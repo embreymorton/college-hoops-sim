@@ -23,6 +23,14 @@ export default defineConfig([
   {
     files: ['src/engine/**/*.{ts,tsx}'],
     rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'Math',
+          property: 'random',
+          message: 'Use the seeded RNG from src/engine/random instead.',
+        },
+      ],
       'no-restricted-globals': [
         'error',
         'document',
@@ -49,4 +57,3 @@ export default defineConfig([
     },
   },
 ])
-
