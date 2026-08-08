@@ -102,4 +102,45 @@ export default defineConfig([
       ],
     },
   },
+  {
+    files: ['src/schedule/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'Math',
+          property: 'random',
+          message: 'Use the seeded RNG exported by src/engine.',
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        'document',
+        'window',
+        'localStorage',
+        'sessionStorage',
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'Schedule logic must remain framework-independent.' },
+            { name: 'react-dom', message: 'Schedule logic must remain framework-independent.' },
+            { name: 'zustand', message: 'Application state belongs above schedule logic.' },
+          ],
+          patterns: [
+            {
+              group: [
+                '**/app/**',
+                '**/components/**',
+                '**/demo/**',
+                '**/store/**',
+              ],
+              message: 'Presentation and application layers may depend on schedules, never the reverse.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ])

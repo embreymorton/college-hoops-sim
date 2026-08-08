@@ -46,4 +46,4 @@ Non-blocking polish may later address stable Player ordering during edits or str
 
 ## Future screens
 
-Universe V0 permanent Program and Conference metadata is implemented. Future Season UI must consume its canonical branding and structured city/state location data rather than create ad hoc Program presentation records. Schedule Generation V0 is next; later season dashboards, schedules, results, standings, upcoming matchups, postseason brackets, recruiting, and dynasty history should extend this same collegiate broadcast-management language rather than introduce a disconnected generic-dashboard aesthetic.
+Universe V0 permanent Program and Conference metadata is implemented. Future Season UI must consume its canonical branding and structured city/state location data rather than create ad hoc Program presentation records. Schedule Generation V0 is active but is not integrated into the exhibition UI; later season dashboards, schedules, results, standings, upcoming matchups, postseason brackets, recruiting, and dynasty history should extend this same collegiate broadcast-management language rather than introduce a disconnected generic-dashboard aesthetic.

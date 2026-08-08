@@ -14,6 +14,7 @@
     "sim:games": "node --import tsx scripts/inspectGameSimulation.ts",
     "sim:boxscores": "node --import tsx scripts/inspectBoxScores.ts",
     "sim:universe": "node --import tsx scripts/inspectUniverse.ts",
+    "sim:schedule": "node --import tsx scripts/inspectSchedule.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

@@ -39,12 +39,12 @@ The repository now contains a permanent fictional basketball world rather than o
 
 The browser now supports the first meaningful coaching decision. HOME is temporarily the coached Team in the exhibition workflow; AWAY uses its generated default Rotation. A custom home Rotation persists through Simulate Again and the return to pregame, and resets when the coached home program changes.
 
-## Next active milestone: Schedule Generation V0
+## Active milestone: Schedule Generation V0
 
-Universe V0 now provides stable Program and Conference identity plus deterministic initial basketball state. Schedule Generation V0 is the next immediate systems milestone; schedule format, games, dates, and season progression are not implemented.
+Universe V0 now provides stable Program and Conference identity plus deterministic initial basketball state. Schedule Generation V0 produces a deterministic 24-round, 384-game unplayed structure for review. It does not implement dates, results, records, standings, or season progression.
 
 ## Next major acceptance target
 
 > A stable fictional league exists and the user can progress through a regular season while all Teams play games and standings update correctly.
 
-The project does not yet contain schedules, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI is not a season interface.
+The project does not yet contain Season State, played schedule results, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI is not a season interface.

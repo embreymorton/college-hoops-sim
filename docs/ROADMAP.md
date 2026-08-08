@@ -90,7 +90,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 012 | Rotation validation and UX polish | COMPLETE |
 | 013 | Stable 32-program fictional program catalog | COMPLETE |
 | 014 | Four-conference model and universe assembly | COMPLETE |
-| 015 | Schedule generation | NEXT |
+| 015 | Schedule generation | ACTIVE |
 | 016 | Season/Game state | PLANNED |
 | 017 | AI game simulation and results progression | PLANNED |
 | 018 | Standings | PLANNED |
@@ -98,7 +98,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 
 ## Phase 3 — League and Season Framework — ACTIVE
 
-The single-game coaching loop is playable. League and season work now becomes active, while schedules and progression remain unimplemented.
+The single-game coaching loop is playable. Schedule structure is the active implementation milestone, while Season State and progression remain unimplemented.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -111,11 +111,11 @@ The single-game coaching loop is playable. League and season work now becomes ac
 
 Universe V0 now contains the validated 32-program/four-conference catalog, stable metadata, and deterministic order-independent initialization of Teams and default Rotations. Initialized Team IDs match their Program IDs, and initial Team prestige matches immutable Program base prestige. Its configured counts do not constrain the generic engine. The six-program exhibition catalog remains a presentation subset plus one development-only fixture.
 
-### 3.2 Schedule Generation V0 — NEXT
+### 3.2 Schedule Generation V0 — ACTIVE
 
 > Given the stable Universe V0 Conference/Program structure, generate a deterministic regular-season schedule in which every Program receives a legal set of opponents and home/away assignments suitable for later Season State.
 
-Exact game counts, Conference/non-Conference composition, calendar shape, and generation algorithm remain intentionally undecided until this milestone is implemented. Schedule Generation does not include Season State, game progression, standings, or presentation.
+The implementation under review uses 24 complete abstract rounds: 14 double-round-robin Conference games and 10 distinct cross-Conference games per Program, with 12 home and 12 away. It does not include dates, Season State, game progression, standings, or presentation.
 
 ### 3.3 Season State and Progression — PLANNED
 
