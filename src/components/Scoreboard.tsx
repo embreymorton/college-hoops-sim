@@ -1,0 +1,184 @@
+import type { TeamStrength } from '../engine'
+import { formatRating } from '../app/formatters'
+
+type ScoreboardSideKey = 'home' | 'away'
+
+function ScoreboardCorners() {
+  return (
+    <>
+      <span className="scoreboard-corner scoreboard-corner--tl" aria-hidden="true" />
+      <span className="scoreboard-corner scoreboard-corner--tr" aria-hidden="true" />
+      <span className="scoreboard-corner scoreboard-corner--bl" aria-hidden="true" />
+      <span className="scoreboard-corner scoreboard-corner--br" aria-hidden="true" />
+    </>
+  )
+}
+
+/* ---------------------------------------------------------------------- */
+/* Pregame — Team Strength scoreboard                                     */
+/* ---------------------------------------------------------------------- */
+
+interface ScoreboardStrengthTeam {
+  readonly name: string
+  readonly accentColor: string
+  readonly strength: TeamStrength
+}
+
+interface PregameScoreboardProps {
+  readonly home: ScoreboardStrengthTeam
+  readonly away: ScoreboardStrengthTeam
+  readonly onSimulate: () => void
+}
+
+export function PregameScoreboard({
+  home,
+  away,
+  onSimulate,
+}: PregameScoreboardProps) {
+  return (
+    <div className="scoreboard scoreboard--pregame">
+      <ScoreboardCorners />
+      <div className="scoreboard-grid">
+        <StrengthSide side="home" team={home} />
+        <div className="scoreboard-divider">
+          <span className="scoreboard-vs">VS</span>
+        </div>
+        <StrengthSide side="away" team={away} />
+      </div>
+      <div className="scoreboard-cta">
+        <button
+          type="button"
+          className="button button--primary"
+          onClick={onSimulate}
+        >
+          Simulate Game
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function StrengthSide({
+  side,
+  team,
+}: {
+  side: ScoreboardSideKey
+  team: ScoreboardStrengthTeam
+}) {
+  return (
+    <div className={`scoreboard-side scoreboard-side--${side}`}>
+      <span className="scoreboard-side__label">
+        {side === 'home' ? 'Home' : 'Away'}
+      </span>
+      <span className="scoreboard-side__name">{team.name}</span>
+      <span
+        className="scoreboard-side__accent-bar"
+        style={{ background: team.accentColor }}
+        aria-hidden="true"
+      />
+      <div className="stat-trio">
+        <StatTrioItem label="Off" value={team.strength.offense} />
+        <StatTrioItem label="Def" value={team.strength.defense} />
+        <StatTrioItem label="Ovr" value={team.strength.overall} />
+      </div>
+    </div>
+  )
+}
+
+function StatTrioItem({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="stat-trio__item">
+      <span className="stat-trio__value">{formatRating(value)}</span>
+      <span className="stat-trio__label">{label}</span>
+    </div>
+  )
+}
+
+/* ---------------------------------------------------------------------- */
+/* Postgame — Final scoreboard                                            */
+/* ---------------------------------------------------------------------- */
+
+interface ScoreboardScoreTeam {
+  readonly name: string
+  readonly accentColor: string
+  readonly score: number
+  readonly isWinner: boolean
+}
+
+interface FinalScoreboardProps {
+  readonly home: ScoreboardScoreTeam
+  readonly away: ScoreboardScoreTeam
+  readonly winnerName: string
+  readonly overtimeTag: string | null
+  readonly onSimulateAgain: () => void
+  readonly onChangeMatchup: () => void
+}
+
+export function FinalScoreboard({
+  home,
+  away,
+  winnerName,
+  overtimeTag,
+  onSimulateAgain,
+  onChangeMatchup,
+}: FinalScoreboardProps) {
+  return (
+    <div className="scoreboard scoreboard--final" aria-live="polite">
+      <ScoreboardCorners />
+      <div className="final-tag-row">
+        <span className="final-tag final-tag--headline">Final</span>
+        {overtimeTag && <span className="final-tag">{overtimeTag}</span>}
+      </div>
+      <div className="scoreboard-grid">
+        <ScoreSide side="home" team={home} />
+        <div className="scoreboard-divider">
+          <span className="scoreboard-vs">–</span>
+        </div>
+        <ScoreSide side="away" team={away} />
+      </div>
+      <p className="final-result-line">{winnerName} wins</p>
+      <div className="scoreboard-actions">
+        <button
+          type="button"
+          className="button button--primary"
+          onClick={onSimulateAgain}
+        >
+          Simulate Again
+        </button>
+        <button
+          type="button"
+          className="button button--ghost"
+          onClick={onChangeMatchup}
+        >
+          Change Matchup
+        </button>
+      </div>
+    </div>
+  )
+}
+
+function ScoreSide({
+  side,
+  team,
+}: {
+  side: ScoreboardSideKey
+  team: ScoreboardScoreTeam
+}) {
+  const winnerClass = team.isWinner ? ' scoreboard-side--winner' : ''
+
+  return (
+    <div className={`scoreboard-side scoreboard-side--${side}${winnerClass}`}>
+      <span className="scoreboard-side__label">
+        {side === 'home' ? 'Home' : 'Away'}
+        {team.isWinner ? ' · Winner' : ''}
+      </span>
+      <span className="scoreboard-side__name">{team.name}</span>
+      <span className="scoreboard-side__score">{team.score}</span>
+      <span
+        className="scoreboard-side__win-bar"
+        style={{ background: team.isWinner ? team.accentColor : 'transparent' }}
+        aria-hidden="true"
+      />
+    </div>
+  )
+}

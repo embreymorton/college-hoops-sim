@@ -1,12 +1,21 @@
+import { useGamePresentationStore } from '../store/gamePresentationStore'
+import { PostgameScreen } from './PostgameScreen'
+import { PregameScreen } from './PregameScreen'
+
 export function App() {
+  const phase = useGamePresentationStore((state) => state.phase)
+
   return (
-    <main>
-      <p className="eyebrow">Foundation milestone</p>
-      <h1>College Hoops Simulator</h1>
-      <p>
-        The project structure is ready. Basketball simulation is the next milestone.
-      </p>
-    </main>
+    <div className="app">
+      <header className="app-header">
+        <div className="app-header__inner">
+          <h1 className="wordmark">College Hoops</h1>
+          <p className="app-subtitle">Exhibition / Development Matchup</p>
+        </div>
+      </header>
+      <main className="app-main">
+        {phase === 'pregame' ? <PregameScreen /> : <PostgameScreen />}
+      </main>
+    </div>
   )
 }
-
