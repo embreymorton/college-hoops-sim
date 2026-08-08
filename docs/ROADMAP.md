@@ -2,44 +2,58 @@
 
 Each milestone should remain small enough to test independently. Starting a later milestone or adding a new system requires an explicit scope discussion.
 
-## 0. Foundation — complete
+## 1. Foundation, domain, and generation — complete
 
-- Establish React, TypeScript, Vite, Zustand, and Vitest tooling.
-- Establish engine/UI boundaries and documentation.
-- Verify lint, test, type-check, and build workflows.
+- React, TypeScript, Vite, Zustand, and Vitest tooling
+- Engine/UI dependency boundaries and source-of-truth documentation
+- Serializable Player, Team, and Rotation domain models
+- Position-aware derived Player overall
+- Deterministic seeded RNG
+- Fictional Player and 12-player Team generation
+- Rotation validation and deterministic default rotations
 
-## 1. Domain and deterministic generation — complete
+## 2. Team Strength — complete
 
-Seeded RNG, Player, Team, and Rotation domain models, individual player and 12-player roster generation, rotation validation, deterministic default rotations, and rotation-weighted team strength are complete. Game simulation has not started.
+- Derived position-aware Player offense and defense
+- Rotation-weighted Team offense and defense
+- Derived Team overall
+- Deterministic, pure calculations with zero influence from zero-minute players
+- Constructed and large-sample validation of offensive and defensive identities
 
-- Define serializable player, attribute, position, team, and rotation types.
-- Implement position-aware derived overall ratings.
-- Implement and test seeded RNG.
-- Generate only enough teams and players to exercise a game.
-
-## 2. Single-game simulation
+## 3. Single-Game Simulation — next
 
 - Define `GameResult` and `PlayerGameStats`.
 - Simulate a game between two generated teams.
 - Produce consistent final scores and box scores.
 - Tune broad realism using deterministic statistical tests.
 
-## 3. Game presentation
+No game outcomes, scores, or box scores exist yet.
+
+## 4. Game Presentation
 
 - Connect the engine through an application-state adapter.
 - Add a minimal matchup setup and box-score UI.
 - Keep simulation behavior independent from React.
 
-## 4. Season framework
+## 5. Season Framework
 
 - Define the fictional league of approximately 32 teams in four conferences.
 - Add schedules, standings, season progression, and a national tournament.
 
-## 5. Dynasty loop
+## 6. Dynasty Loop
 
 - Add recruiting, player development, roster turnover, and offseason progression.
 - Add save/load support and multi-season continuity.
 
 ## Deferred until explicitly scoped
 
-Detailed play-by-play, injuries, transfers, finances, staff systems, real-world teams/data, multiplayer, and advanced coaching tactics are not part of the current plan.
+- Multi-position eligibility
+- Tighter or more realistic rotations
+- Player roles and playing-time expectations
+- Explicit Player or Team archetypes
+- Advanced tactics and detailed play-by-play
+- Injuries and transfers
+- NIL and finances
+- Coaching and staff systems
+- Real-world teams or data
+- Multiplayer

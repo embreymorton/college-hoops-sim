@@ -99,7 +99,11 @@ Rotation validation returns structured, serializable issues for unknown players,
 
 ## Initial derived team strength
 
-Player offense and defense are separate position-weighted ratings derived from current attributes. Potential, class year, and stamina do not directly enter these skill formulas. Team offense and defense weight active players by their share of the valid 200-minute rotation, and team overall is their balanced average. These ratings are never stored on Player or Team. The tunable v0.1 weights are documented in `SIMULATION.md`.
+Current ability can differ meaningfully between offense and defense. Positional context changes how attributes translate into each rating: perimeter creation and defense matter more for guards, while finishing, interior defense, and rebounding matter more for frontcourt players.
+
+Team offense and defense weight active players by their share of the valid 200-minute rotation, so rotation choices can create real offensive and defensive tradeoffs. Potential, class year, and stamina do not directly enter the skill formulas, and the ratings are never stored on Player or Team. The tunable v0.1 weights and exact aggregation formulas are documented in `SIMULATION.md`.
+
+Generated-team offense and defense currently remain fairly correlated because roster generation primarily varies talent rather than explicit style. Stronger naturally generated identities may be explored during future tuning; this is not a defect in the accepted Team Strength layer.
 
 ## MVP world
 

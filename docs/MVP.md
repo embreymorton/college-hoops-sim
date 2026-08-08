@@ -11,9 +11,9 @@ The product MVP should support one complete dynasty-season loop:
 - Recruit and develop players.
 - Advance into the next season with persistent, serializable state.
 
-## Current milestone: engine foundations
+## Completed: engine foundations and Team Strength
 
-This milestone delivers only:
+The project currently includes:
 
 - A React, TypeScript, and Vite application shell
 - A framework-independent `src/engine` boundary
@@ -28,8 +28,8 @@ This milestone delivers only:
 - A serializable Rotation model with validation and deterministic default allocation
 - Derived positional player OFF/DEF and rotation-weighted Team Strength ratings
 
-The current scope explicitly excludes game simulation, substitutions, fatigue, multi-position eligibility, league generation, conferences, schedules, standings, recruiting, development progression, saves, and gameplay UI.
+## Next active milestone: Single-Game Simulation
 
-## Next milestone acceptance target
+The next milestone must allow two generated teams with valid rotations to produce a deterministic, believable game outcome with a final score and internally consistent box score. The scoring model has not been designed or implemented yet.
 
-Before expanding the dynasty loop, two generated teams must be simulatable entirely through TypeScript and produce a plausible final score plus internally consistent player and team box scores. Identical inputs and seed must produce identical output.
+The project does not yet contain actual game outcomes, final scores, box scores, possession simulation, schedules, standings, season progression, recruiting, offseason development, substitutions, fatigue simulation, multi-position eligibility, saves, or gameplay UI.

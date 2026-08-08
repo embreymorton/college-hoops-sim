@@ -35,7 +35,8 @@ Folders describe ownership, not permission to implement future systems early.
 - Domain objects and game state use JSON-serializable data: plain objects, arrays, numbers, strings, booleans, and null where meaningful.
 - Do not put functions, class instances, DOM objects, `Map`, `Set`, or implicit global state into persisted domain objects.
 - Stable string IDs connect entities. Do not rely on object identity.
-- Current ability lives in player attributes. Overall rating is computed from attributes and position.
+- Current ability lives in player attributes. Player overall, player offense, and player defense are derived from attributes and positional context; none are mutable Player fields.
+- Team offense and defense are derived from Player ratings and a valid Rotation. Team overall is derived from Team offense and defense. None are mutable Team fields.
 - Randomness enters through an explicit seeded RNG or seed. Engine code never calls `Math.random()`.
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
 - Zustand owns application/UI workflow state, not basketball rules.
