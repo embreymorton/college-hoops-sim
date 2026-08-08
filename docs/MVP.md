@@ -29,20 +29,19 @@ The project currently includes:
 - Derived positional player OFF/DEF and rotation-weighted Team Strength ratings
 - Deterministic game outcomes with final scores, winners, and overtime
 - Complete full-roster Player box scores with minutes, points, shooting, rebounds, assists, steals, blocks, and turnovers
-- Browser Game Presentation V0 with home/away selection, generated rosters, displayed default Rotation minutes and Team Strength, final-score and overtime presentation, both Teams' box scores, deterministic re-simulation, and matchup reset
+- Browser Game Presentation V0 with home/away selection, generated rosters, Rotation and Team Strength presentation, final-score and overtime presentation, both Teams' box scores, deterministic re-simulation, and matchup reset
+- Rotation Management V0 with exact home-Team minute editing, engine-authoritative validation, visible position and Team budgets, default/current Team Strength comparison, reset to default, simulation gating, and simulation using the edited legal Rotation
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
-## Current milestone: Rotation Management
+The browser now supports the first meaningful coaching decision. HOME is temporarily the coached Team in the exhibition workflow; AWAY uses its generated default Rotation. A custom home Rotation persists through Simulate Again and the return to pregame, and resets when the coached home program changes.
 
-> The user can modify a legal Team Rotation, receive immediate validation, see Team Strength update from those choices, and simulate a game using that custom Rotation.
+## Next active phase: League and Season Framework
 
-The Rotation Editor is not implemented. The initial editor must preserve the existing natural-position, 40-minutes-per-position, 200-total-minute rules and defer legality and strength derivation to the engine.
+The immediate next milestone is a Stable Fictional Basketball Universe: approximately 32 stable fictional programs in four conferences, with deterministic identities, prestige, presentation metadata, and initial roster generation. Exact programs and conference assignments are not designed yet.
 
 ## Next major acceptance target
 
-After the first playable rotation-management loop is complete:
-
-> Play through a multi-Team regular season in a stable fictional league while standings and AI results update correctly.
+> A stable fictional league exists and the user can progress through a regular season while all Teams play games and standings update correctly.
 
 The project does not yet contain a stable league, conferences, schedules, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six deterministic demo programs are presentation fixtures, not the planned 32-Team league.

@@ -113,14 +113,16 @@ The accepted Team scores remain authoritative. A deterministic allocation layer 
 
 This supports individual statistical storytelling beneath Team outcomes: stars can carry an offense or have quiet games, role players can spike, frontcourt Players retain stronger rebounding identities, guards tend to create more assists, and shooting efficiency varies from game to game. These performances explain the accepted result without becoming a second outcome simulation.
 
-Game Presentation V0 exposes this information through deterministic demo matchups, generated rosters and default Rotations, Team Strength, final scores, overtime, and both Teams' Player box scores. It adds no basketball rules to the presentation layer.
+Game Presentation V0 exposes this information through deterministic demo matchups, generated rosters, the editable home/default away Rotations, Team Strength, final scores, overtime, and both Teams' Player box scores. It adds no basketball rules to the presentation layer.
 
-## Initial coaching agency
+## Initial coaching agency — implemented
 
-Rotation Management is the first direct coaching decision available to the user. The coach will distribute the available 200 player-minutes within the v0.1 natural-position constraint: exactly 40 minutes at each position. Because Team Strength weights Player influence by assigned minutes, changing a legal Rotation can create visible offensive, defensive, and depth tradeoffs. Better Players should usually deserve more minutes, but differences between Player offense, Player defense, and roster depth can make the best choice contextual.
+Rotation Management is the first direct coaching decision available to the user. In the current exhibition workflow, HOME is the coached Team and AWAY retains its generated default Rotation. The coach distributes the home Team's available 200 player-minutes within the v0.1 natural-position constraint: exactly 40 minutes at each position.
 
-The initial goal is understandable basketball choice, not broad tactical complexity. Pace, offensive and defensive schemes, pressing, shot profiles, live substitutions, fatigue, morale, and playing-time consequences are not part of this milestone. Additional tactical systems must earn their complexity after the season and dynasty loops work.
+Because Team Strength weights Player influence by assigned minutes, a legal Rotation change alters Team OFF, DEF, and OVR and therefore affects game outcomes probabilistically. Better Players should usually deserve more minutes, but differences between Player offense, Player defense, and roster depth can make choices contextual. The interface exposes those consequences without declaring one Rotation strategically correct.
+
+The goal is understandable basketball choice, not broad tactical complexity. Pace, offensive and defensive schemes, pressing, shot profiles, live substitutions, fatigue, morale, Player happiness, chemistry, and playing-time consequences are not implemented. Additional tactical systems must earn their complexity after the season and dynasty loops work. A displayed or minute-derived starting five has no separate gameplay effect.
 
 ## MVP world
 
-The eventual MVP targets approximately 32 fictional teams in four conferences. The current six-program demo catalog supports the presentation slice only; it is not the future league. The scale target is not authorization to implement league or season systems during Rotation Management.
+The eventual MVP targets approximately 32 fictional teams in four conferences. The current six-program demo catalog supports the presentation slice only; it is not the future league. Defining a stable fictional basketball universe is the next milestone, but exact program identities and conference assignments remain undecided until that work is explicitly scoped.

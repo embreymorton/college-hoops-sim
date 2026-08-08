@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, and their first browser presentation are complete. Rotation Management is the next active milestone. It does not introduce another simulator: custom legal Rotations become alternate inputs to the existing Team Strength and game-simulation pipeline.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, and Rotation Management V0 are complete. Rotation Management introduced no new simulator or engine rules: a user-edited legal home Rotation is another valid input to the accepted Team Strength and game-simulation pipeline, while the away Team currently uses its generated default Rotation. The Stable Fictional Basketball Universe is the next product milestone.
 
 ## Implemented Rotation constraint
 

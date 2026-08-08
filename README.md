@@ -1,6 +1,6 @@
 # College Hoops Simulator
 
-A fictional college basketball dynasty simulator. The validated Basketball Engine V0 and browser Game Presentation V0 are complete; Rotation Management is the next active milestone.
+A fictional college basketball dynasty simulator. The validated Basketball Engine V0 and first playable single-game coaching loop are complete; the Stable Fictional Basketball Universe is the next milestone.
 
 ## Commands
 

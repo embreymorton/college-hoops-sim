@@ -50,44 +50,34 @@ Exact formulas and constants become source-of-truth documentation after implemen
 - Exact Player-points-to-Team-score reconciliation
 - Regulation/overtime minute reconciliation, shooting arithmetic, determinism, serialization, and non-mutation invariants
 
-## Phase 2 — First Playable Coaching Loop — ACTIVE
+## Phase 2 — First Playable Coaching Loop — COMPLETE
 
 ### 2.1 Game Presentation V0 — COMPLETE
 
 - Six deterministic demo-program fixtures with presentation metadata
 - Distinct home/away matchup selection
-- Engine-generated rosters and displayed default Rotation minutes
+- Engine-generated rosters, an editable home Rotation, and a displayed default away Rotation
 - Displayed Team OFF, DEF, and OVR
 - Real `simulateGame()` integration through Zustand application orchestration
 - Final score, winner, overtime, and both Teams' Player box scores
 - Deterministic re-simulation using a stable matchup-and-sequence seed scheme
 - Change Matchup workflow
 
-The demo catalog is not a league, and displayed Rotations are not editable.
+The demo catalog is not a league. HOME is the coached side only for the current exhibition workflow; this is not yet a permanent dynasty user-Team model.
 
-### 2.2 Rotation Management — NEXT
+### 2.2 Rotation Management V0 — COMPLETE
 
 > The coach can change who plays and how many minutes they receive, see the consequences of those choices, and simulate the game using the edited legal rotation.
 
-Plan:
-
-- Display editable Player minutes.
-- Preserve the v0.1 natural-position restriction.
-- Enforce exactly 40 minutes at each position and 200 total Team minutes.
-- Provide immediate validation feedback.
-- Allow reset to the generated/default Rotation.
-- Derive Team Strength from the currently edited Rotation.
-- Make OFF, DEF, and OVR changes visible.
-- Simulate using the user's legal Rotation.
-- Preserve seeded deterministic game behavior.
-
-The exact editing controls remain an upcoming UI-design decision.
-
-### 2.3 Pregame Coaching Polish — PLANNED
-
-Keep this optional and small after Rotation Management. Candidate improvements include a clearer starting-five or primary-Player presentation derived from minutes, matchup comparison, positional strengths and weaknesses, and refined coaching feedback.
-
-Advanced tactics are not required here. Pace, schemes, zone defense, presses, shot profiles, live substitutions, and similar systems remain outside the active MVP.
+- Exact numeric home-Team Player-minute editing within the v0.1 natural-position restriction
+- Temporary invalid editing states with visible position and 200-minute Team budgets
+- Engine-authoritative Rotation validation and blocked simulation while invalid
+- Default/current OFF, DEF, and OVR comparison for legal edits
+- Reset to generated default Rotation
+- Simulation using the actual edited legal home Rotation and default away Rotation
+- Custom Rotation preservation through postgame return and Simulate Again
+- Default Rotation restoration when the coached home program changes
+- Deterministic matchup-and-sequence simulation seeds
 
 ## Near-term planning horizon
 
@@ -95,31 +85,32 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 
 | Task | Intended slice | Status |
 | --- | --- | --- |
-| 010 | Rotation Management application/state support | NEXT |
-| 011 | Rotation Editor UI | PLANNED |
-| 012 | Rotation validation and UX polish | PLANNED |
-| 013 | Stable 32-program fictional league | PLANNED |
-| 014 | Conference model | PLANNED |
+| 010 | Rotation Management application/state support | COMPLETE |
+| 011 | Rotation Editor UI | COMPLETE |
+| 012 | Rotation validation and UX polish | COMPLETE |
+| 013 | Stable 32-program fictional program catalog | NEXT |
+| 014 | Four-conference model and universe assembly | PLANNED |
 | 015 | Schedule generation | PLANNED |
 | 016 | Season/Game state | PLANNED |
-| 017 | AI game simulation and progression | PLANNED |
+| 017 | AI game simulation and results progression | PLANNED |
 | 018 | Standings | PLANNED |
 | 019 | Season presentation | PLANNED |
 
-## Phase 3 — League and Season Framework — PLANNED
+## Phase 3 — League and Season Framework — ACTIVE
 
-This phase begins after the single-game coaching loop is playable.
+The single-game coaching loop is playable. League and season work now becomes active, while schedules and progression remain unimplemented.
 
-### 3.1 Fictional League
+### 3.1 Stable Fictional Basketball Universe — NEXT
 
 - Approximately 32 fictional programs across four conferences
-- Stable deterministic program definitions
+- Stable program identities and deterministic IDs
+- Prestige values
 - Program presentation metadata and branding
-- Generated starting rosters
+- Deterministic initial roster generation
 
-The current six-program demo catalog is presentation scaffolding, not the full league.
+The current six-program demo catalog is presentation scaffolding, not the full universe. Exact school names and conference assignments will be designed in the next planning task rather than precommitted here.
 
-### 3.2 Schedule
+### 3.2 Schedule Generation — PLANNED
 
 - Regular-season schedule generation
 - Conference and non-conference games
@@ -128,15 +119,19 @@ The current six-program demo catalog is presentation scaffolding, not the full l
 
 The first schedule need not reproduce the exact current NCAA format.
 
-### 3.3 Season State and Progression
+### 3.3 Season State and Progression — PLANNED
 
 - Overall and conference records
 - User schedule and results
-- AI-vs-AI game simulation
 - Advance-game or advance-date workflow
-- Standings
 
-### 3.4 Season Presentation
+### 3.4 AI Game Simulation / Standings — PLANNED
+
+- AI-vs-AI game simulation
+- Complete scheduled results for all Teams
+- Overall and conference standings derived from results
+
+### 3.5 Season Presentation — PLANNED
 
 - Season/dashboard home
 - Schedule and results
@@ -196,12 +191,17 @@ Persistence should not be implemented before the evolving dynasty-state model is
 ## Phase 7 — Post-MVP Depth — DEFERRED
 
 - Multi-position eligibility and more advanced automatic Rotations
+- Optional pregame polish such as starting-five presentation, matchup comparison, and positional insights
+- Stable Player ordering during Rotation edits if reordering proves distracting
+- Stronger live-region announcements for dynamic Rotation validation
 - Player roles, playing-time expectations, happiness, and redshirts
 - Transfer portal, injuries, and NBA Draft declarations
 - Coaching career, job offers, firing/hiring, and assistant coaches
 - Offensive and defensive schemes
 - Explicit Player or Team archetype systems
 - Deeper box-score event reconciliation
+
+These are non-blocking polish or depth candidates. None precedes the League and Season Framework.
 
 ## Far-future / optional
 

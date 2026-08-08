@@ -62,15 +62,27 @@ The engine owns every step through Player box scores. The application layer sele
 
 The current Game Presentation store owns matchup selections, pregame/postgame phase, generated Team setups, deterministic game-sequence seeds, and the latest `GameResult`. It calls the public engine API to generate Teams and default Rotations, derive Team Strength, and simulate games. Its in-memory setup cache is an application detail, not persisted domain state.
 
+Rotation Management V0 adds the coach's editable home-Team `Rotation` to that Zustand workflow state. Temporary invalid values are allowed during editing. The application asks the engine to validate the current Rotation, derives current Team Strength through the engine only when it is legal, and blocks simulation otherwise. A legal simulation passes that exact edited home Rotation and the away Team's generated default Rotation to `simulateGame()`.
+
+```text
+UI interaction
+→ Zustand application workflow state
+→ validateRotation()
+→ calculateTeamStrength()
+→ simulateGame()
+```
+
+The home Rotation persists through Simulate Again and the return from postgame to pregame. Reset restores the generated default, and selecting a different home program installs that program's default. HOME is the coached Team only for the current exhibition workflow; this is not yet a permanent dynasty user-Team model.
+
 The six deterministic demo-program definitions live in `src/demo/demoPrograms.ts`, a neutral presentation fixture module shared by the store and React components. Their names, prestige values, generation seeds, and colors are not an implemented league or engine data model.
 
 ## Public API and imports
 
 Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Within the engine, modules may import only other engine modules or platform-neutral utilities. Avoid circular dependencies and avoid a catch-all `utils` directory; place a helper with the domain that owns it.
 
-Game Presentation V0 is complete. React renders deterministic demo matchups, engine-generated rosters and default Rotation minutes, Team Strength, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes or ratings.
+Game Presentation V0 and Rotation Management V0 are complete. React renders deterministic demo matchups, engine-generated rosters, an editable home Rotation, a read-only default away Rotation, Team Strength comparisons, validation feedback, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes, ratings, or Rotation legality.
 
-Rotation Management is the next active milestone. Editable Rotation state may live in the application layer, but legality is defined by the engine's Rotation validation rules and Team Strength must continue to come from engine derivation. A legal edited Rotation becomes an input to the existing strength and simulation pipeline; the UI must not duplicate or redefine those rules.
+The engine was not changed for Rotation Management. Editable Rotation state lives in the application layer, while legality remains defined by engine validation and Team Strength remains an engine derivation. The Stable Fictional Basketball Universe is next; it must preserve the same dependency direction and must not turn presentation fixtures into engine-owned UI metadata.
 
 ## Enforcement
 
