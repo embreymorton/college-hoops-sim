@@ -28,8 +28,8 @@ The project currently includes:
 - A serializable Rotation model with validation and deterministic default allocation
 - Derived positional player OFF/DEF and rotation-weighted Team Strength ratings
 
-## Active milestone: Single-Game Simulation
+## Completed: Single-Game Simulation
 
-The first team-level version now allows two generated teams with valid rotations to produce a deterministic final score, winner, and overtime count from an explicit seed. It uses derived offense and defense, a small home advantage, and seeded game-level variance. The next explicitly scoped step is internally consistent Team and Player box scores.
+Two generated teams with valid rotations can now produce a deterministic final score, winner, overtime count, and internally consistent Player box scores from an explicit seed. The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates full-roster minutes, points, traditional shooting, rebounds, assists, steals, blocks, and turnovers.
 
-The project does not yet contain box scores, Player game statistics, possession simulation, schedules, standings, season progression, recruiting, offseason development, substitutions, fatigue simulation, multi-position eligibility, saves, or gameplay UI.
+The project does not yet contain possession simulation, schedules, standings, season progression, recruiting, offseason development, substitutions, fatigue simulation, multi-position eligibility, saves, or gameplay UI.

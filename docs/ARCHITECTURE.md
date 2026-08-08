@@ -23,7 +23,7 @@ src/
     domain/              Serializable domain types and derived ratings
     generation/          Player/team generation and default rotation derivation
     random/              Seeded RNG abstraction and implementation
-    simulation/          Pure team-level game outcomes; later box-score aggregation
+    simulation/          Pure game outcomes and Player box-score allocation
     index.ts             Engine's public API
   test/                  Shared test setup
 ```
@@ -37,7 +37,7 @@ Folders describe ownership, not permission to implement future systems early.
 - Stable string IDs connect entities. Do not rely on object identity.
 - Current ability lives in player attributes. Player overall, player offense, and player defense are derived from attributes and positional context; none are mutable Player fields.
 - Team offense and defense are derived from Player ratings and a valid Rotation. Team overall is derived from Team offense and defense. None are mutable Team fields.
-- Game simulation accepts explicit Teams, Rotations, and a seed, then returns a plain serializable result without retaining hidden RNG or game state.
+- Game simulation accepts explicit Teams, Rotations, and a seed, then returns a plain serializable outcome with full-roster Player box-score rows without retaining hidden RNG or game state.
 - Randomness enters through an explicit seeded RNG or seed. Engine code never calls `Math.random()`.
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
 - Zustand owns application/UI workflow state, not basketball rules.

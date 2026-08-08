@@ -481,7 +481,7 @@ function main(): void {
   process.stdout.write('COLLEGE HOOPS SIM — SINGLE-GAME V0 INSPECTION\n')
   process.stdout.write(`Deterministic base seed: ${BASE_SEED}\n`)
   process.stdout.write(
-    'Team-level outcomes only; player box scores and possessions are absent.\n',
+    'This report focuses on team outcomes; use sim:boxscores for Player stats.\n',
   )
 
   writeShowcaseGames()

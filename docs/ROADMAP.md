@@ -20,14 +20,14 @@ Each milestone should remain small enough to test independently. Starting a late
 - Deterministic, pure calculations with zero influence from zero-minute players
 - Constructed and large-sample validation of offensive and defensive identities
 
-## 3. Single-Game Simulation — in progress
+## 3. Single-Game Simulation — complete
 
 - Define a minimal serializable team-level `GameResult`. — complete
 - Simulate deterministic final scores, winners, home advantage, and overtime. — complete
-- Define `PlayerGameStats` and allocate consistent Team and Player box scores.
-- Tune broad realism using deterministic statistical tests.
+- Define `PlayerGameStats` and allocate consistent Team and Player box scores. — complete
+- Tune broad realism using deterministic statistical tests. — complete
 
-Team-level outcomes and final scores now exist. Player statistics, Team box-score detail, and score reconciliation remain unimplemented.
+Team outcomes, final scores, full-roster Player statistics, shooting arithmetic, minute reconciliation, and deterministic statistical inspection are implemented.
 
 ## 4. Game Presentation
 

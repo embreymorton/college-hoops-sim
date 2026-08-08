@@ -109,7 +109,7 @@ Generated-team offense and defense currently remain fairly correlated because ro
 
 Single-Game Simulation V0 converts two valid Rotations and their derived Team strengths into a deterministic final score, winner, and overtime count. Each Team's expected score responds separately to its own offense and the opponent's defense. A small home advantage changes the expected margin, while seeded shared and Team-specific variance keep outcomes uncertain. Tied games play repeated overtime periods until a winner is produced.
 
-This version intentionally ends at Team scores. It does not yet represent possessions, pace, shooting attempts, Player game statistics, substitutions, fatigue, or box-score allocation.
+The accepted Team scores remain authoritative. A deterministic allocation layer explains them with full-roster Player rows containing minutes, points, rebounds, assists, steals, blocks, turnovers, and traditional shooting lines. Player points always reconstruct the Team score, while shooting makes always reconstruct Player points. The layer does not represent possessions, pace, substitutions, fatigue, or play-by-play.
 
 ## MVP world
 

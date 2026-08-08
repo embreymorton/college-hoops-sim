@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength and team-level Single-Game Simulation V0 constraints.
+This document records the implemented Team Strength, Single-Game Simulation V0, and Player Box Scores V0 constraints.
 
 ## Status and pipeline
 
@@ -8,16 +8,10 @@ Implemented:
 
 ```text
 Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
-    → seeded team-level game result
+    → seeded team-level outcome → Player box-score allocation
 ```
 
-Next within the single-game milestone:
-
-```text
-GameResult → internally consistent Team and Player box scores
-```
-
-The team-level result is implemented. Box-score allocation and any finer simulation model remain separate future work.
+The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
 ## Implemented Rotation constraint
 
@@ -83,9 +77,9 @@ These formulas are the implemented and validated v0.1 baseline. Their exact cons
 
 ## Implemented Single-Game Simulation V0
 
-`simulateGame` takes two Teams, one valid Rotation per Team, and an explicit numeric or string seed. It returns a minimal serializable `GameResult` containing Team IDs, final integer scores, the winner ID, completed overtime-period count, and the reproduction seed. Team and Rotation inputs are not mutated.
+`simulateGame` takes two Teams, one valid Rotation per Team, and an explicit numeric or string seed. It returns a serializable `GameResult` containing Team IDs, final integer scores, the winner ID, completed overtime-period count, the reproduction seed, and home/away Player-stat arrays. Team and Rotation inputs are not mutated.
 
-The initial game-level model deliberately stops at the final Team score. It does not simulate possessions, pace, shooting attempts, Player statistics, Team box-score totals, substitutions, or fatigue.
+The accepted team-level model remains authoritative for final scores and winners. The box-score layer only allocates those completed outcomes; it cannot regenerate or modify them.
 
 ### Scoring model
 
@@ -165,17 +159,62 @@ Overtime points are added to the existing score, `overtimePeriods` is incremente
 
 These values are now the accepted and documented v0.1 baseline. They remain centralized in the simulation module so later balance work can change them deliberately. The model is intentionally simple; a possession-based model may be introduced later if it provides clear value, but it is not a current commitment.
 
+## Implemented Player Box Scores V0
+
+Each `GameResult` contains `homePlayerStats` and `awayPlayerStats`. Each array follows Team roster order and contains one row for every rostered Player, including explicit all-zero rows for zero-minute Players.
+
+`PlayerGameStats` contains:
+
+- `playerId`, `minutes`, and `points`
+- `rebounds`, `assists`, `steals`, `blocks`, and `turnovers`
+- `fieldGoalsMade` and `fieldGoalsAttempted`
+- `threePointersMade` and `threePointersAttempted`
+- `freeThrowsMade` and `freeThrowsAttempted`
+
+### Minutes
+
+Regulation minutes come directly from the valid Rotation and total exactly `200` per Team. Each overtime adds the milestone-defined `5` Team player-minutes. Those minutes are assigned deterministically, one each to the five active Players ranked by regulation minutes, Player offense, and stable Player ID. No live substitution or fatigue model is implied.
+
+```text
+Team box-score minutes = 200 + (5 × overtimePeriods)
+```
+
+### Points and shooting
+
+The completed Team score is allocated one point at a time among active Players using seeded weighted selection. Opportunity primarily combines assigned minutes, derived Player offense, shooting, finishing, and a game-specific performance multiplier. Zero-minute Players have zero opportunity.
+
+After Player points are fixed, each total is decomposed into two-point field goals, three-point field goals, and made free throws. Shooting and position influence three-point involvement; finishing and athleticism influence two-point and free-throw involvement. Attribute-informed efficiency estimates then generate missed attempts without changing points.
+
+Every row enforces:
+
+```text
+FGM ≤ FGA
+3PM ≤ 3PA
+3PM ≤ FGM
+3PA ≤ FGA
+FTM ≤ FTA
+
+points = 2 × (FGM − 3PM) + 3 × 3PM + FTM
+```
+
+### Other statistics
+
+Rebounds use minutes, position, rebounding, and athleticism. Assists use minutes, position, playmaking, and ball handling. Steals use minutes, position, perimeter defense, and athleticism. Blocks use minutes, position, interior defense, athleticism, and height. Turnovers use minutes, positional role, scoring involvement, ball handling, and playmaking. Each is sampled as a non-negative integer from a simple seeded game-level count model.
+
+All box-score tuning values are centralized and named in the simulation module. Their detailed values remain implementation-level calibration inputs until the inspection output is reviewed and accepted.
+
 ### Implemented invariants
 
 - The same inputs and seed produce deeply equal results.
 - No simulation code calls `Math.random()`.
 - Each game terminates and has one winner after overtime.
 - Scores are non-negative integers.
+- Player points sum exactly to the authoritative Team score.
+- Team minutes total exactly `200 + (5 × overtimePeriods)`.
+- Every shooting line satisfies its make/attempt and point-reconstruction equations.
+- Every statistic is a non-negative integer.
+- Zero-minute Players receive explicit all-zero rows.
 - Inputs are not mutated.
 - Inputs and results survive a JSON serialize/parse round trip.
 
-### Deferred box-score constraints
-
-When Player and Team box scores are explicitly scoped, Player scoring must reconcile with Team scores, minutes must reconcile with regulation and overtime duration under a documented rounding rule, and Players outside the Rotation must receive no minutes unless a later rule allows it.
-
-Unit tests lock down deterministic behavior, outcome invariants, strength effects, home-court direction, overtime resolution, rotation rejection, serialization, and non-mutation. The deterministic inspection command reports broad distributions over many seeds. Statistical assertions use generous bounds so they detect structural errors rather than harmless tuning changes.
+Unit tests lock down deterministic behavior, accepted outcome regression values, box-score reconciliation, attribute effects, overtime allocation, rotation rejection, serialization, and non-mutation. Deterministic inspection commands report broad outcome and Player-stat distributions over many seeds. Statistical assertions use generous bounds so they detect structural errors rather than harmless tuning changes.

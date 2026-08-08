@@ -5,6 +5,10 @@ import {
   type TeamStrength,
 } from '../domain'
 import { createRng, type Rng, type RngSeed } from '../random'
+import {
+  generateTeamPlayerStats,
+  type PlayerGameStats,
+} from './boxScore'
 
 export interface SimulateGameOptions {
   homeTeam: Team
@@ -14,7 +18,7 @@ export interface SimulateGameOptions {
   seed: RngSeed
 }
 
-/** Minimal V0 team-level outcome. Player statistics are intentionally absent. */
+/** Serializable final outcome and full-roster traditional box scores. */
 export interface GameResult {
   homeTeamId: string
   awayTeamId: string
@@ -23,6 +27,8 @@ export interface GameResult {
   winnerId: string
   overtimePeriods: number
   seed: RngSeed
+  homePlayerStats: PlayerGameStats[]
+  awayPlayerStats: PlayerGameStats[]
 }
 
 /** Centralized V0 balance constants; these are tuning inputs, not domain state. */
@@ -146,7 +152,7 @@ function simulateOvertimeScores(
   }
 }
 
-/** Simulates one deterministic team-level game without player box scores. */
+/** Simulates one deterministic outcome and allocates its Player box scores. */
 export function simulateGame({
   homeTeam,
   awayTeam,
@@ -185,6 +191,21 @@ export function simulateGame({
     }
   }
 
+  const homePlayerStats = generateTeamPlayerStats({
+    team: homeTeam,
+    rotation: homeRotation,
+    teamScore: homeScore,
+    overtimePeriods,
+    rng,
+  })
+  const awayPlayerStats = generateTeamPlayerStats({
+    team: awayTeam,
+    rotation: awayRotation,
+    teamScore: awayScore,
+    overtimePeriods,
+    rng,
+  })
+
   return {
     homeTeamId: homeTeam.id,
     awayTeamId: awayTeam.id,
@@ -193,5 +214,7 @@ export function simulateGame({
     winnerId: homeScore > awayScore ? homeTeam.id : awayTeam.id,
     overtimePeriods,
     seed,
+    homePlayerStats,
+    awayPlayerStats,
   }
 }
