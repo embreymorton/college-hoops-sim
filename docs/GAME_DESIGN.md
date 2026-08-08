@@ -125,4 +125,6 @@ The goal is understandable basketball choice, not broad tactical complexity. Pac
 
 ## MVP world
 
-The eventual MVP targets approximately 32 fictional teams in four conferences. The current six-program demo catalog supports the presentation slice only; it is not the future league. Defining a stable fictional basketball universe is the next milestone, but exact program identities and conference assignments remain undecided until that work is explicitly scoped.
+Stable Fictional Basketball Universe V0 defines 32 permanent fictional programs across four conferences of eight. Stable Program configuration owns identity, structured city/state location, conference membership, branding, and immutable base prestige. Current dynasty `Team.prestige` is initialized from base prestige but remains basketball state that may evolve only in a later scoped system.
+
+New-dynasty initialization derives an isolated seeded RNG from the universe version, roster-generation version, typed dynasty seed, and Program ID. It generates each roster through the accepted Team generator, assigns the stable Program ID to Team, and derives a legal default Rotation. The six-program exhibition catalog is still only a UI subset plus one development fixture; no schedule or season exists yet.

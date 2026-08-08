@@ -88,9 +88,9 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 010 | Rotation Management application/state support | COMPLETE |
 | 011 | Rotation Editor UI | COMPLETE |
 | 012 | Rotation validation and UX polish | COMPLETE |
-| 013 | Stable 32-program fictional program catalog | NEXT |
-| 014 | Four-conference model and universe assembly | PLANNED |
-| 015 | Schedule generation | PLANNED |
+| 013 | Stable 32-program fictional program catalog | COMPLETE |
+| 014 | Four-conference model and universe assembly | COMPLETE |
+| 015 | Schedule generation | NEXT |
 | 016 | Season/Game state | PLANNED |
 | 017 | AI game simulation and results progression | PLANNED |
 | 018 | Standings | PLANNED |
@@ -100,7 +100,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 
 The single-game coaching loop is playable. League and season work now becomes active, while schedules and progression remain unimplemented.
 
-### 3.1 Stable Fictional Basketball Universe — NEXT
+### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
 - Approximately 32 fictional programs across four conferences
 - Stable program identities and deterministic IDs
@@ -108,9 +108,9 @@ The single-game coaching loop is playable. League and season work now becomes ac
 - Program presentation metadata and branding
 - Deterministic initial roster generation
 
-The current six-program demo catalog is presentation scaffolding, not the full universe. Exact school names and conference assignments will be designed in the next planning task rather than precommitted here.
+Universe V0 now contains the validated 32-program/four-conference catalog, stable metadata, and deterministic order-independent initialization of Teams and default Rotations. Its configured counts do not constrain the generic engine. The six-program exhibition catalog remains a presentation subset plus one development-only fixture.
 
-### 3.2 Schedule Generation — PLANNED
+### 3.2 Schedule Generation — NEXT
 
 - Regular-season schedule generation
 - Conference and non-conference games

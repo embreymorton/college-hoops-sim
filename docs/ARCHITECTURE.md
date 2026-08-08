@@ -7,6 +7,7 @@ Dependencies point inward toward the engine:
 ```text
 React presentation → Zustand application state/adapters → engine public API
                                       tests/tools → engine public API
+React / future season state → universe → engine public API
 ```
 
 `src/engine` must not import React, React DOM, Zustand, components, application stores, browser/DOM APIs, or other UI-specific code. The engine accepts data and configuration, then returns data. UI code may import the engine.
@@ -20,6 +21,7 @@ src/
   components/            Reusable presentational UI
   demo/                  Presentation fixtures and demo-program metadata
   store/                 Zustand workflow state and engine orchestration
+  universe/              Stable world definitions and deterministic initialization
   engine/
     domain/              Serializable domain types and derived ratings
     generation/          Player/team generation and default rotation derivation
@@ -74,7 +76,9 @@ UI interaction
 
 The home Rotation persists through Simulate Again and the return from postgame to pregame. Reset restores the generated default, and selecting a different home program installs that program's default. HOME is the coached Team only for the current exhibition workflow; this is not yet a permanent dynasty user-Team model.
 
-The six deterministic demo-program definitions live in `src/demo/demoPrograms.ts`, a neutral presentation fixture module shared by the store and React components. Their names, prestige values, generation seeds, and colors are not an implemented league or engine data model.
+The versioned `src/universe` layer owns four stable Conference definitions, 32 stable Program definitions, Universe V0 configuration, validation, and deterministic Team/Rotation initialization. Its 32/4/8 counts are constraints of `UNIVERSE_V0`, never generic engine assumptions. Program identity, location, conference, immutable `basePrestige`, and branding stay outside Team; initialized `Team.id` equals the Program ID and current `Team.prestige` begins at `basePrestige`.
+
+The six-program exhibition catalog remains a presentation adapter. Charlotte Tech, Capital State, Great Lakes, Pine Valley, and Coastal Plains source permanent metadata from Universe V0; National Tech remains explicitly development-only. This preserves the accepted UI workflow without duplicating permanent metadata or presenting the exhibition list as a season.
 
 ## Public API and imports
 
@@ -82,8 +86,8 @@ Consumers import engine capabilities and types through `src/engine/index.ts`; th
 
 Game Presentation V0 and Rotation Management V0 are complete. React renders deterministic demo matchups, engine-generated rosters, an editable home Rotation, a read-only default away Rotation, Team Strength comparisons, validation feedback, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes, ratings, or Rotation legality.
 
-The engine was not changed for Rotation Management. Editable Rotation state lives in the application layer, while legality remains defined by engine validation and Team Strength remains an engine derivation. The Stable Fictional Basketball Universe is next; it must preserve the same dependency direction and must not turn presentation fixtures into engine-owned UI metadata.
+The engine was not changed for Rotation Management or Universe V0. Editable Rotation state lives in the application layer, while legality remains defined by engine validation and Team Strength remains an engine derivation. The universe consumes only the engine public API; `src/engine` never imports universe definitions. Schedule Generation is next and must preserve these boundaries.
 
 ## Enforcement
 
-ESLint rejects framework, store, UI-layer imports, and common browser globals in `src/engine`. Tests must cover domain invariants, serialization, aggregation consistency, and deterministic seeded behavior as those features are added.
+ESLint rejects framework, store, UI-layer imports, and common browser globals in `src/engine`. It also prevents the engine from importing `src/universe`, and keeps framework, presentation, ambient randomness, and browser dependencies out of the universe layer. Tests must cover domain invariants, serialization, aggregation consistency, and deterministic seeded behavior as those features are added.

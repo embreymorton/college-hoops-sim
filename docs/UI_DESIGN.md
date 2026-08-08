@@ -6,7 +6,7 @@ The implemented Game Presentation establishes the visual baseline: modern colleg
 
 - Use condensed sports display typography with a readable data sans-serif.
 - Prefer dense tables, strong hierarchy, and visually dominant scores.
-- Use restrained Team accent colors. Demo branding remains presentation-layer metadata.
+- Use restrained Team accent colors. Program branding is universe-owned presentation metadata, not Team simulation state.
 - Keep motion subtle and functional.
 - Design desktop-first while preserving responsive use at narrower widths.
 - Borrow arena-center-court and broadcast-scoreboard language without directly imitating ESPN, the NCAA, or another real brand.
@@ -25,7 +25,7 @@ The accepted presentation includes:
 - Full Player box scores with a control for inspecting either Team
 - Deterministic Simulate Again and Change Matchup workflows
 
-The six demo programs support this vertical slice; they do not define the eventual league. Season, recruiting, rankings, standings, tournaments, coach profiles, and a dynasty dashboard are not current screens.
+The six exhibition programs support this vertical slice; five source permanent metadata from Universe V0 and National Tech remains development-only. The stable 32-program universe is not yet exposed as a season interface. Recruiting, rankings, standings, tournaments, coach profiles, and a dynasty dashboard are not current screens.
 
 ## Rotation Management V0 — accepted and implemented
 
@@ -46,4 +46,4 @@ Non-blocking polish may later address stable Player ordering during edits or str
 
 ## Future screens
 
-The Stable Fictional Basketball Universe is the next product milestone. Its program and conference presentation—and later season dashboards, schedules, results, standings, upcoming matchups, postseason brackets, recruiting, and dynasty history—should extend this same collegiate broadcast-management language rather than introduce a disconnected generic-dashboard aesthetic.
+Universe V0 program and conference metadata is implemented. Schedule Generation is next; later season dashboards, schedules, results, standings, upcoming matchups, postseason brackets, recruiting, and dynasty history should extend this same collegiate broadcast-management language rather than introduce a disconnected generic-dashboard aesthetic.

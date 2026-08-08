@@ -48,8 +48,54 @@ export default defineConfig([
           ],
           patterns: [
             {
-              group: ['**/app/**', '**/components/**', '**/store/**'],
+              group: [
+                '**/app/**',
+                '**/components/**',
+                '**/store/**',
+                '**/universe/**',
+              ],
               message: 'UI and application layers may depend on the engine, never the reverse.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/universe/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'Math',
+          property: 'random',
+          message: 'Use the seeded RNG exported by src/engine.',
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        'document',
+        'window',
+        'localStorage',
+        'sessionStorage',
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'The universe must remain framework-independent.' },
+            { name: 'react-dom', message: 'The universe must remain framework-independent.' },
+            { name: 'zustand', message: 'Application state belongs above the universe.' },
+          ],
+          patterns: [
+            {
+              group: [
+                '**/app/**',
+                '**/components/**',
+                '**/demo/**',
+                '**/store/**',
+              ],
+              message: 'Presentation and application layers may depend on the universe, never the reverse.',
             },
           ],
         },

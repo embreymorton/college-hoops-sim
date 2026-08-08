@@ -31,17 +31,18 @@ The project currently includes:
 - Complete full-roster Player box scores with minutes, points, shooting, rebounds, assists, steals, blocks, and turnovers
 - Browser Game Presentation V0 with home/away selection, generated rosters, Rotation and Team Strength presentation, final-score and overtime presentation, both Teams' box scores, deterministic re-simulation, and matchup reset
 - Rotation Management V0 with exact home-Team minute editing, engine-authoritative validation, visible position and Team budgets, default/current Team Strength comparison, reset to default, simulation gating, and simulation using the edited legal Rotation
+- Stable Fictional Basketball Universe V0 with 32 permanent Programs, four Conferences, validated identity/branding metadata, and order-independent deterministic Team/Rotation initialization
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
 The browser now supports the first meaningful coaching decision. HOME is temporarily the coached Team in the exhibition workflow; AWAY uses its generated default Rotation. A custom home Rotation persists through Simulate Again and the return to pregame, and resets when the coached home program changes.
 
-## Next active phase: League and Season Framework
+## Next active milestone: Schedule Generation
 
-The immediate next milestone is a Stable Fictional Basketball Universe: approximately 32 stable fictional programs in four conferences, with deterministic identities, prestige, presentation metadata, and initial roster generation. Exact programs and conference assignments are not designed yet.
+Universe V0 now provides stable program and conference identity plus deterministic initial basketball state. Schedule Generation is the next milestone; schedule format, games, dates, and season progression are not implemented.
 
 ## Next major acceptance target
 
 > A stable fictional league exists and the user can progress through a regular season while all Teams play games and standings update correctly.
 
-The project does not yet contain a stable league, conferences, schedules, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six deterministic demo programs are presentation fixtures, not the planned 32-Team league.
+The project does not yet contain schedules, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI is not a season interface.

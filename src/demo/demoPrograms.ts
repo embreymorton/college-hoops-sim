@@ -1,10 +1,10 @@
+import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
+
 /**
- * Neutral application-data demo program catalog for Game Presentation V0.
- * There is no league system yet — these are deterministic display fixtures
- * consumed by the engine's public `generateTeam`/`generateDefaultRotation`
- * API, not engine domain data. Colors and seeds live here, never on `Team`.
- * Lives outside `app/` so both React screens and the Zustand store can
- * depend on it without the store reaching into the app layer.
+ * Presentation adapter for the accepted six-program exhibition workflow.
+ * Permanent identity/branding comes from Universe V0; National Tech remains
+ * an explicitly development-only fixture. The stable universe is not yet a
+ * season or league UI.
  */
 export interface DemoProgram {
   readonly id: string
@@ -16,52 +16,39 @@ export interface DemoProgram {
   readonly secondaryColor: string
 }
 
-export const DEMO_PROGRAMS = [
-  {
-    id: 'charlotte-tech',
-    name: 'Charlotte Tech',
-    abbreviation: 'CTU',
-    prestige: 75,
-    seed: 'demo-program:charlotte-tech:v1',
-    primaryColor: '#3f7fe0',
-    secondaryColor: '#17335c',
-  },
-  {
-    id: 'capital-state',
-    name: 'Capital State',
-    abbreviation: 'CSU',
-    prestige: 60,
-    seed: 'demo-program:capital-state:v1',
-    primaryColor: '#c23b3b',
-    secondaryColor: '#4a1717',
-  },
-  {
-    id: 'great-lakes',
-    name: 'Great Lakes',
-    abbreviation: 'GLU',
-    prestige: 90,
-    seed: 'demo-program:great-lakes:v1',
-    primaryColor: '#2f9e6e',
-    secondaryColor: '#0f3326',
-  },
-  {
-    id: 'pine-valley',
-    name: 'Pine Valley',
-    abbreviation: 'PVA',
-    prestige: 30,
-    seed: 'demo-program:pine-valley:v1',
-    primaryColor: '#b5842a',
-    secondaryColor: '#40300f',
-  },
-  {
-    id: 'coastal-plains',
-    name: 'Coastal Plains',
-    abbreviation: 'CPU',
-    prestige: 45,
-    seed: 'demo-program:coastal-plains:v1',
-    primaryColor: '#2ba7a1',
-    secondaryColor: '#0f3a38',
-  },
+const PERMANENT_DEMO_PROGRAM_IDS = [
+  'charlotte-tech',
+  'capital-state',
+  'great-lakes',
+  'pine-valley',
+  'coastal-plains',
+] as const
+
+function getUniverseProgram(programId: string): ProgramDefinition {
+  const program = UNIVERSE_V0.programs.find(({ id }) => id === programId)
+
+  if (!program) {
+    throw new RangeError(`Unknown Universe V0 program ID "${programId}"`)
+  }
+
+  return program
+}
+
+function toPermanentDemoProgram(programId: string): DemoProgram {
+  const program = getUniverseProgram(programId)
+
+  return {
+    id: program.id,
+    name: program.name,
+    abbreviation: program.abbreviation,
+    prestige: program.basePrestige,
+    seed: `demo-program:${program.id}:v1`,
+    primaryColor: program.branding.primaryColor,
+    secondaryColor: program.branding.secondaryColor,
+  }
+}
+
+const DEVELOPMENT_ONLY_DEMO_PROGRAMS = [
   {
     id: 'national-tech',
     name: 'National Tech',
@@ -72,6 +59,11 @@ export const DEMO_PROGRAMS = [
     secondaryColor: '#2a1c4d',
   },
 ] as const satisfies readonly DemoProgram[]
+
+export const DEMO_PROGRAMS: readonly DemoProgram[] = [
+  ...PERMANENT_DEMO_PROGRAM_IDS.map(toPermanentDemoProgram),
+  ...DEVELOPMENT_ONLY_DEMO_PROGRAMS,
+]
 
 export const DEFAULT_HOME_PROGRAM_ID = 'charlotte-tech'
 export const DEFAULT_AWAY_PROGRAM_ID = 'capital-state'
