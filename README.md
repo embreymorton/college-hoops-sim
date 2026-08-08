@@ -1,6 +1,6 @@
 # College Hoops Simulator
 
-A fictional college basketball dynasty simulator. The validated Basketball Engine V0, first playable single-game coaching loop, and Stable Fictional Basketball Universe V0 are complete; Schedule Generation V0 is the active milestone.
+A fictional college basketball dynasty simulator. The validated Basketball Engine V0, first playable single-game coaching loop, Stable Fictional Basketball Universe V0, and Schedule Generation V0 are complete; Season State and Progression V0 is next.
 
 ## Commands
 

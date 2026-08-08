@@ -90,15 +90,15 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 012 | Rotation validation and UX polish | COMPLETE |
 | 013 | Stable 32-program fictional program catalog | COMPLETE |
 | 014 | Four-conference model and universe assembly | COMPLETE |
-| 015 | Schedule generation | ACTIVE |
-| 016 | Season/Game state | PLANNED |
+| 015 | Schedule generation | COMPLETE |
+| 016 | Season State and progression | NEXT |
 | 017 | AI game simulation and results progression | PLANNED |
 | 018 | Standings | PLANNED |
 | 019 | Season presentation | PLANNED |
 
 ## Phase 3 — League and Season Framework — ACTIVE
 
-The single-game coaching loop is playable. Schedule structure is the active implementation milestone, while Season State and progression remain unimplemented.
+The single-game coaching loop and regular-season structure are complete. Season State and round-by-round progression are next.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -111,17 +111,19 @@ The single-game coaching loop is playable. Schedule structure is the active impl
 
 Universe V0 now contains the validated 32-program/four-conference catalog, stable metadata, and deterministic order-independent initialization of Teams and default Rotations. Initialized Team IDs match their Program IDs, and initial Team prestige matches immutable Program base prestige. Its configured counts do not constrain the generic engine. The six-program exhibition catalog remains a presentation subset plus one development-only fixture.
 
-### 3.2 Schedule Generation V0 — ACTIVE
+### 3.2 Schedule Generation V0 — COMPLETE
 
 > Given the stable Universe V0 Conference/Program structure, generate a deterministic regular-season schedule in which every Program receives a legal set of opponents and home/away assignments suitable for later Season State.
 
-The implementation under review uses 24 complete abstract rounds: 14 double-round-robin Conference games and 10 distinct cross-Conference games per Program, with 12 home and 12 away. It does not include dates, Season State, game progression, standings, or presentation.
+The accepted implementation uses 24 complete abstract rounds with all 32 Programs playing once among 16 games per round. Each Program receives 14 double-round-robin Conference games, 10 distinct cross-Conference games, and an exact 12-home/12-away split. It creates 384 canonical unplayed games with deterministic IDs and stable Program references, but no dates, results, records, or progression.
 
-### 3.3 Season State and Progression — PLANNED
+Validation confirms reciprocal Conference hosting, zero duplicate non-Conference matchups, cross-Conference-only non-Conference play, same-seed reproduction, Program/Conference input-order independence, and different-seed schedule variation. The inspection sample produced valid schedules for 100 of 100 deterministic seeds.
 
-- Overall and conference records
-- User schedule and results
-- Advance-game or advance-date workflow
+### 3.3 Season State and Progression V0 — NEXT
+
+> Combine an initialized Universe with a generated Schedule into serializable Season state that can progress round by round, record completed `GameResult` values, and expose enough derived information for records, Conference records, upcoming games, and later standings.
+
+The Schedule should remain immutable Season structure. Completed results should reference stable ScheduledGame IDs, and records should be derived rather than maintained as duplicate mutable truth where practical. Exact Season State interfaces and the boundary with later AI round simulation remain open for implementation review.
 
 ### 3.4 AI Game Simulation / Standings — PLANNED
 

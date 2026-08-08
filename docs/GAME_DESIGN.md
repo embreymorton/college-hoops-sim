@@ -129,4 +129,12 @@ Stable Fictional Basketball Universe V0 defines 32 permanent fictional programs 
 
 Base prestige establishes the starting long-term Program hierarchy; it does not prescribe an exact roster. Individual opening rosters retain deterministic Player and Team-generation variance. Conference identities are descriptive world-building only and currently grant no engine bonuses. Universe V0 conference membership is fixed for the MVP, while conference realignment and changes to current `Team.prestige` are deferred to later Dynasty systems.
 
-New-dynasty initialization derives an isolated seeded RNG from the universe version, roster-generation version, typed dynasty seed, and Program ID. It generates each roster through the accepted Team generator, assigns the stable Program ID to Team, and derives a legal default Rotation. The full Program dataset remains canonical in `src/universe`; the six-program exhibition catalog is still only a UI subset plus one development fixture. Schedule Generation V0 now produces unplayed regular-season structure for review, but no Season State or season progression exists yet.
+New-dynasty initialization derives an isolated seeded RNG from the universe version, roster-generation version, typed dynasty seed, and Program ID. It generates each roster through the accepted Team generator, assigns the stable Program ID to Team, and derives a legal default Rotation. The full Program dataset remains canonical in `src/universe`; the six-program exhibition catalog is still only a UI subset plus one development fixture.
+
+## Accepted MVP regular season
+
+Schedule Generation V0 gives every Program a 24-game regular season: 14 Conference games from a double round robin and 10 distinct non-Conference matchups. Every Conference opponent is played once at home and once away, no non-Conference pairing is duplicated, no games are neutral-site, and each Program finishes with exactly 12 home and 12 away games.
+
+The schedule uses 24 abstract rounds rather than real dates. All 32 Programs play exactly once in each round. Seeded variation changes legal non-Conference pairings, home/away orientation where choices exist, and ordering without making scheduling depend on prestige, Team Strength, or geography. Universe V0 Conference membership remains fixed.
+
+These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Schedule Generation is structural only: no games have been played, and Season State, records, standings, calendar dates, and postseason scheduling remain future work.

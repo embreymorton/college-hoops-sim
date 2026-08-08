@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, and Stable Fictional Basketball Universe V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; it changes no simulation rules or constants. Schedule Generation V0 is a separate structure-only layer and does not modify or invoke this simulation pipeline.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, and Schedule Generation V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. A future Season State can resolve a ScheduledGame's home and away Program IDs to initialized Teams/Rotations and pass them to the existing simulator, but that integration is not implemented.
 
 ## Implemented Rotation constraint
 

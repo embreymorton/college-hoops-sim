@@ -32,6 +32,7 @@ The project currently includes:
 - Browser Game Presentation V0 with home/away selection, generated rosters, Rotation and Team Strength presentation, final-score and overtime presentation, both Teams' box scores, deterministic re-simulation, and matchup reset
 - Rotation Management V0 with exact home-Team minute editing, engine-authoritative validation, visible position and Team budgets, default/current Team Strength comparison, reset to default, simulation gating, and simulation using the edited legal Rotation
 - Stable Fictional Basketball Universe V0 with 32 permanent Programs, four Conferences, validated identity/branding metadata, and order-independent deterministic Team/Rotation initialization
+- Schedule Generation V0 with 24 complete abstract rounds, 384 canonical games, reciprocal Conference play, distinct non-Conference opponents, exact home/away balance, structured validation, and deterministic input-order-independent generation
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
@@ -39,12 +40,19 @@ The repository now contains a permanent fictional basketball world rather than o
 
 The browser now supports the first meaningful coaching decision. HOME is temporarily the coached Team in the exhibition workflow; AWAY uses its generated default Rotation. A custom home Rotation persists through Simulate Again and the return to pregame, and resets when the coached home program changes.
 
-## Active milestone: Schedule Generation V0
+The completed infrastructure now supports:
 
-Universe V0 now provides stable Program and Conference identity plus deterministic initial basketball state. Schedule Generation V0 produces a deterministic 24-round, 384-game unplayed structure for review. It does not implement dates, results, records, standings, or season progression.
+```text
+stable fictional Universe
+→ legal 24-round regular-season Schedule
+```
+
+It cannot yet progress through that Schedule as a season.
+
+## Next active milestone: Season State and Progression V0
 
 ## Next major acceptance target
 
-> A stable fictional league exists and the user can progress through a regular season while all Teams play games and standings update correctly.
+> A Season object can advance through scheduled rounds while completed GameResults are recorded deterministically and current Program records can be derived from those results.
 
 The project does not yet contain Season State, played schedule results, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI is not a season interface.
