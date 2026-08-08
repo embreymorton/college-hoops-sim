@@ -4,7 +4,7 @@
 
 The product MVP should support one complete dynasty-season loop:
 
-- Select one of approximately 32 fictional teams across four conferences.
+- Select one of 32 fictional programs across four conferences.
 - Review a roster and set a legal rotation.
 - Simulate believable games and inspect final scores and box scores.
 - Progress through a season and national tournament.
@@ -35,11 +35,13 @@ The project currently includes:
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
+The repository now contains a permanent fictional basketball world rather than only temporary development Teams. `ProgramDefinition` holds stable identity and configuration; each initialized `Team` is the current basketball state for that Program. Given a master dynasty seed, Universe V0 reproducibly generates every opening roster and legal default Rotation with an isolated RNG stream per Program, so Program ordering cannot change another Program's roster.
+
 The browser now supports the first meaningful coaching decision. HOME is temporarily the coached Team in the exhibition workflow; AWAY uses its generated default Rotation. A custom home Rotation persists through Simulate Again and the return to pregame, and resets when the coached home program changes.
 
-## Next active milestone: Schedule Generation
+## Next active milestone: Schedule Generation V0
 
-Universe V0 now provides stable program and conference identity plus deterministic initial basketball state. Schedule Generation is the next milestone; schedule format, games, dates, and season progression are not implemented.
+Universe V0 now provides stable Program and Conference identity plus deterministic initial basketball state. Schedule Generation V0 is the next immediate systems milestone; schedule format, games, dates, and season progression are not implemented.
 
 ## Next major acceptance target
 

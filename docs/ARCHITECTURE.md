@@ -7,7 +7,12 @@ Dependencies point inward toward the engine:
 ```text
 React presentation → Zustand application state/adapters → engine public API
                                       tests/tools → engine public API
-React / future season state → universe → engine public API
+
+React / Zustand / future Season State
+                 ↓
+          Universe layer
+                 ↓
+         Engine public API
 ```
 
 `src/engine` must not import React, React DOM, Zustand, components, application stores, browser/DOM APIs, or other UI-specific code. The engine accepts data and configuration, then returns data. UI code may import the engine.
@@ -76,17 +81,24 @@ UI interaction
 
 The home Rotation persists through Simulate Again and the return from postgame to pregame. Reset restores the generated default, and selecting a different home program installs that program's default. HOME is the coached Team only for the current exhibition workflow; this is not yet a permanent dynasty user-Team model.
 
-The versioned `src/universe` layer owns four stable Conference definitions, 32 stable Program definitions, Universe V0 configuration, validation, and deterministic Team/Rotation initialization. Its 32/4/8 counts are constraints of `UNIVERSE_V0`, never generic engine assumptions. Program identity, location, conference, immutable `basePrestige`, and branding stay outside Team; initialized `Team.id` equals the Program ID and current `Team.prestige` begins at `basePrestige`.
+The versioned `src/universe` layer owns four stable Conference definitions, 32 stable Program definitions, Universe V0 configuration, validation, and deterministic Team/Rotation initialization. Its 32/4/8 counts are constraints of `UNIVERSE_V0`, never generic engine assumptions.
+
+```text
+ProgramDefinition = stable world identity and configuration
+Team              = current generated basketball state
+```
+
+Program identity, structured location, permanent V0 conference membership, immutable `basePrestige`, and branding stay outside Team. Initialization generates current basketball state through the engine, then guarantees `Team.id === ProgramDefinition.id` and initially sets `Team.prestige === ProgramDefinition.basePrestige`. Future schedules and season state should join their records through these stable Program IDs rather than names, array positions, or object identity.
 
 The six-program exhibition catalog remains a presentation adapter. Charlotte Tech, Capital State, Great Lakes, Pine Valley, and Coastal Plains source permanent metadata from Universe V0; National Tech remains explicitly development-only. This preserves the accepted UI workflow without duplicating permanent metadata or presenting the exhibition list as a season.
 
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Within the engine, modules may import only other engine modules or platform-neutral utilities. Avoid circular dependencies and avoid a catch-all `utils` directory; place a helper with the domain that owns it.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Within the engine, modules may import only other engine modules or platform-neutral utilities. Avoid circular dependencies and avoid a catch-all `utils` directory; place a helper with the domain that owns it.
 
 Game Presentation V0 and Rotation Management V0 are complete. React renders deterministic demo matchups, engine-generated rosters, an editable home Rotation, a read-only default away Rotation, Team Strength comparisons, validation feedback, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes, ratings, or Rotation legality.
 
-The engine was not changed for Rotation Management or Universe V0. Editable Rotation state lives in the application layer, while legality remains defined by engine validation and Team Strength remains an engine derivation. The universe consumes only the engine public API; `src/engine` never imports universe definitions. Schedule Generation is next and must preserve these boundaries.
+The engine was not changed for Rotation Management or Universe V0. Editable Rotation state lives in the application layer, while legality remains defined by engine validation and Team Strength remains an engine derivation. The universe consumes only the engine public API; `src/engine` never imports universe definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. Schedule Generation V0 is next and must preserve these boundaries.
 
 ## Enforcement
 

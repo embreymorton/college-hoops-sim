@@ -102,22 +102,20 @@ The single-game coaching loop is playable. League and season work now becomes ac
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
-- Approximately 32 fictional programs across four conferences
+- A versioned `UniverseDefinition` with 32 permanent fictional Programs across four permanent V0 Conferences of eight
 - Stable program identities and deterministic IDs
-- Prestige values
-- Program presentation metadata and branding
-- Deterministic initial roster generation
+- Structured locations, presentation branding, fixed V0 Conference membership, and immutable base prestige
+- Deterministic initial Team and default-Rotation generation through isolated per-Program RNG streams
+- Stable same-seed reproduction and Program-order-independent roster generation
+- Public `src/universe` API, definition validation, stable Team IDs, and valid initialized Rotations
 
-Universe V0 now contains the validated 32-program/four-conference catalog, stable metadata, and deterministic order-independent initialization of Teams and default Rotations. Its configured counts do not constrain the generic engine. The six-program exhibition catalog remains a presentation subset plus one development-only fixture.
+Universe V0 now contains the validated 32-program/four-conference catalog, stable metadata, and deterministic order-independent initialization of Teams and default Rotations. Initialized Team IDs match their Program IDs, and initial Team prestige matches immutable Program base prestige. Its configured counts do not constrain the generic engine. The six-program exhibition catalog remains a presentation subset plus one development-only fixture.
 
-### 3.2 Schedule Generation — NEXT
+### 3.2 Schedule Generation V0 — NEXT
 
-- Regular-season schedule generation
-- Conference and non-conference games
-- Home/away assignments
-- Upcoming opponents for the user's Team
+> Given the stable Universe V0 Conference/Program structure, generate a deterministic regular-season schedule in which every Program receives a legal set of opponents and home/away assignments suitable for later Season State.
 
-The first schedule need not reproduce the exact current NCAA format.
+Exact game counts, Conference/non-Conference composition, calendar shape, and generation algorithm remain intentionally undecided until this milestone is implemented. Schedule Generation does not include Season State, game progression, standings, or presentation.
 
 ### 3.3 Season State and Progression — PLANNED
 
