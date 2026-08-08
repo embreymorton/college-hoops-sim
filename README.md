@@ -12,6 +12,7 @@ A fictional college basketball dynasty simulator. The repository is currently at
 - `npm run sim:rosters` — print deterministic roster examples and prestige validation
 - `npm run sim:rotations` — print default rotations, aggregate validation, and invalid examples
 - `npm run sim:strength` — inspect player OFF/DEF and rotation-weighted team strength
+- `npm run sim:games` — inspect deterministic team-level games and outcome distributions
 - `npm run typecheck` — run TypeScript checks
 - `npm run build` — type-check and create a production build
 - `npm run check` — run lint, tests, and build

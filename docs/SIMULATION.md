@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength prerequisite and constraints for the next milestone. No game simulator exists yet.
+This document records the implemented Team Strength and team-level Single-Game Simulation V0 constraints.
 
 ## Status and pipeline
 
@@ -8,15 +8,16 @@ Implemented:
 
 ```text
 Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
+    → seeded team-level game result
 ```
 
-Next:
+Next within the single-game milestone:
 
 ```text
-Team OFF/DEF + seeded game variance → GameResult
+GameResult → internally consistent Team and Player box scores
 ```
 
-The second pipeline is a milestone boundary, not an implemented scoring formula.
+The team-level result is implemented. Box-score allocation and any finer simulation model remain separate future work.
 
 ## Implemented Rotation constraint
 
@@ -80,36 +81,101 @@ Zero-minute Players contribute nothing. Team aggregation is also pure and determ
 
 These formulas are the implemented and validated v0.1 baseline. Their exact constants are documented for reproducibility and tuning, not as permanent balance commitments or required prestige-tier targets.
 
-## Next milestone: Single-Game Simulation
+## Implemented Single-Game Simulation V0
 
-The next milestone should take two valid Teams, their Rotations, derived strengths, and an explicit seed and return a serializable `GameResult` with a believable final score and internally consistent Player and Team box scores.
+`simulateGame` takes two Teams, one valid Rotation per Team, and an explicit numeric or string seed. It returns a minimal serializable `GameResult` containing Team IDs, final integer scores, the winner ID, completed overtime-period count, and the reproduction seed. Team and Rotation inputs are not mutated.
 
-Planned inputs:
+The initial game-level model deliberately stops at the final Team score. It does not simulate possessions, pace, shooting attempts, Player statistics, Team box-score totals, substitutions, or fatigue.
 
-- Two teams with unique IDs and valid player rosters
-- One legal rotation per team
-- A deterministic seed or seeded RNG state
+### Scoring model
 
-Planned output:
+The accepted v0.1 calibration uses a neutral Team strength of `70` and a neutral expected score of `72` points per Team. Each point of offense above or below `70` changes that Team's expected score by `0.65` points. Each point of opposing defense above or below `70` changes it in the opposite direction by `0.45` points.
 
-`GameResult` should contain team identities, final score, player statistics, team totals, and enough metadata to reproduce or debug the run. All output must be serializable.
+Home court is worth `3` expected margin points. The model applies half to each side so it changes the expected margin without changing the matchup's expected combined score:
 
-Initial `PlayerGameStats` should stay small and support score reconstruction. Exact fields and simulation granularity will be decided during the simulation milestone, before implementation.
+```text
+Expected home score = 72
+    + (home OFF − 70) × 0.65
+    − (away DEF − 70) × 0.45
+    + 1.5
 
-The initial simulator should use the simplest deterministic game-level model that produces believable, testable outcomes. A possession-based model may be introduced later if it provides clear value; it is not a current commitment. No scoring, pace, variance, overtime, or box-score allocation formula has been selected yet.
+Expected away score = 72
+    + (away OFF − 70) × 0.65
+    − (home DEF − 70) × 0.45
+    − 1.5
+```
 
-### Required future invariants
+Team overall is not used in either equation.
+
+### Regulation variance and score bounds
+
+Seeded uniform RNG values are converted to standard-normal values with the Box–Muller transform:
+
+```text
+Z = sqrt(−2 × ln(max(U₁, Number.EPSILON))) × cos(2πU₂)
+```
+
+One shared game-environment draw with standard deviation `4` is added to both Teams. Each Team also receives an independent draw with standard deviation `8`:
+
+```text
+Shared environment ~ Normal(0, 4)
+Home variation    ~ Normal(0, 8)
+Away variation    ~ Normal(0, 8)
+
+Raw home score = Expected home score + Shared environment + Home variation
+Raw away score = Expected away score + Shared environment + Away variation
+```
+
+Each raw regulation score is rounded to the nearest integer and clamped to the inclusive `35–130` safety range. The shared draw allows games to be broadly high- or low-scoring, while the independent draws create uncertainty in the result and margin.
+
+### Overtime
+
+If regulation is tied, each overtime period scales the original expected regulation scores by `5 / 40`, adds a fresh shared normal draw with standard deviation `1.5`, and adds fresh independent Team draws with standard deviation `3`:
+
+```text
+OT shared variation ~ Normal(0, 1.5)
+OT Team variation   ~ Normal(0, 3)
+
+Home OT points = max(0, round(Expected home score × 5/40
+    + OT shared variation + Home OT variation))
+
+Away OT points = max(0, round(Expected away score × 5/40
+    + OT shared variation + Away OT variation))
+```
+
+Overtime points are added to the existing score, `overtimePeriods` is incremented, and another overtime is simulated whenever the cumulative score remains tied. The explicit safety limit is `10` overtime periods. If the score is still tied after that pathological case, one point is awarded to the Team with the higher expected score; an exact expected-score tie favors the home Team. This fallback does not consume a coin flip and guarantees termination.
+
+### Accepted v0.1 constants
+
+| Constant | Value |
+| --- | ---: |
+| Baseline regulation score | 72 |
+| Reference Team strength | 70 |
+| Points per offensive rating point | 0.65 |
+| Points suppressed per defensive rating point | 0.45 |
+| Home-court expected margin | 3 |
+| Shared regulation standard deviation | 4 |
+| Independent Team regulation standard deviation | 8 |
+| Minimum regulation score | 35 |
+| Maximum regulation score | 130 |
+| Overtime length scale | 5 / 40 |
+| Shared overtime standard deviation | 1.5 |
+| Independent Team overtime standard deviation | 3 |
+| Maximum simulated overtime periods | 10 |
+
+These values are now the accepted and documented v0.1 baseline. They remain centralized in the simulation module so later balance work can change them deliberately. The model is intentionally simple; a possession-based model may be introduced later if it provides clear value, but it is not a current commitment.
+
+### Implemented invariants
 
 - The same inputs and seed produce deeply equal results.
 - No simulation code calls `Math.random()`.
 - Each game terminates and has one winner after overtime.
 - Scores are non-negative integers.
-- Player scoring totals equal team scoring totals.
-- Player minutes approximately reconcile with regulation and overtime team-minute totals, within an explicitly documented rounding tolerance.
-- Players outside the rotation receive no minutes unless a later rule explicitly allows it.
 - Inputs are not mutated.
 - Inputs and results survive a JSON serialize/parse round trip.
 
-### Future testing and tuning
+### Deferred box-score constraints
 
-Unit tests should lock down deterministic RNG sequences, rating derivation, outcome aggregation, overtime, and all invariants above. Statistical tests may check broad ranges over many seeds, but should use generous bounds so they detect structural errors rather than harmless tuning changes. Balance constants belong in named configuration, not scattered magic numbers.
+When Player and Team box scores are explicitly scoped, Player scoring must reconcile with Team scores, minutes must reconcile with regulation and overtime duration under a documented rounding rule, and Players outside the Rotation must receive no minutes unless a later rule allows it.
+
+Unit tests lock down deterministic behavior, outcome invariants, strength effects, home-court direction, overtime resolution, rotation rejection, serialization, and non-mutation. The deterministic inspection command reports broad distributions over many seeds. Statistical assertions use generous bounds so they detect structural errors rather than harmless tuning changes.

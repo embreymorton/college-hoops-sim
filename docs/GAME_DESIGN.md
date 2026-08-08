@@ -105,6 +105,12 @@ Team offense and defense weight active players by their share of the valid 200-m
 
 Generated-team offense and defense currently remain fairly correlated because roster generation primarily varies talent rather than explicit style. Stronger naturally generated identities may be explored during future tuning; this is not a defect in the accepted Team Strength layer.
 
+## Initial team-level game outcome
+
+Single-Game Simulation V0 converts two valid Rotations and their derived Team strengths into a deterministic final score, winner, and overtime count. Each Team's expected score responds separately to its own offense and the opponent's defense. A small home advantage changes the expected margin, while seeded shared and Team-specific variance keep outcomes uncertain. Tied games play repeated overtime periods until a winner is produced.
+
+This version intentionally ends at Team scores. It does not yet represent possessions, pace, shooting attempts, Player game statistics, substitutions, fatigue, or box-score allocation.
+
 ## MVP world
 
 The eventual MVP targets approximately 32 fictional teams in four conferences. This is a scale target, not authorization to generate the league during the game-simulation milestone.

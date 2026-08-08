@@ -1,3 +1,2 @@
-// Pure game simulation will live here.
-export {}
-
+export { simulateGame } from './game'
+export type { GameResult, SimulateGameOptions } from './game'

@@ -44,3 +44,5 @@ export {
 export type { GeneratePlayerOptions, GenerateTeamOptions } from './generation'
 export { createRng } from './random'
 export type { Rng, RngSeed } from './random'
+export { simulateGame } from './simulation'
+export type { GameResult, SimulateGameOptions } from './simulation'
