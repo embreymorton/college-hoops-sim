@@ -42,8 +42,8 @@ export function PostgameScreen() {
           }}
           winnerName={winnerName}
           overtimeTag={formatOvertimeTag(result.overtimePeriods)}
-          onSimulateAgain={simulate}
-          onChangeMatchup={changeMatchup}
+          primaryAction={{ label: 'Simulate Again', onClick: simulate }}
+          secondaryAction={{ label: 'Change Matchup', onClick: changeMatchup }}
         />
       </section>
       <section className="section" aria-labelledby="box-score-heading">

@@ -15,17 +15,17 @@ import {
   type Team,
   type TeamStrength,
 } from '../engine'
-import type { DemoProgram } from '../demo/demoPrograms'
 import { areRotationsEqual, describePositionMinutes, formatRating } from '../app/formatters'
 import { MinuteStepper } from './MinuteStepper'
 import { RotationStrengthSummary } from './RotationStrengthSummary'
 import { TeamPanelHeader } from './TeamPanelHeader'
+import type { BrandingSource } from './branding'
 
 interface RotationEditorPanelProps {
   readonly team: Team
   readonly defaultRotation: Rotation
   readonly currentRotation: Rotation
-  readonly program: DemoProgram
+  readonly program: BrandingSource
   readonly validation: RotationValidationResult
   readonly defaultStrength: TeamStrength
   readonly currentStrength: TeamStrength | null

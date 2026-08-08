@@ -54,14 +54,14 @@ stable fictional Universe
 → derived Conference standings
 ```
 
-Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. The regular-season domain can now deterministically complete all 24 rounds and derive Conference tables. The remaining regular-season MVP gap is browser presentation and application integration.
+Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. The regular-season domain can now deterministically complete all 24 rounds and derive Conference tables.
 
-## Next milestone: Season Presentation V0
+## Season Presentation V0 — implemented
 
-The next application layer should let one controlled Program use its current Team and Rotation, play or simulate its scheduled game, resolve the remaining AI games in the round, and inspect updated Season context. This browser workflow does not exist yet.
+The application layer lets one controlled Program use its current Season Team and Rotation, play or simulate its scheduled game, resolve the remaining AI games in the round, and inspect updated Season context — program selection, a Season Hub with record/round/next-game/standings/schedule, game prep, and postgame. `controlledProgramId` and a deterministic session seed live in application state, never in `SeasonState`.
 
 ## Next major acceptance target
 
 > A user can play through the 24-round regular season from the browser using one controlled program while all other scheduled games resolve through the existing AI simulation pipeline.
 
-The project does not contain a Season interface, national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI remains unchanged.
+This acceptance target is met. The project does not yet contain a postseason/national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as a secondary sandbox behind a mode toggle.

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import type { PlayerGameStats, Team } from '../engine'
-import type { DemoProgram } from '../demo/demoPrograms'
 import { BoxScoreTable } from './BoxScoreTable'
+import type { BrandingSource } from './branding'
 
 interface BoxScoreSide {
   readonly team: Team
   readonly stats: readonly PlayerGameStats[]
-  readonly program: DemoProgram
+  readonly program: BrandingSource
 }
 
 interface BoxScorePanelProps {

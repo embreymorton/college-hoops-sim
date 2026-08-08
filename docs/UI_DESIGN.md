@@ -44,8 +44,8 @@ The home Team represents the coach in this exhibition workflow; the away Team's 
 
 Non-blocking polish may later address stable Player ordering during edits or stronger live-region announcements. Neither should delay the League and Season Framework.
 
-## Next interaction milestone — Season Presentation V0
+## Season Presentation V0 — implemented
 
-Universe V0 permanent Program and Conference metadata is implemented. Season Presentation should extend the accepted collegiate broadcast-management language rather than redesign it. It should consume canonical branding/location plus existing APIs for the application-controlled Program's Team and Rotation, current round, next ScheduledGame, completed results, overall and Conference records, and Conference standings. User control remains application state, not `SeasonState`, and the UI must not maintain duplicate basketball truth.
+Extends the accepted collegiate broadcast-management language rather than redesigning it. Program selection groups the 32 permanent Universe V0 programs by Conference. The Season Hub composes a program-identity header, a next-game preview reusing the Team Strength stat-trio language, round-progress and regular-season-complete states, Conference standings with a lightweight Conference switch, and the controlled Program's 24-game schedule/results. Game prep and postgame reuse the accepted Rotation Editor, scoreboard, and box-score presentation with real home/away orientation. User control (`controlledProgramId`) remains application state, not `SeasonState`, and the UI does not maintain duplicate basketball truth.
 
-The current six-program exhibition UI remains unchanged, and this document does not yet define the complete Season dashboard. Postseason brackets, recruiting, and Dynasty history remain later screens.
+The six-program exhibition workflow remains available as a secondary sandbox behind a mode toggle. Postseason brackets, recruiting, and Dynasty history remain later screens.

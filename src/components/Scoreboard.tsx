@@ -27,19 +27,23 @@ interface ScoreboardStrengthTeam {
 interface PregameScoreboardProps {
   readonly home: ScoreboardStrengthTeam
   readonly away: ScoreboardStrengthTeam
-  readonly onSimulate: () => void
-  readonly simulateDisabled?: boolean
-  readonly simulateDisabledReason?: string | null
+  /** Handles the primary action: simulate directly, or navigate to game prep. */
+  readonly onAction: () => void
+  /** Defaults to "Simulate Game"; Season reuses this for "Prepare for Game". */
+  readonly actionLabel?: string
+  readonly actionDisabled?: boolean
+  readonly actionDisabledReason?: string | null
 }
 
 export function PregameScoreboard({
   home,
   away,
-  onSimulate,
-  simulateDisabled = false,
-  simulateDisabledReason = null,
+  onAction,
+  actionLabel = 'Simulate Game',
+  actionDisabled = false,
+  actionDisabledReason = null,
 }: PregameScoreboardProps) {
-  const showReason = simulateDisabled && Boolean(simulateDisabledReason)
+  const showReason = actionDisabled && Boolean(actionDisabledReason)
 
   return (
     <div className="scoreboard scoreboard--pregame">
@@ -55,15 +59,15 @@ export function PregameScoreboard({
         <button
           type="button"
           className="button button--primary"
-          onClick={onSimulate}
-          disabled={simulateDisabled}
-          aria-describedby={showReason ? 'simulate-disabled-reason' : undefined}
+          onClick={onAction}
+          disabled={actionDisabled}
+          aria-describedby={showReason ? 'action-disabled-reason' : undefined}
         >
-          Simulate Game
+          {actionLabel}
         </button>
         {showReason && (
-          <p id="simulate-disabled-reason" className="scoreboard-cta-reason">
-            {simulateDisabledReason}
+          <p id="action-disabled-reason" className="scoreboard-cta-reason">
+            {actionDisabledReason}
           </p>
         )}
       </div>
@@ -98,7 +102,7 @@ function StrengthSide({
   )
 }
 
-function StatTrioItem({ label, value }: { label: string; value: number }) {
+export function StatTrioItem({ label, value }: { label: string; value: number }) {
   return (
     <div className="stat-trio__item">
       <span className="stat-trio__value">{formatRating(value)}</span>
@@ -118,13 +122,19 @@ interface ScoreboardScoreTeam {
   readonly isWinner: boolean
 }
 
+export interface FinalScoreboardAction {
+  readonly label: string
+  readonly onClick: () => void
+}
+
 interface FinalScoreboardProps {
   readonly home: ScoreboardScoreTeam
   readonly away: ScoreboardScoreTeam
   readonly winnerName: string
   readonly overtimeTag: string | null
-  readonly onSimulateAgain: () => void
-  readonly onChangeMatchup: () => void
+  /** Null when there is nothing left to act on (e.g. no round games remain). */
+  readonly primaryAction: FinalScoreboardAction | null
+  readonly secondaryAction: FinalScoreboardAction
 }
 
 export function FinalScoreboard({
@@ -132,8 +142,8 @@ export function FinalScoreboard({
   away,
   winnerName,
   overtimeTag,
-  onSimulateAgain,
-  onChangeMatchup,
+  primaryAction,
+  secondaryAction,
 }: FinalScoreboardProps) {
   return (
     <div className="scoreboard scoreboard--final" aria-live="polite">
@@ -151,19 +161,21 @@ export function FinalScoreboard({
       </div>
       <p className="final-result-line">{winnerName} wins</p>
       <div className="scoreboard-actions">
-        <button
-          type="button"
-          className="button button--primary"
-          onClick={onSimulateAgain}
-        >
-          Simulate Again
-        </button>
+        {primaryAction && (
+          <button
+            type="button"
+            className="button button--primary"
+            onClick={primaryAction.onClick}
+          >
+            {primaryAction.label}
+          </button>
+        )}
         <button
           type="button"
           className="button button--ghost"
-          onClick={onChangeMatchup}
+          onClick={secondaryAction.onClick}
         >
-          Change Matchup
+          {secondaryAction.label}
         </button>
       </div>
     </div>

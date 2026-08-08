@@ -83,9 +83,9 @@ export function PregameScreen() {
             accentColor: awayProgram.primaryColor,
             strength: awaySetup.strength,
           }}
-          onSimulate={simulate}
-          simulateDisabled={!isRotationValid}
-          simulateDisabledReason={blockingReason}
+          onAction={simulate}
+          actionDisabled={!isRotationValid}
+          actionDisabledReason={blockingReason}
         />
       </section>
       <section className="section" aria-labelledby="rosters-heading">

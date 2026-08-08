@@ -93,11 +93,11 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 015 | Schedule generation | COMPLETE |
 | 016 | Season State and progression | COMPLETE |
 | 017 | AI Round Simulation and Standings V0 | COMPLETE |
-| 019 | Season Presentation V0 | NEXT |
+| 019 | Season Presentation V0 | COMPLETE |
 
-## Phase 3 — League and Season Framework — ACTIVE
+## Phase 3 — League and Season Framework — COMPLETE
 
-The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, and derived standings are complete. Season Presentation V0 is next; completing it will finish the League and Season Framework phase.
+The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, derived standings, and Season Presentation V0 are complete, finishing the League and Season Framework phase.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -140,16 +140,16 @@ The accepted implementation provides independent per-game seeds, current-Rotatio
 
 Validation confirmed that excluded pending games survive AI round execution, all 384 ScheduledGames can complete through production APIs, Season completion and validation pass, same-seed full seasons reproduce, game execution order does not affect individual outcomes, and different simulation seeds change Season outcomes. The 50-season strength diagnostic is observational rather than normative.
 
-### 3.5 Season Presentation V0 — NEXT
+### 3.5 Season Presentation V0 — COMPLETE
 
 > The user selects and controls a Program, sees the current Season context, manages its Rotation, plays or simulates its scheduled game, simulates remaining AI games in the round, and views updated schedule/results and Conference standings through the existing React application.
 
-- Season/dashboard home
-- Schedule and results
-- Standings
-- Upcoming matchup
+- Program selection across the 32 permanent Universe V0 Programs, grouped by Conference
+- A Season Hub: program-identity header, next-game preview, round-progress and regular-season-complete states, Conference standings, and schedule/results
+- Game prep and postgame reusing the accepted Rotation Editor, scoreboard, and box-score presentation
+- `controlledProgramId` and a deterministic session seed live in application state, never in `SeasonState`
 
-Exact screen composition and interaction details remain for the milestone. Season Presentation should consume existing Universe, Schedule, Season, simulation, and standings APIs rather than reimplement basketball state or rules.
+Season Presentation consumes the existing Universe, Schedule, Season, simulation, and standings APIs rather than reimplementing basketball state or rules. The six-program exhibition workflow remains as a secondary sandbox behind a mode toggle.
 
 ## Phase 4 — Postseason — PLANNED
 
