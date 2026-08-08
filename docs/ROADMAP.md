@@ -1,6 +1,6 @@
 # Roadmap
 
-Milestones remain small enough to test independently. A later phase or unlisted system may not be implemented early without explicit scope discussion. Status labels are deliberate: **COMPLETE** is implemented and validated, **ACTIVE** is current work, **PLANNED** expresses intent without implementation, and **DEFERRED** is outside the core MVP.
+Milestones remain small enough to test independently. A later phase or unlisted system may not be implemented early without explicit scope discussion. Status labels are deliberate: **COMPLETE** is implemented, validated, and accepted; **NEXT** is the immediate milestone; **PLANNED** expresses later intent without implementation; and **DEFERRED** is outside the core MVP.
 
 Exact formulas and constants become source-of-truth documentation after implementation and validation, not before. Validation sample outputs inform acceptance but are not roadmap requirements.
 
@@ -91,14 +91,13 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 013 | Stable 32-program fictional program catalog | COMPLETE |
 | 014 | Four-conference model and universe assembly | COMPLETE |
 | 015 | Schedule generation | COMPLETE |
-| 016 | Season State and progression | ACTIVE |
-| 017 | AI game simulation and results progression | PLANNED |
-| 018 | Standings | PLANNED |
+| 016 | Season State and progression | COMPLETE |
+| 017 | AI Round Simulation and Standings V0 | NEXT |
 | 019 | Season presentation | PLANNED |
 
 ## Phase 3 — League and Season Framework — ACTIVE
 
-The single-game coaching loop and regular-season structure are complete. Season State and fact-driven round progression are the active implementation milestone.
+The single-game coaching loop, regular-season structure, and canonical Season State are complete. AI Round Simulation and Standings V0 is next.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -119,17 +118,23 @@ The accepted implementation uses 24 complete abstract rounds with all 32 Program
 
 Validation confirms reciprocal Conference hosting, zero duplicate non-Conference matchups, cross-Conference-only non-Conference play, same-seed reproduction, Program/Conference input-order independence, and different-seed schedule variation. The inspection sample produced valid schedules for 100 of 100 deterministic seeds.
 
-### 3.3 Season State and Progression V0 — ACTIVE
+### 3.3 Season State and Progression V0 — COMPLETE
 
 > Combine an initialized Universe with a generated Schedule into serializable Season state that can progress round by round, record completed `GameResult` values, and expose enough derived information for records, Conference records, upcoming games, and later standings.
 
-The implementation under review stores immutable Schedule structure, current Team/Rotation state by Program ID, and complete GameResults once by ScheduledGame ID. It supports legal Rotation updates, out-of-order and partial-round result recording, derived current-round/completion queries, and derived Program and Conference records without duplicate counters. Automatic AI round simulation, standings, and presentation remain planned separately.
+The accepted implementation stores immutable Schedule structure, current Team/Rotation state by Program ID, and complete GameResults once by ScheduledGame ID. It supports legal Rotation updates, out-of-order and partial-round result recording, Program schedule/result queries, derived current-round and completion queries, and derived Program and Conference records without duplicate counters. Operations are pure, Season validation is structured and serializable, and state survives JSON round-tripping.
 
-### 3.4 AI Game Simulation / Standings — PLANNED
+The accepted inspection begins with 32 Programs, 24 rounds, 384 ScheduledGames, zero completed games, current Round 1, and valid Season state. Five recorded Round 1 games leave the current round at 1; all 16 advance it to 2. A legal custom Rotation preserves the Team and Season validity, while duplicate results, mismatched Teams, unknown ScheduledGames, and invalid Rotations are rejected.
 
-- AI-vs-AI game simulation
-- Complete scheduled results for all Teams
-- Overall and conference standings derived from results
+### 3.4 AI Round Simulation and Standings V0 — NEXT
+
+> Given the current Season State, deterministically simulate pending scheduled games using each Program's current Team and Rotation, record the resulting GameResults, advance naturally through rounds, and derive Conference standings from completed results.
+
+- Give each ScheduledGame an independent deterministic simulation identity so execution order cannot change outcomes.
+- Use each Program's current Season Team and Rotation.
+- Record results through the existing `recordGameResult()` behavior and never re-simulate already-completed games.
+- Preserve partial-round progression.
+- Derive standings rather than storing them; define exact ordering and tiebreakers during this milestone.
 
 ### 3.5 Season Presentation — PLANNED
 

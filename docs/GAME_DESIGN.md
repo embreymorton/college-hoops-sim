@@ -137,4 +137,12 @@ Schedule Generation V0 gives every Program a 24-game regular season: 14 Conferen
 
 The schedule uses 24 abstract rounds rather than real dates. All 32 Programs play exactly once in each round. Seeded variation changes legal non-Conference pairings, home/away orientation where choices exist, and ordering without making scheduling depend on prestige, Team Strength, or geography. Universe V0 Conference membership remains fixed.
 
-These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Schedule Generation remains structural only. Season State and Progression V0 now combines that Schedule with current Team/Rotation state and canonically recorded full GameResults for review; it derives partial-round progress and records without automatically simulating games. Standings, calendar dates, and postseason scheduling remain future work.
+These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Schedule Generation remains structural only. Standings, calendar dates, and postseason scheduling remain future work.
+
+## Accepted Season State and progression
+
+Season State and Progression V0 combines the initialized Universe basketball state with the accepted Schedule. Every Program begins with its generated Team and default legal Rotation. Team rosters, Player ratings, and Team prestige remain fixed during Season V0; the current Rotation is the only basketball input exposed for legal in-season replacement. AI Programs keep their default Rotations because no automatic AI Rotation behavior exists. No injury, fatigue, development, recruiting, or prestige-evolution system is implied.
+
+Completed games are immutable facts stored once by stable ScheduledGame ID. Each result retains the complete existing `GameResult`, including both Teams' full Player box scores. A round may be partially complete, and results may be recorded out of order without changing the meaning of earlier or later games.
+
+The design rule is **store facts, derive summaries**. Current round, round completion, regular-season completion, overall Program records, and Conference records are derived from the Schedule and recorded results rather than maintained as separate mutable counters or flags. Automatic AI game progression and standings ordering are not yet implemented.

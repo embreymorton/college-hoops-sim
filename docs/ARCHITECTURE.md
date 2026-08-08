@@ -8,11 +8,12 @@ Dependencies point inward toward the engine:
 React presentation → Zustand application state/adapters → engine public API
                                       tests/tools → engine public API
 
-React / Zustand / future Dynasty state
+Application / future Dynasty state
                   ↓
-             Season layer
-            ↙      ↓      ↘
-      Schedule  Universe  Engine public APIs
+             Season State
+            ↙      ↓       ↘
+      Schedule  Universe  Engine outputs
+                            Team / Rotation / GameResult
 ```
 
 `src/engine` must not import React, React DOM, Zustand, components, application stores, browser/DOM APIs, or other UI-specific code. The engine accepts data and configuration, then returns data. UI code may import the engine.
@@ -68,6 +69,7 @@ The engine owns every step through Player box scores. The application layer sele
 - `RegularSeasonSchedule` is serializable schedule output containing one canonical collection of unplayed games. `ScheduledGame` references stable Program IDs and contains no Team snapshots, results, records, or progression state.
 - A schedule round is a one-based abstract progression unit, not a date. Universe V0 has 24 complete rounds, with all 32 Programs appearing exactly once among the 16 games in each round.
 - `SeasonState` stores its immutable Schedule, current Team/Rotation state by stable Program ID, and complete `GameResult` facts once by stable ScheduledGame ID. Current round, completion, Program records, and Conference records are derived rather than stored.
+- Store facts and derive summaries. Season State does not maintain authoritative wins, losses, Conference records, games played, current-round counters, completion flags, or standings alongside the Schedule and results that determine them.
 - Randomness enters through an explicit seeded RNG or seed. Engine code never calls `Math.random()`.
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
 - Zustand owns application/UI workflow state, not basketball rules.
@@ -97,15 +99,23 @@ Program identity, structured location, permanent V0 conference membership, immut
 
 The six-program exhibition catalog remains a presentation adapter. Charlotte Tech, Capital State, Great Lakes, Pine Valley, and Coastal Plains source permanent metadata from Universe V0; National Tech remains explicitly development-only. This preserves the accepted UI workflow without duplicating permanent metadata or presenting the exhibition list as a season.
 
+## Season State and progression
+
+`SeasonProgramState` owns the current `Team` and legal current `Rotation` needed to play games for one Program. Universe definitions remain stable world configuration outside Season basketball state, while the regular-season Schedule remains unchanged structural data inside the Season. `resultsByGameId` is the single canonical completed-game collection and preserves each full engine-produced `GameResult`, including Player box scores.
+
+Season operations are pure: `recordGameResult()` and `updateProgramRotation()` return new Season values without mutating their inputs. Recorded results are immutable facts and cannot be silently overwritten. Result recording validates the ScheduledGame ID, exact home/away orientation, score/winner consistency, and that Player points reconstruct each Team score. Rotation updates delegate legality to the engine's existing `validateRotation()` contract.
+
+Partial rounds and out-of-order result insertion are supported. Current round is the lowest Schedule round with a pending game; round completion, regular-season completion, overall Program records, and Conference records are projections over Schedule plus recorded results. `controlledProgramId` is intentionally absent because user ownership belongs to future application or Dynasty state rather than the generic Season domain.
+
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, and record derivation. Schedule and Universe remain independent from mutable Season results, while Season may consume their public APIs and the engine's Team, Rotation, validation, and GameResult contracts.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, and record derivation. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
 
 Game Presentation V0 and Rotation Management V0 are complete. React renders deterministic demo matchups, engine-generated rosters, an editable home Rotation, a read-only default away Rotation, Team Strength comparisons, validation feedback, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes, ratings, or Rotation legality.
 
-The engine was not changed for Rotation Management, Universe V0, or Schedule Generation V0. Editable Rotation state lives in the application layer, while legality remains defined by engine validation and Team Strength remains an engine derivation. The universe consumes only the engine public API; `src/engine` never imports universe or schedule definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. Schedule Generation V0 remains structure-only and introduces no Season State.
+The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 
-The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. Season State treats the Schedule as immutable structure and associates complete `GameResult` values with stable `ScheduledGame.id` values. It stores no mutable current-round, completion, record, or standings counters. Automatic AI round simulation and standings remain outside the implemented layer.
+The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. Season State and Progression V0 is complete and accepted. Automatic AI round simulation and standings remain outside it. The next progression layer should resolve pending games through the Season public queries, use current Season Teams and Rotations, and write results only through `recordGameResult()` rather than mutating results or derived summaries directly.
 
 ## Enforcement
 
