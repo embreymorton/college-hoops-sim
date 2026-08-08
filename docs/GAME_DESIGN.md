@@ -113,8 +113,14 @@ The accepted Team scores remain authoritative. A deterministic allocation layer 
 
 This supports individual statistical storytelling beneath Team outcomes: stars can carry an offense or have quiet games, role players can spike, frontcourt Players retain stronger rebounding identities, guards tend to create more assists, and shooting efficiency varies from game to game. These performances explain the accepted result without becoming a second outcome simulation.
 
-Game Presentation is the next active milestone and should expose this existing information without adding new basketball systems.
+Game Presentation V0 exposes this information through deterministic demo matchups, generated rosters and default Rotations, Team Strength, final scores, overtime, and both Teams' Player box scores. It adds no basketball rules to the presentation layer.
+
+## Initial coaching agency
+
+Rotation Management is the first direct coaching decision available to the user. The coach will distribute the available 200 player-minutes within the v0.1 natural-position constraint: exactly 40 minutes at each position. Because Team Strength weights Player influence by assigned minutes, changing a legal Rotation can create visible offensive, defensive, and depth tradeoffs. Better Players should usually deserve more minutes, but differences between Player offense, Player defense, and roster depth can make the best choice contextual.
+
+The initial goal is understandable basketball choice, not broad tactical complexity. Pace, offensive and defensive schemes, pressing, shot profiles, live substitutions, fatigue, morale, and playing-time consequences are not part of this milestone. Additional tactical systems must earn their complexity after the season and dynasty loops work.
 
 ## MVP world
 
-The eventual MVP targets approximately 32 fictional teams in four conferences. This is a scale target, not authorization to generate the league during the game-simulation milestone.
+The eventual MVP targets approximately 32 fictional teams in four conferences. The current six-program demo catalog supports the presentation slice only; it is not the future league. The scale target is not authorization to implement league or season systems during Rotation Management.

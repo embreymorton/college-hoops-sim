@@ -1,6 +1,6 @@
 # College Hoops Simulator
 
-A fictional college basketball dynasty simulator. The repository is currently at the foundation milestone: project structure, architecture constraints, and test tooling only.
+A fictional college basketball dynasty simulator. The validated Basketball Engine V0 and browser Game Presentation V0 are complete; Rotation Management is the next active milestone.
 
 ## Commands
 

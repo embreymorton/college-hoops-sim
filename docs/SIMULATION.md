@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation and Player Box Scores V0 are complete. Game Presentation is the next active milestone; it consumes this pipeline without changing it.
+Single-Game Simulation, Player Box Scores V0, and their first browser presentation are complete. Rotation Management is the next active milestone. It does not introduce another simulator: custom legal Rotations become alternate inputs to the existing Team Strength and game-simulation pipeline.
 
 ## Implemented Rotation constraint
 

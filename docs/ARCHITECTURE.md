@@ -5,8 +5,8 @@
 Dependencies point inward toward the engine:
 
 ```text
-React UI → Zustand/application adapters → engine
-                         tests/tools → engine
+React presentation → Zustand application state/adapters → engine public API
+                                      tests/tools → engine public API
 ```
 
 `src/engine` must not import React, React DOM, Zustand, components, application stores, browser/DOM APIs, or other UI-specific code. The engine accepts data and configuration, then returns data. UI code may import the engine.
@@ -18,7 +18,8 @@ docs/                    Product and technical source of truth
 src/
   app/                   React application composition and screens
   components/            Reusable presentational UI
-  store/                 Zustand stores and engine adapters
+  demo/                  Presentation fixtures and demo-program metadata
+  store/                 Zustand workflow state and engine orchestration
   engine/
     domain/              Serializable domain types and derived ratings
     generation/          Player/team generation and default rotation derivation
@@ -29,6 +30,22 @@ src/
 ```
 
 Folders describe ownership, not permission to implement future systems early.
+
+## Implemented vertical-slice flow
+
+```text
+Generated Players
+→ Generated Teams / Rosters
+→ Default Rotations
+→ Player OFF / DEF
+→ Team Strength
+→ Game Simulation
+→ Player Box Scores
+→ Zustand application state
+→ React Game Presentation
+```
+
+The engine owns every step through Player box scores. The application layer selects demo inputs, invokes the public API, and retains workflow state and engine outputs. React presents that state and dispatches user intent back to the store.
 
 ## Domain and state rules
 
@@ -43,11 +60,17 @@ Folders describe ownership, not permission to implement future systems early.
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
 - Zustand owns application/UI workflow state, not basketball rules.
 
+The current Game Presentation store owns matchup selections, pregame/postgame phase, generated Team setups, deterministic game-sequence seeds, and the latest `GameResult`. It calls the public engine API to generate Teams and default Rotations, derive Team Strength, and simulate games. Its in-memory setup cache is an application detail, not persisted domain state.
+
+The six deterministic demo-program definitions live in `src/demo/demoPrograms.ts`, a neutral presentation fixture module shared by the store and React components. Their names, prestige values, generation seeds, and colors are not an implemented league or engine data model.
+
 ## Public API and imports
 
-Consumers import `simulateGame`, `GameResult`, and `PlayerGameStats` through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Within the engine, modules may import only other engine modules or platform-neutral utilities. Avoid circular dependencies and avoid a catch-all `utils` directory; place a helper with the domain that owns it.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Within the engine, modules may import only other engine modules or platform-neutral utilities. Avoid circular dependencies and avoid a catch-all `utils` directory; place a helper with the domain that owns it.
 
-Game Presentation is the next active milestone. Its application-state adapter and UI may consume these public serializable outputs but must not reimplement or mutate simulation rules.
+Game Presentation V0 is complete. React renders deterministic demo matchups, engine-generated rosters and default Rotation minutes, Team Strength, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes or ratings.
+
+Rotation Management is the next active milestone. Editable Rotation state may live in the application layer, but legality is defined by the engine's Rotation validation rules and Team Strength must continue to come from engine derivation. A legal edited Rotation becomes an input to the existing strength and simulation pipeline; the UI must not duplicate or redefine those rules.
 
 ## Enforcement
 
