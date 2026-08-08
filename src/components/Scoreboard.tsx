@@ -28,13 +28,19 @@ interface PregameScoreboardProps {
   readonly home: ScoreboardStrengthTeam
   readonly away: ScoreboardStrengthTeam
   readonly onSimulate: () => void
+  readonly simulateDisabled?: boolean
+  readonly simulateDisabledReason?: string | null
 }
 
 export function PregameScoreboard({
   home,
   away,
   onSimulate,
+  simulateDisabled = false,
+  simulateDisabledReason = null,
 }: PregameScoreboardProps) {
+  const showReason = simulateDisabled && Boolean(simulateDisabledReason)
+
   return (
     <div className="scoreboard scoreboard--pregame">
       <ScoreboardCorners />
@@ -50,9 +56,16 @@ export function PregameScoreboard({
           type="button"
           className="button button--primary"
           onClick={onSimulate}
+          disabled={simulateDisabled}
+          aria-describedby={showReason ? 'simulate-disabled-reason' : undefined}
         >
           Simulate Game
         </button>
+        {showReason && (
+          <p id="simulate-disabled-reason" className="scoreboard-cta-reason">
+            {simulateDisabledReason}
+          </p>
+        )}
       </div>
     </div>
   )

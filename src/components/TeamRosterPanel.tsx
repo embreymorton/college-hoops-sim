@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import type { Rotation, Team } from '../engine'
 import type { DemoProgram } from '../demo/demoPrograms'
 import { RosterTable } from './RosterTable'
+import { TeamPanelHeader } from './TeamPanelHeader'
 
 interface TeamRosterPanelProps {
   readonly team: Team
@@ -22,18 +23,16 @@ export function TeamRosterPanel({
 
   return (
     <div className="team-panel" style={accentStyle}>
-      <div className="team-panel__header">
-        <div className="team-panel__identity">
-          <h3 id={headingId} className="team-panel__name">
-            {team.name}
-          </h3>
-          <span className="team-panel__abbr">{team.abbreviation}</span>
-        </div>
-        <div className="team-panel__prestige">
-          <div className="team-panel__prestige-value">{team.prestige}</div>
-          <div className="team-panel__prestige-label">Prestige</div>
-        </div>
-      </div>
+      <TeamPanelHeader
+        team={team}
+        headingId={headingId}
+        right={
+          <div className="team-panel__prestige">
+            <div className="team-panel__prestige-value">{team.prestige}</div>
+            <div className="team-panel__prestige-label">Prestige</div>
+          </div>
+        }
+      />
       <RosterTable team={team} rotation={rotation} />
     </div>
   )

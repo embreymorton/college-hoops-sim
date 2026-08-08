@@ -27,20 +27,18 @@ The accepted presentation includes:
 
 The six demo programs support this vertical slice; they do not define the eventual league. Season, recruiting, rankings, standings, tournaments, coach profiles, and a dynasty dashboard are not current screens.
 
-## Next interaction milestone — Rotation Management
+## Rotation Management V0 — implemented
 
-Extend the accepted visual system rather than replacing it. Priorities are:
+Extends the accepted visual system rather than replacing it. The accepted presentation includes:
 
-- Keep roster and Rotation interaction information-dense.
-- Make each Player's minutes immediately legible.
-- Make each position's required 40-minute total immediately legible.
-- Make the Team's required 200-minute total immediately legible.
-- Make invalid states obvious without making valid editing visually noisy.
-- Show OFF, DEF, and OVR changes while the Rotation is edited.
-- Provide a clear reset-to-default path.
-- Prioritize precise, accessible interaction over decorative complexity.
+- An editable home Rotation grouped by natural position, with each Player's minutes controlled by a compact [-] numeric-input [+] stepper (one-minute precision, keyboard editable, non-negative integers; no drag-and-drop, no sliders).
+- Each position's current-minutes-of-40 total and a plain-language status ("Valid", "N minutes remaining", "N minutes over").
+- The Team's current-minutes-of-200 total.
+- A Team Strength comparison (Default / Current / Change) for OFF, DEF, and OVR, updated from a legal edited Rotation and explicitly marked pending rather than shown while the Rotation is invalid.
+- A disabled Simulate Game action with a concise reason while the Rotation is invalid.
+- A Reset to Default action, enabled only when the Rotation differs from the generated default.
 
-The exact editing control has not been accepted. Do not assume drag-and-drop, sliders, steppers, or numeric inputs before interaction design and implementation are explicitly scoped.
+The away Team's Rotation remains read-only. Player-level invalid minutes are surfaced adjacent to the affected Player rather than as raw validation codes.
 
 ## Future screens
 

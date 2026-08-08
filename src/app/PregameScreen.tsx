@@ -1,14 +1,28 @@
-import { PregameScoreboard, TeamRosterPanel, TeamSelect } from '../components'
+import {
+  PregameScoreboard,
+  RotationEditorPanel,
+  TeamRosterPanel,
+  TeamSelect,
+} from '../components'
 import { useGamePresentationStore } from '../store'
 import { DEMO_PROGRAMS, getDemoProgram } from '../demo/demoPrograms'
+import { calculateTeamStrength, validateRotation } from '../engine'
+import { describeRotationBlockingReason } from './formatters'
 
 export function PregameScreen() {
   const homeProgramId = useGamePresentationStore((state) => state.homeProgramId)
   const awayProgramId = useGamePresentationStore((state) => state.awayProgramId)
   const homeSetup = useGamePresentationStore((state) => state.homeSetup)
   const awaySetup = useGamePresentationStore((state) => state.awaySetup)
+  const homeRotation = useGamePresentationStore((state) => state.homeRotation)
   const setHomeProgram = useGamePresentationStore((state) => state.setHomeProgram)
   const setAwayProgram = useGamePresentationStore((state) => state.setAwayProgram)
+  const setHomePlayerMinutes = useGamePresentationStore(
+    (state) => state.setHomePlayerMinutes,
+  )
+  const resetHomeRotation = useGamePresentationStore(
+    (state) => state.resetHomeRotation,
+  )
   const simulate = useGamePresentationStore((state) => state.simulate)
 
   const homeProgram = getDemoProgram(homeProgramId)
@@ -19,6 +33,15 @@ export function PregameScreen() {
   const awayOptions = DEMO_PROGRAMS.filter(
     (program) => program.id !== homeProgramId,
   )
+
+  const rotationValidation = validateRotation(homeSetup.team, homeRotation)
+  const isRotationValid = rotationValidation.valid
+  const currentHomeStrength = isRotationValid
+    ? calculateTeamStrength(homeSetup.team, homeRotation)
+    : null
+  const blockingReason = isRotationValid
+    ? null
+    : describeRotationBlockingReason(rotationValidation)
 
   return (
     <>
@@ -53,7 +76,7 @@ export function PregameScreen() {
           home={{
             name: homeSetup.team.name,
             accentColor: homeProgram.primaryColor,
-            strength: homeSetup.strength,
+            strength: currentHomeStrength ?? homeSetup.strength,
           }}
           away={{
             name: awaySetup.team.name,
@@ -61,6 +84,8 @@ export function PregameScreen() {
             strength: awaySetup.strength,
           }}
           onSimulate={simulate}
+          simulateDisabled={!isRotationValid}
+          simulateDisabledReason={blockingReason}
         />
       </section>
       <section className="section" aria-labelledby="rosters-heading">
@@ -69,14 +94,21 @@ export function PregameScreen() {
             Rosters &amp; Rotations
           </h2>
           <p className="section-hint">
-            Default rotation minutes are display-only in this milestone.
+            Set the home rotation, then simulate.
           </p>
         </div>
         <div className="matchup-panels">
-          <TeamRosterPanel
+          <RotationEditorPanel
             team={homeSetup.team}
-            rotation={homeSetup.rotation}
+            defaultRotation={homeSetup.rotation}
+            currentRotation={homeRotation}
             program={homeProgram}
+            validation={rotationValidation}
+            defaultStrength={homeSetup.strength}
+            currentStrength={currentHomeStrength}
+            pendingStrengthReason={blockingReason}
+            onSetPlayerMinutes={setHomePlayerMinutes}
+            onReset={resetHomeRotation}
             headingId="home-team-heading"
           />
           <TeamRosterPanel

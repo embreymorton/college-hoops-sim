@@ -513,7 +513,16 @@ p {
 .scoreboard-cta {
   margin-top: var(--space-7);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.scoreboard-cta-reason {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
 }
 
 /* Final (postgame) variant */
@@ -643,6 +652,12 @@ p {
 .button--ghost:hover {
   border-color: var(--accent);
   color: var(--accent);
+}
+
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ==========================================================================
@@ -822,6 +837,208 @@ p {
 }
 
 /* ==========================================================================
+   Rotation editor
+   ========================================================================== */
+
+.rotation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.rotation-budget {
+  display: flex;
+  align-items: baseline;
+  gap: 0.3rem;
+}
+
+.rotation-budget__value {
+  font-family: var(--font-score);
+  font-size: 1.9rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-0);
+}
+
+.rotation-budget[data-status='invalid'] .rotation-budget__value:not(.rotation-budget__value--target) {
+  color: var(--accent);
+}
+
+.rotation-budget__value--target {
+  color: var(--ink-1);
+}
+
+.rotation-budget__slash {
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+
+.rotation-budget__label {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  margin-left: 0.3rem;
+  align-self: center;
+}
+
+.rotation-strength {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.rotation-strength__heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.rotation-strength__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.rotation-strength__note {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.rotation-strength__table {
+  max-width: 26rem;
+}
+
+.rotation-table thead th:last-child,
+.rotation-table td:last-child {
+  text-align: right;
+}
+
+.rotation-group-row th {
+  text-align: left;
+  background: var(--surface-2);
+  padding: 0.5rem 0.65rem;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.rotation-group-row__inner {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.rotation-group-row__position {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  color: var(--ink-0);
+}
+
+.rotation-group-row__total {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--ink-1);
+}
+
+.rotation-group-row__status {
+  margin-left: auto;
+  font-size: 0.72rem;
+  color: var(--ink-1);
+}
+
+.rotation-group-row[data-status='invalid'] .rotation-group-row__total,
+.rotation-group-row[data-status='invalid'] .rotation-group-row__status {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.rotation-minutes-cell {
+  text-align: right;
+  vertical-align: middle;
+}
+
+.rotation-player-note {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.minute-stepper {
+  display: inline-flex;
+  align-items: stretch;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  overflow: hidden;
+}
+
+.minute-stepper__button {
+  width: 1.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--ink-1);
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.minute-stepper__button:hover:not(:disabled) {
+  background: var(--surface-3);
+  color: var(--ink-0);
+}
+
+.minute-stepper__button:disabled {
+  color: var(--ink-2);
+  cursor: not-allowed;
+}
+
+.minute-stepper__input {
+  width: 2.6rem;
+  border: none;
+  border-left: 1px solid var(--line);
+  border-right: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-0);
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  padding: 0.3rem 0;
+  -moz-appearance: textfield;
+}
+
+.minute-stepper__input::-webkit-outer-spin-button,
+.minute-stepper__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.minute-stepper__input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 
@@ -927,5 +1144,27 @@ p {
     flex-direction: column;
     align-items: flex-start;
     gap: var(--space-1);
+  }
+
+  .rotation-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .rotation-reset {
+    width: 100%;
+  }
+
+  .rotation-strength__table {
+    max-width: none;
+  }
+
+  /* Keep the primary minute control reachable without a full horizontal scroll. */
+  .rotation-table thead th:last-child,
+  .rotation-table td.rotation-minutes-cell {
+    position: sticky;
+    right: 0;
+    background: var(--surface-1);
+    box-shadow: -6px 0 8px -6px rgba(0, 0, 0, 0.6);
   }
 }

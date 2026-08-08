@@ -1,12 +1,28 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { getPlayersByMinutes, type GameResult, type PlayerGameStats } from '../engine'
+import {
+  calculateTeamStrength,
+  getPlayersByMinutes,
+  type GameResult,
+  type PlayerGameStats,
+} from '../engine'
 import { useGamePresentationStore } from '../store'
 import { App } from './App'
 import { DEMO_PROGRAMS } from '../demo/demoPrograms'
 
 function resetStore() {
   useGamePresentationStore.setState(useGamePresentationStore.getInitialState())
+}
+
+/** The home Rotation editor renders first among the two team panels. */
+function getHomeRotationPanel(): HTMLElement {
+  const panel = document.querySelectorAll('.team-panel')[0]
+
+  if (!panel) {
+    throw new Error('Home rotation panel not found')
+  }
+
+  return panel as HTMLElement
 }
 
 function zeroStatsFor(playerId: string): PlayerGameStats {
@@ -87,12 +103,12 @@ describe('App', () => {
     ).toBeGreaterThan(0)
   })
 
-  it('renders roster rows with default rotation minutes from the generated Team', () => {
+  it('renders the read-only away roster with default rotation minutes from the generated Team', () => {
     render(<App />)
-    const { homeSetup } = useGamePresentationStore.getState()
+    const { awaySetup } = useGamePresentationStore.getState()
     const topPlayer = getPlayersByMinutes(
-      homeSetup.team,
-      homeSetup.rotation,
+      awaySetup.team,
+      awaySetup.rotation,
     )[0]!
 
     const row = document.querySelector(
@@ -243,5 +259,180 @@ describe('App', () => {
     expect(
       screen.getByRole('button', { name: /simulate game/i }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('Rotation editor', () => {
+  it('renders position minute totals and the global minute budget for the home Rotation', () => {
+    render(<App />)
+
+    const homePanel = getHomeRotationPanel()
+    const groupRows = homePanel.querySelectorAll('.rotation-group-row')
+    expect(groupRows).toHaveLength(5)
+    for (const groupRow of groupRows) {
+      expect(within(groupRow as HTMLElement).getByText('40 / 40')).toBeInTheDocument()
+      expect(within(groupRow as HTMLElement).getByText('Valid')).toBeInTheDocument()
+    }
+
+    const budget = homePanel.querySelector('.rotation-budget')
+    expect(budget).not.toBeNull()
+    expect(within(budget as HTMLElement).getAllByText('200')).toHaveLength(2)
+  })
+
+  it('updates application state when a Player minutes input is edited directly', () => {
+    render(<App />)
+
+    const homePanel = getHomeRotationPanel()
+    const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
+    const playerId = row.getAttribute('data-player-id')!
+    const input = within(row).getByRole('spinbutton')
+
+    fireEvent.change(input, { target: { value: '17' } })
+
+    expect(
+      useGamePresentationStore.getState().homeRotation.minutes[playerId],
+    ).toBe(17)
+    expect((input as HTMLInputElement).value).toBe('17')
+  })
+
+  it('adjusts a Player minutes by one minute via the stepper buttons', () => {
+    render(<App />)
+
+    const homePanel = getHomeRotationPanel()
+    const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
+    const playerId = row.getAttribute('data-player-id')!
+    const startingMinutes =
+      useGamePresentationStore.getState().homeRotation.minutes[playerId] ?? 0
+    const increase = within(row).getByRole('button', { name: /increase/i })
+    const decrease = within(row).getByRole('button', { name: /decrease/i })
+
+    fireEvent.click(increase)
+    expect(
+      useGamePresentationStore.getState().homeRotation.minutes[playerId],
+    ).toBe(startingMinutes + 1)
+
+    fireEvent.click(decrease)
+    fireEvent.click(decrease)
+    expect(
+      useGamePresentationStore.getState().homeRotation.minutes[playerId],
+    ).toBe(startingMinutes - 1)
+  })
+
+  it('disables Simulate Game with a reason while the home Rotation is invalid, and re-enables it once fixed', () => {
+    render(<App />)
+
+    const homePanel = getHomeRotationPanel()
+    const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
+    const input = within(row).getByRole('spinbutton')
+    const originalValue = (input as HTMLInputElement).value
+
+    fireEvent.change(input, {
+      target: { value: String(Number(originalValue) + 5) },
+    })
+
+    const simulateButton = screen.getByRole('button', {
+      name: /simulate game/i,
+    })
+    expect(simulateButton).toBeDisabled()
+    expect(screen.getAllByText(/to simulate\.$/i).length).toBeGreaterThan(0)
+
+    fireEvent.change(input, { target: { value: originalValue } })
+
+    expect(simulateButton).not.toBeDisabled()
+  })
+
+  it('updates Team Strength from the real engine for a legal edit, and marks it pending while invalid', () => {
+    render(<App />)
+
+    const { homeSetup } = useGamePresentationStore.getState()
+    const pointGuards = getPlayersByMinutes(
+      homeSetup.team,
+      homeSetup.rotation,
+    ).filter(({ player }) => player.position === 'PG')
+    const donorRow = document.querySelector(
+      `tr[data-player-id="${pointGuards[0]!.player.id}"]`,
+    ) as HTMLElement
+    const recipientRow = document.querySelector(
+      `tr[data-player-id="${pointGuards[1]!.player.id}"]`,
+    ) as HTMLElement
+
+    fireEvent.change(within(donorRow).getByRole('spinbutton'), {
+      target: { value: String(pointGuards[0]!.minutes - 2) },
+    })
+    fireEvent.change(within(recipientRow).getByRole('spinbutton'), {
+      target: { value: String(pointGuards[1]!.minutes + 2) },
+    })
+
+    const editedRotation = useGamePresentationStore.getState().homeRotation
+    const expectedStrength = calculateTeamStrength(
+      homeSetup.team,
+      editedRotation,
+    )
+    const strengthTable = document.querySelector('.rotation-strength')
+    expect(
+      within(strengthTable as HTMLElement).getByText(
+        expectedStrength.overall.toFixed(1),
+      ),
+    ).toBeInTheDocument()
+
+    const input = within(donorRow).getByRole('spinbutton')
+    fireEvent.change(input, {
+      target: { value: String(pointGuards[0]!.minutes + 20) },
+    })
+
+    expect(
+      within(strengthTable as HTMLElement).getAllByText('—').length,
+    ).toBeGreaterThan(0)
+  })
+
+  it('restores the generated default Rotation when Reset to Default is pressed', () => {
+    render(<App />)
+
+    const homePanel = getHomeRotationPanel()
+    const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
+    const input = within(row).getByRole('spinbutton')
+    const originalValue = (input as HTMLInputElement).value
+    const resetButton = screen.getByRole('button', {
+      name: /reset to default/i,
+    })
+    expect(resetButton).toBeDisabled()
+
+    fireEvent.change(input, {
+      target: { value: String(Number(originalValue) + 3) },
+    })
+    expect(resetButton).not.toBeDisabled()
+
+    fireEvent.click(resetButton)
+
+    expect((input as HTMLInputElement).value).toBe(originalValue)
+    expect(
+      useGamePresentationStore.getState().homeRotation,
+    ).toEqual(useGamePresentationStore.getState().homeSetup.rotation)
+    expect(resetButton).toBeDisabled()
+  })
+
+  it('replaces the Rotation editor with the new Team default when the home program changes', () => {
+    render(<App />)
+
+    const homeSelect = screen.getByLabelText(
+      'Home Program',
+    ) as HTMLSelectElement
+    const nextProgram = DEMO_PROGRAMS.find(
+      (program) =>
+        program.id !== useGamePresentationStore.getState().homeProgramId &&
+        program.id !== useGamePresentationStore.getState().awayProgramId,
+    )!
+
+    fireEvent.change(homeSelect, { target: { value: nextProgram.id } })
+
+    const state = useGamePresentationStore.getState()
+    expect(state.homeProgramId).toBe(nextProgram.id)
+    expect(state.homeRotation).toEqual(state.homeSetup.rotation)
+
+    const homePanel = getHomeRotationPanel()
+    const groupRows = homePanel.querySelectorAll('.rotation-group-row')
+    for (const groupRow of groupRows) {
+      expect(within(groupRow as HTMLElement).getByText('Valid')).toBeInTheDocument()
+    }
   })
 })

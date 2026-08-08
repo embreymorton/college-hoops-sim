@@ -5,6 +5,7 @@ import {
   generateDefaultRotation,
   generateTeam,
   simulateGame,
+  validateRotation,
   type GameResult,
   type Rotation,
   type Team,
@@ -69,6 +70,12 @@ export interface GamePresentationState {
   readonly awayProgramId: string
   readonly homeSetup: DemoTeamSetup
   readonly awaySetup: DemoTeamSetup
+  /**
+   * The coach's current home Rotation. Starts equal to `homeSetup.rotation`
+   * and may be temporarily invalid while the coach reallocates minutes; only
+   * the away Team's Rotation remains the fixed generated default.
+   */
+  readonly homeRotation: Rotation
   readonly phase: GamePresentationPhase
   readonly result: GameResult | null
   /** Number of games simulated for the current home/away pairing. */
@@ -77,6 +84,11 @@ export interface GamePresentationState {
   setHomeProgram(programId: string): void
   /** No-op if programId matches the current home program. */
   setAwayProgram(programId: string): void
+  /** Assigns one Player's minutes; zero minutes omits the Player, preserving canonical Rotation shape. */
+  setHomePlayerMinutes(playerId: string, minutes: number): void
+  /** Restores the coached home Rotation to the current Team's generated default. */
+  resetHomeRotation(): void
+  /** No-op if the current home Rotation is invalid; never simulates an illegal Rotation. */
   simulate(): void
   changeMatchup(): void
 }
@@ -87,6 +99,7 @@ export const useGamePresentationStore = create<GamePresentationState>(
     awayProgramId: DEFAULT_AWAY_PROGRAM_ID,
     homeSetup: getDemoTeamSetup(DEFAULT_HOME_PROGRAM_ID),
     awaySetup: getDemoTeamSetup(DEFAULT_AWAY_PROGRAM_ID),
+    homeRotation: getDemoTeamSetup(DEFAULT_HOME_PROGRAM_ID).rotation,
     phase: 'pregame',
     result: null,
     simulationSequence: 0,
@@ -96,9 +109,12 @@ export const useGamePresentationStore = create<GamePresentationState>(
         return
       }
 
+      const homeSetup = getDemoTeamSetup(programId)
+
       set({
         homeProgramId: programId,
-        homeSetup: getDemoTeamSetup(programId),
+        homeSetup,
+        homeRotation: homeSetup.rotation,
         phase: 'pregame',
         result: null,
         simulationSequence: 0,
@@ -119,14 +135,37 @@ export const useGamePresentationStore = create<GamePresentationState>(
       })
     },
 
+    setHomePlayerMinutes(playerId, minutes) {
+      const sanitizedMinutes = Math.max(0, Math.round(minutes))
+      const nextMinutes = { ...get().homeRotation.minutes }
+
+      if (sanitizedMinutes === 0) {
+        delete nextMinutes[playerId]
+      } else {
+        nextMinutes[playerId] = sanitizedMinutes
+      }
+
+      set({ homeRotation: { minutes: nextMinutes } })
+    },
+
+    resetHomeRotation() {
+      set({ homeRotation: get().homeSetup.rotation })
+    },
+
     simulate() {
       const {
         homeProgramId,
         awayProgramId,
         homeSetup,
         awaySetup,
+        homeRotation,
         simulationSequence,
       } = get()
+
+      if (!validateRotation(homeSetup.team, homeRotation).valid) {
+        return
+      }
+
       const nextSequence = simulationSequence + 1
       const seed = buildGameSeed(
         getDemoProgram(homeProgramId).abbreviation,
@@ -136,7 +175,7 @@ export const useGamePresentationStore = create<GamePresentationState>(
       const result = simulateGame({
         homeTeam: homeSetup.team,
         awayTeam: awaySetup.team,
-        homeRotation: homeSetup.rotation,
+        homeRotation,
         awayRotation: awaySetup.rotation,
         seed,
       })
