@@ -11,7 +11,7 @@ export type {
   PlayerAttributes,
   Position,
 } from './domain'
-export { generatePlayer } from './generation'
+export { generatePlayer, PLAYER_NAME_POOL_COUNTS } from './generation'
 export type { GeneratePlayerOptions } from './generation'
 export { createRng } from './random'
 export type { Rng, RngSeed } from './random'

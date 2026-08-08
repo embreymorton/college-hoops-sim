@@ -29,7 +29,6 @@ export interface Player {
   classYear: ClassYear
   height: number
   attributes: PlayerAttributes
-  /** Development ceiling in the inclusive 40–99 range; not current ability. */
+  /** Approximate development ceiling in 40–99; never below current overall. */
   potential: number
 }
-

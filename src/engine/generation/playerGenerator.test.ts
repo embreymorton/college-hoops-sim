@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   calculateOverall,
+  CLASS_YEARS,
   MAX_PLAYER_RATING,
   MIN_PLAYER_RATING,
   POSITIONS,
@@ -9,7 +10,11 @@ import {
   type Position,
 } from '../domain'
 import { createRng } from '../random'
-import { generatePlayer, type GeneratePlayerOptions } from './playerGenerator'
+import {
+  generatePlayer,
+  PLAYER_NAME_POOL_COUNTS,
+  type GeneratePlayerOptions,
+} from './playerGenerator'
 
 const ATTRIBUTE_NAMES = [
   'finishing',
@@ -49,6 +54,18 @@ function attributeAverage(
   )
 }
 
+function average(values: readonly number[]): number {
+  return values.reduce((sum, value) => sum + value, 0) / values.length
+}
+
+function standardDeviation(values: readonly number[]): number {
+  const sampleAverage = average(values)
+
+  return Math.sqrt(
+    average(values.map((value) => (value - sampleAverage) ** 2)),
+  )
+}
+
 afterEach(() => {
   vi.restoreAllMocks()
 })
@@ -64,26 +81,6 @@ describe('generatePlayer', () => {
     const first = generatePlayer({ ...options, rng: createRng('same-player') })
     const second = generatePlayer({ ...options, rng: createRng('same-player') })
 
-    expect(first).toEqual({
-      id: 'player-dea09f73445cf739',
-      firstName: 'Jalen',
-      lastName: 'Bennett',
-      position: 'PG',
-      classYear: 'SO',
-      height: 77,
-      attributes: {
-        finishing: 67,
-        shooting: 71,
-        playmaking: 78,
-        ballHandling: 78,
-        perimeterDefense: 81,
-        interiorDefense: 52,
-        rebounding: 65,
-        athleticism: 76,
-        stamina: 63,
-      },
-      potential: 86,
-    })
     expect(first).toEqual(second)
     expect(first.id).toMatch(/^player-[0-9a-f]{16}$/)
     expect(first.position).toBe('PG')
@@ -110,6 +107,25 @@ describe('generatePlayer', () => {
     expect(
       new Set(players.map((player) => JSON.stringify(player.attributes))).size,
     ).toBeGreaterThan(45)
+  })
+
+  it('uses expanded deterministic local name pools', () => {
+    expect(PLAYER_NAME_POOL_COUNTS.firstNames).toBeGreaterThanOrEqual(75)
+    expect(PLAYER_NAME_POOL_COUNTS.lastNames).toBeGreaterThanOrEqual(100)
+    expect(PLAYER_NAME_POOL_COUNTS.combinations).toBeGreaterThanOrEqual(7_500)
+
+    const names = Array.from({ length: 384 }, (_, index) => {
+      const player = generatePlayer({
+        position: 'SF',
+        talentLevel: 70,
+        classYear: 'SO',
+        rng: createRng(`mvp-name-sample-${index}`),
+      })
+
+      return `${player.firstName} ${player.lastName}`
+    })
+
+    expect(new Set(names).size).toBeGreaterThan(360)
   })
 
   it('uses only the supplied RNG', () => {
@@ -183,24 +199,47 @@ describe('generatePlayer', () => {
     },
   )
 
-  it('produces players compatible with calculateOverall near their talent level', () => {
+  it('centers each position near requested talent with meaningful overall variance', () => {
     for (const position of POSITIONS) {
-      for (const talentLevel of [55, 75, 90]) {
-        const rng = createRng(`overall-${position}-${talentLevel}`)
+      const players = generateSample(position, 1_000)
+      const overalls = players.map(calculateOverall)
 
-        for (let index = 0; index < 100; index += 1) {
-          const player = generatePlayer({
-            position,
-            talentLevel,
-            classYear: 'JR',
-            rng,
-          })
-          const overall = calculateOverall(player)
+      expect(Math.abs(average(overalls) - 75)).toBeLessThan(0.75)
+      expect(standardDeviation(overalls)).toBeGreaterThan(1.5)
+      expect(standardDeviation(overalls)).toBeLessThan(3)
+      expect(Math.max(...overalls) - Math.min(...overalls)).toBeGreaterThan(8)
+    }
+  })
 
-          expect(Number.isInteger(overall)).toBe(true)
-          expect(Math.abs(overall - talentLevel)).toBeLessThanOrEqual(2)
-        }
-      }
+  it('keeps talent levels distinct while centering aggregate quality', () => {
+    const talentLevels = [55, 65, 75, 85]
+    const averages = talentLevels.map((talentLevel) => {
+      const overalls = POSITIONS.flatMap((position) => {
+        const rng = createRng(`talent-distribution-${position}-${talentLevel}`)
+
+        return Array.from({ length: 400 }, () =>
+          calculateOverall(
+            generatePlayer({
+              position,
+              talentLevel,
+              classYear: 'JR',
+              rng,
+            }),
+          ),
+        )
+      })
+
+      expect(Math.abs(average(overalls) - talentLevel)).toBeLessThan(1)
+      expect(standardDeviation(overalls)).toBeGreaterThan(1.5)
+      expect(standardDeviation(overalls)).toBeLessThan(3)
+
+      return average(overalls)
+    })
+
+    for (let index = 1; index < averages.length; index += 1) {
+      expect((averages[index] ?? 0) - (averages[index - 1] ?? 0)).toBeGreaterThan(
+        9,
+      )
     }
   })
 
@@ -258,29 +297,92 @@ describe('generatePlayer', () => {
     )
   })
 
-  it('generates potential above, near, and occasionally below current overall', () => {
-    const rng = createRng('potential-distribution')
-    const players = Array.from({ length: 1_000 }, () =>
-      generatePlayer({
-        position: 'SF',
-        talentLevel: 70,
-        classYear: 'SO',
-        rng,
-      }),
-    )
-    const differences = players.map(
-      (player) => player.potential - calculateOverall(player),
-    )
+  it('never generates potential below current overall', () => {
+    for (const position of POSITIONS) {
+      for (const classYear of CLASS_YEARS) {
+        for (const talentLevel of [40, 70, 99]) {
+          const rng = createRng(
+            `potential-floor-${position}-${classYear}-${talentLevel}`,
+          )
 
-    expect(differences.some((difference) => difference < 0)).toBe(true)
-    expect(differences.some((difference) => difference === 0)).toBe(true)
-    expect(differences.some((difference) => difference > 0)).toBe(true)
-    expect(
-      differences.filter((difference) => difference < 0).length,
-    ).toBeLessThan(200)
-    expect(
-      differences.filter((difference) => difference > 0).length,
-    ).toBeGreaterThan(600)
+          for (let index = 0; index < 100; index += 1) {
+            const player = generatePlayer({
+              position,
+              talentLevel,
+              classYear,
+              rng,
+            })
+
+            expect(player.potential).toBeGreaterThanOrEqual(
+              calculateOverall(player),
+            )
+          }
+        }
+      }
+    }
+  })
+
+  it('gives younger players more average development runway', () => {
+    const runwayByClassYear = Object.fromEntries(
+      CLASS_YEARS.map((classYear) => {
+        const differences = POSITIONS.flatMap((position) => {
+          const rng = createRng(`runway-${classYear}-${position}`)
+
+          return Array.from({ length: 500 }, () => {
+            const player = generatePlayer({
+              position,
+              talentLevel: 70,
+              classYear,
+              rng,
+            })
+
+            return player.potential - calculateOverall(player)
+          })
+        })
+
+        return [classYear, average(differences)]
+      }),
+    ) as Record<(typeof CLASS_YEARS)[number], number>
+
+    expect(runwayByClassYear.FR).toBeGreaterThan(runwayByClassYear.SO + 2)
+    expect(runwayByClassYear.SO).toBeGreaterThan(runwayByClassYear.JR + 2)
+    expect(runwayByClassYear.JR).toBeGreaterThan(runwayByClassYear.SR + 1)
+  })
+
+  it('avoids excessive lower-bound pileups for weak positional skills', () => {
+    const lowerBoundRate = (
+      position: Position,
+      attribute: keyof PlayerAttributes,
+    ) => {
+      const players = [55, 65, 75, 85].flatMap((talentLevel) => {
+        const rng = createRng(
+          `clamp-health-${position}-${attribute}-${talentLevel}`,
+        )
+
+        return Array.from({ length: 250 }, () =>
+          generatePlayer({
+            position,
+            talentLevel,
+            classYear: 'SO',
+            rng,
+          }),
+        )
+      })
+
+      return (
+        players.filter(
+          (player) => player.attributes[attribute] === MIN_PLAYER_RATING,
+        ).length / players.length
+      )
+    }
+
+    expect(lowerBoundRate('PG', 'interiorDefense')).toBeLessThan(0.1)
+    expect(lowerBoundRate('PG', 'rebounding')).toBeLessThan(0.1)
+    expect(lowerBoundRate('PF', 'playmaking')).toBeLessThan(0.1)
+    expect(lowerBoundRate('PF', 'ballHandling')).toBeLessThan(0.1)
+    expect(lowerBoundRate('C', 'shooting')).toBeLessThan(0.1)
+    expect(lowerBoundRate('C', 'playmaking')).toBeLessThan(0.1)
+    expect(lowerBoundRate('C', 'ballHandling')).toBeLessThan(0.1)
   })
 
   it('does not mutate its options or unrelated state', () => {

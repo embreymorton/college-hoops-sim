@@ -26,7 +26,7 @@ Current-ability attributes use an inclusive 40–99 rating scale:
 - Defense: perimeter defense, interior defense, rebounding
 - Physical: athleticism, stamina
 
-Potential is a separate 40–99 development rating. Overall rating is a rounded, position-weighted average of current-ability attributes. It is never stored as independently mutable state, and potential does not affect it.
+Potential is a separate 40–99 estimate of a player's developmental ceiling. It is never lower than current overall, but it does not affect current ability. Overall rating is a rounded, position-weighted average of current-ability attributes and is never stored as independently mutable state.
 
 Initial overall weights:
 
@@ -42,7 +42,9 @@ These weights are an understandable tuning baseline, not a final balance model.
 
 ## Initial player generation
 
-`generatePlayer` accepts position, class year, a 40–99 talent level, and an explicit seeded RNG. Talent level is a target for current overall quality, not a uniform attribute value. Position-specific modifiers and bounded independent variance create strengths and weaknesses, after which the profile is shifted toward the target overall without removing those differences.
+`generatePlayer` accepts position, class year, a 40–99 talent level, and an explicit seeded RNG. Talent level is the center of an expected overall distribution, not a guaranteed overall or a uniform attribute value. Fixed position corrections keep average quality comparable, while position-specific modifiers and independent bounded variance create natural strengths, weaknesses, and roughly two overall points of standard deviation. Individual players are not forced back to the requested talent value.
+
+Ratings landing at or below the lower bound during generation are redistributed across a narrow 40–46 band. This keeps intentionally weak skills weak while avoiding large populations collapsed to exactly 40. The rating bounds remain 40–99.
 
 Height ranges use total inches:
 
@@ -54,7 +56,18 @@ Height ranges use total inches:
 | PF | 78–83 (6'6"–6'11") |
 | C | 80–86 (6'8"–7'2") |
 
-Names come from small local fictional pools. IDs, names, height, attributes, and potential all consume only the supplied RNG. Potential is based on current overall: most players land from equal to 12 points above it, while a 15% branch lands 1–6 points below it. All ratings are clamped to 40–99. These distributions are initial tuning values, not recruiting or development rules.
+Names come from local fictional pools containing 99 first names and 155 last names, providing 15,345 combinations without enforcing global uniqueness. IDs, names, height, attributes, and potential all consume only the supplied RNG.
+
+Potential is generated from current overall as an approximate development ceiling and is capped at 99:
+
+| Class year | Generated upside |
+| --- | --- |
+| FR | 6–15 points |
+| SO | 4–11 points |
+| JR | 1–7 points |
+| SR | 0–3 points |
+
+These ranges describe initial generation only. They do not implement or guarantee future progression outcomes.
 
 ## MVP world
 

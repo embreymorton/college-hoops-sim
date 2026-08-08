@@ -21,56 +21,282 @@ type AttributeModifiers = Readonly<Record<keyof PlayerAttributes, number>>
 interface PositionGenerationProfile {
   readonly minHeight: number
   readonly maxHeight: number
+  readonly talentOffset: number
   readonly modifiers: AttributeModifiers
 }
 
 const FIRST_NAMES = [
+  'Aaron',
+  'Adrian',
+  'Aiden',
+  'Amir',
   'Andre',
+  'Anthony',
+  'Ashton',
+  'Avery',
+  'Brandon',
+  'Bryce',
   'Caleb',
   'Cameron',
+  'Carter',
+  'Cedric',
+  'Christian',
+  'Cole',
+  'Connor',
   'Darius',
+  'Darren',
+  'Darnell',
+  'Davion',
+  'DeAndre',
+  'Desmond',
   'Devin',
+  'Dominic',
+  'Donovan',
+  'Easton',
   'Elijah',
+  'Emanuel',
+  'Eric',
+  'Evan',
+  'Gavin',
+  'Grant',
+  'Ian',
   'Isaiah',
+  'Jace',
   'Jalen',
+  'Jamal',
+  'James',
+  'Jared',
+  'Jason',
+  'Jayden',
+  'Jeremiah',
   'Jordan',
   'Josiah',
+  'Julian',
+  'Justin',
+  'Kaden',
+  'Kai',
+  'Kameron',
+  'Keenan',
+  'Keith',
+  'Kevin',
+  'Khalil',
+  'Kobe',
+  'Landon',
+  'Leo',
+  'Liam',
+  'Logan',
+  'Lucas',
+  'Malik',
   'Malcolm',
   'Marcus',
+  'Mason',
+  'Maxwell',
   'Micah',
   'Miles',
+  'Nasir',
+  'Nathan',
   'Noah',
+  'Nolan',
+  'Omari',
+  'Owen',
+  'Parker',
+  'Paul',
   'Quentin',
+  'Rashad',
+  'Reece',
+  'Roman',
+  'Rylan',
+  'Samuel',
+  'Sean',
+  'Seth',
+  'Shawn',
+  'Silas',
+  'Spencer',
+  'Tariq',
   'Terrence',
+  'Theo',
+  'Tobias',
+  'Travis',
+  'Trent',
   'Trey',
+  'Tristan',
+  'Tyler',
+  'Victor',
+  'Xavier',
+  'Zaire',
+  'Zane',
 ] as const
 
 const LAST_NAMES = [
+  'Adams',
+  'Allen',
+  'Anderson',
+  'Armstrong',
+  'Bailey',
+  'Baker',
   'Banks',
+  'Barnes',
+  'Barrett',
+  'Bell',
   'Bennett',
+  'Bishop',
+  'Black',
+  'Boone',
+  'Bradley',
   'Brooks',
+  'Brown',
+  'Bryant',
+  'Burke',
+  'Butler',
+  'Campbell',
   'Carter',
+  'Chambers',
+  'Chapman',
+  'Clark',
+  'Clayton',
   'Coleman',
+  'Collins',
+  'Cook',
+  'Cooper',
+  'Crawford',
+  'Cruz',
+  'Daniels',
   'Davis',
+  'Dawson',
+  'Dixon',
+  'Douglas',
+  'Dunn',
+  'Edwards',
   'Ellis',
+  'Evans',
+  'Fields',
+  'Fisher',
+  'Fleming',
+  'Fletcher',
+  'Ford',
   'Foster',
+  'Franklin',
+  'Freeman',
+  'Garcia',
+  'Gardner',
+  'Gibson',
+  'Gill',
+  'Gordon',
+  'Graham',
   'Grant',
+  'Gray',
+  'Green',
+  'Griffin',
+  'Hall',
+  'Hamilton',
+  'Harris',
+  'Hart',
   'Hayes',
+  'Henderson',
+  'Henry',
+  'Hill',
+  'Hines',
+  'Holland',
   'Holloway',
+  'Holmes',
+  'Howard',
+  'Hudson',
+  'Hughes',
+  'Hunt',
+  'Jackson',
   'Jefferson',
+  'Jenkins',
+  'Johnson',
+  'Jones',
+  'Jordan',
+  'Kelley',
+  'Kennedy',
+  'King',
+  'Knight',
+  'Lane',
   'Lawson',
+  'Lee',
+  'Lewis',
+  'Long',
+  'Marshall',
+  'Martin',
+  'Mason',
+  'Matthews',
+  'McBride',
+  'McDaniel',
+  'Miller',
   'Mitchell',
+  'Moore',
+  'Morgan',
+  'Morris',
+  'Murphy',
+  'Murray',
+  'Nelson',
+  'Newman',
+  'Nichols',
+  'Oliver',
+  'Owens',
+  'Palmer',
+  'Parker',
+  'Patterson',
+  'Payne',
+  'Perry',
+  'Peterson',
+  'Phillips',
+  'Porter',
+  'Powell',
+  'Price',
   'Reed',
+  'Reynolds',
+  'Richardson',
+  'Riley',
+  'Rivera',
+  'Roberts',
   'Robinson',
+  'Rogers',
+  'Ross',
+  'Russell',
+  'Sanders',
+  'Scott',
+  'Shaw',
+  'Simmons',
+  'Smith',
+  'Spencer',
+  'Stewart',
+  'Stone',
+  'Taylor',
+  'Thomas',
+  'Thompson',
   'Turner',
+  'Walker',
+  'Wallace',
+  'Ward',
   'Warren',
+  'Washington',
+  'Watson',
+  'Webb',
+  'Wells',
+  'West',
+  'White',
+  'Williams',
+  'Wilson',
+  'Woods',
+  'Wright',
+  'Young',
 ] as const
+
+export const PLAYER_NAME_POOL_COUNTS = {
+  firstNames: FIRST_NAMES.length,
+  lastNames: LAST_NAMES.length,
+  combinations: FIRST_NAMES.length * LAST_NAMES.length,
+} as const
 
 /** Position baselines; height values are total inches. */
 const POSITION_PROFILES = {
   PG: {
     minHeight: 70,
     maxHeight: 77,
+    talentOffset: -4,
     modifiers: {
       finishing: -2,
       shooting: 4,
@@ -86,6 +312,7 @@ const POSITION_PROFILES = {
   SG: {
     minHeight: 73,
     maxHeight: 79,
+    talentOffset: -4,
     modifiers: {
       finishing: 6,
       shooting: 9,
@@ -101,6 +328,7 @@ const POSITION_PROFILES = {
   SF: {
     minHeight: 76,
     maxHeight: 81,
+    talentOffset: -1,
     modifiers: {
       finishing: 2,
       shooting: 2,
@@ -116,6 +344,7 @@ const POSITION_PROFILES = {
   PF: {
     minHeight: 78,
     maxHeight: 83,
+    talentOffset: -4,
     modifiers: {
       finishing: 8,
       shooting: -6,
@@ -131,6 +360,7 @@ const POSITION_PROFILES = {
   C: {
     minHeight: 80,
     maxHeight: 86,
+    talentOffset: -6,
     modifiers: {
       finishing: 8,
       shooting: -16,
@@ -149,6 +379,16 @@ function clampRating(rating: number): number {
   return Math.min(MAX_PLAYER_RATING, Math.max(MIN_PLAYER_RATING, rating))
 }
 
+function boundGeneratedRating(rating: number, rng: Rng): number {
+  const roundedRating = Math.round(rating)
+
+  if (roundedRating <= MIN_PLAYER_RATING) {
+    return rng.int(MIN_PLAYER_RATING, MIN_PLAYER_RATING + 6)
+  }
+
+  return clampRating(roundedRating)
+}
+
 function attributeVariance(rng: Rng): number {
   return rng.int(-8, 8) + rng.int(-4, 4)
 }
@@ -159,7 +399,10 @@ function generateRawAttributes(
   rng: Rng,
 ): PlayerAttributes {
   const generateRating = (modifier: number) =>
-    clampRating(Math.round(talentLevel + modifier + attributeVariance(rng)))
+    boundGeneratedRating(
+      talentLevel + modifier + attributeVariance(rng),
+      rng,
+    )
 
   return {
     finishing: generateRating(modifiers.finishing),
@@ -174,23 +417,6 @@ function generateRawAttributes(
   }
 }
 
-function shiftAttributes(
-  attributes: PlayerAttributes,
-  adjustment: number,
-): PlayerAttributes {
-  return {
-    finishing: clampRating(attributes.finishing + adjustment),
-    shooting: clampRating(attributes.shooting + adjustment),
-    playmaking: clampRating(attributes.playmaking + adjustment),
-    ballHandling: clampRating(attributes.ballHandling + adjustment),
-    perimeterDefense: clampRating(attributes.perimeterDefense + adjustment),
-    interiorDefense: clampRating(attributes.interiorDefense + adjustment),
-    rebounding: clampRating(attributes.rebounding + adjustment),
-    athleticism: clampRating(attributes.athleticism + adjustment),
-    stamina: clampRating(attributes.stamina + adjustment),
-  }
-}
-
 function generatePlayerId(rng: Rng): string {
   const firstPart = rng.int(0, 0xffff_ffff).toString(16).padStart(8, '0')
   const secondPart = rng.int(0, 0xffff_ffff).toString(16).padStart(8, '0')
@@ -198,8 +424,20 @@ function generatePlayerId(rng: Rng): string {
   return `player-${firstPart}${secondPart}`
 }
 
-function generatePotential(currentOverall: number, rng: Rng): number {
-  const difference = rng.chance(0.15) ? -rng.int(1, 6) : rng.int(0, 12)
+const POTENTIAL_UPSIDE_RANGES = {
+  FR: [6, 15],
+  SO: [4, 11],
+  JR: [1, 7],
+  SR: [0, 3],
+} as const satisfies Readonly<Record<ClassYear, readonly [number, number]>>
+
+function generatePotential(
+  currentOverall: number,
+  classYear: ClassYear,
+  rng: Rng,
+): number {
+  const [minimumUpside, maximumUpside] = POTENTIAL_UPSIDE_RANGES[classYear]
+  const difference = rng.int(minimumUpside, maximumUpside)
 
   return clampRating(currentOverall + difference)
 }
@@ -233,19 +471,18 @@ export function generatePlayer({
     position,
     classYear,
     height: rng.int(profile.minHeight, profile.maxHeight),
-    attributes: generateRawAttributes(talentLevel, profile.modifiers, rng),
+    attributes: generateRawAttributes(
+      talentLevel + profile.talentOffset,
+      profile.modifiers,
+      rng,
+    ),
     potential: MIN_PLAYER_RATING,
   }
 
-  const targetOverall = Math.round(talentLevel)
-  const overallAdjustment = targetOverall - calculateOverall(basePlayer)
-  const attributes = shiftAttributes(basePlayer.attributes, overallAdjustment)
-  const currentOverall = calculateOverall({ ...basePlayer, attributes })
+  const currentOverall = calculateOverall(basePlayer)
 
   return {
     ...basePlayer,
-    attributes,
-    potential: generatePotential(currentOverall, rng),
+    potential: generatePotential(currentOverall, classYear, rng),
   }
 }
-
