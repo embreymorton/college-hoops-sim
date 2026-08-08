@@ -40,6 +40,22 @@ Initial overall weights:
 
 These weights are an understandable tuning baseline, not a final balance model.
 
+## Initial player generation
+
+`generatePlayer` accepts position, class year, a 40–99 talent level, and an explicit seeded RNG. Talent level is a target for current overall quality, not a uniform attribute value. Position-specific modifiers and bounded independent variance create strengths and weaknesses, after which the profile is shifted toward the target overall without removing those differences.
+
+Height ranges use total inches:
+
+| Position | Range |
+| --- | --- |
+| PG | 70–77 (5'10"–6'5") |
+| SG | 73–79 (6'1"–6'7") |
+| SF | 76–81 (6'4"–6'9") |
+| PF | 78–83 (6'6"–6'11") |
+| C | 80–86 (6'8"–7'2") |
+
+Names come from small local fictional pools. IDs, names, height, attributes, and potential all consume only the supplied RNG. Potential is based on current overall: most players land from equal to 12 points above it, while a 15% branch lands 1–6 points below it. All ratings are clamped to 40–99. These distributions are initial tuning values, not recruiting or development rules.
+
 ## MVP world
 
 The eventual MVP targets approximately 32 fictional teams in four conferences. This is a scale target, not authorization to generate the league during the game-simulation milestone.

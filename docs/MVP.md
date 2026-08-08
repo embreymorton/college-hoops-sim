@@ -23,8 +23,9 @@ This milestone delivers only:
 - Lint, type-check, test, and production-build commands
 - Deterministic seeded RNG utilities
 - A serializable Player model with position-weighted derived overall ratings
+- Deterministic generation of individual fictional players
 
-The current scope explicitly excludes teams, rotations, player generation, game simulation, league generation, schedules, recruiting, development progression, saves, and gameplay UI.
+The current scope explicitly excludes teams, rotations, roster generation, game simulation, league generation, schedules, recruiting, development progression, saves, and gameplay UI.
 
 ## Next milestone acceptance target
 

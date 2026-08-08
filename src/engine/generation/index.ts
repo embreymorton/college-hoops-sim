@@ -1,3 +1,2 @@
-// Deterministic team and player generation will live here.
-export {}
-
+export { generatePlayer } from './playerGenerator'
+export type { GeneratePlayerOptions } from './playerGenerator'
