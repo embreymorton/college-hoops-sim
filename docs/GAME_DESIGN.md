@@ -137,7 +137,7 @@ Schedule Generation V0 gives every Program a 24-game regular season: 14 Conferen
 
 The schedule uses 24 abstract rounds rather than real dates. All 32 Programs play exactly once in each round. Seeded variation changes legal non-Conference pairings, home/away orientation where choices exist, and ordering without making scheduling depend on prestige, Team Strength, or geography. Universe V0 Conference membership remains fixed.
 
-These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Schedule Generation remains structural only. Standings, calendar dates, and postseason scheduling remain future work.
+These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Schedule Generation remains structural only. Calendar dates and postseason scheduling remain future work.
 
 ## Accepted Season State and progression
 
@@ -145,4 +145,12 @@ Season State and Progression V0 combines the initialized Universe basketball sta
 
 Completed games are immutable facts stored once by stable ScheduledGame ID. Each result retains the complete existing `GameResult`, including both Teams' full Player box scores. A round may be partially complete, and results may be recorded out of order without changing the meaning of earlier or later games.
 
-The design rule is **store facts, derive summaries**. Current round, round completion, regular-season completion, overall Program records, and Conference records are derived from the Schedule and recorded results rather than maintained as separate mutable counters or flags. The AI Round Simulation and Standings V0 implementation under review adds deterministic pending-game execution and derived Conference ordering without changing those Season facts.
+The design rule is **store facts, derive summaries**. Current round, round completion, regular-season completion, overall Program records, and Conference records are derived from the Schedule and recorded results rather than maintained as separate mutable counters or flags.
+
+## Accepted AI round simulation and standings
+
+AI Round Simulation and Standings V0 uses each Program's current Season Team and Rotation. Every ScheduledGame receives independent deterministic randomness derived from the explicit Season simulation seed, Season identity, and ScheduledGame identity, so executing games in a different order does not change unrelated results. Pending-round execution preserves completed games and may exclude Programs generically; completed results are immutable and are never automatically replayed.
+
+Conference standings first compare Conference winning percentage. An exact two-Team tie group uses completed head-to-head games when decisive. Split, unplayed, and three-or-more-Team ties fall through to overall winning percentage and then stable Program ID. Rankings and polls are separate concepts and remain deferred.
+
+The accepted 50-season diagnostic showed a strong relationship between initial Team Strength and long-run wins while individual seasons still produced upsets and over- or underperformance. This is an observational health check, not a tuning requirement.

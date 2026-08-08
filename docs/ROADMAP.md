@@ -92,12 +92,12 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 014 | Four-conference model and universe assembly | COMPLETE |
 | 015 | Schedule generation | COMPLETE |
 | 016 | Season State and progression | COMPLETE |
-| 017 | AI Round Simulation and Standings V0 | ACTIVE |
-| 019 | Season presentation | PLANNED |
+| 017 | AI Round Simulation and Standings V0 | COMPLETE |
+| 019 | Season Presentation V0 | NEXT |
 
 ## Phase 3 — League and Season Framework — ACTIVE
 
-The single-game coaching loop, regular-season structure, and canonical Season State are complete. AI Round Simulation and Standings V0 is the active implementation milestone.
+The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, and derived standings are complete. Season Presentation V0 is next; completing it will finish the League and Season Framework phase.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -126,7 +126,7 @@ The accepted implementation stores immutable Schedule structure, current Team/Ro
 
 The accepted inspection begins with 32 Programs, 24 rounds, 384 ScheduledGames, zero completed games, current Round 1, and valid Season state. Five recorded Round 1 games leave the current round at 1; all 16 advance it to 2. A legal custom Rotation preserves the Team and Season validity, while duplicate results, mismatched Teams, unknown ScheduledGames, and invalid Rotations are rejected.
 
-### 3.4 AI Round Simulation and Standings V0 — ACTIVE
+### 3.4 AI Round Simulation and Standings V0 — COMPLETE
 
 > Given the current Season State, deterministically simulate pending scheduled games using each Program's current Team and Rotation, record the resulting GameResults, advance naturally through rounds, and derive Conference standings from completed results.
 
@@ -134,16 +134,22 @@ The accepted inspection begins with 32 Programs, 24 rounds, 384 ScheduledGames, 
 - Use each Program's current Season Team and Rotation.
 - Record results through the existing `recordGameResult()` behavior and never re-simulate already-completed games.
 - Preserve partial-round progression.
-- Derive standings rather than storing them; define exact ordering and tiebreakers during this milestone.
+- Derive standings rather than storing them, using the accepted V0 ordering below.
 
-The implementation under review provides independent per-game seeds, current-Rotation scheduled-game simulation, partial-round execution with generic Program exclusions, and derived Conference standings. Its V0 tiebreak order is Conference win percentage, decisive head-to-head only for an exact two-Team tie group, overall win percentage, then stable Program ID. Season Presentation is not included.
+The accepted implementation provides independent per-game seeds, current-Rotation scheduled-game simulation, partial-round execution with generic Program exclusions, and derived Conference standings. Its V0 tiebreak order is Conference win percentage, decisive head-to-head only for an exact two-Team tie group, overall win percentage, then stable Program ID. Standings and records remain derived rather than stored.
 
-### 3.5 Season Presentation — PLANNED
+Validation confirmed that excluded pending games survive AI round execution, all 384 ScheduledGames can complete through production APIs, Season completion and validation pass, same-seed full seasons reproduce, game execution order does not affect individual outcomes, and different simulation seeds change Season outcomes. The 50-season strength diagnostic is observational rather than normative.
+
+### 3.5 Season Presentation V0 — NEXT
+
+> The user selects and controls a Program, sees the current Season context, manages its Rotation, plays or simulates its scheduled game, simulates remaining AI games in the round, and views updated schedule/results and Conference standings through the existing React application.
 
 - Season/dashboard home
 - Schedule and results
 - Standings
 - Upcoming matchup
+
+Exact screen composition and interaction details remain for the milestone. Season Presentation should consume existing Universe, Schedule, Season, simulation, and standings APIs rather than reimplement basketball state or rules.
 
 ## Phase 4 — Postseason — PLANNED
 

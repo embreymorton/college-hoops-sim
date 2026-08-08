@@ -34,6 +34,7 @@ The project currently includes:
 - Stable Fictional Basketball Universe V0 with 32 permanent Programs, four Conferences, validated identity/branding metadata, and order-independent deterministic Team/Rotation initialization
 - Schedule Generation V0 with 24 complete abstract rounds, 384 canonical games, reciprocal Conference play, distinct non-Conference opponents, exact home/away balance, structured validation, and deterministic input-order-independent generation
 - Season State and Progression V0 with initialized Team/Rotation state for all Programs, immutable Schedule structure, strict full-GameResult storage, persistent legal Rotation updates, partial-round support, derived progression and records, structured validation, and JSON-safe pure operations
+- AI Round Simulation and Standings V0 with independent per-game seeds, current-Rotation game execution, pending-round simulation and exclusions, complete 384-game Season execution, and derived Conference standings
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
@@ -49,16 +50,18 @@ stable fictional Universe
 → current Season basketball state
 → completed GameResults
 → derived records and current round
+→ autonomous regular-season simulation
+→ derived Conference standings
 ```
 
-Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. The active implementation under review now exercises complete autonomous regular seasons and Conference standings; Season presentation remains unimplemented.
+Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. The regular-season domain can now deterministically complete all 24 rounds and derive Conference tables. The remaining regular-season MVP gap is browser presentation and application integration.
 
-## Active milestone: AI Round Simulation and Standings V0
+## Next milestone: Season Presentation V0
 
-The implementation under review consumes current Season Teams and Rotations, deterministically simulates eligible pending games, records them through the accepted Season API, and derives Conference standings from completed results. Season presentation remains unimplemented.
+The next application layer should let one controlled Program use its current Team and Rotation, play or simulate its scheduled game, resolve the remaining AI games in the round, and inspect updated Season context. This browser workflow does not exist yet.
 
 ## Next major acceptance target
 
-> All programs can deterministically progress through the 24-round regular season, with AI games recorded into Season State and standings derived correctly from completed results.
+> A user can play through the 24-round regular season from the browser using one controlled program while all other scheduled games resolve through the existing AI simulation pipeline.
 
-AI round simulation and Conference standings are not yet accepted. The project does not contain a Season interface, national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI remains unchanged.
+The project does not contain a Season interface, national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI remains unchanged.

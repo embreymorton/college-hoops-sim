@@ -107,6 +107,26 @@ Season operations are pure: `recordGameResult()` and `updateProgramRotation()` r
 
 Partial rounds and out-of-order result insertion are supported. Current round is the lowest Schedule round with a pending game; round completion, regular-season completion, overall Program records, and Conference records are projections over Schedule plus recorded results. `controlledProgramId` is intentionally absent because user ownership belongs to future application or Dynasty state rather than the generic Season domain.
 
+The accepted autonomous regular-season pipeline composes existing boundaries rather than bypassing them:
+
+```text
+ScheduledGame
+      ↓
+Season Team + current Rotation
+      ↓
+independent deterministic game seed
+      ↓
+simulateGame()
+      ↓
+recordGameResult()
+      ↓
+Season projections
+      ↓
+records / standings / current round
+```
+
+Individual and pending-round simulation both write full results through `recordGameResult()`. Already-completed games remain unchanged, generic Program exclusions can leave a user-facing game pending, and completing the final pending game naturally changes the derived current round. Conference standings are transient `StandingRow` projections over Schedule and results, never canonical mutable Season state.
+
 ## Public API and imports
 
 Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game/round simulation, and derived Conference standings. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
@@ -115,7 +135,7 @@ Game Presentation V0 and Rotation Management V0 are complete. React renders dete
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 
-The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. Season State and Progression V0 is complete and accepted. The AI Round Simulation and Standings V0 implementation under review resolves pending games through Season queries, uses current Season Teams and Rotations, and writes results only through `recordGameResult()`. Standings remain projections and are never added to `SeasonState`.
+The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. Season State and Progression V0 and AI Round Simulation and Standings V0 are complete and accepted. Season Presentation V0 is the next application-layer milestone; it should consume these public projections and operations without creating UI-owned basketball truth.
 
 ## Enforcement
 
