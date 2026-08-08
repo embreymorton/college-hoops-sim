@@ -11,7 +11,7 @@ The product MVP should support one complete dynasty-season loop:
 - Recruit and develop players.
 - Advance into the next season with persistent, serializable state.
 
-## Completed: engine foundations and Team Strength
+## Completed basketball engine
 
 The project currently includes:
 
@@ -27,9 +27,13 @@ The project currently includes:
 - A serializable Team model with deterministic 12-player roster generation
 - A serializable Rotation model with validation and deterministic default allocation
 - Derived positional player OFF/DEF and rotation-weighted Team Strength ratings
+- Deterministic game outcomes with final scores, winners, and overtime
+- Complete full-roster Player box scores with minutes, points, shooting, rebounds, assists, steals, blocks, and turnovers
 
-## Completed: Single-Game Simulation
+The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
-Two generated teams with valid rotations can now produce a deterministic final score, winner, overtime count, and internally consistent Player box scores from an explicit seed. The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates full-roster minutes, points, traditional shooting, rebounds, assists, steals, blocks, and turnovers.
+## Next active milestone: Game Presentation
 
-The project does not yet contain possession simulation, schedules, standings, season progression, recruiting, offseason development, substitutions, fatigue simulation, multi-position eligibility, saves, or gameplay UI.
+The next milestone should connect the accepted engine through an application-state adapter and present a minimal matchup setup, final score, and Player box score. Basketball rules and deterministic simulation behavior must remain inside the framework-independent engine.
+
+The project does not yet contain season schedules, conferences, standings, season progression, a national tournament, recruiting, offseason player development, save/load dynasty state, substitutions, fatigue simulation, multi-position eligibility, possession simulation, or completed gameplay UI.

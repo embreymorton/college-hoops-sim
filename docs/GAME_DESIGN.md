@@ -111,6 +111,10 @@ Single-Game Simulation V0 converts two valid Rotations and their derived Team st
 
 The accepted Team scores remain authoritative. A deterministic allocation layer explains them with full-roster Player rows containing minutes, points, rebounds, assists, steals, blocks, turnovers, and traditional shooting lines. Player points always reconstruct the Team score, while shooting makes always reconstruct Player points. The layer does not represent possessions, pace, substitutions, fatigue, or play-by-play.
 
+This supports individual statistical storytelling beneath Team outcomes: stars can carry an offense or have quiet games, role players can spike, frontcourt Players retain stronger rebounding identities, guards tend to create more assists, and shooting efficiency varies from game to game. These performances explain the accepted result without becoming a second outcome simulation.
+
+Game Presentation is the next active milestone and should expose this existing information without adding new basketball systems.
+
 ## MVP world
 
 The eventual MVP targets approximately 32 fictional teams in four conferences. This is a scale target, not authorization to generate the league during the game-simulation milestone.

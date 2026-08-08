@@ -13,6 +13,8 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
+Single-Game Simulation and Player Box Scores V0 are complete. Game Presentation is the next active milestone; it consumes this pipeline without changing it.
+
 ## Implemented Rotation constraint
 
 Each natural position owns exactly 40 minutes, producing 200 regulation player-minutes per Team. Missing Player IDs in a Rotation mean zero minutes. Players cannot consume minutes at another position. This is an intentionally temporary simplification until flexible positional eligibility is explicitly designed.
@@ -181,9 +183,107 @@ Team box-score minutes = 200 + (5 × overtimePeriods)
 
 ### Points and shooting
 
-The completed Team score is allocated one point at a time among active Players using seeded weighted selection. Opportunity primarily combines assigned minutes, derived Player offense, shooting, finishing, and a game-specific performance multiplier. Zero-minute Players have zero opportunity.
+The completed Team score is allocated one point at a time among active Players using seeded weighted selection. Define normalized rating and clamping helpers as:
+
+```text
+N(rating) = (rating − 40) / 59
+clamp(value, low, high) = min(high, max(low, value))
+```
+
+For each active Player, a scoring rating and opportunity weight are calculated once per game:
+
+```text
+Scoring rating = Player OFF × 0.45
+               + shooting × 0.30
+               + finishing × 0.25
+
+Ability multiplier = exp((Scoring rating − 70) / 25)
+Performance multiplier = exp(Z × 0.30), where Z ~ Normal(0, 1)
+
+Scoring opportunity weight = minutes
+                           × Ability multiplier
+                           × Performance multiplier
+```
+
+Each point in the authoritative Team score is then assigned through a weighted categorical draw over active Players. This makes the sum exact by construction. Zero-minute Players have zero opportunity.
 
 After Player points are fixed, each total is decomposed into two-point field goals, three-point field goals, and made free throws. Shooting and position influence three-point involvement; finishing and athleticism influence two-point and free-throw involvement. Attribute-informed efficiency estimates then generate missed attempts without changing points.
+
+Target three-point and free-throw shares are:
+
+```text
+Target 3-point share = clamp(
+    0.14 + N(shooting) × 0.28 + position adjustment,
+    0.04,
+    0.48
+)
+
+Target FT share = clamp(
+    0.10 + N(finishing) × 0.10 + N(athleticism) × 0.04,
+    0.08,
+    0.25
+)
+```
+
+| Position | 3-point share adjustment |
+| --- | ---: |
+| PG | +0.04 |
+| SG | +0.06 |
+| SF | +0.02 |
+| PF | −0.04 |
+| C | −0.10 |
+
+The target number of points from threes receives `Normal(0, 2)` variation, and the target made-free-throw count receives `Normal(0, 1.5)` variation. The implementation enumerates every non-negative integer combination of `2PM`, `3PM`, and `FTM` that reconstructs the allocated Player points, then chooses the combination minimizing:
+
+```text
+abs(3 × 3PM − target 3-point points) / 3
+    + abs(FTM − target FT points) / 2
+```
+
+Missed attempts use attribute-informed efficiency values:
+
+```text
+2P% = clamp(
+    0.40 + N(finishing) × 0.19 + N(athleticism) × 0.04
+         + Z × 0.025,
+    0.35,
+    0.68
+)
+
+3P% = clamp(
+    0.26 + N(shooting) × 0.18 + Z × 0.02,
+    0.22,
+    0.48
+)
+
+FT skill = (shooting + ballHandling) / 2
+
+FT% = clamp(
+    0.58 + N(FT skill) × 0.25 + Z × 0.025,
+    0.50,
+    0.92
+)
+```
+
+With `Poisson(λ)` denoting the existing seeded integer count sampler, misses are:
+
+```text
+2P misses ~ Poisson(
+    2PM × (1 − 2P%) / 2P% + (minutes / 40) × 0.35
+)
+
+3P misses ~ Poisson(
+    3PM × (1 − 3P%) / 3P%
+        + (minutes / 40) × 0.30 × (0.50 + N(shooting))
+)
+
+FT misses ~ Poisson(FTM × (1 − FT%) / FT%)
+
+FGM = 2PM + 3PM
+FGA = FGM + 2P misses + 3P misses
+3PA = 3PM + 3P misses
+FTA = FTM + FT misses
+```
 
 Every row enforces:
 
@@ -199,9 +299,78 @@ points = 2 × (FGM − 3PM) + 3 × 3PM + FTM
 
 ### Other statistics
 
-Rebounds use minutes, position, rebounding, and athleticism. Assists use minutes, position, playmaking, and ball handling. Steals use minutes, position, perimeter defense, and athleticism. Blocks use minutes, position, interior defense, athleticism, and height. Turnovers use minutes, positional role, scoring involvement, ball handling, and playmaking. Each is sampled as a non-negative integer from a simple seeded game-level count model.
+Rebounds, assists, steals, blocks, and turnovers are independent seeded Poisson counts. Define the shared two-attribute factor as:
 
-All box-score tuning values are centralized and named in the simulation module. Their detailed values remain implementation-level calibration inputs until the inspection output is reviewed and accepted.
+```text
+R(primary, secondary, a, b) = clamp(
+    1 + (primary − 70) × a + (secondary − 70) × b,
+    0.35,
+    1.75
+)
+
+minute scale = minutes / 40
+```
+
+The position baselines are per 40 minutes:
+
+| Position | REB | AST | STL | BLK | TO |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| PG | 4.00 | 6.00 | 1.25 | 0.15 | 2.50 |
+| SG | 4.80 | 3.00 | 1.15 | 0.25 | 1.80 |
+| SF | 6.20 | 2.70 | 1.00 | 0.55 | 1.60 |
+| PF | 8.00 | 1.60 | 0.75 | 1.05 | 1.40 |
+| C | 9.50 | 1.30 | 0.55 | 1.55 | 1.50 |
+
+Expected values are:
+
+```text
+REB λ = position REB × minute scale
+      × R(rebounding, athleticism, 0.012, 0.003)
+
+AST λ = position AST × minute scale
+      × R(playmaking, ballHandling, 0.013, 0.004)
+
+STL λ = position STL × minute scale
+      × R(perimeterDefense, athleticism, 0.010, 0.004)
+
+Height factor = clamp(1 + (height − 78) × 0.04, 0.65, 1.40)
+
+BLK λ = position BLK × minute scale × Height factor
+      × R(interiorDefense, athleticism, 0.012, 0.003)
+```
+
+Turnovers also respond to scoring involvement:
+
+```text
+Minute share = minutes / 200
+Scoring share = points / max(1, Team score)
+
+Involvement factor = clamp(
+    0.75 + 0.25 × Scoring share / max(Minute share, 0.01),
+    0.65,
+    1.40
+)
+
+Turnover skill factor = clamp(
+    1 + (70 − ballHandling) × 0.010
+      + (playmaking − 70) × 0.003,
+    0.55,
+    1.55
+)
+
+TO λ = position TO × minute scale
+     × Involvement factor × Turnover skill factor
+```
+
+Each statistic is sampled as `Poisson(λ)`. These are game-level allocations, not events linked to opponent possessions.
+
+### Determinism, ordering, and scope
+
+Box-score generation continues from the same explicit seeded RNG after the final Team outcome has been resolved. Home Player stats are allocated first, then away Player stats. Full-roster rows remain in Team roster order; weighted selection also iterates active Players in roster order. Identical complete inputs and seed therefore produce deeply equal `GameResult` values.
+
+The final Team scores, winner, and overtime count are determined before either box score is generated. Box-score RNG consumption cannot change them. This is a game-level statistical allocation model, not possession-by-possession simulation. Assists are not reconciled to made field goals, defensive events are not reconciled to opponent outcomes, and rebounds are not linked to missed shots. Cross-team consistency diagnostics are a future consideration.
+
+The constants and formulas above are the accepted Player Box Scores V0 baseline. They remain centralized in the simulation module for deliberate future tuning.
 
 ### Implemented invariants
 
@@ -216,5 +385,7 @@ All box-score tuning values are centralized and named in the simulation module. 
 - Zero-minute Players receive explicit all-zero rows.
 - Inputs are not mutated.
 - Inputs and results survive a JSON serialize/parse round trip.
+
+Deterministic inspection across `10,000` Team box scores observed zero failures for point reconciliation, minute reconciliation, zero-minute behavior, and integer/shooting arithmetic across `120,000` Player rows. These are validation observations, not tuning targets.
 
 Unit tests lock down deterministic behavior, accepted outcome regression values, box-score reconciliation, attribute effects, overtime allocation, rotation rejection, serialization, and non-mutation. Deterministic inspection commands report broad outcome and Player-stat distributions over many seeds. Statistical assertions use generous bounds so they detect structural errors rather than harmless tuning changes.

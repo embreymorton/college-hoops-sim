@@ -29,7 +29,7 @@ Each milestone should remain small enough to test independently. Starting a late
 
 Team outcomes, final scores, full-roster Player statistics, shooting arithmetic, minute reconciliation, and deterministic statistical inspection are implemented.
 
-## 4. Game Presentation
+## 4. Game Presentation — next active milestone
 
 - Connect the engine through an application-state adapter.
 - Add a minimal matchup setup and box-score UI.
@@ -51,6 +51,9 @@ Team outcomes, final scores, full-roster Player statistics, shooting arithmetic,
 - Tighter or more realistic rotations
 - Player roles and playing-time expectations
 - Explicit Player or Team archetypes
+- Cross-team statistical consistency diagnostics
+- Possible offensive/defensive rebound split
+- Fouls and other detailed box-score fields
 - Advanced tactics and detailed play-by-play
 - Injuries and transfers
 - NIL and finances
