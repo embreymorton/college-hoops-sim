@@ -11,7 +11,7 @@ The product MVP should support one complete dynasty-season loop:
 - Recruit and develop players.
 - Advance into the next season with persistent, serializable state.
 
-## Current milestone: foundation
+## Current milestone: engine foundations
 
 This milestone delivers only:
 
@@ -21,10 +21,11 @@ This milestone delivers only:
 - Vitest and Testing Library configuration
 - Source-of-truth design and architecture documentation
 - Lint, type-check, test, and production-build commands
+- Deterministic seeded RNG utilities
+- A serializable Player model with position-weighted derived overall ratings
 
-The milestone explicitly excludes players, teams, RNG implementation, game simulation, league generation, schedules, recruiting, development, saves, and gameplay UI.
+The current scope explicitly excludes teams, rotations, player generation, game simulation, league generation, schedules, recruiting, development progression, saves, and gameplay UI.
 
 ## Next milestone acceptance target
 
 Before expanding the dynasty loop, two generated teams must be simulatable entirely through TypeScript and produce a plausible final score plus internally consistent player and team box scores. Identical inputs and seed must produce identical output.
-
