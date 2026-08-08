@@ -69,6 +69,24 @@ Potential is generated from current overall as an approximate development ceilin
 
 These ranges describe initial generation only. They do not implement or guarantee future progression outcomes.
 
+## Initial team and roster model
+
+A Team is a plain serializable record containing ID, name, abbreviation, prestige, and exactly 12 players. It does not store overall rating, record, ranking, rotation, coaching, recruiting, conference, or schedule state.
+
+Prestige is long-term program quality and reputation on an inclusive 1–100 scale. It will eventually inform recruiting, expectations, and program progression; in the current milestone it affects only initial roster talent.
+
+Each roster contains two players at every natural position plus one extra player at two distinct, seeded positions. Position counts therefore vary between two and three while always covering `PG`, `SG`, `SF`, `PF`, and `C`.
+
+Class-year construction starts with two players in every year, then adds four seeded selections from a bag containing two of each year. A roster therefore has two to four players in each class without forcing the same distribution on every team.
+
+Roster quality uses a tunable program baseline:
+
+```text
+baseline talent = 42 + (prestige × 0.42) + team variance (-3 to +3)
+```
+
+Twelve ordered slot offsets (`+9, +6, +4, +3, +2, +1, 0, -1, -2, -3, -5, -7`) create a star-to-depth hierarchy. Each slot also receives `-3` to `+3` variance. The top slot has a 12% chance of an additional `+4` to `+9` breakout, allowing occasional standout players at lower-prestige programs. Final player talent inputs remain bounded to 40–99 and are passed through the existing Player generator unchanged.
+
 ## MVP world
 
 The eventual MVP targets approximately 32 fictional teams in four conferences. This is a scale target, not authorization to generate the league during the game-simulation milestone.

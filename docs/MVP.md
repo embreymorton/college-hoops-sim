@@ -24,8 +24,9 @@ This milestone delivers only:
 - Deterministic seeded RNG utilities
 - A serializable Player model with position-weighted derived overall ratings
 - Deterministic generation of individual fictional players
+- A serializable Team model with deterministic 12-player roster generation
 
-The current scope explicitly excludes teams, rotations, roster generation, game simulation, league generation, schedules, recruiting, development progression, saves, and gameplay UI.
+The current scope explicitly excludes rotations, game simulation, league generation, conferences, schedules, standings, recruiting, development progression, saves, and gameplay UI.
 
 ## Next milestone acceptance target
 

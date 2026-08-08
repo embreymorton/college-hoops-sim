@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "sim:players": "node --import tsx scripts/inspectPlayerGeneration.ts",
+    "sim:rosters": "node --import tsx scripts/inspectRosterGeneration.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

@@ -10,7 +10,7 @@ Each milestone should remain small enough to test independently. Starting a late
 
 ## 1. Domain and deterministic generation — in progress
 
-Seeded RNG, the initial Player model with derived positional overall ratings, and deterministic generation of individual players are complete. Team and rotation types and roster/team generation have not started.
+Seeded RNG, Player and Team domain models, individual player generation, and deterministic 12-player roster generation are complete. Rotation types and game simulation have not started.
 
 - Define serializable player, attribute, position, team, and rotation types.
 - Implement position-aware derived overall ratings.

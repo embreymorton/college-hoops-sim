@@ -9,6 +9,7 @@ A fictional college basketball dynasty simulator. The repository is currently at
 - `npm run test:watch` — run Vitest in watch mode
 - `npm run lint` — run ESLint
 - `npm run sim:players` — print the deterministic player-generation inspection report
+- `npm run sim:rosters` — print deterministic roster examples and prestige validation
 - `npm run typecheck` — run TypeScript checks
 - `npm run build` — type-check and create a production build
 - `npm run check` — run lint, tests, and build
