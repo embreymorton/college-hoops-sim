@@ -91,14 +91,14 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 013 | Stable 32-program fictional program catalog | COMPLETE |
 | 014 | Four-conference model and universe assembly | COMPLETE |
 | 015 | Schedule generation | COMPLETE |
-| 016 | Season State and progression | NEXT |
+| 016 | Season State and progression | ACTIVE |
 | 017 | AI game simulation and results progression | PLANNED |
 | 018 | Standings | PLANNED |
 | 019 | Season presentation | PLANNED |
 
 ## Phase 3 — League and Season Framework — ACTIVE
 
-The single-game coaching loop and regular-season structure are complete. Season State and round-by-round progression are next.
+The single-game coaching loop and regular-season structure are complete. Season State and fact-driven round progression are the active implementation milestone.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -119,11 +119,11 @@ The accepted implementation uses 24 complete abstract rounds with all 32 Program
 
 Validation confirms reciprocal Conference hosting, zero duplicate non-Conference matchups, cross-Conference-only non-Conference play, same-seed reproduction, Program/Conference input-order independence, and different-seed schedule variation. The inspection sample produced valid schedules for 100 of 100 deterministic seeds.
 
-### 3.3 Season State and Progression V0 — NEXT
+### 3.3 Season State and Progression V0 — ACTIVE
 
 > Combine an initialized Universe with a generated Schedule into serializable Season state that can progress round by round, record completed `GameResult` values, and expose enough derived information for records, Conference records, upcoming games, and later standings.
 
-The Schedule should remain immutable Season structure. Completed results should reference stable ScheduledGame IDs, and records should be derived rather than maintained as duplicate mutable truth where practical. Exact Season State interfaces and the boundary with later AI round simulation remain open for implementation review.
+The implementation under review stores immutable Schedule structure, current Team/Rotation state by Program ID, and complete GameResults once by ScheduledGame ID. It supports legal Rotation updates, out-of-order and partial-round result recording, derived current-round/completion queries, and derived Program and Conference records without duplicate counters. Automatic AI round simulation, standings, and presentation remain planned separately.
 
 ### 3.4 AI Game Simulation / Standings — PLANNED
 

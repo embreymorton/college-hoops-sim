@@ -40,19 +40,21 @@ The repository now contains a permanent fictional basketball world rather than o
 
 The browser now supports the first meaningful coaching decision. HOME is temporarily the coached Team in the exhibition workflow; AWAY uses its generated default Rotation. A custom home Rotation persists through Simulate Again and the return to pregame, and resets when the coached home program changes.
 
-The completed infrastructure now supports:
+The completed pre-Season infrastructure supports:
 
 ```text
 stable fictional Universe
 → legal 24-round regular-season Schedule
 ```
 
-It cannot yet progress through that Schedule as a season.
+The active Season State layer now supplies the fact storage and pure derivations needed for that progression, while automatic game execution remains separate.
 
-## Next active milestone: Season State and Progression V0
+## Active milestone: Season State and Progression V0
+
+The implementation under review can initialize serializable Season basketball state, persist legal Rotation changes, record complete GameResults by ScheduledGame ID in any order, and derive current round, completion, and Program/Conference records. It does not automatically simulate scheduled games or calculate standings.
 
 ## Next major acceptance target
 
 > A Season object can advance through scheduled rounds while completed GameResults are recorded deterministically and current Program records can be derived from those results.
 
-The project does not yet contain Season State, played schedule results, standings, season progression, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI is not a season interface.
+The project does not yet contain automatic AI round simulation, standings, a season interface, a national tournament, recruiting, offseason player development, dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI remains unchanged.
