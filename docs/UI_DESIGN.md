@@ -44,3 +44,5 @@ Rankings
 Tournament
 Coach profile
 Dynasty dashboard
+
+The matchup/final-score area should borrow visual language from an arena center court / broadcast scoreboard, without directly imitating ESPN or NCAA branding.
