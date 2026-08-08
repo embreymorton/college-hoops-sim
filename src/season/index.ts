@@ -14,6 +14,12 @@ export {
   isRoundComplete,
 } from './queries'
 export { recordGameResult, updateProgramRotation } from './seasonState'
+export {
+  simulatePendingGamesInCurrentRound,
+  simulatePendingGamesInRound,
+  simulateScheduledGame,
+} from './simulation'
+export { deriveConferenceStandings } from './standings'
 export { validateSeasonState } from './validation'
 export type {
   CompletedSeasonGame,
@@ -24,4 +30,8 @@ export type {
   SeasonValidationIssue,
   SeasonValidationIssueCode,
   SeasonValidationResult,
+  SimulatePendingGamesInCurrentRoundOptions,
+  SimulatePendingGamesInRoundOptions,
+  SimulateScheduledGameOptions,
+  StandingRow,
 } from './domain'

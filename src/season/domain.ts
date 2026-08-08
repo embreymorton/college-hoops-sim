@@ -1,4 +1,4 @@
-import type { GameResult, Rotation, Team } from '../engine'
+import type { GameResult, RngSeed, Rotation, Team } from '../engine'
 import type { RegularSeasonSchedule, ScheduledGame } from '../schedule'
 import type { InitializedUniverse, UniverseDefinition } from '../universe'
 
@@ -33,6 +33,36 @@ export interface CompletedSeasonGame {
 export interface ProgramRecord {
   readonly wins: number
   readonly losses: number
+}
+
+export interface SimulateScheduledGameOptions {
+  readonly season: SeasonState
+  readonly scheduledGameId: string
+  readonly simulationSeed: RngSeed
+}
+
+export interface SimulatePendingGamesInRoundOptions {
+  readonly season: SeasonState
+  readonly round: number
+  readonly simulationSeed: RngSeed
+  readonly excludedProgramIds?: readonly string[]
+}
+
+export interface SimulatePendingGamesInCurrentRoundOptions {
+  readonly season: SeasonState
+  readonly simulationSeed: RngSeed
+  readonly excludedProgramIds?: readonly string[]
+}
+
+/** Serializable derived conference-standing projection; never Season state. */
+export interface StandingRow {
+  readonly programId: string
+  readonly wins: number
+  readonly losses: number
+  readonly conferenceWins: number
+  readonly conferenceLosses: number
+  readonly winPercentage: number
+  readonly conferenceWinPercentage: number
 }
 
 export type SeasonValidationIssueCode =

@@ -1,6 +1,6 @@
 # Roadmap
 
-Milestones remain small enough to test independently. A later phase or unlisted system may not be implemented early without explicit scope discussion. Status labels are deliberate: **COMPLETE** is implemented, validated, and accepted; **NEXT** is the immediate milestone; **PLANNED** expresses later intent without implementation; and **DEFERRED** is outside the core MVP.
+Milestones remain small enough to test independently. A later phase or unlisted system may not be implemented early without explicit scope discussion. Status labels are deliberate: **COMPLETE** is implemented, validated, and accepted; **ACTIVE** is implemented or being validated in the current milestone; **NEXT** is the immediate future milestone; **PLANNED** expresses later intent without implementation; and **DEFERRED** is outside the core MVP.
 
 Exact formulas and constants become source-of-truth documentation after implementation and validation, not before. Validation sample outputs inform acceptance but are not roadmap requirements.
 
@@ -92,12 +92,12 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 014 | Four-conference model and universe assembly | COMPLETE |
 | 015 | Schedule generation | COMPLETE |
 | 016 | Season State and progression | COMPLETE |
-| 017 | AI Round Simulation and Standings V0 | NEXT |
+| 017 | AI Round Simulation and Standings V0 | ACTIVE |
 | 019 | Season presentation | PLANNED |
 
 ## Phase 3 — League and Season Framework — ACTIVE
 
-The single-game coaching loop, regular-season structure, and canonical Season State are complete. AI Round Simulation and Standings V0 is next.
+The single-game coaching loop, regular-season structure, and canonical Season State are complete. AI Round Simulation and Standings V0 is the active implementation milestone.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -126,7 +126,7 @@ The accepted implementation stores immutable Schedule structure, current Team/Ro
 
 The accepted inspection begins with 32 Programs, 24 rounds, 384 ScheduledGames, zero completed games, current Round 1, and valid Season state. Five recorded Round 1 games leave the current round at 1; all 16 advance it to 2. A legal custom Rotation preserves the Team and Season validity, while duplicate results, mismatched Teams, unknown ScheduledGames, and invalid Rotations are rejected.
 
-### 3.4 AI Round Simulation and Standings V0 — NEXT
+### 3.4 AI Round Simulation and Standings V0 — ACTIVE
 
 > Given the current Season State, deterministically simulate pending scheduled games using each Program's current Team and Rotation, record the resulting GameResults, advance naturally through rounds, and derive Conference standings from completed results.
 
@@ -135,6 +135,8 @@ The accepted inspection begins with 32 Programs, 24 rounds, 384 ScheduledGames, 
 - Record results through the existing `recordGameResult()` behavior and never re-simulate already-completed games.
 - Preserve partial-round progression.
 - Derive standings rather than storing them; define exact ordering and tiebreakers during this milestone.
+
+The implementation under review provides independent per-game seeds, current-Rotation scheduled-game simulation, partial-round execution with generic Program exclusions, and derived Conference standings. Its V0 tiebreak order is Conference win percentage, decisive head-to-head only for an exact two-Team tie group, overall win percentage, then stable Program ID. Season Presentation is not included.
 
 ### 3.5 Season Presentation — PLANNED
 

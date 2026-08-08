@@ -15,14 +15,14 @@ The completed single-game pipeline remains a game-level model. Possessions, play
 
 Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, and Season State and Progression V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season State stores each complete simulator-produced `GameResult` against its ScheduledGame ID without changing any game simulation formula or behavior.
 
-Automatic AI Round Simulation and Standings V0 is next, not implemented. Its deterministic boundary should give each scheduled game an independent seed derived conceptually as:
+The AI Round Simulation and Standings V0 implementation under review gives each scheduled game an independent seed derived conceptually as:
 
 ```text
 Season identity + ScheduledGame ID
 → independent game simulation seed
 ```
 
-This keeps a game's outcome independent of execution order. Future progression should use current Season Team/Rotation inputs and write completed output through `recordGameResult()`.
+The actual namespace retains the explicit simulation seed's numeric/string type and includes Season identity, Season number, and ScheduledGame ID. This keeps a game's outcome independent of execution order. Scheduled-game and round operations use current Season Team/Rotation inputs and write completed output through `recordGameResult()` without changing the simulation formulas below.
 
 ## Implemented Rotation constraint
 

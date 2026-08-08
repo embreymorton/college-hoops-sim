@@ -1,6 +1,6 @@
 # College Hoops Simulator
 
-A fictional college basketball dynasty simulator. The validated Basketball Engine V0, first playable single-game coaching loop, Stable Fictional Basketball Universe V0, Schedule Generation V0, and Season State and Progression V0 are complete. AI Round Simulation and Standings V0 is next.
+A fictional college basketball dynasty simulator. The validated Basketball Engine V0, first playable single-game coaching loop, Stable Fictional Basketball Universe V0, Schedule Generation V0, and Season State and Progression V0 are complete. AI Round Simulation and Standings V0 is the active milestone.
 
 ## Commands
 
@@ -17,6 +17,7 @@ A fictional college basketball dynasty simulator. The validated Basketball Engin
 - `npm run sim:universe` — inspect Universe V0 definitions and deterministic initialization
 - `npm run sim:schedule` — inspect deterministic Schedule V0 structure and validation
 - `npm run sim:season-state` — inspect Season initialization, partial rounds, records, and Rotation persistence
+- `npm run sim:season` — inspect deterministic round simulation, standings, and complete regular seasons
 - `npm run typecheck` — run TypeScript checks
 - `npm run build` — type-check and create a production build
 - `npm run check` — run lint, tests, and build

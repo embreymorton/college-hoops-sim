@@ -16,6 +16,7 @@
     "sim:universe": "node --import tsx scripts/inspectUniverse.ts",
     "sim:schedule": "node --import tsx scripts/inspectSchedule.ts",
     "sim:season-state": "node --import tsx scripts/inspectSeasonState.ts",
+    "sim:season": "node --import tsx scripts/inspectSeason.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

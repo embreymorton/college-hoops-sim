@@ -51,14 +51,14 @@ stable fictional Universe
 → derived records and current round
 ```
 
-Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. A complete regular season is not yet automatically simulated: AI game progression, Conference standings ordering and tiebreakers, and Season presentation remain unimplemented.
+Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. The active implementation under review now exercises complete autonomous regular seasons and Conference standings; Season presentation remains unimplemented.
 
-## Next milestone: AI Round Simulation and Standings V0
+## Active milestone: AI Round Simulation and Standings V0
 
-The next layer will consume current Season Teams and Rotations, deterministically simulate pending scheduled games, record them through the accepted Season API, and derive Conference standings from completed results.
+The implementation under review consumes current Season Teams and Rotations, deterministically simulates eligible pending games, records them through the accepted Season API, and derives Conference standings from completed results. Season presentation remains unimplemented.
 
 ## Next major acceptance target
 
 > All programs can deterministically progress through the 24-round regular season, with AI games recorded into Season State and standings derived correctly from completed results.
 
-The project does not yet contain automatic AI round simulation, Conference standings ordering or tiebreakers, a Season interface, a national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI remains unchanged.
+AI round simulation and Conference standings are not yet accepted. The project does not contain a Season interface, national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The current six-program exhibition UI remains unchanged.
