@@ -1,24 +1,11 @@
 import {
-  MAX_PLAYER_RATING,
-  MIN_PLAYER_RATING,
+  assertValidPlayerAttributes,
   type Player,
   type PlayerAttributes,
   type Position,
 } from './player'
 
 type AttributeWeights = Readonly<Record<keyof PlayerAttributes, number>>
-
-const ATTRIBUTE_NAMES = [
-  'finishing',
-  'shooting',
-  'playmaking',
-  'ballHandling',
-  'perimeterDefense',
-  'interiorDefense',
-  'rebounding',
-  'athleticism',
-  'stamina',
-] as const satisfies readonly (keyof PlayerAttributes)[]
 
 /**
  * Position weights used by calculateOverall. Values sum to 1.00 per position.
@@ -89,28 +76,12 @@ const POSITION_WEIGHTS = {
   },
 } as const satisfies Readonly<Record<Position, AttributeWeights>>
 
-function assertValidAttributes(attributes: PlayerAttributes): void {
-  for (const name of ATTRIBUTE_NAMES) {
-    const rating = attributes[name]
-
-    if (
-      !Number.isFinite(rating) ||
-      rating < MIN_PLAYER_RATING ||
-      rating > MAX_PLAYER_RATING
-    ) {
-      throw new RangeError(
-        `${name} must be between ${MIN_PLAYER_RATING} and ${MAX_PLAYER_RATING}`,
-      )
-    }
-  }
-}
-
 /** Calculates current ability; potential deliberately has no effect. */
 export function calculateOverall(player: Player): number {
   const { attributes } = player
   const weights = POSITION_WEIGHTS[player.position]
 
-  assertValidAttributes(attributes)
+  assertValidPlayerAttributes(attributes)
 
   const weightedRating =
     attributes.finishing * weights.finishing +

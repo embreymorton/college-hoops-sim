@@ -21,7 +21,7 @@ src/
   store/                 Zustand stores and engine adapters
   engine/
     domain/              Serializable domain types and derived ratings
-    generation/          Seeded player/team generation
+    generation/          Player/team generation and default rotation derivation
     random/              Seeded RNG abstraction and implementation
     simulation/          Pure game simulation and box-score aggregation
     index.ts             Engine's public API
@@ -47,4 +47,3 @@ Consumers should eventually import engine capabilities from `src/engine/index.ts
 ## Enforcement
 
 ESLint rejects framework, store, UI-layer imports, and common browser globals in `src/engine`. Tests must cover domain invariants, serialization, aggregation consistency, and deterministic seeded behavior as those features are added.
-

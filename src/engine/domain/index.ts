@@ -7,6 +7,30 @@ export {
 } from './player'
 export type { ClassYear, Player, PlayerAttributes, Position } from './player'
 export {
+  calculatePositionMinutes,
+  calculateTotalMinutes,
+  getPlayersByMinutes,
+  MAX_PLAYER_MINUTES,
+  MINUTES_PER_POSITION,
+  TOTAL_ROTATION_MINUTES,
+  validateRotation,
+} from './rotation'
+export type {
+  PlayerRotationMinutes,
+  Rotation,
+  RotationValidationIssue,
+  RotationValidationIssueCode,
+  RotationValidationResult,
+} from './rotation'
+export {
+  calculatePlayerDefense,
+  calculatePlayerOffense,
+  calculateTeamDefense,
+  calculateTeamOffense,
+  calculateTeamStrength,
+} from './strength'
+export type { TeamStrength } from './strength'
+export {
   calculateRosterAverage,
   calculateTopPlayersAverage,
   MAX_TEAM_PRESTIGE,

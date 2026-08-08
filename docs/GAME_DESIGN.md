@@ -87,6 +87,20 @@ baseline talent = 42 + (prestige × 0.42) + team variance (-3 to +3)
 
 Twelve ordered slot offsets (`+9, +6, +4, +3, +2, +1, 0, -1, -2, -3, -5, -7`) create a star-to-depth hierarchy. Each slot also receives `-3` to `+3` variance. The top slot has a 12% chance of an additional `+4` to `+9` breakout, allowing occasional standout players at lower-prestige programs. Final player talent inputs remain bounded to 40–99 and are passed through the existing Player generator unchanged.
 
+## Initial rotation model
+
+A Rotation is a plain serializable mapping from player ID to assigned minutes. Missing player IDs mean zero minutes; generated rotations omit zero-minute entries. Total minutes, positional totals, starters, roles, and depth-chart ranks are derived rather than stored.
+
+The v0.1 model assigns each natural position exactly 40 minutes, for 200 total player-minutes. Players may consume minutes only at their listed position. This restriction is intentionally temporary: flexible positional eligibility can replace it in a later explicitly scoped milestone.
+
+Default rotations are deterministic and allocate each position independently. Player overall feeds a softmax weighting with a quality temperature of 5, so larger talent gaps produce more top-heavy minutes while close players split more evenly. The top two natural-position players remain eligible; a third-or-deeper player must project to at least five initial weighted minutes or remains at zero. When backups exist, a player is capped at 36 minutes; a sole player at a position may play all 40. Integer rounding preserves exactly 40 minutes per position. Stamina is not weighted separately because it already contributes to derived overall, and no fatigue behavior exists yet.
+
+Rotation validation returns structured, serializable issues for unknown players, non-finite or out-of-range player minutes, positional totals other than 40, and team totals other than 200.
+
+## Initial derived team strength
+
+Player offense and defense are separate position-weighted ratings derived from current attributes. Potential, class year, and stamina do not directly enter these skill formulas. Team offense and defense weight active players by their share of the valid 200-minute rotation, and team overall is their balanced average. These ratings are never stored on Player or Team. The tunable v0.1 weights are documented in `SIMULATION.md`.
+
 ## MVP world
 
 The eventual MVP targets approximately 32 fictional teams in four conferences. This is a scale target, not authorization to generate the league during the game-simulation milestone.

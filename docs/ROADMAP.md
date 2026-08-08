@@ -8,9 +8,9 @@ Each milestone should remain small enough to test independently. Starting a late
 - Establish engine/UI boundaries and documentation.
 - Verify lint, test, type-check, and build workflows.
 
-## 1. Domain and deterministic generation — in progress
+## 1. Domain and deterministic generation — complete
 
-Seeded RNG, Player and Team domain models, individual player generation, and deterministic 12-player roster generation are complete. Rotation types and game simulation have not started.
+Seeded RNG, Player, Team, and Rotation domain models, individual player and 12-player roster generation, rotation validation, deterministic default rotations, and rotation-weighted team strength are complete. Game simulation has not started.
 
 - Define serializable player, attribute, position, team, and rotation types.
 - Implement position-aware derived overall ratings.

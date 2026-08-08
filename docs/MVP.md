@@ -25,8 +25,10 @@ This milestone delivers only:
 - A serializable Player model with position-weighted derived overall ratings
 - Deterministic generation of individual fictional players
 - A serializable Team model with deterministic 12-player roster generation
+- A serializable Rotation model with validation and deterministic default allocation
+- Derived positional player OFF/DEF and rotation-weighted Team Strength ratings
 
-The current scope explicitly excludes rotations, game simulation, league generation, conferences, schedules, standings, recruiting, development progression, saves, and gameplay UI.
+The current scope explicitly excludes game simulation, substitutions, fatigue, multi-position eligibility, league generation, conferences, schedules, standings, recruiting, development progression, saves, and gameplay UI.
 
 ## Next milestone acceptance target
 

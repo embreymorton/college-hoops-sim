@@ -9,6 +9,8 @@
     "lint": "eslint .",
     "sim:players": "node --import tsx scripts/inspectPlayerGeneration.ts",
     "sim:rosters": "node --import tsx scripts/inspectRosterGeneration.ts",
+    "sim:rotations": "node --import tsx scripts/inspectRotationGeneration.ts",
+    "sim:strength": "node --import tsx scripts/inspectTeamStrength.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",
