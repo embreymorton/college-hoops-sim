@@ -1,4 +1,4 @@
-import { useGamePresentationStore } from '../store/gamePresentationStore'
+import { useGamePresentationStore } from '../store'
 import { PostgameScreen } from './PostgameScreen'
 import { PregameScreen } from './PregameScreen'
 

@@ -1,3 +1,6 @@
-// Zustand application-state adapters will live here, outside the engine.
-export {}
-
+export { useGamePresentationStore } from './gamePresentationStore'
+export type {
+  DemoTeamSetup,
+  GamePresentationPhase,
+  GamePresentationState,
+} from './gamePresentationStore'

@@ -14,7 +14,7 @@ import {
   DEFAULT_AWAY_PROGRAM_ID,
   DEFAULT_HOME_PROGRAM_ID,
   getDemoProgram,
-} from '../app/demoPrograms'
+} from '../demo/demoPrograms'
 
 /** One demo program's generated Team, its default Rotation, and derived Team Strength. */
 export interface DemoTeamSetup {
@@ -73,7 +73,9 @@ export interface GamePresentationState {
   readonly result: GameResult | null
   /** Number of games simulated for the current home/away pairing. */
   readonly simulationSequence: number
+  /** No-op if programId matches the current away program. */
   setHomeProgram(programId: string): void
+  /** No-op if programId matches the current home program. */
   setAwayProgram(programId: string): void
   simulate(): void
   changeMatchup(): void
@@ -90,6 +92,10 @@ export const useGamePresentationStore = create<GamePresentationState>(
     simulationSequence: 0,
 
     setHomeProgram(programId) {
+      if (programId === get().awayProgramId) {
+        return
+      }
+
       set({
         homeProgramId: programId,
         homeSetup: getDemoTeamSetup(programId),
@@ -100,6 +106,10 @@ export const useGamePresentationStore = create<GamePresentationState>(
     },
 
     setAwayProgram(programId) {
+      if (programId === get().homeProgramId) {
+        return
+      }
+
       set({
         awayProgramId: programId,
         awaySetup: getDemoTeamSetup(programId),

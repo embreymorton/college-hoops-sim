@@ -1,5 +1,5 @@
 import type { ChangeEvent } from 'react'
-import type { DemoProgram } from '../app/demoPrograms'
+import type { DemoProgram } from '../demo/demoPrograms'
 
 interface TeamSelectProps {
   readonly id: string

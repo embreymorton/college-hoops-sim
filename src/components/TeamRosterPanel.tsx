@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 import type { Rotation, Team } from '../engine'
-import type { DemoProgram } from '../app/demoPrograms'
+import type { DemoProgram } from '../demo/demoPrograms'
 import { RosterTable } from './RosterTable'
 
 interface TeamRosterPanelProps {

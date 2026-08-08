@@ -1,6 +1,6 @@
 import { PregameScoreboard, TeamRosterPanel, TeamSelect } from '../components'
-import { useGamePresentationStore } from '../store/gamePresentationStore'
-import { DEMO_PROGRAMS, getDemoProgram } from './demoPrograms'
+import { useGamePresentationStore } from '../store'
+import { DEMO_PROGRAMS, getDemoProgram } from '../demo/demoPrograms'
 
 export function PregameScreen() {
   const homeProgramId = useGamePresentationStore((state) => state.homeProgramId)

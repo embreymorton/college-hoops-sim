@@ -778,7 +778,7 @@ p {
 }
 
 /* ==========================================================================
-   Tabs (box score team switch)
+   Box score team toggle
    ========================================================================== */
 
 .tab-list {
@@ -808,7 +808,7 @@ p {
   transition: background var(--duration-fast) var(--ease-standard), color var(--duration-fast) var(--ease-standard);
 }
 
-.tab[aria-selected='true'] {
+.tab[aria-pressed='true'] {
   background: var(--surface-3);
   color: var(--ink-0);
 }

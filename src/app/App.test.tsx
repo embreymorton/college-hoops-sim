@@ -1,9 +1,9 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { getPlayersByMinutes, type GameResult, type PlayerGameStats } from '../engine'
-import { useGamePresentationStore } from '../store/gamePresentationStore'
+import { useGamePresentationStore } from '../store'
 import { App } from './App'
-import { DEMO_PROGRAMS } from './demoPrograms'
+import { DEMO_PROGRAMS } from '../demo/demoPrograms'
 
 function resetStore() {
   useGamePresentationStore.setState(useGamePresentationStore.getInitialState())
@@ -178,24 +178,24 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /simulate game/i }))
 
     const { homeSetup, awaySetup } = useGamePresentationStore.getState()
-    const homeTab = screen.getByRole('tab', {
+    const homeToggle = screen.getByRole('button', {
       name: new RegExp(homeSetup.team.abbreviation),
     })
-    const awayTab = screen.getByRole('tab', {
+    const awayToggle = screen.getByRole('button', {
       name: new RegExp(awaySetup.team.abbreviation),
     })
 
-    expect(homeTab).toHaveAttribute('aria-selected', 'true')
+    expect(homeToggle).toHaveAttribute('aria-pressed', 'true')
     expect(
       document.querySelector(
         `tr[data-player-id="${homeSetup.team.roster[0]!.id}"]`,
       ),
     ).not.toBeNull()
 
-    fireEvent.click(awayTab)
+    fireEvent.click(awayToggle)
 
-    expect(awayTab).toHaveAttribute('aria-selected', 'true')
-    expect(homeTab).toHaveAttribute('aria-selected', 'false')
+    expect(awayToggle).toHaveAttribute('aria-pressed', 'true')
+    expect(homeToggle).toHaveAttribute('aria-pressed', 'false')
     expect(
       document.querySelector(
         `tr[data-player-id="${awaySetup.team.roster[0]!.id}"]`,

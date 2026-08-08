@@ -1,8 +1,10 @@
 /**
- * Presentation-layer demo program catalog for Game Presentation V0.
+ * Neutral application-data demo program catalog for Game Presentation V0.
  * There is no league system yet — these are deterministic display fixtures
  * consumed by the engine's public `generateTeam`/`generateDefaultRotation`
  * API, not engine domain data. Colors and seeds live here, never on `Team`.
+ * Lives outside `app/` so both React screens and the Zustand store can
+ * depend on it without the store reaching into the app layer.
  */
 export interface DemoProgram {
   readonly id: string

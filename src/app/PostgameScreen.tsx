@@ -1,7 +1,7 @@
 import { BoxScorePanel, FinalScoreboard } from '../components'
-import { useGamePresentationStore } from '../store/gamePresentationStore'
+import { useGamePresentationStore } from '../store'
 import { formatOvertimeTag } from './formatters'
-import { getDemoProgram } from './demoPrograms'
+import { getDemoProgram } from '../demo/demoPrograms'
 
 export function PostgameScreen() {
   const result = useGamePresentationStore((state) => state.result)
