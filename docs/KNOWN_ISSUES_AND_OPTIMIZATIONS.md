@@ -1,6 +1,6 @@
 # Known Issues and Optimizations
 
-This is a concise engineering memory for accepted, non-blocking follow-ups. It is not a second roadmap and does not change the next milestone. Remove or mark an item resolved when the relevant work lands.
+This file tracks accepted bugs, technical debt, maintainability concerns, performance/scaling risks, and current-design watchpoints. It is not a roadmap or product-feature backlog. Unscheduled gameplay/presentation ideas belong in `FUTURE_FEATURES.md`; deliberately sequenced work belongs in `ROADMAP.md`. Remove or mark an item resolved when implementation addresses it.
 
 ## Open items
 
@@ -25,11 +25,15 @@ The UI hides Midseason after Round 12 and all Super Sim actions after regular-se
 
 ### P2 — Preserve completed-season Player history before multi-season play
 
-The active Season currently retains each full `GameResult`, including all Player box scores. Before replacing it during a future offseason transition, preserve completed-season Player history through a deliberate Season snapshot or derived archive. Do not build that archive now.
+The active Season and Postseason currently retain each full `GameResult`, including all Player box scores. They are safe for the completed single-season product, but Dynasty rollover cannot overwrite the only copy when Season 2 becomes active.
+
+This remains unresolved and is now an explicit Phase 5 architecture requirement: preserve completed `SeasonState` and `PostseasonState`, or an equivalent historical representation containing their canonical results, before replacing active competition state. This does not require a full persistence format or history UI in the first Dynasty milestone.
 
 ### P2 — Keep returning Player IDs stable
 
-Before progression or offseason work, ensure every returning Player keeps the same `playerId` across seasons so career statistics, progression, awards, and historical GameResults remain attributable.
+The single-season implementation is correct, but Dynasty progression must evolve returning Players without regenerating them as new identities. Every returning Player must keep the same `playerId` across seasons so historical GameResults, roster continuity, career projections, and future recognition systems remain attributable.
+
+This remains unresolved and is now an explicit Phase 5 architecture requirement, not optional future polish.
 
 ### P3 — Allow future Super Sim interruption points
 
@@ -45,17 +49,29 @@ Player Season Stats inspection observed a Season in which all 12 Charlotte Tech 
 
 The future balance question is whether accepted Rotation V0 eventually needs tighter seven-to-ten-Player regular rotations, occasional deep-bench DNPs, or more situational participation. Do not tune Rotation generation now. Revisit only if universal bench participation makes roster management less meaningful, Player season production less believable, or future development decisions less interesting. This is a low-priority design watchpoint, not an implementation defect or MVP blocker.
 
+### P3 — Rotation Editor ordering and announcements
+
+Player rows may reorder when ratings/minutes change, and dynamic Rotation validation could provide stronger live-region announcements. Both are accepted at the current scale. Revisit stable editing order or accessibility announcements only if user testing shows the current interaction is distracting or unclear.
+
+### P3 — Cross-team box-score reconciliation
+
+Player Box Scores V0 reconciles Player points, shooting arithmetic, and Team minutes, but assists, rebounds, and defensive events are not possession-linked to opponent events. This is an accepted game-level allocation model. Revisit only if future advanced statistics or possession-level features require stronger cross-team event consistency; do not add a second outcome model.
+
 ### P3 — Protected conference-champion top-four seeds may need revisiting after universe expansion
 
 Postseason V0 intentionally guarantees every regular-season Conference champion a protected seed in the top four. This works cleanly for the current 32 Programs, four Conferences, 16-Team field, and four protected Conference champions, and it intentionally makes Conference titles highly valuable.
 
 If the universe later adds substantially more Programs or Conferences, expands the tournament field, introduces Conference tournaments, or develops materially different Conference strengths, automatic qualification and top-seed protection should be reconsidered separately. Future options could include automatic bids without top-four protection, champion seed floors, selection/seeding ratings, or Conference-tournament automatic bids. Do not change V0 behavior now; this is a scaling/design watchpoint, not a bug or MVP blocker.
 
+Optional Tournament-expansion ideas are listed separately in `FUTURE_FEATURES.md`.
+
 ### P3 — First-round conference rematch avoidance
 
 Postseason V0 intentionally permits same-Conference Round-of-16 matchups under its accepted fixed-seed bracket. The first accepted Postseason inspection produced multiple such Conference rematches; this is valid bracket behavior, not a correctness bug.
 
 Because Conference opponents already play a regular-season double round robin, repeated first-round matchups may eventually make tournament draws feel less fresh. A future improvement could preserve seed lines and bracket fairness while avoiding same-Conference Round-of-16 matchups where possible. Any such system must remain deterministic, avoid materially distorting seed value, terminate reliably, and never depend on an uncontrolled random retry loop. Do not implement this now; revisit after gameplay experience or universe expansion. This is a presentation/game-design quality watchpoint, not an MVP blocker.
+
+Optional Tournament-depth ideas are listed separately in `FUTURE_FEATURES.md`; this entry remains here because it records a quality/scaling risk in the accepted fixed bracket.
 
 ### P3 — Application session store growth
 

@@ -4,13 +4,15 @@ A deterministic fictional college basketball dynasty simulator built with React,
 
 ## Current status
 
-- Basketball Engine V0: seeded Player/Team/roster generation, Rotation Management, derived Team Strength, deterministic game simulation, overtime, and complete Player box scores.
-- Fictional Universe V0: 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
-- Season experience: serializable Season State, AI round simulation, Conference standings, Dashboard Quick Sim, Super Sim, historical results, and derived Player Season Stats/game logs.
-- Postseason Domain / Simulation V0: four Conference-champion automatic bids, 12 at-large bids, protected champion seeds 1–4, a fixed 16-Team bracket, neutral-site simulation, full tournament box scores, and National Champion derivation.
-- Postseason Presentation V0: regular-season-to-Tournament entry, the 16-Team field and fixed bracket, qualified/alive, eliminated, and did-not-qualify flows, Tournament Quick Sim and Rotation Management, rest-of-round AI progression, historical Tournament box scores, and National Champion presentation.
+The complete single-season experience is playable from Program selection through a National Champion:
 
-The React application now exposes the complete single-season basketball flow from Program selection through National Champion. The Dynasty Loop is the next major systems phase; recruiting, progression, offseason transition, persistence, and history remain later work.
+- **Basketball Engine V0:** deterministic Player and 12-Player roster generation, Rotation Management, derived Player/Team ratings, game simulation, overtime, and complete Player box scores.
+- **Fictional Universe V0:** 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
+- **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed Game Prep, Super Sim, historical results, and full box-score inspection.
+- **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details, Player Details, and cross-Program navigation.
+- **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, protected Conference-champion seeds, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
+
+> **Next: Dynasty Loop.** Graduation, Player development/class progression, recruiting, roster finalization, and the Season 2 transition are not implemented. Save/load and long-term history also remain future work.
 
 ## Commands
 
@@ -24,17 +26,10 @@ The React application now exposes the complete single-season basketball flow fro
 
 ### Deterministic inspection reports
 
-- `npm run sim:players` — print the deterministic player-generation inspection report
-- `npm run sim:rosters` — print deterministic roster examples and prestige validation
-- `npm run sim:rotations` — print default rotations, aggregate validation, and invalid examples
-- `npm run sim:strength` — inspect player OFF/DEF and rotation-weighted team strength
-- `npm run sim:games` — inspect deterministic team-level games and outcome distributions
-- `npm run sim:boxscores` — inspect deterministic player box scores and distributions
-- `npm run sim:universe` — inspect Universe V0 definitions and deterministic initialization
-- `npm run sim:schedule` — inspect deterministic Schedule V0 structure and validation
-- `npm run sim:season-state` — inspect Season initialization, partial rounds, records, and Rotation persistence
-- `npm run sim:season` — inspect deterministic round simulation, standings, and complete regular seasons
-- `npm run sim:player-stats` — inspect derived regular-season Player totals, rates, and game logs
-- `npm run sim:postseason` — inspect selection, the fixed bracket, tournament progression, validation, determinism, and balance diagnostics
+- `npm run sim:players`, `sim:rosters`, `sim:rotations`, and `sim:strength`
+- `npm run sim:games` and `sim:boxscores`
+- `npm run sim:universe` and `sim:schedule`
+- `npm run sim:season-state`, `sim:season`, and `sim:player-stats`
+- `npm run sim:postseason`
 
-Project scope and source-of-truth constraints live in [`docs/`](docs/). Start with the [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [game design](docs/GAME_DESIGN.md).
+Project constraints live in [`docs/`](docs/). Start with the [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [game design](docs/GAME_DESIGN.md). Optional product ideas belong in [future features](docs/FUTURE_FEATURES.md); engineering risks and follow-ups belong in [known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md).

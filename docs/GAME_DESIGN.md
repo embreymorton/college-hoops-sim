@@ -14,6 +14,7 @@ Choose a school → manage roster and rotations → simulate games → complete 
 - Results should be believable across many games, without trying to model every possession detail at first.
 - The same inputs and seed must reproduce the same outcome.
 - Fictional schools and players avoid dependence on real-world data.
+- Simulated production should naturally create recognizable Players and Program identities without requiring manually authored star or archetype narratives.
 - New systems must earn their complexity and be discussed before entering the active milestone.
 
 ## Initial player model
@@ -159,19 +160,33 @@ The accepted 50-season diagnostic showed a strong relationship between initial T
 
 The permanent Season flow is the primary playable experience. Game Prep is optional rather than a required stop before every game. The coach may progress at three speeds:
 
-- **Hands-on:** Manage Rotation, then Simulate Game.
-- **Normal:** Dashboard Quick Sim from the Season Hub.
-- **Fast:** Super Sim to Midseason or End of Regular Season.
+- **Detailed:** Game Prep, inspect/edit the Rotation, then Simulate Game into the full Box Score.
+- **Fast:** Quick Sim from the Season Hub, remain on the Hub for the inline result and whole-game leaders, then advance explicitly.
+- **Bulk:** Super Sim to Midseason or End of Regular Season.
 
-Dashboard Quick Sim uses the controlled Program's last committed legal current Season Rotation. A legal change made in Game Prep persists into future games; a temporary invalid draft does not replace that canonical Rotation. Super Sim also uses every Program's current Team and Rotation and changes only pacing, not basketball rules, randomness, or result detail.
+Hub Quick Sim uses the controlled Program's last committed legal current Season Rotation. A legal change made in Game Prep persists into future games; a temporary invalid draft does not replace that canonical Rotation. Super Sim also uses every Program's current Team and Rotation and changes only pacing, not basketball rules, randomness, or result detail.
 
 Midseason means all pending regular-season games through Round 12. End of Regular Season means all pending games through Round 24. Already-completed games are preserved, every newly completed game records its full `GameResult` and Player box scores, and no Super Sim action advances into a postseason.
 
 Completed results are final. Opening a completed Schedule entry or Recent Results entry reads the stored result and full historical box score without re-simulation. Recent Results, records, standings, and round progress are derived from Schedule plus completed results.
 
+The fast/detailed distinction also applies in Postseason. Tournament Quick Sim stays on the Tournament Hub and presents the canonical final, advancement/elimination context, and whole-game PTS/REB/AST leaders. Tournament Game Prep exposes the current legal Postseason Rotation and deliberately opens the complete Box Score after simulation. The basketball result is identical in authority; only presentation and navigation differ.
+
+Quick Sim's whole-game leaders support emergent League familiarity. For example:
+
+```text
+Quick Sim
+→ opposing Player scores 34
+→ user recognizes the name and Program
+→ League Leaders / Player Details
+→ broader Program exploration
+```
+
+This is factual storytelling from stored simulated production, not a separate authored-star system. The regular-season leaderboards, Team averages/leaders, Player profiles, and game logs likewise reflect canonical completed games.
+
 ## Accepted Player Season Stats V0
 
-Season-long Player production emerges from actual simulated games; it is not generated separately at the Season level. Game Prep simulation, Dashboard Quick Sim, AI round simulation, and Super Sim all record the same canonical `PlayerGameStats` history and therefore feed the same derived Player totals, averages, percentages, and game logs.
+Season-long Player production emerges from actual simulated games; it is not generated separately at the Season level. Game Prep simulation, Hub Quick Sim, AI round simulation, and Super Sim all record the same canonical `PlayerGameStats` history and therefore feed the same derived Player totals, averages, percentages, and game logs.
 
 Stats can be derived at any point in a partial or complete Season. Each current roster Player receives a row, including Players with no games played. A completed Team game with a zero-minute box-score row appears in that Player's chronological log as a DNP but does not increment `gamesPlayed`:
 
@@ -181,7 +196,7 @@ gamesPlayed = completed games where Player minutes > 0
 
 Game logs retain Schedule chronology, opponent, home/away context, final score, W/L result, and the stored traditional box-score line. This supports performance history without inventing Season-level events or new randomness.
 
-Current outputs are limited to the traditional facts already produced by Player Box Scores V0: games played; minutes; points; rebounds; assists; steals; blocks; turnovers; field goals, three-pointers, and free throws made/attempted; per-game versions of minutes and the counting stats; and aggregate shooting percentages. Awards, national Player rankings, All-Conference teams, advanced metrics, career stats, and Player Stats presentation remain future work.
+Current outputs are limited to the traditional facts already produced by Player Box Scores V0: games played; minutes; points; rebounds; assists; steals; blocks; turnovers; field goals, three-pointers, and free throws made/attempted; per-game versions of minutes and the counting stats; and aggregate shooting percentages. These facts now power national Player leaders, Team/Player Details, Team leaders, and Player game logs. Optional awards, rankings, advanced metrics, and historical depth belong in `FUTURE_FEATURES.md` rather than accepted game rules.
 
 Acceptance inspection produced a plausible scoring hierarchy and believable game-to-game variance. Those observations are not calibration targets and require no simulation tuning.
 

@@ -67,7 +67,7 @@ The engine owns basketball generation, ratings, Rotation legality, game outcomes
 - `GameResult` is serializable engine output containing Team IDs, final scores, winner, overtime count, reproduction seed, and home/away `PlayerGameStats` arrays. Each `PlayerGameStats` row contains only a Player ID and numeric traditional box-score fields.
 - `RegularSeasonSchedule` is serializable schedule output containing one canonical collection of unplayed games. `ScheduledGame` references stable Program IDs and contains no Team snapshots, results, records, or progression state.
 - A schedule round is a one-based abstract progression unit, not a date. Universe V0 has 24 complete rounds, with all 32 Programs appearing exactly once among the 16 games in each round.
-- `SeasonState` stores its immutable Schedule, current Team/Rotation state by stable Program ID, and complete `GameResult` facts once by stable ScheduledGame ID. Current round, completion, Program records, and Conference records are derived rather than stored.
+- `SeasonState` stores its immutable Schedule, current Team/Rotation state by stable Program ID, and complete `GameResult` facts once by stable ScheduledGame ID. Current round, completion, Program records, Conference records, Player/Team Season Stats, and leaderboards are derived rather than stored.
 - Store facts and derive summaries. Season State does not maintain authoritative wins, losses, Conference records, games played, current-round counters, completion flags, standings, Player season totals/rates, or Player game logs alongside the Schedule and results that determine them.
 - Randomness enters through an explicit seeded RNG or seed. Engine code never calls `Math.random()`.
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
@@ -75,10 +75,10 @@ The engine owns basketball generation, ratings, Rotation legality, game outcomes
 
 The Season store is not authoritative for Program records, Conference records, standings, current round, next opponent, Recent Results, or Player statistics. Those values are projections over the active `SeasonState`, its immutable Schedule, and its recorded `GameResult` values. Transient Super Sim confirmation and completion-summary state is presentation state, not Season truth.
 
-Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Dashboard Quick Sim and Super Sim; neither operation reads a stale invalid draft.
+Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
 ```text
-Manage Rotation
+Game Prep
 → Zustand draft
 → validateRotation()
 → updateProgramRotation()
@@ -105,7 +105,7 @@ The six-program exhibition catalog remains a presentation adapter. Charlotte Tec
 
 Season operations are pure: `recordGameResult()` and `updateProgramRotation()` return new Season values without mutating their inputs. Recorded results are immutable facts and cannot be silently overwritten. Result recording validates the ScheduledGame ID, exact home/away orientation, score/winner consistency, and that Player points reconstruct each Team score. Rotation updates delegate legality to the engine's existing `validateRotation()` contract.
 
-Partial rounds and out-of-order result insertion are supported. Current round is the lowest Schedule round with a pending game; round completion, regular-season completion, overall Program records, and Conference records are projections over Schedule plus recorded results. `controlledProgramId` is intentionally absent because user ownership belongs to future application or Dynasty state rather than the generic Season domain.
+Partial rounds and out-of-order result insertion are supported. Current round is the lowest Schedule round with a pending game; round completion, regular-season completion, overall Program records, and Conference records are projections over Schedule plus recorded results. `controlledProgramId` is intentionally absent because user ownership belongs to application session state or future Dynasty state rather than the generic Season domain.
 
 The accepted autonomous regular-season pipeline composes existing boundaries rather than bypassing them:
 
@@ -130,7 +130,7 @@ Individual and pending-round simulation both write full results through `recordG
 All Season simulation entry points converge on this pipeline:
 
 ```text
-Game Prep play / Dashboard Quick Sim / AI rest-of-round / Super Sim
+Game Prep play / Hub Quick Sim / AI rest-of-round / Super Sim
                               ↓
                 simulateScheduledGame()
                               ↓
@@ -139,9 +139,11 @@ Game Prep play / Dashboard Quick Sim / AI rest-of-round / Super Sim
                   recordGameResult()
 ```
 
-Game Prep is optional. Dashboard Quick Sim runs the controlled Program's next ScheduledGame from the Hub with the last committed legal current Season Rotation. Super Sim calls `simulatePendingGamesThroughRound()` as a pacing convenience: Midseason resolves pending games through Round 12, and End of Regular Season resolves pending games through Round 24. It preserves completed results, uses every Program's current Team and Rotation, and creates the same full `GameResult` values as ordinary progression for identical state and seed.
+Game Prep is optional. Hub Quick Sim runs the controlled Program's next ScheduledGame with the last committed legal current Season Rotation, remains on the Hub, and shows the stored result inline. Super Sim calls `simulatePendingGamesThroughRound()` as a pacing convenience: Midseason resolves pending games through Round 12, and End of Regular Season resolves pending games through Round 24. It preserves completed results, uses every Program's current Team and Rotation, and creates the same full `GameResult` values as ordinary progression for identical state and seed.
 
 Completed games are final. The postgame and historical-result screens read the already-recorded `GameResult`; opening a Schedule or Recent Results entry never re-simulates it. Recent Results is likewise derived from completed Schedule/results facts.
+
+Hub Quick Sim adds no alternate result state. Its compact whole-game PTS/REB/AST leaders are pure presentation projections over the controlled game's canonical home and away `PlayerGameStats`. A leader may represent either Program; Player identity and Program identity are resolved from the participating Teams, and deterministic ties use minutes then stable Player ID. The result card does not store leader summaries in Zustand.
 
 ## Postseason State and progression
 
@@ -172,7 +174,7 @@ At initialization, each qualified Program's exact end-of-regular-season Team and
 
 The complete 15-game bracket is fixed when Postseason begins. Round-of-16 slots reference seeds; later slots reference stable prior-game winner sources. Completed `GameResult` facts resolve those sources without rebuilding or reseeding the bracket. The current tournament round, ready games, remaining or eliminated Programs, tournament completion, and National Champion are derived projections rather than parallel mutable flags or counters.
 
-Each completed tournament result is canonical and preserves the existing full home/away `PlayerGameStats` arrays. Postseason Player aggregates, combined regular/postseason statistics, career statistics, and tournament records are not yet implemented; future projections should derive them from retained results rather than introduce competing statistical truth.
+Each completed tournament result is canonical and preserves the existing full home/away `PlayerGameStats` arrays. Postseason Quick Sim derives the same compact whole-game leader projection from that stored result. Postseason Player aggregates, combined regular/postseason statistics, career statistics, and tournament records are not yet implemented; future projections should derive them from retained results rather than introduce competing statistical truth.
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
 
@@ -196,13 +198,38 @@ Player Season Stats projection
 
 Game logs include every completed Team game for the Player's Program. A stored zero-minute row is represented as `didPlay: false`; it remains visible as a DNP but does not increment the derived `gamesPlayed` count. All projection outputs are plain serializable data and add no caching, incremental indexes, or stat-specific randomness.
 
-Future Player Stats UI should consume these public Season APIs rather than importing implementation internals or creating Zustand-owned totals. Awards, completed-season history, and career systems must likewise reuse canonical GameResult history and stable Player IDs rather than inventing parallel statistical truth.
+The current League, Team Details, and Player Details UI consumes these public Season projections. National Player leaderboards, Team leaders, Player summaries, and game logs are derived rather than stored in Zustand. Awards, completed-season history, and career systems must likewise reuse canonical `GameResult` history and stable Player IDs rather than inventing parallel statistical truth.
+
+## Team Season Stats and exploration projections
+
+The current regular-season presentation follows one facts-to-projections pipeline:
+
+```text
+SeasonState
+   ↓
+completed GameResults
+   ↓
+PlayerGameStats
+   ↓
+├── PlayerSeasonStats
+├── PlayerGameLog
+├── TeamSeasonStats
+├── national Player leader projections
+├── Team Player leaders
+└── Quick Sim whole-game leaders
+        ↓
+League / Team / Player / Quick Sim presentation
+```
+
+`TeamSeasonStats` is a pure projection, not mutable Team or `SeasonState` data. It derives one Program's games played, scoring totals/rates, Player box-score totals/rates, and shooting percentages from completed regular-season results. National Player leaderboards and Team Player leaders project existing `PlayerSeasonStats`; they are not authoritative tables in Zustand.
+
+Player Season Stats and Team Season Stats remain regular-season-only. Postseason `GameResult` values are separate canonical facts inside `PostseasonState`; no current projection silently combines the two competitions.
 
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, derived Player Season Stats, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Postseason.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, Player/Team Season Stats, national/Team leader projections, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Postseason.
 
-Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player Season Stats V0, Postseason Domain / Simulation V0, and Postseason Presentation V0 are complete. React renders regular-season and Tournament context, matchup actions, Rotation management, standings, brackets, final scores, historical full box scores, and the National Champion without calculating basketball outcomes, ratings, records, selection, advancement, or Rotation legality. Player Season Stats currently has no React presentation.
+Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League & Player Exploration V0, Postseason Domain / Simulation V0, Postseason Presentation V0, and the shared fast/detailed game-flow QOL are complete. React renders regular-season and Tournament context, matchup actions, Rotation management, standings, brackets, final scores, statistical projections, Team/Player exploration, historical full box scores, and the National Champion without calculating basketball outcomes, ratings, records, selection, advancement, or Rotation legality.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 

@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player Season Stats V0, and Postseason Domain / Simulation V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season and Postseason state retain complete simulator-produced `GameResult` facts without changing scoring, variance, overtime, or box-score formulas.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, and Postseason Domain / Simulation and presentation are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season and Postseason state retain complete simulator-produced `GameResult` facts without changing scoring, variance, overtime, or box-score formulas.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -28,7 +28,7 @@ The actual namespace retains the explicit simulation seed's numeric/string type 
 
 ### Season simulation entry points
 
-Playing one scheduled game from Game Prep, Dashboard Quick Sim, AI rest-of-round simulation, and Super Sim all converge on the same deterministic per-game pipeline:
+Playing one scheduled game from Game Prep, Hub Quick Sim, AI rest-of-round simulation, and Super Sim all converge on the same deterministic per-game pipeline:
 
 ```text
 current Season Team + current committed Rotation
@@ -41,7 +41,7 @@ ScheduledGame identity + explicit simulation seed
 
 Each ScheduledGame has an independent derived seed, so changing execution order or choosing a faster UI path does not change its result. For identical Season state, simulation seed, Teams, and Rotations, normal round-by-round progression and Super Sim produce identical `GameResult` values.
 
-Dashboard Quick Sim resolves only the controlled Program's next ScheduledGame. AI rest-of-round resolves eligible pending games in the current round. Super Sim repeatedly resolves pending rounds through an inclusive target: Round 12 for Midseason or Round 24 for End of Regular Season. It preserves already-completed results, uses every Program's current committed Rotation, and never simulates postseason games.
+Hub Quick Sim resolves only the controlled Program's next ScheduledGame. AI rest-of-round resolves eligible pending games in the current round. Super Sim repeatedly resolves pending rounds through an inclusive target: Round 12 for Midseason or Round 24 for End of Regular Season. It preserves already-completed results, uses every Program's current committed Rotation, and never simulates postseason games.
 
 Every route records the same full `PlayerGameStats` fields: minutes, points, rebounds, assists, steals, blocks, turnovers, field goals made/attempted, three-pointers made/attempted, and free throws made/attempted. Accepted Player Season Stats V0 derives aggregates and game logs from these stored rows; it does not change the game formulas below or add authoritative mutable stat totals to `SeasonState`.
 
@@ -89,7 +89,7 @@ simulateGame()
 → later aggregate Player season statistics / chronological game logs
 ```
 
-Game Prep simulation, Dashboard Quick Sim, AI round simulation, and Super Sim are statistically equivalent inputs to this layer. If they produce the same canonical `GameResult` values, they produce identical Player Season Stats. Partial Seasons include only completed results; pending ScheduledGames contribute nothing.
+Game Prep simulation, Hub Quick Sim, AI round simulation, and Super Sim are statistically equivalent inputs to this layer. If they produce the same canonical `GameResult` values, they produce identical Player Season Stats. Partial Seasons include only completed results; pending ScheduledGames contribute nothing.
 
 Each Program projection returns one row per current roster Player. Individual, Program-wide, and Season-wide APIs expose exact totals for games played, minutes, points, rebounds, assists, steals, blocks, turnovers, FGM/FGA, 3PM/3PA, and FTM/FTA. The domain retains full numeric precision and leaves display rounding to future presentation.
 
@@ -124,6 +124,41 @@ FT% = total FTM / total FTA
 A zero games-played or zero-attempt denominator returns numeric `0`, never `NaN` or `Infinity`. Results and game logs are serializable, pure, and independent of `resultsByGameId` insertion order; logs sort chronologically by Schedule round and canonical game index.
 
 Accepted full-season inspection reported 32 Programs, 384 of 384 completed regular-season games, 384 current-roster Player stat lines, and passing validation. Derived totals reconciled to raw `PlayerGameStats`, zero-minute games did not falsely increment games played, all numbers remained finite, JSON round-tripping passed, and logs remained chronological. Observed scoring hierarchy and game-to-game variance were plausible but are not calibration targets.
+
+## Implemented Team Season Stats V0.1
+
+Team Season Stats adds no simulation behavior, randomness, or mutable Season counters. It is a pure regular-season projection over completed Program games:
+
+```text
+completed regular-season GameResults
+→ canonical final scores + participating Team PlayerGameStats
+→ Team totals and rates
+```
+
+`gamesPlayed` counts completed regular-season games for the Program. Team points and points allowed come from canonical final scores. Rebounds, assists, steals, blocks, turnovers, and shooting makes/attempts sum the Program's stored Player rows.
+
+Derived rates are:
+
+```text
+PPG          = points / gamesPlayed
+Opponent PPG = pointsAllowed / gamesPlayed
+Margin/game  = (points − pointsAllowed) / gamesPlayed
+RPG          = rebounds / gamesPlayed
+APG          = assists / gamesPlayed
+SPG          = steals / gamesPlayed
+BPG          = blocks / gamesPlayed
+TOPG         = turnovers / gamesPlayed
+
+FG% = total FGM / total FGA
+3P% = total 3PM / total 3PA
+FT% = total FTM / total FTA
+```
+
+Shooting percentages use aggregate makes divided by aggregate attempts, never averages of game percentages. Zero attempts return numeric `0`; zero completed games return safe zero totals and rates. `TeamSeasonStats` remains regular-season-only and does not modify game simulation or `SeasonState`.
+
+## Quick Sim Game Leaders projection
+
+The completed Quick Sim card derives whole-game PTS, REB, and AST leaders from the canonical home plus away `PlayerGameStats` in one stored `GameResult`. A leader may come from either Program. Ties resolve deterministically by the target statistic, minutes, then stable Player ID; an all-zero category displays no arbitrary leader. This is presentation projection only and creates no alternate result, leaderboard state, or simulation formula.
 
 ## Implemented Rotation constraint
 

@@ -4,6 +4,8 @@ Milestones remain small enough to test independently. A later phase or unlisted 
 
 Exact formulas and constants become source-of-truth documentation after implementation and validation, not before. Validation sample outputs inform acceptance but are not roadmap requirements.
 
+This file contains work intentionally placed in the development sequence. It is not a wishlist: unscheduled product ideas live in `FUTURE_FEATURES.md`, while engineering bugs, debt, and scaling watchpoints live in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
+
 ## Phase 0 — Foundation — COMPLETE
 
 - React, TypeScript, Vite, Zustand, Vitest, and Testing Library foundation
@@ -99,6 +101,10 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 022 | Player Season Stats V0 | COMPLETE |
 | 023 | Postseason Domain / Simulation V0 | COMPLETE |
 | 024 | Postseason Presentation V0 | COMPLETE |
+| 025 | League & Player Exploration V0 | COMPLETE |
+| 026 | Team Stats / Exploration V0.1 | COMPLETE |
+| 027 | Season + Postseason Game Flow QOL | COMPLETE |
+| 028 | Quick Sim Result / Game Leaders polish | COMPLETE |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
@@ -158,8 +164,8 @@ Season Presentation consumes the existing Universe, Schedule, Season, simulation
 
 ### 3.6 Season UX Polish V0 — COMPLETE
 
-- Dashboard Quick Sim directly plays the controlled Program's next ScheduledGame from the Hub.
-- Manage Rotation remains the optional hands-on path; legal changes persist as the Program's current Season Rotation.
+- Hub Quick Sim directly plays the controlled Program's next ScheduledGame and presents the result inline.
+- Game Prep remains the optional hands-on path; legal changes persist as the Program's current Season Rotation.
 - Quick Sim uses that committed legal Rotation and is unaffected by a stale invalid Game Prep draft.
 - Completed Schedule and Recent Results entries reopen the stored read-only result with its full historical box score.
 - Recent Results and its Last-N record are derived from completed Season results.
@@ -191,6 +197,23 @@ The accepted pure projections support individual, Program-wide, and Season-wide 
 
 No Player totals, averages, percentages, or game logs are stored as mutable `SeasonState` counters. Inspection completed all 384 regular-season games, derived 384 current-roster Player lines, and passed raw-total reconciliation, games-played, finite-number, chronological-order, and JSON-serialization checks.
 
+### 3.9 League & Player Exploration V0 — COMPLETE
+
+- National regular-season PPG, RPG, APG, SPG, and BPG leaderboards
+- Complete 32-Program Teams directory
+- Team Details with record, OFF/DEF/OVR, recent results, roster, and Player statistics
+- Player Details with identity, ratings, regular-season statistics, and chronological game log
+- Cross-Program navigation from standings, leaderboards, rosters, schedules, and Player links
+
+All statistical and navigation summaries are derived from stable Universe identity plus canonical Season facts. Zustand stores navigation context, not leaderboard or Player-stat truth.
+
+### 3.10 Team Stats / Exploration V0.1 — COMPLETE
+
+- Pure regular-season `TeamSeasonStats` totals and rates over completed `GameResult` values
+- Team averages for scoring, opponent scoring, margin, counting stats, and shooting percentages
+- Team PTS/REB/AST leaders derived from existing Player Season Stats
+- Team Details presentation of these projections without mutable Team-stat state
+
 ## Phase 4 — Postseason V0 — COMPLETE
 
 > Feed a completed regular season into the accepted fixed 16-Team national tournament through deterministic selection, seeding, neutral-site simulation, and result-derived advancement.
@@ -209,9 +232,35 @@ The completed regular season now transitions into a React Tournament Hub backed 
 
 Zustand retains the completed `SeasonState` alongside the active `PostseasonState` and coordinates navigation, drafts, and user actions. It delegates selection, participant resolution, progression, results, and champion derivation to the public Postseason API, so presentation does not duplicate Tournament rules or mutate completed regular-season facts.
 
+### Season + Postseason Game Flow QOL — COMPLETE
+
+Both competition Hubs now expose the same intentional pacing contract:
+
+```text
+SIMULATE GAME → remain on Hub → inline canonical result → optional Box Score
+GAME PREP → Rotation/detail flow → simulate → Box Score
+```
+
+Quick Sim resolves only the controlled game. Round progression remains explicit and uses the accepted pending-game APIs; completed results are preserved. Regular-season Super Sim remains in the separate Round Progression card, and Postseason adds no Super Sim-to-Championship path.
+
+### Quick Sim Result / Game Leaders polish — COMPLETE
+
+Completed Quick Sim cards preserve site and overtime context, show outcome/margin, and derive whole-game PTS/REB/AST leaders from both teams' canonical stored `PlayerGameStats`. Each leader retains Player and Program identity; deterministic ties use minutes and stable Player ID. The Hub remains a compact summary rather than a replacement Box Score.
+
+The complete single-season game loop is implemented and exposed through the UI, from Program selection through National Champion.
+
 ## Phase 5 — Dynasty Loop — NEXT MAJOR SYSTEMS PHASE
 
 > Turn the completed single-season basketball loop into a multi-season Dynasty. Exact progression, graduation, recruiting, and offseason formulas require a separate design milestone.
+
+### Required Dynasty architecture boundaries
+
+These are prerequisites for rollover, not optional polish:
+
+- **Stable returning Player IDs:** every returning Player must keep the same existing `playerId` across seasons. Class progression and development must evolve the existing identity rather than regenerate the Player. Career statistics, Player history, future awards, roster continuity, and save/history correctness depend on this.
+- **Completed-season preservation:** before Season 2 replaces the active competition state, Season 1's completed `SeasonState` and `PostseasonState`—or an equivalent historical representation containing their canonical `GameResult` facts—must remain recoverable. Rollover may not overwrite the only copy of completed results.
+
+These requirements do not define a persistence format, history UI, or final `DynastyState` schema. The corresponding unresolved watchpoints remain in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` until implementation resolves them.
 
 ### 5.1 Player progression and roster turnover
 
@@ -254,30 +303,7 @@ Persistence should not be implemented before the evolving dynasty-state model is
 
 ## Phase 7 — Post-MVP Depth — DEFERRED
 
-- Multi-position eligibility and more advanced automatic Rotations
-- Optional pregame polish such as starting-five presentation, matchup comparison, and positional insights
-- Stable Player ordering during Rotation edits if reordering proves distracting
-- Stronger live-region announcements for dynamic Rotation validation
-- Player roles, playing-time expectations, happiness, and redshirts
-- Transfer portal, injuries, and NBA Draft declarations
-- Coaching career, job offers, firing/hiring, and assistant coaches
-- Offensive and defensive schemes
-- Explicit Player or Team archetype systems
-- Deeper box-score event reconciliation
-
-These are non-blocking polish or depth candidates. None changes the next major systems phase or enters scope without an explicit milestone.
-
-## Far-future / optional
-
-- NIL
-- Conference realignment
-- Hundreds of real-world-style programs
-- Real NCAA Teams, logos, or data
-- Detailed possession play-by-play
-- Manual live substitutions and real-time in-game coaching
-- Multiplayer or online leagues
-
-None of these are required to complete the core game.
+Optional product/gameplay ideas are deliberately separated into `FUTURE_FEATURES.md`. They are not scheduled roadmap commitments or Dynasty MVP blockers. Engineering-quality follow-ups and scaling risks remain in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 ## Non-binding development-agent fit
 
