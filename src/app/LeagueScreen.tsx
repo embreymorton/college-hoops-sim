@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import {
+  DynastySectionNav,
   ExplorationBackButton,
   LeagueTeamsDirectory,
   NationalLeadersSection,
 } from '../components'
 import { deriveNationalPlayerLeaders } from '../season'
 import {
+  selectActivePostseason,
   selectActiveSeason,
   selectControlledProgramId,
   useDynastyStore,
@@ -22,6 +24,7 @@ type LeagueTab = 'leaders' | 'teams'
 export function LeagueScreen() {
   const [tab, setTab] = useState<LeagueTab>('leaders')
   const season = useDynastyStore(selectActiveSeason)
+  const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const explorationViewHistory = useDynastyStore(
     (state) => state.explorationViewHistory,
@@ -29,6 +32,10 @@ export function LeagueScreen() {
   const goBackFromExploration = useDynastyStore(
     (state) => state.goBackFromExploration,
   )
+  const goToHub = useDynastyStore((state) => state.goToHub)
+  const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
+  const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
+  const goToLeague = useDynastyStore((state) => state.goToLeague)
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
@@ -41,6 +48,13 @@ export function LeagueScreen() {
 
   return (
     <>
+      <DynastySectionNav
+        competitionLabel={postseason ? 'Tournament' : 'Season'}
+        activeSection="league"
+        onSelectCompetition={postseason ? goToPostseasonHub : goToHub}
+        onSelectRecruiting={goToRecruiting}
+        onSelectLeague={goToLeague}
+      />
       <ExplorationBackButton
         destination={backDestination}
         onClick={goBackFromExploration}

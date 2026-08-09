@@ -4,6 +4,7 @@ import { App } from './app/App'
 import './styles.css'
 import './postseason.css'
 import './league.css'
+import './recruiting.css'
 
 const rootElement = document.getElementById('root')
 

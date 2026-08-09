@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
-import { calculateTeamStrength } from '../engine'
+import { calculateTeamStrength, POSITIONS } from '../engine'
 import {
   CompletedMatchupCard,
-  HubSectionTabs,
+  DynastySectionNav,
+  RecruitingHubSummary,
   TournamentBracket,
   TournamentFieldTable,
   TournamentMatchupCard,
@@ -12,6 +13,7 @@ import {
   type BracketSlotParticipant,
   type TournamentFieldRow,
 } from '../components'
+import { deriveProgramRecruitingBoard } from '../dynasty'
 import {
   deriveNationalChampion,
   getCurrentTournamentRound,
@@ -41,6 +43,7 @@ import {
 } from './postseasonFormatters'
 import { formatOvertimeTag } from './formatters'
 import { deriveGameLeaders } from './gameLeaders'
+import { deriveRecentControlledCommitment } from './recruitingFormatters'
 import { describeRoundProgress } from './seasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -136,6 +139,7 @@ function buildBracketSlots(
  * qualify — by branching purely on existing Postseason query output.
  */
 export function PostseasonHubScreen() {
+  const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
@@ -155,7 +159,9 @@ export function PostseasonHubScreen() {
     (state) => state.lastPlayedTournamentGameId,
   )
   const goToHub = useDynastyStore((state) => state.goToHub)
+  const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
+  const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !postseason || !controlledProgramId) {
@@ -167,6 +173,22 @@ export function PostseasonHubScreen() {
   if (!controlledProgram) {
     return null
   }
+
+  const recruiting = dynasty?.recruiting
+  const recruitingBoard =
+    dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
+  const recruitingProjectedTotal = recruitingBoard
+    ? POSITIONS.reduce(
+        (sum, position) => sum + recruitingBoard.projectedOpeningsByPosition[position],
+        0,
+      )
+    : 0
+  const recruitingRemainingTotal = recruitingBoard
+    ? POSITIONS.reduce(
+        (sum, position) => sum + recruitingBoard.remainingOpeningsByPosition[position],
+        0,
+      )
+    : 0
 
   const controlledEntry = postseason.field.find(
     (entry) => entry.programId === controlledProgramId,
@@ -458,7 +480,13 @@ export function PostseasonHubScreen() {
 
   return (
     <>
-      <HubSectionTabs activeLabel="Tournament" onSelectLeague={goToLeague} />
+      <DynastySectionNav
+        competitionLabel="Tournament"
+        activeSection="competition"
+        onSelectCompetition={goToPostseasonHub}
+        onSelectRecruiting={goToRecruiting}
+        onSelectLeague={goToLeague}
+      />
       <TournamentStatusHeader
         programName={controlledProgram.name}
         accentColor={controlledProgram.branding.primaryColor}
@@ -509,6 +537,24 @@ export function PostseasonHubScreen() {
           </div>
           )}
       </section>
+
+      {recruiting && recruitingBoard && (
+        <section className="section" aria-labelledby="recruiting-summary-heading">
+          <h2 id="recruiting-summary-heading" className="visually-hidden">
+            Recruiting
+          </h2>
+          <RecruitingHubSummary
+            targetSeasonNumber={recruiting.targetSeasonNumber}
+            phase={recruiting.phase}
+            lastResolvedPeriod={recruiting.lastResolvedPeriod}
+            boardSize={recruitingBoard.targets.length}
+            signedTotal={recruitingProjectedTotal - recruitingRemainingTotal}
+            projectedTotal={recruitingProjectedTotal}
+            recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
+            onManageRecruiting={goToRecruiting}
+          />
+        </section>
+      )}
 
       <section className="section" aria-labelledby="bracket-heading">
         <h2 id="bracket-heading" className="section-title">

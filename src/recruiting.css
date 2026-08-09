@@ -1,0 +1,274 @@
+/* ==========================================================================
+   Recruiting Management UI V0 — extends styles.css's tokens and components
+   ========================================================================== */
+
+/* ==========================================================================
+   Dynasty section navigation
+   ========================================================================== */
+
+.dynasty-section-nav {
+  margin-bottom: var(--space-2);
+}
+
+.dynasty-section-nav__tab {
+  position: relative;
+}
+
+.dynasty-section-nav__tab[aria-pressed='true']::after {
+  content: '';
+  position: absolute;
+  left: 0.8rem;
+  right: 0.8rem;
+  bottom: 3px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* ==========================================================================
+   Recruiting header
+   ========================================================================== */
+
+.recruiting-header {
+  align-items: center;
+}
+
+.recruiting-header__period {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Positional needs ledger
+   ========================================================================== */
+
+.recruiting-needs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.recruiting-needs__table th,
+.recruiting-needs__table td {
+  text-align: right;
+}
+
+.recruiting-needs__table thead th:first-child {
+  background: var(--surface-2);
+}
+
+.recruiting-needs__table tbody th {
+  text-align: left;
+  font-family: var(--font-display);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  background: var(--surface-1);
+}
+
+.recruiting-needs__summary {
+  padding-top: var(--space-1);
+}
+
+/* ==========================================================================
+   Priority stepper (compact 1–5 control)
+   ========================================================================== */
+
+.recruiting-priority-stepper {
+  display: inline-flex;
+}
+
+.recruiting-priority-stepper__value {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6rem;
+}
+
+/* ==========================================================================
+   Star tier
+   ========================================================================== */
+
+.recruit-stars {
+  font-size: 0.78rem;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+.recruit-stars__empty {
+  color: var(--ink-2);
+}
+
+/* ==========================================================================
+   Board + National Class tables
+   ========================================================================== */
+
+.recruiting-board-table td,
+.national-recruit-table__table td {
+  vertical-align: middle;
+}
+
+.recruiting-status-cell {
+  color: var(--ink-1);
+  font-size: 0.76rem;
+}
+
+.recruiting-board-table tbody tr[data-status='committed'] .recruiting-status-cell {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.recruiting-board-table tbody tr[data-status='committed-elsewhere'] td,
+.recruiting-board-table tbody tr[data-status='position-filled'] td,
+.national-recruit-table__table tbody tr[data-status='committed-elsewhere'] td,
+.national-recruit-table__table tbody tr[data-status='position-filled'] td {
+  color: var(--ink-2);
+}
+
+.national-recruit-table__table tbody tr[data-status='committed'] .recruiting-status-cell {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.recruiting-board-table__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+
+.recruiting-action-button {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.recruiting-remove-button {
+  font-size: 0.72rem;
+  color: var(--ink-2);
+}
+
+.recruiting-capacity-note {
+  font-size: 0.68rem;
+  color: var(--ink-2);
+  text-align: right;
+  max-width: 9rem;
+}
+
+.recruiting-class-filters {
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   Recruiting action error
+   ========================================================================== */
+
+.recruiting-action-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-0);
+  font-size: 0.82rem;
+}
+
+.recruiting-action-error__dismiss {
+  flex-shrink: 0;
+  color: var(--ink-1);
+}
+
+/* ==========================================================================
+   Season/Postseason Hub Recruiting module
+   ========================================================================== */
+
+.recruiting-hub-summary {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+}
+
+.recruiting-hub-summary__class {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  color: var(--ink-0);
+  margin-bottom: var(--space-4);
+}
+
+.recruiting-hub-summary__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: 0 0 var(--space-4);
+}
+
+.recruiting-hub-summary__stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recruiting-hub-summary__stat dt {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.recruiting-hub-summary__stat dd {
+  margin: 0;
+  font-family: var(--font-score);
+  font-size: 1.6rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-0);
+}
+
+.recruiting-hub-summary__commitment {
+  font-size: 0.82rem;
+  color: var(--ink-0);
+  background: var(--accent-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-4);
+}
+
+.recruiting-hub-summary__commitment-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-right: var(--space-2);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .recruiting-header {
+    align-items: flex-start;
+  }
+
+  .recruiting-board-table__actions {
+    align-items: stretch;
+  }
+
+  .recruiting-capacity-note {
+    max-width: none;
+    text-align: left;
+  }
+}

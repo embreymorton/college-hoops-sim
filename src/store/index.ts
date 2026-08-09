@@ -5,6 +5,7 @@ export type {
   GamePresentationState,
 } from './gamePresentationStore'
 export {
+  DEFAULT_ADDED_TARGET_PRIORITY,
   MIDSEASON_ROUND,
   selectActivePostseason,
   selectActiveRecruiting,

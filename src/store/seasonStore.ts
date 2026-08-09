@@ -1,10 +1,15 @@
 import { create } from 'zustand'
 import { validateRotation, type Rotation, type RngSeed } from '../engine'
 import {
+  addRecruitingBoardTarget,
   initializeDynastyState,
   initializeRecruiting,
+  offerRecruit,
+  removeRecruitingBoardTarget,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
+  updateRecruitingBoardPriority,
+  withdrawRecruitOffer,
   type DynastyState,
   type RecruitingState,
 } from '../dynasty'
@@ -51,6 +56,15 @@ const POSTSEASON_SIMULATION_SEED = `${MASTER_SEED}:season-1:postseason:simulatio
  * generic `simulatePendingGamesThroughRound` operation accepts any round.
  */
 export const MIDSEASON_ROUND = 12
+
+/**
+ * Priority assigned when the controlled Program manually adds a National
+ * Class Recruit to its board. The accepted board API requires an explicit
+ * priority with no built-in default; this mirrors the mid-tier value the
+ * same 1–5 scale already uses elsewhere (e.g. the AI's own default-board
+ * priority table centers on 3) rather than inventing a new convention.
+ */
+export const DEFAULT_ADDED_TARGET_PRIORITY = 3
 
 export type SuperSimKind = 'midseason' | 'endOfRegularSeason'
 
@@ -112,6 +126,7 @@ export type SeasonSessionView =
   | 'league'
   | 'teamDetails'
   | 'playerDetails'
+  | 'recruiting'
 
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
@@ -157,6 +172,14 @@ export interface DynastySessionState {
   readonly selectedPlayerProgramId: string | null
   /** The Player currently open in Player Details. */
   readonly selectedPlayerId: string | null
+  /**
+   * The message from the most recent rejected Recruiting board/offer action,
+   * if any. Recruiting UI derives disabled states to keep this rare; when a
+   * command is rejected anyway, the canonical domain error is surfaced here
+   * instead of being silently swallowed. Cleared on the next successful
+   * Recruiting action or Dynasty-section navigation.
+   */
+  readonly recruitingActionError: string | null
   readonly masterSeed: RngSeed
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string): void
@@ -225,6 +248,24 @@ export interface DynastySessionState {
   openPlayerDetails(programId: string, playerId: string): void
   /** Unwinds one step of `explorationViewHistory`, back to where exploration was entered. */
   goBackFromExploration(): void
+  /** Opens the Recruiting destination; always reachable while Dynasty Recruiting is active. */
+  goToRecruiting(): void
+  /**
+   * Adds a National Class Recruit to the controlled Program's board at the
+   * default priority. No-op with a surfaced error if the canonical board API
+   * rejects it (e.g. already committed, board full, no projected opening).
+   */
+  addRecruitingTarget(playerId: string): void
+  /** Removes a target from the controlled Program's board. */
+  removeRecruitingTarget(playerId: string): void
+  /** Updates one board target's 1–5 priority via the canonical Recruiting API. */
+  setRecruitingPriority(playerId: string, priority: number): void
+  /** Places a controlled-Program offer on a board target. */
+  offerRecruitingTarget(playerId: string): void
+  /** Withdraws the controlled Program's active offer on a board target. */
+  withdrawRecruitingOffer(playerId: string): void
+  /** Dismisses the most recent Recruiting action error without changing Dynasty state. */
+  dismissRecruitingActionError(): void
 }
 
 export const selectActiveSeason = (
@@ -330,6 +371,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   selectedTeamProgramId: null,
   selectedPlayerProgramId: null,
   selectedPlayerId: null,
+  recruitingActionError: null,
   masterSeed: MASTER_SEED,
 
   selectProgram(programId) {
@@ -377,6 +419,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       selectedTeamProgramId: null,
       selectedPlayerProgramId: null,
       selectedPlayerId: null,
+      recruitingActionError: null,
     })
   },
 
@@ -471,7 +514,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   goToHub() {
-    set({ view: 'hub', viewedGameId: null })
+    set({
+      view: 'hub',
+      viewedGameId: null,
+      explorationViewHistory: [],
+      recruitingActionError: null,
+    })
   },
 
   playScheduledGame() {
@@ -642,7 +690,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   goToPostseasonHub() {
-    set({ view: 'postseasonHub', viewedTournamentGameId: null })
+    set({
+      view: 'postseasonHub',
+      viewedTournamentGameId: null,
+      explorationViewHistory: [],
+      recruitingActionError: null,
+    })
   },
 
   goToPostseasonGamePrep() {
@@ -859,5 +912,111 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       view: previousView ?? (dynasty?.activePostseason ? 'postseasonHub' : 'hub'),
       explorationViewHistory: explorationViewHistory.slice(0, -1),
     })
+  },
+
+  goToRecruiting() {
+    set({
+      view: 'recruiting',
+      explorationViewHistory: [],
+      recruitingActionError: null,
+    })
+  },
+
+  addRecruitingTarget(playerId) {
+    const { dynasty } = get()
+
+    if (!dynasty?.recruiting) {
+      return
+    }
+
+    try {
+      const nextDynasty = addRecruitingBoardTarget({
+        dynasty,
+        playerId,
+        priority: DEFAULT_ADDED_TARGET_PRIORITY,
+      })
+      set({ dynasty: nextDynasty, recruitingActionError: null })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not add that Recruit to the board.',
+      })
+    }
+  },
+
+  removeRecruitingTarget(playerId) {
+    const { dynasty } = get()
+
+    if (!dynasty?.recruiting) {
+      return
+    }
+
+    try {
+      const nextDynasty = removeRecruitingBoardTarget({ dynasty, playerId })
+      set({ dynasty: nextDynasty, recruitingActionError: null })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not remove that Recruit from the board.',
+      })
+    }
+  },
+
+  setRecruitingPriority(playerId, priority) {
+    const { dynasty } = get()
+
+    if (!dynasty?.recruiting) {
+      return
+    }
+
+    try {
+      const nextDynasty = updateRecruitingBoardPriority({ dynasty, playerId, priority })
+      set({ dynasty: nextDynasty, recruitingActionError: null })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not update that priority.',
+      })
+    }
+  },
+
+  offerRecruitingTarget(playerId) {
+    const { dynasty } = get()
+
+    if (!dynasty?.recruiting) {
+      return
+    }
+
+    try {
+      const nextDynasty = offerRecruit({ dynasty, playerId })
+      set({ dynasty: nextDynasty, recruitingActionError: null })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not extend that offer.',
+      })
+    }
+  },
+
+  withdrawRecruitingOffer(playerId) {
+    const { dynasty } = get()
+
+    if (!dynasty?.recruiting) {
+      return
+    }
+
+    try {
+      const nextDynasty = withdrawRecruitOffer({ dynasty, playerId })
+      set({ dynasty: nextDynasty, recruitingActionError: null })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not withdraw that offer.',
+      })
+    }
+  },
+
+  dismissRecruitingActionError() {
+    set({ recruitingActionError: null })
   },
 }))

@@ -72,6 +72,8 @@ export function formatBackDestinationLabel(view: SeasonSessionView): string {
       return 'Team'
     case 'playerDetails':
       return 'Player'
+    case 'recruiting':
+      return 'Recruiting'
     default:
       return 'Season'
   }

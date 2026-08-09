@@ -4,6 +4,7 @@ import { LeagueScreen } from './LeagueScreen'
 import { PlayerDetailsScreen } from './PlayerDetailsScreen'
 import { PostseasonHubScreen } from './PostseasonHubScreen'
 import { ProgramSelectScreen } from './ProgramSelectScreen'
+import { RecruitingScreen } from './RecruitingScreen'
 import { SeasonHubScreen } from './SeasonHubScreen'
 import { SeasonPostgameScreen } from './SeasonPostgameScreen'
 import { TeamDetailsScreen } from './TeamDetailsScreen'
@@ -38,6 +39,8 @@ export function DynastyApp() {
       return <TeamDetailsScreen />
     case 'playerDetails':
       return <PlayerDetailsScreen />
+    case 'recruiting':
+      return <RecruitingScreen />
     case 'hub':
     case 'programSelect':
     default:

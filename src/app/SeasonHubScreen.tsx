@@ -1,16 +1,18 @@
-import { calculateTeamStrength, type Team, type TeamStrength } from '../engine'
+import { calculateTeamStrength, POSITIONS, type Team, type TeamStrength } from '../engine'
 import {
   CompletedMatchupCard,
   ConferenceStandingsSection,
-  HubSectionTabs,
+  DynastySectionNav,
   NextGameCard,
   RecentResultsSection,
+  RecruitingHubSummary,
   ScheduleTable,
   SeasonHeader,
   SuperSimConfirmDialog,
   SuperSimMenu,
   SuperSimSummaryDialog,
 } from '../components'
+import { deriveProgramRecruitingBoard } from '../dynasty'
 import {
   MIDSEASON_ROUND,
   selectActivePostseason,
@@ -35,6 +37,7 @@ import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
 import { deriveGameLeaders, formatControlledMargin } from './gameLeaders'
 import { formatTournamentQualification } from './postseasonFormatters'
+import { deriveRecentControlledCommitment } from './recruitingFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -60,9 +63,11 @@ function buildTeamInfo(
 }
 
 export function SeasonHubScreen() {
+  const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const goToGamePrep = useDynastyStore((state) => state.goToGamePrep)
+  const goToHub = useDynastyStore((state) => state.goToHub)
   const simulateNextGame = useDynastyStore((state) => state.simulateNextGame)
   const simulateRestOfRound = useDynastyStore(
     (state) => state.simulateRestOfRound,
@@ -80,6 +85,7 @@ export function SeasonHubScreen() {
   const postseason = useDynastyStore(selectActivePostseason)
   const enterPostseason = useDynastyStore((state) => state.enterPostseason)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
+  const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !controlledProgramId) {
@@ -94,6 +100,22 @@ export function SeasonHubScreen() {
   if (!controlledProgram || !controlledConference) {
     return null
   }
+
+  const recruiting = dynasty?.recruiting
+  const recruitingBoard =
+    dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
+  const recruitingProjectedTotal = recruitingBoard
+    ? POSITIONS.reduce(
+        (sum, position) => sum + recruitingBoard.projectedOpeningsByPosition[position],
+        0,
+      )
+    : 0
+  const recruitingRemainingTotal = recruitingBoard
+    ? POSITIONS.reduce(
+        (sum, position) => sum + recruitingBoard.remainingOpeningsByPosition[position],
+        0,
+      )
+    : 0
 
   const overallRecord = deriveProgramRecord(season, controlledProgramId)
   const conferenceRecord = deriveConferenceRecord(season, controlledProgramId)
@@ -182,7 +204,13 @@ export function SeasonHubScreen() {
 
   return (
     <>
-      <HubSectionTabs activeLabel="Season" onSelectLeague={goToLeague} />
+      <DynastySectionNav
+        competitionLabel="Season"
+        activeSection="competition"
+        onSelectCompetition={goToHub}
+        onSelectRecruiting={goToRecruiting}
+        onSelectLeague={goToLeague}
+      />
       <SeasonHeader
         programName={controlledProgram.name}
         accentColor={controlledProgram.branding.primaryColor}
@@ -342,6 +370,24 @@ export function SeasonHubScreen() {
           </div>
         )}
       </section>
+
+      {recruiting && recruitingBoard && (
+        <section className="section" aria-labelledby="recruiting-summary-heading">
+          <h2 id="recruiting-summary-heading" className="visually-hidden">
+            Recruiting
+          </h2>
+          <RecruitingHubSummary
+            targetSeasonNumber={recruiting.targetSeasonNumber}
+            phase={recruiting.phase}
+            lastResolvedPeriod={recruiting.lastResolvedPeriod}
+            boardSize={recruitingBoard.targets.length}
+            signedTotal={recruitingProjectedTotal - recruitingRemainingTotal}
+            projectedTotal={recruitingProjectedTotal}
+            recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
+            onManageRecruiting={goToRecruiting}
+          />
+        </section>
+      )}
 
       <section className="section" aria-labelledby="standings-heading">
         <h2 id="standings-heading" className="section-title">
