@@ -11,8 +11,13 @@ export {
 export {
   addRecruitingBoardTarget,
   buildDefaultRecruitingBoard,
+  cleanupInvalidRecruitingOffers,
+  manageProgramRecruitingOffers,
+  offerRecruit,
+  promoteControlledRecruitingBackups,
   removeRecruitingBoardTarget,
   updateRecruitingBoardPriority,
+  withdrawRecruitOffer,
 } from './recruiting/boards'
 export {
   MAX_RECRUITING_PRIORITY,
@@ -29,6 +34,8 @@ export {
 } from './recruiting/generation'
 export {
   deriveBaseRecruitAttraction,
+  deriveActiveOfferCountsByPosition,
+  deriveAvailableOfferSlotsByPosition,
   deriveProgramCommitments,
   deriveProgramRecruitingBoard,
   deriveRecruitNationalRank,
@@ -74,4 +81,5 @@ export type {
   RecruitStarRating,
   RemoveRecruitingBoardTargetOptions,
   UpdateRecruitingBoardPriorityOptions,
+  UpdateRecruitingOfferOptions,
 } from './recruiting/domain'

@@ -16,7 +16,7 @@ export const DECISION_READY_PERIOD_RANGES = {
   2: [4, 15],
   3: [7, 18],
   4: [10, 22],
-  5: [13, 24],
+  5: [11, 24],
 } as const satisfies Readonly<
   Record<RecruitStarRating, readonly [number, number]>
 >
@@ -25,7 +25,7 @@ export const COMMITMENT_STANDING_RANGES = {
   2: [42, 58],
   3: [56, 75],
   4: [74, 96],
-  5: [94, 120],
+  5: [64, 92],
 } as const satisfies Readonly<
   Record<RecruitStarRating, readonly [number, number]>
 >
@@ -34,7 +34,7 @@ export const COMMITMENT_SEPARATION_RANGES = {
   2: [2, 7],
   3: [4, 9],
   4: [6, 12],
-  5: [8, 15],
+  5: [4, 9],
 } as const satisfies Readonly<
   Record<RecruitStarRating, readonly [number, number]>
 >
@@ -43,7 +43,7 @@ export const PRESTIGE_SENSITIVITY = {
   2: 0.1,
   3: 0.18,
   4: 0.29,
-  5: 0.42,
+  5: 0.3,
 } as const satisfies Readonly<Record<RecruitStarRating, number>>
 
 export const EMPTY_POSITION_COUNTS = {

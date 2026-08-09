@@ -203,7 +203,7 @@ describe('Recruiting strategy model', () => {
             ...dynasty.recruiting!.programs,
             [lateProgramId]: {
               ...lateProgram,
-              board: [{ playerId: earlyCommitment.playerId, priority: 5 }, ...lateProgram.board].slice(0, 10),
+              board: [{ playerId: earlyCommitment.playerId, priority: 5, hasActiveOffer: true }, ...lateProgram.board].slice(0, 10),
             },
           },
         },

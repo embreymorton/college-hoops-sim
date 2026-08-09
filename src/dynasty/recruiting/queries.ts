@@ -112,6 +112,31 @@ export function deriveRemainingOpeningsByPosition(
   ])) as PositionCounts
 }
 
+export function deriveActiveOfferCountsByPosition(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): PositionCounts {
+  const counts = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
+  for (const target of program.board) {
+    if (!target.hasActiveOffer || deriveTargetStatus(recruiting, program.programId, target.playerId) !== 'active') continue
+    const recruit = getRecruit(recruiting, target.playerId)
+    if (recruit) counts[recruit.player.position] += 1
+  }
+  return counts
+}
+
+export function deriveAvailableOfferSlotsByPosition(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): PositionCounts {
+  const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
+  const activeOffers = deriveActiveOfferCountsByPosition(recruiting, program)
+  return Object.fromEntries(POSITIONS.map((position) => [
+    position,
+    Math.max(0, remaining[position] - activeOffers[position]),
+  ])) as PositionCounts
+}
+
 export function deriveTargetStatus(
   recruiting: RecruitingState,
   programId: string,
@@ -144,6 +169,8 @@ export function deriveProgramRecruitingBoard(
     programId,
     projectedOpeningsByPosition: program.projectedOpeningsByPosition,
     remainingOpeningsByPosition: deriveRemainingOpeningsByPosition(recruiting, program),
+    activeOfferCountsByPosition: deriveActiveOfferCountsByPosition(recruiting, program),
+    availableOfferSlotsByPosition: deriveAvailableOfferSlotsByPosition(recruiting, program),
     targets: program.board.map((target) => ({
       ...target,
       status: deriveTargetStatus(recruiting, programId, target.playerId),

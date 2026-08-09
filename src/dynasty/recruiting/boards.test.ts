@@ -9,6 +9,7 @@ import { RECRUITING_BOARD_LIMIT } from './constants'
 import {
   deriveProgramCommitments,
   deriveProgramRecruitingBoard,
+  deriveActiveOfferCountsByPosition,
   getRecruit,
 } from './queries'
 import { resolveRecruitingPeriod } from './simulation'
@@ -105,6 +106,11 @@ describe('Program recruiting boards', () => {
         const position = getRecruit(dynasty.recruiting!, commitment.playerId)!.player.position
         counts[position] = (counts[position] ?? 0) + 1
         expect(counts[position]).toBeLessThanOrEqual(program.projectedOpeningsByPosition[position])
+      }
+      const offerCounts = deriveActiveOfferCountsByPosition(dynasty.recruiting!, program)
+      for (const position of Object.keys(program.projectedOpeningsByPosition) as Array<keyof typeof offerCounts>) {
+        expect((counts[position] ?? 0) + offerCounts[position])
+          .toBeLessThanOrEqual(program.projectedOpeningsByPosition[position])
       }
       expect(deriveProgramRecruitingBoard(dynasty, program.programId).targets.every(
         ({ status }) => ['active', 'committed', 'committed-elsewhere', 'position-filled'].includes(status),

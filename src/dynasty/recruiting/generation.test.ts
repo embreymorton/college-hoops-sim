@@ -85,4 +85,35 @@ describe('national recruiting class generation', () => {
     expect(recruits.filter(({ stars }) => stars === 5)).toHaveLength(Math.ceil(recruits.length * 0.06))
     expect(recruits.every(({ stars }) => [2, 3, 4, 5].includes(stars))).toBe(true)
   })
+
+  it('keeps premium positional supply within projected national openings', () => {
+    const dynasty = createRecruitingDynasty('premium-capacity')
+    const demand = deriveNationalPositionDemand(dynasty.activeSeason!)
+    for (const position of POSITIONS) {
+      const premium = dynasty.recruiting!.recruits.filter(
+        (recruit) => recruit.player.position === position && recruit.stars >= 4,
+      ).length
+      expect(premium).toBeLessThanOrEqual(demand[position])
+    }
+  })
+
+  it('permits earlier five-star readiness while keeping elite timing latest on average', () => {
+    const dynasty = createRecruitingDynasty('elite-readiness')
+    const samples = Array.from({ length: 20 }, (_, index) =>
+      generateRecruitingClass({
+        dynastySeed: `elite-readiness:${index}`,
+        targetSeasonNumber: 2,
+        season: dynasty.activeSeason!,
+      }),
+    ).flat()
+    const averageReady = (stars: number) => {
+      const periods = samples.filter((recruit) => recruit.stars === stars)
+        .map(({ decisionReadyPeriod }) => decisionReadyPeriod)
+      return periods.reduce((sum, period) => sum + period, 0) / periods.length
+    }
+    expect(Math.min(...samples.filter(({ stars }) => stars === 5)
+      .map(({ decisionReadyPeriod }) => decisionReadyPeriod))).toBeLessThanOrEqual(15)
+    expect(averageReady(5)).toBeGreaterThan(averageReady(4))
+    expect(averageReady(4)).toBeGreaterThan(averageReady(3))
+  })
 })

@@ -19,6 +19,8 @@ export interface Recruit {
 export interface RecruitingBoardTarget {
   readonly playerId: string
   readonly priority: number
+  /** Canonical Program intent to accept this Recruit into positional capacity. */
+  readonly hasActiveOffer: boolean
 }
 
 export interface RecruitingProgramState {
@@ -71,6 +73,7 @@ export type RecruitingTargetStatus =
 export interface ProgramRecruitingBoardEntry {
   readonly playerId: string
   readonly priority: number
+  readonly hasActiveOffer: boolean
   readonly status: RecruitingTargetStatus
   readonly relationshipProgress: number
   readonly standingRank: number
@@ -80,6 +83,8 @@ export interface ProgramRecruitingBoard {
   readonly programId: string
   readonly projectedOpeningsByPosition: PositionCounts
   readonly remainingOpeningsByPosition: PositionCounts
+  readonly activeOfferCountsByPosition: PositionCounts
+  readonly availableOfferSlotsByPosition: PositionCounts
   readonly targets: readonly ProgramRecruitingBoardEntry[]
 }
 
@@ -98,4 +103,9 @@ export interface UpdateRecruitingBoardPriorityOptions {
   readonly dynasty: import('../domain').DynastyState
   readonly playerId: string
   readonly priority: number
+}
+
+export interface UpdateRecruitingOfferOptions {
+  readonly dynasty: import('../domain').DynastyState
+  readonly playerId: string
 }

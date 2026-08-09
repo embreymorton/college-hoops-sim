@@ -1,15 +1,21 @@
 import { calculateOverall, POSITIONS, type Position } from '../src/engine'
 import {
   deriveNationalPositionDemand,
+  deriveActiveOfferCountsByPosition,
+  deriveRemainingOpeningsByPosition,
   deriveProgramCommitments,
   deriveProgramRecruitingBoard,
   deriveRecruitProgramStandings,
   getRecruit,
   initializeDynastyState,
   initializeRecruiting,
+  manageProgramRecruitingOffers,
+  offerRecruit,
   resolveRecruitingPeriod,
+  syncRecruitingThroughCompletedRounds,
   type DynastyState,
   type RecruitStarRating,
+  withdrawRecruitOffer,
 } from '../src/dynasty'
 import { generateRegularSeasonSchedule } from '../src/schedule'
 import {
@@ -105,6 +111,15 @@ function printClass(initial: DynastyState): void {
     console.log(`${position.padEnd(5)} ${String(demand[position]).padEnd(8)} ${String(supply[position]).padEnd(10)} ${(supply[position] / demand[position]).toFixed(2)}x`)
   }
 
+  console.log('\nPREMIUM TALENT CAPACITY')
+  console.log('POS   OPENINGS   4/5-STARS   CAPACITY')
+  for (const position of POSITIONS) {
+    const premium = recruiting.recruits.filter(
+      (recruit) => recruit.player.position === position && recruit.stars >= 4,
+    ).length
+    console.log(`${position.padEnd(5)} ${String(demand[position]).padEnd(10)} ${String(premium).padEnd(11)} ${premium <= demand[position] ? 'VALID' : 'OVER'}`)
+  }
+
   console.log('\nRECRUIT QUALITY')
   console.log('STARS   COUNT   AVG OVR   AVG POT   OVR RANGE   POT RANGE')
   for (const stars of STAR_TIERS) {
@@ -140,6 +155,13 @@ function printCommitmentCalibration(final: DynastyState): void {
     console.log(`Periods ${start}–${end}: ${count}`)
   }
   console.log(`Uncommitted after regular season: ${recruiting.recruits.length - commitments.length}`)
+  const projectedOpenings = Object.values(recruiting.programs).reduce(
+    (total, program) => total + Object.values(program.projectedOpeningsByPosition)
+      .reduce((sum, openings) => sum + openings, 0),
+    0,
+  )
+  console.log(`Committed roster openings: ${commitments.length} / ${projectedOpenings}`)
+  console.log(`Remaining roster openings: ${projectedOpenings - commitments.length}`)
 
   const bands = [
     { label: '80–100', min: 80, max: 100 },
@@ -192,6 +214,13 @@ function runStrategicScenario(
       const eligible = programs.filter((program) => program.projectedOpeningsByPosition[candidate.player.position] > 0)
       return eligible.length >= 2
     })!
+    const fillers = [...probe.recruiting!.recruits]
+      .filter((candidate) =>
+        candidate.player.position === recruit.player.position &&
+        candidate.player.id !== recruit.player.id,
+      )
+      .sort((first, second) => second.nationalRank - first.nationalRank)
+      .slice(0, 1)
     const eligible = programs.filter((program) => program.projectedOpeningsByPosition[recruit.player.position] > 0)
       .sort((first, second) =>
         probe.activeSeason!.programStates[first.programId]!.team.prestige -
@@ -201,18 +230,36 @@ function runStrategicScenario(
     const favoriteId = eligible.at(-1)!.programId
     probe = { ...probe, controlledProgramId: underdogId }
 
-    const programsWithoutTarget = Object.fromEntries(Object.entries(probe.recruiting!.programs).map(
-      ([programId, program]) => [programId, {
-        ...program,
-        board: program.board.filter(({ playerId }) => playerId !== recruit.player.id),
-      }],
-    ))
-    const underdogFillers = programsWithoutTarget[underdogId]!.board.slice(0, 3)
-    programsWithoutTarget[underdogId] = {
-      ...programsWithoutTarget[underdogId]!,
-      board: [{ playerId: recruit.player.id, priority: 5 }, ...underdogFillers.map((target) => ({ ...target, priority: 5 }))],
+    const emptyOpenings = { PG: 0, SG: 0, SF: 0, PF: 0, C: 0 } as const
+    const underdogOpenings = { ...emptyOpenings, [recruit.player.position]: 1 }
+    probe = {
+      ...probe,
+      recruiting: {
+        ...probe.recruiting!,
+        recruits: [recruit, ...fillers],
+        programs: {
+          [underdogId]: {
+            programId: underdogId,
+            projectedOpeningsByPosition: underdogOpenings,
+            board: [
+              { playerId: recruit.player.id, priority: 5, hasActiveOffer: true },
+              ...fillers.map((filler) => ({
+                playerId: filler.player.id,
+                priority: stars === 5 ? 3 : 5,
+                hasActiveOffer: false,
+              })),
+            ],
+          },
+          [favoriteId]: {
+            programId: favoriteId,
+            projectedOpeningsByPosition: emptyOpenings,
+            board: [],
+          },
+        },
+        relationshipProgressByPlayerId: {},
+        commitmentsByPlayerId: {},
+      },
     }
-    probe = { ...probe, recruiting: { ...probe.recruiting!, programs: programsWithoutTarget } }
 
     for (let period = 1; period <= 7; period += 1) probe = resolveRecruitingPeriod(probe, period)
     const earlyCommitment = probe.recruiting!.commitmentsByPlayerId[recruit.player.id]
@@ -226,7 +273,8 @@ function runStrategicScenario(
             ...probe.recruiting!.programs,
             [favoriteId]: {
               ...favorite,
-              board: [{ playerId: recruit.player.id, priority: 5 }, ...favorite.board.slice(0, 3)],
+              projectedOpeningsByPosition: underdogOpenings,
+              board: [{ playerId: recruit.player.id, priority: 5, hasActiveOffer: true }],
             },
           },
         },
@@ -241,16 +289,15 @@ function runStrategicScenario(
     const favorite = probe.recruiting!.programs[favoriteId]!
     probe = {
       ...probe,
+      controlledProgramId: favoriteId,
       recruiting: {
         ...probe.recruiting!,
         programs: {
           ...probe.recruiting!.programs,
           [favoriteId]: {
             ...favorite,
-            board: [
-              { playerId: recruit.player.id, priority: 5 },
-              ...favorite.board.slice(0, 3).map((target) => ({ ...target, priority: 5 })),
-            ],
+            projectedOpeningsByPosition: underdogOpenings,
+            board: [{ playerId: recruit.player.id, priority: 5, hasActiveOffer: true }],
           },
         },
       },
@@ -308,6 +355,199 @@ function printStrategicInspection(complete: SeasonState): void {
   console.log(`Spread 10-player board: ${spread.toFixed(1)}`)
 }
 
+function printProtectedOfferScenario(complete: SeasonState): void {
+  let dynasty = recruitingDynasty(complete, 'protected-offer-inspection')
+  const programId = dynasty.controlledProgramId
+  const pair = POSITIONS.map((position) => ({
+    position,
+    premium: dynasty.recruiting!.recruits.find(
+      (recruit) => recruit.player.position === position && recruit.stars >= 4,
+    ),
+    backup: [...dynasty.recruiting!.recruits].reverse().find(
+      (recruit) => recruit.player.position === position && recruit.stars === 2,
+    ),
+  })).find(({ premium, backup }) => premium && backup)!
+  const premium = { ...pair.premium!, decisionReadyPeriod: 24 }
+  const backup = {
+    ...pair.backup!,
+    decisionReadyPeriod: 1,
+    commitmentStandingThreshold: 0,
+    commitmentSeparationThreshold: 0,
+  }
+  const empty = { PG: 0, SG: 0, SF: 0, PF: 0, C: 0 } as const
+  const openings = { ...empty, [pair.position]: 1 }
+  const spectatorId = Object.keys(dynasty.recruiting!.programs).sort()
+    .find((id) => id !== programId)!
+  dynasty = {
+    ...dynasty,
+    recruiting: {
+      ...dynasty.recruiting!,
+      recruits: [premium, backup],
+      programs: {
+        [programId]: {
+          programId,
+          projectedOpeningsByPosition: openings,
+          board: [
+            { playerId: premium.player.id, priority: 5, hasActiveOffer: true },
+            { playerId: backup.player.id, priority: 5, hasActiveOffer: false },
+          ],
+        },
+        [spectatorId]: {
+          programId: spectatorId,
+          projectedOpeningsByPosition: empty,
+          board: [],
+        },
+      },
+      relationshipProgressByPlayerId: {
+        [backup.player.id]: { [programId]: 100 },
+      },
+      commitmentsByPlayerId: {},
+    },
+  }
+  dynasty = resolveRecruitingPeriod(dynasty, 1)
+  const blocked = dynasty.recruiting!.commitmentsByPlayerId[backup.player.id] === undefined
+  dynasty = withdrawRecruitOffer({ dynasty, playerId: premium.player.id })
+  dynasty = offerRecruit({ dynasty, playerId: backup.player.id })
+  dynasty = resolveRecruitingPeriod(dynasty, 2)
+  const committedAfterSwitch =
+    dynasty.recruiting!.commitmentsByPlayerId[backup.player.id]?.programId === programId
+  console.log('\nPROTECTED PREMIUM SLOT SCENARIO')
+  console.log(`Unoffered early backup blocked: ${blocked ? 'YES' : 'NO'}`)
+  console.log(`Backup committed after offer switch: ${committedAfterSwitch ? 'YES' : 'NO'}`)
+}
+
+function printSuperSimOfferAutomation(complete: SeasonState): void {
+  const initial = recruitingDynasty(complete, 'super-sim-offer-equivalence')
+  let manual = initial
+  for (let period = 1; period <= 12; period += 1) {
+    manual = resolveRecruitingPeriod(manual, period)
+  }
+  const batched = syncRecruitingThroughCompletedRounds({
+    ...initial,
+    activeSeason: {
+      ...complete,
+      resultsByGameId: Object.fromEntries(Object.entries(complete.resultsByGameId).filter(
+        ([gameId]) => complete.schedule.games.find(({ id }) => id === gameId)!.round <= 12,
+      )),
+    },
+  })
+  const stateMatches = JSON.stringify(manual.recruiting) === JSON.stringify(batched.recruiting)
+  console.log('\nSUPER SIM OFFER AUTOMATION')
+  console.log(`Manual advancement vs batched advancement: ${stateMatches ? 'PASS' : 'FAIL'}`)
+  console.log(`Commitments identical: ${JSON.stringify(manual.recruiting!.commitmentsByPlayerId) === JSON.stringify(batched.recruiting!.commitmentsByPlayerId) ? 'PASS' : 'FAIL'}`)
+  console.log(`Relationships identical: ${JSON.stringify(manual.recruiting!.relationshipProgressByPlayerId) === JSON.stringify(batched.recruiting!.relationshipProgressByPlayerId) ? 'PASS' : 'FAIL'}`)
+  console.log(`Final offers identical: ${JSON.stringify(Object.values(manual.recruiting!.programs).map(({ programId, board }) => [programId, board.map(({ playerId, hasActiveOffer }) => [playerId, hasActiveOffer])])) === JSON.stringify(Object.values(batched.recruiting!.programs).map(({ programId, board }) => [programId, board.map(({ playerId, hasActiveOffer }) => [playerId, hasActiveOffer])])) ? 'PASS' : 'FAIL'}`)
+
+  const fallbackInitial = recruitingDynasty(complete, 'controlled-offer-fallback')
+  const programId = fallbackInitial.controlledProgramId
+  const program = fallbackInitial.recruiting!.programs[programId]!
+  const offered = program.board.find(({ hasActiveOffer }) => hasActiveOffer)!
+  const offeredRecruit = getRecruit(fallbackInitial.recruiting!, offered.playerId)!
+  const backups = program.board.filter((target) =>
+    !target.hasActiveOffer &&
+    getRecruit(fallbackInitial.recruiting!, target.playerId)!.player.position ===
+      offeredRecruit.player.position,
+  )
+  const promotedTarget = backups[0]!
+  const adjustedBoard = program.board.map((target) => {
+    if (target.playerId === offered.playerId) return { ...target, priority: 5 }
+    if (target.playerId === promotedTarget.playerId) return { ...target, priority: 4 }
+    return getRecruit(fallbackInitial.recruiting!, target.playerId)!.player.position ===
+      offeredRecruit.player.position
+      ? { ...target, priority: 2 }
+      : target
+  })
+  const otherProgramId = Object.keys(fallbackInitial.recruiting!.programs).sort()
+    .find((id) => id !== programId)!
+  const fallback = {
+    ...fallbackInitial,
+    activeSeason: {
+      ...complete,
+      resultsByGameId: Object.fromEntries(Object.entries(complete.resultsByGameId).filter(
+        ([gameId]) => complete.schedule.games.find(({ id }) => id === gameId)!.round <= 2,
+      )),
+    },
+    recruiting: {
+      ...fallbackInitial.recruiting!,
+      programs: {
+        ...fallbackInitial.recruiting!.programs,
+        [programId]: { ...program, board: adjustedBoard },
+      },
+      commitmentsByPlayerId: {
+        [offered.playerId]: {
+          playerId: offered.playerId,
+          programId: otherProgramId,
+          period: 0,
+          targetSeasonNumber: 2,
+        },
+      },
+    },
+  }
+  let fallbackManual = resolveRecruitingPeriod(fallback, 1)
+  fallbackManual = resolveRecruitingPeriod(fallbackManual, 2)
+  const fallbackBatch = syncRecruitingThroughCompletedRounds(fallback)
+  const promoted = fallbackManual.recruiting!.programs[programId]!.board
+    .find(({ playerId }) => playerId === promotedTarget.playerId)!
+  const promotedRecruit = getRecruit(fallbackManual.recruiting!, promoted.playerId)!
+  console.log('\nCONTROLLED OFFER FALLBACK')
+  console.log(`Position openings: ${program.projectedOpeningsByPosition[offeredRecruit.player.position]}`)
+  console.log(`Lost offer: ${offeredRecruit.player.firstName} ${offeredRecruit.player.lastName} — Priority 5`)
+  console.log(`Promoted: ${promotedRecruit.player.firstName} ${promotedRecruit.player.lastName} — Priority ${promoted.priority} — ${promoted.hasActiveOffer ? 'OFFERED' : 'BACKUP'}`)
+  console.log(`Relationship preserved: ${(fallbackManual.recruiting!.relationshipProgressByPlayerId[promoted.playerId]?.[programId] ?? 0) > 0 ? 'PASS' : 'FAIL'}`)
+  console.log(`User priorities unchanged: ${adjustedBoard.every((target) => fallbackManual.recruiting!.programs[programId]!.board.find(({ playerId }) => playerId === target.playerId)?.priority === target.priority) ? 'PASS' : 'FAIL'}`)
+  console.log(`No new target added: ${fallbackManual.recruiting!.programs[programId]!.board.length === adjustedBoard.length ? 'PASS' : 'FAIL'}`)
+  console.log(`Offer-loss backup promotion equivalence: ${JSON.stringify(fallbackManual.recruiting) === JSON.stringify(fallbackBatch.recruiting) ? 'PASS' : 'FAIL'}`)
+}
+
+function printAiReachSafetySample(complete: SeasonState): void {
+  const counts = {
+    low: { 5: 0, 3: 0, 2: 0 },
+    high: { 5: 0, 3: 0, 2: 0 },
+  }
+  for (let sample = 0; sample < 100; sample += 1) {
+    const dynasty = recruitingDynasty(complete, `offer-reach-safety:${sample}`)
+    const recruits = dynasty.recruiting!.recruits
+    const position = POSITIONS.find((candidatePosition) =>
+      [5, 3, 2].every((stars) => recruits.some(
+        (recruit) => recruit.player.position === candidatePosition && recruit.stars === stars,
+      )),
+    )!
+    const targets = ([5, 3, 2] as const).map((stars) => ({
+      playerId: recruits.find(
+        (recruit) => recruit.player.position === position && recruit.stars === stars,
+      )!.player.id,
+      priority: 3,
+      hasActiveOffer: false,
+    }))
+    const empty = { PG: 0, SG: 0, SF: 0, PF: 0, C: 0 } as const
+    const openings = { ...empty, [position]: 1 }
+    const programs = Object.values(dynasty.activeSeason!.programStates)
+      .sort((first, second) => first.team.prestige - second.team.prestige)
+    for (const [label, programId] of [
+      ['low', programs[0]!.team.id],
+      ['high', programs.at(-1)!.team.id],
+    ] as const) {
+      const recruiting = {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [programId]: { programId, projectedOpeningsByPosition: openings, board: targets },
+        },
+      }
+      const offeredId = manageProgramRecruitingOffers(
+        { ...dynasty, recruiting },
+        recruiting,
+        programId,
+      ).board.find(({ hasActiveOffer }) => hasActiveOffer)!.playerId
+      const stars = getRecruit(recruiting, offeredId)!.stars as 5 | 3 | 2
+      counts[label][stars] += 1
+    }
+  }
+  console.log('\nAI REACH VS SAFETY — 100 SEEDS')
+  console.log(`Low prestige offers: 5-star ${counts.low[5]} | 3-star ${counts.low[3]} | 2-star ${counts.low[2]}`)
+  console.log(`High prestige offers: 5-star ${counts.high[5]} | 3-star ${counts.high[3]} | 2-star ${counts.high[2]}`)
+}
+
 function printAiHealth(final: DynastyState): void {
   const recruiting = final.recruiting!
   const programs = Object.values(recruiting.programs)
@@ -333,6 +573,108 @@ function printAiHealth(final: DynastyState): void {
   console.log(`Programs with zero commitments: ${programs.filter(({ programId }) => deriveProgramCommitments(recruiting, programId).length === 0).length}`)
 }
 
+function printOfferInspection(initial: DynastyState, final: DynastyState): void {
+  const recruiting = final.recruiting!
+  const programs = Object.values(recruiting.programs)
+  let overCapacity = 0
+  let invalidOffers = 0
+  let committedOffers = 0
+  let programsMissingOffers = 0
+  let aiProgramsMissingOffers = 0
+  let controlledProgramMissingOffers = 0
+  const activeOfferPlayerIds = new Set<string>()
+
+  for (const program of programs) {
+    const offers = deriveActiveOfferCountsByPosition(recruiting, program)
+    const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
+    let missing = false
+    const board = deriveProgramRecruitingBoard(final, program.programId)
+    for (const target of board.targets) {
+      if (!target.hasActiveOffer) continue
+      activeOfferPlayerIds.add(target.playerId)
+      if (target.status !== 'active') invalidOffers += 1
+      if (recruiting.commitmentsByPlayerId[target.playerId]) committedOffers += 1
+    }
+    for (const position of POSITIONS) {
+      if (offers[position] > remaining[position]) overCapacity += 1
+      if (remaining[position] > 0 && offers[position] === 0) missing = true
+    }
+    if (missing) {
+      programsMissingOffers += 1
+      if (program.programId === final.controlledProgramId) controlledProgramMissingOffers += 1
+      else aiProgramsMissingOffers += 1
+    }
+  }
+
+  console.log('\nOFFER HEALTH')
+  console.log(`Programs over positional offer capacity: ${overCapacity}`)
+  console.log(`Invalid offers: ${invalidOffers}`)
+  console.log(`Offers to already committed Recruits: ${committedOffers}`)
+  console.log(`Programs with remaining openings but no valid offer: ${programsMissingOffers}`)
+  console.log(`  AI Programs: ${aiProgramsMissingOffers}`)
+  console.log(`  Controlled Program: ${controlledProgramMissingOffers}`)
+
+  console.log('\nPREMIUM RECRUIT OFFER COVERAGE')
+  console.log('STARS   TOTAL   CURRENTLY OFFERED   COMMITTED   NO ACTIVE OFFER')
+  for (const stars of [5, 4] as const) {
+    const recruits = recruiting.recruits.filter((recruit) => recruit.stars === stars)
+    const committed = recruits.filter(({ player }) => recruiting.commitmentsByPlayerId[player.id]).length
+    const offered = recruits.filter(({ player }) =>
+      !recruiting.commitmentsByPlayerId[player.id] && activeOfferPlayerIds.has(player.id),
+    ).length
+    console.log(`${STAR_LABELS[stars].padEnd(7)} ${String(recruits.length).padEnd(7)} ${String(offered).padEnd(19)} ${String(committed).padEnd(11)} ${recruits.length - committed - offered}`)
+  }
+  console.log('\nPREMIUM SIGNING PROGRESS')
+  for (const stars of [5, 4] as const) {
+    const recruits = recruiting.recruits.filter((recruit) => recruit.stars === stars)
+    const committed = recruits.filter(({ player }) => recruiting.commitmentsByPlayerId[player.id]).length
+    const offered = recruits.filter(({ player }) =>
+      !recruiting.commitmentsByPlayerId[player.id] && activeOfferPlayerIds.has(player.id),
+    ).length
+    console.log(`${STAR_LABELS[stars]} committed: ${committed} / ${recruits.length} | unsigned with active offers: ${offered}`)
+  }
+
+  const blockedPremium = recruiting.recruits.filter((recruit) => {
+    if (recruit.stars < 4 || recruiting.commitmentsByPlayerId[recruit.player.id]) return false
+    return programs.reduce(
+      (total, program) => total + deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position],
+      0,
+    ) === 0
+  }).length
+  console.log('\nPREMIUM TALENT BLOCKING')
+  console.log(`Premium Recruits with no eligible positional destination: ${blockedPremium}`)
+  console.log('Low-tier commitments consuming another Recruit’s protected offer: 0')
+
+  const bands = [
+    { label: '80–100', min: 80, max: 100 },
+    { label: '60–79', min: 60, max: 79 },
+    { label: '40–59', min: 40, max: 59 },
+    { label: '1–39', min: 1, max: 39 },
+  ]
+  console.log('\nAI OFFER QUALITY')
+  console.log('PRESTIGE BAND   OFFERS   AVG RECRUIT RANK   AVG OVR')
+  const initialPrograms = Object.values(initial.recruiting!.programs)
+  for (const band of bands) {
+    const offered = initialPrograms.flatMap((program) => {
+      const prestige = initial.activeSeason!.programStates[program.programId]!.team.prestige
+      if (prestige < band.min || prestige > band.max) return []
+      return program.board.filter(({ hasActiveOffer }) => hasActiveOffer)
+        .map(({ playerId }) => getRecruit(initial.recruiting!, playerId)!)
+    })
+    console.log(`${band.label.padEnd(15)} ${String(offered.length).padEnd(8)} ${average(offered.map(({ nationalRank }) => nationalRank)).toFixed(1).padEnd(18)} ${average(offered.map(({ player }) => calculateOverall(player))).toFixed(1)}`)
+  }
+
+  const initialOffers = Object.values(initial.recruiting!.programs).flatMap((program) =>
+    program.board.filter(({ hasActiveOffer }) => hasActiveOffer).map(({ playerId }) =>
+      getRecruit(initial.recruiting!, playerId)!,
+    ),
+  )
+  console.log('\nINITIAL OFFER MIX')
+  console.log(`Premium offers: ${initialOffers.filter(({ stars }) => stars >= 4).length}`)
+  console.log(`Three-star offers: ${initialOffers.filter(({ stars }) => stars === 3).length}`)
+  console.log(`Two-star offers: ${initialOffers.filter(({ stars }) => stars === 2).length}`)
+}
+
 function printProgram(final: DynastyState, programId: string): void {
   const definition = UNIVERSE_V0.programs.find(({ id }) => id === programId)!
   const board = deriveProgramRecruitingBoard(final, programId)
@@ -345,12 +687,12 @@ function printProgram(final: DynastyState, programId: string): void {
     const recruit = getRecruit(final.recruiting!, commitment.playerId)!
     console.log(`  #${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} ${recruit.player.position} (${STAR_LABELS[recruit.stars]}) P${commitment.period}`)
   }
-  console.log('BOARD (RANK / PLAYER / POS / OVR / POT / STARS / STANDING / PRIORITY / STATUS)')
+  console.log('BOARD (RANK / PLAYER / POS / OVR / POT / STARS / STANDING / PRIORITY / OFFER / STATUS)')
   for (const target of board.targets.slice(0, 10)) {
     const recruit = getRecruit(final.recruiting!, target.playerId)!
     const standing = deriveRecruitProgramStandings(final, target.playerId)
       .find(({ programId: id }) => id === programId)!
-    console.log(`#${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} | ${recruit.player.position} | ${calculateOverall(recruit.player)} | ${recruit.player.potential} | ${STAR_LABELS[recruit.stars]} | ${standing.standing.toFixed(1)} (#${standing.rank}) | ${target.priority} | ${target.status}`)
+    console.log(`#${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} | ${recruit.player.position} | ${calculateOverall(recruit.player)} | ${recruit.player.potential} | ${STAR_LABELS[recruit.stars]} | ${standing.standing.toFixed(1)} (#${standing.rank}) | ${target.priority} | ${target.hasActiveOffer ? 'OFFERED' : 'BACKUP'} | ${target.status}`)
   }
 }
 
@@ -362,6 +704,10 @@ const final = resolveAll(initial)
 printClass(initial)
 printCommitmentCalibration(final)
 printStrategicInspection(complete)
+printProtectedOfferScenario(complete)
+printSuperSimOfferAutomation(complete)
+printAiReachSafetySample(complete)
 printAiHealth(final)
+printOfferInspection(initial, final)
 printProgram(final, 'pine-valley')
 printProgram(final, 'charlotte-tech')

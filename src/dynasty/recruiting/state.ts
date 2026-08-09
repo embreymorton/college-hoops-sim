@@ -1,6 +1,9 @@
 import type { DynastyState } from '../domain'
 import { deriveProjectedRosterOutlook } from '../rosterOutlook'
-import { buildDefaultRecruitingBoard } from './boards'
+import {
+  buildDefaultRecruitingBoard,
+  manageProgramRecruitingOffers,
+} from './boards'
 import { RECRUITING_V0_VERSION } from './constants'
 import type { RecruitingProgramState, RecruitingState } from './domain'
 import { generateRecruitingClass } from './generation'
@@ -51,6 +54,20 @@ export function initializeRecruiting(dynasty: DynastyState): DynastyState {
             programId,
           ),
         },
+      },
+    }
+  }
+
+  for (const programId of Object.keys(programs).sort()) {
+    recruiting = {
+      ...recruiting,
+      programs: {
+        ...recruiting.programs,
+        [programId]: manageProgramRecruitingOffers(
+          { ...context, recruiting },
+          recruiting,
+          programId,
+        ),
       },
     }
   }

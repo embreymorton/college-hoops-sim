@@ -1,6 +1,10 @@
 import { isRoundComplete } from '../../season'
 import type { DynastyState } from '../domain'
-import { refreshAiRecruitingBoards } from './boards'
+import {
+  cleanupInvalidRecruitingOffers,
+  promoteControlledRecruitingBackups,
+  refreshAiRecruitingBoards,
+} from './boards'
 import {
   MIN_MEANINGFUL_RELATIONSHIP,
   RECRUITING_EFFORT_PER_PERIOD,
@@ -61,7 +65,9 @@ function activeCandidateProgramIds(
   return Object.keys(recruiting.programs).sort().filter((programId) => {
     const program = recruiting.programs[programId]!
     return (
-      program.board.some((target) => target.playerId === playerId) &&
+      program.board.some((target) =>
+        target.playerId === playerId && target.hasActiveOffer,
+      ) &&
       deriveTargetStatus(recruiting, programId, playerId) === 'active' &&
       (recruiting.relationshipProgressByPlayerId[playerId]?.[programId] ?? 0) >=
         MIN_MEANINGFUL_RELATIONSHIP
@@ -126,21 +132,36 @@ export function resolveRecruitingPeriod(
     throw new RangeError(`Recruiting Period ${period} requires completed basketball Round ${period}.`)
   }
 
-  let recruiting = refreshAiRecruitingBoards(dynasty, dynasty.recruiting)
+  const periodStart = dynasty.recruiting
+  let recruiting = cleanupInvalidRecruitingOffers(periodStart)
+  recruiting = promoteControlledRecruitingBackups(
+    dynasty,
+    periodStart,
+    recruiting,
+  )
+  recruiting = refreshAiRecruitingBoards(dynasty, recruiting)
   recruiting = applyPeriodEffort(recruiting)
   const recruits = [...recruiting.recruits].sort(
     (first, second) => first.nationalRank - second.nationalRank ||
       first.player.id.localeCompare(second.player.id),
   )
   recruiting = { ...recruiting, recruits }
+  const beforeCommitments = recruiting
   for (const recruit of recruits) {
     recruiting = tryCommitRecruit(dynasty, recruiting, recruit.player.id, period)
   }
+  recruiting = cleanupInvalidRecruitingOffers(recruiting)
+  recruiting = promoteControlledRecruitingBackups(
+    dynasty,
+    beforeCommitments,
+    recruiting,
+  )
   recruiting = {
     ...recruiting,
     lastResolvedPeriod: period,
     programs: canonicalPrograms(recruiting.programs),
   }
+  recruiting = refreshAiRecruitingBoards(dynasty, recruiting)
   return { ...dynasty, recruiting }
 }
 
