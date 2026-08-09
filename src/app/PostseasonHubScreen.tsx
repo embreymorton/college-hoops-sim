@@ -26,7 +26,12 @@ import {
   type TournamentGame,
 } from '../postseason'
 import { deriveProgramRecord } from '../season'
-import { useSeasonStore } from '../store'
+import {
+  selectActivePostseason,
+  selectActiveSeason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import {
   describeRemainingTournamentGames,
@@ -131,27 +136,27 @@ function buildBracketSlots(
  * qualify — by branching purely on existing Postseason query output.
  */
 export function PostseasonHubScreen() {
-  const season = useSeasonStore((state) => state.season)
-  const postseason = useSeasonStore((state) => state.postseason)
-  const controlledProgramId = useSeasonStore((state) => state.controlledProgramId)
-  const simulateNextPostseasonGame = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const postseason = useDynastyStore(selectActivePostseason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const simulateNextPostseasonGame = useDynastyStore(
     (state) => state.simulateNextPostseasonGame,
   )
-  const goToPostseasonGamePrep = useSeasonStore(
+  const goToPostseasonGamePrep = useDynastyStore(
     (state) => state.goToPostseasonGamePrep,
   )
-  const simulateRestOfCurrentTournamentRound = useSeasonStore(
+  const simulateRestOfCurrentTournamentRound = useDynastyStore(
     (state) => state.simulateRestOfCurrentTournamentRound,
   )
-  const viewCompletedTournamentGame = useSeasonStore(
+  const viewCompletedTournamentGame = useDynastyStore(
     (state) => state.viewCompletedTournamentGame,
   )
-  const lastPlayedTournamentGameId = useSeasonStore(
+  const lastPlayedTournamentGameId = useDynastyStore(
     (state) => state.lastPlayedTournamentGameId,
   )
-  const goToHub = useSeasonStore((state) => state.goToHub)
-  const goToLeague = useSeasonStore((state) => state.goToLeague)
-  const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
+  const goToHub = useDynastyStore((state) => state.goToHub)
+  const goToLeague = useDynastyStore((state) => state.goToLeague)
+  const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !postseason || !controlledProgramId) {
     return null

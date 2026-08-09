@@ -1,4 +1,4 @@
-import { useSeasonStore } from '../store'
+import { selectControlledProgramId, useDynastyStore } from '../store'
 import { GamePrepScreen } from './GamePrepScreen'
 import { LeagueScreen } from './LeagueScreen'
 import { PlayerDetailsScreen } from './PlayerDetailsScreen'
@@ -10,12 +10,10 @@ import { TeamDetailsScreen } from './TeamDetailsScreen'
 import { TournamentGamePrepScreen } from './TournamentGamePrepScreen'
 import { TournamentPostgameScreen } from './TournamentPostgameScreen'
 
-/** Routes the Season session: program select, then hub/game-prep/postgame/Postseason. */
-export function SeasonApp() {
-  const controlledProgramId = useSeasonStore(
-    (state) => state.controlledProgramId,
-  )
-  const view = useSeasonStore((state) => state.view)
+/** Routes the Dynasty session across program selection, Season, and Postseason views. */
+export function DynastyApp() {
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const view = useDynastyStore((state) => state.view)
 
   if (!controlledProgramId) {
     return <ProgramSelectScreen />

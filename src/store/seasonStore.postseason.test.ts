@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
+  syncRecruitingThroughCompletedRounds,
+  type DynastyState,
+} from '../dynasty'
+import {
   simulateGame,
   validateRotation,
   type GameResult,
@@ -25,10 +29,16 @@ import {
   type SeasonState,
 } from '../season'
 import { initializeUniverse, UNIVERSE_V0 } from '../universe'
-import { useSeasonStore } from './seasonStore'
+import { useDynastyStore } from './seasonStore'
 
 function resetStore() {
-  useSeasonStore.setState(useSeasonStore.getInitialState())
+  useDynastyStore.setState(useDynastyStore.getInitialState())
+}
+
+function updateDynasty(update: Partial<DynastyState>): void {
+  const dynasty = useDynastyStore.getState().dynasty
+  if (!dynasty) throw new Error('Expected an initialized Dynasty.')
+  useDynastyStore.setState({ dynasty: { ...dynasty, ...update } })
 }
 
 function stat(playerId: string, points: number): PlayerGameStats {
@@ -132,8 +142,16 @@ function buildCompletedSeason(seedSuffix: string): SeasonState {
 function primeStore(seedSuffix = 'fixture') {
   const season = buildCompletedSeason(seedSuffix)
   const postseason = initializePostseason({ universe: UNIVERSE_V0, season })
-
-  useSeasonStore.setState({ season, postseason, view: 'postseasonHub' })
+  useDynastyStore.getState().selectProgram('charlotte-tech')
+  const dynasty = useDynastyStore.getState().dynasty!
+  const synchronized = syncRecruitingThroughCompletedRounds({
+    ...dynasty,
+    activeSeason: season,
+  })
+  useDynastyStore.setState({
+    dynasty: { ...synchronized, activePostseason: postseason },
+    view: 'postseasonHub',
+  })
 
   return { season, postseason }
 }
@@ -146,8 +164,8 @@ function primeStore(seedSuffix = 'fixture') {
 function assignControlledProgram(postseason: PostseasonState, programId: string) {
   const controlledState = postseason.programStates[programId]
 
-  useSeasonStore.setState({
-    controlledProgramId: programId,
+  updateDynasty({ controlledProgramId: programId })
+  useDynastyStore.setState({
     postseasonControlledDefaultRotation: controlledState?.rotation ?? null,
     postseasonDraftRotation: controlledState?.rotation ?? null,
   })
@@ -182,42 +200,43 @@ beforeEach(() => {
 describe('seasonStore postseason transition', () => {
   it('initializes Postseason once from the completed Season; re-entry only navigates', () => {
     const season = buildCompletedSeason('init-once')
-    useSeasonStore.setState({ controlledProgramId: 'charlotte-tech', season })
+    useDynastyStore.getState().selectProgram('charlotte-tech')
+    updateDynasty({ activeSeason: season })
 
-    useSeasonStore.getState().enterPostseason()
-    const firstPostseason = useSeasonStore.getState().postseason
+    useDynastyStore.getState().enterPostseason()
+    const firstPostseason = useDynastyStore.getState().dynasty!.activePostseason
     expect(firstPostseason).not.toBeNull()
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
 
-    useSeasonStore.getState().goToHub()
-    useSeasonStore.getState().enterPostseason()
+    useDynastyStore.getState().goToHub()
+    useDynastyStore.getState().enterPostseason()
 
-    expect(useSeasonStore.getState().postseason).toBe(firstPostseason)
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().dynasty!.activePostseason).toBe(firstPostseason)
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
   })
 
   it('does not mutate the completed SeasonState', () => {
     const { season } = primeStore('unmutated')
     const before = JSON.parse(JSON.stringify(season)) as SeasonState
 
-    useSeasonStore.getState().enterPostseason()
+    useDynastyStore.getState().enterPostseason()
 
-    expect(useSeasonStore.getState().season).toBe(season)
-    expect(useSeasonStore.getState().season).toEqual(before)
+    expect(useDynastyStore.getState().dynasty!.activeSeason).toBe(season)
+    expect(useDynastyStore.getState().dynasty!.activeSeason).toEqual(before)
   })
 
   it('persists Postseason across navigation to the Season Hub and back', () => {
     primeStore('persists')
-    useSeasonStore.getState().enterPostseason()
-    const postseason = useSeasonStore.getState().postseason
+    useDynastyStore.getState().enterPostseason()
+    const postseason = useDynastyStore.getState().dynasty!.activePostseason
 
-    useSeasonStore.getState().goToHub()
-    expect(useSeasonStore.getState().view).toBe('hub')
-    expect(useSeasonStore.getState().postseason).toBe(postseason)
+    useDynastyStore.getState().goToHub()
+    expect(useDynastyStore.getState().view).toBe('hub')
+    expect(useDynastyStore.getState().dynasty!.activePostseason).toBe(postseason)
 
-    useSeasonStore.getState().enterPostseason()
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
-    expect(useSeasonStore.getState().postseason).toBe(postseason)
+    useDynastyStore.getState().enterPostseason()
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().dynasty!.activePostseason).toBe(postseason)
   })
 })
 
@@ -238,12 +257,12 @@ describe('seasonStore postseason — qualified and alive', () => {
     const home = postseason.programStates[participants.homeProgramId]!
     const away = postseason.programStates[participants.awayProgramId]!
 
-    useSeasonStore.getState().simulateNextPostseasonGame()
+    useDynastyStore.getState().simulateNextPostseasonGame()
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(state.view).toBe('postseasonHub')
     expect(state.lastPlayedTournamentGameId).toBe(expectedGame.id)
-    const recorded = state.postseason!.resultsByGameId[expectedGame.id]
+    const recorded = state.dynasty!.activePostseason!.resultsByGameId[expectedGame.id]
     expect(recorded).toBeDefined()
 
     const independent = simulateGame({
@@ -266,23 +285,23 @@ describe('seasonStore postseason — qualified and alive', () => {
       postseason.programStates[controlledProgramId]!.rotation.minutes,
     )
 
-    useSeasonStore.getState().goToPostseasonGamePrep()
+    useDynastyStore.getState().goToPostseasonGamePrep()
     const currentMinutes =
-      useSeasonStore.getState().postseasonDraftRotation!.minutes[firstPlayerId!] ?? 0
-    useSeasonStore
+      useDynastyStore.getState().postseasonDraftRotation!.minutes[firstPlayerId!] ?? 0
+    useDynastyStore
       .getState()
       .setPostseasonDraftPlayerMinutes(firstPlayerId!, currentMinutes + 5)
     expect(
       validateRotation(
         controlledTeam,
-        useSeasonStore.getState().postseasonDraftRotation!,
+        useDynastyStore.getState().postseasonDraftRotation!,
       ).valid,
     ).toBe(false)
 
-    useSeasonStore.getState().simulateNextPostseasonGame()
+    useDynastyStore.getState().simulateNextPostseasonGame()
 
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
-    expect(useSeasonStore.getState().lastPlayedTournamentGameId).not.toBeNull()
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().lastPlayedTournamentGameId).not.toBeNull()
   })
 
   it('commits Rotation edits to Postseason only, leaving the completed Season Rotation untouched', () => {
@@ -292,16 +311,16 @@ describe('seasonStore postseason — qualified and alive', () => {
     const originalSeasonRotation = season.programStates[controlledProgramId]!.rotation
     const nudged = nudgeRotation(postseason, controlledProgramId)
 
-    useSeasonStore.getState().goToPostseasonGamePrep()
+    useDynastyStore.getState().goToPostseasonGamePrep()
     for (const [playerId, minutes] of Object.entries(nudged.minutes)) {
-      useSeasonStore.getState().setPostseasonDraftPlayerMinutes(playerId, minutes)
+      useDynastyStore.getState().setPostseasonDraftPlayerMinutes(playerId, minutes)
     }
 
-    const state = useSeasonStore.getState()
-    expect(state.postseason!.programStates[controlledProgramId]!.rotation).toEqual(
+    const state = useDynastyStore.getState()
+    expect(state.dynasty!.activePostseason!.programStates[controlledProgramId]!.rotation).toEqual(
       nudged,
     )
-    expect(state.season!.programStates[controlledProgramId]!.rotation).toEqual(
+    expect(state.dynasty!.activeSeason!.programStates[controlledProgramId]!.rotation).toEqual(
       originalSeasonRotation,
     )
   })
@@ -313,15 +332,15 @@ describe('seasonStore postseason — qualified and alive', () => {
     const canonical = postseason.programStates[controlledProgramId]!.rotation
     const nudged = nudgeRotation(postseason, controlledProgramId)
 
-    useSeasonStore.getState().goToPostseasonGamePrep()
+    useDynastyStore.getState().goToPostseasonGamePrep()
     for (const [playerId, minutes] of Object.entries(nudged.minutes)) {
-      useSeasonStore.getState().setPostseasonDraftPlayerMinutes(playerId, minutes)
+      useDynastyStore.getState().setPostseasonDraftPlayerMinutes(playerId, minutes)
     }
-    useSeasonStore.getState().resetPostseasonDraftRotation()
+    useDynastyStore.getState().resetPostseasonDraftRotation()
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(state.postseasonDraftRotation).toEqual(canonical)
-    expect(state.postseason!.programStates[controlledProgramId]!.rotation).toEqual(
+    expect(state.dynasty!.activePostseason!.programStates[controlledProgramId]!.rotation).toEqual(
       canonical,
     )
   })
@@ -331,20 +350,20 @@ describe('seasonStore postseason — qualified and alive', () => {
     const controlledProgramId = postseason.field[0]!.programId
     assignControlledProgram(postseason, controlledProgramId)
 
-    useSeasonStore.getState().simulateNextPostseasonGame()
-    expect(getCurrentTournamentRound(useSeasonStore.getState().postseason!)).toBe(
+    useDynastyStore.getState().simulateNextPostseasonGame()
+    expect(getCurrentTournamentRound(useDynastyStore.getState().dynasty!.activePostseason!)).toBe(
       'round-of-16',
     )
 
-    useSeasonStore.getState().simulateRestOfCurrentTournamentRound()
+    useDynastyStore.getState().simulateRestOfCurrentTournamentRound()
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(
-      getGamesForTournamentRound(state.postseason!, 'round-of-16').every(
-        (game) => state.postseason!.resultsByGameId[game.id] !== undefined,
+      getGamesForTournamentRound(state.dynasty!.activePostseason!, 'round-of-16').every(
+        (game) => state.dynasty!.activePostseason!.resultsByGameId[game.id] !== undefined,
       ),
     ).toBe(true)
-    expect(getCurrentTournamentRound(state.postseason!)).toBe('quarterfinals')
+    expect(getCurrentTournamentRound(state.dynasty!.activePostseason!)).toBe('quarterfinals')
   })
 })
 
@@ -353,33 +372,33 @@ describe('seasonStore postseason — eliminated', () => {
     const { postseason } = primeStore('eliminated')
     const controlledProgramId = postseason.field[0]!.programId
     const afterLoss = forceRoundOf16Loss(postseason, controlledProgramId)
-    useSeasonStore.setState({ controlledProgramId, postseason: afterLoss })
+    updateDynasty({ controlledProgramId, activePostseason: afterLoss })
 
     expect(deriveRemainingProgramIds(afterLoss)).not.toContain(controlledProgramId)
     expect(
       getTournamentGameForProgram(afterLoss, controlledProgramId, 'quarterfinals'),
     ).toBeUndefined()
 
-    useSeasonStore.getState().simulateNextPostseasonGame()
-    expect(useSeasonStore.getState().lastPlayedTournamentGameId).toBeNull()
-    expect(useSeasonStore.getState().postseason).toBe(afterLoss)
+    useDynastyStore.getState().simulateNextPostseasonGame()
+    expect(useDynastyStore.getState().lastPlayedTournamentGameId).toBeNull()
+    expect(useDynastyStore.getState().dynasty!.activePostseason).toBe(afterLoss)
   })
 
   it('lets the AI Tournament continue past an eliminated controlled Program', () => {
     const { postseason } = primeStore('eliminated-ai-continue')
     const controlledProgramId = postseason.field[0]!.programId
     const afterLoss = forceRoundOf16Loss(postseason, controlledProgramId)
-    useSeasonStore.setState({ controlledProgramId, postseason: afterLoss })
+    updateDynasty({ controlledProgramId, activePostseason: afterLoss })
 
-    useSeasonStore.getState().simulateRestOfCurrentTournamentRound()
+    useDynastyStore.getState().simulateRestOfCurrentTournamentRound()
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(
-      getGamesForTournamentRound(state.postseason!, 'round-of-16').every(
-        (game) => state.postseason!.resultsByGameId[game.id] !== undefined,
+      getGamesForTournamentRound(state.dynasty!.activePostseason!, 'round-of-16').every(
+        (game) => state.dynasty!.activePostseason!.resultsByGameId[game.id] !== undefined,
       ),
     ).toBe(true)
-    expect(getCurrentTournamentRound(state.postseason!)).toBe('quarterfinals')
+    expect(getCurrentTournamentRound(state.dynasty!.activePostseason!)).toBe('quarterfinals')
   })
 })
 
@@ -390,17 +409,17 @@ describe('seasonStore postseason — did not qualify', () => {
       (program) =>
         !postseason.field.some((entry) => entry.programId === program.id),
     )!
-    useSeasonStore.setState({ controlledProgramId: outsider.id })
+    updateDynasty({ controlledProgramId: outsider.id })
 
-    useSeasonStore.getState().simulateNextPostseasonGame()
-    expect(useSeasonStore.getState().lastPlayedTournamentGameId).toBeNull()
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    useDynastyStore.getState().simulateNextPostseasonGame()
+    expect(useDynastyStore.getState().lastPlayedTournamentGameId).toBeNull()
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
 
-    useSeasonStore.getState().goToPostseasonGamePrep()
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    useDynastyStore.getState().goToPostseasonGamePrep()
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
 
-    useSeasonStore.getState().playPostseasonScheduledGame()
-    expect(useSeasonStore.getState().lastPlayedTournamentGameId).toBeNull()
+    useDynastyStore.getState().playPostseasonScheduledGame()
+    expect(useDynastyStore.getState().lastPlayedTournamentGameId).toBeNull()
   })
 
   it('lets the AI Tournament progress all the way to a National Champion', () => {
@@ -409,15 +428,15 @@ describe('seasonStore postseason — did not qualify', () => {
       (program) =>
         !postseason.field.some((entry) => entry.programId === program.id),
     )!
-    useSeasonStore.setState({ controlledProgramId: outsider.id })
+    updateDynasty({ controlledProgramId: outsider.id })
 
     for (let round = 0; round < 4; round += 1) {
-      useSeasonStore.getState().simulateRestOfCurrentTournamentRound()
+      useDynastyStore.getState().simulateRestOfCurrentTournamentRound()
     }
 
-    const state = useSeasonStore.getState()
-    expect(isTournamentComplete(state.postseason!)).toBe(true)
-    expect(deriveNationalChampion(state.postseason!)).toBeDefined()
+    const state = useDynastyStore.getState()
+    expect(isTournamentComplete(state.dynasty!.activePostseason!)).toBe(true)
+    expect(deriveNationalChampion(state.dynasty!.activePostseason!)).toBeDefined()
   })
 })
 
@@ -426,27 +445,27 @@ describe('seasonStore postseason — historical results', () => {
     const { postseason } = primeStore('historical')
     const controlledProgramId = postseason.field[0]!.programId
     assignControlledProgram(postseason, controlledProgramId)
-    useSeasonStore.getState().simulateNextPostseasonGame()
-    const gameId = useSeasonStore.getState().lastPlayedTournamentGameId!
-    const resultBefore = useSeasonStore.getState().postseason!.resultsByGameId[gameId]
-    useSeasonStore.getState().goToPostseasonHub()
+    useDynastyStore.getState().simulateNextPostseasonGame()
+    const gameId = useDynastyStore.getState().lastPlayedTournamentGameId!
+    const resultBefore = useDynastyStore.getState().dynasty!.activePostseason!.resultsByGameId[gameId]
+    useDynastyStore.getState().goToPostseasonHub()
 
-    useSeasonStore.getState().viewCompletedTournamentGame(gameId)
+    useDynastyStore.getState().viewCompletedTournamentGame(gameId)
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(state.view).toBe('postseasonGameHistory')
     expect(state.viewedTournamentGameId).toBe(gameId)
-    expect(state.postseason!.resultsByGameId[gameId]).toEqual(resultBefore)
+    expect(state.dynasty!.activePostseason!.resultsByGameId[gameId]).toEqual(resultBefore)
   })
 
   it('is a no-op for a Tournament game that has not been played yet', () => {
     const { postseason } = primeStore('historical-pending')
     const pendingGame = postseason.bracket.games[0]!
-    useSeasonStore.setState({ controlledProgramId: postseason.field[0]!.programId })
+    updateDynasty({ controlledProgramId: postseason.field[0]!.programId })
 
-    useSeasonStore.getState().viewCompletedTournamentGame(pendingGame.id)
+    useDynastyStore.getState().viewCompletedTournamentGame(pendingGame.id)
 
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
-    expect(useSeasonStore.getState().viewedTournamentGameId).toBeNull()
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().viewedTournamentGameId).toBeNull()
   })
 })

@@ -4,7 +4,7 @@ import {
   PlayerGameLogTable,
 } from '../components'
 import { derivePlayerSeasonStats, getPlayerGameLog } from '../season'
-import { useSeasonStore } from '../store'
+import { selectActiveSeason, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatPercentage, formatRating } from './formatters'
 
@@ -14,18 +14,18 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 
 /** Player Details: identity/ratings plus regular-season stats and game log, for any Player. */
 export function PlayerDetailsScreen() {
-  const season = useSeasonStore((state) => state.season)
-  const selectedPlayerProgramId = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const selectedPlayerProgramId = useDynastyStore(
     (state) => state.selectedPlayerProgramId,
   )
-  const selectedPlayerId = useSeasonStore((state) => state.selectedPlayerId)
-  const explorationViewHistory = useSeasonStore(
+  const selectedPlayerId = useDynastyStore((state) => state.selectedPlayerId)
+  const explorationViewHistory = useDynastyStore(
     (state) => state.explorationViewHistory,
   )
-  const goBackFromExploration = useSeasonStore(
+  const goBackFromExploration = useDynastyStore(
     (state) => state.goBackFromExploration,
   )
-  const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
+  const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !selectedPlayerProgramId || !selectedPlayerId) {
     return null

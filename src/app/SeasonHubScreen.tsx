@@ -11,7 +11,13 @@ import {
   SuperSimMenu,
   SuperSimSummaryDialog,
 } from '../components'
-import { MIDSEASON_ROUND, useSeasonStore } from '../store'
+import {
+  MIDSEASON_ROUND,
+  selectActivePostseason,
+  selectActiveSeason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { selectNationalTournamentField } from '../postseason'
 import {
   deriveConferenceRecord,
@@ -54,29 +60,27 @@ function buildTeamInfo(
 }
 
 export function SeasonHubScreen() {
-  const season = useSeasonStore((state) => state.season)
-  const controlledProgramId = useSeasonStore(
-    (state) => state.controlledProgramId,
-  )
-  const goToGamePrep = useSeasonStore((state) => state.goToGamePrep)
-  const simulateNextGame = useSeasonStore((state) => state.simulateNextGame)
-  const simulateRestOfRound = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const goToGamePrep = useDynastyStore((state) => state.goToGamePrep)
+  const simulateNextGame = useDynastyStore((state) => state.simulateNextGame)
+  const simulateRestOfRound = useDynastyStore(
     (state) => state.simulateRestOfRound,
   )
-  const viewCompletedGame = useSeasonStore((state) => state.viewCompletedGame)
-  const lastPlayedGameId = useSeasonStore((state) => state.lastPlayedGameId)
-  const pendingSuperSim = useSeasonStore((state) => state.pendingSuperSim)
-  const superSimSummary = useSeasonStore((state) => state.superSimSummary)
-  const requestSuperSim = useSeasonStore((state) => state.requestSuperSim)
-  const cancelSuperSim = useSeasonStore((state) => state.cancelSuperSim)
-  const confirmSuperSim = useSeasonStore((state) => state.confirmSuperSim)
-  const dismissSuperSimSummary = useSeasonStore(
+  const viewCompletedGame = useDynastyStore((state) => state.viewCompletedGame)
+  const lastPlayedGameId = useDynastyStore((state) => state.lastPlayedGameId)
+  const pendingSuperSim = useDynastyStore((state) => state.pendingSuperSim)
+  const superSimSummary = useDynastyStore((state) => state.superSimSummary)
+  const requestSuperSim = useDynastyStore((state) => state.requestSuperSim)
+  const cancelSuperSim = useDynastyStore((state) => state.cancelSuperSim)
+  const confirmSuperSim = useDynastyStore((state) => state.confirmSuperSim)
+  const dismissSuperSimSummary = useDynastyStore(
     (state) => state.dismissSuperSimSummary,
   )
-  const postseason = useSeasonStore((state) => state.postseason)
-  const enterPostseason = useSeasonStore((state) => state.enterPostseason)
-  const goToLeague = useSeasonStore((state) => state.goToLeague)
-  const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
+  const postseason = useDynastyStore(selectActivePostseason)
+  const enterPostseason = useDynastyStore((state) => state.enterPostseason)
+  const goToLeague = useDynastyStore((state) => state.goToLeague)
+  const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !controlledProgramId) {
     return null

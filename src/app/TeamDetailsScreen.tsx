@@ -15,7 +15,11 @@ import {
   deriveTeamPlayerLeaders,
   getCompletedGamesForProgram,
 } from '../season'
-import { useSeasonStore } from '../store'
+import {
+  selectActiveSeason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -26,18 +30,18 @@ const RECENT_RESULTS_COUNT = 5
 
 /** Team Details: works for any of the 32 Programs, controlled or not. */
 export function TeamDetailsScreen() {
-  const season = useSeasonStore((state) => state.season)
-  const controlledProgramId = useSeasonStore((state) => state.controlledProgramId)
-  const selectedTeamProgramId = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const selectedTeamProgramId = useDynastyStore(
     (state) => state.selectedTeamProgramId,
   )
-  const explorationViewHistory = useSeasonStore(
+  const explorationViewHistory = useDynastyStore(
     (state) => state.explorationViewHistory,
   )
-  const goBackFromExploration = useSeasonStore(
+  const goBackFromExploration = useDynastyStore(
     (state) => state.goBackFromExploration,
   )
-  const openPlayerDetails = useSeasonStore((state) => state.openPlayerDetails)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
   if (!season || !selectedTeamProgramId) {
     return null

@@ -10,13 +10,19 @@ import {
   getNextGameForProgram,
   isRegularSeasonComplete,
 } from '../season'
-import { MIDSEASON_ROUND, useSeasonStore } from '../store'
+import { MIDSEASON_ROUND, useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
 import { deriveGameLeaders, formatControlledMargin } from './gameLeaders'
 
 function resetStore() {
-  useSeasonStore.setState(useSeasonStore.getInitialState())
+  useDynastyStore.setState(useDynastyStore.getInitialState())
+}
+
+function setControlledProgramId(controlledProgramId: string): void {
+  const dynasty = useDynastyStore.getState().dynasty
+  if (!dynasty) throw new Error('Expected an initialized Dynasty.')
+  useDynastyStore.setState({ dynasty: { ...dynasty, controlledProgramId } })
 }
 
 function selectProgramViaUI(programName: string) {
@@ -37,23 +43,23 @@ function clickButtonByText(pattern: RegExp) {
 
 function driveSeasonToCompletion(): void {
   for (let iteration = 0; iteration < 30; iteration += 1) {
-    const season = useSeasonStore.getState().season!
+    const season = useDynastyStore.getState().dynasty!.activeSeason!
 
     if (isRegularSeasonComplete(season)) {
       return
     }
 
-    useSeasonStore.getState().simulateNextGame()
-    useSeasonStore.getState().simulateRestOfRound()
+    useDynastyStore.getState().simulateNextGame()
+    useDynastyStore.getState().simulateRestOfRound()
   }
 
   throw new Error('Season did not complete within the expected round budget.')
 }
 
 function finishRegularSeasonWithSuperSim(): void {
-  useSeasonStore.getState().selectProgram('charlotte-tech')
-  useSeasonStore.getState().requestSuperSim('endOfRegularSeason')
-  useSeasonStore.getState().confirmSuperSim()
+  useDynastyStore.getState().selectProgram('charlotte-tech')
+  useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
+  useDynastyStore.getState().confirmSuperSim()
 }
 
 beforeEach(() => {
@@ -89,7 +95,7 @@ describe('Season Presentation', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const nextGame = getNextGameForProgram(season!, controlledProgramId!)!
     const opponentId =
       nextGame.homeProgramId === controlledProgramId
@@ -105,18 +111,18 @@ describe('Season Presentation', () => {
   })
 
   it('shows the opponent overall and Conference record on the hub, matching the Season-derived record', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
 
     // Play a few rounds so the next opponent has a non-trivial record to show.
     for (let round = 0; round < 3; round += 1) {
-      useSeasonStore.getState().simulateNextGame()
-      useSeasonStore.getState().simulateRestOfRound()
+      useDynastyStore.getState().simulateNextGame()
+      useDynastyStore.getState().simulateRestOfRound()
     }
-    useSeasonStore.getState().goToHub()
+    useDynastyStore.getState().goToHub()
 
     render(<App />)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const nextGame = getNextGameForProgram(season!, controlledProgramId!)!
     const opponentId =
       nextGame.homeProgramId === controlledProgramId
@@ -169,23 +175,23 @@ describe('Season Presentation', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const game = getNextGameForProgram(season!, controlledProgramId!)!
 
     clickButtonByText(/^simulate game$/i)
 
-    const state = useSeasonStore.getState()
-    const result = state.season!.resultsByGameId[game.id]
+    const state = useDynastyStore.getState()
+    const result = state.dynasty!.activeSeason!.resultsByGameId[game.id]
     expect(result).toBeDefined()
     expect(state.view).toBe('hub')
-    expect(getCurrentRound(state.season!)).toBe(game.round)
-    expect(Object.keys(state.season!.resultsByGameId)).toEqual([game.id])
+    expect(getCurrentRound(state.dynasty!.activeSeason!)).toBe(game.round)
+    expect(Object.keys(state.dynasty!.activeSeason!.resultsByGameId)).toEqual([game.id])
 
     const completedCard = document.querySelector(
       '.next-game-card--final',
     ) as HTMLElement
-    const homeTeam = state.season!.programStates[result!.homeTeamId]!.team
-    const awayTeam = state.season!.programStates[result!.awayTeamId]!.team
+    const homeTeam = state.dynasty!.activeSeason!.programStates[result!.homeTeamId]!.team
+    const awayTeam = state.dynasty!.activeSeason!.programStates[result!.awayTeamId]!.team
     const leaders = deriveGameLeaders(result!, homeTeam, awayTeam)
     expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
     expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
@@ -232,14 +238,14 @@ describe('Season Presentation', () => {
     ).not.toBeInTheDocument()
 
     clickButtonByText(/view box score/i)
-    expect(useSeasonStore.getState().view).toBe('gameHistory')
-    expect(useSeasonStore.getState().season!.resultsByGameId[game.id]).toBe(result)
+    expect(useDynastyStore.getState().view).toBe('gameHistory')
+    expect(useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId[game.id]).toBe(result)
     clickButtonByText(/back to season hub/i)
 
-    const storedResult = useSeasonStore.getState().season!.resultsByGameId[game.id]
+    const storedResult = useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId[game.id]
     clickButtonByText(/advance to next round/i)
-    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(game.round + 1)
-    expect(useSeasonStore.getState().season!.resultsByGameId[game.id]).toBe(
+    expect(getCurrentRound(useDynastyStore.getState().dynasty!.activeSeason!)).toBe(game.round + 1)
+    expect(useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId[game.id]).toBe(
       storedResult,
     )
   })
@@ -284,19 +290,20 @@ describe('Season Presentation', () => {
     clickButtonByText(/game prep/i)
     clickButtonByText(/simulate game/i)
 
-    const { season, lastPlayedGameId } = useSeasonStore.getState()
+    const { lastPlayedGameId } = useDynastyStore.getState()
+    const season = useDynastyStore.getState().dynasty!.activeSeason
     const result = season!.resultsByGameId[lastPlayedGameId!]!
 
-    expect(useSeasonStore.getState().view).toBe('postgame')
+    expect(useDynastyStore.getState().view).toBe('postgame')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
 
     clickButtonByText(/return to season hub/i)
-    expect(useSeasonStore.getState().view).toBe('hub')
-    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(1)
+    expect(useDynastyStore.getState().view).toBe('hub')
+    expect(getCurrentRound(useDynastyStore.getState().dynasty!.activeSeason!)).toBe(1)
     expect(document.querySelector('.next-game-card--final')).not.toBeNull()
     expect(
-      useSeasonStore.getState().season!.resultsByGameId[lastPlayedGameId!],
+      useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId[lastPlayedGameId!],
     ).toBe(result)
   })
 
@@ -306,7 +313,8 @@ describe('Season Presentation', () => {
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/view box score/i)
 
-    const { season, lastPlayedGameId } = useSeasonStore.getState()
+    const { lastPlayedGameId } = useDynastyStore.getState()
+    const season = useDynastyStore.getState().dynasty!.activeSeason
     const result = season!.resultsByGameId[lastPlayedGameId!]!
     const topScorer = [...result.homePlayerStats].sort(
       (first, second) => second.points - first.points,
@@ -328,7 +336,9 @@ describe('Season Presentation', () => {
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/simulate rest of round & continue/i)
 
-    const { season, controlledProgramId, view } = useSeasonStore.getState()
+    const { view } = useDynastyStore.getState()
+    const { activeSeason: season, controlledProgramId } =
+      useDynastyStore.getState().dynasty!
     expect(view).toBe('hub')
 
     const round1Games = season!.schedule.games.filter(
@@ -368,7 +378,7 @@ describe('Season Presentation', () => {
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/simulate rest of round & continue/i)
 
-    const { season } = useSeasonStore.getState()
+    const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledProgram = UNIVERSE_V0.programs.find(
       (program) => program.id === 'charlotte-tech',
     )!
@@ -395,7 +405,7 @@ describe('Season Presentation', () => {
     selectProgramViaUI('Charlotte Tech')
     clickButtonByText(/^simulate game$/i)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const round1Game = season!.schedule.games.find(
       (game) =>
         game.round === 1 &&
@@ -433,7 +443,7 @@ describe('Season Presentation', () => {
     selectProgramViaUI('Charlotte Tech')
     clickButtonByText(/^simulate game$/i)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const round1Game = season!.schedule.games.find(
       (game) =>
         game.round === 1 &&
@@ -447,7 +457,7 @@ describe('Season Presentation', () => {
     })
     fireEvent.click(resultButton)
 
-    expect(useSeasonStore.getState().view).toBe('gameHistory')
+    expect(useDynastyStore.getState().view).toBe('gameHistory')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
 
@@ -473,21 +483,21 @@ describe('Season Presentation', () => {
     ).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: /back to season hub/i }))
-    expect(useSeasonStore.getState().view).toBe('hub')
+    expect(useDynastyStore.getState().view).toBe('hub')
   })
 
   it('shows Recent Results derived from actual completed games, with a matching Last-N record', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
 
     for (let round = 0; round < 2; round += 1) {
-      useSeasonStore.getState().simulateNextGame()
-      useSeasonStore.getState().simulateRestOfRound()
+      useDynastyStore.getState().simulateNextGame()
+      useDynastyStore.getState().simulateRestOfRound()
     }
-    useSeasonStore.getState().goToHub()
+    useDynastyStore.getState().goToHub()
 
     render(<App />)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const completedGames = getCompletedGamesForProgram(
       season!,
       controlledProgramId!,
@@ -511,7 +521,7 @@ describe('Season Presentation', () => {
 
     clickButtonByText(/simulate other games$/i)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const ownGame = getNextGameForProgram(season!, controlledProgramId!)
     expect(ownGame).toBeDefined()
     expect(ownGame!.round).toBe(1)
@@ -528,9 +538,9 @@ describe('Season Presentation', () => {
   })
 
   it('shows Regular Season Complete once all 384 games are finished, with no residual game actions', () => {
-    useSeasonStore.getState().selectProgram('pine-valley')
+    useDynastyStore.getState().selectProgram('pine-valley')
     driveSeasonToCompletion()
-    useSeasonStore.getState().goToHub()
+    useDynastyStore.getState().goToHub()
 
     render(<App />)
 
@@ -551,14 +561,14 @@ describe('Season Presentation', () => {
       name: /^[WL] \d+-\d+$/,
     })[0]!
     fireEvent.click(resultButton)
-    expect(useSeasonStore.getState().view).toBe('gameHistory')
+    expect(useDynastyStore.getState().view).toBe('gameHistory')
   })
 
   it('reveals the canonical automatic, at-large, and non-qualified Tournament states and keeps the field accessible', () => {
     finishRegularSeasonWithSuperSim()
-    useSeasonStore.getState().dismissSuperSimSummary()
+    useDynastyStore.getState().dismissSuperSimSummary()
 
-    const season = useSeasonStore.getState().season!
+    const season = useDynastyStore.getState().dynasty!.activeSeason!
     const selection = selectNationalTournamentField(UNIVERSE_V0, season)
     const automaticEntry = selection.field.find(
       (entry) => entry.bidType === 'automatic',
@@ -571,7 +581,7 @@ describe('Season Presentation', () => {
         !selection.field.some((entry) => entry.programId === program.id),
     )!
 
-    useSeasonStore.setState({ controlledProgramId: automaticEntry.programId })
+    setControlledProgramId(automaticEntry.programId)
     render(<App />)
 
     const completionPanel = document.querySelector(
@@ -590,7 +600,7 @@ describe('Season Presentation', () => {
     ).toBeInTheDocument()
 
     act(() => {
-      useSeasonStore.setState({ controlledProgramId: atLargeEntry.programId })
+      setControlledProgramId(atLargeEntry.programId)
     })
     expect(
       within(completionPanel).getByText(`#${atLargeEntry.seed} Seed · At-Large`),
@@ -602,9 +612,7 @@ describe('Season Presentation', () => {
     ).toBeInTheDocument()
 
     act(() => {
-      useSeasonStore.setState({
-        controlledProgramId: nonQualifiedProgram.id,
-      })
+      setControlledProgramId(nonQualifiedProgram.id)
     })
     const tournamentStatus = completionPanel.querySelector(
       '.season-complete-panel__tournament-status',
@@ -617,8 +625,8 @@ describe('Season Presentation', () => {
         name: /view national tournament/i,
       }),
     )
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
-    expect(useSeasonStore.getState().postseason?.field).toEqual(selection.field)
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().dynasty!.activePostseason?.field).toEqual(selection.field)
     expect(
       screen.getByText(
         `${nonQualifiedProgram.name} did not qualify for the National Tournament.`,
@@ -653,12 +661,12 @@ describe('Super Sim', () => {
   })
 
   it('hides Midseason once Round 12 has fully completed, while End of Regular Season remains available', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     // Drive past Round 12 using the existing bulk operation directly.
-    useSeasonStore.getState().requestSuperSim('midseason')
-    useSeasonStore.getState().confirmSuperSim()
-    useSeasonStore.getState().dismissSuperSimSummary()
-    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(13)
+    useDynastyStore.getState().requestSuperSim('midseason')
+    useDynastyStore.getState().confirmSuperSim()
+    useDynastyStore.getState().dismissSuperSimSummary()
+    expect(getCurrentRound(useDynastyStore.getState().dynasty!.activeSeason!)).toBe(13)
 
     render(<App />)
     openSuperSimMenu()
@@ -683,15 +691,15 @@ describe('Super Sim', () => {
     expect(
       screen.getByText(/all game results are final/i),
     ).toBeInTheDocument()
-    expect(useSeasonStore.getState().season!.resultsByGameId).toEqual({})
+    expect(useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId).toEqual({})
 
     clickButtonByText(/^cancel$/i)
 
     expect(
       screen.queryByRole('heading', { name: /sim to midseason\?/i }),
     ).not.toBeInTheDocument()
-    expect(useSeasonStore.getState().season!.resultsByGameId).toEqual({})
-    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(1)
+    expect(useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId).toEqual({})
+    expect(getCurrentRound(useDynastyStore.getState().dynasty!.activeSeason!)).toBe(1)
   })
 
   it('confirming Sim to Midseason completes Rounds 1-12 and shows a completion summary with the correct segment record', () => {
@@ -701,7 +709,7 @@ describe('Super Sim', () => {
     clickButtonByText(/sim to midseason/i)
     clickButtonByText(new RegExp(`sim to round ${MIDSEASON_ROUND}`, 'i'))
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     for (let round = 1; round <= MIDSEASON_ROUND; round += 1) {
       const roundGames = season!.schedule.games.filter(
         (game) => game.round === round,
@@ -764,7 +772,7 @@ describe('Super Sim', () => {
 
     clickButtonByText(/^sim regular season$/i)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     expect(isRegularSeasonComplete(season!)).toBe(true)
     expect(Object.keys(season!.resultsByGameId)).toHaveLength(384)
 
@@ -794,7 +802,7 @@ describe('Super Sim', () => {
   it('shows the canonical automatic, at-large, and non-qualified Tournament result in the end-of-season summary', () => {
     finishRegularSeasonWithSuperSim()
 
-    const season = useSeasonStore.getState().season!
+    const season = useDynastyStore.getState().dynasty!.activeSeason!
     const selection = selectNationalTournamentField(UNIVERSE_V0, season)
     const repeatedSelection = selectNationalTournamentField(UNIVERSE_V0, season)
     const automaticEntry = selection.field.find(
@@ -809,7 +817,7 @@ describe('Super Sim', () => {
     )!
 
     expect(repeatedSelection).toEqual(selection)
-    useSeasonStore.setState({ controlledProgramId: automaticEntry.programId })
+    setControlledProgramId(automaticEntry.programId)
     render(<App />)
 
     const summaryDialog = screen.getByRole('dialog', {
@@ -823,16 +831,14 @@ describe('Super Sim', () => {
     ).toBeInTheDocument()
 
     act(() => {
-      useSeasonStore.setState({ controlledProgramId: atLargeEntry.programId })
+      setControlledProgramId(atLargeEntry.programId)
     })
     expect(
       within(tournamentRow).getByText(`#${atLargeEntry.seed} · At-Large`),
     ).toBeInTheDocument()
 
     act(() => {
-      useSeasonStore.setState({
-        controlledProgramId: nonQualifiedProgram.id,
-      })
+      setControlledProgramId(nonQualifiedProgram.id)
     })
     expect(within(tournamentRow).getByText('Did Not Qualify')).toBeInTheDocument()
   })
@@ -845,7 +851,7 @@ describe('Super Sim', () => {
     clickButtonByText(new RegExp(`sim to round ${MIDSEASON_ROUND}`, 'i'))
     clickButtonByText(/^continue$/i)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     // The controlled Program's own Round 5 game — never touched by Quick
     // Sim, resolved entirely by Super Sim — and the only kind of completed
     // game the current UI actually exposes a click-through for.
@@ -863,7 +869,7 @@ describe('Super Sim', () => {
       .find((candidateRow) => within(candidateRow).queryByText('5'))!
     fireEvent.click(within(round5Row).getByRole('button'))
 
-    expect(useSeasonStore.getState().view).toBe('gameHistory')
+    expect(useDynastyStore.getState().view).toBe('gameHistory')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
     const topScorer = [...result.homePlayerStats].sort(
@@ -895,6 +901,6 @@ describe('Super Sim', () => {
     clickButtonByText(/sim to midseason/i)
     clickButtonByText(new RegExp(`sim to round ${MIDSEASON_ROUND}`, 'i'))
 
-    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(13)
+    expect(getCurrentRound(useDynastyStore.getState().dynasty!.activeSeason!)).toBe(13)
   })
 })

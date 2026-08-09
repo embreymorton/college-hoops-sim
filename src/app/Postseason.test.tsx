@@ -13,13 +13,19 @@ import {
   TOURNAMENT_ROUNDS,
   type PostseasonState,
 } from '../postseason'
-import { useSeasonStore } from '../store'
+import { useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
 import { deriveGameLeaders } from './gameLeaders'
 
 function resetStore() {
-  useSeasonStore.setState(useSeasonStore.getInitialState())
+  useDynastyStore.setState(useDynastyStore.getInitialState())
+}
+
+function setActivePostseason(activePostseason: PostseasonState): void {
+  const dynasty = useDynastyStore.getState().dynasty
+  if (!dynasty) throw new Error('Expected an initialized Dynasty.')
+  useDynastyStore.setState({ dynasty: { ...dynasty, activePostseason } })
 }
 
 function clickButtonByText(pattern: RegExp) {
@@ -46,10 +52,10 @@ function stat(playerId: string, points: number): PlayerGameStats {
 }
 
 function completeRegularSeasonAndEnterPostseason() {
-  useSeasonStore.getState().requestSuperSim('endOfRegularSeason')
-  useSeasonStore.getState().confirmSuperSim()
-  useSeasonStore.getState().dismissSuperSimSummary()
-  useSeasonStore.getState().enterPostseason()
+  useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
+  useDynastyStore.getState().confirmSuperSim()
+  useDynastyStore.getState().dismissSuperSimSummary()
+  useDynastyStore.getState().enterPostseason()
 }
 
 function tournamentHeader(): HTMLElement {
@@ -62,10 +68,10 @@ beforeEach(() => {
 
 describe('Postseason transition', () => {
   it('shows the National Tournament entry point once the regular season completes, and enters it', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
-    useSeasonStore.getState().requestSuperSim('endOfRegularSeason')
-    useSeasonStore.getState().confirmSuperSim()
-    useSeasonStore.getState().dismissSuperSimSummary()
+    useDynastyStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
+    useDynastyStore.getState().confirmSuperSim()
+    useDynastyStore.getState().dismissSuperSimSummary()
     render(<App />)
 
     expect(
@@ -74,34 +80,34 @@ describe('Postseason transition', () => {
 
     clickButtonByText(/enter national tournament/i)
 
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
     expect(within(tournamentHeader()).getByText('National Tournament')).toBeInTheDocument()
   })
 
   it('re-entering later only navigates and never replaces the initialized Postseason or the completed Season', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
-    const firstPostseason = useSeasonStore.getState().postseason
-    const season = useSeasonStore.getState().season
-    useSeasonStore.getState().goToHub()
+    const firstPostseason = useDynastyStore.getState().dynasty!.activePostseason
+    const season = useDynastyStore.getState().dynasty!.activeSeason
+    useDynastyStore.getState().goToHub()
 
     render(<App />)
     clickButtonByText(/enter national tournament/i)
 
-    const state = useSeasonStore.getState()
-    expect(state.postseason).toBe(firstPostseason)
-    expect(state.season).toBe(season)
+    const state = useDynastyStore.getState()
+    expect(state.dynasty!.activePostseason).toBe(firstPostseason)
+    expect(state.dynasty!.activeSeason).toBe(season)
     expect(state.view).toBe('postseasonHub')
   })
 })
 
 describe('Postseason — qualified and alive', () => {
   it('shows the correct seed, bid, and canonical next Tournament matchup', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
-    const { postseason, controlledProgramId } = useSeasonStore.getState()
+    const { activePostseason: postseason, controlledProgramId } = useDynastyStore.getState().dynasty!
     const entry = postseason!.field.find(
       (candidate) => candidate.programId === controlledProgramId,
     )!
@@ -135,11 +141,11 @@ describe('Postseason — qualified and alive', () => {
   })
 
   it('Quick Sim stays on the Tournament Hub with the stored result and optional Box Score', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
-    const { postseason, controlledProgramId } = useSeasonStore.getState()
+    const { activePostseason: postseason, controlledProgramId } = useDynastyStore.getState().dynasty!
     const currentRound = getCurrentTournamentRound(postseason!)!
     const expectedGame = getTournamentGameForProgram(
       postseason!,
@@ -149,20 +155,20 @@ describe('Postseason — qualified and alive', () => {
 
     clickButtonByText(/^simulate game$/i)
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(state.view).toBe('postseasonHub')
     expect(state.lastPlayedTournamentGameId).toBe(expectedGame.id)
-    const result = state.postseason!.resultsByGameId[expectedGame.id]
+    const result = state.dynasty!.activePostseason!.resultsByGameId[expectedGame.id]
     expect(result).toBeDefined()
-    expect(Object.keys(state.postseason!.resultsByGameId)).toEqual([
+    expect(Object.keys(state.dynasty!.activePostseason!.resultsByGameId)).toEqual([
       expectedGame.id,
     ])
 
     const completedCard = document.querySelector(
       '.next-game-card--final',
     ) as HTMLElement
-    const homeTeam = state.postseason!.programStates[result!.homeTeamId]!.team
-    const awayTeam = state.postseason!.programStates[result!.awayTeamId]!.team
+    const homeTeam = state.dynasty!.activePostseason!.programStates[result!.homeTeamId]!.team
+    const awayTeam = state.dynasty!.activePostseason!.programStates[result!.awayTeamId]!.team
     const leaders = deriveGameLeaders(result!, homeTeam, awayTeam)
     expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
     expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
@@ -203,20 +209,21 @@ describe('Postseason — qualified and alive', () => {
     ).toBeInTheDocument()
 
     clickButtonByText(/view box score/i)
-    expect(useSeasonStore.getState().view).toBe('postseasonGameHistory')
+    expect(useDynastyStore.getState().view).toBe('postseasonGameHistory')
     expect(
-      useSeasonStore.getState().postseason!.resultsByGameId[expectedGame.id],
+      useDynastyStore.getState().dynasty!.activePostseason!.resultsByGameId[expectedGame.id],
     ).toBe(result)
   })
 
   it('renders full Player box scores for the just-played Tournament game, with a neutral-site round tag', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/view box score/i)
 
-    const { postseason, lastPlayedTournamentGameId } = useSeasonStore.getState()
+    const { lastPlayedTournamentGameId } = useDynastyStore.getState()
+    const postseason = useDynastyStore.getState().dynasty!.activePostseason
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
     const topScorer = [...result.homePlayerStats].sort(
       (first, second) => second.points - first.points,
@@ -233,11 +240,11 @@ describe('Postseason — qualified and alive', () => {
   })
 
   it('Game Prep opens Tournament Rotation editing without mutating the completed Season', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
-    const { season, controlledProgramId } = useSeasonStore.getState()
+    const { activeSeason: season, controlledProgramId } = useDynastyStore.getState().dynasty!
     const originalSeasonRotation =
       season!.programStates[controlledProgramId!]!.rotation
 
@@ -263,40 +270,40 @@ describe('Postseason — qualified and alive', () => {
     expect(simulateButton).not.toBeDisabled()
 
     expect(
-      useSeasonStore.getState().season!.programStates[controlledProgramId!]!
+      useDynastyStore.getState().dynasty!.activeSeason!.programStates[controlledProgramId!]!
         .rotation,
     ).toEqual(originalSeasonRotation)
 
     fireEvent.click(simulateButton)
-    const playedGameId = useSeasonStore.getState().lastPlayedTournamentGameId!
-    const playedResult = useSeasonStore.getState().postseason!.resultsByGameId[
+    const playedGameId = useDynastyStore.getState().lastPlayedTournamentGameId!
+    const playedResult = useDynastyStore.getState().dynasty!.activePostseason!.resultsByGameId[
       playedGameId
     ]!
-    expect(useSeasonStore.getState().view).toBe('postseasonPostgame')
+    expect(useDynastyStore.getState().view).toBe('postseasonPostgame')
     expect(screen.getByText(String(playedResult.homeScore))).toBeInTheDocument()
 
     clickButtonByText(/return to tournament hub/i)
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
     expect(document.querySelector('.next-game-card--final')).not.toBeNull()
     expect(
-      useSeasonStore.getState().postseason!.resultsByGameId[playedGameId],
+      useDynastyStore.getState().dynasty!.activePostseason!.resultsByGameId[playedGameId],
     ).toBe(playedResult)
   })
 
   it('Advance to Next Round resolves the remaining bracket games and preserves the controlled result', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
-    const controlledResult = useSeasonStore.getState().postseason!
-      .resultsByGameId[useSeasonStore.getState().lastPlayedTournamentGameId!]!
+    const controlledResult = useDynastyStore.getState().dynasty!.activePostseason!
+      .resultsByGameId[useDynastyStore.getState().lastPlayedTournamentGameId!]!
     clickButtonByText(/advance to next round/i)
 
-    const state = useSeasonStore.getState()
+    const state = useDynastyStore.getState()
     expect(state.view).toBe('postseasonHub')
-    expect(getCurrentTournamentRound(state.postseason!)).toBe('quarterfinals')
+    expect(getCurrentTournamentRound(state.dynasty!.activePostseason!)).toBe('quarterfinals')
     expect(
-      state.postseason!.resultsByGameId[state.lastPlayedTournamentGameId!],
+      state.dynasty!.activePostseason!.resultsByGameId[state.lastPlayedTournamentGameId!],
     ).toBe(controlledResult)
     // The Round of 16 is fully resolved — its own round-progress control is gone.
     expect(
@@ -311,15 +318,16 @@ describe('Postseason — eliminated', () => {
     // of 16, then loses the Quarterfinal — regression coverage for a real
     // bug where a resolved loss in the *current* round was misread as an
     // already-won game still waiting on the rest of the round.
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/advance to next round/i)
     clickButtonByText(/^simulate game$/i)
 
-    const { postseason, controlledProgramId, lastPlayedTournamentGameId } =
-      useSeasonStore.getState()
+    const { lastPlayedTournamentGameId } = useDynastyStore.getState()
+    const { activePostseason: postseason, controlledProgramId } =
+      useDynastyStore.getState().dynasty!
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
     expect(result.winnerId).not.toBe(controlledProgramId)
 
@@ -334,7 +342,7 @@ describe('Postseason — eliminated', () => {
   })
 
   it('lets the AI Tournament continue past the eliminated controlled Program toward a Champion', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -349,16 +357,16 @@ describe('Postseason — eliminated', () => {
       }
     }
 
-    const state = useSeasonStore.getState()
-    expect(isTournamentComplete(state.postseason!)).toBe(true)
-    expect(deriveNationalChampion(state.postseason!)).toBeDefined()
+    const state = useDynastyStore.getState()
+    expect(isTournamentComplete(state.dynasty!.activePostseason!)).toBe(true)
+    expect(deriveNationalChampion(state.dynasty!.activePostseason!)).toBeDefined()
     expect(screen.getByText('Tournament Complete')).toBeInTheDocument()
   })
 })
 
 describe('Postseason — did not qualify', () => {
   it('shows No Bid with no fake matchup, and the Tournament remains simulatable to a Champion', () => {
-    useSeasonStore.getState().selectProgram('pine-valley')
+    useDynastyStore.getState().selectProgram('pine-valley')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
@@ -379,26 +387,28 @@ describe('Postseason — did not qualify', () => {
       }
     }
 
-    const state = useSeasonStore.getState()
-    expect(isTournamentComplete(state.postseason!)).toBe(true)
-    expect(deriveNationalChampion(state.postseason!)).toBeDefined()
+    const state = useDynastyStore.getState()
+    expect(isTournamentComplete(state.dynasty!.activePostseason!)).toBe(true)
+    expect(deriveNationalChampion(state.dynasty!.activePostseason!)).toBeDefined()
   })
 })
 
 describe('Postseason — bracket and historical results', () => {
   it('reveals future participants one feeder at a time, then preserves completed scores and winner styling', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
-    const initial = useSeasonStore.getState()
-    const currentRound = getCurrentTournamentRound(initial.postseason!)!
+    const initial = useDynastyStore.getState()
+    const currentRound = getCurrentTournamentRound(
+      initial.dynasty!.activePostseason!,
+    )!
     const controlledGame = getTournamentGameForProgram(
-      initial.postseason!,
-      initial.controlledProgramId!,
+      initial.dynasty!.activePostseason!,
+      initial.dynasty!.controlledProgramId,
       currentRound,
     )!
-    const futureGame = initial.postseason!.bracket.games.find(
+    const futureGame = initial.dynasty!.activePostseason!.bracket.games.find(
       (game) =>
         game.round === 'quarterfinals' &&
         game.participantSources.some(
@@ -426,11 +436,15 @@ describe('Postseason — bracket and historical results', () => {
 
     clickButtonByText(/^simulate other games$/i)
 
-    const partial = useSeasonStore.getState()
-    expect(partial.postseason!.resultsByGameId[controlledGame.id]).toBeUndefined()
-    expect(partial.postseason!.resultsByGameId[otherFeeder.gameId]).toBeDefined()
+    const partial = useDynastyStore.getState()
+    expect(
+      partial.dynasty!.activePostseason!.resultsByGameId[controlledGame.id],
+    ).toBeUndefined()
+    expect(
+      partial.dynasty!.activePostseason!.resultsByGameId[otherFeeder.gameId],
+    ).toBeDefined()
     const partialSlots = resolveTournamentGameParticipantSlots(
-      partial.postseason!,
+      partial.dynasty!.activePostseason!,
       futureGame.id,
     )
     expect(partialSlots.filter(Boolean)).toHaveLength(1)
@@ -444,9 +458,9 @@ describe('Postseason — bracket and historical results', () => {
 
     clickButtonByText(/^simulate game$/i)
 
-    const completed = useSeasonStore.getState()
+    const completed = useDynastyStore.getState()
     const resolvedSlots = resolveTournamentGameParticipantSlots(
-      completed.postseason!,
+      completed.dynasty!.activePostseason!,
       futureGame.id,
     )
     expect(resolvedSlots.every(Boolean)).toBe(true)
@@ -459,7 +473,8 @@ describe('Postseason — bracket and historical results', () => {
       expect(within(resolvedSlot).getByText(program.name)).toBeInTheDocument()
     }
 
-    const result = completed.postseason!.resultsByGameId[controlledGame.id]!
+    const result =
+      completed.dynasty!.activePostseason!.resultsByGameId[controlledGame.id]!
     const completedSlot = getSlot(controlledGame.id)
     expect(completedSlot).toHaveClass('bracket-slot--complete')
     const renderedScores = [...completedSlot.querySelectorAll('.bracket-slot__score')]
@@ -478,10 +493,10 @@ describe('Postseason — bracket and historical results', () => {
       result.homeTeamId === result.winnerId
         ? result.awayTeamId
         : result.homeTeamId
-    const winnerSeed = completed.postseason!.field.find(
+    const winnerSeed = completed.dynasty!.activePostseason!.field.find(
       (entry) => entry.programId === result.winnerId,
     )!.seed
-    const loserSeed = completed.postseason!.field.find(
+    const loserSeed = completed.dynasty!.activePostseason!.field.find(
       (entry) => entry.programId === loserId,
     )!.seed
     if (winnerSeed > loserSeed) {
@@ -492,18 +507,19 @@ describe('Postseason — bracket and historical results', () => {
   })
 
   it('opens a completed Tournament game as a read-only historical result with the full box score', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
-    const { postseason, lastPlayedTournamentGameId } = useSeasonStore.getState()
+    const { lastPlayedTournamentGameId } = useDynastyStore.getState()
+    const postseason = useDynastyStore.getState().dynasty!.activePostseason
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
     const completedSlot = document.querySelector(
       '.bracket-slot--complete',
     ) as HTMLElement
     fireEvent.click(completedSlot)
 
-    expect(useSeasonStore.getState().view).toBe('postseasonGameHistory')
+    expect(useDynastyStore.getState().view).toBe('postseasonGameHistory')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
     const topScorer = [...result.homePlayerStats].sort(
@@ -523,16 +539,16 @@ describe('Postseason — bracket and historical results', () => {
     fireEvent.click(
       screen.getByRole('button', { name: /back to tournament hub/i }),
     )
-    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
   })
 })
 
 describe('Postseason — Champion', () => {
   it('renders the National Champions state when the controlled Program wins it all', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
 
-    const { postseason, controlledProgramId } = useSeasonStore.getState()
+    const { activePostseason: postseason, controlledProgramId } = useDynastyStore.getState().dynasty!
     let current: PostseasonState = postseason!
 
     // Force the controlled Program to win every game on its path to the
@@ -566,7 +582,7 @@ describe('Postseason — Champion', () => {
       }
       current = recordTournamentGameResult(current, game.id, result)
     }
-    useSeasonStore.setState({ postseason: current })
+    setActivePostseason(current)
 
     render(<App />)
 
@@ -577,7 +593,7 @@ describe('Postseason — Champion', () => {
   })
 
   it('renders another Program as National Champion when the controlled Program does not win it', () => {
-    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -592,7 +608,7 @@ describe('Postseason — Champion', () => {
       }
     }
 
-    const { postseason, controlledProgramId } = useSeasonStore.getState()
+    const { activePostseason: postseason, controlledProgramId } = useDynastyStore.getState().dynasty!
     const champion = deriveNationalChampion(postseason!)!
     expect(champion).not.toBe(controlledProgramId)
     expect(screen.getByText('Tournament Complete')).toBeInTheDocument()

@@ -1,6 +1,6 @@
 import { BoxScorePanel, FinalScoreboard } from '../components'
 import { getPendingGamesForTournamentRound } from '../postseason'
-import { useSeasonStore } from '../store'
+import { selectActivePostseason, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
 import { formatSeedLabel, formatTournamentRoundName } from './postseasonFormatters'
@@ -20,18 +20,18 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  *   Read-only — no continuation or resimulation action.
  */
 export function TournamentPostgameScreen() {
-  const postseason = useSeasonStore((state) => state.postseason)
-  const view = useSeasonStore((state) => state.view)
-  const lastPlayedTournamentGameId = useSeasonStore(
+  const postseason = useDynastyStore(selectActivePostseason)
+  const view = useDynastyStore((state) => state.view)
+  const lastPlayedTournamentGameId = useDynastyStore(
     (state) => state.lastPlayedTournamentGameId,
   )
-  const viewedTournamentGameId = useSeasonStore(
+  const viewedTournamentGameId = useDynastyStore(
     (state) => state.viewedTournamentGameId,
   )
-  const simulateRestOfCurrentTournamentRound = useSeasonStore(
+  const simulateRestOfCurrentTournamentRound = useDynastyStore(
     (state) => state.simulateRestOfCurrentTournamentRound,
   )
-  const goToPostseasonHub = useSeasonStore((state) => state.goToPostseasonHub)
+  const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
 
   const isHistorical = view === 'postseasonGameHistory'
   const tournamentGameId = isHistorical

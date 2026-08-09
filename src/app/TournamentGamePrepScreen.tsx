@@ -9,7 +9,11 @@ import {
   getTournamentGameForProgram,
   resolveTournamentGameParticipants,
 } from '../postseason'
-import { useSeasonStore } from '../store'
+import {
+  selectActivePostseason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { describeRotationBlockingReason } from './formatters'
 import { formatSeedLabel, formatTournamentRoundName } from './postseasonFormatters'
@@ -20,22 +24,22 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 
 /** The Tournament equivalent of Game Prep: manage the Postseason Rotation, then play — always neutral site. */
 export function TournamentGamePrepScreen() {
-  const postseason = useSeasonStore((state) => state.postseason)
-  const controlledProgramId = useSeasonStore((state) => state.controlledProgramId)
-  const draftRotation = useSeasonStore((state) => state.postseasonDraftRotation)
-  const controlledDefaultRotation = useSeasonStore(
+  const postseason = useDynastyStore(selectActivePostseason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const draftRotation = useDynastyStore((state) => state.postseasonDraftRotation)
+  const controlledDefaultRotation = useDynastyStore(
     (state) => state.postseasonControlledDefaultRotation,
   )
-  const setDraftPlayerMinutes = useSeasonStore(
+  const setDraftPlayerMinutes = useDynastyStore(
     (state) => state.setPostseasonDraftPlayerMinutes,
   )
-  const resetDraftRotation = useSeasonStore(
+  const resetDraftRotation = useDynastyStore(
     (state) => state.resetPostseasonDraftRotation,
   )
-  const playPostseasonScheduledGame = useSeasonStore(
+  const playPostseasonScheduledGame = useDynastyStore(
     (state) => state.playPostseasonScheduledGame,
   )
-  const goToPostseasonHub = useSeasonStore((state) => state.goToPostseasonHub)
+  const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
 
   if (!postseason || !controlledProgramId || !draftRotation || !controlledDefaultRotation) {
     return null

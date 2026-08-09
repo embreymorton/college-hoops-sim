@@ -5,7 +5,11 @@ import {
   NationalLeadersSection,
 } from '../components'
 import { deriveNationalPlayerLeaders } from '../season'
-import { useSeasonStore } from '../store'
+import {
+  selectActiveSeason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -17,16 +21,16 @@ type LeagueTab = 'leaders' | 'teams'
 /** The League destination: national statistical leaders and the full 32-Program directory. */
 export function LeagueScreen() {
   const [tab, setTab] = useState<LeagueTab>('leaders')
-  const season = useSeasonStore((state) => state.season)
-  const controlledProgramId = useSeasonStore((state) => state.controlledProgramId)
-  const explorationViewHistory = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const explorationViewHistory = useDynastyStore(
     (state) => state.explorationViewHistory,
   )
-  const goBackFromExploration = useSeasonStore(
+  const goBackFromExploration = useDynastyStore(
     (state) => state.goBackFromExploration,
   )
-  const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
-  const openPlayerDetails = useSeasonStore((state) => state.openPlayerDetails)
+  const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
   if (!season) {
     return null

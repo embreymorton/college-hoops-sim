@@ -4,7 +4,11 @@ import {
   RotationEditorPanel,
   TeamRosterPanel,
 } from '../components'
-import { useSeasonStore } from '../store'
+import {
+  selectActiveSeason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { getNextGameForProgram } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { describeRotationBlockingReason } from './formatters'
@@ -15,22 +19,20 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 
 /** The Season equivalent of Pregame: manage the controlled Rotation, then play. */
 export function GamePrepScreen() {
-  const season = useSeasonStore((state) => state.season)
-  const controlledProgramId = useSeasonStore(
-    (state) => state.controlledProgramId,
-  )
-  const draftRotation = useSeasonStore((state) => state.draftRotation)
-  const controlledProgramDefaultRotation = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const draftRotation = useDynastyStore((state) => state.draftRotation)
+  const controlledProgramDefaultRotation = useDynastyStore(
     (state) => state.controlledProgramDefaultRotation,
   )
-  const setDraftPlayerMinutes = useSeasonStore(
+  const setDraftPlayerMinutes = useDynastyStore(
     (state) => state.setDraftPlayerMinutes,
   )
-  const resetDraftRotation = useSeasonStore(
+  const resetDraftRotation = useDynastyStore(
     (state) => state.resetDraftRotation,
   )
-  const playScheduledGame = useSeasonStore((state) => state.playScheduledGame)
-  const goToHub = useSeasonStore((state) => state.goToHub)
+  const playScheduledGame = useDynastyStore((state) => state.playScheduledGame)
+  const goToHub = useDynastyStore((state) => state.goToHub)
 
   if (
     !season ||

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { ExhibitionApp } from './ExhibitionApp'
-import { SeasonApp } from './SeasonApp'
+import { DynastyApp } from './SeasonApp'
 
 type AppMode = 'season' | 'exhibition'
 
@@ -31,7 +31,7 @@ export function App() {
         </div>
       </header>
       <main className="app-main">
-        {mode === 'season' ? <SeasonApp /> : <ExhibitionApp />}
+        {mode === 'season' ? <DynastyApp /> : <ExhibitionApp />}
       </main>
     </div>
   )

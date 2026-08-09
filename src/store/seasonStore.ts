@@ -1,6 +1,14 @@
 import { create } from 'zustand'
 import { validateRotation, type Rotation, type RngSeed } from '../engine'
 import {
+  initializeDynastyState,
+  initializeRecruiting,
+  syncRecruitingThroughCompletedPostseasonRounds,
+  syncRecruitingThroughCompletedRounds,
+  type DynastyState,
+  type RecruitingState,
+} from '../dynasty'
+import {
   getCurrentTournamentRound,
   getTournamentGameForProgram,
   initializePostseason,
@@ -105,16 +113,15 @@ export type SeasonSessionView =
   | 'teamDetails'
   | 'playerDetails'
 
-export interface SeasonSessionState {
-  /** User-controlled Program ownership; intentionally absent from SeasonState itself. */
-  readonly controlledProgramId: string | null
-  readonly season: SeasonState | null
+export interface DynastySessionState {
+  /** The application's one canonical cross-season domain value. */
+  readonly dynasty: DynastyState | null
   /** Retained separately because SeasonState only stores the current Rotation. */
   readonly controlledProgramDefaultRotation: Rotation | null
   /**
    * The controlled Program's in-progress Rotation edit, scoped to the Game
    * Prep presentation. May be temporarily invalid; only legal values are
-   * written through into `season`, and it resets from the canonical Season
+   * written through into `dynasty.activeSeason`, and it resets from the canonical Season
    * Rotation whenever Game Prep is (re-)entered so a stale invalid edit can
    * never leak into the Dashboard Quick Sim boundary.
    */
@@ -128,12 +135,6 @@ export interface SeasonSessionState {
   readonly pendingSuperSim: PendingSuperSim | null
   /** One-time completion feedback for the Super Sim that just ran, if any. */
   readonly superSimSummary: SuperSimSummary | null
-  /**
-   * The active National Tournament, initialized once from the completed
-   * Season. Kept entirely separate from `season` — entering or progressing
-   * Postseason never mutates or replaces the completed regular-season facts.
-   */
-  readonly postseason: PostseasonState | null
   /** The controlled Program's Rotation as carried into the tournament; the Postseason "reset" target. */
   readonly postseasonControlledDefaultRotation: Rotation | null
   /** In-progress Postseason Rotation edit, scoped to Tournament Game Prep — same draft-boundary contract as `draftRotation`. */
@@ -157,7 +158,7 @@ export interface SeasonSessionState {
   /** The Player currently open in Player Details. */
   readonly selectedPlayerId: string | null
   readonly masterSeed: RngSeed
-  /** Initializes Universe V0, Season 1, and controls the chosen Program. */
+  /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string): void
   /** Zero minutes omits the Player, preserving canonical Rotation shape. */
   setDraftPlayerMinutes(playerId: string, minutes: number): void
@@ -173,7 +174,7 @@ export interface SeasonSessionState {
    * Rotation, then remains on the Hub. Never reads or is blocked by
    * `draftRotation` — the committed
    * Rotation is guaranteed legal because only legal edits are ever written
-   * through to `season`.
+   * through to `dynasty.activeSeason`.
    */
   simulateNextGame(): void
   /** Excludes the controlled Program as a safety boundary; never re-simulates completed games. */
@@ -224,6 +225,39 @@ export interface SeasonSessionState {
   openPlayerDetails(programId: string, playerId: string): void
   /** Unwinds one step of `explorationViewHistory`, back to where exploration was entered. */
   goBackFromExploration(): void
+}
+
+export const selectActiveSeason = (
+  state: DynastySessionState,
+): SeasonState | null => state.dynasty?.activeSeason ?? null
+
+export const selectActivePostseason = (
+  state: DynastySessionState,
+): PostseasonState | null => state.dynasty?.activePostseason ?? null
+
+export const selectActiveRecruiting = (
+  state: DynastySessionState,
+): RecruitingState | null => state.dynasty?.recruiting ?? null
+
+export const selectControlledProgramId = (
+  state: DynastySessionState,
+): string | null => state.dynasty?.controlledProgramId ?? null
+
+function withActiveSeason(
+  dynasty: DynastyState,
+  activeSeason: SeasonState,
+): DynastyState {
+  return syncRecruitingThroughCompletedRounds({ ...dynasty, activeSeason })
+}
+
+function withActivePostseason(
+  dynasty: DynastyState,
+  activePostseason: PostseasonState,
+): DynastyState {
+  return syncRecruitingThroughCompletedPostseasonRounds({
+    ...dynasty,
+    activePostseason,
+  })
 }
 
 /**
@@ -279,9 +313,8 @@ function resolveControlledTournamentGame(
   return game
 }
 
-export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
-  controlledProgramId: null,
-  season: null,
+export const useDynastyStore = create<DynastySessionState>((set, get) => ({
+  dynasty: null,
   controlledProgramDefaultRotation: null,
   draftRotation: null,
   view: 'programSelect',
@@ -289,7 +322,6 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   viewedGameId: null,
   pendingSuperSim: null,
   superSimSummary: null,
-  postseason: null,
   postseasonControlledDefaultRotation: null,
   postseasonDraftRotation: null,
   lastPlayedTournamentGameId: null,
@@ -320,9 +352,16 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       throw new RangeError(`Unknown Universe V0 program ID "${programId}"`)
     }
 
-    set({
+    const dynasty = initializeRecruiting(initializeDynastyState({
+      dynastyId: `dynasty:${programId}`,
+      dynastySeed: MASTER_SEED,
       controlledProgramId: programId,
-      season,
+      universe: UNIVERSE_V0,
+      activeSeason: season,
+    }))
+
+    set({
+      dynasty,
       controlledProgramDefaultRotation: initializedProgram.rotation,
       draftRotation: initializedProgram.rotation,
       view: 'hub',
@@ -330,7 +369,6 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       viewedGameId: null,
       pendingSuperSim: null,
       superSimSummary: null,
-      postseason: null,
       postseasonControlledDefaultRotation: null,
       postseasonDraftRotation: null,
       lastPlayedTournamentGameId: null,
@@ -343,9 +381,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   setDraftPlayerMinutes(playerId, minutes) {
-    const { season, controlledProgramId, draftRotation } = get()
+    const { dynasty, draftRotation } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId || !draftRotation) {
+    if (!dynasty || !season || !controlledProgramId || !draftRotation) {
       return
     }
 
@@ -369,34 +409,47 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
 
     set({
       draftRotation: nextDraft,
-      season: isValid
-        ? updateProgramRotation(season, controlledProgramId, nextDraft)
-        : season,
+      dynasty: isValid
+        ? {
+            ...dynasty,
+            activeSeason: updateProgramRotation(
+              season,
+              controlledProgramId,
+              nextDraft,
+            ),
+          }
+        : dynasty,
     })
   },
 
   resetDraftRotation() {
-    const { season, controlledProgramId, controlledProgramDefaultRotation } =
-      get()
+    const { dynasty, controlledProgramDefaultRotation } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId || !controlledProgramDefaultRotation) {
+    if (!dynasty || !season || !controlledProgramId || !controlledProgramDefaultRotation) {
       return
     }
 
     set({
       draftRotation: controlledProgramDefaultRotation,
-      season: updateProgramRotation(
-        season,
-        controlledProgramId,
-        controlledProgramDefaultRotation,
-      ),
+      dynasty: {
+        ...dynasty,
+        activeSeason: updateProgramRotation(
+          season,
+          controlledProgramId,
+          controlledProgramDefaultRotation,
+        ),
+      },
     })
   },
 
   goToGamePrep() {
-    const { season, controlledProgramId } = get()
+    const { dynasty } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId) {
+    if (!dynasty || !season || !controlledProgramId) {
       return
     }
 
@@ -411,7 +464,7 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       caughtUpSeason.programStates[controlledProgramId]!.rotation
 
     set({
-      season: caughtUpSeason,
+      dynasty: withActiveSeason(dynasty, caughtUpSeason),
       draftRotation: canonicalRotation,
       view: 'gamePrep',
     })
@@ -422,9 +475,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   playScheduledGame() {
-    const { season, controlledProgramId, draftRotation } = get()
+    const { dynasty, draftRotation } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId || !draftRotation) {
+    if (!dynasty || !season || !controlledProgramId || !draftRotation) {
       return
     }
 
@@ -441,16 +496,18 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     }
 
     set({
-      season: outcome.season,
+      dynasty: withActiveSeason(dynasty, outcome.season),
       lastPlayedGameId: outcome.playedGameId,
       view: 'postgame',
     })
   },
 
   simulateNextGame() {
-    const { season, controlledProgramId } = get()
+    const { dynasty } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId) {
+    if (!dynasty || !season || !controlledProgramId) {
       return
     }
 
@@ -461,16 +518,18 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     }
 
     set({
-      season: outcome.season,
+      dynasty: withActiveSeason(dynasty, outcome.season),
       lastPlayedGameId: outcome.playedGameId,
       view: 'hub',
     })
   },
 
   simulateRestOfRound() {
-    const { season, controlledProgramId } = get()
+    const { dynasty } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId) {
+    if (!dynasty || !season || !controlledProgramId) {
       return
     }
 
@@ -480,11 +539,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       excludedProgramIds: [controlledProgramId],
     })
 
-    set({ season: nextSeason })
+    set({ dynasty: withActiveSeason(dynasty, nextSeason) })
   },
 
   viewCompletedGame(scheduledGameId) {
-    const { season } = get()
+    const season = get().dynasty?.activeSeason
 
     if (!season || season.resultsByGameId[scheduledGameId] === undefined) {
       return
@@ -494,7 +553,7 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   requestSuperSim(kind) {
-    const { season } = get()
+    const season = get().dynasty?.activeSeason
 
     if (!season) {
       return
@@ -511,9 +570,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   confirmSuperSim() {
-    const { season, controlledProgramId, pendingSuperSim } = get()
+    const { dynasty, pendingSuperSim } = get()
+    const season = dynasty?.activeSeason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season || !controlledProgramId || !pendingSuperSim) {
+    if (!dynasty || !season || !controlledProgramId || !pendingSuperSim) {
       return
     }
 
@@ -532,7 +593,7 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     )
 
     set({
-      season: nextSeason,
+      dynasty: withActiveSeason(dynasty, nextSeason),
       pendingSuperSim: null,
       superSimSummary: {
         kind: pendingSuperSim.kind,
@@ -548,9 +609,12 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   enterPostseason() {
-    const { season, postseason, controlledProgramId } = get()
+    const { dynasty } = get()
+    const season = dynasty?.activeSeason
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!season) {
+    if (!dynasty || !season) {
       return
     }
 
@@ -559,16 +623,17 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       return
     }
 
+    const synchronized = syncRecruitingThroughCompletedRounds(dynasty)
     const nextPostseason = initializePostseason({
       universe: UNIVERSE_V0,
-      season,
+      season: synchronized.activeSeason!,
     })
     const controlledState = controlledProgramId
       ? nextPostseason.programStates[controlledProgramId]
       : undefined
 
     set({
-      postseason: nextPostseason,
+      dynasty: { ...synchronized, activePostseason: nextPostseason },
       postseasonControlledDefaultRotation: controlledState?.rotation ?? null,
       postseasonDraftRotation: controlledState?.rotation ?? null,
       view: 'postseasonHub',
@@ -581,7 +646,9 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   goToPostseasonGamePrep() {
-    const { postseason, controlledProgramId } = get()
+    const { dynasty } = get()
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
     const controlledState =
       postseason && controlledProgramId
         ? postseason.programStates[controlledProgramId]
@@ -598,13 +665,15 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   setPostseasonDraftPlayerMinutes(playerId, minutes) {
-    const { postseason, controlledProgramId, postseasonDraftRotation } = get()
+    const { dynasty, postseasonDraftRotation } = get()
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
     const controlledState =
       postseason && controlledProgramId
         ? postseason.programStates[controlledProgramId]
         : undefined
 
-    if (!postseason || !controlledProgramId || !postseasonDraftRotation || !controlledState) {
+    if (!dynasty || !postseason || !controlledProgramId || !postseasonDraftRotation || !controlledState) {
       return
     }
 
@@ -622,41 +691,54 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
 
     set({
       postseasonDraftRotation: nextDraft,
-      postseason: isValid
-        ? updatePostseasonProgramRotation(postseason, controlledProgramId, nextDraft)
-        : postseason,
+      dynasty: isValid
+        ? {
+            ...dynasty,
+            activePostseason: updatePostseasonProgramRotation(
+              postseason,
+              controlledProgramId,
+              nextDraft,
+            ),
+          }
+        : dynasty,
     })
   },
 
   resetPostseasonDraftRotation() {
     const {
-      postseason,
-      controlledProgramId,
+      dynasty,
       postseasonControlledDefaultRotation,
     } = get()
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!postseason || !controlledProgramId || !postseasonControlledDefaultRotation) {
+    if (!dynasty || !postseason || !controlledProgramId || !postseasonControlledDefaultRotation) {
       return
     }
 
     set({
       postseasonDraftRotation: postseasonControlledDefaultRotation,
-      postseason: updatePostseasonProgramRotation(
-        postseason,
-        controlledProgramId,
-        postseasonControlledDefaultRotation,
-      ),
+      dynasty: {
+        ...dynasty,
+        activePostseason: updatePostseasonProgramRotation(
+          postseason,
+          controlledProgramId,
+          postseasonControlledDefaultRotation,
+        ),
+      },
     })
   },
 
   playPostseasonScheduledGame() {
-    const { postseason, controlledProgramId, postseasonDraftRotation } = get()
+    const { dynasty, postseasonDraftRotation } = get()
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
     const controlledState =
       postseason && controlledProgramId
         ? postseason.programStates[controlledProgramId]
         : undefined
 
-    if (!postseason || !controlledProgramId || !postseasonDraftRotation || !controlledState) {
+    if (!dynasty || !postseason || !controlledProgramId || !postseasonDraftRotation || !controlledState) {
       return
     }
 
@@ -677,16 +759,18 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     })
 
     set({
-      postseason: nextPostseason,
+      dynasty: withActivePostseason(dynasty, nextPostseason),
       lastPlayedTournamentGameId: game.id,
       view: 'postseasonPostgame',
     })
   },
 
   simulateNextPostseasonGame() {
-    const { postseason, controlledProgramId } = get()
+    const { dynasty } = get()
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!postseason || !controlledProgramId) {
+    if (!dynasty || !postseason || !controlledProgramId) {
       return
     }
 
@@ -703,16 +787,18 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     })
 
     set({
-      postseason: nextPostseason,
+      dynasty: withActivePostseason(dynasty, nextPostseason),
       lastPlayedTournamentGameId: game.id,
       view: 'postseasonHub',
     })
   },
 
   simulateRestOfCurrentTournamentRound() {
-    const { postseason, controlledProgramId } = get()
+    const { dynasty } = get()
+    const postseason = dynasty?.activePostseason
+    const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!postseason) {
+    if (!dynasty || !postseason) {
       return
     }
 
@@ -722,11 +808,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       excludedProgramIds: controlledProgramId ? [controlledProgramId] : [],
     })
 
-    set({ postseason: nextPostseason })
+    set({ dynasty: withActivePostseason(dynasty, nextPostseason) })
   },
 
   viewCompletedTournamentGame(tournamentGameId) {
-    const { postseason } = get()
+    const postseason = get().dynasty?.activePostseason
 
     if (!postseason || postseason.resultsByGameId[tournamentGameId] === undefined) {
       return
@@ -766,11 +852,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   },
 
   goBackFromExploration() {
-    const { explorationViewHistory, postseason } = get()
+    const { explorationViewHistory, dynasty } = get()
     const previousView = explorationViewHistory.at(-1)
 
     set({
-      view: previousView ?? (postseason ? 'postseasonHub' : 'hub'),
+      view: previousView ?? (dynasty?.activePostseason ? 'postseasonHub' : 'hub'),
       explorationViewHistory: explorationViewHistory.slice(0, -1),
     })
   },

@@ -1,5 +1,9 @@
 import { BoxScorePanel, FinalScoreboard } from '../components'
-import { useSeasonStore } from '../store'
+import {
+  selectActiveSeason,
+  selectControlledProgramId,
+  useDynastyStore,
+} from '../store'
 import { getPendingGamesForRound } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
@@ -19,17 +23,15 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  *   Recent Results. Read-only — no continuation or resimulation action.
  */
 export function SeasonPostgameScreen() {
-  const season = useSeasonStore((state) => state.season)
-  const controlledProgramId = useSeasonStore(
-    (state) => state.controlledProgramId,
-  )
-  const view = useSeasonStore((state) => state.view)
-  const lastPlayedGameId = useSeasonStore((state) => state.lastPlayedGameId)
-  const viewedGameId = useSeasonStore((state) => state.viewedGameId)
-  const simulateRestOfRound = useSeasonStore(
+  const season = useDynastyStore(selectActiveSeason)
+  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const view = useDynastyStore((state) => state.view)
+  const lastPlayedGameId = useDynastyStore((state) => state.lastPlayedGameId)
+  const viewedGameId = useDynastyStore((state) => state.viewedGameId)
+  const simulateRestOfRound = useDynastyStore(
     (state) => state.simulateRestOfRound,
   )
-  const goToHub = useSeasonStore((state) => state.goToHub)
+  const goToHub = useDynastyStore((state) => state.goToHub)
 
   const isHistorical = view === 'gameHistory'
   const scheduledGameId = isHistorical ? viewedGameId : lastPlayedGameId

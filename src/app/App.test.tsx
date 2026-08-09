@@ -1,10 +1,10 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { useSeasonStore } from '../store'
+import { useDynastyStore } from '../store'
 import { App } from './App'
 
 function resetSeasonStore() {
-  useSeasonStore.setState(useSeasonStore.getInitialState())
+  useDynastyStore.setState(useDynastyStore.getInitialState())
 }
 
 beforeEach(() => {

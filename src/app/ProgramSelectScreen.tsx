@@ -1,5 +1,5 @@
 import type { CSSProperties } from 'react'
-import { useSeasonStore } from '../store'
+import { useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import type { ProgramDefinition } from '../universe'
 
@@ -11,7 +11,7 @@ function programsForConference(conferenceId: string): ProgramDefinition[] {
 
 /** Shown once, before a Season session exists: choose one of the 32 permanent programs. */
 export function ProgramSelectScreen() {
-  const selectProgram = useSeasonStore((state) => state.selectProgram)
+  const selectProgram = useDynastyStore((state) => state.selectProgram)
 
   return (
     <section className="section program-select" aria-labelledby="program-select-heading">
