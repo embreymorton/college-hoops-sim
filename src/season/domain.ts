@@ -118,6 +118,38 @@ export interface SimulatePendingGamesThroughRoundOptions {
   readonly simulationSeed: RngSeed
 }
 
+export type NationalLeaderCategory =
+  | 'points'
+  | 'rebounds'
+  | 'assists'
+  | 'steals'
+  | 'blocks'
+
+/** One qualified Player's rank and per-game rate in a national leader category. */
+export interface NationalLeaderEntry {
+  readonly rank: number
+  readonly programId: string
+  readonly playerId: string
+  readonly value: number
+  readonly gamesPlayed: number
+}
+
+export type NationalLeaderboards = Readonly<
+  Record<NationalLeaderCategory, readonly NationalLeaderEntry[]>
+>
+
+export interface TeamLeaderEntry {
+  readonly playerId: string
+  readonly value: number
+}
+
+/** A Program's top qualified Player in each of points/rebounds/assists per game. */
+export interface TeamPlayerLeaders {
+  readonly points: TeamLeaderEntry | undefined
+  readonly rebounds: TeamLeaderEntry | undefined
+  readonly assists: TeamLeaderEntry | undefined
+}
+
 /** Serializable derived conference-standing projection; never Season state. */
 export interface StandingRow {
   readonly programId: string

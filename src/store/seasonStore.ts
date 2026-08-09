@@ -101,6 +101,9 @@ export type SeasonSessionView =
   | 'postseasonGamePrep'
   | 'postseasonPostgame'
   | 'postseasonGameHistory'
+  | 'league'
+  | 'teamDetails'
+  | 'playerDetails'
 
 export interface SeasonSessionState {
   /** User-controlled Program ownership; intentionally absent from SeasonState itself. */
@@ -139,6 +142,20 @@ export interface SeasonSessionState {
   readonly lastPlayedTournamentGameId: string | null
   /** The completed Tournament game currently open for historical review, if any. */
   readonly viewedTournamentGameId: string | null
+  /**
+   * A small back-navigation stack of exploration entry points (Season Hub,
+   * Postseason Hub, League, or Team Details). Pushed once per forward step
+   * into League/Team/Player Details and popped by `goBackFromExploration`,
+   * so a multi-hop trip (e.g. League → Team → Player) unwinds one screen at
+   * a time without a generalized router.
+   */
+  readonly explorationViewHistory: readonly SeasonSessionView[]
+  /** The Program currently open in Team Details, for any Program in the Universe. */
+  readonly selectedTeamProgramId: string | null
+  /** The Program owning the Player currently open in Player Details. */
+  readonly selectedPlayerProgramId: string | null
+  /** The Player currently open in Player Details. */
+  readonly selectedPlayerId: string | null
   readonly masterSeed: RngSeed
   /** Initializes Universe V0, Season 1, and controls the chosen Program. */
   selectProgram(programId: string): void
@@ -198,6 +215,14 @@ export interface SeasonSessionState {
   simulateRestOfCurrentTournamentRound(): void
   /** Opens a historical read of an already-completed Tournament game's result. */
   viewCompletedTournamentGame(tournamentGameId: string): void
+  /** Opens the League destination (National Leaders / Teams) from the current Hub. */
+  goToLeague(): void
+  /** Opens Team Details for any Program in the Universe, not only the controlled one. */
+  openTeamDetails(programId: string): void
+  /** Opens Player Details for any current-roster Player in the Universe. */
+  openPlayerDetails(programId: string, playerId: string): void
+  /** Unwinds one step of `explorationViewHistory`, back to where exploration was entered. */
+  goBackFromExploration(): void
 }
 
 /**
@@ -268,6 +293,10 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   postseasonDraftRotation: null,
   lastPlayedTournamentGameId: null,
   viewedTournamentGameId: null,
+  explorationViewHistory: [],
+  selectedTeamProgramId: null,
+  selectedPlayerProgramId: null,
+  selectedPlayerId: null,
   masterSeed: MASTER_SEED,
 
   selectProgram(programId) {
@@ -305,6 +334,10 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       postseasonDraftRotation: null,
       lastPlayedTournamentGameId: null,
       viewedTournamentGameId: null,
+      explorationViewHistory: [],
+      selectedTeamProgramId: null,
+      selectedPlayerProgramId: null,
+      selectedPlayerId: null,
     })
   },
 
@@ -699,5 +732,45 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     }
 
     set({ viewedTournamentGameId: tournamentGameId, view: 'postseasonGameHistory' })
+  },
+
+  goToLeague() {
+    const { view, explorationViewHistory } = get()
+
+    set({
+      view: 'league',
+      explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  openTeamDetails(programId) {
+    const { view, explorationViewHistory } = get()
+
+    set({
+      view: 'teamDetails',
+      selectedTeamProgramId: programId,
+      explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  openPlayerDetails(programId, playerId) {
+    const { view, explorationViewHistory } = get()
+
+    set({
+      view: 'playerDetails',
+      selectedPlayerProgramId: programId,
+      selectedPlayerId: playerId,
+      explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  goBackFromExploration() {
+    const { explorationViewHistory, postseason } = get()
+    const previousView = explorationViewHistory.at(-1)
+
+    set({
+      view: previousView ?? (postseason ? 'postseasonHub' : 'hub'),
+      explorationViewHistory: explorationViewHistory.slice(0, -1),
+    })
   },
 }))

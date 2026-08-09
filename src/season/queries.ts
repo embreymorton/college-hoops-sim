@@ -1,3 +1,4 @@
+import type { Player } from '../engine'
 import { getGamesForProgram } from '../schedule'
 import type {
   CompletedSeasonGame,
@@ -112,6 +113,31 @@ export function deriveProgramRecord(
     getCompletedGamesForProgram(season, programId),
     programId,
   )
+}
+
+/** Resolves one current-roster Player's identity from Season state, for any Program. */
+export function getSeasonPlayer(
+  season: SeasonState,
+  programId: string,
+  playerId: string,
+): Player {
+  const programState = season.programStates[programId]
+
+  if (!programState) {
+    throw new RangeError(`Unknown Season Program ID "${programId}".`)
+  }
+
+  const player = programState.team.roster.find(
+    (candidate) => candidate.id === playerId,
+  )
+
+  if (!player) {
+    throw new RangeError(
+      `Unknown Season Player ID "${playerId}" on Program "${programId}".`,
+    )
+  }
+
+  return player
 }
 
 export function deriveConferenceRecord(

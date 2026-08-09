@@ -501,7 +501,8 @@ p {
 
 .stat-trio {
   display: flex;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-4);
 }
 
 .scoreboard-side--home .stat-trio {

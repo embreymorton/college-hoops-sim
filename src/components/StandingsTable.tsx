@@ -6,6 +6,8 @@ interface StandingsTableProps {
   readonly rows: readonly StandingRow[]
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
   readonly controlledProgramId: string
+  /** Opens Team Details for the selected row's Program. */
+  readonly onSelectProgram: (programId: string) => void
 }
 
 /** One Conference table in the existing accepted V0 tiebreak order. */
@@ -13,6 +15,7 @@ export function StandingsTable({
   rows,
   programsById,
   controlledProgramId,
+  onSelectProgram,
 }: StandingsTableProps) {
   return (
     <div className="table-scroll">
@@ -39,7 +42,13 @@ export function StandingsTable({
               >
                 <td>{index + 1}</td>
                 <td className="player-name-cell">
-                  {program?.name ?? row.programId}
+                  <button
+                    type="button"
+                    className="text-link-button"
+                    onClick={() => onSelectProgram(row.programId)}
+                  >
+                    {program?.name ?? row.programId}
+                  </button>
                   {isControlled && (
                     <span className="standings-you-tag"> · You</span>
                   )}

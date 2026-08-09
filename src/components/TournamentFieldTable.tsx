@@ -15,12 +15,15 @@ interface TournamentFieldTableProps {
   /** Already in canonical seed order (1–16); rendered as-is, never re-sorted or re-rated. */
   readonly rows: readonly TournamentFieldRow[]
   readonly controlledProgramId: string | null
+  /** Opens Team Details for the selected row's Program. */
+  readonly onSelectProgram: (programId: string) => void
 }
 
 /** The canonical 16-team field. Seeds and bids are presented as selected — never re-derived here. */
 export function TournamentFieldTable({
   rows,
   controlledProgramId,
+  onSelectProgram,
 }: TournamentFieldTableProps) {
   return (
     <div className="table-scroll">
@@ -43,7 +46,13 @@ export function TournamentFieldTable({
               <tr key={row.programId} data-controlled={isControlled}>
                 <td>{formatSeedLabel(row.seed)}</td>
                 <td className="player-name-cell">
-                  {row.programName}
+                  <button
+                    type="button"
+                    className="text-link-button"
+                    onClick={() => onSelectProgram(row.programId)}
+                  >
+                    {row.programName}
+                  </button>
                   {isControlled && (
                     <span className="standings-you-tag"> · You</span>
                   )}

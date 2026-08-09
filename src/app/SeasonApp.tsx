@@ -1,9 +1,12 @@
 import { useSeasonStore } from '../store'
 import { GamePrepScreen } from './GamePrepScreen'
+import { LeagueScreen } from './LeagueScreen'
+import { PlayerDetailsScreen } from './PlayerDetailsScreen'
 import { PostseasonHubScreen } from './PostseasonHubScreen'
 import { ProgramSelectScreen } from './ProgramSelectScreen'
 import { SeasonHubScreen } from './SeasonHubScreen'
 import { SeasonPostgameScreen } from './SeasonPostgameScreen'
+import { TeamDetailsScreen } from './TeamDetailsScreen'
 import { TournamentGamePrepScreen } from './TournamentGamePrepScreen'
 import { TournamentPostgameScreen } from './TournamentPostgameScreen'
 
@@ -31,6 +34,12 @@ export function SeasonApp() {
     case 'postseasonPostgame':
     case 'postseasonGameHistory':
       return <TournamentPostgameScreen />
+    case 'league':
+      return <LeagueScreen />
+    case 'teamDetails':
+      return <TeamDetailsScreen />
+    case 'playerDetails':
+      return <PlayerDetailsScreen />
     case 'hub':
     case 'programSelect':
     default:

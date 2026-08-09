@@ -27,6 +27,11 @@ export function formatRating(value: number): string {
   return value.toFixed(1)
 }
 
+/** A 0–1 ratio as a one-decimal percentage, e.g. 0.359 → "35.9%". */
+export function formatPercentage(value: number): string {
+  return `${(value * 100).toFixed(1)}%`
+}
+
 /** Returns null for regulation games, otherwise "OT", "2OT", "3OT", etc. */
 export function formatOvertimeTag(overtimePeriods: number): string | null {
   if (overtimePeriods <= 0) {

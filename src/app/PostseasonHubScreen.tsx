@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { calculateTeamStrength } from '../engine'
 import {
+  HubSectionTabs,
   TournamentBracket,
   TournamentFieldTable,
   TournamentMatchupCard,
@@ -136,6 +137,8 @@ export function PostseasonHubScreen() {
     (state) => state.viewCompletedTournamentGame,
   )
   const goToHub = useSeasonStore((state) => state.goToHub)
+  const goToLeague = useSeasonStore((state) => state.goToLeague)
+  const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
 
   if (!season || !postseason || !controlledProgramId) {
     return null
@@ -353,6 +356,7 @@ export function PostseasonHubScreen() {
 
   return (
     <>
+      <HubSectionTabs activeLabel="Tournament" onSelectLeague={goToLeague} />
       <TournamentStatusHeader
         programName={controlledProgram.name}
         accentColor={controlledProgram.branding.primaryColor}
@@ -403,6 +407,7 @@ export function PostseasonHubScreen() {
         <TournamentFieldTable
           rows={fieldRows}
           controlledProgramId={controlledProgramId}
+          onSelectProgram={openTeamDetails}
         />
       </section>
 

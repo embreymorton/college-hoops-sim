@@ -1,5 +1,6 @@
 import type { GameResult } from '../engine'
 import type { ScheduledGameType } from '../schedule'
+import type { SeasonSessionView } from '../store'
 
 /**
  * Season-presentation formatting helpers. These format existing Season query
@@ -58,6 +59,22 @@ export function describeRoundProgress(
   totalGames: number,
 ): string {
   return `${completedGames} of ${totalGames} games complete`
+}
+
+/** "Season" / "Tournament" / "League" / "Team" / "Player" — the screen one exploration back-step returns to. */
+export function formatBackDestinationLabel(view: SeasonSessionView): string {
+  switch (view) {
+    case 'postseasonHub':
+      return 'Tournament'
+    case 'league':
+      return 'League'
+    case 'teamDetails':
+      return 'Team'
+    case 'playerDetails':
+      return 'Player'
+    default:
+      return 'Season'
+  }
 }
 
 /** "1st", "2nd", "3rd", "4th", "11th", "21st" — for a 1-based Conference standing. */

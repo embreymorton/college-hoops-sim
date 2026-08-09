@@ -8,6 +8,7 @@ interface ConferenceStandingsSectionProps {
   readonly season: SeasonState
   readonly controlledProgramId: string
   readonly defaultConferenceId: string
+  readonly onSelectProgram: (programId: string) => void
 }
 
 /** Owns the lightweight Conference switch; standings themselves stay derived. */
@@ -16,6 +17,7 @@ export function ConferenceStandingsSection({
   season,
   controlledProgramId,
   defaultConferenceId,
+  onSelectProgram,
 }: ConferenceStandingsSectionProps) {
   const [conferenceId, setConferenceId] = useState(defaultConferenceId)
   const programsById = new Map(
@@ -46,6 +48,7 @@ export function ConferenceStandingsSection({
         rows={rows}
         programsById={programsById}
         controlledProgramId={controlledProgramId}
+        onSelectProgram={onSelectProgram}
       />
     </div>
   )

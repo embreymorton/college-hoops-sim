@@ -1,0 +1,287 @@
+/* ==========================================================================
+   League & Player Exploration V0 — extends styles.css's tokens and components
+   ========================================================================== */
+
+/* Hub section switch (Season/Tournament ↔ League) */
+
+.hub-section-tabs {
+  margin-bottom: var(--space-2);
+}
+
+/* Generic inline text-as-link control, used wherever a Program or Player
+   name inside a table/strip needs to open Team or Player Details. */
+
+.text-link-button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.text-link-button:hover,
+.text-link-button:focus-visible {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.exploration-back-button {
+  align-self: flex-start;
+}
+
+/* ==========================================================================
+   League — Leaders
+   ========================================================================== */
+
+.leaders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.leader-board {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.leader-board__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.leader-board__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-0);
+}
+
+.leader-board__unit {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.leader-board__table td:nth-child(3),
+.leader-board__table th:nth-child(3) {
+  text-align: left;
+}
+
+.leader-board__rank {
+  color: var(--ink-1);
+  width: 1.6rem;
+}
+
+.leader-board__pos {
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  margin-left: 0.35rem;
+}
+
+.league-empty-state {
+  padding: var(--space-6);
+  text-align: center;
+  color: var(--ink-1);
+  border: 1px dashed var(--line-strong);
+  border-radius: var(--radius-md);
+}
+
+/* ==========================================================================
+   League — Teams directory
+   ========================================================================== */
+
+.league-teams-directory {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: var(--space-6);
+}
+
+.league-teams-directory__conference-name {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  margin-bottom: var(--space-2);
+}
+
+.league-teams-directory__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.league-teams-directory__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto auto;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--team-accent, var(--line));
+  border-radius: var(--radius-sm);
+  padding: 0.5rem var(--space-4);
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+
+.league-teams-directory__row:hover,
+.league-teams-directory__row:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.league-teams-directory__name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.84rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--ink-0);
+}
+
+.league-teams-directory__record,
+.league-teams-directory__conf-record,
+.league-teams-directory__ovr {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78rem;
+  color: var(--ink-1);
+  white-space: nowrap;
+}
+
+.league-teams-directory__ovr {
+  color: var(--ink-0);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Team Details
+   ========================================================================== */
+
+.team-leaders {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.team-leaders__item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  min-width: 9rem;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.team-leaders__item:hover,
+.team-leaders__item:focus-visible {
+  border-color: var(--accent);
+}
+
+.team-leaders__value {
+  font-family: var(--font-score);
+  font-size: 2rem;
+  line-height: 1;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.team-leaders__unit {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 3px;
+}
+
+.team-leaders__player {
+  font-size: 0.82rem;
+  color: var(--ink-1);
+  margin-top: 6px;
+}
+
+.team-leaders__empty {
+  color: var(--ink-1);
+  font-size: 0.86rem;
+}
+
+.team-stats-tabs {
+  margin-bottom: var(--space-3);
+}
+
+/* ==========================================================================
+   Player Details
+   ========================================================================== */
+
+.player-stat-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.player-stat-block__row--secondary .stat-trio__value {
+  font-size: 1.9rem;
+}
+
+.game-log-table tbody tr[data-status='win'] td:nth-child(3) {
+  color: var(--ink-0);
+}
+
+.game-log-table tbody tr[data-status='loss'] td:nth-child(3) {
+  color: var(--ink-2);
+}
+
+.game-log-table tbody tr[data-dnp='true'] {
+  color: var(--ink-2);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .league-teams-directory__row {
+    grid-template-columns: 1fr auto;
+    row-gap: 0.3rem;
+  }
+
+  .league-teams-directory__record,
+  .league-teams-directory__conf-record {
+    grid-column: 1 / -1;
+  }
+}

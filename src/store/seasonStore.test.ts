@@ -717,3 +717,109 @@ describe('seasonStore Super Sim', () => {
     expect(useSeasonStore.getState().view).toBe('gameHistory')
   })
 })
+
+describe('seasonStore League & Player exploration navigation', () => {
+  const NON_CONTROLLED_PROGRAM_ID = 'northbridge'
+
+  it('opens League from the Hub and records the Hub as the return step', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().goToLeague()
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('league')
+    expect(state.explorationViewHistory).toEqual(['hub'])
+  })
+
+  it('opens Team Details for any Program, controlled or not', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('teamDetails')
+    expect(state.selectedTeamProgramId).toBe(NON_CONTROLLED_PROGRAM_ID)
+  })
+
+  it('opens Player Details for a Player on any Program', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const roster =
+      useSeasonStore.getState().season!.programStates[NON_CONTROLLED_PROGRAM_ID]!
+        .team.roster
+    const playerId = roster[0]!.id
+
+    useSeasonStore.getState().openPlayerDetails(NON_CONTROLLED_PROGRAM_ID, playerId)
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('playerDetails')
+    expect(state.selectedPlayerProgramId).toBe(NON_CONTROLLED_PROGRAM_ID)
+    expect(state.selectedPlayerId).toBe(playerId)
+  })
+
+  it('unwinds a multi-hop trip (Hub → League → Team → Player) one step at a time', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().goToLeague()
+    useSeasonStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
+    const playerId =
+      useSeasonStore.getState().season!.programStates[NON_CONTROLLED_PROGRAM_ID]!
+        .team.roster[0]!.id
+    useSeasonStore.getState().openPlayerDetails(NON_CONTROLLED_PROGRAM_ID, playerId)
+
+    expect(useSeasonStore.getState().view).toBe('playerDetails')
+
+    useSeasonStore.getState().goBackFromExploration()
+    expect(useSeasonStore.getState().view).toBe('teamDetails')
+    // The Program the Player screen was opened from is still available for the Team screen.
+    expect(useSeasonStore.getState().selectedTeamProgramId).toBe(
+      NON_CONTROLLED_PROGRAM_ID,
+    )
+
+    useSeasonStore.getState().goBackFromExploration()
+    expect(useSeasonStore.getState().view).toBe('league')
+
+    useSeasonStore.getState().goBackFromExploration()
+    expect(useSeasonStore.getState().view).toBe('hub')
+    expect(useSeasonStore.getState().explorationViewHistory).toEqual([])
+  })
+
+  it('returns Standings → Team Details directly back to the Hub in one step', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
+
+    expect(useSeasonStore.getState().explorationViewHistory).toEqual(['hub'])
+
+    useSeasonStore.getState().goBackFromExploration()
+    expect(useSeasonStore.getState().view).toBe('hub')
+  })
+
+  it('remains reachable from the Postseason Hub and returns there', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    for (let round = 0; round < 30; round += 1) {
+      if (isRegularSeasonComplete(useSeasonStore.getState().season!)) break
+      useSeasonStore.getState().simulateNextGame()
+      useSeasonStore.getState().simulateRestOfRound()
+    }
+    useSeasonStore.getState().enterPostseason()
+
+    useSeasonStore.getState().goToLeague()
+    expect(useSeasonStore.getState().view).toBe('league')
+    expect(useSeasonStore.getState().explorationViewHistory).toEqual([
+      'postseasonHub',
+    ])
+
+    useSeasonStore.getState().goBackFromExploration()
+    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+  })
+
+  it('resets exploration navigation state when a new Program is selected', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
+
+    useSeasonStore.getState().selectProgram('northbridge')
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('hub')
+    expect(state.explorationViewHistory).toEqual([])
+    expect(state.selectedTeamProgramId).toBeNull()
+    expect(state.selectedPlayerProgramId).toBeNull()
+    expect(state.selectedPlayerId).toBeNull()
+  })
+})

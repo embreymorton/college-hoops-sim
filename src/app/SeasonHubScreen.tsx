@@ -1,6 +1,7 @@
 import { calculateTeamStrength, type Team, type TeamStrength } from '../engine'
 import {
   ConferenceStandingsSection,
+  HubSectionTabs,
   NextGameCard,
   RecentResultsSection,
   ScheduleTable,
@@ -68,6 +69,8 @@ export function SeasonHubScreen() {
   )
   const postseason = useSeasonStore((state) => state.postseason)
   const enterPostseason = useSeasonStore((state) => state.enterPostseason)
+  const goToLeague = useSeasonStore((state) => state.goToLeague)
+  const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
 
   if (!season || !controlledProgramId) {
     return null
@@ -136,6 +139,7 @@ export function SeasonHubScreen() {
 
   return (
     <>
+      <HubSectionTabs activeLabel="Season" onSelectLeague={goToLeague} />
       <SeasonHeader
         programName={controlledProgram.name}
         accentColor={controlledProgram.branding.primaryColor}
@@ -236,6 +240,7 @@ export function SeasonHubScreen() {
           season={season}
           controlledProgramId={controlledProgramId}
           defaultConferenceId={controlledProgram.conferenceId}
+          onSelectProgram={openTeamDetails}
         />
       </section>
 
