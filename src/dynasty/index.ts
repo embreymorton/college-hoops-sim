@@ -9,6 +9,10 @@ export {
   deriveProjectedRosterOutlook,
 } from './rosterOutlook'
 export {
+  assembleNextSeasonRosters,
+  validateNextSeasonRosterAssembly,
+} from './rosterAssembly'
+export {
   addRecruitingBoardTarget,
   buildDefaultRecruitingBoard,
   cleanupInvalidRecruitingOffers,
@@ -65,10 +69,16 @@ export {
 } from './recruiting/simulation'
 export { initializeRecruiting } from './recruiting/state'
 export type {
+  AssembleNextSeasonRostersOptions,
   CompletedSeasonArchive,
   DevelopReturningPlayerOptions,
   DynastyState,
   InitializeDynastyOptions,
+  NextSeasonProgramRoster,
+  NextSeasonRosterAssembly,
+  NextSeasonRosterValidationIssue,
+  NextSeasonRosterValidationIssueCode,
+  NextSeasonRosterValidationResult,
   OffseasonProgramState,
   OffseasonRosterOutlook,
   OffseasonState,

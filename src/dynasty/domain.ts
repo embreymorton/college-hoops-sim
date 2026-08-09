@@ -27,6 +27,50 @@ export interface OffseasonState {
   readonly programs: Record<string, OffseasonProgramState>
 }
 
+/** One immutable, roster-only input for the next competitive Season. */
+export interface NextSeasonProgramRoster {
+  readonly programId: string
+  readonly players: readonly Player[]
+}
+
+/** Serializable roster assembly output; Team/Rotation/Season construction is separate. */
+export interface NextSeasonRosterAssembly {
+  readonly targetSeasonNumber: number
+  readonly programs: Record<string, NextSeasonProgramRoster>
+}
+
+export interface AssembleNextSeasonRostersOptions {
+  readonly universe: UniverseDefinition
+  readonly offseason: OffseasonState
+  readonly completedRecruitingClass: CompletedRecruitingClass
+  readonly completedSeasonArchive: CompletedSeasonArchive
+}
+
+export type NextSeasonRosterValidationIssueCode =
+  | 'INCOMPATIBLE_SEASON'
+  | 'INVALID_UNIVERSE_PROGRAMS'
+  | 'INVALID_RECRUITING_CLASS'
+  | 'INVALID_PROGRAM'
+  | 'INVALID_ROSTER_SIZE'
+  | 'INVALID_PLAYER'
+  | 'DUPLICATE_PLAYER_ID'
+  | 'INVALID_IDENTITY_CONTINUITY'
+  | 'INVALID_COMMITMENT_ENROLLMENT'
+  | 'INVALID_POSITIONAL_COMPOSITION'
+  | 'GRADUATE_ENROLLED'
+
+export interface NextSeasonRosterValidationIssue {
+  readonly code: NextSeasonRosterValidationIssueCode
+  readonly message: string
+  readonly programId?: string
+  readonly playerId?: string
+}
+
+export interface NextSeasonRosterValidationResult {
+  readonly valid: boolean
+  readonly issues: readonly NextSeasonRosterValidationIssue[]
+}
+
 /** Serializable owner of cross-season identity and lifecycle state. */
 export interface DynastyState {
   readonly dynastyId: string
