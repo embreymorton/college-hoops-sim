@@ -38,6 +38,7 @@ The project currently includes:
 - Season Presentation V0 with 32-Program selection, a permanent Season Hub, Game Prep, postgame, Conference standings, and the controlled Program's full Schedule/results
 - Season UX Polish V0 with Dashboard Quick Sim, persistent committed Season Rotations, historical completed-game box-score viewing, and derived Recent Results
 - Super Sim V0 with confirmed pacing checkpoints through Round 12 or Round 24 using the canonical Season simulation pipeline
+- Player Season Stats V0 with individual, Program-wide, and Season-wide derived totals/rates plus chronological DNP-aware Player game logs
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
@@ -49,15 +50,16 @@ The completed infrastructure now supports:
 
 ```text
 stable fictional Universe
-→ legal 24-round regular-season Schedule
-→ current Season basketball state
-→ completed GameResults
-→ derived records and current round
-→ autonomous regular-season simulation
-→ derived Conference standings
+→ generated rosters
+→ persistent Rotations
+→ deterministic 24-round Schedule
+→ Season progression
+→ canonical GameResults
+→ standings and Super Sim
+→ derived Player Season Stats / game logs
 ```
 
-Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, standings, or Player aggregates. The regular-season domain can now deterministically complete all 24 rounds and derive Conference tables.
+Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, standings, Player aggregates, or game logs. Full Player box-score rows remain canonical inside completed Season `GameResult` values, so Player Season Stats can be recalculated from source facts during partial or complete Seasons.
 
 ## Playable regular season — implemented
 
@@ -71,8 +73,8 @@ Legal Rotation changes persist in `SeasonState` and affect later games regardles
 
 ## Next major acceptance target
 
-> **Player Season Stats V0 — ACTIVE:** derive Player aggregates and game logs from `PlayerGameStats` in the complete `GameResult` values already recorded by the Season.
+> **Postseason V0 — NEXT:** design and then implement the next major basketball loop after the accepted regular season.
 
-The next milestone must not add duplicate mutable Player-stat counters to `SeasonState`. It should expose the already-preserved minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA through derived season totals, averages, percentages, and game logs.
+Postseason does not exist yet. Tournament size, qualification, seeding, bracket structure, and advancement rules require an explicit design decision before implementation.
 
-The project does not yet contain a postseason/national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. Postseason remains future work after Player Season Stats V0. The six-program exhibition UI remains available as secondary development tooling.
+The project also does not yet contain recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as secondary development tooling.

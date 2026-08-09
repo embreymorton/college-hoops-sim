@@ -68,7 +68,7 @@ The engine owns basketball generation, ratings, Rotation legality, game outcomes
 - `RegularSeasonSchedule` is serializable schedule output containing one canonical collection of unplayed games. `ScheduledGame` references stable Program IDs and contains no Team snapshots, results, records, or progression state.
 - A schedule round is a one-based abstract progression unit, not a date. Universe V0 has 24 complete rounds, with all 32 Programs appearing exactly once among the 16 games in each round.
 - `SeasonState` stores its immutable Schedule, current Team/Rotation state by stable Program ID, and complete `GameResult` facts once by stable ScheduledGame ID. Current round, completion, Program records, and Conference records are derived rather than stored.
-- Store facts and derive summaries. Season State does not maintain authoritative wins, losses, Conference records, games played, current-round counters, completion flags, or standings alongside the Schedule and results that determine them.
+- Store facts and derive summaries. Season State does not maintain authoritative wins, losses, Conference records, games played, current-round counters, completion flags, standings, Player season totals/rates, or Player game logs alongside the Schedule and results that determine them.
 - Randomness enters through an explicit seeded RNG or seed. Engine code never calls `Math.random()`.
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
 - Zustand owns application/UI workflow state, not basketball rules.
@@ -143,15 +143,37 @@ Game Prep is optional. Dashboard Quick Sim runs the controlled Program's next Sc
 
 Completed games are final. The postgame and historical-result screens read the already-recorded `GameResult`; opening a Schedule or Recent Results entry never re-simulates it. Recent Results is likewise derived from completed Schedule/results facts.
 
+## Player Season Stats projections
+
+Player Season Stats V0 is a pure Season projection over canonical completed-game facts:
+
+```text
+SeasonState
+   ↓
+stored GameResults
+   ↓
+stored PlayerGameStats
+   ↓
+Player Season Stats projection
+   ├─ PlayerSeasonStats
+   └─ PlayerGameLogEntry[]
+```
+
+`PlayerSeasonStats` and Player game logs are not canonical mutable `SeasonState`. The raw home/away `PlayerGameStats` arrays inside recorded `GameResult` values remain authoritative. The public Season surface exposes `derivePlayerSeasonStats()`, `deriveProgramPlayerSeasonStats()`, `deriveSeasonPlayerStats()`, and `getPlayerGameLog()`. These pure APIs project one current-roster Player, one Program's full current roster, the entire Season's current rosters, or one Player's chronological completed-game log. Pending games contribute nothing, while result-object insertion order cannot affect aggregation or log order.
+
+Game logs include every completed Team game for the Player's Program. A stored zero-minute row is represented as `didPlay: false`; it remains visible as a DNP but does not increment the derived `gamesPlayed` count. All projection outputs are plain serializable data and add no caching, incremental indexes, or stat-specific randomness.
+
+Future Player Stats UI should consume these public Season APIs rather than importing implementation internals or creating Zustand-owned totals. Awards, completed-season history, and career systems must likewise reuse canonical GameResult history and stable Player IDs rather than inventing parallel statistical truth.
+
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, and derived Conference standings. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, derived Player Season Stats, and Player game logs. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
 
-Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, and Super Sim V0 are complete. React renders Season context, next-game actions, Rotation management, standings, Recent Results, Schedule/results, final scores, and historical full box scores without calculating basketball outcomes, ratings, records, or Rotation legality.
+Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, and Player Season Stats V0 are complete. React renders Season context, next-game actions, Rotation management, standings, Recent Results, Schedule/results, final scores, and historical full box scores without calculating basketball outcomes, ratings, records, or Rotation legality. Player Season Stats currently has no React presentation.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 
-The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. The League and Regular Season framework is functionally complete through Season Presentation, UX polish, and Super Sim. Player Season Stats V0 is the active milestone: its pure Season projections derive aggregates and chronological game logs from the full `PlayerGameStats` already retained in recorded `GameResult` values rather than adding duplicate mutable statistics to `SeasonState`.
+The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. The current regular-season simulation/backend feature set is functionally complete through Player Season Stats V0. Postseason V0 is next, but its tournament size, qualification, seeding, and bracket rules require design before implementation.
 
 ## Enforcement
 

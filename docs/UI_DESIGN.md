@@ -67,4 +67,8 @@ The next-game **Simulate Game** action is primary. **Manage Rotation** is the op
 
 Completed postgame results and historical results share the accepted scoreboard and full Player box-score presentation. Historical views read the stored result and offer no simulation action. Recent Results is a compact, derived link into that same historical presentation.
 
-The six-program Exhibition workflow may remain accessible as secondary development tooling where useful, but it should not compete with the Season flow in primary navigation. Player Season Stats is the next UI milestone. Postseason brackets, recruiting, and Dynasty history remain future screens; no postseason UI is implemented.
+The six-program Exhibition workflow may remain accessible as secondary development tooling where useful, but it should not compete with the Season flow in primary navigation.
+
+Player Season Stats V0 now provides public domain APIs capable of powering future Team Player-stat tables, Player profiles, Player game logs, and Team leaders. None of those presentation surfaces is implemented or designed yet.
+
+Postseason V0 is the next major feature area, beginning with rules and interaction design. No postseason UI, tournament format, qualification rule, seed model, or bracket structure is currently accepted or implemented. Recruiting and Dynasty history also remain future screens.

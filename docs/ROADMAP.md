@@ -96,11 +96,12 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 019 | Season Presentation V0 | COMPLETE |
 | 020 | Season UX Polish V0 | COMPLETE |
 | 021 | Super Sim V0 | COMPLETE |
-| 022 | Player Season Stats V0 | ACTIVE |
+| 022 | Player Season Stats V0 | COMPLETE |
+| 023 | Postseason V0 design and implementation | NEXT |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
-The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, derived standings, permanent Season presentation, regular-season UX polish, and Super Sim are complete. A user can now play or rapidly simulate all 24 rounds through one canonical pipeline.
+The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, derived standings, permanent Season presentation, regular-season UX polish, Super Sim, and derived Player Season Stats/game logs are complete. The current regular-season simulation and backend feature set is functionally complete for MVP scope.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -173,11 +174,11 @@ Season Presentation consumes the existing Universe, Schedule, Season, simulation
 - Every path retains full `PlayerGameStats`; Super Sim is a pacing convenience, not a separate simulation model.
 - Super Sim stops at regular-season completion and does not create or enter postseason play.
 
-## Player Season Stats V0 — ACTIVE
+### 3.8 Player Season Stats V0 — COMPLETE
 
 > Derive useful Player season totals, averages, percentages, and game logs from the full `PlayerGameStats` already retained in completed Season `GameResult` values.
 
-The initial derived surface should preserve and aggregate minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. The accepted data flow is:
+The derived surface preserves and aggregates minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. The accepted data flow is:
 
 ```text
 recorded GameResults
@@ -185,16 +186,15 @@ recorded GameResults
 → derived PlayerSeasonStats / game logs
 ```
 
-The pure aggregation and game-log implementation is under review. Do not add duplicate mutable Player-stat counters to `SeasonState`. Postseason remains planned after this milestone.
+The accepted pure projections support individual, Program-wide, and Season-wide Player stat rows for partial or complete Seasons plus chronological Player game logs with opponent, location, result, and DNP context. `gamesPlayed` counts only completed games with positive Player minutes. Totals reconcile to canonical `PlayerGameStats`, percentages use aggregate makes and attempts, zero denominators produce numeric zero, and result insertion order cannot change the output.
 
-## Phase 4 — Postseason — PLANNED
+No Player totals, averages, percentages, or game logs are stored as mutable `SeasonState` counters. Inspection completed all 384 regular-season games, derived 384 current-roster Player lines, and passed raw-total reconciliation, games-played, finite-number, chronological-order, and JSON-serialization checks.
 
-- Postseason qualification and seeding
-- Initial 32-Team national tournament
-- Bracket, round advancement, and championship
-- Postseason history
+## Phase 4 — Postseason V0 — NEXT
 
-Conference tournaments are a later or optional addition unless explicitly scoped. The initial national tournament is not the real NCAA 68-Team structure.
+> Design the Postseason V0 rules and acceptance contract, then implement postseason progression through the existing deterministic game and Season boundaries.
+
+Tournament size, qualification, seeding, bracket structure, scheduling, and history requirements are not yet accepted. They must be designed before implementation rather than inferred from Universe V0's 32-Program configuration. Conference tournaments remain optional unless explicitly scoped.
 
 ## Phase 5 — Dynasty Loop — PLANNED
 

@@ -169,6 +169,20 @@ Midseason means all pending regular-season games through Round 12. End of Regula
 
 Completed results are final. Opening a completed Schedule entry or Recent Results entry reads the stored result and full historical box score without re-simulation. Recent Results, records, standings, and round progress are derived from Schedule plus completed results.
 
-## Next statistical layer
+## Accepted Player Season Stats V0
 
-Player Season Stats V0 is the active milestone before postseason. Its pure projections derive Player totals, averages, percentages, and game logs from the `PlayerGameStats` already stored in completed `GameResult` values. The preserved inputs are minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. No duplicate mutable season-stat counters are introduced.
+Season-long Player production emerges from actual simulated games; it is not generated separately at the Season level. Game Prep simulation, Dashboard Quick Sim, AI round simulation, and Super Sim all record the same canonical `PlayerGameStats` history and therefore feed the same derived Player totals, averages, percentages, and game logs.
+
+Stats can be derived at any point in a partial or complete Season. Each current roster Player receives a row, including Players with no games played. A completed Team game with a zero-minute box-score row appears in that Player's chronological log as a DNP but does not increment `gamesPlayed`:
+
+```text
+gamesPlayed = completed games where Player minutes > 0
+```
+
+Game logs retain Schedule chronology, opponent, home/away context, final score, W/L result, and the stored traditional box-score line. This supports performance history without inventing Season-level events or new randomness.
+
+Current outputs are limited to the traditional facts already produced by Player Box Scores V0: games played; minutes; points; rebounds; assists; steals; blocks; turnovers; field goals, three-pointers, and free throws made/attempted; per-game versions of minutes and the counting stats; and aggregate shooting percentages. Awards, national Player rankings, All-Conference teams, advanced metrics, career stats, and Player Stats presentation remain future work.
+
+Acceptance inspection produced a plausible scoring hierarchy and believable game-to-game variance. Those observations are not calibration targets and require no simulation tuning.
+
+Postseason V0 is the next major design and implementation milestone. Tournament size, qualification, seeding, and bracket rules are intentionally undecided until that design work is accepted.
