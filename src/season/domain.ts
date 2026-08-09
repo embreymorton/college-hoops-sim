@@ -1,4 +1,10 @@
-import type { GameResult, RngSeed, Rotation, Team } from '../engine'
+import type {
+  GameResult,
+  PlayerGameStats,
+  RngSeed,
+  Rotation,
+  Team,
+} from '../engine'
 import type { RegularSeasonSchedule, ScheduledGame } from '../schedule'
 import type { InitializedUniverse, UniverseDefinition } from '../universe'
 
@@ -33,6 +39,52 @@ export interface CompletedSeasonGame {
 export interface ProgramRecord {
   readonly wins: number
   readonly losses: number
+}
+
+/** Serializable Player totals and derived rates projected from Season results. */
+export interface PlayerSeasonStats {
+  readonly programId: string
+  readonly playerId: string
+  readonly gamesPlayed: number
+  readonly minutes: number
+  readonly points: number
+  readonly rebounds: number
+  readonly assists: number
+  readonly steals: number
+  readonly blocks: number
+  readonly turnovers: number
+  readonly fieldGoalsMade: number
+  readonly fieldGoalsAttempted: number
+  readonly threePointersMade: number
+  readonly threePointersAttempted: number
+  readonly freeThrowsMade: number
+  readonly freeThrowsAttempted: number
+  readonly minutesPerGame: number
+  readonly pointsPerGame: number
+  readonly reboundsPerGame: number
+  readonly assistsPerGame: number
+  readonly stealsPerGame: number
+  readonly blocksPerGame: number
+  readonly turnoversPerGame: number
+  readonly fieldGoalPercentage: number
+  readonly threePointPercentage: number
+  readonly freeThrowPercentage: number
+}
+
+export type PlayerGameLocation = 'home' | 'away'
+export type PlayerGameOutcome = 'W' | 'L'
+
+/** One completed scheduled Team game projected for a rostered Player. */
+export interface PlayerGameLogEntry {
+  readonly scheduledGameId: string
+  readonly round: number
+  readonly opponentProgramId: string
+  readonly location: PlayerGameLocation
+  readonly teamScore: number
+  readonly opponentScore: number
+  readonly result: PlayerGameOutcome
+  readonly didPlay: boolean
+  readonly stats: PlayerGameStats
 }
 
 export interface SimulateScheduledGameOptions {

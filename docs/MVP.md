@@ -71,7 +71,7 @@ Legal Rotation changes persist in `SeasonState` and affect later games regardles
 
 ## Next major acceptance target
 
-> **Player Season Stats V0 — NEXT:** derive Player aggregates and game logs from `PlayerGameStats` in the complete `GameResult` values already recorded by the Season.
+> **Player Season Stats V0 — ACTIVE:** derive Player aggregates and game logs from `PlayerGameStats` in the complete `GameResult` values already recorded by the Season.
 
 The next milestone must not add duplicate mutable Player-stat counters to `SeasonState`. It should expose the already-preserved minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA through derived season totals, averages, percentages, and game logs.
 

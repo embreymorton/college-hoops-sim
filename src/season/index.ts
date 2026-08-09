@@ -15,6 +15,12 @@ export {
 } from './queries'
 export { recordGameResult, updateProgramRotation } from './seasonState'
 export {
+  derivePlayerSeasonStats,
+  deriveProgramPlayerSeasonStats,
+  deriveSeasonPlayerStats,
+  getPlayerGameLog,
+} from './playerStats'
+export {
   simulatePendingGamesInCurrentRound,
   simulatePendingGamesInRound,
   simulatePendingGamesThroughRound,
@@ -25,6 +31,10 @@ export { validateSeasonState } from './validation'
 export type {
   CompletedSeasonGame,
   InitializeSeasonOptions,
+  PlayerGameLocation,
+  PlayerGameLogEntry,
+  PlayerGameOutcome,
+  PlayerSeasonStats,
   ProgramRecord,
   SeasonProgramState,
   SeasonState,

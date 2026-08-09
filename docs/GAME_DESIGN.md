@@ -171,4 +171,4 @@ Completed results are final. Opening a completed Schedule entry or Recent Result
 
 ## Next statistical layer
 
-Player Season Stats V0 is the next milestone before postseason. It will derive Player totals, averages, percentages, and game logs from the `PlayerGameStats` already stored in completed `GameResult` values. The preserved inputs are minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. No duplicate mutable season-stat counters should be introduced.
+Player Season Stats V0 is the active milestone before postseason. Its pure projections derive Player totals, averages, percentages, and game logs from the `PlayerGameStats` already stored in completed `GameResult` values. The preserved inputs are minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. No duplicate mutable season-stat counters are introduced.

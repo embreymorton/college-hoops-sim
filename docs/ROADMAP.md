@@ -96,7 +96,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 019 | Season Presentation V0 | COMPLETE |
 | 020 | Season UX Polish V0 | COMPLETE |
 | 021 | Super Sim V0 | COMPLETE |
-| 022 | Player Season Stats V0 | NEXT |
+| 022 | Player Season Stats V0 | ACTIVE |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
@@ -173,7 +173,7 @@ Season Presentation consumes the existing Universe, Schedule, Season, simulation
 - Every path retains full `PlayerGameStats`; Super Sim is a pacing convenience, not a separate simulation model.
 - Super Sim stops at regular-season completion and does not create or enter postseason play.
 
-## Player Season Stats V0 — NEXT
+## Player Season Stats V0 — ACTIVE
 
 > Derive useful Player season totals, averages, percentages, and game logs from the full `PlayerGameStats` already retained in completed Season `GameResult` values.
 
@@ -182,10 +182,10 @@ The initial derived surface should preserve and aggregate minutes, PTS, REB, AST
 ```text
 recorded GameResults
 → PlayerGameStats rows
-→ future derived PlayerSeasonStats / game logs
+→ derived PlayerSeasonStats / game logs
 ```
 
-Do not add duplicate mutable Player-stat counters to `SeasonState`. Postseason remains planned after this milestone.
+The pure aggregation and game-log implementation is under review. Do not add duplicate mutable Player-stat counters to `SeasonState`. Postseason remains planned after this milestone.
 
 ## Phase 4 — Postseason — PLANNED
 
