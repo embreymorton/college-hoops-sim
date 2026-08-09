@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, and Postseason Simulation V0 constraints.
+This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, and Player Development V0 constraints.
 
 ## Status and pipeline
 
@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, and Postseason Domain / Simulation and presentation are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season and Postseason state retain complete simulator-produced `GameResult` facts without changing scoring, variance, overtime, or box-score formulas.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason Domain / Simulation and presentation, and Dynasty Foundation + Progression V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season and Postseason `GameResult` facts are cloned into Dynasty history before active competition is cleared.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -77,6 +77,77 @@ Postseason results are stored separately from `SeasonState`, so Player Season St
 Accepted inspection completed 384 of 384 regular-season games and all 15 tournament games. Field, bracket, and final Postseason validation passed; same-seed reproduction and ready-game execution-order independence passed; a different seed changed tournament outcomes; National Champion derivation and full Player-stat preservation passed; and neutral-site sampling confirmed removal of the normal home-court effect.
 
 The accepted 200-replay diagnostic used one selected 16-Team field across many tournament simulation seeds. Higher seeds generally won more often, seeds 1–8 dominated championships overall, and deeper seeds retained nonzero title probability. Those observations reflect the actual strengths of that inspected field, not universal historical probabilities or permanent balance targets.
+
+## Implemented Player Development V0
+
+Player Development is a pure Dynasty-layer operation over one returning Player. It changes Player attributes and advances class while reusing the existing position-aware `calculateOverall()` function; OVR is never stored or incremented directly. Potential remains fixed.
+
+The development class is the class just completed:
+
+| Completed class | Next class | Seeded target OVR-gain range |
+| --- | --- | ---: |
+| FR | SO | 2–5 |
+| SO | JR | 1–4 |
+| JR | SR | 0–3 |
+
+The target is selected as an inclusive deterministic integer, then constrained by pre-development headroom:
+
+```text
+current OVR = calculateOverall(Player before development)
+target OVR = min(POT, current OVR + seeded class-range draw)
+```
+
+These target ranges are mechanics, not guaranteed gains. Attribute caps, positional OVR weights, and the Potential ceiling govern how allocation reaches the target. A Player with `current OVR >= POT` receives no attribute changes, though a non-senior still advances class. Seniors graduate before development and are rejected by `developReturningPlayer()`.
+
+Attribute gains are allocated one point at a time. Every attribute remains eligible while below 99, but position changes its relative selection weight:
+
+| Position | FIN | SHO | PLY | HND | PER D | INT D | REB | ATH | STA |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| PG | 2 | 5 | 6 | 6 | 4 | 1 | 1 | 3 | 2 |
+| SG | 5 | 6 | 2 | 4 | 5 | 1 | 1 | 3 | 2 |
+| SF | 4 | 4 | 3 | 3 | 4 | 3 | 3 | 4 | 2 |
+| PF | 6 | 2 | 1 | 1 | 2 | 5 | 6 | 5 | 3 |
+| C | 5 | 1 | 1 | 1 | 1 | 7 | 7 | 5 | 3 |
+
+For each allocation draw, each eligible base weight receives independent Player-RNG variation from `0.75×` inclusive to below `1.25×`. A weighted draw selects the attribute. The implementation tentatively adds one point and accepts it only when the existing derived OVR remains at or below POT. Allocation stops when the target OVR or POT is reached, the opportunity is exhausted, or no attribute remains below 99. This creates intentionally uneven Player-specific profiles rather than uniform attribute boosts.
+
+Development randomness uses an independent RNG created from a JSON seed namespace containing:
+
+```text
+namespace = college-hoops-sim:player-development:v0
+typed numeric/string Dynasty seed
+completed season number
+Program ID
+Player ID
+```
+
+There is no shared evolving offseason RNG. The same inputs reproduce the same Player; changing the Dynasty seed changes at least some development, while Program and Player processing order do not affect per-Player results. Development never calls `Math.random()`.
+
+V0 development has no regression and no dependency on playing time, starts, rotation role, Player statistics, Team wins, Postseason success, controlled/AI ownership, Program prestige, conference, coaching, or facilities. All attributes remain within 40–99, Potential does not change, and derived OVR cannot exceed Potential. A Player may stagnate or graduate below Potential.
+
+The accepted canonical 292-returner inspection observed:
+
+| Transition | Count | Average ΔOVR | P50 | P95 | Maximum |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| FR → SO | 96 | +3.56 | +4 | +5 | +5 |
+| SO → JR | 98 | +2.63 | +3 | +4 | +4 |
+| JR → SR | 98 | +1.28 | +1 | +3 | +3 |
+
+Overall stagnation was 30 of 292 returners, or 10.3%. The observed +5 maximum is not a separately imposed universal rule; it follows from the implemented target ranges and this population's constraints.
+
+Pre-development Potential headroom also showed the intended relationship:
+
+| Headroom | Count | Average ΔOVR | P50 | Maximum | Stagnated |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 0 | 0 | 0.00 | 0 | 0 | 0.0% |
+| 1–2 | 30 | +0.97 | +1 | +2 | 33.3% |
+| 3–5 | 64 | +1.88 | +2 | +4 | 18.8% |
+| 6–9 | 113 | +2.65 | +3 | +5 | 7.1% |
+| 10+ | 85 | +3.26 | +3 | +5 | 0.0% |
+
+The empty zero-headroom bucket reflects this generated sample; direct invariant tests confirm a Player at POT cannot improve. These values are validation observations, not guaranteed distributions. The accepted behavior is that low headroom constrains growth, high headroom permits greater opportunity, and completed class remains independently meaningful.
+
+Inspection found zero Potential violations, attributes above 99, regressions, changed returning IDs, or mutated archived Player snapshots. Same-seed, different-seed, Program-order, Player-order, and JSON-serialization checks all passed.
 
 ## Implemented Player Season Stats V0
 

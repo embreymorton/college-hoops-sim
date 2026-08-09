@@ -74,7 +74,7 @@ These ranges describe initial generation only. They do not implement or guarante
 
 A Team is a plain serializable record containing ID, name, abbreviation, prestige, and exactly 12 players. It does not store overall rating, record, ranking, rotation, coaching, recruiting, conference, or schedule state.
 
-Prestige is long-term program quality and reputation on an inclusive 1–100 scale. It will eventually inform recruiting, expectations, and program progression; in the current milestone it affects only initial roster talent.
+Prestige is long-term program quality and reputation on an inclusive 1–100 scale. It may eventually inform recruiting, expectations, and program progression; in current implemented systems it affects initial roster talent and is preserved unchanged into offseason state. It does not modify Player Development V0.
 
 Each roster contains two players at every natural position plus one extra player at two distinct, seeded positions. Position counts therefore vary between two and three while always covering `PG`, `SG`, `SF`, `PF`, and `C`.
 
@@ -184,7 +184,50 @@ Quick Sim
 
 This is factual storytelling from stored simulated production, not a separate authored-star system. The regular-season leaderboards, Team averages/leaders, Player profiles, and game logs likewise reflect canonical completed games.
 
-## Intended Dynasty V0 in-season recruiting
+## Accepted Dynasty Foundation and Player Development V0
+
+Phase 5A establishes the first implemented cross-season gameplay boundary:
+
+```text
+complete regular season and National Tournament
+→ preserve canonical competition history
+→ graduate seniors
+→ develop returning Players
+→ advance classes
+→ expose partial offseason rosters and open spots
+```
+
+This creates recognizable multi-year Player arcs without requiring training micromanagement in V0. Freshmen generally have the greatest development opportunity, sophomores less, and juniors the least before their senior year. Potential distinguishes longer-term upside, while deterministic Player-specific variation allows stagnation and different attribute-development shapes among otherwise similar Players.
+
+Development changes current basketball attributes rather than adding a mutable OVR bonus. It is deliberately uneven and position-aware instead of applying `+1` to every skill. Returning Players keep their stable ID, name, height, position, and Potential; class and attributes advance in new immutable Player values. Overall remains derived from the accepted positional formula. Players do not regress in V0.
+
+Development uses the class just completed:
+
+```text
+FR development → SO
+SO development → JR
+JR development → SR
+SR → graduates
+```
+
+Graduation V0 is the entire departure model: seniors leave and freshmen, sophomores, and juniors return. Transfers, early professional departures, fifth years, redshirts, hardship exemptions, and dismissals are deferred rather than implicit Phase 5A rules.
+
+Potential is a fixed ceiling, not a promised destination. Low headroom constrains growth, Players at the ceiling receive no attribute development, and Players may graduate below Potential. Playing time, starts, box-score production, Team success, Postseason results, Program prestige, conference, user control, coaching, and facilities do not affect V0 development.
+
+The accepted canonical inspection observed approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% of returners stagnating. These population observations validate the intended younger-player-heavy curve; they are not guaranteed individual gains and vary with the Player population, Potential headroom, and deterministic seed.
+
+The stable identity and archive rules support the intended long-term roster story:
+
+```text
+recruit
+→ develop
+→ retain
+→ graduate
+```
+
+Recruiting and recruit enrollment remain future milestones.
+
+## Intended Dynasty V0 in-season recruiting — NEXT
 
 Recruiting is planned as an ongoing Dynasty management layer that runs alongside current-season basketball while targeting the next season. The user should eventually be able to maintain a recruiting board, prioritize or allocate recruiting attention, advance basketball rounds, watch interest and competition evolve, and receive commitments during the season.
 
@@ -213,7 +256,16 @@ Season 2: Marcus Hill enrolls as a freshman
 
 The same stable recruit identity should survive commitment, freshman enrollment, and later college seasons rather than being replaced with an unrelated Player ID. Exact recruit/Player type boundaries remain implementation work. An eventual `INCOMING CLASS` presentation may surface commitments, but no such UI is currently implemented.
 
-Under Dynasty V0 assumptions, projected openings are predictable from senior graduation because there are no transfers, early departures, or fifth years. A 12-Player roster with three seniors therefore has three projected openings. Recruiting-board size is not the same as available roster spots; a Program may track more prospects than it can ultimately sign, but exact board and signing rules are intentionally unspecified.
+Under accepted Dynasty V0 assumptions, `deriveProjectedRosterOutlook()` makes openings available during the current season without requiring completion, Postseason, or OffseasonState. Seniors are projected departures; freshmen, sophomores, and juniors are projected returners. A 12-Player roster with three seniors therefore has three projected openings. Recruiting-board size is not the same as available roster spots; a Program may track more prospects than it can ultimately sign, but exact board and signing rules are intentionally unspecified.
+
+After competition, the accepted Phase 5A transition produces the actual partial next-season construction state:
+
+```text
+graduation + returning-Player development
+→ OffseasonState returning Players + actual openings
+→ future incoming recruits
+→ future 12-Player Team finalization
+```
 
 Some Programs may end the season with fewer commitments than projected openings. Before Season N+1 begins, the recruiting/rollover boundary must resolve every remaining opening and restore every Program to a valid 12-Player roster. The fallback mechanism is deliberately undesigned.
 

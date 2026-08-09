@@ -6,7 +6,7 @@ Inclusion does not mean commitment, priority, or an implementation date. An idea
 
 ## Recruiting boundary
 
-In-season Recruiting V0—including recruiting-class generation, a recruiting board and persistent plan, round-based advancement, commitments, AI recruiting, next-season enrollment, and roster completion—is planned work in Roadmap Phase 5B rather than an unscheduled future idea. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` for the accepted high-level direction.
+In-season Recruiting V0—including recruiting-class generation, a recruiting board and persistent plan, round-based advancement, commitments, AI recruiting, and late recruiting behavior—is planned work in Roadmap Phase 5B rather than an unscheduled future idea. Recruit enrollment, final roster completion, and Season 2 initialization follow in Phase 5C. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` for the accepted high-level direction.
 
 ### Recruiting depth — future and non-blocking
 
@@ -84,6 +84,19 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 
 None is required for the current Dynasty MVP.
 
+### Player-development depth
+
+Player Development V0 is accepted. Optional later depth may include:
+
+- age/class-based regression
+- playing-time or statistical-performance development effects
+- coaching, staff, or facility development modifiers
+- user-selected training focus
+- position changes
+- dynamic Potential or scouting uncertainty
+
+These are unscheduled enhancements, not additional calibration required before Recruiting V0. Redshirts, transfers, and early professional departures remain separate optional roster-depth systems above.
+
 ## Presentation and broader modes
 
 - Starting-five, matchup-comparison, or positional-insight presentation
@@ -95,12 +108,12 @@ These are optional product directions, not current UI defects.
 ## History and immersion
 
 - Career Player statistics
-- Season archives and previous champions
+- Season-archive and previous-champion presentation
 - Record books and historical League leaderboards
 - Program history pages
 - Retired-Player and historical Player pages
 
-Dynasty architecture should preserve stable Player identity and canonical completed-season facts now so these ideas remain possible later.
+The accepted Dynasty archive and stable returning Player identity preserve the source facts needed to keep these ideas possible; their projections and presentation remain unimplemented.
 
 ## Universe expansion
 

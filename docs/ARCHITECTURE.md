@@ -5,13 +5,11 @@
 Dependencies point inward toward pure domain layers:
 
 ```text
-React / Zustand application session
-              ↓
-         Postseason public API
-          ↙              ↘
-Season public API     Universe public API
-     ├─ Schedule public API    ↓
-     └──────────────→ Engine public API
+Current application:
+React / Zustand → Season / Postseason → Schedule / Universe / Engine
+
+Cross-season domain:
+Dynasty → Season / Postseason / Universe → Schedule / Engine
 
 Schedule public API → Universe public API + Engine public API
 
@@ -33,6 +31,7 @@ src/
   schedule/              Pure regular-season structure, generation, and validation
   season/                Serializable Season facts, operations, and derivations
   postseason/            Selection, fixed bracket, tournament state, and progression
+  dynasty/               Cross-season ownership, archives, offseason rosters, and Player development
   engine/
     domain/              Serializable domain types and derived ratings
     generation/          Player/team generation and default rotation derivation
@@ -55,6 +54,8 @@ React Season + Postseason Presentation
 ```
 
 The engine owns basketball generation, ratings, Rotation legality, game outcomes, and Player box scores. The Season layer composes those capabilities with a Schedule and current Program basketball state; Postseason composes the completed Season with selection, a fixed bracket, and tournament progression. Zustand owns the controlled Program, completed `SeasonState`, active `PostseasonState`, navigation, Rotation drafts, viewed-result IDs, and transient confirmation/completion UI. React presents that state and dispatches user intent back through the store.
+
+Phase 5A adds a pure `src/dynasty` layer above those accepted domains. It is not yet wired into React or Zustand; the current application remains the single-season presentation while Dynasty provides the accepted backend lifecycle boundary for future integration.
 
 ## Domain and state rules
 
@@ -178,29 +179,77 @@ Each completed tournament result is canonical and preserves the existing full ho
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
 
-## Intended Dynasty and Recruiting boundary
+## Accepted Dynasty Foundation and future Recruiting boundary
 
-Dynasty is the future cross-season lifecycle owner. The conceptual boundary is:
+`src/dynasty` is the serializable cross-season lifecycle owner. Its accepted state shape is:
 
 ```text
-React / Zustand
-      ↓
-Dynasty
-├── Recruiting
-├── current SeasonState
-├── current PostseasonState
-├── completed history
-├── offseason / rollover state
-└── Universe context
-      ↓
-    Engine
+DynastyState
+├── dynastyId / dynastySeed
+├── controlledProgramId
+├── UniverseDefinition
+├── activeSeason: SeasonState | null
+├── activePostseason: PostseasonState | null
+├── history: CompletedSeasonArchive[]
+└── offseason: OffseasonState | null
 ```
 
-This diagram does not define a final `DynastyState` interface. It locks dependency direction: Recruiting belongs to the Dynasty layer, not `SeasonState`; Season and Engine must not depend on Recruiting. Recruiting may consume Dynasty, Universe, and Program context, while basketball simulation remains unaware of prospects, interest, commitments, or future rosters.
+The dependency direction is:
 
-Recruiting during Season N targets Season N+1. A commitment remains in recruiting/future-roster state and must not mutate the current Team, current Rotation, or current `SeasonState`. At rollover, the same stable recruit identity should become the enrolled freshman Player identity and remain stable in later seasons. Exact recruit/Player schemas remain implementation work.
+```text
+Dynasty
+   ↓
+Season / Postseason / Universe
+   ↓
+Schedule / Engine
+```
 
-Projected recruiting capacity may derive from predictable senior departures under Dynasty V0's no-transfer, no-early-departure, no-fifth-year assumptions. Recruiting-board membership remains distinct from roster capacity; the architecture must not assume board length equals projected openings.
+Season, Postseason, Universe, Schedule, and Engine do not depend on Dynasty. The Dynasty lint boundary also excludes React, React DOM, Zustand, UI/store imports, browser globals, and `Math.random()`.
+
+`initializeDynastyState()` validates Dynasty identity, seed, controlled Program, Universe compatibility, and active Season/Postseason ownership. It creates an initial lifecycle value with empty history and no offseason. It does not migrate the application store or initialize future seasons.
+
+`beginOffseason()` is the accepted pure completed-year transition:
+
+```text
+complete, valid SeasonState
++ complete, valid PostseasonState
++ derived National Champion
+→ clone both competitions into one CompletedSeasonArchive
+→ clear activeSeason and activePostseason
+→ graduate seniors
+→ develop and advance returning Players
+→ create OffseasonState for the target season
+```
+
+The transition rejects incomplete regular seasons, incomplete Tournaments, missing champions, mismatched or invalid competition state, and duplicate archived season numbers. The returned Dynasty does not intentionally retain the completed competitions in both active and historical slots: active competition becomes `null` after the archive is created.
+
+`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Historical presentation, career totals, records, and awards are not implemented, but the facts needed for later projections are preserved.
+
+Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
+
+For each Program, offseason construction uses the latest competitive Team snapshot: the Postseason Team for a qualified Program, otherwise its regular-season Team. `Team.prestige` is copied unchanged. Seniors are omitted; non-seniors are developed and advanced. The implementation guarantees returning Player IDs remain unique across the Universe.
+
+`OffseasonState` contains completed and target season numbers plus one `OffseasonProgramState` per Program. Each Program state contains `programId`, preserved current prestige, and returning Players. It deliberately contains no Rotation and is not a `Team`:
+
+```text
+12 current Players − 3 seniors
+→ 9 returning Players in OffseasonProgramState
+→ derive 3 open roster spots
+```
+
+Incomplete offseason rosters are valid while the existing `Team` invariant remains exactly 12 Players. `deriveOffseasonRosterOutlook()` calculates open spots from `12 - returningPlayers.length`; open spots are not stored as duplicate state.
+
+`deriveProjectedRosterOutlook(team)` is an in-season pure projection over current roster facts:
+
+```text
+SR           → projected departure
+FR / SO / JR → projected returner
+12 − projected returners → projected openings
+```
+
+It returns current roster size plus departing and returning Player IDs and projected openings. It does not require Season completion, Postseason, OffseasonState, graduation, or RNG. Future Recruiting V0 should consume this projection rather than reimplement graduation rules; recruiting-board size remains distinct from signing capacity.
+
+Recruiting during Season N will target Season N+1. A commitment must remain in future-roster state and must not mutate the current Team, current Rotation, or current `SeasonState`. At rollover, the same stable recruit identity should become the enrolled freshman Player identity and remain stable in later seasons. Recruiting state and recruit types are not implemented.
 
 Recruiting advancement should attach to fully completed basketball rounds rather than individual controlled-game completion:
 
@@ -214,7 +263,7 @@ This prevents simulation order from creating extra recruiting progress. A persis
 
 Future recruiting randomness must follow the existing deterministic architecture: no `Math.random()`, Program-processing-order dependence, or recruit-iteration-order dependence. Stable concepts such as dynasty seed, season number, recruit ID, Program ID, and recruiting period should namespace independent randomness; exact seed strings remain implementation work.
 
-Before Season N+1 initializes, completed Season/Postseason facts must be archived, seniors removed, returning Players developed/classes advanced without replacing their IDs, committed recruits enrolled, and remaining openings resolved so every Program has exactly 12 Players. Fresh Rotations and a new deterministic Schedule then initialize the next Season. This is a lifecycle invariant, not a locked data schema or mechanics specification.
+Phase 5A now supplies the archive, graduation, development, class advancement, and partial offseason-roster stages. Phase 5B must add incoming commitments; Phase 5C must combine returning and incoming Players, resolve remaining openings to exactly 12 Players, create fresh Rotations and a deterministic Schedule, and initialize Season N+1.
 
 ## Player Season Stats projections
 
@@ -265,9 +314,9 @@ Player Season Stats and Team Season Stats remain regular-season-only. Postseason
 
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, Player/Team Season Stats, national/Team leader projections, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Postseason.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, Player/Team Season Stats, national/Team leader projections, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Dynasty consumers use `src/dynasty/index.ts` for initialization, offseason transition, projected/offseason roster outlooks, returning-Player development, development summaries, and public Dynasty/archive/offseason types. No lower layer imports Dynasty.
 
-Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League & Player Exploration V0, Postseason Domain / Simulation V0, Postseason Presentation V0, and the shared fast/detailed game-flow QOL are complete. React renders regular-season and Tournament context, matchup actions, Rotation management, standings, brackets, final scores, statistical projections, Team/Player exploration, historical full box scores, and the National Champion without calculating basketball outcomes, ratings, records, selection, advancement, or Rotation legality.
+Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League & Player Exploration V0, Postseason Domain / Simulation V0, Postseason Presentation V0, the shared fast/detailed game-flow QOL, and Dynasty Foundation + Progression V0 are complete. React renders the accepted single-season experience; Dynasty remains a pure backend domain not yet orchestrated by the application store.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 
@@ -275,4 +324,4 @@ The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are
 
 ## Enforcement
 
-ESLint rejects framework, store, UI-layer imports, and common browser globals in `src/engine`. It also prevents the engine from importing `src/universe` or `src/postseason`, prevents Season, Schedule, and Universe from importing Postseason, and keeps framework, presentation, ambient randomness, and browser dependencies out of all pure domain layers. Tests cover domain invariants, serialization, aggregation consistency, and deterministic seeded behavior.
+ESLint rejects framework, store, UI-layer imports, ambient randomness, and common browser globals across pure domain layers. It prevents lower layers from importing Postseason or Dynasty and keeps Dynasty framework-independent. Tests cover domain invariants, serialization, aggregation consistency, immutable archive behavior, stable Player identity, Potential ceilings, and deterministic/order-independent progression.

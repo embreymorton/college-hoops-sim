@@ -62,25 +62,42 @@ GAME PREP
 
 The regular season and Postseason retain separate canonical Rotation state. Historical results are read-only views of stored `GameResult` facts.
 
+## Dynasty Foundation + Progression V0 — implemented
+
+The pure Dynasty layer can now take a fully completed regular season and Tournament through the accepted cross-season boundary:
+
+```text
+completed Season + Postseason
+→ canonical CompletedSeasonArchive
+→ senior graduation
+→ returning Player development and class advancement
+→ temporary incomplete OffseasonState rosters
+```
+
+Completed `GameResult` and `PlayerGameStats` facts remain recoverable through history. Returning Players keep stable IDs while receiving new immutable Player values, so archived class years and attributes do not change. `deriveProjectedRosterOutlook()` can expose senior departures, returners, and projected openings from a current Team before the Season is complete, providing next-season capacity for future in-season Recruiting.
+
+Complete MVP foundation items:
+
+- [x] Dynasty lifecycle boundary and completed Season/Postseason preservation
+- [x] Projected openings from current rosters
+- [x] Senior graduation
+- [x] Player development and class progression
+- [x] Stable returning Player IDs and immutable historical snapshots
+- [x] Serializable partial offseason rosters
+
 ## Remaining Dynasty MVP requirements
 
-The single-season product is complete, but the Dynasty MVP is not. The next phase must add:
+The single-season product and Phase 5A foundation are complete, but the repeatable Dynasty MVP is not. Next comes in-season Recruiting V0, followed by Season Rollover V0:
 
-- [ ] A Dynasty lifecycle boundary and completed Season/Postseason preservation
 - [ ] In-season recruiting for the next season, compatible with saved plans and Super Sim
-- [ ] Graduation
-- [ ] Player development and class progression
 - [ ] Stable recruit identity through commitment and freshman enrollment
+- [ ] Incoming-recruit enrollment and remaining-opening resolution
 - [ ] Roster finalization
+- [ ] Fresh default Rotations and deterministic next-season Schedule
 - [ ] Season 2 transition
 
-Two architecture requirements apply before or during rollover:
-
-- Returning Players retain their stable `playerId`; progression must not regenerate them as new identities.
-- Completed Season and Postseason facts remain recoverable rather than being overwritten when the next active season begins.
-
-Recruiting belongs to the cross-season Dynasty layer and targets Season N+1. A current-season commitment does not change the current Team, Rotation, or `SeasonState`. Exact development formulas, recruiting budgets/allocations, board limits, interest and commitment rules, offer mechanics, AI behavior, recruiting-period timing, roster-completion fallbacks, and a Dynasty-state schema require their own design milestones. Full save/load and permanent history presentation may follow the core Dynasty MVP, but rollover must preserve the canonical facts those systems will need.
+Recruiting belongs to the cross-season Dynasty layer and targets Season N+1. A current-season commitment must not change the current Team, Rotation, or `SeasonState`. Recruiting budgets/allocations, board limits, interest and commitment rules, offer mechanics, AI behavior, recruiting-period timing, and roster-completion fallbacks remain deliberately unspecified pending Phase 5B design. Full save/load and permanent history presentation may follow the core Dynasty MVP; the canonical archive facts they will need are now preserved.
 
 ## Not currently implemented
 
-The project does not yet include graduation, offseason development, recruiting, roster turnover/finalization, Season 2, or save/load. Possession play-by-play, live coaching, injuries, transfers, rankings, awards, and other optional depth are not Dynasty MVP requirements; see `FUTURE_FEATURES.md`.
+The project does not yet include recruiting, incoming recruits, roster finalization, Season 2, Dynasty UI/store integration, or save/load. Possession play-by-play, live coaching, injuries, transfers, rankings, awards, and other optional depth are not Dynasty MVP requirements; see `FUTURE_FEATURES.md`.

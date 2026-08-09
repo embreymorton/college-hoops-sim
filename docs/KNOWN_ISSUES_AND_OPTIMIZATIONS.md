@@ -23,18 +23,6 @@ The UI hides Midseason after Round 12 and all Super Sim actions after regular-se
 
 `recordGameResult()` copies and deterministically orders `resultsByGameId`. This is acceptable for Universe V0's 32 Programs and 384 regular-season games. Optimize only if profiling finds a real bottleneck at larger scale, while preserving immutable operations, deterministic serialization, JSON safety, and stable ScheduledGame-ID lookup.
 
-### P2 — Preserve completed-season Player history before multi-season play
-
-The active Season and Postseason currently retain each full `GameResult`, including all Player box scores. They are safe for the completed single-season product, but Dynasty rollover cannot overwrite the only copy when Season 2 becomes active.
-
-This remains unresolved and is now an explicit Phase 5 architecture requirement: preserve completed `SeasonState` and `PostseasonState`, or an equivalent historical representation containing their canonical results, before replacing active competition state. This does not require a full persistence format or history UI in the first Dynasty milestone.
-
-### P2 — Keep returning Player IDs stable
-
-The single-season implementation is correct, but Dynasty progression must evolve returning Players without regenerating them as new identities. Every returning Player must keep the same `playerId` across seasons so historical GameResults, roster continuity, career projections, and future recognition systems remain attributable.
-
-This remains unresolved and is now an explicit Phase 5 architecture requirement, not optional future polish.
-
 ### P3 — Allow future Super Sim interruption points
 
 Super Sim can run straight to a target because no current event requires a decision between games. Planned In-Season Recruiting V0 must remain compatible with this behavior by advancing a saved recruiting plan without mandatory input every round; recruiting itself is not a reason to force interruption.
@@ -50,6 +38,12 @@ Exhibition remains useful for isolated simulation, Rotation, and presentation te
 Player Season Stats inspection observed a Season in which all 12 Charlotte Tech Players recorded positive minutes in all 24 games. The stats layer is behaving correctly: positive minutes count as a game played, while zero minutes produce a DNP without incrementing `gamesPlayed`.
 
 The future balance question is whether accepted Rotation V0 eventually needs tighter seven-to-ten-Player regular rotations, occasional deep-bench DNPs, or more situational participation. Do not tune Rotation generation now. Revisit only if universal bench participation makes roster management less meaningful, Player season production less believable, or future development decisions less interesting. This is a low-priority design watchpoint, not an implementation defect or MVP blocker.
+
+### P3 — Concentrated single-attribute offseason gains / multi-season profile calibration
+
+Aggregate Player Development V0 calibration is accepted. Its intentionally uneven, position-aware allocation can occasionally produce large gains in one skill; the canonical single-offseason inspection included examples such as `INT D +8` and `ATH +7` while overall development, Potential limits, and class curves remained healthy.
+
+This is a non-blocking calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Revisit after Recruiting and Season Rollover enable deterministic 5–10+ season simulations, then evaluate long-term attribute/profile evolution across populations rather than tuning from isolated manual examples.
 
 ### P3 — Rotation Editor ordering and announcements
 
@@ -79,7 +73,7 @@ Optional Tournament-depth ideas are listed separately in `FUTURE_FEATURES.md`; t
 
 The current Zustand application/session store owns the controlled Program, completed `SeasonState`, active `PostseasonState`, regular-season and Tournament Rotation drafts, viewed-result IDs, navigation, Quick Sim, Super Sim, and round progression. It remains manageable at the current scale.
 
-Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball and Tournament rules in their domain layers, and avoid duplicate derived state or a generalized state framework. Reconsider the top-level boundary when Dynasty introduces multi-season lifecycle state. This is a maintainability watchpoint, not an MVP blocker.
+Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball and Tournament rules in their domain layers, and avoid duplicate derived state or a generalized state framework. Reconsider the top-level application boundary when React/Zustand actually adopts the implemented `DynastyState` and adds Recruiting/rollover orchestration. The pure Dynasty domain alone does not require a store refactor. This is a maintainability watchpoint, not an MVP blocker.
 
 ### P3 — Render-time navigation side effects
 
@@ -88,6 +82,14 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
 ## Resolved / monitor-only
+
+### P2 — Completed-season Player history preservation — RESOLVED
+
+Phase 5A `CompletedSeasonArchive` now clones the complete valid `SeasonState` and `PostseasonState`, including canonical `GameResult` and `PlayerGameStats` facts, before active competition is cleared. Archived Player snapshots remain unchanged during offseason development. Historical UI, career projections, and save/load remain separate future work.
+
+### P2 — Stable returning Player IDs — RESOLVED
+
+Phase 5A development creates new immutable Player values while preserving returning Player IDs, names, height, position, and Potential. Class and attributes may change without mutating archived Player versions. Canonical inspection found zero changed returning IDs and passed Program/Player-order-independence checks.
 
 ### P3 — UI stylesheet boundary
 

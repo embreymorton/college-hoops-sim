@@ -249,9 +249,9 @@ Completed Quick Sim cards preserve site and overtime context, show outcome/margi
 
 The complete single-season game loop is implemented and exposed through the UI, from Program selection through National Champion.
 
-## Phase 5 — Dynasty Loop — NEXT MAJOR SYSTEMS PHASE
+## Phase 5 — Dynasty Loop — ACTIVE
 
-> Turn the completed single-season basketball loop into a multi-season Dynasty. In-season recruiting for the next season is part of the intended Dynasty V0 direction. Exact progression and recruiting mechanics require dedicated design milestones.
+> Turn the completed single-season basketball loop into a multi-season Dynasty. The cross-season foundation and returning-Player progression are accepted; in-season recruiting is the next milestone.
 
 The intended high-level lifecycle is:
 
@@ -273,19 +273,25 @@ REGULAR SEASON
 → Season N+1
 ```
 
-### Phase 5A — Dynasty Foundation + Progression — NEXT
+### Phase 5A — Dynasty Foundation + Progression V0 — COMPLETE
 
-- Establish the Dynasty lifecycle boundary above current Season/Postseason state.
-- Preserve completed `SeasonState` and `PostseasonState`, or an equivalent representation retaining canonical `GameResult` facts, before active competition rolls over.
-- Keep every returning Player's stable `playerId`; development/class progression must evolve rather than regenerate that identity.
-- Graduate seniors, develop returning Players, advance classes, and represent the temporary roster state needed before finalization.
+- Serializable `DynastyState` lifecycle owner above Season, Postseason, Universe, and Engine
+- Full `CompletedSeasonArchive` snapshots retaining canonical regular-season and Tournament `GameResult` / `PlayerGameStats` facts
+- Strict completed-year transition requiring a complete regular season, complete Tournament, and derived National Champion
+- Stable returning Player identity with immutable historical Player snapshots
+- In-season `deriveProjectedRosterOutlook()` for deterministic senior departures, returners, and next-season openings
+- Senior graduation; `FR → SO`, `SO → JR`, and `JR → SR` class advancement
+- Deterministic, position-aware, Potential-constrained Player Development V0
+- Temporary incomplete `OffseasonState` rosters with preserved current Program prestige and derived open spots
 
-These are rollover requirements, not optional polish. This phase does not lock a final `DynastyState` interface, persistence format, development formula, or complete offseason sequence.
+The accepted canonical inspection archived all 384 regular-season and 15 Postseason games, graduated 92 of 384 Players, and created 292 returning Player values across all 32 Programs without changing IDs or historical snapshots. All Dynasty/archive/offseason values passed JSON serialization; same-seed reproduction and Program/Player-order independence passed. The observed development curve was approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% stagnation. These are calibration observations for one deterministic population, not guaranteed outcomes.
 
-### Phase 5B — In-Season Recruiting V0 — PLANNED
+Phase 5A intentionally stops at partial offseason rosters. It does not recruit Players, fill openings, create next-season Teams or Rotations, generate a new Schedule, or initialize Season 2. The current application store also remains on the accepted single-season ownership model.
+
+### Phase 5B — In-Season Recruiting V0 — NEXT
 
 - Generate a recruiting class whose prospects target Season N+1.
-- Derive projected roster openings from predictable senior departures under Dynasty V0 assumptions.
+- Consume the accepted projected roster outlook for predictable next-season capacity.
 - Support a recruiting board and persistent recruiting plan/allocation that can advance without mandatory input every basketball round.
 - Advance recruiting on completed-round boundaries, including through Super Sim using the saved plan.
 - Support commitments, AI recruiting, and late recruiting/roster-completion behavior.
@@ -305,8 +311,8 @@ Acceptance target: the Dynasty can repeat this lifecycle indefinitely across mul
 
 ## Phase 6 — Persistence and History — PLANNED
 
-- Serializable dynasty `GameState`
-- Save and load
+- A durable persistence format for the serializable `DynastyState`
+- Save and load workflows
 - Season and program history
 - Previous champions
 - Player career statistics
