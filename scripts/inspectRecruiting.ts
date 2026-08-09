@@ -801,6 +801,29 @@ function printPostseasonAndFinalization(
   const lateCommitments = Object.values(finalized.recruiting!.commitmentsByPlayerId)
     .filter(({ timing }) => timing.kind === 'late')
 
+  console.log('\nPREMIUM ENDGAME')
+  for (const checkpoint of [
+    { label: 'After Period 24', dynasty: regular },
+    { label: 'After Period 28', dynasty: sequential },
+  ]) {
+    const counts = ([5, 4] as const).map((stars) => {
+      const recruits = checkpoint.dynasty.recruiting!.recruits.filter(
+        (recruit) => recruit.stars === stars,
+      )
+      const signed = recruits.filter(({ player }) =>
+        checkpoint.dynasty.recruiting!.commitmentsByPlayerId[player.id],
+      ).length
+      return `${STAR_LABELS[stars]} ${signed} / ${recruits.length}`
+    })
+    console.log(`${checkpoint.label}: ${counts.join(' | ')}`)
+  }
+  console.log(`Late: ${STAR_LABELS[5]} ${lateCommitments.filter(({ playerId }) => getRecruit(finalized.recruiting!, playerId)!.stars === 5).length} | ${STAR_LABELS[4]} ${lateCommitments.filter(({ playerId }) => getRecruit(finalized.recruiting!, playerId)!.stars === 4).length}`)
+  console.log(`Final: ${([5, 4] as const).map((stars) => {
+    const recruits = finalized.recruiting!.recruits.filter((recruit) => recruit.stars === stars)
+    const signed = recruits.filter(({ player }) => finalized.recruiting!.commitmentsByPlayerId[player.id]).length
+    return `${STAR_LABELS[stars]} ${signed} / ${recruits.length}`
+  }).join(' | ')}`)
+
   console.log('\nLATE RECRUITING')
   console.log(`Openings entering late phase: ${totalOpenings - enteringCommitments.size}`)
   console.log(`Unsigned Recruits entering late phase: ${enteringUnsigned}`)
@@ -822,6 +845,29 @@ function printPostseasonAndFinalization(
     console.log(`${STAR_LABELS[stars]} signed: ${signed} / ${recruits.length}`)
   }
   console.log(`Unsigned Recruits: ${finalized.recruiting!.recruits.length - Object.keys(finalized.recruiting!.commitmentsByPlayerId).length}`)
+
+  const unsignedPremium = finalized.recruiting!.recruits.filter(
+    (recruit) => recruit.stars >= 4 &&
+      !finalized.recruiting!.commitmentsByPlayerId[recruit.player.id],
+  )
+  const compatibleCapacity = unsignedPremium.filter((recruit) =>
+    Object.values(finalized.recruiting!.programs).some((program) =>
+      deriveRemainingOpeningsByPosition(
+        finalized.recruiting!,
+        program,
+      )[recruit.player.position] > 0,
+    ),
+  ).length
+  const blockedByLowerTier = unsignedPremium.filter((premium) =>
+    Object.values(finalized.recruiting!.commitmentsByPlayerId).some((commitment) => {
+      const signed = getRecruit(finalized.recruiting!, commitment.playerId)!
+      return signed.player.position === premium.player.position &&
+        signed.stars < 4 && signed.nationalRank > premium.nationalRank
+    }),
+  ).length
+  console.log('\nPREMIUM STRANDING')
+  console.log(`Unsigned premium Recruits with compatible league positional capacity after finalization: ${compatibleCapacity}`)
+  console.log(`Unsigned premium Recruits blocked by lower-tier capacity consumption: ${blockedByLowerTier}`)
 
   let overCapacity = 0
   let unfilledPrograms = 0
@@ -921,6 +967,7 @@ function printMultiSeedValidation(
   let filled = 0
   let unsignedFive = 0
   let unsignedFour = 0
+  const unsignedFourSeeds: string[] = []
   let fallback = 0
   for (let index = 0; index < cycles; index += 1) {
     const regular = resolveAll(recruitingDynasty(season, `late-multiseed:${index}`))
@@ -928,7 +975,10 @@ function printMultiSeedValidation(
     const recruiting = result.dynasty.recruiting!
     if (Object.keys(recruiting.commitmentsByPlayerId).length === projectedOpenings(recruiting)) filled += 1
     if (recruiting.recruits.some((recruit) => recruit.stars === 5 && !recruiting.commitmentsByPlayerId[recruit.player.id])) unsignedFive += 1
-    if (recruiting.recruits.some((recruit) => recruit.stars === 4 && !recruiting.commitmentsByPlayerId[recruit.player.id])) unsignedFour += 1
+    if (recruiting.recruits.some((recruit) => recruit.stars === 4 && !recruiting.commitmentsByPlayerId[recruit.player.id])) {
+      unsignedFour += 1
+      unsignedFourSeeds.push(`late-multiseed:${index}`)
+    }
     if (result.fallbackMatcherUsed) fallback += 1
   }
   console.log('\nMULTI-SEED FINALIZATION VALIDATION')
@@ -936,6 +986,9 @@ function printMultiSeedValidation(
   console.log(`Cycles with all projected roster openings filled: ${filled} / ${cycles}`)
   console.log(`Cycles with unsigned 5-star after finalization: ${unsignedFive}`)
   console.log(`Cycles with unsigned 4-star after finalization: ${unsignedFour}`)
+  if (unsignedFourSeeds.length > 0) {
+    console.log(`Unsigned 4-star cycle seeds: ${unsignedFourSeeds.join(', ')}`)
+  }
   console.log(`Cycles requiring defensive fallback matcher: ${fallback}`)
   console.log('Cycles requiring emergency generated Recruit: 0')
 }

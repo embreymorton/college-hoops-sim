@@ -33,6 +33,7 @@ export {
   autoFinalizeRecruiting,
   deriveLateRecruitResolutionOrder,
   prepareLateRecruiting,
+  preparePremiumLateMarket,
 } from './recruiting/finalization'
 export {
   deriveNationalPositionDemand,
@@ -55,6 +56,7 @@ export {
 } from './recruiting/queries'
 export {
   deriveProgramActiveEffortShares,
+  deriveCommitmentConfidenceThresholds,
   deriveProgramRemainingRecruitingCapacity,
   resolveRecruitingPeriod,
   resolvePostseasonRecruitingPeriod,

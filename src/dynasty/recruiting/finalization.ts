@@ -224,8 +224,8 @@ function fillOfferVacancies(
   return current
 }
 
-/** Auto Finalize lets AI reconsider a lower-ranked offer for uncovered premium talent. */
-function discoverUncoveredPremiumOffers(
+/** Prepares AI premium options in rank order without replacing controlled offers. */
+export function preparePremiumLateMarket(
   dynasty: DynastyState,
   recruiting: RecruitingState,
 ): RecruitingState {
@@ -240,16 +240,20 @@ function discoverUncoveredPremiumOffers(
       first.player.id.localeCompare(second.player.id),
     )
   for (const recruit of premium) {
-    const alreadyOffered = Object.values(current.programs).some((program) =>
-      program.board.some((target) =>
+    const activeOfferCount = () => Object.values(current.programs).reduce(
+      (count, program) => count + Number(program.board.some((target) =>
         target.playerId === recruit.player.id && target.hasActiveOffer,
-      ),
+      )),
+      0,
     )
-    if (alreadyOffered) continue
-    const options = Object.keys(current.programs).sort()
-      .filter((programId) => programId !== dynasty.controlledProgramId)
-      .flatMap((programId) => {
+    while (activeOfferCount() < 2) {
+      const options = Object.keys(current.programs).sort()
+        .filter((programId) => programId !== dynasty.controlledProgramId)
+        .flatMap((programId) => {
         const program = current.programs[programId]!
+        if (program.board.some((target) =>
+          target.playerId === recruit.player.id && target.hasActiveOffer,
+        )) return []
         if (deriveRemainingOpeningsByPosition(
           current,
           program,
@@ -278,33 +282,34 @@ function discoverUncoveredPremiumOffers(
             programId,
           ),
         }] : []
-      })
-      .sort((first, second) =>
-        second.standing - first.standing ||
-        first.programId.localeCompare(second.programId),
-      )
-    const choice = options[0]
-    if (!choice) continue
-    let program: RecruitingProgramState = {
-      ...choice.program,
-      board: choice.program.board.map((target) =>
-        target.playerId === choice.replacement.playerId
-          ? { ...target, hasActiveOffer: false }
-          : target,
-      ),
-    }
-    program = addTarget(dynasty, current, program, recruit.player.id)
-    program = {
-      ...program,
-      board: program.board.map((target) =>
-        target.playerId === recruit.player.id
-          ? { ...target, hasActiveOffer: true }
-          : target,
-      ),
-    }
-    current = {
-      ...current,
-      programs: { ...current.programs, [choice.programId]: program },
+        })
+        .sort((first, second) =>
+          second.standing - first.standing ||
+          first.programId.localeCompare(second.programId),
+        )
+      const choice = options[0]
+      if (!choice) break
+      let program: RecruitingProgramState = {
+        ...choice.program,
+        board: choice.program.board.map((target) =>
+          target.playerId === choice.replacement.playerId
+            ? { ...target, hasActiveOffer: false }
+            : target,
+        ),
+      }
+      program = addTarget(dynasty, current, program, recruit.player.id)
+      program = {
+        ...program,
+        board: program.board.map((target) =>
+          target.playerId === recruit.player.id
+            ? { ...target, hasActiveOffer: true }
+            : target,
+        ),
+      }
+      current = {
+        ...current,
+        programs: { ...current.programs, [choice.programId]: program },
+      }
     }
   }
   return current
@@ -318,7 +323,8 @@ export function prepareLateRecruiting(dynasty: DynastyState): DynastyState {
   if (recruiting.lastResolvedPeriod !== FINAL_RECRUITING_PERIOD) {
     throw new RangeError('Late Recruiting requires completed Recruiting Period 28.')
   }
-  const prepared = fillOfferVacancies(dynasty, recruiting, false)
+  let prepared = fillOfferVacancies(dynasty, recruiting, false)
+  prepared = preparePremiumLateMarket(dynasty, prepared)
   return { ...dynasty, recruiting: { ...prepared, phase: 'late' } }
 }
 
@@ -471,7 +477,7 @@ export function autoFinalizeRecruiting(
   while (openCount(current.recruiting!) > 0) {
     resolutionPasses += 1
     let offered = fillOfferVacancies(current, current.recruiting!, true)
-    offered = discoverUncoveredPremiumOffers(current, offered)
+    offered = preparePremiumLateMarket(current, offered)
     const resolved = resolveLateOffers(current, offered)
     current = { ...current, recruiting: resolved.recruiting }
     if (resolved.commitments > 0) continue

@@ -5,6 +5,7 @@ import {
 } from '../../postseason'
 import { isRoundComplete } from '../../season'
 import type { DynastyState } from '../domain'
+import { preparePremiumLateMarket } from './finalization'
 import {
   cleanupInvalidRecruitingOffers,
   promoteControlledRecruitingBackups,
@@ -101,10 +102,11 @@ function tryCommitRecruit(
   ).filter(({ programId }) => candidates.has(programId))
   const leader = standings[0]!
   const runnerUp = standings[1]
+  const confidence = deriveCommitmentConfidenceThresholds(recruit, period)
   if (
-    leader.standing < recruit.commitmentStandingThreshold ||
+    leader.standing < confidence.standing ||
     leader.standing - (runnerUp?.standing ?? 0) <
-      recruit.commitmentSeparationThreshold
+      confidence.separation
   ) return recruiting
 
   const commitment: RecruitingCommitment = {
@@ -122,6 +124,28 @@ function tryCommitRecruit(
   }
 }
 
+/** Regular-season thresholds are frozen; only already-ready postseason battles ease. */
+export function deriveCommitmentConfidenceThresholds(
+  recruit: Pick<
+    import('./domain').Recruit,
+    'commitmentStandingThreshold' | 'commitmentSeparationThreshold'
+  >,
+  period: number,
+): { readonly standing: number; readonly separation: number } {
+  const postseasonStep = Math.max(
+    0,
+    Math.min(FINAL_RECRUITING_PERIOD, period) -
+      REGULAR_SEASON_RECRUITING_PERIODS,
+  )
+  return {
+    standing: recruit.commitmentStandingThreshold - postseasonStep * 1.5,
+    separation: Math.max(
+      2,
+      recruit.commitmentSeparationThreshold - postseasonStep * 0.75,
+    ),
+  }
+}
+
 function resolveCanonicalPeriod(
   dynasty: DynastyState,
   period: number,
@@ -134,6 +158,9 @@ function resolveCanonicalPeriod(
     recruiting,
   )
   recruiting = refreshAiRecruitingBoards(dynasty, recruiting)
+  if (period > REGULAR_SEASON_RECRUITING_PERIODS) {
+    recruiting = preparePremiumLateMarket(dynasty, recruiting)
+  }
   recruiting = applyPeriodEffort(recruiting)
   const recruits = [...recruiting.recruits].sort(
     (first, second) => first.nationalRank - second.nationalRank ||

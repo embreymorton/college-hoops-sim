@@ -11,6 +11,7 @@ import {
   autoFinalizeRecruiting,
   deriveLateRecruitResolutionOrder,
   prepareLateRecruiting,
+  preparePremiumLateMarket,
 } from './finalization'
 import type { PositionCounts, RecruitingState } from './domain'
 import {
@@ -235,5 +236,77 @@ describe('Late Recruiting and finalization', () => {
     const final = autoFinalizeRecruiting(prepared).dynasty.recruiting!
     expect(final.commitmentsByPlayerId[premium.player.id]?.programId).toBe(programB)
     expect(final.commitmentsByPlayerId[fallback.player.id]?.programId).toBe(programA)
+  })
+
+  it('gives a premium Recruit an offered path before a lower-ranked target consumes capacity', () => {
+    const initial = readyForLate('late-premium-capacity-order')
+    const premium = initial.recruiting!.recruits.find(({ stars }) => stars === 4)!
+    const lower = initial.recruiting!.recruits.find(
+      ({ player, stars }) => player.position === premium.player.position && stars === 2,
+    )!
+    const programId = Object.keys(initial.recruiting!.programs).sort().find(
+      (id) => id !== initial.controlledProgramId,
+    )!
+    const openings = { ...zeroCounts(), [premium.player.position]: 1 }
+    const recruiting: RecruitingState = {
+      ...initial.recruiting!,
+      phase: 'postseason',
+      recruits: [premium, lower],
+      programs: {
+        [programId]: {
+          programId,
+          projectedOpeningsByPosition: openings,
+          board: [{ playerId: lower.player.id, priority: 5, hasActiveOffer: true }],
+        },
+      },
+      relationshipProgressByPlayerId: {
+        [premium.player.id]: { [programId]: 25 },
+        [lower.player.id]: { [programId]: 40 },
+      },
+      commitmentsByPlayerId: {},
+    }
+    const prepared = prepareLateRecruiting({ ...initial, recruiting })
+    expect(prepared.recruiting!.programs[programId]!.board.find(
+      ({ playerId }) => playerId === premium.player.id,
+    )?.hasActiveOffer).toBe(true)
+    expect(prepared.recruiting!.programs[programId]!.board.find(
+      ({ playerId }) => playerId === lower.player.id,
+    )?.hasActiveOffer).toBe(false)
+    expect(prepared.recruiting!.relationshipProgressByPlayerId)
+      .toEqual(recruiting.relationshipProgressByPlayerId)
+
+    const final = autoFinalizeRecruiting({ ...initial, recruiting }).dynasty.recruiting!
+    expect(final.commitmentsByPlayerId[premium.player.id]?.programId).toBe(programId)
+    expect(final.commitmentsByPlayerId[lower.player.id]).toBeUndefined()
+    expect(deriveRemainingOpeningsByPosition(final, final.programs[programId]!)[premium.player.position]).toBe(0)
+  })
+
+  it('does not manufacture a premium offer by overriding controlled strategy', () => {
+    const initial = readyForLate('late-controlled-premium-protection')
+    const premium = initial.recruiting!.recruits.find(({ stars }) => stars >= 4)!
+    const lower = initial.recruiting!.recruits.find(
+      ({ player }) => player.position === premium.player.position && player.id !== premium.player.id,
+    )!
+    const programId = initial.controlledProgramId
+    const openings = { ...zeroCounts(), [premium.player.position]: 1 }
+    const recruiting: RecruitingState = {
+      ...initial.recruiting!,
+      phase: 'late',
+      recruits: [premium, lower],
+      programs: {
+        [programId]: {
+          programId,
+          projectedOpeningsByPosition: openings,
+          board: [{ playerId: lower.player.id, priority: 5, hasActiveOffer: true }],
+        },
+      },
+      relationshipProgressByPlayerId: {},
+      commitmentsByPlayerId: {},
+    }
+    const prepared = preparePremiumLateMarket({ ...initial, recruiting }, recruiting)
+    expect(prepared.programs[programId]!.board).toEqual(recruiting.programs[programId]!.board)
+    expect(prepared.programs[programId]!.board.some(
+      ({ playerId }) => playerId === premium.player.id,
+    )).toBe(false)
   })
 })
