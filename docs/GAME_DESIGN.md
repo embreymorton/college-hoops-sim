@@ -154,3 +154,21 @@ AI Round Simulation and Standings V0 uses each Program's current Season Team and
 Conference standings first compare Conference winning percentage. An exact two-Team tie group uses completed head-to-head games when decisive. Split, unplayed, and three-or-more-Team ties fall through to overall winning percentage and then stable Program ID. Rankings and polls are separate concepts and remain deferred.
 
 The accepted 50-season diagnostic showed a strong relationship between initial Team Strength and long-run wins while individual seasons still produced upsets and over- or underperformance. This is an observational health check, not a tuning requirement.
+
+## Accepted regular-season experience
+
+The permanent Season flow is the primary playable experience. Game Prep is optional rather than a required stop before every game. The coach may progress at three speeds:
+
+- **Hands-on:** Manage Rotation, then Simulate Game.
+- **Normal:** Dashboard Quick Sim from the Season Hub.
+- **Fast:** Super Sim to Midseason or End of Regular Season.
+
+Dashboard Quick Sim uses the controlled Program's last committed legal current Season Rotation. A legal change made in Game Prep persists into future games; a temporary invalid draft does not replace that canonical Rotation. Super Sim also uses every Program's current Team and Rotation and changes only pacing, not basketball rules, randomness, or result detail.
+
+Midseason means all pending regular-season games through Round 12. End of Regular Season means all pending games through Round 24. Already-completed games are preserved, every newly completed game records its full `GameResult` and Player box scores, and no Super Sim action advances into a postseason.
+
+Completed results are final. Opening a completed Schedule entry or Recent Results entry reads the stored result and full historical box score without re-simulation. Recent Results, records, standings, and round progress are derived from Schedule plus completed results.
+
+## Next statistical layer
+
+Player Season Stats V0 is the next milestone before postseason. It will derive Player totals, averages, percentages, and game logs from the `PlayerGameStats` already stored in completed `GameResult` values. The preserved inputs are minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. No duplicate mutable season-stat counters should be introduced.

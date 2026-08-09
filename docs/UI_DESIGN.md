@@ -25,7 +25,7 @@ The accepted presentation includes:
 - Full Player box scores with a control for inspecting either Team
 - Deterministic Simulate Again and Change Matchup workflows
 
-The six exhibition programs support this vertical slice; five source permanent metadata from Universe V0 and National Tech remains development-only. The stable 32-program universe is not yet exposed as a season interface. Recruiting, rankings, standings, tournaments, coach profiles, and a dynasty dashboard are not current screens.
+The six exhibition programs support this vertical slice; five source permanent metadata from Universe V0 and National Tech remains development-only. Exhibition is retained as secondary development tooling rather than the primary product flow.
 
 ## Rotation Management V0 — accepted and implemented
 
@@ -48,4 +48,23 @@ Non-blocking polish may later address stable Player ordering during edits or str
 
 Extends the accepted collegiate broadcast-management language rather than redesigning it. Program selection groups the 32 permanent Universe V0 programs by Conference. The Season Hub composes a program-identity header, a next-game preview reusing the Team Strength stat-trio language, round-progress and regular-season-complete states, Conference standings with a lightweight Conference switch, and the controlled Program's 24-game schedule/results. Game prep and postgame reuse the accepted Rotation Editor, scoreboard, and box-score presentation with real home/away orientation. User control (`controlledProgramId`) remains application state, not `SeasonState`, and the UI does not maintain duplicate basketball truth.
 
-The six-program exhibition workflow remains available as a secondary sandbox behind a mode toggle. Postseason brackets, recruiting, and Dynasty history remain later screens.
+## Accepted Season hierarchy and pacing
+
+The permanent Season flow is the primary product hierarchy:
+
+```text
+Season Hub
+├─ Next Game
+│  ├─ Simulate Game (primary Dashboard Quick Sim)
+│  └─ Manage Rotation (optional Game Prep)
+├─ Super Sim (secondary pacing control)
+├─ Conference Standings
+├─ Recent Results
+└─ Schedule & Results → historical completed-game box score
+```
+
+The next-game **Simulate Game** action is primary. **Manage Rotation** is the optional hands-on path. **Super Sim** is a compact secondary action with confirmed choices for Midseason (through Round 12) and End of Regular Season (through Round 24). It does not imply a separate simulation mode or postseason advancement.
+
+Completed postgame results and historical results share the accepted scoreboard and full Player box-score presentation. Historical views read the stored result and offer no simulation action. Recent Results is a compact, derived link into that same historical presentation.
+
+The six-program Exhibition workflow may remain accessible as secondary development tooling where useful, but it should not compete with the Season flow in primary navigation. Player Season Stats is the next UI milestone. Postseason brackets, recruiting, and Dynasty history remain future screens; no postseason UI is implemented.

@@ -35,6 +35,9 @@ The project currently includes:
 - Schedule Generation V0 with 24 complete abstract rounds, 384 canonical games, reciprocal Conference play, distinct non-Conference opponents, exact home/away balance, structured validation, and deterministic input-order-independent generation
 - Season State and Progression V0 with initialized Team/Rotation state for all Programs, immutable Schedule structure, strict full-GameResult storage, persistent legal Rotation updates, partial-round support, derived progression and records, structured validation, and JSON-safe pure operations
 - AI Round Simulation and Standings V0 with independent per-game seeds, current-Rotation game execution, pending-round simulation and exclusions, complete 384-game Season execution, and derived Conference standings
+- Season Presentation V0 with 32-Program selection, a permanent Season Hub, Game Prep, postgame, Conference standings, and the controlled Program's full Schedule/results
+- Season UX Polish V0 with Dashboard Quick Sim, persistent committed Season Rotations, historical completed-game box-score viewing, and derived Recent Results
+- Super Sim V0 with confirmed pacing checkpoints through Round 12 or Round 24 using the canonical Season simulation pipeline
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
@@ -54,14 +57,22 @@ stable fictional Universe
 → derived Conference standings
 ```
 
-Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, or standings. The regular-season domain can now deterministically complete all 24 rounds and derive Conference tables.
+Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, standings, or Player aggregates. The regular-season domain can now deterministically complete all 24 rounds and derive Conference tables.
 
-## Season Presentation V0 — implemented
+## Playable regular season — implemented
 
-The application layer lets one controlled Program use its current Season Team and Rotation, play or simulate its scheduled game, resolve the remaining AI games in the round, and inspect updated Season context — program selection, a Season Hub with record/round/next-game/standings/schedule, game prep, and postgame. `controlledProgramId` and a deterministic session seed live in application state, never in `SeasonState`.
+The application layer lets one controlled Program complete the full 24-round regular season at three pacing levels, all backed by the same canonical scheduled-game simulation and result-recording pipeline:
+
+- Hands-on: **Manage Rotation → Simulate Game**.
+- Normal: **Dashboard Quick Sim** uses the last committed legal current Season Rotation.
+- Fast: **Super Sim** resolves pending games through Midseason (Round 12) or End of Regular Season (Round 24).
+
+Legal Rotation changes persist in `SeasonState` and affect later games regardless of pacing path. Every completed result is final and retains its full Player box scores. The Hub derives records, current round, standings, Recent Results, and Schedule presentation from Season facts rather than maintaining duplicate UI truth.
 
 ## Next major acceptance target
 
-> A user can play through the 24-round regular season from the browser using one controlled program while all other scheduled games resolve through the existing AI simulation pipeline.
+> **Player Season Stats V0 — NEXT:** derive Player aggregates and game logs from `PlayerGameStats` in the complete `GameResult` values already recorded by the Season.
 
-This acceptance target is met. The project does not yet contain a postseason/national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as a secondary sandbox behind a mode toggle.
+The next milestone must not add duplicate mutable Player-stat counters to `SeasonState`. It should expose the already-preserved minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA through derived season totals, averages, percentages, and game logs.
+
+The project does not yet contain a postseason/national tournament, recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. Postseason remains future work after Player Season Stats V0. The six-program exhibition UI remains available as secondary development tooling.

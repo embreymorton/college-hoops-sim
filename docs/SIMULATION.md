@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, and Season State and Progression V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season State stores each complete simulator-produced `GameResult` against its ScheduledGame ID without changing any game simulation formula or behavior.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, and Super Sim V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season State stores each complete simulator-produced `GameResult` against its ScheduledGame ID without changing any game simulation formula or behavior.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -25,6 +25,25 @@ Season simulation namespace
 ```
 
 The actual namespace retains the explicit simulation seed's numeric/string type and includes Season identity, Season number, Universe identity/version, and ScheduledGame ID. This keeps a game's outcome independent of execution order. Scheduled-game and pending-round operations use current Season Team/Rotation inputs and write complete output through `recordGameResult()` without changing the simulation formulas below.
+
+### Season simulation entry points
+
+Playing one scheduled game from Game Prep, Dashboard Quick Sim, AI rest-of-round simulation, and Super Sim all converge on the same deterministic per-game pipeline:
+
+```text
+current Season Team + current committed Rotation
+ScheduledGame identity + explicit simulation seed
+→ simulateScheduledGame()
+→ simulateGame()
+→ full GameResult
+→ recordGameResult()
+```
+
+Each ScheduledGame has an independent derived seed, so changing execution order or choosing a faster UI path does not change its result. For identical Season state, simulation seed, Teams, and Rotations, normal round-by-round progression and Super Sim produce identical `GameResult` values.
+
+Dashboard Quick Sim resolves only the controlled Program's next ScheduledGame. AI rest-of-round resolves eligible pending games in the current round. Super Sim repeatedly resolves pending rounds through an inclusive target: Round 12 for Midseason or Round 24 for End of Regular Season. It preserves already-completed results, uses every Program's current committed Rotation, and never simulates postseason games.
+
+Every route records the same full `PlayerGameStats` fields: minutes, points, rebounds, assists, steals, blocks, turnovers, field goals made/attempted, three-pointers made/attempted, and free throws made/attempted. Player Season Stats V0 will derive aggregates and game logs from these stored rows; it will not change the game formulas below or add authoritative mutable stat totals to `SeasonState`.
 
 ## Implemented Rotation constraint
 

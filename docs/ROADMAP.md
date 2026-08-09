@@ -94,10 +94,13 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 016 | Season State and progression | COMPLETE |
 | 017 | AI Round Simulation and Standings V0 | COMPLETE |
 | 019 | Season Presentation V0 | COMPLETE |
+| 020 | Season UX Polish V0 | COMPLETE |
+| 021 | Super Sim V0 | COMPLETE |
+| 022 | Player Season Stats V0 | NEXT |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
-The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, derived standings, and Season Presentation V0 are complete, finishing the League and Season Framework phase.
+The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, derived standings, permanent Season presentation, regular-season UX polish, and Super Sim are complete. A user can now play or rapidly simulate all 24 rounds through one canonical pipeline.
 
 ### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
 
@@ -150,6 +153,39 @@ Validation confirmed that excluded pending games survive AI round execution, all
 - `controlledProgramId` and a deterministic session seed live in application state, never in `SeasonState`
 
 Season Presentation consumes the existing Universe, Schedule, Season, simulation, and standings APIs rather than reimplementing basketball state or rules. The six-program exhibition workflow remains as a secondary sandbox behind a mode toggle.
+
+### 3.6 Season UX Polish V0 — COMPLETE
+
+- Dashboard Quick Sim directly plays the controlled Program's next ScheduledGame from the Hub.
+- Manage Rotation remains the optional hands-on path; legal changes persist as the Program's current Season Rotation.
+- Quick Sim uses that committed legal Rotation and is unaffected by a stale invalid Game Prep draft.
+- Completed Schedule and Recent Results entries reopen the stored read-only result with its full historical box score.
+- Recent Results and its Last-N record are derived from completed Season results.
+- The permanent Season flow is primary; Exhibition remains useful secondary development tooling.
+
+### 3.7 Super Sim V0 — COMPLETE
+
+- **Sim to Midseason** resolves every pending regular-season game through Round 12.
+- **Sim to End of Regular Season** resolves every pending game through Round 24.
+- Confirmation and one-time completion feedback remain Zustand presentation state.
+- Bulk progression preserves completed games and uses every Program's current Team and Rotation.
+- Normal progression and Super Sim produce identical `GameResult` values for identical Season state, simulation seed, Teams, and Rotations.
+- Every path retains full `PlayerGameStats`; Super Sim is a pacing convenience, not a separate simulation model.
+- Super Sim stops at regular-season completion and does not create or enter postseason play.
+
+## Player Season Stats V0 — NEXT
+
+> Derive useful Player season totals, averages, percentages, and game logs from the full `PlayerGameStats` already retained in completed Season `GameResult` values.
+
+The initial derived surface should preserve and aggregate minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. The accepted data flow is:
+
+```text
+recorded GameResults
+→ PlayerGameStats rows
+→ future derived PlayerSeasonStats / game logs
+```
+
+Do not add duplicate mutable Player-stat counters to `SeasonState`. Postseason remains planned after this milestone.
 
 ## Phase 4 — Postseason — PLANNED
 

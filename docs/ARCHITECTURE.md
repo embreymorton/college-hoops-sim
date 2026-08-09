@@ -2,18 +2,21 @@
 
 ## Dependency rule
 
-Dependencies point inward toward the engine:
+Dependencies point inward toward pure domain layers:
 
 ```text
-React presentation → Zustand application state/adapters → engine public API
-                                      tests/tools → engine public API
+React Season Presentation
+        ↓
+Zustand Season session / navigation
+        ↓
+Season public API
+        ├─ Schedule public API
+        ├─ Universe public API → Engine public API
+        └─ Engine public API
 
-Application / future Dynasty state
-                  ↓
-             Season State
-            ↙      ↓       ↘
-      Schedule  Universe  Engine outputs
-                            Team / Rotation / GameResult
+Schedule public API → Universe public API + Engine public API
+
+tests / inspection tools → the relevant public API at each boundary
 ```
 
 `src/engine` must not import React, React DOM, Zustand, components, application stores, browser/DOM APIs, or other UI-specific code. The engine accepts data and configuration, then returns data. UI code may import the engine.
@@ -41,21 +44,17 @@ src/
 
 Folders describe ownership, not permission to implement future systems early.
 
-## Implemented vertical-slice flow
+## Implemented application flow
 
 ```text
-Generated Players
-→ Generated Teams / Rosters
-→ Default Rotations
-→ Player OFF / DEF
-→ Team Strength
-→ Game Simulation
-→ Player Box Scores
-→ Zustand application state
-→ React Game Presentation
+React Season Presentation
+→ Zustand Season session / navigation
+→ Season public API
+→ Schedule + Universe + Engine outputs
+→ stored GameResult facts and derived Season projections
 ```
 
-The engine owns every step through Player box scores. The application layer selects demo inputs, invokes the public API, and retains workflow state and engine outputs. React presents that state and dispatches user intent back to the store.
+The engine owns basketball generation, ratings, Rotation legality, game outcomes, and Player box scores. The Season layer composes those capabilities with a Schedule and current Program basketball state. Zustand owns the controlled Program, active `SeasonState`, navigation, Rotation draft, and transient confirmation/completion UI. React presents that state and dispatches user intent back through the store.
 
 ## Domain and state rules
 
@@ -74,19 +73,20 @@ The engine owns every step through Player box scores. The application layer sele
 - Prefer pure functions. If an operation evolves state, make inputs and returned state explicit.
 - Zustand owns application/UI workflow state, not basketball rules.
 
-The current Game Presentation store owns matchup selections, pregame/postgame phase, generated Team setups, deterministic game-sequence seeds, and the latest `GameResult`. It calls the public engine API to generate Teams and default Rotations, derive Team Strength, and simulate games. Its in-memory setup cache is an application detail, not persisted domain state.
+The Season store is not authoritative for Program records, Conference records, standings, current round, next opponent, Recent Results, or Player statistics. Those values are projections over the active `SeasonState`, its immutable Schedule, and its recorded `GameResult` values. Transient Super Sim confirmation and completion-summary state is presentation state, not Season truth.
 
-Rotation Management V0 adds the coach's editable home-Team `Rotation` to that Zustand workflow state. Temporary invalid values are allowed during editing. The application asks the engine to validate the current Rotation, derives current Team Strength through the engine only when it is legal, and blocks simulation otherwise. A legal simulation passes that exact edited home Rotation and the away Team's generated default Rotation to `simulateGame()`.
+Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Dashboard Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
 ```text
-UI interaction
-→ Zustand application workflow state
+Manage Rotation
+→ Zustand draft
 → validateRotation()
-→ calculateTeamStrength()
-→ simulateGame()
+→ updateProgramRotation()
+→ canonical Season Rotation
+→ scheduled-game simulation
 ```
 
-The home Rotation persists through Simulate Again and the return from postgame to pregame. Reset restores the generated default, and selecting a different home program installs that program's default. HOME is the coached Team only for the current exhibition workflow; this is not yet a permanent dynasty user-Team model.
+The separate Exhibition workflow still owns demo matchup selection and an editable home Rotation for isolated game testing. It is retained as development tooling and does not define the permanent Season architecture.
 
 The versioned `src/universe` layer owns four stable Conference definitions, 32 stable Program definitions, Universe V0 configuration, validation, and deterministic Team/Rotation initialization. Its 32/4/8 counts are constraints of `UNIVERSE_V0`, never generic engine assumptions.
 
@@ -127,15 +127,31 @@ records / standings / current round
 
 Individual and pending-round simulation both write full results through `recordGameResult()`. Already-completed games remain unchanged, generic Program exclusions can leave a user-facing game pending, and completing the final pending game naturally changes the derived current round. Conference standings are transient `StandingRow` projections over Schedule and results, never canonical mutable Season state.
 
+All Season simulation entry points converge on this pipeline:
+
+```text
+Game Prep play / Dashboard Quick Sim / AI rest-of-round / Super Sim
+                              ↓
+                simulateScheduledGame()
+                              ↓
+                     simulateGame()
+                              ↓
+                  recordGameResult()
+```
+
+Game Prep is optional. Dashboard Quick Sim runs the controlled Program's next ScheduledGame from the Hub with the last committed legal current Season Rotation. Super Sim calls `simulatePendingGamesThroughRound()` as a pacing convenience: Midseason resolves pending games through Round 12, and End of Regular Season resolves pending games through Round 24. It preserves completed results, uses every Program's current Team and Rotation, and creates the same full `GameResult` values as ordinary progression for identical state and seed.
+
+Completed games are final. The postgame and historical-result screens read the already-recorded `GameResult`; opening a Schedule or Recent Results entry never re-simulates it. Recent Results is likewise derived from completed Schedule/results facts.
+
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game/round simulation, and derived Conference standings. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, and derived Conference standings. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
 
-Game Presentation V0 and Rotation Management V0 are complete. React renders deterministic demo matchups, engine-generated rosters, an editable home Rotation, a read-only default away Rotation, Team Strength comparisons, validation feedback, final scores, overtime, and both Teams' Player box scores. It does not calculate basketball outcomes, ratings, or Rotation legality.
+Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, and Super Sim V0 are complete. React renders Season context, next-game actions, Rotation management, standings, Recent Results, Schedule/results, final scores, and historical full box scores without calculating basketball outcomes, ratings, records, or Rotation legality.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 
-The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. Season State and Progression V0 and AI Round Simulation and Standings V0 are complete and accepted. Season Presentation V0 is the next application-layer milestone; it should consume these public projections and operations without creating UI-owned basketball truth.
+The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. The League and Regular Season framework is functionally complete through Season Presentation, UX polish, and Super Sim. Player Season Stats V0 is next and must derive aggregates and game logs from the full `PlayerGameStats` already retained in recorded `GameResult` values rather than adding duplicate mutable statistics to `SeasonState`.
 
 ## Enforcement
 
