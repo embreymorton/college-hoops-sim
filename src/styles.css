@@ -1201,8 +1201,8 @@ p {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
-  margin: var(--space-4) 0;
-  padding: var(--space-4) 0;
+  margin: var(--space-3) 0;
+  padding: var(--space-3) 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -1238,15 +1238,108 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
+.next-game-card__result-summary {
+  margin-bottom: var(--space-3);
+  text-align: center;
+}
+
 .next-game-card__result-line {
-  margin-bottom: var(--space-4);
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 0.82rem;
   letter-spacing: 0.12em;
-  text-align: center;
   text-transform: uppercase;
   color: var(--accent);
+}
+
+.next-game-card__result-detail {
+  margin-top: var(--space-1);
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.game-leaders {
+  margin: 0 auto var(--space-4);
+  width: min(100%, 52rem);
+}
+
+.game-leaders__heading {
+  margin-bottom: var(--space-2);
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.game-leaders__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.game-leaders__column {
+  display: grid;
+  grid-template-rows: auto auto minmax(2.3em, auto) auto;
+  align-items: start;
+  justify-items: center;
+  gap: var(--space-1);
+  min-width: 0;
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.game-leaders__column + .game-leaders__column {
+  border-left: 1px solid var(--line);
+}
+
+.game-leaders__label {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.game-leaders__team {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.game-leaders__name {
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.15;
+  text-transform: uppercase;
+  color: var(--ink-0);
+}
+
+.game-leaders__value,
+.game-leaders__empty {
+  font-family: var(--font-score);
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--ink-0);
+}
+
+.game-leaders__empty {
+  grid-row: 2 / span 3;
+  align-self: center;
+  color: var(--ink-2);
 }
 
 .round-progress {
@@ -1265,6 +1358,12 @@ p {
 .round-progress__text {
   font-size: 0.82rem;
   color: var(--ink-1);
+}
+
+.round-progress__detail {
+  margin-top: var(--space-1);
+  font-size: 0.72rem;
+  color: var(--ink-2);
 }
 
 .round-progress__actions {

@@ -13,6 +13,7 @@ import {
 import { MIDSEASON_ROUND, useSeasonStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
+import { deriveGameLeaders, formatControlledMargin } from './gameLeaders'
 
 function resetStore() {
   useSeasonStore.setState(useSeasonStore.getInitialState())
@@ -183,12 +184,45 @@ describe('Season Presentation', () => {
     const completedCard = document.querySelector(
       '.next-game-card--final',
     ) as HTMLElement
+    const homeTeam = state.season!.programStates[result!.homeTeamId]!.team
+    const awayTeam = state.season!.programStates[result!.awayTeamId]!.team
+    const leaders = deriveGameLeaders(result!, homeTeam, awayTeam)
     expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
     expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
     expect(
       within(completedCard).getByText(
         result!.winnerId === controlledProgramId ? 'Win' : 'Loss',
       ),
+    ).toBeInTheDocument()
+    expect(
+      within(completedCard).getByText(
+        formatControlledMargin(result!, controlledProgramId!),
+      ),
+    ).toBeInTheDocument()
+    expect(
+      within(completedCard).getByText(
+        `${game.homeProgramId === controlledProgramId ? 'Home' : 'Away'} · Final`,
+      ),
+    ).toBeInTheDocument()
+    for (const [stat, leader] of [
+      ['pts', leaders.points],
+      ['reb', leaders.rebounds],
+      ['ast', leaders.assists],
+    ] as const) {
+      const column = completedCard.querySelector(
+        `[data-stat="${stat}"]`,
+      ) as HTMLElement
+      expect(column).not.toBeNull()
+      if (leader) {
+        expect(column).toHaveTextContent(leader.playerName)
+        expect(column).toHaveTextContent(leader.programAbbreviation)
+        expect(column).toHaveTextContent(String(leader.value))
+      } else {
+        expect(column).toHaveTextContent('—')
+      }
+    }
+    expect(
+      screen.getByText('Advance will simulate the remaining 15 games.'),
     ).toBeInTheDocument()
     expect(
       within(completedCard).queryByRole('button', { name: /^simulate game$/i }),

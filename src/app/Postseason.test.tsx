@@ -16,6 +16,7 @@ import {
 import { useSeasonStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
+import { deriveGameLeaders } from './gameLeaders'
 
 function resetStore() {
   useSeasonStore.setState(useSeasonStore.getInitialState())
@@ -160,6 +161,9 @@ describe('Postseason — qualified and alive', () => {
     const completedCard = document.querySelector(
       '.next-game-card--final',
     ) as HTMLElement
+    const homeTeam = state.postseason!.programStates[result!.homeTeamId]!.team
+    const awayTeam = state.postseason!.programStates[result!.awayTeamId]!.team
+    const leaders = deriveGameLeaders(result!, homeTeam, awayTeam)
     expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
     expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
     expect(
@@ -174,6 +178,28 @@ describe('Postseason — qualified and alive', () => {
           ? `${UNIVERSE_V0.programs.find((program) => program.id === controlledProgramId)!.name} Advances`
           : 'Tournament Run Ends',
       ),
+    ).toBeInTheDocument()
+    expect(within(completedCard).getByText('Neutral · Final')).toBeInTheDocument()
+    for (const [stat, leader] of [
+      ['pts', leaders.points],
+      ['reb', leaders.rebounds],
+      ['ast', leaders.assists],
+    ] as const) {
+      const column = completedCard.querySelector(
+        `[data-stat="${stat}"]`,
+      ) as HTMLElement
+      expect(column).not.toBeNull()
+      if (leader) {
+        expect(column).toHaveTextContent(leader.playerName)
+        expect(column).toHaveTextContent(leader.programAbbreviation)
+        expect(column).toHaveTextContent(String(leader.value))
+      } else {
+        expect(column).toHaveTextContent('—')
+      }
+    }
+    expect(screen.getByText('Round of 16 — 1 of 8 games complete')).toBeInTheDocument()
+    expect(
+      screen.getByText('Advance will simulate the remaining 7 Round of 16 games.'),
     ).toBeInTheDocument()
 
     clickButtonByText(/view box score/i)

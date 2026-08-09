@@ -27,6 +27,7 @@ import {
 } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
+import { deriveGameLeaders, formatControlledMargin } from './gameLeaders'
 import { formatTournamentQualification } from './postseasonFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
@@ -223,6 +224,11 @@ export function SeasonHubScreen() {
         ) : completedHubGame ? (
           <CompletedMatchupCard
             roundLabel={`Round ${completedHubGame.game.round}`}
+            siteLabel={
+              completedHubGame.game.homeProgramId === controlledProgramId
+                ? 'Home'
+                : 'Away'
+            }
             overtimeTag={formatOvertimeTag(
               completedHubGame.result.overtimePeriods,
             )}
@@ -253,6 +259,15 @@ export function SeasonHubScreen() {
                 ? 'Win'
                 : 'Loss'
             }
+            resultDetail={formatControlledMargin(
+              completedHubGame.result,
+              controlledProgramId,
+            )}
+            leaders={deriveGameLeaders(
+              completedHubGame.result,
+              season.programStates[completedHubGame.result.homeTeamId]!.team,
+              season.programStates[completedHubGame.result.awayTeamId]!.team,
+            )}
             onViewBoxScore={() => viewCompletedGame(completedHubGame.game.id)}
           />
         ) : (
@@ -285,13 +300,21 @@ export function SeasonHubScreen() {
         )}
         {currentRound !== undefined && (
           <div className="round-progress">
-            <p className="round-progress__text">
-              Round {currentRound} —{' '}
-              {describeRoundProgress(
-                roundGameCount - pendingRoundGames.length,
-                roundGameCount,
+            <div>
+              <p className="round-progress__text">
+                Round {currentRound} —{' '}
+                {describeRoundProgress(
+                  roundGameCount - pendingRoundGames.length,
+                  roundGameCount,
+                )}
+              </p>
+              {controlledRoundGameComplete && pendingRoundGames.length > 0 && (
+                <p className="round-progress__detail">
+                  Advance will simulate the remaining {pendingRoundGames.length}{' '}
+                  {pendingRoundGames.length === 1 ? 'game' : 'games'}.
+                </p>
               )}
-            </p>
+            </div>
             <div className="round-progress__actions">
               {hasSimulatableRoundGames && (
                 <button

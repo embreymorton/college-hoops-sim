@@ -15,6 +15,7 @@ import {
 import {
   deriveNationalChampion,
   getCurrentTournamentRound,
+  getGamesForTournamentRound,
   getPendingGamesForTournamentRound,
   getTournamentGameForProgram,
   isTournamentComplete,
@@ -27,8 +28,15 @@ import {
 import { deriveProgramRecord } from '../season'
 import { useSeasonStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
-import { formatTournamentRoundName } from './postseasonFormatters'
+import {
+  describeRemainingTournamentGames,
+  formatTournamentQuickResult,
+  formatTournamentProgressRoundName,
+  formatTournamentRoundName,
+} from './postseasonFormatters'
 import { formatOvertimeTag } from './formatters'
+import { deriveGameLeaders } from './gameLeaders'
+import { describeRoundProgress } from './seasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -190,6 +198,10 @@ export function PostseasonHubScreen() {
     currentRound !== undefined
       ? getPendingGamesForTournamentRound(postseason, currentRound)
       : []
+  const roundGameCount =
+    currentRound !== undefined
+      ? getGamesForTournamentRound(postseason, currentRound).length
+      : 0
   const hasOtherSimulatableGames = pendingRoundGames.some((game) => {
     const participants = resolveTournamentGameParticipants(postseason, game.id)
     return (
@@ -252,10 +264,13 @@ export function PostseasonHubScreen() {
     const awayEntry = postseason.field.find(
       (entry) => entry.programId === completedHubTournamentGame.result.awayTeamId,
     )!
+    const controlledWon =
+      completedHubTournamentGame.result.winnerId === controlledProgramId
 
     matchup = (
       <CompletedMatchupCard
         roundLabel={formatTournamentRoundName(completedHubTournamentGame.game.round)}
+        siteLabel="Neutral"
         overtimeTag={formatOvertimeTag(
           completedHubTournamentGame.result.overtimePeriods,
         )}
@@ -276,12 +291,23 @@ export function PostseasonHubScreen() {
             completedHubTournamentGame.result.winnerId === awayProgram.id,
         }}
         resultLabel={
-          championProgramId === controlledProgramId
-            ? 'National Champions'
-            : isEliminated
-              ? 'Tournament Run Ends'
-              : `${controlledProgram.name} Advances`
+          formatTournamentQuickResult(
+            controlledProgram.name,
+            completedHubTournamentGame.game.round,
+            championProgramId === controlledProgramId
+              ? 'champion'
+              : isEliminated || !controlledWon
+                ? 'eliminated'
+                : 'advanced',
+          )
         }
+        leaders={deriveGameLeaders(
+          completedHubTournamentGame.result,
+          postseason.programStates[completedHubTournamentGame.result.homeTeamId]!
+            .team,
+          postseason.programStates[completedHubTournamentGame.result.awayTeamId]!
+            .team,
+        )}
         onViewBoxScore={() =>
           viewCompletedTournamentGame(completedHubTournamentGame.game.id)
         }
@@ -449,9 +475,23 @@ export function PostseasonHubScreen() {
           hasOtherSimulatableGames &&
           currentRound && (
           <div className="round-progress">
-            <p className="round-progress__text">
-              {formatTournamentRoundName(currentRound)} in progress
-            </p>
+            <div>
+              <p className="round-progress__text">
+                {formatTournamentProgressRoundName(currentRound)} —{' '}
+                {describeRoundProgress(
+                  roundGameCount - pendingRoundGames.length,
+                  roundGameCount,
+                )}
+              </p>
+              {completedHubTournamentGame && pendingRoundGames.length > 0 && (
+                <p className="round-progress__detail">
+                  {describeRemainingTournamentGames(
+                    currentRound,
+                    pendingRoundGames.length,
+                  )}
+                </p>
+              )}
+            </div>
             <button
               type="button"
               className="button button--ghost"

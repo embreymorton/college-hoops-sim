@@ -22,6 +22,58 @@ export function formatTournamentRoundName(round: TournamentRound): string {
   return TOURNAMENT_ROUND_NAMES[round]
 }
 
+/** Slightly fuller label used in count-based round-progression copy. */
+export function formatTournamentProgressRoundName(
+  round: TournamentRound,
+): string {
+  return round === 'championship'
+    ? 'National Championship'
+    : formatTournamentRoundName(round)
+}
+
+export function describeRemainingTournamentGames(
+  round: TournamentRound,
+  remainingGames: number,
+): string {
+  if (remainingGames === 1) {
+    const singular: Record<TournamentRound, string> = {
+      'round-of-16': 'Round of 16 game',
+      quarterfinals: 'quarterfinal',
+      semifinals: 'semifinal',
+      championship: 'championship game',
+    }
+
+    return `Advance will simulate the remaining ${singular[round]}.`
+  }
+
+  const plural: Record<TournamentRound, string> = {
+    'round-of-16': 'Round of 16 games',
+    quarterfinals: 'quarterfinals',
+    semifinals: 'semifinals',
+    championship: 'championship games',
+  }
+
+  return `Advance will simulate the remaining ${remainingGames} ${plural[round]}.`
+}
+
+export function formatTournamentQuickResult(
+  programName: string,
+  round: TournamentRound,
+  outcome: 'advanced' | 'eliminated' | 'champion',
+): string {
+  if (outcome === 'champion') {
+    return 'National Champions'
+  }
+
+  if (outcome === 'eliminated') {
+    return 'Tournament Run Ends'
+  }
+
+  return round === 'semifinals'
+    ? `${programName} Advances to the National Championship`
+    : `${programName} Advances`
+}
+
 export function formatSeedLabel(seed: number): string {
   return `#${seed}`
 }
