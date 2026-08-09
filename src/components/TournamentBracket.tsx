@@ -15,9 +15,10 @@ export interface BracketSlot {
   readonly gameId: string
   readonly round: TournamentRound
   readonly index: number
-  /** Null while this slot's participant is not yet resolved (an earlier winner). */
-  readonly home: BracketSlotParticipant | null
-  readonly away: BracketSlotParticipant | null
+  /** Canonical first source slot; null while unresolved, never home orientation. */
+  readonly top: BracketSlotParticipant | null
+  /** Canonical second source slot; null while unresolved, never away orientation. */
+  readonly bottom: BracketSlotParticipant | null
   readonly isComplete: boolean
   readonly isUpset: boolean
 }
@@ -81,12 +82,12 @@ export function TournamentBracket({ slots, onSelectGame }: TournamentBracketProp
 }
 
 function slotAriaLabel(slot: BracketSlot): string | undefined {
-  if (!slot.isComplete || !slot.home || !slot.away) {
+  if (!slot.isComplete || !slot.top || !slot.bottom) {
     return undefined
   }
 
-  const winner = slot.home.isWinner ? slot.home : slot.away
-  const loser = slot.home.isWinner ? slot.away : slot.home
+  const winner = slot.top.isWinner ? slot.top : slot.bottom
+  const loser = slot.top.isWinner ? slot.bottom : slot.top
 
   return `${formatTournamentRoundName(slot.round)}: ${winner.name} defeated ${loser.name}, ${winner.score}-${loser.score}`
 }
@@ -100,8 +101,8 @@ function BracketSlotCard({
 }) {
   const rows = (
     <>
-      <BracketParticipantRow participant={slot.home} />
-      <BracketParticipantRow participant={slot.away} />
+      <BracketParticipantRow participant={slot.top} />
+      <BracketParticipantRow participant={slot.bottom} />
     </>
   )
 
@@ -110,6 +111,7 @@ function BracketSlotCard({
       <button
         type="button"
         className="bracket-slot bracket-slot--complete"
+        data-game-id={slot.gameId}
         onClick={() => onSelectGame(slot.gameId)}
         aria-label={slotAriaLabel(slot)}
       >
@@ -119,7 +121,11 @@ function BracketSlotCard({
     )
   }
 
-  return <div className="bracket-slot">{rows}</div>
+  return (
+    <div className="bracket-slot" data-game-id={slot.gameId}>
+      {rows}
+    </div>
+  )
 }
 
 function BracketParticipantRow({

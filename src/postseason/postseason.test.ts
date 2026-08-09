@@ -28,6 +28,7 @@ import {
   rankAutomaticQualifiers,
   rankAtLargeCandidates,
   recordTournamentGameResult,
+  resolveTournamentGameParticipantSlots,
   resolveTournamentGameParticipants,
   selectNationalTournamentField,
   simulatePendingGamesInTournamentRound,
@@ -478,6 +479,55 @@ describe('postseason state and progression', () => {
         )
       : []
     expect(seeds).toEqual([9, 16])
+  })
+
+  it('projects future bracket sources independently without making the game ready early', () => {
+    const futureGameId = 'national-qf-g1'
+    expect(
+      resolveTournamentGameParticipantSlots(initialPostseason, futureGameId),
+    ).toEqual([undefined, undefined])
+    expect(
+      resolveTournamentGameParticipants(initialPostseason, futureGameId),
+    ).toBeUndefined()
+
+    let current = initialPostseason
+    const firstFeeder = resolveTournamentGameParticipants(
+      current,
+      'national-r16-g1',
+    )!
+    current = recordTournamentGameResult(
+      current,
+      'national-r16-g1',
+      manualResult(firstFeeder, firstFeeder.awayProgramId),
+    )
+
+    expect(
+      resolveTournamentGameParticipantSlots(current, futureGameId),
+    ).toEqual([firstFeeder.awayProgramId, undefined])
+    expect(
+      resolveTournamentGameParticipants(current, futureGameId),
+    ).toBeUndefined()
+
+    const secondFeeder = resolveTournamentGameParticipants(
+      current,
+      'national-r16-g2',
+    )!
+    current = recordTournamentGameResult(
+      current,
+      'national-r16-g2',
+      manualResult(secondFeeder, secondFeeder.homeProgramId),
+    )
+
+    expect(
+      resolveTournamentGameParticipantSlots(current, futureGameId),
+    ).toEqual([
+      firstFeeder.awayProgramId,
+      secondFeeder.homeProgramId,
+    ])
+    expect(resolveTournamentGameParticipants(current, futureGameId)).toEqual({
+      homeProgramId: secondFeeder.homeProgramId,
+      awayProgramId: firstFeeder.awayProgramId,
+    })
   })
 
   it('bulk-simulates only ready pending games, preserves results, and respects exclusions', () => {

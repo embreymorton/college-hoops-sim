@@ -40,6 +40,7 @@ The project currently includes:
 - Super Sim V0 with confirmed pacing checkpoints through Round 12 or Round 24 using the canonical Season simulation pipeline
 - Player Season Stats V0 with individual, Program-wide, and Season-wide derived totals/rates plus chronological DNP-aware Player game logs
 - Postseason Domain / Simulation V0 with results-only qualification, protected Conference-champion seeds, a fixed neutral-site bracket, carried Team/Rotation state, deterministic advancement, full tournament box scores, and National Champion derivation
+- Postseason Presentation V0 with regular-season entry, the 16-Team field and fixed bracket, qualified/alive, eliminated, and did-not-qualify flows, Tournament Quick Sim and Rotation Management, AI round progression, historical Tournament box scores, and National Champion presentation
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
@@ -75,7 +76,7 @@ The application layer lets one controlled Program complete the full 24-round reg
 
 Legal Rotation changes persist in `SeasonState` and affect later games regardless of pacing path. Every completed result is final and retains its full Player box scores. The Hub derives records, current round, standings, Recent Results, and Schedule presentation from Season facts rather than maintaining duplicate UI truth.
 
-## Complete single-season basketball backend
+## Complete single-season basketball experience
 
 The project can now complete the basketball lifecycle for one Season:
 
@@ -91,18 +92,12 @@ Program selection
 
 Postseason V0 includes automatic qualification through existing regular-season Conference standings, deterministic results-only at-large selection, protected Conference-champion seeds 1–4, at-large seeds 5–16, fixed bracket generation, neutral-site game simulation, exact Team and Rotation carryover, legal between-game Rotation changes, result-derived advancement, National Champion derivation, structured validation, and complete retained `PlayerGameStats` for all 15 tournament games.
 
-This is currently a domain/simulation capability, not a browser workflow. Postseason React presentation, Selection presentation, bracket navigation, tournament controls, and historical tournament box-score screens remain unimplemented.
-
-## Next presentation milestone
-
-> **Postseason Presentation V0 — NEXT:** expose the accepted tournament field, bracket, progression, results, and champion through the application without duplicating Postseason rules in React or Zustand.
-
-The application/session layer will eventually own both the completed regular-season `SeasonState` and active `PostseasonState`. Postseason initialization and progression must preserve the completed regular-season facts.
+The browser exposes this lifecycle through the Tournament Hub, canonical bracket, controlled-Program matchup flow, Quick Sim, Rotation Management, AI rest-of-round progression, historical result inspection, and National Champion endpoint. Qualified/alive, eliminated, and did-not-qualify are distinct legitimate states; elimination or non-qualification does not prevent the wider Tournament from completing.
 
 ## Next major systems phase
 
 > **Dynasty Loop — NEXT:** turn the accepted single-season basketball loop into a multi-season game.
 
-Postseason Presentation is the immediate UI milestone, while the next major systems design phase is the Dynasty Loop. Progression, graduation, recruiting, and offseason formulas require separate design and are not defined here.
+Progression, graduation, recruiting, and offseason formulas require separate design and are not defined here. Player Season Stats presentation remains an optional smaller UI opportunity and does not reopen the completed Postseason milestone.
 
 The project also does not yet contain recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as secondary development tooling.

@@ -206,4 +206,6 @@ Tournament results are final canonical facts and retain both Teams' complete Pla
 
 Player Season Stats V0 remains regular-season-only. Postseason `GameResult` values preserve the full `PlayerGameStats` needed for future postseason, combined-season, career, or tournament-record projections, but none of those aggregate systems exists yet.
 
-Postseason Domain / Simulation V0 completes the single-season basketball backend from regular season through National Champion. Postseason presentation is still pending, so the browser does not yet expose tournament selection, bracket navigation, or tournament play.
+Postseason Presentation V0 exposes the accepted single-season lifecycle from the completed regular season through National Champion. The Tournament Hub presents the selected field and canonical bracket, focuses the controlled Program's next neutral-site matchup while it is qualified and alive, supports Tournament Quick Sim and legal Rotation changes, and retains completed results for historical box-score inspection.
+
+The controlled Program has three legitimate Tournament outcomes: qualified/alive, eliminated, or did not qualify. Elimination and non-qualification receive distinct presentation states but do not stop the wider Tournament; AI progression remains available until the bracket derives a National Champion. React and Zustand present and orchestrate these states without owning selection, advancement, or champion rules.

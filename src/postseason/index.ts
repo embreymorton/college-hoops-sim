@@ -11,6 +11,7 @@ export {
   getTournamentGame,
   getTournamentGameForProgram,
   isTournamentComplete,
+  resolveTournamentGameParticipantSlots,
   resolveTournamentGameParticipants,
 } from './queries'
 export {

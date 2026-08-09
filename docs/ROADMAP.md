@@ -98,7 +98,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 021 | Super Sim V0 | COMPLETE |
 | 022 | Player Season Stats V0 | COMPLETE |
 | 023 | Postseason Domain / Simulation V0 | COMPLETE |
-| 024 | Postseason Presentation V0 | NEXT |
+| 024 | Postseason Presentation V0 | COMPLETE |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
@@ -201,11 +201,13 @@ The complete fixed bracket contains eight Round-of-16 games, four quarterfinals,
 
 Accepted validation completed 384 of 384 regular-season games, selected 16 Programs with four automatic and 12 at-large bids, completed and validated all 15 tournament games, reproduced same-seed tournaments, preserved ready-game execution-order independence, changed outcomes under a different simulation seed, derived the National Champion, retained complete Player box scores, and confirmed neutral-site simulation removes the normal home-court modifier.
 
-The core single-season basketball backend is now complete from Program initialization through National Champion.
+The core single-season basketball experience is now complete from Program initialization through National Champion.
 
-### Postseason Presentation V0 — NEXT UI MILESTONE
+### Postseason Presentation V0 — COMPLETE
 
-No Postseason React or Zustand workflow exists yet. The next presentation slice may consume the accepted field, bid types, seeds, fixed bracket, round progression, completed results, champion, and historical tournament box scores. The application/session layer will eventually retain the completed regular-season `SeasonState` alongside the active `PostseasonState`; initializing or progressing the tournament must not mutate or replace completed regular-season facts. This pending UI distinction does not reopen the accepted Postseason domain and simulation rules.
+The completed regular season now transitions into a React Tournament Hub backed by an active `PostseasonState`. The browser presents the 16-Team field, bid types and seeds, canonical fixed bracket, controlled Program matchup and neutral-site Quick Sim, Tournament Rotation Management, AI rest-of-round progression, eliminated and did-not-qualify states, historical Tournament box scores, and the derived National Champion endpoint. The wider Tournament remains playable when the controlled Program loses or does not qualify.
+
+Zustand retains the completed `SeasonState` alongside the active `PostseasonState` and coordinates navigation, drafts, and user actions. It delegates selection, participant resolution, progression, results, and champion derivation to the public Postseason API, so presentation does not duplicate Tournament rules or mutate completed regular-season facts.
 
 ## Phase 5 — Dynasty Loop — NEXT MAJOR SYSTEMS PHASE
 

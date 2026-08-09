@@ -16,6 +16,7 @@ import {
   getPendingGamesForTournamentRound,
   getTournamentGameForProgram,
   isTournamentComplete,
+  resolveTournamentGameParticipantSlots,
   resolveTournamentGameParticipants,
   TOURNAMENT_ROUNDS,
   type PostseasonState,
@@ -74,32 +75,39 @@ function buildBracketSlots(
   }
 
   return postseason.bracket.games.map((game) => {
-    const participants = resolveTournamentGameParticipants(postseason, game.id)
+    const [topProgramId, bottomProgramId] =
+      resolveTournamentGameParticipantSlots(postseason, game.id)
     const result = postseason.resultsByGameId[game.id]
-    const home = buildParticipant(
-      participants?.homeProgramId,
-      result ? result.homeScore : null,
-      Boolean(result && participants && result.winnerId === participants.homeProgramId),
+    const scoreFor = (programId: string | undefined): number | null => {
+      if (!result || !programId) return null
+      return result.homeTeamId === programId
+        ? result.homeScore
+        : result.awayScore
+    }
+    const top = buildParticipant(
+      topProgramId,
+      scoreFor(topProgramId),
+      Boolean(result && topProgramId && result.winnerId === topProgramId),
     )
-    const away = buildParticipant(
-      participants?.awayProgramId,
-      result ? result.awayScore : null,
-      Boolean(result && participants && result.winnerId === participants.awayProgramId),
+    const bottom = buildParticipant(
+      bottomProgramId,
+      scoreFor(bottomProgramId),
+      Boolean(result && bottomProgramId && result.winnerId === bottomProgramId),
     )
 
     const isUpset = Boolean(
       result &&
-        home &&
-        away &&
-        (home.isWinner ? home.seed > away.seed : away.seed > home.seed),
+        top &&
+        bottom &&
+        (top.isWinner ? top.seed > bottom.seed : bottom.seed > top.seed),
     )
 
     return {
       gameId: game.id,
       round: game.round,
       index: game.index,
-      home,
-      away,
+      top,
+      bottom,
       isComplete: Boolean(result),
       isUpset,
     }
@@ -372,7 +380,7 @@ export function PostseasonHubScreen() {
               className="button button--ghost"
               onClick={simulateRestOfCurrentTournamentRound}
             >
-              Simulate Rest of Round
+              Simulate Other Games
             </button>
           </div>
         )}

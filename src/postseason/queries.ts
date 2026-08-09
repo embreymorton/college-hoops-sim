@@ -37,14 +37,32 @@ export function getTournamentGame(
   return game
 }
 
+/**
+ * Resolves each canonical participant source independently for bracket
+ * presentation. Tuple order always matches `participantSources`; it does not
+ * imply designated-home orientation while either source remains unresolved.
+ */
+export function resolveTournamentGameParticipantSlots(
+  postseason: PostseasonState,
+  tournamentGameId: string,
+): readonly [string | undefined, string | undefined] {
+  const game = getTournamentGame(postseason, tournamentGameId)
+
+  return [
+    resolveSource(postseason, game.participantSources[0]),
+    resolveSource(postseason, game.participantSources[1]),
+  ]
+}
+
 /** Resolves sources and orients the lower numeric seed as designated home. */
 export function resolveTournamentGameParticipants(
   postseason: PostseasonState,
   tournamentGameId: string,
 ): ResolvedTournamentParticipants | undefined {
-  const game = getTournamentGame(postseason, tournamentGameId)
-  const first = resolveSource(postseason, game.participantSources[0])
-  const second = resolveSource(postseason, game.participantSources[1])
+  const [first, second] = resolveTournamentGameParticipantSlots(
+    postseason,
+    tournamentGameId,
+  )
   if (!first || !second) return undefined
 
   return seedFor(postseason, first) < seedFor(postseason, second)

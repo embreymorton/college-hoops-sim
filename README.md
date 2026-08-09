@@ -8,8 +8,9 @@ A deterministic fictional college basketball dynasty simulator built with React,
 - Fictional Universe V0: 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
 - Season experience: serializable Season State, AI round simulation, Conference standings, Dashboard Quick Sim, Super Sim, historical results, and derived Player Season Stats/game logs.
 - Postseason Domain / Simulation V0: four Conference-champion automatic bids, 12 at-large bids, protected champion seeds 1–4, a fixed 16-Team bracket, neutral-site simulation, full tournament box scores, and National Champion derivation.
+- Postseason Presentation V0: regular-season-to-Tournament entry, the 16-Team field and fixed bracket, qualified/alive, eliminated, and did-not-qualify flows, Tournament Quick Sim and Rotation Management, rest-of-round AI progression, historical Tournament box scores, and National Champion presentation.
 
-The React application currently exposes the complete regular season, but not the accepted tournament backend. **Postseason Presentation V0 is the next UI milestone.** The Dynasty Loop is the next major systems phase after the single-season experience is fully exposed; persistence and history remain later work.
+The React application now exposes the complete single-season basketball flow from Program selection through National Champion. The Dynasty Loop is the next major systems phase; recruiting, progression, offseason transition, persistence, and history remain later work.
 
 ## Commands
 

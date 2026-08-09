@@ -57,17 +57,23 @@ Postseason V0 intentionally permits same-Conference Round-of-16 matchups under i
 
 Because Conference opponents already play a regular-season double round robin, repeated first-round matchups may eventually make tournament draws feel less fresh. A future improvement could preserve seed lines and bracket fairness while avoiding same-Conference Round-of-16 matchups where possible. Any such system must remain deterministic, avoid materially distorting seed value, terminate reliably, and never depend on an uncontrolled random retry loop. Do not implement this now; revisit after gameplay experience or universe expansion. This is a presentation/game-design quality watchpoint, not an MVP blocker.
 
-### P3 — UI stylesheet growth
-
-The primary application stylesheet has grown substantially as the Season UI has expanded. This is not currently a functional or performance problem, and architectural cleanliness alone does not justify a CSS refactor before Postseason Presentation.
-
-If tournament and bracket styles make the main stylesheet difficult to navigate or create accidental cross-feature coupling, consider a small feature-level boundary such as `src/styles.css` plus `src/postseason.css`, or another minimal organization consistent with the project. Do not introduce CSS Modules, Tailwind, CSS-in-JS, or another styling framework without a separate reason. This is a maintainability watchpoint, not an MVP blocker.
-
 ### P3 — Application session store growth
 
-The current Zustand Season/application store has grown while coordinating the controlled Program, `SeasonState`, presentation navigation, Quick Sim, Super Sim, and historical-result viewing. Postseason Presentation will add orchestration for the active `PostseasonState` alongside the completed regular season.
+The current Zustand application/session store owns the controlled Program, completed `SeasonState`, active `PostseasonState`, regular-season and Tournament Rotation drafts, viewed-result IDs, navigation, Quick Sim, Super Sim, and round progression. It remains manageable at the current scale.
 
-Do not refactor or rename the store preemptively. If tournament integration makes it difficult to reason about, consider extracting small Postseason-specific orchestration helpers while preserving one clear application/session state boundary. Do not move basketball rules into Zustand, duplicate Postseason-derived state, or introduce a large generalized state framework. A future Dynasty root state is the more appropriate time to reconsider top-level store naming and organization. This is a maintainability watchpoint, not an MVP blocker.
+Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball and Tournament rules in their domain layers, and avoid duplicate derived state or a generalized state framework. Reconsider the top-level boundary when Dynasty introduces multi-season lifecycle state. This is a maintainability watchpoint, not an MVP blocker.
+
+### P3 — Render-time navigation side effects
+
+Some regular-season and Postseason screens defensively handle stale or invalid presentation state by invoking Zustand navigation actions during React render. This appears to be fallback behavior rather than a normal product path, but state updates during render can become problematic under Strict Mode or more complex navigation.
+
+Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
+
+## Resolved / monitor-only
+
+### P3 — UI stylesheet boundary
+
+Postseason Presentation established the anticipated feature-level boundary with `src/styles.css` plus `src/postseason.css`. This addresses the original stylesheet-growth concern at the current scale; monitor for real cross-feature coupling, but do not perform another CSS refactor merely for organization.
 
 ## Accepted non-issues
 

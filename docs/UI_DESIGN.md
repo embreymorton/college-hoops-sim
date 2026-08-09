@@ -71,18 +71,12 @@ The six-program Exhibition workflow may remain accessible as secondary developme
 
 Player Season Stats V0 now provides public domain APIs capable of powering future Team Player-stat tables, Player profiles, Player game logs, and Team leaders. None of those presentation surfaces is implemented or designed yet.
 
-## Postseason Presentation V0 — next UI milestone
+## Postseason Presentation V0 — accepted and implemented
 
-Postseason Domain / Simulation V0 is complete, but no Postseason React or Zustand workflow exists. The browser does not yet present Selection, enter tournament play, navigate a bracket, or display a National Champion.
+Postseason extends the existing Season visual language rather than redesigning it. A completed regular season enters a Tournament Hub that presents the selected 16-Team field, automatic/at-large bids, seeds, and the canonical fixed bracket. While the controlled Program is qualified and alive, its neutral-site matchup is the primary focus with Tournament Quick Sim and optional Rotation Management. The AI-only secondary action is labeled **Simulate Other Games** while that controlled game remains pending; after it is complete, **Simulate Rest of Round** advances the remaining bracket.
 
-Future Postseason presentation can consume the existing public domain support for:
+Eliminated and did-not-qualify are separate, explicit states with no fake matchup or Rotation action. In both cases the wider Tournament remains simulatable through the National Champion endpoint. Every completed bracket game can reopen its stored final score and full historical Player box score without re-simulation.
 
-- the selected 16-Team field, automatic/at-large bid type, and seeds;
-- the fixed bracket and resolved participants;
-- ready, pending, and completed games by tournament round;
-- stored final scores and complete historical Player box scores; and
-- the derived National Champion.
+The bracket follows its fixed source paths and progressively reveals resolved Programs while unresolved feeder sources remain `TBD`. It uses readable top/bottom source-slot order for presentation; designated home/away orientation remains a simulation-ready Postseason concern. The bracket stays horizontally scrollable on narrow screens rather than compressing every round beyond readability.
 
-This is capability context, not a detailed UI design. The accepted Season UI remains unchanged, and future Postseason presentation must consume canonical Postseason facts and projections rather than recreate selection, advancement, or champion logic in React or Zustand. Recruiting and Dynasty history also remain future screens.
-
-The application/session layer will eventually retain the completed regular-season `SeasonState` alongside the active `PostseasonState`. Entering or progressing Postseason must not mutate or replace the completed regular-season facts.
+Postseason-specific styles live in `src/postseason.css` beside the shared `src/styles.css`, establishing a small feature-level styling boundary. React and Zustand consume public Postseason facts and projections and do not recreate selection, advancement, result, or champion logic. Recruiting and Dynasty history remain future screens.

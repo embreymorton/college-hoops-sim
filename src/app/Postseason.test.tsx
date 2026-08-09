@@ -7,6 +7,7 @@ import {
   getTournamentGameForProgram,
   isTournamentComplete,
   recordTournamentGameResult,
+  resolveTournamentGameParticipantSlots,
   resolveTournamentGameParticipants,
   simulatePendingGamesInTournamentRound,
   TOURNAMENT_ROUNDS,
@@ -219,6 +220,11 @@ describe('Postseason — qualified and alive', () => {
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
+    expect(
+      screen.getByRole('button', {
+        name: /simulate rest of round of 16 & continue/i,
+      }),
+    ).toBeInTheDocument()
     clickButtonByText(/simulate rest of round of 16 & continue/i)
 
     const state = useSeasonStore.getState()
@@ -314,19 +320,110 @@ describe('Postseason — did not qualify', () => {
 })
 
 describe('Postseason — bracket and historical results', () => {
-  it('renders canonical seeds and distinguishes resolved from unresolved slots', () => {
+  it('reveals future participants one feeder at a time, then preserves completed scores and winner styling', () => {
     useSeasonStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
-    const bracket = document.querySelector('.tournament-bracket') as HTMLElement
-    expect(within(bracket).getAllByText('TBD').length).toBeGreaterThan(0)
+    const initial = useSeasonStore.getState()
+    const currentRound = getCurrentTournamentRound(initial.postseason!)!
+    const controlledGame = getTournamentGameForProgram(
+      initial.postseason!,
+      initial.controlledProgramId!,
+      currentRound,
+    )!
+    const futureGame = initial.postseason!.bracket.games.find(
+      (game) =>
+        game.round === 'quarterfinals' &&
+        game.participantSources.some(
+          (source) =>
+            source.type === 'winner' && source.gameId === controlledGame.id,
+        ),
+    )!
+    const otherFeeder = futureGame.participantSources.find(
+      (source) =>
+        source.type === 'winner' && source.gameId !== controlledGame.id,
+    )!
+    if (otherFeeder.type !== 'winner') {
+      throw new Error('Expected the Quarterfinal slot to have a second feeder.')
+    }
+
+    const getSlot = (gameId: string): HTMLElement =>
+      document.querySelector(`[data-game-id="${gameId}"]`) as HTMLElement
+
+    expect(
+      within(getSlot(futureGame.id)).getAllByText('TBD'),
+    ).toHaveLength(2)
+    expect(
+      screen.getByRole('button', { name: /^simulate other games$/i }),
+    ).toBeInTheDocument()
+
+    clickButtonByText(/^simulate other games$/i)
+
+    const partial = useSeasonStore.getState()
+    expect(partial.postseason!.resultsByGameId[controlledGame.id]).toBeUndefined()
+    expect(partial.postseason!.resultsByGameId[otherFeeder.gameId]).toBeDefined()
+    const partialSlots = resolveTournamentGameParticipantSlots(
+      partial.postseason!,
+      futureGame.id,
+    )
+    expect(partialSlots.filter(Boolean)).toHaveLength(1)
+    const knownProgramId = partialSlots.find(Boolean)!
+    const knownProgram = UNIVERSE_V0.programs.find(
+      (program) => program.id === knownProgramId,
+    )!
+    const partialSlot = getSlot(futureGame.id)
+    expect(within(partialSlot).getAllByText('TBD')).toHaveLength(1)
+    expect(within(partialSlot).getByText(knownProgram.name)).toBeInTheDocument()
 
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/simulate rest of round of 16 & continue/i)
+    clickButtonByText(/return to tournament hub/i)
 
-    const round1Slots = document.querySelectorAll('.bracket-slot--complete')
-    expect(round1Slots.length).toBe(8)
+    const completed = useSeasonStore.getState()
+    const resolvedSlots = resolveTournamentGameParticipantSlots(
+      completed.postseason!,
+      futureGame.id,
+    )
+    expect(resolvedSlots.every(Boolean)).toBe(true)
+    const resolvedSlot = getSlot(futureGame.id)
+    expect(within(resolvedSlot).queryByText('TBD')).not.toBeInTheDocument()
+    for (const programId of resolvedSlots) {
+      const program = UNIVERSE_V0.programs.find(
+        (candidate) => candidate.id === programId,
+      )!
+      expect(within(resolvedSlot).getByText(program.name)).toBeInTheDocument()
+    }
+
+    const result = completed.postseason!.resultsByGameId[controlledGame.id]!
+    const completedSlot = getSlot(controlledGame.id)
+    expect(completedSlot).toHaveClass('bracket-slot--complete')
+    const renderedScores = [...completedSlot.querySelectorAll('.bracket-slot__score')]
+      .map((element) => element.textContent)
+    expect(renderedScores).toEqual(
+      expect.arrayContaining([String(result.homeScore), String(result.awayScore)]),
+    )
+    const winner = UNIVERSE_V0.programs.find(
+      (program) => program.id === result.winnerId,
+    )!
+    const winnerRow = completedSlot.querySelector(
+      '.bracket-slot__row[data-winner="true"]',
+    ) as HTMLElement
+    expect(within(winnerRow).getByText(new RegExp(winner.name))).toBeInTheDocument()
+    const loserId =
+      result.homeTeamId === result.winnerId
+        ? result.awayTeamId
+        : result.homeTeamId
+    const winnerSeed = completed.postseason!.field.find(
+      (entry) => entry.programId === result.winnerId,
+    )!.seed
+    const loserSeed = completed.postseason!.field.find(
+      (entry) => entry.programId === loserId,
+    )!.seed
+    if (winnerSeed > loserSeed) {
+      expect(within(completedSlot).getByText('Upset')).toBeInTheDocument()
+    } else {
+      expect(within(completedSlot).queryByText('Upset')).not.toBeInTheDocument()
+    }
   })
 
   it('opens a completed Tournament game as a read-only historical result with the full box score', () => {
