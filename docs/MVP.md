@@ -73,8 +73,8 @@ Legal Rotation changes persist in `SeasonState` and affect later games regardles
 
 ## Next major acceptance target
 
-> **Postseason V0 — NEXT:** design and then implement the next major basketball loop after the accepted regular season.
+> **Postseason V0 — ACTIVE:** validate the accepted deterministic 16-Team national-tournament backend after the completed regular season.
 
-Postseason does not exist yet. Tournament size, qualification, seeding, bracket structure, and advancement rules require an explicit design decision before implementation.
+The accepted backend structure is four Conference-champion automatic bids protected at seeds 1–4 plus 12 results-only at-large bids, feeding a fixed 15-game neutral-site bracket. It remains under human review and has no Postseason UI yet.
 
 The project also does not yet contain recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as secondary development tooling.

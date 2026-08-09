@@ -97,7 +97,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 020 | Season UX Polish V0 | COMPLETE |
 | 021 | Super Sim V0 | COMPLETE |
 | 022 | Player Season Stats V0 | COMPLETE |
-| 023 | Postseason V0 design and implementation | NEXT |
+| 023 | Postseason V0 design and implementation | ACTIVE |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
@@ -190,11 +190,11 @@ The accepted pure projections support individual, Program-wide, and Season-wide 
 
 No Player totals, averages, percentages, or game logs are stored as mutable `SeasonState` counters. Inspection completed all 384 regular-season games, derived 384 current-roster Player lines, and passed raw-total reconciliation, games-played, finite-number, chronological-order, and JSON-serialization checks.
 
-## Phase 4 — Postseason V0 — NEXT
+## Phase 4 — Postseason V0 — ACTIVE
 
-> Design the Postseason V0 rules and acceptance contract, then implement postseason progression through the existing deterministic game and Season boundaries.
+> Feed a completed regular season into the accepted fixed 16-Team national tournament through deterministic selection, seeding, neutral-site simulation, and result-derived advancement.
 
-Tournament size, qualification, seeding, bracket structure, scheduling, and history requirements are not yet accepted. They must be designed before implementation rather than inferred from Universe V0's 32-Program configuration. Conference tournaments remain optional unless explicitly scoped.
+The accepted backend slice uses four regular-season Conference champions as protected seeds 1–4, 12 results-only at-large selections as seeds 5–16, and a fixed 15-game single-elimination bracket. Implementation is under validation and human review; this milestone is not marked complete, and Postseason presentation remains a later dedicated slice. Conference tournaments are not part of V0.
 
 ## Phase 5 — Dynasty Loop — PLANNED
 

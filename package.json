@@ -18,6 +18,7 @@
     "sim:season-state": "node --import tsx scripts/inspectSeasonState.ts",
     "sim:season": "node --import tsx scripts/inspectSeason.ts",
     "sim:player-stats": "node --import tsx scripts/inspectPlayerStats.ts",
+    "sim:postseason": "node --import tsx scripts/inspectPostseason.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

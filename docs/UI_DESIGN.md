@@ -71,4 +71,4 @@ The six-program Exhibition workflow may remain accessible as secondary developme
 
 Player Season Stats V0 now provides public domain APIs capable of powering future Team Player-stat tables, Player profiles, Player game logs, and Team leaders. None of those presentation surfaces is implemented or designed yet.
 
-Postseason V0 is the next major feature area, beginning with rules and interaction design. No postseason UI, tournament format, qualification rule, seed model, or bracket structure is currently accepted or implemented. Recruiting and Dynasty history also remain future screens.
+Postseason V0 backend rules now define a 16-Team fixed national tournament, but no Postseason UI or interaction design is implemented. Selection presentation, bracket presentation, Recruiting, and Dynasty history remain future screens.

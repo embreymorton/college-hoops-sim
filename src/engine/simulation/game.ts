@@ -16,7 +16,11 @@ export interface SimulateGameOptions {
   homeRotation: Rotation
   awayRotation: Rotation
   seed: RngSeed
+  /** Defaults to the existing home-site behavior for backward compatibility. */
+  site?: GameSite
 }
+
+export type GameSite = 'home' | 'neutral'
 
 /** Serializable final outcome and full-roster traditional box scores. */
 export interface GameResult {
@@ -71,8 +75,10 @@ function nextStandardNormal(rng: Rng): number {
 function calculateExpectedScores(
   homeStrength: TeamStrength,
   awayStrength: TeamStrength,
+  site: GameSite,
 ): ExpectedScores {
-  const homeCourtPerTeam = GAME_SIMULATION_CONFIG.homeCourtMargin / 2
+  const homeCourtPerTeam =
+    site === 'home' ? GAME_SIMULATION_CONFIG.homeCourtMargin / 2 : 0
 
   return {
     home:
@@ -159,6 +165,7 @@ export function simulateGame({
   homeRotation,
   awayRotation,
   seed,
+  site = 'home',
 }: SimulateGameOptions): GameResult {
   if (homeTeam.id === awayTeam.id) {
     throw new RangeError('Home and away teams must have different IDs')
@@ -166,7 +173,11 @@ export function simulateGame({
 
   const homeStrength = calculateTeamStrength(homeTeam, homeRotation)
   const awayStrength = calculateTeamStrength(awayTeam, awayRotation)
-  const expectedScores = calculateExpectedScores(homeStrength, awayStrength)
+  const expectedScores = calculateExpectedScores(
+    homeStrength,
+    awayStrength,
+    site,
+  )
   const rng = createRng(seed)
   const regulation = simulateRegulationScores(expectedScores, rng)
   let homeScore = regulation.home

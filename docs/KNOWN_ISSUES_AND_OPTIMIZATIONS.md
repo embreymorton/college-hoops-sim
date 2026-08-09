@@ -45,6 +45,12 @@ Player Season Stats inspection observed a Season in which all 12 Charlotte Tech 
 
 The future balance question is whether accepted Rotation V0 eventually needs tighter seven-to-ten-Player regular rotations, occasional deep-bench DNPs, or more situational participation. Do not tune Rotation generation now. Revisit only if universal bench participation makes roster management less meaningful, Player season production less believable, or future development decisions less interesting. This is a low-priority design watchpoint, not an implementation defect or MVP blocker.
 
+### P3 — Protected conference-champion top-four seeds may need revisiting after universe expansion
+
+Postseason V0 intentionally guarantees every regular-season Conference champion a protected seed in the top four. This works cleanly for the current 32 Programs, four Conferences, and 16-Team field because there are exactly four Conference champions, and it intentionally makes Conference titles highly valuable.
+
+If the universe later adds substantially more Programs or Conferences, expands the tournament field, introduces Conference tournaments, or develops materially different Conference strengths, automatic qualification and top-seed protection should be reconsidered separately. Future options could include automatic bids without top-four protection, champion seed floors, selection/seeding ratings, or Conference-tournament automatic bids. Do not change V0 behavior now; this is a scaling/design watchpoint, not a bug or MVP blocker.
+
 ## Accepted non-issues
 
 - A high correlation between initial Team Strength and average wins across many seasons is expected because averaging removes game-level variance. Do not tune the simulator solely for that observation; revisit only if individual seasons become too deterministic.

@@ -47,6 +47,7 @@ export type { Rng, RngSeed } from './random'
 export { simulateGame } from './simulation'
 export type {
   GameResult,
+  GameSite,
   PlayerGameStats,
   SimulateGameOptions,
 } from './simulation'

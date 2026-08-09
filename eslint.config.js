@@ -53,6 +53,7 @@ export default defineConfig([
                 '**/components/**',
                 '**/store/**',
                 '**/universe/**',
+                '**/postseason/**',
               ],
               message: 'UI and application layers may depend on the engine, never the reverse.',
             },
@@ -94,6 +95,7 @@ export default defineConfig([
                 '**/components/**',
                 '**/demo/**',
                 '**/store/**',
+                '**/postseason/**',
               ],
               message: 'Presentation and application layers may depend on the universe, never the reverse.',
             },
@@ -135,6 +137,7 @@ export default defineConfig([
                 '**/components/**',
                 '**/demo/**',
                 '**/store/**',
+                '**/postseason/**',
               ],
               message: 'Presentation and application layers may depend on schedules, never the reverse.',
             },
@@ -176,8 +179,45 @@ export default defineConfig([
                 '**/components/**',
                 '**/demo/**',
                 '**/store/**',
+                '**/postseason/**',
               ],
               message: 'Presentation and application layers may depend on Season, never the reverse.',
+            },
+          ],
+        },
+      ],
+    },
+  },
+  {
+    files: ['src/postseason/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'Math',
+          property: 'random',
+          message: 'Postseason logic must use explicit deterministic inputs.',
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        'document',
+        'window',
+        'localStorage',
+        'sessionStorage',
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'Postseason logic must remain framework-independent.' },
+            { name: 'react-dom', message: 'Postseason logic must remain framework-independent.' },
+            { name: 'zustand', message: 'Application state belongs above Postseason.' },
+          ],
+          patterns: [
+            {
+              group: ['**/app/**', '**/components/**', '**/demo/**', '**/store/**'],
+              message: 'Presentation and application layers may depend on Postseason, never the reverse.',
             },
           ],
         },

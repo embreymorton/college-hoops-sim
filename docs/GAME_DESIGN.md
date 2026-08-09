@@ -185,4 +185,4 @@ Current outputs are limited to the traditional facts already produced by Player 
 
 Acceptance inspection produced a plausible scoring hierarchy and believable game-to-game variance. Those observations are not calibration targets and require no simulation tuning.
 
-Postseason V0 is the next major design and implementation milestone. Tournament size, qualification, seeding, and bracket rules are intentionally undecided until that design work is accepted.
+Postseason V0's accepted backend uses a 16-Team field: four regular-season Conference champions protected at seeds 1–4 and 12 results-only at-large selections at seeds 5–16. Teams advance through a fixed 15-game neutral-site bracket with no reseeding or Conference separation. The implementation remains under review, and Postseason presentation is not yet designed.

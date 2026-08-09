@@ -103,6 +103,7 @@ function simulateFixture(
   homeTeam: Team,
   awayTeam: Team,
   seed: string | number,
+  site: 'home' | 'neutral' = 'home',
 ) {
   return simulateGame({
     homeTeam,
@@ -110,6 +111,7 @@ function simulateFixture(
     homeRotation: fullRotation(homeTeam),
     awayRotation: fullRotation(awayTeam),
     seed,
+    site,
   })
 }
 
@@ -282,6 +284,45 @@ describe('simulateGame', () => {
 
     expect(homeWinRate).toBeGreaterThan(0.54)
     expect(homeWinRate).toBeLessThan(0.68)
+  })
+
+  it('preserves the existing default and removes only home court at neutral sites', () => {
+    const homeTeam = makeUniformTeam('neutral-home', 70)
+    const awayTeam = makeUniformTeam('neutral-away', 70)
+    const defaultResult = simulateFixture(homeTeam, awayTeam, 'site-default')
+    const explicitHome = simulateGame({
+      homeTeam,
+      awayTeam,
+      homeRotation: fullRotation(homeTeam),
+      awayRotation: fullRotation(awayTeam),
+      seed: 'site-default',
+      site: 'home',
+    })
+    const neutralGames = Array.from({ length: 5_000 }, (_, index) =>
+      simulateFixture(homeTeam, awayTeam, `neutral-${index}`, 'neutral'),
+    )
+    const homeWinRate =
+      neutralGames.filter(({ winnerId }) => winnerId === homeTeam.id).length /
+      neutralGames.length
+
+    expect(defaultResult).toEqual(explicitHome)
+    expect(homeWinRate).toBeGreaterThan(0.47)
+    expect(homeWinRate).toBeLessThan(0.53)
+  })
+
+  it('retains reconciled full Player box scores at neutral sites', () => {
+    const homeTeam = makeUniformTeam('neutral-box-home', 70)
+    const awayTeam = makeUniformTeam('neutral-box-away', 70)
+    const result = simulateFixture(homeTeam, awayTeam, 'neutral-box', 'neutral')
+
+    expect(result.homePlayerStats).toHaveLength(homeTeam.roster.length)
+    expect(result.awayPlayerStats).toHaveLength(awayTeam.roster.length)
+    expect(result.homePlayerStats.reduce((sum, row) => sum + row.points, 0)).toBe(
+      result.homeScore,
+    )
+    expect(result.awayPlayerStats.reduce((sum, row) => sum + row.points, 0)).toBe(
+      result.awayScore,
+    )
   })
 
   it('rejects invalid rotations', () => {
