@@ -85,19 +85,35 @@ Complete MVP foundation items:
 - [x] Stable returning Player IDs and immutable historical snapshots
 - [x] Serializable partial offseason rosters
 
+## In-Season Recruiting V0 — implemented and accepted
+
+The pure Dynasty layer now runs one national Recruiting market for Season N+1 alongside the current basketball year:
+
+```text
+projected positional openings
+→ national Recruit class with rankings/stars
+→ boards, priorities, Active Offers, and relationship progress
+→ regular-season and Postseason commitments
+→ Late Recruiting and finalization
+→ CompletedRecruitingClass
+```
+
+Recruiting supports persistent 1–5 priorities, AI Programs, capacity-limited offers, final commitments, postseason continuation, Late Recruiting, and canonical period-by-period synchronization through ordinary progression or Super Sim. A commitment remains a future-roster fact and does not alter the current Team, Rotation, or Season. Recruit identity is already future Player identity and remains stable through the finalized incoming class; enrollment is Phase 5C.
+
 ## Remaining Dynasty MVP requirements
 
-The single-season product and Phase 5A foundation are complete, but the repeatable Dynasty MVP is not. Next comes in-season Recruiting V0, followed by Season Rollover V0:
+The single-season product, Phase 5A foundation, and Phase 5B Recruiting V0 are complete, but the repeatable Dynasty MVP is not. Season Rollover V0 is next:
 
-- [ ] In-season recruiting for the next season, compatible with saved plans and Super Sim
-- [ ] Stable recruit identity through commitment and freshman enrollment
+- [x] In-season Recruiting for the next season, compatible with saved plans and Super Sim
+- [x] Stable Recruit identity through commitment and finalized incoming class
+- [ ] Freshman enrollment preserving Recruit Player identity
 - [ ] Incoming-recruit enrollment and remaining-opening resolution
 - [ ] Roster finalization
 - [ ] Fresh default Rotations and deterministic next-season Schedule
 - [ ] Season 2 transition
 
-Recruiting belongs to the cross-season Dynasty layer and targets Season N+1. A current-season commitment must not change the current Team, Rotation, or `SeasonState`. Recruiting budgets/allocations, board limits, interest and commitment rules, offer mechanics, AI behavior, recruiting-period timing, and roster-completion fallbacks remain deliberately unspecified pending Phase 5B design. Full save/load and permanent history presentation may follow the core Dynasty MVP; the canonical archive facts they will need are now preserved.
+Phase 5C will combine Phase 5A returning/developed Players with the finalized `CompletedRecruitingClass`, construct exact 12-Player rosters, and create the next Season. Its exact API and ordering remain intentionally unspecified until implementation. Full save/load and permanent history presentation may follow the core Dynasty MVP; the canonical basketball and Recruiting archive facts they will need are preserved.
 
 ## Not currently implemented
 
-The project does not yet include recruiting, incoming recruits, roster finalization, Season 2, Dynasty UI/store integration, or save/load. Possession play-by-play, live coaching, injuries, transfers, rankings, awards, and other optional depth are not Dynasty MVP requirements; see `FUTURE_FEATURES.md`.
+The project does not yet include Recruit enrollment, next-season roster finalization, Season 2, Dynasty/Recruiting UI-store integration, or save/load. Possession play-by-play, live coaching, injuries, transfers, basketball rankings, awards, and other optional depth are not Dynasty MVP requirements; see `FUTURE_FEATURES.md`.
