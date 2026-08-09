@@ -6,24 +6,26 @@ Inclusion does not mean commitment, priority, or an implementation date. An idea
 
 ## Recruiting boundary
 
-In-season Recruiting V0—including recruiting-class generation, a recruiting board and persistent plan, round-based advancement, commitments, AI recruiting, and late recruiting behavior—is planned work in Roadmap Phase 5B rather than an unscheduled future idea. Recruit enrollment, final roster completion, and Season 2 initialization follow in Phase 5C. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` for the accepted high-level direction.
+In-season Recruiting V0—including national-class generation, rankings/stars, boards, priorities, Active Offers, round-based advancement, commitments, AI Recruiting, Late Recruiting, and finalized incoming classes—is implemented and accepted in Roadmap Phase 5B. Recruit enrollment, next-season roster construction, and Season 2 initialization follow in Phase 5C. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` / `SIMULATION.md` for accepted behavior.
 
 ### Recruiting depth — future and non-blocking
 
 - Campus visits and signing-day presentation
-- Recruiting pipelines
+- Geography and home-state preferences
+- Recruiting pipelines and facilities
 - NIL
 - Playing-time promises
 - Deeper recruit personality and preferences
 - Dynamic interest from Tournament success
 - Depth-chart opportunity effects
-- Geographic preferences
 - Coaching/staff recruiting bonuses
 - Decommitments
-- Transfer portal
-- Recruiting battles, class history, and retrospectives
+- Scouting uncertainty and hidden ratings/Potential
+- Transfer-portal interactions
+- Recruiting battles, class-history UI, and retrospectives
+- Recruiting class rankings, awards, and recognition
 
-These enhancements are intentionally unscheduled and are not Dynasty MVP requirements. Recruiting V0 mechanics remain deliberately undesigned; this list does not imply formulas or priority.
+These enhancements are intentionally unscheduled and are not Recruiting V0 or Dynasty MVP requirements. Current V0 exposes exact ratings/Potential, gives no winning or Tournament attraction bonus, and treats commitments as final.
 
 ## Statistics and League immersion
 
@@ -77,12 +79,17 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 - Redshirts
 - Injuries, fatigue, morale, and chemistry
 - Playing-time expectations
+- Generic roster spots or scholarship accounting
 - Multi-position eligibility
+- Position changes
+- Roster cuts and walk-ons
+- Transfer portal
+- Early professional departures
+- Fifth-year eligibility
 - Deeper tactics, schemes, and live coaching
 - Staff and coaching carousel
-- NBA Draft declarations
 
-None is required for the current Dynasty MVP.
+None is required for the current Dynasty MVP. These systems may eventually loosen Recruiting V0's strict natural-position capacity, but they are not implicit in Phase 5C.
 
 ### Player-development depth
 
@@ -95,7 +102,7 @@ Player Development V0 is accepted. Optional later depth may include:
 - position changes
 - dynamic Potential or scouting uncertainty
 
-These are unscheduled enhancements, not additional calibration required before Recruiting V0. Redshirts, transfers, and early professional departures remain separate optional roster-depth systems above.
+These are unscheduled enhancements, not additional calibration required before Season Rollover V0. Redshirts, transfers, and early professional departures remain separate optional roster-depth systems above.
 
 ## Presentation and broader modes
 

@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, and Player Development V0 constraints.
+This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, Player Development V0, and Recruiting V0 constraints.
 
 ## Status and pipeline
 
@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason Domain / Simulation and presentation, and Dynasty Foundation + Progression V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season and Postseason `GameResult` facts are cloned into Dynasty history before active competition is cleared.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason Domain / Simulation and presentation, Dynasty Foundation + Progression V0, and Recruiting V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season/Postseason `GameResult` facts and finalized Recruiting facts are preserved in their separate Dynasty histories.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -148,6 +148,162 @@ Pre-development Potential headroom also showed the intended relationship:
 The empty zero-headroom bucket reflects this generated sample; direct invariant tests confirm a Player at POT cannot improve. These values are validation observations, not guaranteed distributions. The accepted behavior is that low headroom constrains growth, high headroom permits greater opportunity, and completed class remains independently meaningful.
 
 Inspection found zero Potential violations, attributes above 99, regressions, changed returning IDs, or mutated archived Player snapshots. Same-seed, different-seed, Program-order, Player-order, and JSON-serialization checks all passed.
+
+## Implemented Recruiting V0
+
+Recruiting is a deterministic Dynasty-layer simulation targeting the following season. It consumes the active Season's current Teams and projected senior departures, but it neither changes game simulation nor mutates current Teams, Rotations, or Season results.
+
+### National class generation and ranking
+
+Position demand is the sum of all 32 Programs' projected senior departures at that natural position. Generated supply is calculated independently per position:
+
+```text
+supply(position) = max(18, ceil(national demand(position) × 1.65))
+```
+
+Every generated Recruit already contains his future freshman `Player` value. The generator supplies `classYear: FR`; the accepted Player generator produces exact attributes, height, name, Potential, and stable identity. The Recruiting talent input has a long upper tail:
+
+```text
+talent = clamp(52, 88, round(56 + 31 × U^1.55))
+U = seeded uniform value in [0, 1)
+```
+
+Class quality is:
+
+```text
+qualityScore = roundTo2(OVR × 0.72 + POT × 0.28)
+```
+
+National order sorts by quality score descending, OVR descending, POT descending, then stable Player ID. Position Rank counts each position within that national order. Stars use exact cumulative class-rank bands:
+
+| National class band | Stars |
+| --- | ---: |
+| Rank ≤ `ceil(class size × 0.06)` | 5 |
+| Rank ≤ `ceil(class size × 0.26)` | 4 |
+| Rank ≤ `ceil(class size × 0.72)` | 3 |
+| Remaining ranks | 2 |
+
+National Rank, Position Rank, stars, and quality score are immutable facts of that Recruiting class. Future development does not rerank the historical class.
+
+### Attraction, relationships, and decisions
+
+For each Recruit/Program pair:
+
+```text
+base attraction = roundTo2(20 + Team.prestige × star sensitivity + affinity)
+affinity = seeded integer from -12 through +12
+standing = roundTo4(base attraction + accumulated relationship progress)
+```
+
+| Stars | Prestige sensitivity | Decision-ready period | Standing threshold | Separation threshold |
+| --- | ---: | ---: | ---: | ---: |
+| 2 | 0.10 | 4–15 | 42–58 | 2–7 |
+| 3 | 0.18 | 7–18 | 56–75 | 4–9 |
+| 4 | 0.29 | 10–22 | 74–96 | 6–12 |
+| 5 | 0.30 | 11–24 | 64–92 | 4–9 |
+
+All ranges are inclusive seeded integer draws stored on the Recruit. A Program receives 18 relationship-effort units each period, normalized across every active eligible board target whether offered or not:
+
+```text
+target progress = 18 × target priority / sum(active target priorities)
+```
+
+Priorities are integers 1–5. Inactive targets are excluded, so effort automatically redistributes. Standing order is descending standing with stable Program ID as the tie-breaker.
+
+A Recruit may commit only after his decision-ready period and only to a Program that has a valid Active Offer, unfilled capacity at his position, and at least 8 relationship progress. The leading eligible Program must meet both the Recruit's standing threshold and the required lead over the eligible runner-up. Recruits resolve in National Rank order then Player ID; exact standing ties resolve by Program ID. A recorded commitment is final.
+
+Regular-season thresholds never ease. During periods 25–28, only already-ready Recruit confidence changes:
+
+```text
+postseason step = period - 24
+effective standing threshold = stored threshold - 1.5 × postseason step
+effective separation threshold = max(2, stored threshold - 0.75 × postseason step)
+```
+
+This modestly makes ready Recruits more decisive as the calendar closes; it does not force premium commitments, and close or insufficiently strong battles may remain unresolved.
+
+### Board construction and AI offers
+
+Boards hold at most 10 targets. Default plans seek at most three candidates per remaining positional opening and cycle across positions. Default priorities by board slot are `5, 4, 3, 3, 2, 2, 1, 1, 1, 1`. For a position, the prestige-shaped target rank is:
+
+```text
+ideal position rank = max(1, round(candidate count × (1.08 - prestige × 0.0095)))
+candidate utility = -2 × abs(position rank - ideal rank) + base attraction
+```
+
+Candidate ties use National Rank then Player ID. AI Programs refresh boards and offers in stable Program-ID order; the controlled Program is excluded from AI management.
+
+AI offer evaluation uses the next planning period, capped at 28:
+
+```text
+offer utility =
+  qualityScore × (0.5 + prestige × 0.033)
+  + (standing - standingThreshold) × (0.65 + planningPeriod × 0.02)
+  + (25 - decisionReadyPeriod) × 1.5
+  + relationshipProgress × 0.3
+  - competingOffers × (3 + planningPeriod × 0.35)
+  + uncoveredPremiumUrgency
+  - eliteReachPenalty
+
+uncoveredPremiumUrgency =
+  stars ≥ 4 and no competing offer
+    ? max(0, planningPeriod - 6) × (stars = 5 ? 3 : 1.5)
+    : 0
+
+eliteReachPenalty = stars = 5 ? max(0, 65 - prestige) × 0.7 : 0
+```
+
+An AI offer switches to a backup only when the utility gain exceeds:
+
+```text
+max(3, 10 - planningPeriod × 0.3)
+```
+
+AI premium discovery may add or replace unoffered board targets; after Period 7, an uncovered 4/5-star receives more permissive discovery. During postseason endgame preparation, unsigned premium Recruits are considered in National Rank order and autonomous Programs attempt to establish up to two valid offers without replacing the controlled Program's valid offer. Strict positional capacity and final commitments always remain authoritative.
+
+### Calendar and Super Sim equivalence
+
+Periods 1–24 require the corresponding complete regular-season basketball round. Periods 25–28 require the completed Round of 16, quarterfinals, semifinals, and National Championship respectively. Every Program recruits during all four Postseason periods; Tournament success supplies no attraction bonus.
+
+Synchronization is idempotent and resolves each missing Recruiting period one by one in canonical order. It never replaces multiple periods with an aggregate calculation. With unchanged user choices, manual advancement and Super Sim/batched basketball progression therefore produce identical relationship progress, AI changes, offer cleanup, controlled-board backup promotions, and commitments in both regular season and Postseason.
+
+### Late Recruiting and finalization
+
+Late Recruiting is a distinct reviewable phase available only after Period 28; it is not a fictional Period 29+. Existing relationships and valid offers remain authoritative, and all unsigned Recruits are decision-ready for this conclusion of the same market.
+
+Vacancies first use eligible existing-board backups ordered by priority descending, standing descending, National Rank ascending, then Player ID. Autonomous Programs—and the controlled Program only during full automatic finalization—may search the broader unsigned national pool. National candidates use:
+
+```text
+late utility = qualityScore × 1.5
+             + standing
+             - abs(standing - stored standing threshold) × 0.2
+```
+
+Unsigned Recruits resolve in National Rank order then Player ID. Only Programs with a valid Active Offer and compatible remaining positional capacity are candidates; highest standing wins, with Program ID breaking ties. Capacity and invalid offers are recalculated after every commitment. Finalization iteratively fills offer vacancies, prepares premium options, and resolves commitments until every projected opening is filled. Lower-tier Recruits remain unsigned when League roster supply is exhausted.
+
+The defensive fallback matcher is not normal Recruiting flow. It runs only if an iterative pass produces zero commitments while openings remain; it uses existing unsigned Recruits, compatible positional capacity, standing, and stable Program ID ordering. Supply is validated before finalization. V0 contains no emergency-Recruit generation path: `emergencyGeneratedRecruits` is always `0`, and normal and fallback resolution use only the originally generated class.
+
+Finalization marks the state `finalized` and appends a structured clone to `completedRecruitingHistory` as a `CompletedRecruitingClass`. Repeating finalization on the already-finalized state is idempotent; a conflicting duplicate target-season archive is rejected.
+
+### Deterministic seed namespaces
+
+Class and decision RNG streams use JSON namespaces containing Recruiting version `v0`, the Dynasty seed with its numeric/string type preserved, target season number, and a stream name. Player generation uses `class:{position}:{index}`. Decision draws use `decision:{playerId}:ready`, `:standing`, and `:separation`. Recruit/Program affinity uses the same version, typed Dynasty seed, target season, stream `program-affinity`, Player ID, and Program ID. There is no shared evolving Recruiting RNG and no `Math.random()`.
+
+### Accepted calibration and validation
+
+One canonical 32-Program inspection observed 88 projected openings and 147 generated Recruits (`1.67×` supply), including nine 5-stars and 30 4-stars. It filled 66 openings by Period 24, 74 by Period 28, and all 88 after 14 Late commitments across three resolution passes. All nine 5-stars and all 30 4-stars signed; neither fallback nor emergency generation was used.
+
+| Phase | Commitments | Average National Rank | Average OVR | Average POT |
+| --- | ---: | ---: | ---: | ---: |
+| Regular season | 66 | 49.0 | 73.2 | 84.0 |
+| Postseason | 8 | 44.0 | 74.6 | 85.4 |
+| Late | 14 | 47.2 | 74.2 | 84.3 |
+
+In that canonical sample, average actual commitment periods were approximately 20.2 for 5-stars (earliest 16), 17.9 for 4-stars, and 14.1 for 3-stars. These are observations from generated decisions and competition, not additional constants or guaranteed timing.
+
+Across 100 deterministic strategic scenarios, a lower-ranked early underdog defeated a late favorite about 72% to 28%, while an early underdog pursuing an elite Recruit won about 33% to the late favorite's 67%. These results validate attainable early investment and stronger elite prestige pressure; they are not fixed probabilities.
+
+Across 100 full finalization cycles, every projected opening was filled in all 100. No cycle left a 5-star unsigned; one left a 4-star unsigned because no compatible positional capacity remained. That is an accepted consequence of strict positional capacity plus final commitments, not a defect or a guarantee that every premium Recruit signs. Fallback and emergency Recruit usage were both zero across the 100 cycles. Premium Recruits are strongly prioritized and should not remain unsigned while compatible capacity remains.
 
 ## Implemented Player Season Stats V0
 

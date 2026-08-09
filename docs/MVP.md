@@ -106,8 +106,7 @@ The single-season product, Phase 5A foundation, and Phase 5B Recruiting V0 are c
 
 - [x] In-season Recruiting for the next season, compatible with saved plans and Super Sim
 - [x] Stable Recruit identity through commitment and finalized incoming class
-- [ ] Freshman enrollment preserving Recruit Player identity
-- [ ] Incoming-recruit enrollment and remaining-opening resolution
+- [ ] Incoming-Recruit enrollment preserving Player identity and remaining-opening resolution
 - [ ] Roster finalization
 - [ ] Fresh default Rotations and deterministic next-season Schedule
 - [ ] Season 2 transition

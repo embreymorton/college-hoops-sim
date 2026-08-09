@@ -25,7 +25,7 @@ The UI hides Midseason after Round 12 and all Super Sim actions after regular-se
 
 ### P3 — Allow future Super Sim interruption points
 
-Super Sim can run straight to a target because no current event requires a decision between games. Planned In-Season Recruiting V0 must remain compatible with this behavior by advancing a saved recruiting plan without mandatory input every round; recruiting itself is not a reason to force interruption.
+Super Sim can run straight to a target because no current event requires a decision between games. Accepted Recruiting V0 remains compatible by resolving every missing Recruiting period canonically in order from the saved plan, without mandatory input every round; Recruiting itself is not a reason to force interruption.
 
 If later injuries, availability changes, Player decisions, or explicitly designed mandatory recruiting events require attention between games, bulk progression should be able to stop, resolve the required decision, and optionally continue. Do not implement interruption now.
 
@@ -43,7 +43,24 @@ The future balance question is whether accepted Rotation V0 eventually needs tig
 
 Aggregate Player Development V0 calibration is accepted. Its intentionally uneven, position-aware allocation can occasionally produce large gains in one skill; the canonical single-offseason inspection included examples such as `INT D +8` and `ATH +7` while overall development, Potential limits, and class curves remained healthy.
 
-This is a non-blocking calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Revisit after Recruiting and Season Rollover enable deterministic 5–10+ season simulations, then evaluate long-term attribute/profile evolution across populations rather than tuning from isolated manual examples.
+This is a non-blocking calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Revisit after Season Rollover enables deterministic multi-season simulations, then evaluate long-term attribute/profile evolution across populations rather than tuning from isolated manual examples.
+
+### P3 — Strict positional Recruiting capacity may become restrictive
+
+Recruiting V0 intentionally replaces projected departures by exact natural position. This preserves the accepted roster/Rotation assumptions and correctly permits a premium Recruit to remain unsigned when no compatible positional capacity exists; the lone unsigned 4-star in 100-cycle validation is therefore not a bug.
+
+Revisit only if future generic scholarships, multi-position Players, position changes, cuts, walk-ons, transfers, or early departures loosen the roster model. Any change must update roster construction, offer capacity, and Rotation legality together rather than weakening only Recruiting validation.
+
+### P3 — Multi-season talent equilibrium is not yet validated
+
+Recruiting class generation and Player Development are independently accepted, but Phase 5C has not yet rolled incoming classes through repeated seasons. Once rollover exists, run deterministic population studies over at least 5, 10, 25, and 50 seasons and evaluate:
+
+- League OVR drift and graduating-versus-incoming talent balance
+- Program hierarchy stability and elite-talent concentration
+- Recruit/star distributions across repeated classes
+- Player Development relative to replacement talent
+
+This is a future calibration watchpoint, not a current defect. Do not retune Recruit generation or Player Development without multi-season evidence.
 
 ### P3 — Rotation Editor ordering and announcements
 
@@ -73,7 +90,7 @@ Optional Tournament-depth ideas are listed separately in `FUTURE_FEATURES.md`; t
 
 The current Zustand application/session store owns the controlled Program, completed `SeasonState`, active `PostseasonState`, regular-season and Tournament Rotation drafts, viewed-result IDs, navigation, Quick Sim, Super Sim, and round progression. It remains manageable at the current scale.
 
-Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball and Tournament rules in their domain layers, and avoid duplicate derived state or a generalized state framework. Reconsider the top-level application boundary when React/Zustand actually adopts the implemented `DynastyState` and adds Recruiting/rollover orchestration. The pure Dynasty domain alone does not require a store refactor. This is a maintainability watchpoint, not an MVP blocker.
+Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball, Tournament, and Recruiting rules in their domain layers, and avoid duplicate derived state or a generalized state framework. Reconsider the top-level application boundary when React/Zustand actually adopts the implemented `DynastyState` and adds Recruiting/rollover orchestration. The pure Dynasty/Recruiting domain alone does not require a store refactor. This is a maintainability watchpoint, not an MVP blocker.
 
 ### P3 — Render-time navigation side effects
 
