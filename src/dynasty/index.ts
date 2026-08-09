@@ -12,6 +12,7 @@ export {
   assembleNextSeasonRosters,
   validateNextSeasonRosterAssembly,
 } from './rosterAssembly'
+export { rolloverDynastyToNextSeason } from './rollover'
 export {
   addRecruitingBoardTarget,
   buildDefaultRecruitingBoard,

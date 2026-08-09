@@ -39,11 +39,11 @@ Player Season Stats inspection observed a Season in which all 12 Charlotte Tech 
 
 The future balance question is whether accepted Rotation V0 eventually needs tighter seven-to-ten-Player regular rotations, occasional deep-bench DNPs, or more situational participation. Do not tune Rotation generation now. Revisit only if universal bench participation makes roster management less meaningful, Player season production less believable, or future development decisions less interesting. This is a low-priority design watchpoint, not an implementation defect or MVP blocker.
 
-### P3 — Concentrated single-attribute offseason gains / multi-season profile calibration
+### P3 — Concentrated single-attribute offseason gains
 
 Aggregate Player Development V0 calibration is accepted. Its intentionally uneven, position-aware allocation can occasionally produce large gains in one skill; the canonical single-offseason inspection included examples such as `INT D +8` and `ATH +7` while overall development, Potential limits, and class curves remained healthy.
 
-This is a non-blocking calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Revisit after Season Rollover enables deterministic multi-season simulations, then evaluate long-term attribute/profile evolution across populations rather than tuning from isolated manual examples.
+This is a non-blocking calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Season Rollover now enables deterministic multi-season simulations; evaluate long-term attribute/profile evolution across populations during Dynasty Long-Run Calibration V0 rather than tuning from isolated manual examples.
 
 ### P3 — Strict positional Recruiting capacity may become restrictive
 
@@ -51,16 +51,26 @@ Recruiting V0 intentionally replaces projected departures by exact natural posit
 
 Revisit only if future generic scholarships, multi-position Players, position changes, cuts, walk-ons, transfers, or early departures loosen the roster model. Any change must update roster construction, offer capacity, and Rotation legality together rather than weakening only Recruiting validation.
 
-### P3 — Multi-season talent equilibrium is not yet validated
+### P3 — Dynasty long-run talent equilibrium / initial rollover inflation
 
-Recruiting class generation and Player Development are independently accepted, but Phase 5C has not yet rolled incoming classes through repeated seasons. Once rollover exists, run deterministic population studies over at least 5, 10, 25, and 50 seasons and evaluate:
+Season Rollover V0 is accepted and its five-season smoke passed structural lifecycle invariants, but that smoke was not a talent-equilibrium calibration. In the accepted Season 1 → 2 inspection, average Team OVR rose from `72.80` to `75.96`; the strongest Team, Great Lakes, rose from `86.0` to `89.7`. This is an observation from one deterministic lifecycle sample, not yet a bug or a tuning conclusion. The initial generated-roster baseline, incoming Recruit talent, returning-Player Development, and graduating talent can all contribute; the open question is whether the League approaches equilibrium after the initial rosters age out.
+
+Dynasty Long-Run Calibration V0 should run deterministic multi-seed population studies over 10, 25, and 50+ seasons and evaluate:
 
 - League OVR drift and graduating-versus-incoming talent balance
 - Program hierarchy stability and elite-talent concentration
 - Recruit/star distributions across repeated classes
 - Player Development relative to replacement talent
+- attribute distributions, Potential headroom, and concentrated profile gains
+- roster, Rotation, Recruiting, identity, Schedule, and serialization invariants
 
 This is a future calibration watchpoint, not a current defect. Do not retune Recruit generation or Player Development without multi-season evidence.
+
+### P3 — Dynasty history and serialized-state growth
+
+The accepted five-season lifecycle smoke preserved full completed Season/Postseason results and Recruiting-class snapshots and passed JSON round-tripping. That validates correctness at the inspected scale, not storage size or persistence performance over a long career.
+
+Measure serialized state size, rollover time, and history-query costs during 10/25/50+ season calibration before introducing pruning, compression, caches, or alternate persistence structures. Preserve canonical historical `GameResult`, Player, Team, and Recruiting facts. This is a scaling watchpoint, not a current defect.
 
 ### P3 — Rotation Editor ordering and announcements
 
@@ -99,6 +109,14 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
 ## Resolved / monitor-only
+
+### P2 — Recruit enrollment and exact next-season rosters — RESOLVED
+
+Phase 5C.1 now assembles each next-season roster solely from accepted Offseason returners and that Program's finalized commitments. It preserves stable person identity, excludes graduates and unsigned Recruits, enrolls commitments as freshmen, validates every Player and Program relationship, and requires exactly 12 Players rather than repairing invalid inputs.
+
+### P2 — Repeatable rollover, Schedule identity, and next Recruiting cycle — RESOLVED
+
+Phase 5C.2 now performs an atomic pure rollover into a fresh Season, generates legal default Rotations, derives a deterministic season-specific Schedule and collision-free Game IDs, preserves histories and controlled Program identity, and immediately initializes Recruiting for the following target season. A five-season smoke found zero lifecycle, roster, Rotation, Recruiting, Player-identity, or cross-season Game-ID failures.
 
 ### P2 — Completed-season Player history preservation — RESOLVED
 

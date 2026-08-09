@@ -74,7 +74,7 @@ completed Season + Postseason
 → temporary incomplete OffseasonState rosters
 ```
 
-Completed `GameResult` and `PlayerGameStats` facts remain recoverable through history. Returning Players keep stable IDs while receiving new immutable Player values, so archived class years and attributes do not change. `deriveProjectedRosterOutlook()` can expose senior departures, returners, and projected openings from a current Team before the Season is complete, providing next-season capacity for future in-season Recruiting.
+Completed `GameResult` and `PlayerGameStats` facts remain recoverable through history. Returning Players keep stable IDs while receiving new immutable Player values, so archived class years and attributes do not change. `deriveProjectedRosterOutlook()` exposes senior departures, returners, and projected openings from a current Team before the Season is complete, providing next-season capacity for accepted in-season Recruiting.
 
 Complete MVP foundation items:
 
@@ -98,21 +98,35 @@ projected positional openings
 → CompletedRecruitingClass
 ```
 
-Recruiting supports persistent 1–5 priorities, AI Programs, capacity-limited offers, final commitments, postseason continuation, Late Recruiting, and canonical period-by-period synchronization through ordinary progression or Super Sim. A commitment remains a future-roster fact and does not alter the current Team, Rotation, or Season. Recruit identity is already future Player identity and remains stable through the finalized incoming class; enrollment is Phase 5C.
+Recruiting supports persistent 1–5 priorities, AI Programs, capacity-limited offers, final commitments, postseason continuation, Late Recruiting, and canonical period-by-period synchronization through ordinary progression or Super Sim. A commitment remains a future-roster fact and does not alter the current Team, Rotation, or Season. Recruit identity is already future Player identity and Phase 5C preserves it through freshman enrollment.
 
-## Remaining Dynasty MVP requirements
+## Season Rollover V0 — implemented and accepted
 
-The single-season product, Phase 5A foundation, and Phase 5B Recruiting V0 are complete, but the repeatable Dynasty MVP is not. Season Rollover V0 is next:
+The backend completes the cross-season loop:
 
-- [x] In-season Recruiting for the next season, compatible with saved plans and Super Sim
-- [x] Stable Recruit identity through commitment and finalized incoming class
-- [ ] Incoming-Recruit enrollment preserving Player identity and remaining-opening resolution
-- [ ] Roster finalization
-- [ ] Fresh default Rotations and deterministic next-season Schedule
-- [ ] Season 2 transition
+```text
+completed competition and finalized Recruiting
+→ graduation and returning-Player development
+→ committed Recruits enroll as FR with stable identity
+→ exactly 12 Players per Program
+→ fresh Teams, default Rotations, and season-specific Schedule
+→ empty next SeasonState
+→ Recruiting targeting the following season
+→ repeat
+```
 
-Phase 5C will combine Phase 5A returning/developed Players with the finalized `CompletedRecruitingClass`, construct exact 12-Player rosters, and create the next Season. Its exact API and ordering remain intentionally unspecified until implementation. Full save/load and permanent history presentation may follow the core Dynasty MVP; the canonical basketball and Recruiting archive facts they will need are preserved.
+Complete backend Dynasty MVP items:
+
+- [x] In-season Recruiting compatible with saved plans and Super Sim
+- [x] Stable Recruit identity through commitment and freshman enrollment
+- [x] Exact 12-Player next-season roster assembly
+- [x] Fresh default Rotations and deterministic, season-specific Schedule
+- [x] Atomic next-Season transition with preserved basketball/Recruiting history
+- [x] Immediate next Recruiting-cycle initialization
+- [x] Repeatable multi-season lifecycle and JSON-safe state
+
+This completion is domain/backend-only. The current React/Zustand application still exposes the accepted single-season experience and does not orchestrate Dynasty rollover or Recruiting.
 
 ## Not currently implemented
 
-The project does not yet include Recruit enrollment, next-season roster finalization, Season 2, Dynasty/Recruiting UI-store integration, or save/load. Possession play-by-play, live coaching, injuries, transfers, basketball rankings, awards, and other optional depth are not Dynasty MVP requirements; see `FUTURE_FEATURES.md`.
+The project does not yet include Dynasty/Recruiting UI-store integration, rollover presentation, Recruiting/history screens, or save/load. Possession play-by-play, live coaching, injuries, transfers, basketball rankings, awards, and other optional depth are not backend Dynasty MVP requirements; see `FUTURE_FEATURES.md`.

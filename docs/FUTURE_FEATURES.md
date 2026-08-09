@@ -6,7 +6,7 @@ Inclusion does not mean commitment, priority, or an implementation date. An idea
 
 ## Recruiting boundary
 
-In-season Recruiting V0—including national-class generation, rankings/stars, boards, priorities, Active Offers, round-based advancement, commitments, AI Recruiting, Late Recruiting, and finalized incoming classes—is implemented and accepted in Roadmap Phase 5B. Recruit enrollment, next-season roster construction, and Season 2 initialization follow in Phase 5C. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` / `SIMULATION.md` for accepted behavior.
+In-season Recruiting V0—including national-class generation, rankings/stars, boards, priorities, Active Offers, round-based advancement, commitments, AI Recruiting, Late Recruiting, and finalized incoming classes—is implemented and accepted in Roadmap Phase 5B. Phase 5C is also complete: committed Recruits enroll, next-season rosters are assembled, and the pure backend lifecycle initializes the next Season and Recruiting cycle. Recruiting UI, Dynasty rollover presentation, historical browsing, and persistence remain separate future product work. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` / `SIMULATION.md` for accepted behavior.
 
 ### Recruiting depth — future and non-blocking
 
@@ -87,6 +87,7 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 - Early professional departures
 - Fifth-year eligibility
 - Deeper tactics, schemes, and live coaching
+- Rotation-preference carryover between seasons
 - Staff and coaching carousel
 
 None is required for the current Dynasty MVP. These systems may eventually loosen Recruiting V0's strict natural-position capacity, but they are not implicit in Phase 5C.
@@ -102,10 +103,13 @@ Player Development V0 is accepted. Optional later depth may include:
 - position changes
 - dynamic Potential or scouting uncertainty
 
-These are unscheduled enhancements, not additional calibration required before Season Rollover V0. Redshirts, transfers, and early professional departures remain separate optional roster-depth systems above.
+These are unscheduled enhancements, not prerequisites for the accepted Season Rollover V0. Redshirts, transfers, and early professional departures remain separate optional roster-depth systems above.
 
 ## Presentation and broader modes
 
+- Dynasty lifecycle and Recruiting UI over the accepted backend domain
+- Completed-season, offseason, rollover, and next-season transition presentation
+- Save/load and persistence UX
 - Starting-five, matchup-comparison, or positional-insight presentation
 - Explicit Player or Team archetype presentation
 - Multiplayer or online leagues

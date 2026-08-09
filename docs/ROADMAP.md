@@ -249,9 +249,9 @@ Completed Quick Sim cards preserve site and overtime context, show outcome/margi
 
 The complete single-season game loop is implemented and exposed through the UI, from Program selection through National Champion.
 
-## Phase 5 — Dynasty Loop — ACTIVE
+## Phase 5 — Dynasty Loop Backend — COMPLETE
 
-> Turn the completed single-season basketball loop into a multi-season Dynasty. The cross-season foundation, returning-Player progression, and Recruiting V0 are accepted; Season Rollover V0 is next.
+> The backend now supports the complete repeatable cross-season lifecycle. React/Zustand Dynasty integration remains separate future application work.
 
 The intended high-level lifecycle is:
 
@@ -263,14 +263,15 @@ REGULAR SEASON
 ├── basketball rounds
 └── recruiting advances alongside completed rounds
 → Postseason (recruiting may continue or finalize)
+→ Late Recruiting finalizes every projected opening
 → archive completed Season + Postseason
 → seniors graduate
 → returning Players develop and classes advance
 → committed recruits enroll as freshmen
-→ remaining openings resolve
 → every Program finalizes a 12-Player roster
 → fresh default Rotations + new deterministic Schedule
-→ Season N+1
+→ Season N+1 + Recruiting targeting N+2
+→ repeat
 ```
 
 ### Phase 5A — Dynasty Foundation + Progression V0 — COMPLETE
@@ -286,7 +287,7 @@ REGULAR SEASON
 
 The accepted canonical inspection archived all 384 regular-season and 15 Postseason games, graduated 92 of 384 Players, and created 292 returning Player values across all 32 Programs without changing IDs or historical snapshots. All Dynasty/archive/offseason values passed JSON serialization; same-seed reproduction and Program/Player-order independence passed. The observed development curve was approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% stagnation. These are calibration observations for one deterministic population, not guaranteed outcomes.
 
-Phase 5A intentionally stops at partial offseason rosters. Recruiting V0 now supplies finalized incoming classes, but roster construction, enrollment, next-season Teams/Rotations/Schedule, and Season 2 remain Phase 5C work. The current application store also remains on the accepted single-season ownership model.
+Phase 5A intentionally stops at partial offseason rosters. Phase 5C now consumes those values with finalized incoming classes. The current application store remains on the accepted single-season ownership model.
 
 ### Phase 5B — In-Season Recruiting V0 — COMPLETE / ACCEPTED
 
@@ -296,19 +297,26 @@ Phase 5A intentionally stops at partial offseason rosters. Recruiting V0 now sup
 - Recruiting periods 1–24 synchronized to regular-season completion and periods 25–28 synchronized to Postseason completion
 - Canonical period-by-period Super Sim equivalence, including offer invalidation and controlled-Program backup promotion from the existing board
 - Distinct Late Recruiting and deterministic finalization using the original class, producing a complete `CompletedRecruitingClass`
-- Stable Recruit Player identity through generation, commitment, and the finalized incoming class; freshman enrollment follows in Phase 5C
+- Stable Recruit Player identity through generation, commitment, and the finalized incoming class
 
 Commitments remain future-roster facts and do not mutate the current Team, Rotation, or `SeasonState`. Recruiting is owned by the Dynasty layer and stores its finalized history separately from completed basketball-season archives. Exact accepted mechanics and formulas live in `GAME_DESIGN.md`, `ARCHITECTURE.md`, and `SIMULATION.md`.
 
-### Phase 5C — Season Rollover V0 — NEXT
+### Phase 5C — Season Rollover V0 — COMPLETE / ACCEPTED
 
-- Combine Phase 5A returning/developed Players with the finalized Phase 5B incoming class.
-- Enroll Recruits as freshmen while preserving their stable Player IDs.
-- Construct exact 12-Player next-season rosters.
-- Generate fresh legal default Rotations and a new deterministic Schedule.
-- Initialize Season N+1 without discarding completed basketball or Recruiting history.
+- **5C.1 — Next-Season Roster Assembly V0:** combines accepted returners and finalized commitments into exact 12-Player rosters, enrolls Recruits as freshmen without changing identity or attributes, rejects malformed lifecycle inputs, and preserves every source snapshot.
+- **5C.2 — Dynasty Season Rollover V0:** atomically creates fresh Team snapshots, default Rotations, a season-specific Schedule and Game IDs, a clean `SeasonState`, and Recruiting targeting N+2 while preserving histories and the controlled Program.
+- Same-state determinism, Program-order independence, JSON serialization, cross-cycle identity safety, and five consecutive completed Dynasty seasons are accepted.
 
-Acceptance target: the Dynasty can repeat this lifecycle indefinitely across multiple seasons.
+The backend lifecycle is now repeatable:
+
+```text
+Season N → Recruiting N+1 → Postseason → Offseason
+→ exact next roster → Season N+1 → Recruiting N+2 → repeat
+```
+
+## Dynasty Long-Run Calibration V0 — NEXT
+
+Validate whether Recruiting, Player Development, and graduation produce a stable long-run talent ecosystem. Planned analysis should cover multiple seeds and 10+, 25+, and 50+ seasons. Measures should include League-average Player and Team OVR; Team OVR distribution/spread; class-year OVR; incoming Recruit OVR/POT; graduating Player OVR; Development gains; prestige relationships with Recruiting and Team quality; Team quality versus wins; elite-Recruit distribution; Program-hierarchy persistence; and championship diversity. This is calibration/validation work, not a new gameplay system.
 
 ## Phase 6 — Persistence and History — PLANNED
 

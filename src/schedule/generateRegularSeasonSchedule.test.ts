@@ -234,6 +234,40 @@ describe('Schedule Generation V0', () => {
     expect(second).toEqual(first)
   })
 
+  it('optionally namespaces game IDs without changing schedule structure', () => {
+    const first = generateRegularSeasonSchedule({
+      universe: UNIVERSE_V0,
+      seed: TEST_SEED,
+      gameIdNamespace: 'season-1',
+    })
+    const second = generateRegularSeasonSchedule({
+      universe: UNIVERSE_V0,
+      seed: TEST_SEED,
+      gameIdNamespace: 'season-2',
+    })
+    expect(first.games.map(({ id }) => id)).not.toEqual(
+      second.games.map(({ id }) => id),
+    )
+    const structure = (schedule: RegularSeasonSchedule) => schedule.games.map(
+      ({ index, round, homeProgramId, awayProgramId, type }) => ({
+        index,
+        round,
+        homeProgramId,
+        awayProgramId,
+        type,
+      }),
+    )
+    expect(structure(first)).toEqual(structure(second))
+    expect(second.games.some(({ id }) => first.games.some(
+      ({ id: firstId }) => firstId === id,
+    ))).toBe(false)
+    expect(() => generateRegularSeasonSchedule({
+      universe: UNIVERSE_V0,
+      seed: TEST_SEED,
+      gameIdNamespace: '  ',
+    })).toThrow(/namespace/)
+  })
+
   it('uses different seeds to produce different legal non-conference schedules', () => {
     const first = generateRegularSeasonSchedule({
       universe: UNIVERSE_V0,

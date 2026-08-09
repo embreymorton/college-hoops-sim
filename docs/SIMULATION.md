@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, Player Development V0, and Recruiting V0 constraints.
+This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, Player Development V0, Recruiting V0, Next-Season Roster Assembly V0, and Dynasty Season Rollover V0 constraints.
 
 ## Status and pipeline
 
@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason Domain / Simulation and presentation, Dynasty Foundation + Progression V0, and Recruiting V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season/Postseason `GameResult` facts and finalized Recruiting facts are preserved in their separate Dynasty histories.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason Domain / Simulation and presentation, Dynasty Foundation + Progression V0, Recruiting V0, Next-Season Roster Assembly V0, and Dynasty Season Rollover V0 are complete. The backend Dynasty lifecycle can now repeat across seasons; the application UI/store has not yet adopted that lifecycle. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season/Postseason `GameResult` facts and finalized Recruiting facts are preserved in their separate Dynasty histories.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -304,6 +304,76 @@ In that canonical sample, average actual commitment periods were approximately 2
 Across 100 deterministic strategic scenarios, a lower-ranked early underdog defeated a late favorite about 72% to 28%, while an early underdog pursuing an elite Recruit won about 33% to the late favorite's 67%. These results validate attainable early investment and stronger elite prestige pressure; they are not fixed probabilities.
 
 Across 100 full finalization cycles, every projected opening was filled in all 100. No cycle left a 5-star unsigned; one left a 4-star unsigned because no compatible positional capacity remained. That is an accepted consequence of strict positional capacity plus final commitments, not a defect or a guarantee that every premium Recruit signs. Fallback and emergency Recruit usage were both zero across the 100 cycles. Premium Recruits are strongly prioritized and should not remain unsigned while compatible capacity remains.
+
+## Implemented Next-Season Roster Assembly V0
+
+`assembleNextSeasonRosters()` is a pure construction/validation step over a lifecycle-compatible `OffseasonState`, finalized `CompletedRecruitingClass`, matching `CompletedSeasonArchive`, and Universe. For each Program:
+
+```text
+next roster = accepted Offseason returners
+            + Recruits committed to that Program
+```
+
+Only recorded commitments enroll; unsigned Recruits remain in Recruiting history. The assembler does not regenerate or develop Players, rerun graduation or Recruiting, reconsider destinations, or create replacements. Every Program must exist in all sources, all target-season fields must agree, and each result must contain exactly 12 Players. An 11- or 13-Player result fails rather than being repaired.
+
+An incoming Player is a structured clone of `Recruit.player` with `classYear: "FR"`. Player ID, name, height, natural position, all nine attributes, and Potential remain exact; derived OVR therefore remains exact. Returners are likewise cloned from their already-developed/class-advanced Offseason values. Output is deterministically ordered by `PG, SG, SF, PF, C`, then stable Player ID.
+
+Validation checks Player IDs/names, accepted position-specific height ranges, valid class, integer 40–99 attributes and Potential, `OVR ≤ POT`, exact positional composition, one appearance per returner/commitment, commitment destination, graduate exclusion, and unique active IDs. Historical continuation is semantic: the same person may share an ID across Recruit/active or prior/current snapshots, while an unrelated Recruit may not reuse it.
+
+One accepted 5C.1 canonical inspection observed 290 returners and 94 commitments, producing 384 Players across 32 of 32 exact 12-Player rosters. It found 384 unique active IDs, zero changed returner or Recruit-enrollment IDs, and zero duplicates. Completed Season history, completed Recruiting history, and Offseason input all remained unchanged. These returner/commitment counts describe that sample, not fixed future distributions.
+
+## Implemented Dynasty Season Rollover V0
+
+`rolloverDynastyToNextSeason()` is the atomic pure orchestration boundary. It requires no active Season/Postseason, a prepared Offseason, exactly one matching completed Season archive and finalized Recruiting class, unique Season/Recruiting history keys, finalized active Recruiting equal to its historical snapshot, compatible seasons/Programs, and a valid roster assembly. Failure returns no partial Dynasty and mutates no input.
+
+For every Program, rollover creates a fresh Team from stable Program ID/name/abbreviation, preserved Offseason prestige, and the assembled roster. It then calls the accepted default Rotation generator; prior-season minutes are not reused. Archived Teams and Players remain independent immutable snapshots.
+
+### Season-specific Schedule and Game IDs
+
+The next Schedule seed is the JSON serialization of:
+
+```text
+namespace: college-hoops-sim:dynasty-schedule:v0
+typed numeric/string Dynasty seed
+Season number
+```
+
+The existing Schedule generator consumes that value normally. Rollover also supplies the lifecycle Game-ID namespace `season-N`, producing IDs shaped as:
+
+```text
+schedule:{universeId}:{universeVersion}:season-N:
+round-{round}:game-{index}:{homeProgramId}:{awayProgramId}
+```
+
+Other Schedule callers may omit the optional namespace and retain the pre-rollover ID format. Rollover rejects a Game ID found in completed Season history and rejects a next Schedule whose normalized round/orientation structure exactly reproduces the prior Schedule. Identical Dynasty/lifecycle input reproduces the same next Schedule; Program definition order does not affect it.
+
+### Fresh Season and next Recruiting cycle
+
+`initializeSeason()` receives the fresh Teams/Rotations and Schedule, creating Season N+1 with empty `resultsByGameId`. No prior results, records, standings, statistics, Schedule, or Rotations are copied. At initialization, 0 of 384 games are complete, every record derives as 0–0, and the Season is incomplete.
+
+The successful Dynasty postcondition is:
+
+```text
+activeSeason              = Season N+1
+activePostseason          = null
+offseason                 = null
+history                   = preserved
+completedRecruitingHistory = preserved
+controlledProgramId       = preserved
+recruiting                = fresh cycle targeting N+2
+```
+
+The existing `initializeRecruiting()` immediately derives N+2 positional openings from seniors on the new rosters, generates a season-specific national class, creates default plans for every Program including the controlled Program, and leaves `lastResolvedPeriod = 0`. Existing Recruiting V0 target-season namespaces make the class distinct from prior cycles. Rollover additionally rejects any new Recruit ID that duplicates another new Recruit or collides with completed Season Players, current Players, or prior Recruiting identities.
+
+### Accepted rollover and lifecycle validation
+
+One accepted Season 1 → 2 inspection observed 289 returners, 95 incoming Recruits, and 384 assembled Players after 384 regular-season and 15 Postseason games. Rollover preserved the controlled Program and both histories, cleared Offseason/Postseason state, and created Season 2 with 32 exact rosters and 384 unique Players.
+
+All 32 default Rotations validated with exactly 200 minutes and zero invalid positional assignments. The new Schedule validated at 384 games/24 rounds, with every Program receiving 14 Conference games, 10 non-Conference games, and a 12/12 home-away split. Season 1 and Season 2 shared zero Game IDs and did not have identical Schedule structures.
+
+The resulting Season 2 stored zero results and derived every Program at 0–0. Recruiting targeting Season 3 observed 90 projected openings and generated 151 Recruits, with plans for 32 of 32 Programs and zero resolved periods. Those two counts are canonical sample observations, not fixed rules. Class 3 had zero IDs colliding with active Season 2 Players, historical Players, or prior Recruiting identities and contained no duplicate IDs.
+
+A five-season invariant smoke completed Seasons 1–5 and five rollovers. Completed Season archives grew `1 → 2 → 3 → 4 → 5`; completed Recruiting histories grew by target season `2 → 3 → 4 → 5 → 6`. Every roster, Rotation, Schedule, and finalized Recruiting cycle remained valid, with zero unfilled openings, identity collisions, cross-season Game-ID collisions, emergency Recruits, fallback uses, or lifecycle failures. The multi-season `DynastyState` passed JSON round-tripping. This proves lifecycle/serialization health at the inspected scale, not long-run talent equilibrium or implemented persistence/save UX.
 
 ## Implemented Player Season Stats V0
 

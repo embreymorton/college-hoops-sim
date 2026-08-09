@@ -597,6 +597,7 @@ function assignGameIdentity(
   universe: UniverseDefinition,
   rounds: readonly PendingGame[][],
   universeRng: Rng,
+  gameIdNamespace?: string,
 ): ScheduledGame[] {
   let gameIndex = 0
 
@@ -611,6 +612,7 @@ function assignGameIdentity(
         ...game,
         id:
           `schedule:${universe.id}:${universe.version}:` +
+          (gameIdNamespace ? `${gameIdNamespace}:` : '') +
           `round-${round}:game-${index}:${game.homeProgramId}:${game.awayProgramId}`,
         index,
         round,
@@ -627,7 +629,11 @@ export function generateRegularSeasonSchedule({
   universe,
   seed,
   configuration = SCHEDULE_V0_CONFIGURATION,
+  gameIdNamespace,
 }: GenerateRegularSeasonScheduleOptions): RegularSeasonSchedule {
+  if (gameIdNamespace !== undefined && gameIdNamespace.trim().length === 0) {
+    throw new RangeError('Schedule game-ID namespace cannot be empty.')
+  }
   const shape = getSupportedScheduleShape(universe, configuration)
   const conferenceRounds = createConferenceRounds(
     universe,
@@ -667,6 +673,7 @@ export function generateRegularSeasonSchedule({
       universe,
       rounds,
       scheduleRng(universe, configuration, seed, 'games-within-round'),
+      gameIdNamespace,
     ),
   }
   const validation = validateRegularSeasonSchedule(universe, schedule)

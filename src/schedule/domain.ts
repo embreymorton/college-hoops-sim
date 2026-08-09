@@ -75,4 +75,6 @@ export interface GenerateRegularSeasonScheduleOptions {
   readonly universe: UniverseDefinition
   readonly seed: RngSeed
   readonly configuration?: ScheduleConfiguration
+  /** Optional lifecycle namespace preventing otherwise-valid cross-season ID reuse. */
+  readonly gameIdNamespace?: string
 }

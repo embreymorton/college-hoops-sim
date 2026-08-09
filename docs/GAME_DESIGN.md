@@ -227,7 +227,7 @@ recruit
 → graduate
 ```
 
-Recruiting through a finalized incoming class is accepted. Enrollment remains Phase 5C.
+Recruiting through a finalized incoming class and freshman enrollment during rollover are accepted.
 
 ## Accepted In-Season Recruiting V0
 
@@ -275,7 +275,7 @@ A commitment is final. V0 has no decommitments, post-commitment flips, or reopen
 Season 1: Marcus Hill commits to Charlotte Tech
 Season 1 Team / Rotation: unchanged
 finalized incoming class: same Marcus Hill Player ID
-Season 2 enrollment: Phase 5C
+Season 2 enrollment: same Marcus Hill Player ID, class FR
 ```
 
 Recruiting progress aligns with globally completed basketball rounds, not completion of the controlled Program's individual game:
@@ -297,10 +297,22 @@ After competition, the accepted Phase 5A transition produces the actual partial 
 graduation + returning-Player development
 → OffseasonState returning Players + actual openings
 plus CompletedRecruitingClass incoming Recruits
-→ Phase 5C 12-Player Team construction
+→ exact 12-Player next-season roster
 ```
 
-Late Recruiting deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Exact formulas and accepted calibration are documented in `SIMULATION.md`. Recruit enrollment and next-season construction are not implemented.
+Late Recruiting deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Exact formulas and accepted calibration are documented in `SIMULATION.md`.
+
+## Accepted Dynasty Season Rollover V0
+
+At the season boundary, seniors leave; freshmen, sophomores, and juniors have already developed and advanced class; and committed Recruits enroll as freshmen without rerolled identity, ratings, or Potential. Every Program must return to exactly 12 Players. V0 has no cuts, transfers, redshirts, fifth-year Players, early professional departures, walk-ons, or position changes.
+
+Every new roster receives a fresh generated default Rotation, including the controlled Program. Prior user/AI minute distributions are not carried between seasons. Rotation preference carryover is future depth.
+
+`Team.prestige` remains fixed through rollover. Championships, losing seasons, and Recruiting classes do not modify it in V0; dynamic prestige is deferred.
+
+Each Season receives a fresh deterministic Schedule under the accepted 24-game format: 14 Conference and 10 non-Conference games across 24 rounds, split 12 home and 12 away. The new Season begins with zero results and default Rotations, while the prior Season remains historical.
+
+Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from the senior positions on the new rosters. Prior projected needs are not reused. This closes the repeatable backend loop while the current React/Zustand product remains single-season-only.
 
 ## Accepted Player Season Stats V0
 
