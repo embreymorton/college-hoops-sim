@@ -20,12 +20,12 @@ const teams = {
 const leaders = {
   points: {
     playerName: 'Caleb Daniels',
-    programAbbreviation: 'CTU',
+    programName: 'Charlotte Tech',
     value: 24,
   },
   rebounds: {
     playerName: 'Tobias Spencer',
-    programAbbreviation: 'GLU',
+    programName: 'Great Lakes',
     value: 11,
   },
   assists: null,
@@ -70,10 +70,16 @@ describe('CompletedMatchupCard', () => {
     const rebounds = document.querySelector('[data-stat="reb"]')
     expect(points).toHaveTextContent('24')
     expect(points).toHaveTextContent('Caleb Daniels')
-    expect(points).toHaveTextContent('CTU')
+    expect(points).toHaveTextContent('Charlotte Tech')
+    expect(points?.querySelector('.team-color-dot')).toHaveStyle({
+      background: '#123456',
+    })
     expect(rebounds).toHaveTextContent('11')
     expect(rebounds).toHaveTextContent('Tobias Spencer')
-    expect(rebounds).toHaveTextContent('GLU')
+    expect(rebounds).toHaveTextContent('Great Lakes')
+    expect(rebounds?.querySelector('.team-color-dot')).toHaveStyle({
+      background: '#654321',
+    })
     expect(document.querySelector('[data-stat="ast"]')).toHaveTextContent('—')
     expect(screen.getByText('3-Point Victory')).toBeInTheDocument()
   })

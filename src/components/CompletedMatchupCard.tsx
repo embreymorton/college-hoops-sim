@@ -8,7 +8,7 @@ interface CompletedMatchupTeamInfo {
 
 interface CompletedGameStatLeader {
   readonly playerName: string
-  readonly programAbbreviation: string
+  readonly programName: string
   readonly value: number
 }
 
@@ -66,14 +66,17 @@ export function CompletedMatchupCard({
           <GameLeaderColumn
             label="PTS"
             leader={leaders.points}
+            teamColor={getLeaderTeamColor(leaders.points, home, away)}
           />
           <GameLeaderColumn
             label="REB"
             leader={leaders.rebounds}
+            teamColor={getLeaderTeamColor(leaders.rebounds, home, away)}
           />
           <GameLeaderColumn
             label="AST"
             leader={leaders.assists}
+            teamColor={getLeaderTeamColor(leaders.assists, home, away)}
           />
         </div>
       </div>
@@ -93,9 +96,11 @@ export function CompletedMatchupCard({
 function GameLeaderColumn({
   label,
   leader,
+  teamColor,
 }: {
   readonly label: 'PTS' | 'REB' | 'AST'
   readonly leader: CompletedGameStatLeader | null
+  readonly teamColor: string | undefined
 }) {
   return (
     <div className="game-leaders__column" data-stat={label.toLowerCase()}>
@@ -105,7 +110,14 @@ function GameLeaderColumn({
           <span className="game-leaders__value">{leader.value}</span>
           <span className="game-leaders__name">{leader.playerName}</span>
           <span className="game-leaders__team">
-            {leader.programAbbreviation}
+            {teamColor && (
+              <span
+                className="team-color-dot"
+                style={{ background: teamColor }}
+                aria-hidden="true"
+              />
+            )}
+            {leader.programName}
           </span>
         </>
       ) : (
@@ -113,6 +125,17 @@ function GameLeaderColumn({
       )}
     </div>
   )
+}
+
+function getLeaderTeamColor(
+  leader: CompletedGameStatLeader | null,
+  home: CompletedMatchupTeamInfo,
+  away: CompletedMatchupTeamInfo,
+): string | undefined {
+  if (!leader) return undefined
+  if (leader.programName === home.name) return home.accentColor
+  if (leader.programName === away.name) return away.accentColor
+  return undefined
 }
 
 function CompletedTeamRow({ team }: { team: CompletedMatchupTeamInfo }) {
