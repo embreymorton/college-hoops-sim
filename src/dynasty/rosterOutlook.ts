@@ -1,4 +1,4 @@
-import { TEAM_ROSTER_SIZE, type Team } from '../engine'
+import { POSITIONS, TEAM_ROSTER_SIZE, type Team } from '../engine'
 import type {
   OffseasonProgramState,
   OffseasonRosterOutlook,
@@ -15,6 +15,16 @@ export function deriveProjectedRosterOutlook(
   const projectedReturningPlayerIds = team.roster
     .filter(({ classYear }) => classYear !== 'SR')
     .map(({ id }) => id)
+  const projectedDepartingIds = new Set(projectedDepartingPlayerIds)
+  const projectedOpeningsByPosition = Object.fromEntries(
+    POSITIONS.map((position) => [
+      position,
+      team.roster.filter(
+        (player) =>
+          player.position === position && projectedDepartingIds.has(player.id),
+      ).length,
+    ]),
+  ) as ProjectedRosterOutlook['projectedOpeningsByPosition']
 
   return {
     programId: team.id,
@@ -23,6 +33,7 @@ export function deriveProjectedRosterOutlook(
     projectedReturningPlayerIds,
     projectedOpenings:
       TEAM_ROSTER_SIZE - projectedReturningPlayerIds.length,
+    projectedOpeningsByPosition,
   }
 }
 

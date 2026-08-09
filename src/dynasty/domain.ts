@@ -1,7 +1,8 @@
-import type { Player, RngSeed } from '../engine'
+import type { Player, Position, RngSeed } from '../engine'
 import type { PostseasonState } from '../postseason'
 import type { SeasonState } from '../season'
 import type { UniverseDefinition } from '../universe'
+import type { RecruitingState } from './recruiting/domain'
 
 /** Canonical source facts for one fully completed competitive year. */
 export interface CompletedSeasonArchive {
@@ -31,6 +32,7 @@ export interface DynastyState {
   readonly universe: UniverseDefinition
   readonly activeSeason: SeasonState | null
   readonly activePostseason: PostseasonState | null
+  readonly recruiting: RecruitingState | null
   readonly history: readonly CompletedSeasonArchive[]
   readonly offseason: OffseasonState | null
 }
@@ -50,6 +52,7 @@ export interface ProjectedRosterOutlook {
   readonly projectedDepartingPlayerIds: readonly string[]
   readonly projectedReturningPlayerIds: readonly string[]
   readonly projectedOpenings: number
+  readonly projectedOpeningsByPosition: Readonly<Record<Position, number>>
 }
 
 export interface OffseasonRosterOutlook {

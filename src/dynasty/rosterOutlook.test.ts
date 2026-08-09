@@ -34,6 +34,13 @@ describe('projected roster outlook', () => {
       team.roster.filter(({ classYear }) => classYear !== 'SR').map(({ id }) => id),
     )
     expect(outlook.projectedOpenings).toBe(seniorCount)
+    expect(Object.values(outlook.projectedOpeningsByPosition).reduce(
+      (sum, openings) => sum + openings,
+      0,
+    )).toBe(seniorCount)
+    for (const player of team.roster.filter(({ classYear }) => classYear === 'SR')) {
+      expect(outlook.projectedOpeningsByPosition[player.position]).toBeGreaterThan(0)
+    }
     expect(outlook.currentRosterSize).toBe(TEAM_ROSTER_SIZE)
     expect(team).toEqual(before)
   })
