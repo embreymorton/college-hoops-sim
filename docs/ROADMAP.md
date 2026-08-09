@@ -251,45 +251,57 @@ The complete single-season game loop is implemented and exposed through the UI, 
 
 ## Phase 5 — Dynasty Loop — NEXT MAJOR SYSTEMS PHASE
 
-> Turn the completed single-season basketball loop into a multi-season Dynasty. Exact progression, graduation, recruiting, and offseason formulas require a separate design milestone.
+> Turn the completed single-season basketball loop into a multi-season Dynasty. In-season recruiting for the next season is part of the intended Dynasty V0 direction. Exact progression and recruiting mechanics require dedicated design milestones.
 
-### Required Dynasty architecture boundaries
-
-These are prerequisites for rollover, not optional polish:
-
-- **Stable returning Player IDs:** every returning Player must keep the same existing `playerId` across seasons. Class progression and development must evolve the existing identity rather than regenerate the Player. Career statistics, Player history, future awards, roster continuity, and save/history correctness depend on this.
-- **Completed-season preservation:** before Season 2 replaces the active competition state, Season 1's completed `SeasonState` and `PostseasonState`—or an equivalent historical representation containing their canonical `GameResult` facts—must remain recoverable. Rollover may not overwrite the only copy of completed results.
-
-These requirements do not define a persistence format, history UI, or final `DynastyState` schema. The corresponding unresolved watchpoints remain in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` until implementation resolves them.
-
-### 5.1 Player progression and roster turnover
-
-- Advance class years and graduate seniors
-- Apply potential-informed offseason development
-- Create roster openings
-
-### 5.2 Recruiting
-
-- Recruit domain model and recruiting-class generation
-- Recruiting board and Player preferences
-- Recruiting resources and decisions
-- AI recruiting, commitments, and incoming freshmen
-
-Exact recruiting mechanics remain intentionally undecided.
-
-### 5.3 Offseason transition
+The intended high-level lifecycle is:
 
 ```text
-Season ends
-→ postseason complete
+Season N begins
+→ Recruiting Class for Season N+1 exists
+
+REGULAR SEASON
+├── basketball rounds
+└── recruiting advances alongside completed rounds
+→ Postseason (recruiting may continue or finalize)
+→ archive completed Season + Postseason
 → seniors graduate
-→ Players develop
-→ recruiting resolves
-→ incoming Players join
-→ new season begins
+→ returning Players develop and classes advance
+→ committed recruits enroll as freshmen
+→ remaining openings resolve
+→ every Program finalizes a 12-Player roster
+→ fresh default Rotations + new deterministic Schedule
+→ Season N+1
 ```
 
-Acceptance target: the dynasty can advance indefinitely across multiple seasons.
+### Phase 5A — Dynasty Foundation + Progression — NEXT
+
+- Establish the Dynasty lifecycle boundary above current Season/Postseason state.
+- Preserve completed `SeasonState` and `PostseasonState`, or an equivalent representation retaining canonical `GameResult` facts, before active competition rolls over.
+- Keep every returning Player's stable `playerId`; development/class progression must evolve rather than regenerate that identity.
+- Graduate seniors, develop returning Players, advance classes, and represent the temporary roster state needed before finalization.
+
+These are rollover requirements, not optional polish. This phase does not lock a final `DynastyState` interface, persistence format, development formula, or complete offseason sequence.
+
+### Phase 5B — In-Season Recruiting V0 — PLANNED
+
+- Generate a recruiting class whose prospects target Season N+1.
+- Derive projected roster openings from predictable senior departures under Dynasty V0 assumptions.
+- Support a recruiting board and persistent recruiting plan/allocation that can advance without mandatory input every basketball round.
+- Advance recruiting on completed-round boundaries, including through Super Sim using the saved plan.
+- Support commitments, AI recruiting, and late recruiting/roster-completion behavior.
+- Preserve recruit identity through commitment, enrollment as a freshman, and later college seasons.
+
+Commitments remain future-roster facts and must not mutate the current Team, Rotation, or `SeasonState`. Board size and roster capacity are distinct concepts. Budgets, points, board limits, interest/commitment formulas, offer terminology, exact timing, Postseason periods, AI strategy, scouting, and fallback mechanics remain intentionally unspecified pending Recruiting V0 design.
+
+### Phase 5C — Season Rollover V0 — PLANNED
+
+- Enroll committed recruits as freshmen while preserving their identity.
+- Combine returning and incoming Players into the next roster.
+- Resolve any remaining openings so every Program returns to exactly 12 Players.
+- Generate fresh legal default Rotations and a new deterministic Schedule.
+- Initialize Season N+1 without discarding completed history.
+
+Acceptance target: the Dynasty can repeat this lifecycle indefinitely across multiple seasons.
 
 ## Phase 6 — Persistence and History — PLANNED
 

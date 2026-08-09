@@ -4,6 +4,27 @@ This file contains desirable product/gameplay ideas that are intentionally unsch
 
 Inclusion does not mean commitment, priority, or an implementation date. An idea may move into `ROADMAP.md` only after it is deliberately selected as planned work. Bugs, technical debt, maintainability risks, and current-design scaling watchpoints belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` instead.
 
+## Recruiting boundary
+
+In-season Recruiting V0—including recruiting-class generation, a recruiting board and persistent plan, round-based advancement, commitments, AI recruiting, next-season enrollment, and roster completion—is planned work in Roadmap Phase 5B rather than an unscheduled future idea. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` for the accepted high-level direction.
+
+### Recruiting depth — future and non-blocking
+
+- Campus visits and signing-day presentation
+- Recruiting pipelines
+- NIL
+- Playing-time promises
+- Deeper recruit personality and preferences
+- Dynamic interest from Tournament success
+- Depth-chart opportunity effects
+- Geographic preferences
+- Coaching/staff recruiting bonuses
+- Decommitments
+- Transfer portal
+- Recruiting battles, class history, and retrospectives
+
+These enhancements are intentionally unscheduled and are not Dynasty MVP requirements. Recruiting V0 mechanics remain deliberately undesigned; this list does not imply formulas or priority.
+
 ## Statistics and League immersion
 
 ### Postseason Player Stats
@@ -53,7 +74,7 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 
 ## Roster and coaching depth
 
-- Transfer portal and redshirts
+- Redshirts
 - Injuries, fatigue, morale, and chemistry
 - Playing-time expectations
 - Multi-position eligibility
@@ -67,7 +88,6 @@ None is required for the current Dynasty MVP.
 
 - Starting-five, matchup-comparison, or positional-insight presentation
 - Explicit Player or Team archetype presentation
-- NIL-related dynasty depth
 - Multiplayer or online leagues
 
 These are optional product directions, not current UI defects.

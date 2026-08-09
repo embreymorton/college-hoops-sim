@@ -7,10 +7,10 @@ The Dynasty MVP is one complete, repeatable college-basketball loop:
 ```text
 choose Program
 → manage roster and Rotation
-→ play a regular season
+→ play a regular season while recruiting for the next one
 → compete in the National Tournament
 → graduate and develop Players
-→ recruit and finalize the next roster
+→ enroll commitments and finalize the next roster
 → begin Season 2
 ```
 
@@ -66,9 +66,11 @@ The regular season and Postseason retain separate canonical Rotation state. Hist
 
 The single-season product is complete, but the Dynasty MVP is not. The next phase must add:
 
+- [ ] A Dynasty lifecycle boundary and completed Season/Postseason preservation
+- [ ] In-season recruiting for the next season, compatible with saved plans and Super Sim
 - [ ] Graduation
 - [ ] Player development and class progression
-- [ ] Recruiting
+- [ ] Stable recruit identity through commitment and freshman enrollment
 - [ ] Roster finalization
 - [ ] Season 2 transition
 
@@ -77,7 +79,7 @@ Two architecture requirements apply before or during rollover:
 - Returning Players retain their stable `playerId`; progression must not regenerate them as new identities.
 - Completed Season and Postseason facts remain recoverable rather than being overwritten when the next active season begins.
 
-Exact development formulas, recruiting mechanics, offseason sequencing details, and a Dynasty-state schema require their own design milestones. Full save/load and permanent history presentation may follow the core Dynasty MVP, but the rollover architecture must preserve the canonical facts those systems will need.
+Recruiting belongs to the cross-season Dynasty layer and targets Season N+1. A current-season commitment does not change the current Team, Rotation, or `SeasonState`. Exact development formulas, recruiting budgets/allocations, board limits, interest and commitment rules, offer mechanics, AI behavior, recruiting-period timing, roster-completion fallbacks, and a Dynasty-state schema require their own design milestones. Full save/load and permanent history presentation may follow the core Dynasty MVP, but rollover must preserve the canonical facts those systems will need.
 
 ## Not currently implemented
 

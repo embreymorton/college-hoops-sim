@@ -178,6 +178,44 @@ Each completed tournament result is canonical and preserves the existing full ho
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
 
+## Intended Dynasty and Recruiting boundary
+
+Dynasty is the future cross-season lifecycle owner. The conceptual boundary is:
+
+```text
+React / Zustand
+      ↓
+Dynasty
+├── Recruiting
+├── current SeasonState
+├── current PostseasonState
+├── completed history
+├── offseason / rollover state
+└── Universe context
+      ↓
+    Engine
+```
+
+This diagram does not define a final `DynastyState` interface. It locks dependency direction: Recruiting belongs to the Dynasty layer, not `SeasonState`; Season and Engine must not depend on Recruiting. Recruiting may consume Dynasty, Universe, and Program context, while basketball simulation remains unaware of prospects, interest, commitments, or future rosters.
+
+Recruiting during Season N targets Season N+1. A commitment remains in recruiting/future-roster state and must not mutate the current Team, current Rotation, or current `SeasonState`. At rollover, the same stable recruit identity should become the enrolled freshman Player identity and remain stable in later seasons. Exact recruit/Player schemas remain implementation work.
+
+Projected recruiting capacity may derive from predictable senior departures under Dynasty V0's no-transfer, no-early-departure, no-fifth-year assumptions. Recruiting-board membership remains distinct from roster capacity; the architecture must not assume board length equals projected openings.
+
+Recruiting advancement should attach to fully completed basketball rounds rather than individual controlled-game completion:
+
+```text
+entire Round 7 completes
+→ recruiting period 7 resolves once
+→ Round 8 begins
+```
+
+This prevents simulation order from creating extra recruiting progress. A persistent saved recruiting plan must continue through ordinary round advancement and Super Sim without mandatory user input every round. The precise recruiting-period model, including any Postseason periods, remains unspecified.
+
+Future recruiting randomness must follow the existing deterministic architecture: no `Math.random()`, Program-processing-order dependence, or recruit-iteration-order dependence. Stable concepts such as dynasty seed, season number, recruit ID, Program ID, and recruiting period should namespace independent randomness; exact seed strings remain implementation work.
+
+Before Season N+1 initializes, completed Season/Postseason facts must be archived, seniors removed, returning Players developed/classes advanced without replacing their IDs, committed recruits enrolled, and remaining openings resolved so every Program has exactly 12 Players. Fresh Rotations and a new deterministic Schedule then initialize the next Season. This is a lifecycle invariant, not a locked data schema or mechanics specification.
+
 ## Player Season Stats projections
 
 Player Season Stats V0 is a pure Season projection over canonical completed-game facts:

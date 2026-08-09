@@ -6,7 +6,7 @@ Build an approachable fictional college basketball dynasty simulator in which ro
 
 ## Core loop
 
-Choose a school → manage roster and rotations → simulate games → complete a season → compete in a national tournament → recruit players → develop the roster → advance to the next season.
+Choose a school → manage the current roster/Rotation while recruiting for the next season → complete the regular season and national tournament → preserve history → graduate/develop returning Players → enroll recruits and finalize rosters → advance to the next season.
 
 ## Design principles
 
@@ -183,6 +183,41 @@ Quick Sim
 ```
 
 This is factual storytelling from stored simulated production, not a separate authored-star system. The regular-season leaderboards, Team averages/leaders, Player profiles, and game logs likewise reflect canonical completed games.
+
+## Intended Dynasty V0 in-season recruiting
+
+Recruiting is planned as an ongoing Dynasty management layer that runs alongside current-season basketball while targeting the next season. The user should eventually be able to maintain a recruiting board, prioritize or allocate recruiting attention, advance basketball rounds, watch interest and competition evolve, and receive commitments during the season.
+
+```text
+maintain recruiting board and saved plan
+→ complete basketball rounds
+→ recruiting periods advance
+→ interest / competition evolves
+→ recruits commit for Season N+1
+```
+
+This should serve both pacing styles already established by Quick Sim and Game Prep:
+
+- A hands-on user may revisit and adjust the recruiting plan frequently.
+- A fast user may set a persistent plan and allow it to advance automatically through ordinary round progression or Super Sim.
+
+Recruiting progress aligns with completed basketball rounds, not completion of the controlled Program's individual game. Completing all of Round 7 conceptually resolves recruiting period 7 before Round 8 begins. This avoids granting extra progress based on game-simulation order. Whether Postseason provides a particular number of additional recruiting periods remains Recruiting V0 design work.
+
+A commitment may occur during the current season, but it creates a future-roster fact only:
+
+```text
+Season 1: Marcus Hill commits to Charlotte Tech
+Season 1 Team / Rotation: unchanged
+Season 2: Marcus Hill enrolls as a freshman
+```
+
+The same stable recruit identity should survive commitment, freshman enrollment, and later college seasons rather than being replaced with an unrelated Player ID. Exact recruit/Player type boundaries remain implementation work. An eventual `INCOMING CLASS` presentation may surface commitments, but no such UI is currently implemented.
+
+Under Dynasty V0 assumptions, projected openings are predictable from senior graduation because there are no transfers, early departures, or fifth years. A 12-Player roster with three seniors therefore has three projected openings. Recruiting-board size is not the same as available roster spots; a Program may track more prospects than it can ultimately sign, but exact board and signing rules are intentionally unspecified.
+
+Some Programs may end the season with fewer commitments than projected openings. Before Season N+1 begins, the recruiting/rollover boundary must resolve every remaining opening and restore every Program to a valid 12-Player roster. The fallback mechanism is deliberately undesigned.
+
+Recruiting budgets, points, board limits, interest formulas, commitment probabilities/timing, offers or scholarship terminology, star ratings, recruit distributions, Postseason periods, AI strategy, scouting, and roster-completion mechanics require a dedicated Recruiting V0 design session.
 
 ## Accepted Player Season Stats V0
 

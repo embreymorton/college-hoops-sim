@@ -37,7 +37,9 @@ This remains unresolved and is now an explicit Phase 5 architecture requirement,
 
 ### P3 — Allow future Super Sim interruption points
 
-Super Sim can run straight to a target because no current event requires a decision between games. If injuries, availability changes, Player decisions, or recruiting decisions are later introduced, bulk progression should be able to stop, resolve the required decision, and optionally continue. Do not implement interruption now.
+Super Sim can run straight to a target because no current event requires a decision between games. Planned In-Season Recruiting V0 must remain compatible with this behavior by advancing a saved recruiting plan without mandatory input every round; recruiting itself is not a reason to force interruption.
+
+If later injuries, availability changes, Player decisions, or explicitly designed mandatory recruiting events require attention between games, bulk progression should be able to stop, resolve the required decision, and optionally continue. Do not implement interruption now.
 
 ### P3 — Retain Exhibition as development tooling
 
