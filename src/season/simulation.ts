@@ -4,6 +4,7 @@ import type {
   SeasonState,
   SimulatePendingGamesInCurrentRoundOptions,
   SimulatePendingGamesInRoundOptions,
+  SimulatePendingGamesThroughRoundOptions,
   SimulateScheduledGameOptions,
 } from './domain'
 import { getCurrentRound, getGamesForRound } from './queries'
@@ -156,4 +157,43 @@ export function simulatePendingGamesInCurrentRound({
     simulationSeed,
     excludedProgramIds,
   })
+}
+
+/**
+ * Super Sim's sole basketball primitive: a bulk-progression convenience over
+ * the same per-game pipeline `simulatePendingGamesInRound` already uses, with
+ * no Program exclusions. Advances round by round — using each round's
+ * genuinely current pending games, so out-of-order or partially completed
+ * rounds behave identically to hand-played progression — until either no
+ * round remains pending or the next pending round is beyond `throughRound`.
+ *
+ * A no-op when the Season has already progressed past `throughRound`: this
+ * never simulates backward or touches already-recorded results.
+ */
+export function simulatePendingGamesThroughRound({
+  season,
+  throughRound,
+  simulationSeed,
+}: SimulatePendingGamesThroughRoundOptions): SeasonState {
+  if (
+    !Number.isSafeInteger(throughRound) ||
+    throughRound < 1 ||
+    throughRound > season.schedule.roundCount
+  ) {
+    throw new RangeError(`Unknown Schedule round "${throughRound}".`)
+  }
+
+  let current = season
+  let round = getCurrentRound(current)
+
+  while (round !== undefined && round <= throughRound) {
+    current = simulatePendingGamesInRound({
+      season: current,
+      round,
+      simulationSeed,
+    })
+    round = getCurrentRound(current)
+  }
+
+  return current
 }

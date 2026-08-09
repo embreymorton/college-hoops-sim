@@ -2,13 +2,19 @@ import { calculateTeamStrength, type Team, type TeamStrength } from '../engine'
 import {
   ConferenceStandingsSection,
   NextGameCard,
+  RecentResultsSection,
   ScheduleTable,
   SeasonHeader,
+  SuperSimConfirmDialog,
+  SuperSimMenu,
+  SuperSimSummaryDialog,
 } from '../components'
-import { useSeasonStore } from '../store'
+import { MIDSEASON_ROUND, useSeasonStore } from '../store'
 import {
   deriveConferenceRecord,
+  deriveConferenceStandings,
   deriveProgramRecord,
+  getCompletedGamesForProgram,
   getCurrentRound,
   getNextGameForProgram,
   getPendingGamesForRound,
@@ -22,6 +28,9 @@ import { describeRoundProgress, formatRecord } from './seasonFormatters'
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
+
+/** Compact recent-form strip; 3–5 games keeps the Hub from feeling like a full log. */
+const RECENT_RESULTS_COUNT = 4
 
 function buildTeamInfo(
   season: SeasonState,
@@ -44,8 +53,18 @@ export function SeasonHubScreen() {
     (state) => state.controlledProgramId,
   )
   const goToGamePrep = useSeasonStore((state) => state.goToGamePrep)
+  const simulateNextGame = useSeasonStore((state) => state.simulateNextGame)
   const simulateRestOfRound = useSeasonStore(
     (state) => state.simulateRestOfRound,
+  )
+  const viewCompletedGame = useSeasonStore((state) => state.viewCompletedGame)
+  const pendingSuperSim = useSeasonStore((state) => state.pendingSuperSim)
+  const superSimSummary = useSeasonStore((state) => state.superSimSummary)
+  const requestSuperSim = useSeasonStore((state) => state.requestSuperSim)
+  const cancelSuperSim = useSeasonStore((state) => state.cancelSuperSim)
+  const confirmSuperSim = useSeasonStore((state) => state.confirmSuperSim)
+  const dismissSuperSimSummary = useSeasonStore(
+    (state) => state.dismissSuperSimSummary,
   )
 
   if (!season || !controlledProgramId) {
@@ -91,6 +110,27 @@ export function SeasonHubScreen() {
         (conference) => conference.id === opponentProgram.conferenceId,
       )
     : undefined
+  const recentGames = getCompletedGamesForProgram(season, controlledProgramId)
+    .slice()
+    .sort(
+      (first, second) =>
+        second.game.round - first.game.round ||
+        second.game.index - first.game.index,
+    )
+    .slice(0, RECENT_RESULTS_COUNT)
+  // Midseason is only a meaningful checkpoint while Round 12 has not yet
+  // fully resolved; once the Season has moved past it, offering it again
+  // would be a confusing no-op rather than hiding a stale option.
+  const showMidseason =
+    currentRound !== undefined && currentRound <= MIDSEASON_ROUND
+  const isSuperSimDialogOpen = Boolean(pendingSuperSim) || Boolean(superSimSummary)
+  const controlledStandingIndex = deriveConferenceStandings(
+    UNIVERSE_V0,
+    season,
+    controlledProgram.conferenceId,
+  ).findIndex((row) => row.programId === controlledProgramId)
+  const controlledConferenceStanding =
+    controlledStandingIndex === -1 ? undefined : controlledStandingIndex + 1
 
   return (
     <>
@@ -137,9 +177,26 @@ export function SeasonHubScreen() {
                 opponentProgram.branding.primaryColor,
               )}
               opponentConferenceName={opponentConference.name}
-              onPrepare={goToGamePrep}
+              opponentRecord={deriveProgramRecord(season, opponentProgram.id)}
+              opponentConferenceRecord={deriveConferenceRecord(
+                season,
+                opponentProgram.id,
+              )}
+              onSimulate={simulateNextGame}
+              onManageRotation={goToGamePrep}
             />
           )
+        )}
+        {!seasonComplete && (
+          <div className="super-sim-row">
+            <SuperSimMenu
+              showMidseason={showMidseason}
+              midseasonRound={MIDSEASON_ROUND}
+              endOfSeasonRound={season.schedule.roundCount}
+              onSelect={requestSuperSim}
+              isDialogOpen={isSuperSimDialogOpen}
+            />
+          </div>
         )}
         {currentRound !== undefined && hasSimulatableRoundGames && (
           <div className="round-progress">
@@ -173,6 +230,20 @@ export function SeasonHubScreen() {
         />
       </section>
 
+      {recentGames.length > 0 && (
+        <section className="section" aria-labelledby="recent-results-heading">
+          <h2 id="recent-results-heading" className="section-title">
+            Recent Results
+          </h2>
+          <RecentResultsSection
+            games={recentGames}
+            controlledProgramId={controlledProgramId}
+            programsById={PROGRAMS_BY_ID}
+            onSelectGame={viewCompletedGame}
+          />
+        </section>
+      )}
+
       <section className="section" aria-labelledby="schedule-heading">
         <h2 id="schedule-heading" className="section-title">
           Schedule &amp; Results
@@ -183,8 +254,34 @@ export function SeasonHubScreen() {
           programsById={PROGRAMS_BY_ID}
           resultsByGameId={season.resultsByGameId}
           nextGameId={nextGame?.id}
+          onSelectGame={viewCompletedGame}
         />
       </section>
+
+      {pendingSuperSim && (
+        <SuperSimConfirmDialog
+          kind={pendingSuperSim.kind}
+          throughRound={pendingSuperSim.throughRound}
+          controlledProgramName={controlledProgram.name}
+          onCancel={cancelSuperSim}
+          onConfirm={confirmSuperSim}
+        />
+      )}
+
+      {superSimSummary && (
+        <SuperSimSummaryDialog
+          kind={superSimSummary.kind}
+          controlledProgramName={controlledProgram.name}
+          segmentRecord={{
+            wins: superSimSummary.segmentWins,
+            losses: superSimSummary.segmentLosses,
+          }}
+          overallRecord={overallRecord}
+          conferenceRecord={conferenceRecord}
+          conferenceStanding={controlledConferenceStanding}
+          onContinue={dismissSuperSimSummary}
+        />
+      )}
     </>
   )
 }

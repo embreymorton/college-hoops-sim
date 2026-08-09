@@ -1140,10 +1140,11 @@ p {
   color: var(--ink-0);
 }
 
-.next-game-card__opponent-conference {
+.next-game-card__opponent-meta {
   font-size: 0.8rem;
   color: var(--ink-1);
   margin-top: 0.2rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .next-game-card__comparison {
@@ -1188,9 +1189,11 @@ p {
   color: var(--ink-2);
 }
 
-.next-game-card__action {
-  display: block;
-  margin: 0 auto;
+.next-game-card__actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .round-progress {
@@ -1209,6 +1212,189 @@ p {
 .round-progress__text {
   font-size: 0.82rem;
   color: var(--ink-1);
+}
+
+/* ==========================================================================
+   Super Sim
+   ========================================================================== */
+
+.super-sim-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--space-3);
+}
+
+.super-sim-menu {
+  position: relative;
+}
+
+.super-sim-menu__trigger {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    color var(--duration-fast) var(--ease-standard);
+}
+
+.super-sim-menu__trigger:hover,
+.super-sim-menu__trigger[aria-expanded='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.super-sim-menu__panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 0.4rem);
+  z-index: 20;
+  min-width: 15rem;
+  max-width: calc(100vw - 2rem);
+  background: var(--surface-2);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel);
+  padding: 0.3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.super-sim-menu__option {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  cursor: pointer;
+  color: var(--ink-0);
+  transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.super-sim-menu__option:hover,
+.super-sim-menu__option:focus-visible {
+  background: var(--surface-3);
+}
+
+.super-sim-menu__option-label {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.super-sim-menu__option-detail {
+  font-size: 0.72rem;
+  color: var(--ink-1);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================================================
+   Modal dialogs (Super Sim confirm / completion)
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 9, 13, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-5);
+  z-index: 100;
+}
+
+.modal {
+  background: linear-gradient(180deg, var(--surface-2), var(--surface-1));
+  border: 1px solid var(--line-strong);
+  border-top: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-panel);
+  padding: var(--space-6);
+  max-width: 28rem;
+  width: 100%;
+}
+
+.modal__eyebrow {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+}
+
+.modal__title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.3rem;
+  text-transform: uppercase;
+  color: var(--ink-0);
+  margin-bottom: var(--space-3);
+}
+
+.modal__body {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--ink-1);
+}
+
+.modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+.modal-stat-list {
+  margin: var(--space-5) 0 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modal-stat-list__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.modal-stat-list__row dt {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.modal-stat-list__row dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--ink-0);
+  font-size: 0.95rem;
 }
 
 .season-complete-panel {
@@ -1270,6 +1456,105 @@ p {
 .schedule-table tbody tr[data-status='next'] td:last-child {
   color: var(--accent);
   font-weight: 600;
+}
+
+/* Future games recede; completed and current rows keep full contrast. */
+.schedule-table tbody tr[data-status='pending'] td {
+  color: var(--ink-2);
+}
+
+.schedule-result-button {
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  transition: text-decoration-color var(--duration-fast) var(--ease-standard);
+}
+
+.schedule-result-button:hover,
+.schedule-result-button:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* ==========================================================================
+   Recent results
+   ========================================================================== */
+
+.recent-results__list {
+  list-style: none;
+  margin: 0 0 var(--space-3);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.recent-results__row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1.4rem 4rem 1fr;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  padding: 0.55rem var(--space-4);
+  font: inherit;
+  color: var(--ink-0);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-standard),
+    border-color var(--duration-fast) var(--ease-standard);
+}
+
+.recent-results__row:hover {
+  background: var(--surface-2);
+  border-color: var(--line);
+}
+
+.recent-results__outcome {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.recent-results__row[data-outcome='win'] .recent-results__outcome {
+  color: var(--accent);
+}
+
+.recent-results__row[data-outcome='loss'] .recent-results__outcome {
+  color: var(--ink-2);
+}
+
+.recent-results__score {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  color: var(--ink-0);
+}
+
+.recent-results__opponent {
+  font-size: 0.85rem;
+  color: var(--ink-1);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-results__summary {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-1);
 }
 
 .program-select__conferences {
@@ -1375,6 +1660,17 @@ p {
   color: var(--ink-1);
   width: 1.5rem;
   text-align: right;
+}
+
+.program-select__identity {
+  grid-column: 1 / -1;
+  font-size: 0.76rem;
+  font-style: italic;
+  color: var(--ink-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 0.2rem;
 }
 
 /* ==========================================================================
@@ -1548,6 +1844,49 @@ p {
   .round-progress {
     flex-direction: column;
     align-items: stretch;
+    text-align: center;
+  }
+
+  .next-game-card__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .recent-results__row {
+    grid-template-columns: 1.2rem 3.4rem 1fr;
+    gap: var(--space-2);
+    padding: 0.5rem var(--space-3);
+  }
+
+  .super-sim-row {
+    justify-content: stretch;
+  }
+
+  .super-sim-menu {
+    width: 100%;
+  }
+
+  .super-sim-menu__trigger {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .super-sim-menu__panel {
+    left: 0;
+    right: 0;
+    min-width: 0;
+  }
+
+  .modal {
+    padding: var(--space-5);
+  }
+
+  .modal__actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .modal__actions .button {
     text-align: center;
   }
 }

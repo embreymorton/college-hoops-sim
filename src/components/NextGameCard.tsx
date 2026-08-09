@@ -1,5 +1,6 @@
 import type { TeamStrength } from '../engine'
-import { formatOpponentLine } from '../app/seasonFormatters'
+import type { ProgramRecord } from '../season'
+import { formatOpponentLine, formatRecord } from '../app/seasonFormatters'
 import { StatTrioItem } from './Scoreboard'
 
 interface NextGameTeamInfo {
@@ -14,7 +15,12 @@ interface NextGameCardProps {
   readonly controlled: NextGameTeamInfo
   readonly opponent: NextGameTeamInfo
   readonly opponentConferenceName: string
-  readonly onPrepare: () => void
+  readonly opponentRecord: ProgramRecord
+  readonly opponentConferenceRecord: ProgramRecord
+  /** Dashboard Quick Sim: plays the game directly with the canonical Season Rotation. */
+  readonly onSimulate: () => void
+  /** Opens the Rotation Editor / Game Prep workflow instead of simulating immediately. */
+  readonly onManageRotation: () => void
 }
 
 /** Compact preview of the controlled Program's next ScheduledGame. */
@@ -24,7 +30,10 @@ export function NextGameCard({
   controlled,
   opponent,
   opponentConferenceName,
-  onPrepare,
+  opponentRecord,
+  opponentConferenceRecord,
+  onSimulate,
+  onManageRotation,
 }: NextGameCardProps) {
   return (
     <div className="next-game-card">
@@ -37,8 +46,14 @@ export function NextGameCard({
       <h3 className="next-game-card__headline">
         {formatOpponentLine(isControlledHome, opponent.name)}
       </h3>
-      <p className="next-game-card__opponent-conference">
-        {opponentConferenceName}
+      <p className="next-game-card__opponent-meta">
+        {opponentConferenceName} ·{' '}
+        {formatRecord(opponentRecord.wins, opponentRecord.losses)} Overall ·{' '}
+        {formatRecord(
+          opponentConferenceRecord.wins,
+          opponentConferenceRecord.losses,
+        )}{' '}
+        Conf
       </p>
       <div className="next-game-card__comparison">
         <NextGameTeamStats label="You" team={controlled} />
@@ -47,13 +62,22 @@ export function NextGameCard({
         </span>
         <NextGameTeamStats label={opponent.name} team={opponent} />
       </div>
-      <button
-        type="button"
-        className="button button--primary next-game-card__action"
-        onClick={onPrepare}
-      >
-        Prepare for Game
-      </button>
+      <div className="next-game-card__actions">
+        <button
+          type="button"
+          className="button button--primary"
+          onClick={onSimulate}
+        >
+          Simulate Game
+        </button>
+        <button
+          type="button"
+          className="button button--ghost"
+          onClick={onManageRotation}
+        >
+          Manage Rotation
+        </button>
+      </div>
     </div>
   )
 }

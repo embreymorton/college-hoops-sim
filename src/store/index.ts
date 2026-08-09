@@ -4,5 +4,11 @@ export type {
   GamePresentationPhase,
   GamePresentationState,
 } from './gamePresentationStore'
-export { useSeasonStore } from './seasonStore'
-export type { SeasonSessionState, SeasonSessionView } from './seasonStore'
+export { MIDSEASON_ROUND, useSeasonStore } from './seasonStore'
+export type {
+  PendingSuperSim,
+  SeasonSessionState,
+  SeasonSessionView,
+  SuperSimKind,
+  SuperSimSummary,
+} from './seasonStore'

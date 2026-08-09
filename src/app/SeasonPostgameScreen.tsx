@@ -8,26 +8,40 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
 
-/** Reuses the accepted final-score and box-score presentation for a Season result. */
+/**
+ * Reuses the accepted final-score and box-score presentation for a Season
+ * result in two presentation contexts, distinguished only by the Season
+ * session's current `view` — never encoded into the stored `GameResult`:
+ *
+ * - `postgame`: the controlled Program's just-played game. Offers the
+ *   round-continuation action.
+ * - `gameHistory`: any completed game the coach opens from the schedule or
+ *   Recent Results. Read-only — no continuation or resimulation action.
+ */
 export function SeasonPostgameScreen() {
   const season = useSeasonStore((state) => state.season)
   const controlledProgramId = useSeasonStore(
     (state) => state.controlledProgramId,
   )
+  const view = useSeasonStore((state) => state.view)
   const lastPlayedGameId = useSeasonStore((state) => state.lastPlayedGameId)
+  const viewedGameId = useSeasonStore((state) => state.viewedGameId)
   const simulateRestOfRound = useSeasonStore(
     (state) => state.simulateRestOfRound,
   )
   const goToHub = useSeasonStore((state) => state.goToHub)
 
-  if (!season || !controlledProgramId || !lastPlayedGameId) {
+  const isHistorical = view === 'gameHistory'
+  const scheduledGameId = isHistorical ? viewedGameId : lastPlayedGameId
+
+  if (!season || !controlledProgramId || !scheduledGameId) {
     return null
   }
 
   const game = season.schedule.games.find(
-    (candidate) => candidate.id === lastPlayedGameId,
+    (candidate) => candidate.id === scheduledGameId,
   )
-  const result = season.resultsByGameId[lastPlayedGameId]
+  const result = season.resultsByGameId[scheduledGameId]
 
   if (!game || !result) {
     return null
@@ -49,17 +63,27 @@ export function SeasonPostgameScreen() {
   // "current round" — otherwise this action would silently drift onto the
   // next round as soon as this one finishes resolving.
   const pendingRoundGames = getPendingGamesForRound(season, game.round)
-  const hasSimulatableRoundGames = pendingRoundGames.some(
-    (pendingGame) =>
-      pendingGame.homeProgramId !== controlledProgramId &&
-      pendingGame.awayProgramId !== controlledProgramId,
-  )
+  const hasSimulatableRoundGames =
+    !isHistorical &&
+    pendingRoundGames.some(
+      (pendingGame) =>
+        pendingGame.homeProgramId !== controlledProgramId &&
+        pendingGame.awayProgramId !== controlledProgramId,
+    )
+
+  function continueToHub() {
+    if (hasSimulatableRoundGames) {
+      simulateRestOfRound()
+    }
+
+    goToHub()
+  }
 
   return (
     <>
       <section className="section" aria-labelledby="season-final-heading">
         <h2 id="season-final-heading" className="visually-hidden">
-          Final result
+          {isHistorical ? 'Historical result' : 'Final result'}
         </h2>
         <FinalScoreboard
           home={{
@@ -76,12 +100,19 @@ export function SeasonPostgameScreen() {
           }}
           winnerName={winnerName}
           overtimeTag={formatOvertimeTag(result.overtimePeriods)}
+          roundLabel={`Round ${game.round}`}
           primaryAction={
             hasSimulatableRoundGames
-              ? { label: 'Simulate Rest of Round', onClick: simulateRestOfRound }
+              ? {
+                  label: 'Simulate Rest of Round & Continue',
+                  onClick: continueToHub,
+                }
               : null
           }
-          secondaryAction={{ label: 'Return to Season Hub', onClick: goToHub }}
+          secondaryAction={{
+            label: isHistorical ? 'Back to Season Hub' : 'Return to Season Hub',
+            onClick: goToHub,
+          }}
         />
       </section>
       <section className="section" aria-labelledby="season-box-score-heading">

@@ -17,6 +17,7 @@ export { recordGameResult, updateProgramRotation } from './seasonState'
 export {
   simulatePendingGamesInCurrentRound,
   simulatePendingGamesInRound,
+  simulatePendingGamesThroughRound,
   simulateScheduledGame,
 } from './simulation'
 export { deriveConferenceStandings } from './standings'
@@ -32,6 +33,7 @@ export type {
   SeasonValidationResult,
   SimulatePendingGamesInCurrentRoundOptions,
   SimulatePendingGamesInRoundOptions,
+  SimulatePendingGamesThroughRoundOptions,
   SimulateScheduledGameOptions,
   StandingRow,
 } from './domain'

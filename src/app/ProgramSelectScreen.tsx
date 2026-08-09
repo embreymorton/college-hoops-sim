@@ -70,6 +70,9 @@ export function ProgramSelectScreen() {
                         {program.basePrestige}
                       </span>
                     </span>
+                    <span className="program-select__identity">
+                      {program.identity}
+                    </span>
                   </button>
                 </li>
               ))}

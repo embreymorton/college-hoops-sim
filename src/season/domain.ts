@@ -54,6 +54,18 @@ export interface SimulatePendingGamesInCurrentRoundOptions {
   readonly excludedProgramIds?: readonly string[]
 }
 
+/**
+ * Bulk-progression checkpoint: simulate every pending ScheduledGame from the
+ * current round through (and including) `throughRound`, with no Program
+ * exclusions. A pacing convenience over the same per-game pipeline — not a
+ * distinct simulation model.
+ */
+export interface SimulatePendingGamesThroughRoundOptions {
+  readonly season: SeasonState
+  readonly throughRound: number
+  readonly simulationSeed: RngSeed
+}
+
 /** Serializable derived conference-standing projection; never Season state. */
 export interface StandingRow {
   readonly programId: string

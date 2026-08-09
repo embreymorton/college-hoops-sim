@@ -14,6 +14,8 @@ interface ScheduleTableProps {
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
   readonly resultsByGameId: Readonly<Record<string, GameResult>>
   readonly nextGameId: string | undefined
+  /** Opens the recorded historical result for a completed ScheduledGame. */
+  readonly onSelectGame: (scheduledGameId: string) => void
 }
 
 /** The controlled Program's 24-game regular-season schedule and results. */
@@ -23,6 +25,7 @@ export function ScheduleTable({
   programsById,
   resultsByGameId,
   nextGameId,
+  onSelectGame,
 }: ScheduleTableProps) {
   return (
     <div className="table-scroll">
@@ -68,11 +71,19 @@ export function ScheduleTable({
                   {formatGameTypeTag(game.type)}
                 </td>
                 <td>
-                  {result
-                    ? formatControlledResultLine(isControlledHome, result)
-                    : isNext
-                      ? 'Next'
-                      : '—'}
+                  {result ? (
+                    <button
+                      type="button"
+                      className="schedule-result-button"
+                      onClick={() => onSelectGame(game.id)}
+                    >
+                      {formatControlledResultLine(isControlledHome, result)}
+                    </button>
+                  ) : isNext ? (
+                    'Next'
+                  ) : (
+                    '—'
+                  )}
                 </td>
               </tr>
             )

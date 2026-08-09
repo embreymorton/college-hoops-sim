@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { getPlayersByMinutes, simulateGame, validateRotation } from '../engine'
 import {
   deriveProgramRecord,
+  getCompletedGamesForProgram,
   getCurrentRound,
   getNextGameForProgram,
   getPendingGamesForRound,
@@ -9,7 +10,7 @@ import {
   validateSeasonState,
 } from '../season'
 import { UNIVERSE_V0 } from '../universe'
-import { useSeasonStore } from './seasonStore'
+import { MIDSEASON_ROUND, useSeasonStore } from './seasonStore'
 
 function resetStore() {
   useSeasonStore.setState(useSeasonStore.getInitialState())
@@ -277,6 +278,119 @@ describe('seasonStore game simulation', () => {
   })
 })
 
+describe('seasonStore Dashboard Quick Sim', () => {
+  it('uses the canonical current Season Rotation, matching a reproduction from the committed Team/Rotation', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const { season } = useSeasonStore.getState()
+    const game = getNextGameForProgram(season!, 'charlotte-tech')!
+    const home = season!.programStates[game.homeProgramId]!
+    const away = season!.programStates[game.awayProgramId]!
+
+    useSeasonStore.getState().simulateNextGame()
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('postgame')
+    expect(state.lastPlayedGameId).toBe(game.id)
+
+    const recorded = state.season!.resultsByGameId[game.id]
+    expect(recorded).toBeDefined()
+
+    const independent = simulateGame({
+      homeTeam: home.team,
+      awayTeam: away.team,
+      homeRotation: home.rotation,
+      awayRotation: away.rotation,
+      seed: recorded!.seed,
+    })
+    expect(recorded).toEqual(independent)
+  })
+
+  it('is not blocked by a stale, invalid Rotation draft left over from Game Prep', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const { season } = useSeasonStore.getState()
+    const controlledTeam = season!.programStates['charlotte-tech']!.team
+    const [firstPlayer] = getPlayersByMinutes(
+      controlledTeam,
+      season!.programStates['charlotte-tech']!.rotation,
+    )
+    const game = getNextGameForProgram(season!, 'charlotte-tech')!
+
+    // Leave an invalid edit in the draft without committing or fixing it.
+    useSeasonStore
+      .getState()
+      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+    expect(
+      validateRotation(controlledTeam, useSeasonStore.getState().draftRotation!)
+        .valid,
+    ).toBe(false)
+
+    useSeasonStore.getState().simulateNextGame()
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('postgame')
+    expect(state.lastPlayedGameId).toBe(game.id)
+    expect(state.season!.resultsByGameId[game.id]).toBeDefined()
+  })
+
+  it('resets a stale invalid draft back to the canonical Rotation when Game Prep is (re-)entered', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const { season } = useSeasonStore.getState()
+    const controlledTeam = season!.programStates['charlotte-tech']!.team
+    const canonicalRotation =
+      season!.programStates['charlotte-tech']!.rotation
+    const [firstPlayer] = getPlayersByMinutes(controlledTeam, canonicalRotation)
+
+    useSeasonStore
+      .getState()
+      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+    useSeasonStore.getState().goToHub()
+
+    useSeasonStore.getState().goToGamePrep()
+
+    const state = useSeasonStore.getState()
+    expect(validateRotation(controlledTeam, state.draftRotation!).valid).toBe(
+      true,
+    )
+    expect(state.draftRotation).toEqual(canonicalRotation)
+  })
+})
+
+describe('seasonStore historical game viewing', () => {
+  it('opens a completed ScheduledGame for historical review without resimulating it', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().playScheduledGame()
+    const { lastPlayedGameId, season: seasonAfterGame } =
+      useSeasonStore.getState()
+    const resultBeforeViewing = seasonAfterGame!.resultsByGameId[
+      lastPlayedGameId!
+    ]
+    useSeasonStore.getState().goToHub()
+
+    useSeasonStore.getState().viewCompletedGame(lastPlayedGameId!)
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('gameHistory')
+    expect(state.viewedGameId).toBe(lastPlayedGameId)
+    expect(state.season!.resultsByGameId[lastPlayedGameId!]).toEqual(
+      resultBeforeViewing,
+    )
+  })
+
+  it('is a no-op for a ScheduledGame that has not been played yet', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const pendingGame = getNextGameForProgram(
+      useSeasonStore.getState().season!,
+      'charlotte-tech',
+    )!
+
+    useSeasonStore.getState().viewCompletedGame(pendingGame.id)
+
+    const state = useSeasonStore.getState()
+    expect(state.view).toBe('hub')
+    expect(state.viewedGameId).toBeNull()
+  })
+})
+
 describe('seasonStore rest-of-round simulation', () => {
   it('preserves the controlled Program result and completes remaining Round 1 games', () => {
     useSeasonStore.getState().selectProgram('charlotte-tech')
@@ -391,4 +505,215 @@ describe('seasonStore regular-season completion', () => {
     },
     20000,
   )
+})
+
+describe('seasonStore Super Sim', () => {
+  it('requests Midseason with throughRound = 12 and does not touch Season state', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const before = useSeasonStore.getState().season
+
+    useSeasonStore.getState().requestSuperSim('midseason')
+
+    const state = useSeasonStore.getState()
+    expect(state.pendingSuperSim).toEqual({
+      kind: 'midseason',
+      throughRound: MIDSEASON_ROUND,
+    })
+    expect(state.season).toBe(before)
+  })
+
+  it('requests End of Regular Season with throughRound = the Schedule round count', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+
+    useSeasonStore.getState().requestSuperSim('endOfRegularSeason')
+
+    const state = useSeasonStore.getState()
+    expect(state.pendingSuperSim).toEqual({
+      kind: 'endOfRegularSeason',
+      throughRound: state.season!.schedule.roundCount,
+    })
+  })
+
+  it('cancelSuperSim clears the pending request without simulating anything', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const before = useSeasonStore.getState().season
+    useSeasonStore.getState().requestSuperSim('midseason')
+
+    useSeasonStore.getState().cancelSuperSim()
+
+    const state = useSeasonStore.getState()
+    expect(state.pendingSuperSim).toBeNull()
+    expect(state.season).toBe(before)
+  })
+
+  it('confirmSuperSim completes every pending game through Round 12 and derives the segment record', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().requestSuperSim('midseason')
+
+    useSeasonStore.getState().confirmSuperSim()
+
+    const state = useSeasonStore.getState()
+    expect(getCurrentRound(state.season!)).toBe(13)
+    for (let round = 1; round <= 12; round += 1) {
+      expect(getPendingGamesForRound(state.season!, round)).toHaveLength(0)
+    }
+    expect(state.pendingSuperSim).toBeNull()
+
+    const finalRecord = deriveProgramRecord(state.season!, 'charlotte-tech')
+    // A fresh Season starts 0-0, so the segment record equals the final record.
+    expect(state.superSimSummary).toEqual({
+      kind: 'midseason',
+      throughRound: MIDSEASON_ROUND,
+      segmentWins: finalRecord.wins,
+      segmentLosses: finalRecord.losses,
+    })
+    expect(finalRecord.wins + finalRecord.losses).toBe(12)
+  })
+
+  it('confirmSuperSim through End of Regular Season completes all 384 games', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().requestSuperSim('endOfRegularSeason')
+
+    useSeasonStore.getState().confirmSuperSim()
+
+    const state = useSeasonStore.getState()
+    expect(isRegularSeasonComplete(state.season!)).toBe(true)
+    expect(Object.keys(state.season!.resultsByGameId)).toHaveLength(384)
+    expect(getCurrentRound(state.season!)).toBeUndefined()
+    expect(state.superSimSummary!.kind).toBe('endOfRegularSeason')
+    expect(
+      state.superSimSummary!.segmentWins + state.superSimSummary!.segmentLosses,
+    ).toBe(24)
+  })
+
+  it('preserves an already in-progress segment record (before/after, not from a fresh 0-0 Season)', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    // Play a few rounds by hand first, establishing a non-zero "before" record.
+    for (let round = 0; round < 3; round += 1) {
+      useSeasonStore.getState().simulateNextGame()
+      useSeasonStore.getState().simulateRestOfRound()
+    }
+    const before = deriveProgramRecord(
+      useSeasonStore.getState().season!,
+      'charlotte-tech',
+    )
+
+    useSeasonStore.getState().requestSuperSim('midseason')
+    useSeasonStore.getState().confirmSuperSim()
+
+    const after = deriveProgramRecord(
+      useSeasonStore.getState().season!,
+      'charlotte-tech',
+    )
+    const summary = useSeasonStore.getState().superSimSummary!
+    expect(summary.segmentWins).toBe(after.wins - before.wins)
+    expect(summary.segmentLosses).toBe(after.losses - before.losses)
+  })
+
+  it('dismissSuperSimSummary clears the feedback without altering Season state', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().requestSuperSim('midseason')
+    useSeasonStore.getState().confirmSuperSim()
+    const seasonAfterSim = useSeasonStore.getState().season
+
+    useSeasonStore.getState().dismissSuperSimSummary()
+
+    const state = useSeasonStore.getState()
+    expect(state.superSimSummary).toBeNull()
+    expect(state.season).toBe(seasonAfterSim)
+  })
+
+  it("uses each Program's current committed Rotation, unaffected by a stale invalid Game Prep draft", () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const { season } = useSeasonStore.getState()
+    const controlledTeam = season!.programStates['charlotte-tech']!.team
+    const canonicalRotation = season!.programStates['charlotte-tech']!.rotation
+    const [firstPlayer] = getPlayersByMinutes(controlledTeam, canonicalRotation)
+
+    // Leave an invalid draft behind, exactly like the Dashboard Quick Sim boundary test.
+    useSeasonStore
+      .getState()
+      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+    expect(
+      validateRotation(controlledTeam, useSeasonStore.getState().draftRotation!)
+        .valid,
+    ).toBe(false)
+
+    useSeasonStore.getState().requestSuperSim('midseason')
+    useSeasonStore.getState().confirmSuperSim()
+
+    const state = useSeasonStore.getState()
+    expect(getCurrentRound(state.season!)).toBe(13)
+    // The canonical committed Rotation — never the invalid draft — was used.
+    expect(state.season!.programStates['charlotte-tech']!.rotation).toEqual(
+      canonicalRotation,
+    )
+  })
+
+  it('preserves a custom, legally committed Rotation across the entire bulk simulation', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    const { season } = useSeasonStore.getState()
+    const controlledTeam = season!.programStates['charlotte-tech']!.team
+    const forwards = getPlayersByMinutes(
+      controlledTeam,
+      season!.programStates['charlotte-tech']!.rotation,
+    ).filter(({ player }) => player.position === 'SF')
+
+    useSeasonStore
+      .getState()
+      .setDraftPlayerMinutes(forwards[0]!.player.id, forwards[0]!.minutes - 3)
+    useSeasonStore
+      .getState()
+      .setDraftPlayerMinutes(forwards[1]!.player.id, forwards[1]!.minutes + 3)
+    const customRotation = useSeasonStore.getState().draftRotation!
+
+    useSeasonStore.getState().requestSuperSim('midseason')
+    useSeasonStore.getState().confirmSuperSim()
+
+    const state = useSeasonStore.getState()
+    expect(state.season!.programStates['charlotte-tech']!.rotation).toEqual(
+      customRotation,
+    )
+  })
+
+  it('preserves already-completed results exactly when Super Sim runs from a partial Season', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().simulateNextGame()
+    useSeasonStore.getState().simulateRestOfRound()
+    const round1Results = { ...useSeasonStore.getState().season!.resultsByGameId }
+
+    useSeasonStore.getState().requestSuperSim('midseason')
+    useSeasonStore.getState().confirmSuperSim()
+
+    const state = useSeasonStore.getState()
+    for (const [gameId, result] of Object.entries(round1Results)) {
+      expect(state.season!.resultsByGameId[gameId]).toEqual(result)
+    }
+  })
+
+  it('produces full PlayerGameStats, still available as historical results', () => {
+    useSeasonStore.getState().selectProgram('charlotte-tech')
+    useSeasonStore.getState().requestSuperSim('midseason')
+    useSeasonStore.getState().confirmSuperSim()
+
+    const { season, controlledProgramId } = useSeasonStore.getState()
+    const completedGames = getCompletedGamesForProgram(
+      season!,
+      controlledProgramId!,
+    )
+    expect(completedGames.length).toBeGreaterThan(0)
+
+    for (const { game, result } of completedGames) {
+      const homeTeam = season!.programStates[game.homeProgramId]!.team
+      const awayTeam = season!.programStates[game.awayProgramId]!.team
+      expect(result.homePlayerStats).toHaveLength(homeTeam.roster.length)
+      expect(result.awayPlayerStats).toHaveLength(awayTeam.roster.length)
+    }
+
+    // Every completed game — including ones Super Sim simulated for the
+    // controlled Program itself — opens the same historical viewer.
+    const anyGameId = Object.keys(season!.resultsByGameId)[0]!
+    useSeasonStore.getState().viewCompletedGame(anyGameId)
+    expect(useSeasonStore.getState().view).toBe('gameHistory')
+  })
 })

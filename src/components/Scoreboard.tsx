@@ -132,6 +132,8 @@ interface FinalScoreboardProps {
   readonly away: ScoreboardScoreTeam
   readonly winnerName: string
   readonly overtimeTag: string | null
+  /** e.g. "Round 8" — round context for both live and historical results. */
+  readonly roundLabel?: string
   /** Null when there is nothing left to act on (e.g. no round games remain). */
   readonly primaryAction: FinalScoreboardAction | null
   readonly secondaryAction: FinalScoreboardAction
@@ -142,6 +144,7 @@ export function FinalScoreboard({
   away,
   winnerName,
   overtimeTag,
+  roundLabel,
   primaryAction,
   secondaryAction,
 }: FinalScoreboardProps) {
@@ -149,6 +152,7 @@ export function FinalScoreboard({
     <div className="scoreboard scoreboard--final" aria-live="polite">
       <ScoreboardCorners />
       <div className="final-tag-row">
+        {roundLabel && <span className="final-tag">{roundLabel}</span>}
         <span className="final-tag final-tag--headline">Final</span>
         {overtimeTag && <span className="final-tag">{overtimeTag}</span>}
       </div>

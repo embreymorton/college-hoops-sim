@@ -4,7 +4,11 @@ import { SeasonApp } from './SeasonApp'
 
 type AppMode = 'season' | 'exhibition'
 
-/** Season Presentation is the primary experience; Exhibition remains a dev/demo sandbox. */
+/**
+ * Season Presentation is the permanent product experience. Exhibition is
+ * development scaffolding only — its toggle stays out of the primary
+ * navigation for real users and is reachable only in development/test builds.
+ */
 export function App() {
   const [mode, setMode] = useState<AppMode>('season')
 
@@ -13,13 +17,17 @@ export function App() {
       <header className="app-header">
         <div className="app-header__inner">
           <h1 className="wordmark">College Hoops</h1>
-          <button
-            type="button"
-            className="app-mode-toggle"
-            onClick={() => setMode(mode === 'season' ? 'exhibition' : 'season')}
-          >
-            {mode === 'season' ? 'Exhibition Mode' : 'Back to Season'}
-          </button>
+          {import.meta.env.DEV && (
+            <button
+              type="button"
+              className="app-mode-toggle"
+              onClick={() =>
+                setMode(mode === 'season' ? 'exhibition' : 'season')
+              }
+            >
+              {mode === 'season' ? 'Exhibition Mode' : 'Back to Season'}
+            </button>
+          )}
         </div>
       </header>
       <main className="app-main">

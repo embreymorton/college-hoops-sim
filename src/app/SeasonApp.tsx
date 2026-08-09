@@ -19,6 +19,7 @@ export function SeasonApp() {
     case 'gamePrep':
       return <GamePrepScreen />
     case 'postgame':
+    case 'gameHistory':
       return <SeasonPostgameScreen />
     case 'hub':
     case 'programSelect':
