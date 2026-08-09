@@ -23,6 +23,7 @@
     "sim:recruiting": "node --import tsx scripts/inspectRecruiting.ts",
     "sim:roster-rollover": "node --import tsx scripts/inspectRosterRollover.ts",
     "sim:season-rollover": "node --import tsx scripts/inspectSeasonRollover.ts",
+    "sim:dynasty-long-run": "node --import tsx scripts/inspectDynastyLongRun.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

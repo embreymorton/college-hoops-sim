@@ -11,9 +11,9 @@ The complete single-season experience is playable from Program selection through
 - **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed Game Prep, Super Sim, historical results, and full box-score inspection.
 - **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details, Player Details, and cross-Program navigation.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, protected Conference-champion seeds, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
-- **Repeatable Dynasty backend:** serializable cross-season state, immutable Season/Recruiting histories, graduation and Player development, finalized Recruiting, exact next-season roster construction, fresh Teams/Rotations/Schedules, and automatic initialization of the following Recruiting cycle.
+- **Repeatable Dynasty backend:** serializable cross-season state, immutable Season/Recruiting histories, graduation and Player development, finalized Recruiting, exact next-season roster construction, fresh Teams/Rotations/Schedules, and automatic initialization of the following Recruiting cycle. Its V0 talent economy is accepted as stable after deterministic validation across 250 completed Seasons.
 
-> **Next backend validation: Dynasty Long-Run Calibration V0.** The domain can run consecutive Dynasty seasons; React/Zustand has not yet migrated to this cross-season lifecycle, and save/load remains unimplemented.
+> **Next major focus: Playable Dynasty Integration / Dynasty UX.** The backend lifecycle and current talent calibration are complete; React/Zustand has not yet exposed Recruiting, offseason rollover, consecutive Seasons, or history/save workflows to the user.
 
 ## Commands
 
@@ -35,5 +35,6 @@ The complete single-season experience is playable from Program selection through
 - `npm run sim:dynasty-foundation`
 - `npm run sim:recruiting`
 - `npm run sim:roster-rollover` and `sim:season-rollover`
+- `npm run sim:dynasty-long-run`
 
 Project constraints live in [`docs/`](docs/). Start with the [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [game design](docs/GAME_DESIGN.md). Optional product ideas belong in [future features](docs/FUTURE_FEATURES.md); engineering risks and follow-ups belong in [known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md).

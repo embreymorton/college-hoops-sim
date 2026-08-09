@@ -43,34 +43,19 @@ The future balance question is whether accepted Rotation V0 eventually needs tig
 
 Aggregate Player Development V0 calibration is accepted. Its intentionally uneven, position-aware allocation can occasionally produce large gains in one skill; the canonical single-offseason inspection included examples such as `INT D +8` and `ATH +7` while overall development, Potential limits, and class curves remained healthy.
 
-This is a non-blocking calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Season Rollover now enables deterministic multi-season simulations; evaluate long-term attribute/profile evolution across populations during Dynasty Long-Run Calibration V0 rather than tuning from isolated manual examples.
+This is a non-blocking micro-level calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Dynasty Long-Run Calibration V0 validated League-wide OVR equilibrium and class progression, but it did not deeply evaluate the basketball flavor of individual attribute shapes. Revisit only with attribute-level population evidence; do not conflate it with the now-resolved talent-inflation question.
 
 ### P3 — Strict positional Recruiting capacity may become restrictive
 
-Recruiting V0 intentionally replaces projected departures by exact natural position. This preserves the accepted roster/Rotation assumptions and correctly permits a premium Recruit to remain unsigned when no compatible positional capacity exists; the lone unsigned 4-star in 100-cycle validation is therefore not a bug.
+Recruiting V0 intentionally replaces projected departures by exact natural position. Long-run calibration found stable positional populations, zero unfilled openings, and no premium Recruit stranded while compatible capacity remained, so the current model is structurally healthy.
 
 Revisit only if future generic scholarships, multi-position Players, position changes, cuts, walk-ons, transfers, or early departures loosen the roster model. Any change must update roster construction, offer capacity, and Rotation legality together rather than weakening only Recruiting validation.
 
-### P3 — Dynasty long-run talent equilibrium / initial rollover inflation
-
-Season Rollover V0 is accepted and its five-season smoke passed structural lifecycle invariants, but that smoke was not a talent-equilibrium calibration. In the accepted Season 1 → 2 inspection, average Team OVR rose from `72.80` to `75.96`; the strongest Team, Great Lakes, rose from `86.0` to `89.7`. This is an observation from one deterministic lifecycle sample, not yet a bug or a tuning conclusion. The initial generated-roster baseline, incoming Recruit talent, returning-Player Development, and graduating talent can all contribute; the open question is whether the League approaches equilibrium after the initial rosters age out.
-
-Dynasty Long-Run Calibration V0 should run deterministic multi-seed population studies over 10, 25, and 50+ seasons and evaluate:
-
-- League OVR drift and graduating-versus-incoming talent balance
-- Program hierarchy stability and elite-talent concentration
-- Recruit/star distributions across repeated classes
-- Player Development relative to replacement talent
-- attribute distributions, Potential headroom, and concentrated profile gains
-- roster, Rotation, Recruiting, identity, Schedule, and serialization invariants
-
-This is a future calibration watchpoint, not a current defect. Do not retune Recruit generation or Player Development without multi-season evidence.
-
 ### P3 — Dynasty history and serialized-state growth
 
-The accepted five-season lifecycle smoke preserved full completed Season/Postseason results and Recruiting-class snapshots and passed JSON round-tripping. That validates correctness at the inspected scale, not storage size or persistence performance over a long career.
+Accepted long-run calibration measured the full-snapshot serialized `DynastyState` at `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. Growth is approximately linear at roughly 3 MB per completed Season and is material even though 50-Season JSON serialization remained correct.
 
-Measure serialized state size, rollover time, and history-query costs during 10/25/50+ season calibration before introducing pruning, compression, caches, or alternate persistence structures. Preserve canonical historical `GameResult`, Player, Team, and Recruiting facts. This is a scaling watchpoint, not a current defect.
+Before production-scale save support or very long playable Dynasties, evaluate save-file size, browser persistence limits, load/parse time, memory use, and history-rendering cost. Preserve canonical historical `GameResult`, Player, Team, and Recruiting facts. Do not prematurely prescribe a database, compression format, pruning policy, binary serialization, IndexedDB, backend persistence, or stat-reconstruction model. This is a measured scaling watchpoint, not a current correctness defect.
 
 ### P3 — Rotation Editor ordering and announcements
 
@@ -109,6 +94,12 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
 ## Resolved / monitor-only
+
+### P2 — Long-run talent equilibrium / initial OVR inflation — RESOLVED
+
+Dynasty Long-Run Calibration V0 completed 250 Seasons across five deterministic seeds. Average Team OVR stabilized at `81.25` over Seasons 16–50 with a mean slope of `+0.003` per Season; individual seed slopes ranged from `−0.016` to `+0.012`. The earlier Season 1 → 2 increase was part of the initial generated-roster transition, not persistent inflation. Incoming and graduating populations had nearly identical average Potential, while accepted Development bridged their OVR difference.
+
+Recruit generation, Recruiting calibration, Player Development, roster rollover, and their combined V0 talent economy are frozen. Reopen only with new evidence or a future talent-flow system such as transfers, early departures, eligibility changes, dynamic prestige, roster/position flexibility, or staff/Development modifiers.
 
 ### P2 — Recruit enrollment and exact next-season rosters — RESOLVED
 

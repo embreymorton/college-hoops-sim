@@ -314,6 +314,12 @@ Each Season receives a fresh deterministic Schedule under the accepted 24-game f
 
 Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from the senior positions on the new rosters. Prior projected needs are not reused. This closes the repeatable backend loop while the current React/Zustand product remains single-season-only.
 
+## Accepted long-run Dynasty economy
+
+Across 250 completed Seasons, the current Recruiting, graduation, Development, and rollover rules settled into a stable long-run talent level. Upperclassmen were stronger on average (`FR < SO < JR < SR`), prestige created a meaningful but non-absolute Program hierarchy, better Teams won more often, and 26 of 32 Programs won at least one simulated championship.
+
+The current talent economy is frozen for V0. Do not casually retune Recruit generation, Recruiting, Development, or rollover. Recalibration becomes appropriate if new evidence reveals a real problem or a future system—such as transfers, early professional departures, redshirts/fifth years, dynamic prestige, roster-size or position-flexibility changes, or staff/Development modifiers—materially changes talent flow.
+
 ## Accepted Player Season Stats V0
 
 Season-long Player production emerges from actual simulated games; it is not generated separately at the Season level. Game Prep simulation, Hub Quick Sim, AI round simulation, and Super Sim all record the same canonical `PlayerGameStats` history and therefore feed the same derived Player totals, averages, percentages, and game logs.

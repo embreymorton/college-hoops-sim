@@ -27,6 +27,8 @@ In-season Recruiting V0—including national-class generation, rankings/stars, b
 
 These enhancements are intentionally unscheduled and are not Recruiting V0 or Dynasty MVP requirements. Current V0 exposes exact ratings/Potential, gives no winning or Tournament attraction bonus, and treats commitments as final.
 
+The current V0 talent economy is accepted and frozen. Transfer-portal behavior, NIL, facilities, staff modifiers, or other future Recruiting inputs may require a new long-run calibration after their design is implemented; their possibility is not a reason to retune the present system.
+
 ## Statistics and League immersion
 
 ### Postseason Player Stats
@@ -80,6 +82,7 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 - Injuries, fatigue, morale, and chemistry
 - Playing-time expectations
 - Generic roster spots or scholarship accounting
+- Roster-size changes
 - Multi-position eligibility
 - Position changes
 - Roster cuts and walk-ons
@@ -131,6 +134,8 @@ The accepted Dynasty archive and stable returning Player identity preserve the s
 - More Programs and Conferences
 - A larger National Tournament
 - Conference realignment
-- Prestige evolution
+- Dynamic Program prestige
 
 Expansion details remain intentionally high-level and must not turn Universe V0's `32 / 4 / 8` configuration into generic engine assumptions.
+
+Systems that change departures, eligibility, roster capacity, Player Development, position capacity, or prestige should rerun long-run talent calibration when implemented. Ordinary presentation and application-integration work should not reopen the frozen V0 calibration.

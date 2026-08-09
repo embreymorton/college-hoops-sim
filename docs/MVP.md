@@ -125,7 +125,13 @@ Complete backend Dynasty MVP items:
 - [x] Immediate next Recruiting-cycle initialization
 - [x] Repeatable multi-season lifecycle and JSON-safe state
 
-This completion is domain/backend-only. The current React/Zustand application still exposes the accepted single-season experience and does not orchestrate Dynasty rollover or Recruiting.
+This completion is domain/backend-only. Long-run calibration across five deterministic seeds and 250 completed Seasons classified the current Recruiting + Development + graduation economy as stable, with no structural failures. The current React/Zustand application still exposes the accepted single-season experience and does not orchestrate Recruiting or Dynasty rollover.
+
+## Dynasty Long-Run Calibration V0 — implemented and accepted
+
+The backend loop reproducibly reaches a stable endogenous talent level under current V0 rules. The initial generated Universe transitions upward during the first several Seasons, while the Seasons 16–50 Team OVR slope averages approximately zero across seeds. Incoming and graduating populations have nearly identical average Potential, and Player Development creates the expected average progression from freshman to senior.
+
+The simulation/domain Dynasty MVP is therefore complete and its current talent economy is frozen. The playable product Dynasty MVP is not: application integration must still expose Recruiting, Late Recruiting, offseason, rollover, consecutive Seasons, and historical context.
 
 ## Not currently implemented
 

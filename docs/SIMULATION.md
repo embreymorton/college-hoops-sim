@@ -375,6 +375,91 @@ The resulting Season 2 stored zero results and derived every Program at 0–0. R
 
 A five-season invariant smoke completed Seasons 1–5 and five rollovers. Completed Season archives grew `1 → 2 → 3 → 4 → 5`; completed Recruiting histories grew by target season `2 → 3 → 4 → 5 → 6`. Every roster, Rotation, Schedule, and finalized Recruiting cycle remained valid, with zero unfilled openings, identity collisions, cross-season Game-ID collisions, emergency Recruits, fallback uses, or lifecycle failures. The multi-season `DynastyState` passed JSON round-tripping. This proves lifecycle/serialization health at the inspected scale, not long-run talent equilibrium or implemented persistence/save UX.
 
+## Accepted Dynasty Long-Run Calibration V0
+
+The accepted inspection exercised the real lifecycle for five deterministic Dynasty seeds and 50 completed Seasons per seed: 250 Season observations and 250 rollovers. Identical configuration replayed deterministically. The full run took approximately `214.8` seconds on the inspection environment. Runtime is an observation, not a gameplay constant or current performance failure.
+
+All values below are observed calibration evidence. They are not hardcoded generation quotas, guaranteed future distributions, or test thresholds.
+
+### Team talent equilibrium
+
+| Window | Average Team OVR | OVR slope / Season | Average Team OVR SD |
+| --- | ---: | ---: | ---: |
+| Seasons 1–5 | 77.55 | +2.041 | 5.14 |
+| Seasons 6–15 | 81.13 | −0.085 | 4.45 |
+| Seasons 16–50 | 81.25 | +0.003 | 4.50 |
+
+Late-window slopes by seed were `+0.012`, `+0.010`, `0.000`, `−0.016`, and `+0.008`; their mean was `+0.003` and median `+0.008`. The accepted classification is **STABLE**. The initial Season 1 → 2 increase is a transition from the generated Universe toward the endogenous roster economy, not persistent inflation.
+
+The canonical seed followed this representative path:
+
+| Season | Average Team OVR |
+| ---: | ---: |
+| 1 | 72.68 |
+| 2 | 75.35 |
+| 3 | 77.98 |
+| 5 | 81.08 |
+| 10 | 81.15 |
+| 20 | 81.63 |
+| 30 | 80.50 |
+| 40 | 81.15 |
+| 50 | 81.22 |
+
+The late-window Team OVR distribution retained meaningful separation: P10 `75.2`, P25 `78.7`, median `81.9`, P75 `84.6`, and P90 `86.4`. Equilibrium near 81 is an observed outcome of current V0 rules, not a target constant.
+
+### Player lifecycle and Development
+
+| Class | Average OVR | Average POT | Average POT gap | At POT | Within 3 OVR of POT |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| FR | 73.63 | 84.22 | 10.59 | 0.0% | 0.0% |
+| SO | 77.12 | 84.22 | 7.10 | 0.0% | 14.2% |
+| JR | 79.52 | 84.20 | 4.68 | 12.1% | 38.3% |
+| SR | 80.74 | 84.16 | 3.42 | 25.0% | 54.0% |
+
+The steady-state population supports `FR < SO < JR < SR` on average; it does not require monotonic growth for every individual Player.
+
+| Transition | Average OVR gain | Median | Zero gain | Gain 3+ |
+| --- | ---: | ---: | ---: | ---: |
+| FR → SO | 3.50 | 4 | 0.0% | 75.0% |
+| SO → JR | 2.41 | 2 | 0.0% | 46.5% |
+| JR → SR | 1.24 | 1 | 33.9% | 17.9% |
+
+Development is accepted as healthy rather than materially too strong or weak. Players approach their ceilings without every upperclassman reaching POT, so Potential remains meaningful.
+
+The late window contained 16,806 incoming freshmen averaging `73.63 OVR / 84.22 POT` and 16,799 graduating seniors averaging `80.74 OVR / 84.16 POT`. Incoming and graduating Potential were effectively equal, while the `7.11` OVR difference was bridged by cumulative Development. This replacement flow is the strongest evidence for a stable endogenous talent economy.
+
+Average late-window high-end populations per Season were:
+
+| Threshold | Players / Season |
+| --- | ---: |
+| OVR ≥ 80 | 165.77 |
+| OVR ≥ 85 | 92.64 |
+| OVR ≥ 90 | 33.15 |
+| OVR ≥ 95 | 4.35 |
+
+These counts are observations, not Recruit-generation or roster quotas.
+
+### Program hierarchy and outcomes
+
+| Prestige band | Average Team OVR | Average Recruit rank | Average Recruit OVR | Average Recruit POT |
+| --- | ---: | ---: | ---: | ---: |
+| 80–100 | 85.44 | 31.7 | 78.47 | 89.15 |
+| 60–79 | 82.36 | 47.4 | 74.71 | 85.27 |
+| 40–59 | 77.76 | 70.4 | 69.69 | 80.28 |
+| 1–39 | 69.86 | 106.9 | 62.77 | 73.31 |
+
+Prestige correlated `0.773` with Team OVR; Team OVR correlated `0.839` with regular-season winning percentage; and adjacent-season Team OVR correlated `0.890`. Prestige therefore creates meaningful quality and continuity without absolute outcomes.
+
+Across 250 championships, 26 of 32 Programs won at least once. Northbridge won 25, Appalachian Commonwealth 20, and Great Lakes 20. Prestige bands `80–100`, `60–79`, `40–59`, and `1–39` won `112`, `126`, `12`, and `0` titles respectively. No Program received more than `6.2%` of late-window 5-star Recruits. Stronger Programs retained a clear advantage without a single-Team premium-Recruit monopoly or championship lock.
+
+Strict positional Recruiting remained stable at approximately 76–77 active Players per position per Season. Across the full run there were zero invalid rosters, Rotations, or Schedules; unfilled Recruiting/roster openings; Player-ID, Game-ID, or history collisions; history overwrites; emergency Recruits; fallback matcher uses; premium unsigned Recruits with compatible capacity; lifecycle failures; or serialization failures.
+
+### V0 calibration freeze
+
+Recruit generation, Recruiting calibration, Player Development, roster rollover, and the combined Dynasty talent economy are frozen for current V0 rules. Do not casually retune them. Reopen calibration only when new evidence reveals a genuine problem or a future system materially changes talent flow—for example transfers, early professional departures, redshirts/fifth years, dynamic prestige, roster-size or position-flexibility changes, or staff/Development modifiers. UI and application integration alone do not justify recalibration.
+
+The full-snapshot `DynastyState` remained serializable but measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. This approximately linear storage growth is tracked separately as an architecture/scaling watchpoint in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; it does not change the stable talent-economy conclusion.
+
 ## Implemented Player Season Stats V0
 
 Player Season Stats adds no game-outcome formulas, randomness, or simulation-mode metadata. It runs only after canonical results exist:

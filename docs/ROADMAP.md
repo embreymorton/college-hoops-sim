@@ -314,9 +314,17 @@ Season N → Recruiting N+1 → Postseason → Offseason
 → exact next roster → Season N+1 → Recruiting N+2 → repeat
 ```
 
-## Dynasty Long-Run Calibration V0 — NEXT
+## Dynasty Long-Run Calibration V0 — COMPLETE / ACCEPTED
 
-Validate whether Recruiting, Player Development, and graduation produce a stable long-run talent ecosystem. Planned analysis should cover multiple seeds and 10+, 25+, and 50+ seasons. Measures should include League-average Player and Team OVR; Team OVR distribution/spread; class-year OVR; incoming Recruit OVR/POT; graduating Player OVR; Development gains; prestige relationships with Recruiting and Team quality; Team quality versus wins; elite-Recruit distribution; Program-hierarchy persistence; and championship diversity. This is calibration/validation work, not a new gameplay system.
+Five deterministic Dynasty seeds completed 50 Seasons each for 250 Season observations with deterministic replay. Average Team OVR rose during the initial generated-roster transition, then stabilized: Seasons 1–5 averaged `77.55` with a `+2.041` slope/Season; Seasons 6–15 averaged `81.13` with a `−0.085` slope; and Seasons 16–50 averaged `81.25` with a `+0.003` slope. The late slopes across individual seeds ranged from `−0.016` to `+0.012`.
+
+Recruiting, Player Development, graduation, and rollover produced a stable endogenous V0 talent economy. All 250 lifecycle iterations retained valid rosters, Rotations, Schedules, Recruiting completion, identity/history integrity, and serialization. No gameplay calibration changed. Exact observations live in `SIMULATION.md`.
+
+Recruit generation, Recruiting calibration, Player Development, roster rollover, and their combined talent economy are frozen for V0. Reopen them only with new evidence or a future system that materially changes talent flow.
+
+## Playable Dynasty Integration / Dynasty UX — NEXT
+
+Expose the accepted Dynasty lifecycle through the application so a user can move from the Season through Recruiting, Postseason, Late Recruiting, offseason, and rollover into the next Season. Detailed screen design and subphases remain intentionally uncommitted; this milestone changes presentation/application orchestration, not the frozen basketball economy.
 
 ## Phase 6 — Persistence and History — PLANNED
 
@@ -326,7 +334,7 @@ Validate whether Recruiting, Player Development, and graduation produce a stable
 - Previous champions
 - Player career statistics
 
-Persistence should not be implemented before the evolving dynasty-state model is ready.
+Persistence planning must account for the measured full-snapshot history growth documented in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; no storage mechanism is committed yet.
 
 ## Phase 7 — Post-MVP Depth — DEFERRED
 
