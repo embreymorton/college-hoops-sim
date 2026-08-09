@@ -20,13 +20,20 @@ export {
   withdrawRecruitOffer,
 } from './recruiting/boards'
 export {
+  FINAL_RECRUITING_PERIOD,
   MAX_RECRUITING_PRIORITY,
   MIN_MEANINGFUL_RELATIONSHIP,
   MIN_RECRUITING_PRIORITY,
   RECRUITING_BOARD_LIMIT,
   RECRUITING_EFFORT_PER_PERIOD,
+  POSTSEASON_RECRUITING_PERIODS,
   REGULAR_SEASON_RECRUITING_PERIODS,
 } from './recruiting/constants'
+export {
+  autoFinalizeRecruiting,
+  deriveLateRecruitResolutionOrder,
+  prepareLateRecruiting,
+} from './recruiting/finalization'
 export {
   deriveNationalPositionDemand,
   deriveRecruitSupplyByPosition,
@@ -50,6 +57,8 @@ export {
   deriveProgramActiveEffortShares,
   deriveProgramRemainingRecruitingCapacity,
   resolveRecruitingPeriod,
+  resolvePostseasonRecruitingPeriod,
+  syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
 } from './recruiting/simulation'
 export { initializeRecruiting } from './recruiting/state'
@@ -67,6 +76,8 @@ export type {
 } from './domain'
 export type {
   AddRecruitingBoardTargetOptions,
+  CommitmentTiming,
+  CompletedRecruitingClass,
   GenerateRecruitingClassOptions,
   PositionCounts,
   ProgramRecruitingBoard,
@@ -74,6 +85,8 @@ export type {
   Recruit,
   RecruitingBoardTarget,
   RecruitingCommitment,
+  RecruitingFinalizationResult,
+  RecruitingPhase,
   RecruitingProgramState,
   RecruitingState,
   RecruitingTargetStatus,

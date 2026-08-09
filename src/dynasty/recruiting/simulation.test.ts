@@ -95,7 +95,7 @@ describe('regular-season Recruiting advancement', () => {
       recruiting: {
         ...dynasty.recruiting!,
         commitmentsByPlayerId: {
-          [aiTarget]: { playerId: aiTarget, programId: otherProgramId, period: 0, targetSeasonNumber: 2 },
+          [aiTarget]: { playerId: aiTarget, programId: otherProgramId, timing: { kind: 'period', period: 0 }, targetSeasonNumber: 2 },
         },
       },
     }
@@ -155,7 +155,7 @@ describe('Recruiting strategy model', () => {
         ...dynasty.recruiting!,
         commitmentsByPlayerId: {
           ...dynasty.recruiting!.commitmentsByPlayerId,
-          [unavailableId]: { playerId: unavailableId, programId: 'northbridge', period: 1, targetSeasonNumber: 2 },
+          [unavailableId]: { playerId: unavailableId, programId: 'northbridge', timing: { kind: 'period', period: 1 }, targetSeasonNumber: 2 },
         },
       },
     }
@@ -217,7 +217,10 @@ describe('Recruiting strategy model', () => {
     expect(new Set(commitments.map(({ playerId }) => playerId)).size).toBe(commitments.length)
     for (const commitment of commitments) {
       const recruit = getRecruit(dynasty.recruiting!, commitment.playerId)!
-      expect(commitment.period).toBeGreaterThanOrEqual(recruit.decisionReadyPeriod)
+      expect(commitment.timing.kind).toBe('period')
+      if (commitment.timing.kind === 'period') {
+        expect(commitment.timing.period).toBeGreaterThanOrEqual(recruit.decisionReadyPeriod)
+      }
       expect(dynasty.recruiting!.relationshipProgressByPlayerId[commitment.playerId]![commitment.programId])
         .toBeGreaterThanOrEqual(8)
     }

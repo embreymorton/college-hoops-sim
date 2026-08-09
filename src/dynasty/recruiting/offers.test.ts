@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { POSITIONS, type Position } from '../../engine'
+import type { DynastyState } from '../domain'
 import {
   cleanupInvalidRecruitingOffers,
   manageProgramRecruitingOffers,
@@ -109,7 +110,7 @@ describe('active recruiting offers', () => {
           [backup.playerId]: {
             playerId: backup.playerId,
             programId: 'northbridge',
-            period: 1,
+            timing: { kind: 'period', period: 1 },
             targetSeasonNumber: 2,
           },
         },
@@ -214,7 +215,7 @@ describe('active recruiting offers', () => {
         [controlledOffer.playerId]: {
           playerId: controlledOffer.playerId,
           programId: 'northbridge',
-          period: 1,
+          timing: { kind: 'period', period: 1 },
           targetSeasonNumber: 2,
         },
       },
@@ -233,7 +234,7 @@ describe('active recruiting offers', () => {
           [lost.playerId]: {
             playerId: lost.playerId,
             programId: dynasty.controlledProgramId,
-            period: 0,
+            timing: { kind: 'period', period: 0 },
             targetSeasonNumber: 2,
           },
         },
@@ -312,7 +313,7 @@ describe('active recruiting offers', () => {
       { playerId: recruits[1]!.player.id, priority: 4, hasActiveOffer: false },
       { playerId: recruits[2]!.player.id, priority: 2, hasActiveOffer: false },
     ]
-    const prepared = {
+    const prepared: DynastyState = {
       ...setControlledBoard(initial, board, openings),
       activeSeason: completeRounds(initial.activeSeason!, 2),
       recruiting: {
@@ -324,7 +325,7 @@ describe('active recruiting offers', () => {
           [recruits[0]!.player.id]: {
             playerId: recruits[0]!.player.id,
             programId: otherProgramId,
-            period: 0,
+            timing: { kind: 'period', period: 0 },
             targetSeasonNumber: 2,
           },
         },
@@ -477,7 +478,7 @@ describe('active recruiting offers', () => {
         },
       },
     }, 15)
-    expect(clear.recruiting!.commitmentsByPlayerId[elite.player.id]?.period).toBe(15)
+    expect(clear.recruiting!.commitmentsByPlayerId[elite.player.id]?.timing).toEqual({ kind: 'period', period: 15 })
 
     const context = { ...base, recruiting: { ...base.recruiting!, lastResolvedPeriod: 20 } }
     const firstAttraction = deriveBaseRecruitAttraction(context, elite, programId)

@@ -2,7 +2,10 @@ import type { Player, Position, RngSeed } from '../engine'
 import type { PostseasonState } from '../postseason'
 import type { SeasonState } from '../season'
 import type { UniverseDefinition } from '../universe'
-import type { RecruitingState } from './recruiting/domain'
+import type {
+  CompletedRecruitingClass,
+  RecruitingState,
+} from './recruiting/domain'
 
 /** Canonical source facts for one fully completed competitive year. */
 export interface CompletedSeasonArchive {
@@ -34,6 +37,7 @@ export interface DynastyState {
   readonly activePostseason: PostseasonState | null
   readonly recruiting: RecruitingState | null
   readonly history: readonly CompletedSeasonArchive[]
+  readonly completedRecruitingHistory: readonly CompletedRecruitingClass[]
   readonly offseason: OffseasonState | null
 }
 

@@ -29,17 +29,28 @@ export interface RecruitingProgramState {
   readonly board: readonly RecruitingBoardTarget[]
 }
 
+export type CommitmentTiming =
+  | { readonly kind: 'period'; readonly period: number }
+  | { readonly kind: 'late' }
+
 export interface RecruitingCommitment {
   readonly playerId: string
   readonly programId: string
-  readonly period: number
+  readonly timing: CommitmentTiming
   readonly targetSeasonNumber: number
 }
+
+export type RecruitingPhase =
+  | 'regular-season'
+  | 'postseason'
+  | 'late'
+  | 'finalized'
 
 /** Canonical regular-season recruiting facts; current standings are derived. */
 export interface RecruitingState {
   readonly id: string
   readonly targetSeasonNumber: number
+  readonly phase: RecruitingPhase
   readonly lastResolvedPeriod: number
   readonly recruits: readonly Recruit[]
   readonly programs: Record<string, RecruitingProgramState>
@@ -48,6 +59,19 @@ export interface RecruitingState {
     Record<string, number>
   >
   readonly commitmentsByPlayerId: Record<string, RecruitingCommitment>
+}
+
+/** Immutable Dynasty history for one finalized incoming recruiting class. */
+export interface CompletedRecruitingClass {
+  readonly targetSeasonNumber: number
+  readonly recruitingState: RecruitingState
+}
+
+export interface RecruitingFinalizationResult {
+  readonly dynasty: import('../domain').DynastyState
+  readonly resolutionPasses: number
+  readonly fallbackMatcherUsed: boolean
+  readonly emergencyGeneratedRecruits: 0
 }
 
 export interface GenerateRecruitingClassOptions {

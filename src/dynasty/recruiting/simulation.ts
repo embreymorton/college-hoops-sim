@@ -1,3 +1,8 @@
+import {
+  getGamesForTournamentRound,
+  TOURNAMENT_ROUNDS,
+  type TournamentRound,
+} from '../../postseason'
 import { isRoundComplete } from '../../season'
 import type { DynastyState } from '../domain'
 import {
@@ -7,6 +12,7 @@ import {
 } from './boards'
 import {
   MIN_MEANINGFUL_RELATIONSHIP,
+  FINAL_RECRUITING_PERIOD,
   RECRUITING_EFFORT_PER_PERIOD,
   REGULAR_SEASON_RECRUITING_PERIODS,
 } from './constants'
@@ -104,7 +110,7 @@ function tryCommitRecruit(
   const commitment: RecruitingCommitment = {
     playerId,
     programId: leader.programId,
-    period,
+    timing: { kind: 'period', period },
     targetSeasonNumber: recruiting.targetSeasonNumber,
   }
   return {
@@ -116,23 +122,11 @@ function tryCommitRecruit(
   }
 }
 
-/** Resolves exactly the next canonical regular-season recruiting period. */
-export function resolveRecruitingPeriod(
+function resolveCanonicalPeriod(
   dynasty: DynastyState,
   period: number,
 ): DynastyState {
-  if (!dynasty.recruiting) throw new RangeError('Dynasty Recruiting is not initialized.')
-  if (period !== dynasty.recruiting.lastResolvedPeriod + 1) {
-    throw new RangeError('Recruiting periods must resolve once in canonical order.')
-  }
-  if (period < 1 || period > REGULAR_SEASON_RECRUITING_PERIODS) {
-    throw new RangeError('Recruiting period is outside the regular-season range.')
-  }
-  if (!dynasty.activeSeason || !isRoundComplete(dynasty.activeSeason, period)) {
-    throw new RangeError(`Recruiting Period ${period} requires completed basketball Round ${period}.`)
-  }
-
-  const periodStart = dynasty.recruiting
+  const periodStart = dynasty.recruiting!
   let recruiting = cleanupInvalidRecruitingOffers(periodStart)
   recruiting = promoteControlledRecruitingBackups(
     dynasty,
@@ -158,11 +152,67 @@ export function resolveRecruitingPeriod(
   )
   recruiting = {
     ...recruiting,
+    phase: period <= REGULAR_SEASON_RECRUITING_PERIODS
+      ? 'regular-season'
+      : 'postseason',
     lastResolvedPeriod: period,
     programs: canonicalPrograms(recruiting.programs),
   }
   recruiting = refreshAiRecruitingBoards(dynasty, recruiting)
   return { ...dynasty, recruiting }
+}
+
+/** Resolves exactly the next canonical regular-season recruiting period. */
+export function resolveRecruitingPeriod(
+  dynasty: DynastyState,
+  period: number,
+): DynastyState {
+  if (!dynasty.recruiting) throw new RangeError('Dynasty Recruiting is not initialized.')
+  if (period !== dynasty.recruiting.lastResolvedPeriod + 1) {
+    throw new RangeError('Recruiting periods must resolve once in canonical order.')
+  }
+  if (period < 1 || period > REGULAR_SEASON_RECRUITING_PERIODS) {
+    throw new RangeError('Recruiting period is outside the regular-season range.')
+  }
+  if (!dynasty.activeSeason || !isRoundComplete(dynasty.activeSeason, period)) {
+    throw new RangeError(`Recruiting Period ${period} requires completed basketball Round ${period}.`)
+  }
+
+  return resolveCanonicalPeriod(dynasty, period)
+}
+
+function postseasonRoundForPeriod(period: number): TournamentRound | undefined {
+  return TOURNAMENT_ROUNDS[period - REGULAR_SEASON_RECRUITING_PERIODS - 1]
+}
+
+function isPostseasonRoundComplete(
+  dynasty: DynastyState,
+  round: TournamentRound,
+): boolean {
+  const postseason = dynasty.activePostseason
+  return Boolean(postseason && getGamesForTournamentRound(postseason, round).every(
+    ({ id }) => postseason.resultsByGameId[id] !== undefined,
+  ))
+}
+
+/** Resolves one global Tournament-clock Recruiting period, independent of qualification. */
+export function resolvePostseasonRecruitingPeriod(
+  dynasty: DynastyState,
+  period: number,
+): DynastyState {
+  const recruiting = dynasty.recruiting
+  if (!recruiting) throw new RangeError('Dynasty Recruiting is not initialized.')
+  if (period !== recruiting.lastResolvedPeriod + 1) {
+    throw new RangeError('Recruiting periods must resolve once in canonical order.')
+  }
+  const round = postseasonRoundForPeriod(period)
+  if (!round || period > FINAL_RECRUITING_PERIOD) {
+    throw new RangeError('Recruiting period is outside the postseason range.')
+  }
+  if (!isPostseasonRoundComplete(dynasty, round)) {
+    throw new RangeError(`Recruiting Period ${period} requires completed Tournament round "${round}".`)
+  }
+  return resolveCanonicalPeriod(dynasty, period)
 }
 
 /** Idempotently catches Recruiting up to every fully completed basketball round. */
@@ -182,6 +232,26 @@ export function syncRecruitingThroughCompletedRounds(
       current,
       current.recruiting!.lastResolvedPeriod + 1,
     )
+  }
+  return current
+}
+
+/** Idempotently catches Recruiting up to every globally completed Tournament round. */
+export function syncRecruitingThroughCompletedPostseasonRounds(
+  dynasty: DynastyState,
+): DynastyState {
+  if (!dynasty.activePostseason || !dynasty.recruiting) {
+    throw new RangeError('Postseason Recruiting synchronization requires an active Tournament and Recruiting.')
+  }
+  if (dynasty.recruiting.lastResolvedPeriod < REGULAR_SEASON_RECRUITING_PERIODS) {
+    throw new RangeError('Regular-season Recruiting must resolve before postseason Recruiting.')
+  }
+  let current = dynasty
+  while (current.recruiting!.lastResolvedPeriod < FINAL_RECRUITING_PERIOD) {
+    const nextPeriod = current.recruiting!.lastResolvedPeriod + 1
+    const round = postseasonRoundForPeriod(nextPeriod)!
+    if (!isPostseasonRoundComplete(current, round)) break
+    current = resolvePostseasonRecruitingPeriod(current, nextPeriod)
   }
   return current
 }

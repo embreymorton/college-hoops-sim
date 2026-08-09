@@ -89,7 +89,7 @@ describe('Program recruiting boards', () => {
       recruiting: {
         ...dynasty.recruiting!,
         commitmentsByPlayerId: {
-          [committedId]: { playerId: committedId, programId: 'northbridge', period: 1, targetSeasonNumber: 2 },
+          [committedId]: { playerId: committedId, programId: 'northbridge', timing: { kind: 'period', period: 1 }, targetSeasonNumber: 2 },
         },
       },
     }

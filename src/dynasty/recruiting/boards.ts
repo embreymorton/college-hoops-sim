@@ -2,6 +2,7 @@ import type { Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import {
   MAX_RECRUITING_PRIORITY,
+  FINAL_RECRUITING_PERIOD,
   MIN_RECRUITING_PRIORITY,
   RECRUITING_BOARD_LIMIT,
 } from './constants'
@@ -211,7 +212,10 @@ function offerUtility(
   const relationshipProgress =
     recruiting.relationshipProgressByPlayerId[target.playerId]?.[programId] ?? 0
   const prestige = dynasty.activeSeason!.programStates[programId]!.team.prestige
-  const planningPeriod = Math.min(24, recruiting.lastResolvedPeriod + 1)
+  const planningPeriod = Math.min(
+    FINAL_RECRUITING_PERIOD,
+    recruiting.lastResolvedPeriod + 1,
+  )
   const competingOffers = Object.values(recruiting.programs).reduce(
     (count, program) => count + program.board.filter((entry) =>
       entry.playerId === target.playerId &&

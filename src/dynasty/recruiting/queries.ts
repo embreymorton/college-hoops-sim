@@ -94,7 +94,11 @@ export function deriveProgramCommitments(
 ): RecruitingCommitment[] {
   return Object.values(recruiting.commitmentsByPlayerId)
     .filter((commitment) => commitment.programId === programId)
-    .sort((first, second) => first.period - second.period || first.playerId.localeCompare(second.playerId))
+    .sort((first, second) => {
+      const firstPeriod = first.timing.kind === 'period' ? first.timing.period : Number.MAX_SAFE_INTEGER
+      const secondPeriod = second.timing.kind === 'period' ? second.timing.period : Number.MAX_SAFE_INTEGER
+      return firstPeriod - secondPeriod || first.playerId.localeCompare(second.playerId)
+    })
 }
 
 export function deriveRemainingOpeningsByPosition(

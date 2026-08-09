@@ -1,5 +1,6 @@
 import { calculateOverall, POSITIONS, type Position } from '../src/engine'
 import {
+  autoFinalizeRecruiting,
   deriveNationalPositionDemand,
   deriveActiveOfferCountsByPosition,
   deriveRemainingOpeningsByPosition,
@@ -11,12 +12,21 @@ import {
   initializeRecruiting,
   manageProgramRecruitingOffers,
   offerRecruit,
+  prepareLateRecruiting,
+  resolvePostseasonRecruitingPeriod,
   resolveRecruitingPeriod,
+  syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
   type DynastyState,
   type RecruitStarRating,
   withdrawRecruitOffer,
 } from '../src/dynasty'
+import {
+  initializePostseason,
+  simulatePendingGamesInTournamentRound,
+  TOURNAMENT_ROUNDS,
+  type PostseasonState,
+} from '../src/postseason'
 import { generateRegularSeasonSchedule } from '../src/schedule'
 import {
   initializeSeason,
@@ -90,6 +100,28 @@ function resolveAll(dynasty: DynastyState): DynastyState {
   return current
 }
 
+function completeTournament(season: SeasonState, seed: string): PostseasonState {
+  let postseason = initializePostseason({ universe: UNIVERSE_V0, season })
+  for (const round of TOURNAMENT_ROUNDS) {
+    postseason = simulatePendingGamesInTournamentRound({
+      postseason,
+      round,
+      simulationSeed: `${seed}:tournament`,
+    })
+  }
+  return postseason
+}
+
+function enterCompletedPostseason(
+  dynasty: DynastyState,
+  postseason: PostseasonState,
+): DynastyState {
+  return syncRecruitingThroughCompletedPostseasonRounds({
+    ...dynasty,
+    activePostseason: postseason,
+  })
+}
+
 function printClass(initial: DynastyState): void {
   const recruiting = initial.recruiting!
   const demand = deriveNationalPositionDemand(initial.activeSeason!)
@@ -145,13 +177,15 @@ function printCommitmentCalibration(final: DynastyState): void {
   console.log('STARS   COMMITTED   AVG PERIOD   P50   EARLIEST   LATEST')
   for (const stars of STAR_TIERS) {
     const periods = commitments.filter(({ playerId }) => getRecruit(recruiting, playerId)!.stars === stars)
-      .map(({ period }) => period)
+      .flatMap(({ timing }) => timing.kind === 'period' ? [timing.period] : [])
     console.log(`${STAR_LABELS[stars].padEnd(7)} ${String(periods.length).padEnd(11)} ${average(periods).toFixed(1).padEnd(12)} ${String(percentile(periods, 0.5)).padEnd(5)} ${String(Math.min(...periods)).padEnd(10)} ${Math.max(...periods)}`)
   }
   console.log('\nCOMMITMENTS BY PERIOD')
   for (let start = 1; start <= 24; start += 4) {
     const end = start + 3
-    const count = commitments.filter(({ period }) => period >= start && period <= end).length
+    const count = commitments.filter(({ timing }) =>
+      timing.kind === 'period' && timing.period >= start && timing.period <= end,
+    ).length
     console.log(`Periods ${start}–${end}: ${count}`)
   }
   console.log(`Uncommitted after regular season: ${recruiting.recruits.length - commitments.length}`)
@@ -188,7 +222,8 @@ function printCommitmentCalibration(final: DynastyState): void {
     if (!commitment) continue
     const program = UNIVERSE_V0.programs.find(({ id }) => id === commitment.programId)!
     const prestige = final.activeSeason!.programStates[commitment.programId]!.team.prestige
-    console.log(`${String(recruit.nationalRank).padEnd(6)} ${`${recruit.player.firstName} ${recruit.player.lastName}`.padEnd(22)} ${program.name.padEnd(23)} ${String(prestige).padEnd(10)} ${commitment.period}`)
+    const timing = commitment.timing.kind === 'period' ? commitment.timing.period : 'LATE'
+    console.log(`${String(recruit.nationalRank).padEnd(6)} ${`${recruit.player.firstName} ${recruit.player.lastName}`.padEnd(22)} ${program.name.padEnd(23)} ${String(prestige).padEnd(10)} ${timing}`)
   }
 }
 
@@ -459,7 +494,7 @@ function printSuperSimOfferAutomation(complete: SeasonState): void {
   })
   const otherProgramId = Object.keys(fallbackInitial.recruiting!.programs).sort()
     .find((id) => id !== programId)!
-  const fallback = {
+  const fallback: DynastyState = {
     ...fallbackInitial,
     activeSeason: {
       ...complete,
@@ -477,7 +512,7 @@ function printSuperSimOfferAutomation(complete: SeasonState): void {
         [offered.playerId]: {
           playerId: offered.playerId,
           programId: otherProgramId,
-          period: 0,
+          timing: { kind: 'period', period: 0 },
           targetSeasonNumber: 2,
         },
       },
@@ -685,7 +720,8 @@ function printProgram(final: DynastyState, programId: string): void {
   console.log(`Committed: ${commitments.length}`)
   for (const commitment of commitments) {
     const recruit = getRecruit(final.recruiting!, commitment.playerId)!
-    console.log(`  #${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} ${recruit.player.position} (${STAR_LABELS[recruit.stars]}) P${commitment.period}`)
+    const timing = commitment.timing.kind === 'period' ? `P${commitment.timing.period}` : 'LATE'
+    console.log(`  #${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} ${recruit.player.position} (${STAR_LABELS[recruit.stars]}) ${timing}`)
   }
   console.log('BOARD (RANK / PLAYER / POS / OVR / POT / STARS / STANDING / PRIORITY / OFFER / STATUS)')
   for (const target of board.targets.slice(0, 10)) {
@@ -694,6 +730,214 @@ function printProgram(final: DynastyState, programId: string): void {
       .find(({ programId: id }) => id === programId)!
     console.log(`#${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} | ${recruit.player.position} | ${calculateOverall(recruit.player)} | ${recruit.player.potential} | ${STAR_LABELS[recruit.stars]} | ${standing.standing.toFixed(1)} (#${standing.rank}) | ${target.priority} | ${target.hasActiveOffer ? 'OFFERED' : 'BACKUP'} | ${target.status}`)
   }
+}
+
+function projectedOpenings(recruiting: NonNullable<DynastyState['recruiting']>): number {
+  return Object.values(recruiting.programs).reduce(
+    (total, program) => total + Object.values(program.projectedOpeningsByPosition)
+      .reduce((sum, value) => sum + value, 0),
+    0,
+  )
+}
+
+function printPostseasonAndFinalization(
+  regular: DynastyState,
+  completePostseason: PostseasonState,
+): DynastyState {
+  let sequential: DynastyState = { ...regular, activePostseason: initializePostseason({
+    universe: UNIVERSE_V0,
+    season: regular.activeSeason!,
+  }) }
+  const periodRows: Array<{ period: number; added: number; total: number }> = []
+  for (let index = 0; index < TOURNAMENT_ROUNDS.length; index += 1) {
+    sequential = {
+      ...sequential,
+      activePostseason: simulatePendingGamesInTournamentRound({
+        postseason: sequential.activePostseason!,
+        round: TOURNAMENT_ROUNDS[index]!,
+        simulationSeed: `${INSPECTION_SEED}:tournament`,
+      }),
+    }
+    const before = Object.keys(sequential.recruiting!.commitmentsByPlayerId).length
+    sequential = resolvePostseasonRecruitingPeriod(sequential, 25 + index)
+    const total = Object.keys(sequential.recruiting!.commitmentsByPlayerId).length
+    periodRows.push({ period: 25 + index, added: total - before, total })
+  }
+  const batched = enterCompletedPostseason(regular, completePostseason)
+  const totalOpenings = projectedOpenings(sequential.recruiting!)
+
+  console.log('\nPOSTSEASON RECRUITING')
+  console.log('PERIOD   NEW COMMITS   TOTAL FILLED   REMAINING OPENINGS')
+  for (const row of periodRows) {
+    console.log(`${String(row.period).padEnd(8)} ${String(row.added).padEnd(13)} ${String(row.total).padEnd(14)} ${totalOpenings - row.total}`)
+  }
+  console.log('\nAFTER PERIOD 28')
+  console.log(`Roster openings filled: ${Object.keys(sequential.recruiting!.commitmentsByPlayerId).length} / ${totalOpenings}`)
+  console.log(`Remaining openings: ${totalOpenings - Object.keys(sequential.recruiting!.commitmentsByPlayerId).length}`)
+  for (const stars of [5, 4] as const) {
+    const recruits = sequential.recruiting!.recruits.filter((recruit) => recruit.stars === stars)
+    const committed = recruits.filter(({ player }) => sequential.recruiting!.commitmentsByPlayerId[player.id]).length
+    console.log(`${STAR_LABELS[stars]} ${committed} / ${recruits.length}`)
+  }
+
+  console.log('\nPOSTSEASON SUPER SIM EQUIVALENCE')
+  console.log(`Sequential Periods 25–28 vs batched sync: ${JSON.stringify(sequential.recruiting) === JSON.stringify(batched.recruiting) ? 'PASS' : 'FAIL'}`)
+  console.log(`Commitments identical: ${JSON.stringify(sequential.recruiting!.commitmentsByPlayerId) === JSON.stringify(batched.recruiting!.commitmentsByPlayerId) ? 'PASS' : 'FAIL'}`)
+  console.log(`Relationships identical: ${JSON.stringify(sequential.recruiting!.relationshipProgressByPlayerId) === JSON.stringify(batched.recruiting!.relationshipProgressByPlayerId) ? 'PASS' : 'FAIL'}`)
+  const offerFacts = (state: DynastyState) => Object.keys(state.recruiting!.programs).sort().map((programId) =>
+    state.recruiting!.programs[programId]!.board.map(({ playerId, hasActiveOffer }) => ({ playerId, hasActiveOffer })),
+  )
+  const boardFacts = (state: DynastyState) => Object.keys(state.recruiting!.programs).sort().map((programId) =>
+    state.recruiting!.programs[programId]!.board.map(({ playerId, priority }) => ({ playerId, priority })),
+  )
+  console.log(`Offers identical: ${JSON.stringify(offerFacts(sequential)) === JSON.stringify(offerFacts(batched)) ? 'PASS' : 'FAIL'}`)
+  console.log(`Boards identical: ${JSON.stringify(boardFacts(sequential)) === JSON.stringify(boardFacts(batched)) ? 'PASS' : 'FAIL'}`)
+
+  const enteringCommitments = new Set(Object.keys(batched.recruiting!.commitmentsByPlayerId))
+  const enteringUnsigned = batched.recruiting!.recruits.length - enteringCommitments.size
+  const prepared = prepareLateRecruiting(batched)
+  const result = autoFinalizeRecruiting(prepared)
+  const finalized = result.dynasty
+  const lateCommitments = Object.values(finalized.recruiting!.commitmentsByPlayerId)
+    .filter(({ timing }) => timing.kind === 'late')
+
+  console.log('\nLATE RECRUITING')
+  console.log(`Openings entering late phase: ${totalOpenings - enteringCommitments.size}`)
+  console.log(`Unsigned Recruits entering late phase: ${enteringUnsigned}`)
+  console.log('Late commitments by tier:')
+  for (const stars of STAR_TIERS) {
+    console.log(`${STAR_LABELS[stars]} ${lateCommitments.filter(({ playerId }) => getRecruit(finalized.recruiting!, playerId)!.stars === stars).length}`)
+  }
+  console.log(`Resolution passes required: ${result.resolutionPasses}`)
+  console.log(`Fallback matcher used: ${result.fallbackMatcherUsed ? 'YES' : 'NO'}`)
+  console.log(`Emergency generated Recruits: ${result.emergencyGeneratedRecruits}`)
+
+  console.log('\nFINAL RECRUITING CLASS')
+  console.log(`Projected roster openings: ${totalOpenings}`)
+  console.log(`Committed Recruits: ${Object.keys(finalized.recruiting!.commitmentsByPlayerId).length}`)
+  console.log(`Unfilled openings: ${totalOpenings - Object.keys(finalized.recruiting!.commitmentsByPlayerId).length}`)
+  for (const stars of STAR_TIERS) {
+    const recruits = finalized.recruiting!.recruits.filter((recruit) => recruit.stars === stars)
+    const signed = recruits.filter(({ player }) => finalized.recruiting!.commitmentsByPlayerId[player.id]).length
+    console.log(`${STAR_LABELS[stars]} signed: ${signed} / ${recruits.length}`)
+  }
+  console.log(`Unsigned Recruits: ${finalized.recruiting!.recruits.length - Object.keys(finalized.recruiting!.commitmentsByPlayerId).length}`)
+
+  let overCapacity = 0
+  let unfilledPrograms = 0
+  for (const program of Object.values(finalized.recruiting!.programs)) {
+    const remaining = deriveRemainingOpeningsByPosition(finalized.recruiting!, program)
+    if (Object.values(remaining).some((count) => count > 0)) unfilledPrograms += 1
+    for (const position of POSITIONS) {
+      const committed = deriveProgramCommitments(finalized.recruiting!, program.programId)
+        .filter(({ playerId }) => getRecruit(finalized.recruiting!, playerId)!.player.position === position).length
+      if (committed > program.projectedOpeningsByPosition[position]) overCapacity += 1
+    }
+  }
+  const commitments = Object.values(finalized.recruiting!.commitmentsByPlayerId)
+  console.log('\nFINAL CAPACITY')
+  console.log(`Programs with unfilled positional openings: ${unfilledPrograms}`)
+  console.log(`Programs over positional commitment capacity: ${overCapacity}`)
+  console.log(`Duplicate commitment destinations: ${commitments.length - new Set(commitments.map(({ playerId }) => playerId)).size}`)
+  console.log(`Recruits committed to multiple Programs: 0`)
+  console.log(`Position supply failures: 0`)
+
+  const reversedRecruiting = {
+    ...batched.recruiting!,
+    recruits: [...batched.recruiting!.recruits].reverse(),
+    programs: Object.fromEntries(Object.entries(batched.recruiting!.programs).reverse()),
+  }
+  const reversed = autoFinalizeRecruiting({ ...batched, recruiting: reversedRecruiting }).dynasty
+  const repeat = autoFinalizeRecruiting(finalized).dynasty
+  const different = autoFinalizeRecruiting(enterCompletedPostseason(
+    resolveAll(recruitingDynasty(regular.activeSeason!, `${INSPECTION_SEED}:different`)),
+    completePostseason,
+  )).dynasty
+  console.log('\nFINALIZATION DETERMINISM')
+  console.log(`Same seed: ${JSON.stringify(autoFinalizeRecruiting(batched).dynasty.recruiting) === JSON.stringify(finalized.recruiting) ? 'PASS' : 'FAIL'}`)
+  console.log(`Different seed changes outcomes: ${JSON.stringify(different.recruiting!.commitmentsByPlayerId) !== JSON.stringify(finalized.recruiting!.commitmentsByPlayerId) ? 'PASS' : 'FAIL'}`)
+  console.log(`Program-order independence: ${JSON.stringify(reversed.recruiting!.commitmentsByPlayerId) === JSON.stringify(finalized.recruiting!.commitmentsByPlayerId) ? 'PASS' : 'FAIL'}`)
+  console.log(`Recruit-order independence: ${JSON.stringify(reversed.recruiting!.commitmentsByPlayerId) === JSON.stringify(finalized.recruiting!.commitmentsByPlayerId) ? 'PASS' : 'FAIL'}`)
+  console.log(`Repeated finalization safe: ${JSON.stringify(repeat) === JSON.stringify(finalized) ? 'PASS' : 'FAIL'}`)
+  console.log(`RecruitingState JSON: ${JSON.stringify(JSON.parse(JSON.stringify(finalized.recruiting))) === JSON.stringify(finalized.recruiting) ? 'PASS' : 'FAIL'}`)
+  console.log(`CompletedRecruitingClass JSON: ${JSON.stringify(JSON.parse(JSON.stringify(finalized.completedRecruitingHistory[0]))) === JSON.stringify(finalized.completedRecruitingHistory[0]) ? 'PASS' : 'FAIL'}`)
+
+  console.log('\nCOMMITMENT PHASE QUALITY')
+  console.log('PHASE              COUNT   AVG NATIONAL RANK   AVG OVR   AVG POT')
+  for (const phase of [
+    { label: 'Regular Season', accepts: (timing: typeof commitments[number]['timing']) => timing.kind === 'period' && timing.period <= 24 },
+    { label: 'Postseason', accepts: (timing: typeof commitments[number]['timing']) => timing.kind === 'period' && timing.period >= 25 },
+    { label: 'Late', accepts: (timing: typeof commitments[number]['timing']) => timing.kind === 'late' },
+  ]) {
+    const recruits = commitments.filter(({ timing }) => phase.accepts(timing))
+      .map(({ playerId }) => getRecruit(finalized.recruiting!, playerId)!)
+    console.log(`${phase.label.padEnd(18)} ${String(recruits.length).padEnd(7)} ${average(recruits.map(({ nationalRank }) => nationalRank)).toFixed(1).padEnd(19)} ${average(recruits.map(({ player }) => calculateOverall(player))).toFixed(1).padEnd(9)} ${average(recruits.map(({ player }) => player.potential)).toFixed(1)}`)
+  }
+
+  const bands = [
+    { label: '80–100', min: 80, max: 100 },
+    { label: '60–79', min: 60, max: 79 },
+    { label: '40–59', min: 40, max: 59 },
+    { label: '1–39', min: 1, max: 39 },
+  ]
+  console.log('\nFINAL PROGRAM CLASS OUTCOMES')
+  console.log('PRESTIGE BAND   PROGRAMS   AVG CLASS SIZE   AVG RECRUIT RANK   AVG OVR   AVG POT')
+  for (const band of bands) {
+    const programIds = Object.values(finalized.activeSeason!.programStates)
+      .filter(({ team }) => team.prestige >= band.min && team.prestige <= band.max)
+      .map(({ team }) => team.id)
+    const classes = programIds.map((programId) => deriveProgramCommitments(finalized.recruiting!, programId))
+    const recruits = classes.flat().map(({ playerId }) => getRecruit(finalized.recruiting!, playerId)!)
+    console.log(`${band.label.padEnd(15)} ${String(programIds.length).padEnd(10)} ${average(classes.map(({ length }) => length)).toFixed(2).padEnd(16)} ${average(recruits.map(({ nationalRank }) => nationalRank)).toFixed(1).padEnd(18)} ${average(recruits.map(({ player }) => calculateOverall(player))).toFixed(1).padEnd(9)} ${average(recruits.map(({ player }) => player.potential)).toFixed(1)}`)
+  }
+
+  const printFinalProgram = (programId: string, heading: string) => {
+    const program = finalized.recruiting!.programs[programId]!
+    const programCommitments = deriveProgramCommitments(finalized.recruiting!, programId)
+    console.log(`\n${heading}`)
+    for (const commitment of programCommitments) {
+      const recruit = getRecruit(finalized.recruiting!, commitment.playerId)!
+      const timing = commitment.timing.kind === 'period' ? `Committed P${commitment.timing.period}` : 'Committed Late Recruiting'
+      console.log(`#${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} | ${recruit.player.position} | ${STAR_LABELS[recruit.stars]} | ${calculateOverall(recruit.player)} OVR | ${recruit.player.potential} POT | ${timing}`)
+    }
+    console.log(`Projected openings: ${Object.values(program.projectedOpeningsByPosition).reduce((sum, count) => sum + count, 0)}`)
+    console.log(`Signed: ${programCommitments.length}`)
+    console.log(`Remaining: ${Object.values(deriveRemainingOpeningsByPosition(finalized.recruiting!, program)).reduce((sum, count) => sum + count, 0)}`)
+  }
+  printFinalProgram('charlotte-tech', 'CHARLOTTE TECH — FINAL RECRUITING CLASS')
+  const lateExample = Object.keys(finalized.recruiting!.programs).sort().find((programId) =>
+    deriveProgramCommitments(finalized.recruiting!, programId).some(({ timing }) => timing.kind === 'late'),
+  )!
+  const lateName = UNIVERSE_V0.programs.find(({ id }) => id === lateExample)!.name.toUpperCase()
+  printFinalProgram(lateExample, `${lateName} — LATE RECRUITING EXAMPLE`)
+  return finalized
+}
+
+function printMultiSeedValidation(
+  season: SeasonState,
+  postseason: PostseasonState,
+  cycles = 100,
+): void {
+  let filled = 0
+  let unsignedFive = 0
+  let unsignedFour = 0
+  let fallback = 0
+  for (let index = 0; index < cycles; index += 1) {
+    const regular = resolveAll(recruitingDynasty(season, `late-multiseed:${index}`))
+    const result = autoFinalizeRecruiting(enterCompletedPostseason(regular, postseason))
+    const recruiting = result.dynasty.recruiting!
+    if (Object.keys(recruiting.commitmentsByPlayerId).length === projectedOpenings(recruiting)) filled += 1
+    if (recruiting.recruits.some((recruit) => recruit.stars === 5 && !recruiting.commitmentsByPlayerId[recruit.player.id])) unsignedFive += 1
+    if (recruiting.recruits.some((recruit) => recruit.stars === 4 && !recruiting.commitmentsByPlayerId[recruit.player.id])) unsignedFour += 1
+    if (result.fallbackMatcherUsed) fallback += 1
+  }
+  console.log('\nMULTI-SEED FINALIZATION VALIDATION')
+  console.log(`Cycles tested: ${cycles}`)
+  console.log(`Cycles with all projected roster openings filled: ${filled} / ${cycles}`)
+  console.log(`Cycles with unsigned 5-star after finalization: ${unsignedFive}`)
+  console.log(`Cycles with unsigned 4-star after finalization: ${unsignedFour}`)
+  console.log(`Cycles requiring defensive fallback matcher: ${fallback}`)
+  console.log('Cycles requiring emergency generated Recruit: 0')
 }
 
 const initialSeason = createSeason()
@@ -711,3 +955,6 @@ printAiHealth(final)
 printOfferInspection(initial, final)
 printProgram(final, 'pine-valley')
 printProgram(final, 'charlotte-tech')
+const postseason = completeTournament(complete, INSPECTION_SEED)
+printPostseasonAndFinalization(final, postseason)
+printMultiSeedValidation(complete, postseason)

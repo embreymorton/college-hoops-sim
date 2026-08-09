@@ -34,6 +34,7 @@ export function initializeRecruiting(dynasty: DynastyState): DynastyState {
   let recruiting: RecruitingState = {
     id: `recruiting:${dynasty.dynastyId}:season-${targetSeasonNumber}:${RECRUITING_V0_VERSION}`,
     targetSeasonNumber,
+    phase: 'regular-season',
     lastResolvedPeriod: 0,
     recruits,
     programs,

@@ -64,6 +64,7 @@ export function initializeDynastyState({
     activePostseason,
     recruiting: null,
     history: [],
+    completedRecruitingHistory: [],
     offseason: null,
   }
 }
