@@ -129,11 +129,11 @@ describe('Postseason — qualified and alive', () => {
       screen.getByRole('button', { name: /^simulate game$/i }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /manage rotation/i }),
+      screen.getByRole('button', { name: /game prep/i }),
     ).toBeInTheDocument()
   })
 
-  it('Quick Sim records the actual Tournament GameResult using the canonical Postseason Rotation', () => {
+  it('Quick Sim stays on the Tournament Hub with the stored result and optional Box Score', () => {
     useSeasonStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
@@ -149,12 +149,38 @@ describe('Postseason — qualified and alive', () => {
     clickButtonByText(/^simulate game$/i)
 
     const state = useSeasonStore.getState()
-    expect(state.view).toBe('postseasonPostgame')
+    expect(state.view).toBe('postseasonHub')
     expect(state.lastPlayedTournamentGameId).toBe(expectedGame.id)
     const result = state.postseason!.resultsByGameId[expectedGame.id]
     expect(result).toBeDefined()
-    expect(screen.getByText(String(result!.homeScore))).toBeInTheDocument()
-    expect(screen.getByText(String(result!.awayScore))).toBeInTheDocument()
+    expect(Object.keys(state.postseason!.resultsByGameId)).toEqual([
+      expectedGame.id,
+    ])
+
+    const completedCard = document.querySelector(
+      '.next-game-card--final',
+    ) as HTMLElement
+    expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
+    expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
+    expect(
+      within(completedCard).queryByRole('button', { name: /^simulate game$/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(completedCard).queryByRole('button', { name: /game prep/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(completedCard).getByText(
+        result!.winnerId === controlledProgramId
+          ? `${UNIVERSE_V0.programs.find((program) => program.id === controlledProgramId)!.name} Advances`
+          : 'Tournament Run Ends',
+      ),
+    ).toBeInTheDocument()
+
+    clickButtonByText(/view box score/i)
+    expect(useSeasonStore.getState().view).toBe('postseasonGameHistory')
+    expect(
+      useSeasonStore.getState().postseason!.resultsByGameId[expectedGame.id],
+    ).toBe(result)
   })
 
   it('renders full Player box scores for the just-played Tournament game, with a neutral-site round tag', () => {
@@ -162,6 +188,7 @@ describe('Postseason — qualified and alive', () => {
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
+    clickButtonByText(/view box score/i)
 
     const { postseason, lastPlayedTournamentGameId } = useSeasonStore.getState()
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
@@ -179,7 +206,7 @@ describe('Postseason — qualified and alive', () => {
     ).toBeInTheDocument()
   })
 
-  it('Manage Rotation opens Tournament Game Prep; edits commit to Postseason only, never the completed Season', () => {
+  it('Game Prep opens Tournament Rotation editing without mutating the completed Season', () => {
     useSeasonStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
@@ -188,7 +215,7 @@ describe('Postseason — qualified and alive', () => {
     const originalSeasonRotation =
       season!.programStates[controlledProgramId!]!.rotation
 
-    clickButtonByText(/manage rotation/i)
+    clickButtonByText(/game prep/i)
     expect(
       screen.getByRole('heading', { name: /your rotation/i }),
     ).toBeInTheDocument()
@@ -213,23 +240,38 @@ describe('Postseason — qualified and alive', () => {
       useSeasonStore.getState().season!.programStates[controlledProgramId!]!
         .rotation,
     ).toEqual(originalSeasonRotation)
+
+    fireEvent.click(simulateButton)
+    const playedGameId = useSeasonStore.getState().lastPlayedTournamentGameId!
+    const playedResult = useSeasonStore.getState().postseason!.resultsByGameId[
+      playedGameId
+    ]!
+    expect(useSeasonStore.getState().view).toBe('postseasonPostgame')
+    expect(screen.getByText(String(playedResult.homeScore))).toBeInTheDocument()
+
+    clickButtonByText(/return to tournament hub/i)
+    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(document.querySelector('.next-game-card--final')).not.toBeNull()
+    expect(
+      useSeasonStore.getState().postseason!.resultsByGameId[playedGameId],
+    ).toBe(playedResult)
   })
 
-  it('Simulate Rest of Round advances the bracket to the next round, back at the Tournament Hub', () => {
+  it('Advance to Next Round resolves the remaining bracket games and preserves the controlled result', () => {
     useSeasonStore.getState().selectProgram('charlotte-tech')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
-    expect(
-      screen.getByRole('button', {
-        name: /simulate rest of round of 16 & continue/i,
-      }),
-    ).toBeInTheDocument()
-    clickButtonByText(/simulate rest of round of 16 & continue/i)
+    const controlledResult = useSeasonStore.getState().postseason!
+      .resultsByGameId[useSeasonStore.getState().lastPlayedTournamentGameId!]!
+    clickButtonByText(/advance to next round/i)
 
     const state = useSeasonStore.getState()
     expect(state.view).toBe('postseasonHub')
     expect(getCurrentTournamentRound(state.postseason!)).toBe('quarterfinals')
+    expect(
+      state.postseason!.resultsByGameId[state.lastPlayedTournamentGameId!],
+    ).toBe(controlledResult)
     // The Round of 16 is fully resolved — its own round-progress control is gone.
     expect(
       screen.queryByText(/round of 16 in progress/i),
@@ -247,7 +289,7 @@ describe('Postseason — eliminated', () => {
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/simulate rest of round of 16 & continue/i)
+    clickButtonByText(/advance to next round/i)
     clickButtonByText(/^simulate game$/i)
 
     const { postseason, controlledProgramId, lastPlayedTournamentGameId } =
@@ -255,15 +297,13 @@ describe('Postseason — eliminated', () => {
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
     expect(result.winnerId).not.toBe(controlledProgramId)
 
-    clickButtonByText(/return to tournament hub/i)
-
-    expect(screen.getByText('Eliminated')).toBeInTheDocument()
+    expect(screen.getByText('Tournament Run Ends')).toBeInTheDocument()
     expect(screen.queryByText('Advancing')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^simulate game$/i }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: /manage rotation/i }),
+      screen.queryByRole('button', { name: /game prep/i }),
     ).not.toBeInTheDocument()
   })
 
@@ -272,9 +312,9 @@ describe('Postseason — eliminated', () => {
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/simulate rest of round of 16 & continue/i)
+    clickButtonByText(/advance to next round/i)
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/return to tournament hub/i)
+    clickButtonByText(/advance to next round/i)
 
     for (let round = 0; round < 3; round += 1) {
       const button = screen.queryByRole('button', { name: /^simulate/i })
@@ -303,7 +343,7 @@ describe('Postseason — did not qualify', () => {
       screen.queryByRole('button', { name: /^simulate game$/i }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: /manage rotation/i }),
+      screen.queryByRole('button', { name: /game prep/i }),
     ).not.toBeInTheDocument()
 
     for (let round = 0; round < 4; round += 1) {
@@ -377,7 +417,6 @@ describe('Postseason — bracket and historical results', () => {
     expect(within(partialSlot).getByText(knownProgram.name)).toBeInTheDocument()
 
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/return to tournament hub/i)
 
     const completed = useSeasonStore.getState()
     const resolvedSlots = resolveTournamentGameParticipantSlots(
@@ -433,8 +472,6 @@ describe('Postseason — bracket and historical results', () => {
     clickButtonByText(/^simulate game$/i)
     const { postseason, lastPlayedTournamentGameId } = useSeasonStore.getState()
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
-    clickButtonByText(/return to tournament hub/i)
-
     const completedSlot = document.querySelector(
       '.bracket-slot--complete',
     ) as HTMLElement
@@ -518,9 +555,9 @@ describe('Postseason — Champion', () => {
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/simulate rest of round of 16 & continue/i)
+    clickButtonByText(/advance to next round/i)
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/return to tournament hub/i)
+    clickButtonByText(/advance to next round/i)
 
     for (let round = 0; round < 3; round += 1) {
       const button = screen.queryByRole('button', { name: /^simulate/i })

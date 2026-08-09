@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { calculateTeamStrength } from '../engine'
 import {
+  CompletedMatchupCard,
   HubSectionTabs,
   TournamentBracket,
   TournamentFieldTable,
@@ -27,6 +28,7 @@ import { deriveProgramRecord } from '../season'
 import { useSeasonStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatTournamentRoundName } from './postseasonFormatters'
+import { formatOvertimeTag } from './formatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -136,6 +138,9 @@ export function PostseasonHubScreen() {
   const viewCompletedTournamentGame = useSeasonStore(
     (state) => state.viewCompletedTournamentGame,
   )
+  const lastPlayedTournamentGameId = useSeasonStore(
+    (state) => state.lastPlayedTournamentGameId,
+  )
   const goToHub = useSeasonStore((state) => state.goToHub)
   const goToLeague = useSeasonStore((state) => state.goToLeague)
   const openTeamDetails = useSeasonStore((state) => state.openTeamDetails)
@@ -213,10 +218,76 @@ export function PostseasonHubScreen() {
     })
 
   const bracketSlots = buildBracketSlots(postseason, controlledProgramId)
+  const lastPlayedTournamentGame = lastPlayedTournamentGameId
+    ? postseason.bracket.games.find(
+        (game) => game.id === lastPlayedTournamentGameId,
+      )
+    : undefined
+  const lastPlayedTournamentResult = lastPlayedTournamentGameId
+    ? postseason.resultsByGameId[lastPlayedTournamentGameId]
+    : undefined
+  const completedHubTournamentGame =
+    lastPlayedTournamentGame &&
+    lastPlayedTournamentResult &&
+    (lastPlayedTournamentGame.round === currentRound ||
+      (tournamentComplete && lastPlayedTournamentGame.round === 'championship'))
+      ? {
+          game: lastPlayedTournamentGame,
+          result: lastPlayedTournamentResult,
+        }
+      : undefined
 
   let matchup: ReactNode
 
-  if (tournamentComplete) {
+  if (completedHubTournamentGame) {
+    const homeProgram = PROGRAMS_BY_ID.get(
+      completedHubTournamentGame.result.homeTeamId,
+    )!
+    const awayProgram = PROGRAMS_BY_ID.get(
+      completedHubTournamentGame.result.awayTeamId,
+    )!
+    const homeEntry = postseason.field.find(
+      (entry) => entry.programId === completedHubTournamentGame.result.homeTeamId,
+    )!
+    const awayEntry = postseason.field.find(
+      (entry) => entry.programId === completedHubTournamentGame.result.awayTeamId,
+    )!
+
+    matchup = (
+      <CompletedMatchupCard
+        roundLabel={formatTournamentRoundName(completedHubTournamentGame.game.round)}
+        overtimeTag={formatOvertimeTag(
+          completedHubTournamentGame.result.overtimePeriods,
+        )}
+        home={{
+          name: homeProgram.name,
+          accentColor: homeProgram.branding.primaryColor,
+          score: completedHubTournamentGame.result.homeScore,
+          label: `#${homeEntry.seed}`,
+          isWinner:
+            completedHubTournamentGame.result.winnerId === homeProgram.id,
+        }}
+        away={{
+          name: awayProgram.name,
+          accentColor: awayProgram.branding.primaryColor,
+          score: completedHubTournamentGame.result.awayScore,
+          label: `#${awayEntry.seed}`,
+          isWinner:
+            completedHubTournamentGame.result.winnerId === awayProgram.id,
+        }}
+        resultLabel={
+          championProgramId === controlledProgramId
+            ? 'National Champions'
+            : isEliminated
+              ? 'Tournament Run Ends'
+              : `${controlledProgram.name} Advances`
+        }
+        onViewBoxScore={() =>
+          viewCompletedTournamentGame(completedHubTournamentGame.game.id)
+        }
+      />
+    )
+  } else if (tournamentComplete) {
     const isControlledChampion = championProgramId === controlledProgramId
     matchup = (
       <TournamentStatusBanner
@@ -284,7 +355,7 @@ export function PostseasonHubScreen() {
           strength: calculateTeamStrength(opponentState.team, opponentState.rotation),
         }}
         onSimulate={simulateNextPostseasonGame}
-        onManageRotation={goToPostseasonGamePrep}
+        onGamePrep={goToPostseasonGamePrep}
       />
     )
   } else if (isEliminated) {
@@ -374,7 +445,9 @@ export function PostseasonHubScreen() {
           Tournament status
         </h2>
         {matchup}
-        {isAliveWithPendingGame && hasOtherSimulatableGames && currentRound && (
+        {(isAliveWithPendingGame || completedHubTournamentGame) &&
+          hasOtherSimulatableGames &&
+          currentRound && (
           <div className="round-progress">
             <p className="round-progress__text">
               {formatTournamentRoundName(currentRound)} in progress
@@ -384,10 +457,12 @@ export function PostseasonHubScreen() {
               className="button button--ghost"
               onClick={simulateRestOfCurrentTournamentRound}
             >
-              Simulate Other Games
+              {completedHubTournamentGame
+                ? 'Advance to Next Round'
+                : 'Simulate Other Games'}
             </button>
           </div>
-        )}
+          )}
       </section>
 
       <section className="section" aria-labelledby="bracket-heading">

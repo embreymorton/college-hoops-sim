@@ -134,7 +134,7 @@ describe('Season Presentation', () => {
     ).toBeInTheDocument()
   })
 
-  it('exposes a direct Quick Sim action for the pending game on the Hub, alongside Manage Rotation', () => {
+  it('exposes the fast Simulate Game and detailed Game Prep paths on the Hub', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
 
@@ -145,14 +145,14 @@ describe('Season Presentation', () => {
       within(matchupCard).getByRole('button', { name: /^simulate game$/i }),
     ).toBeInTheDocument()
     expect(
-      within(matchupCard).getByRole('button', { name: /manage rotation/i }),
+      within(matchupCard).getByRole('button', { name: /game prep/i }),
     ).toBeInTheDocument()
     expect(
       within(matchupCard).queryByRole('button', { name: /^super sim/i }),
     ).not.toBeInTheDocument()
     expect(
       within(roundProgress).getByRole('button', {
-        name: /simulate rest of round/i,
+        name: /simulate other games/i,
       }),
     ).toBeInTheDocument()
     expect(
@@ -164,7 +164,7 @@ describe('Season Presentation', () => {
     ).not.toBeInTheDocument()
   })
 
-  it('Quick Sim records the actual ScheduledGame result directly from the hub, with no Game Prep screen', () => {
+  it('Quick Sim stays on the Hub, shows the stored final, and advances only when explicitly requested', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
 
@@ -176,15 +176,44 @@ describe('Season Presentation', () => {
     const state = useSeasonStore.getState()
     const result = state.season!.resultsByGameId[game.id]
     expect(result).toBeDefined()
-    expect(state.view).toBe('postgame')
-    expect(screen.getByText(String(result!.homeScore))).toBeInTheDocument()
-    expect(screen.getByText(String(result!.awayScore))).toBeInTheDocument()
+    expect(state.view).toBe('hub')
+    expect(getCurrentRound(state.season!)).toBe(game.round)
+    expect(Object.keys(state.season!.resultsByGameId)).toEqual([game.id])
+
+    const completedCard = document.querySelector(
+      '.next-game-card--final',
+    ) as HTMLElement
+    expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
+    expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
+    expect(
+      within(completedCard).getByText(
+        result!.winnerId === controlledProgramId ? 'Win' : 'Loss',
+      ),
+    ).toBeInTheDocument()
+    expect(
+      within(completedCard).queryByRole('button', { name: /^simulate game$/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(completedCard).queryByRole('button', { name: /game prep/i }),
+    ).not.toBeInTheDocument()
+
+    clickButtonByText(/view box score/i)
+    expect(useSeasonStore.getState().view).toBe('gameHistory')
+    expect(useSeasonStore.getState().season!.resultsByGameId[game.id]).toBe(result)
+    clickButtonByText(/back to season hub/i)
+
+    const storedResult = useSeasonStore.getState().season!.resultsByGameId[game.id]
+    clickButtonByText(/advance to next round/i)
+    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(game.round + 1)
+    expect(useSeasonStore.getState().season!.resultsByGameId[game.id]).toBe(
+      storedResult,
+    )
   })
 
-  it('Manage Rotation still opens the existing Rotation Editor workflow', () => {
+  it('Game Prep still opens the existing Rotation Editor workflow', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
-    clickButtonByText(/manage rotation/i)
+    clickButtonByText(/game prep/i)
 
     expect(
       screen.getByRole('heading', { name: /your rotation/i }),
@@ -195,7 +224,7 @@ describe('Season Presentation', () => {
   it('gates simulation on a legal draft Rotation in Game Prep', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
-    clickButtonByText(/manage rotation/i)
+    clickButtonByText(/game prep/i)
 
     const homePanel = document.querySelectorAll('.team-panel')[0] as HTMLElement
     const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
@@ -215,23 +244,33 @@ describe('Season Presentation', () => {
     expect(simulateButton).not.toBeDisabled()
   })
 
-  it('records the actual ScheduledGame result and shows it in postgame via Manage Rotation', () => {
+  it('records the actual ScheduledGame result and opens Postgame via Game Prep', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
-    clickButtonByText(/manage rotation/i)
+    clickButtonByText(/game prep/i)
     clickButtonByText(/simulate game/i)
 
     const { season, lastPlayedGameId } = useSeasonStore.getState()
     const result = season!.resultsByGameId[lastPlayedGameId!]!
 
+    expect(useSeasonStore.getState().view).toBe('postgame')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
+
+    clickButtonByText(/return to season hub/i)
+    expect(useSeasonStore.getState().view).toBe('hub')
+    expect(getCurrentRound(useSeasonStore.getState().season!)).toBe(1)
+    expect(document.querySelector('.next-game-card--final')).not.toBeNull()
+    expect(
+      useSeasonStore.getState().season!.resultsByGameId[lastPlayedGameId!],
+    ).toBe(result)
   })
 
   it('renders Player box-score rows from the recorded Season GameResult', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
     clickButtonByText(/^simulate game$/i)
+    clickButtonByText(/view box score/i)
 
     const { season, lastPlayedGameId } = useSeasonStore.getState()
     const result = season!.resultsByGameId[lastPlayedGameId!]!
@@ -251,6 +290,7 @@ describe('Season Presentation', () => {
   it('completes remaining Round 1 games via Simulate Rest of Round & Continue in a single action, back at the Hub', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
+    clickButtonByText(/game prep/i)
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/simulate rest of round & continue/i)
 
@@ -290,6 +330,7 @@ describe('Season Presentation', () => {
   it('renders Conference standings matching the Season standings API', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
+    clickButtonByText(/game prep/i)
     clickButtonByText(/^simulate game$/i)
     clickButtonByText(/simulate rest of round & continue/i)
 
@@ -319,7 +360,6 @@ describe('Season Presentation', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/return to season hub/i)
 
     const { season, controlledProgramId } = useSeasonStore.getState()
     const round1Game = season!.schedule.games.find(
@@ -358,7 +398,6 @@ describe('Season Presentation', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
     clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/return to season hub/i)
 
     const { season, controlledProgramId } = useSeasonStore.getState()
     const round1Game = season!.schedule.games.find(
@@ -432,11 +471,11 @@ describe('Season Presentation', () => {
     ).toBeInTheDocument()
   })
 
-  it('never lets the controlled Program appear in resultsByGameId before it is played, even after Simulate Rest of Round', () => {
+  it('never lets the controlled Program appear in resultsByGameId before it is played, even after Simulate Other Games', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
 
-    clickButtonByText(/simulate rest of round$/i)
+    clickButtonByText(/simulate other games$/i)
 
     const { season, controlledProgramId } = useSeasonStore.getState()
     const ownGame = getNextGameForProgram(season!, controlledProgramId!)
@@ -446,7 +485,7 @@ describe('Season Presentation', () => {
     const roundProgress = document.querySelector('.round-progress') as HTMLElement
     expect(
       within(roundProgress).queryByRole('button', {
-        name: /simulate rest of round/i,
+        name: /simulate other games/i,
       }),
     ).not.toBeInTheDocument()
     expect(
@@ -467,7 +506,7 @@ describe('Season Presentation', () => {
       screen.queryByRole('button', { name: /^simulate game$/i }),
     ).not.toBeInTheDocument()
     expect(
-      screen.queryByRole('button', { name: /manage rotation/i }),
+      screen.queryByRole('button', { name: /game prep/i }),
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^super sim/i }),
@@ -808,7 +847,7 @@ describe('Super Sim', () => {
   it('is not blocked or influenced by a stale invalid Rotation draft left over from Game Prep', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
-    clickButtonByText(/manage rotation/i)
+    clickButtonByText(/game prep/i)
 
     const homePanel = document.querySelectorAll('.team-panel')[0] as HTMLElement
     const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement

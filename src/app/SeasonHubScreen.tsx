@@ -1,5 +1,6 @@
 import { calculateTeamStrength, type Team, type TeamStrength } from '../engine'
 import {
+  CompletedMatchupCard,
   ConferenceStandingsSection,
   HubSectionTabs,
   NextGameCard,
@@ -25,6 +26,7 @@ import {
   type SeasonState,
 } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
+import { formatOvertimeTag } from './formatters'
 import { formatTournamentQualification } from './postseasonFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
@@ -61,6 +63,7 @@ export function SeasonHubScreen() {
     (state) => state.simulateRestOfRound,
   )
   const viewCompletedGame = useSeasonStore((state) => state.viewCompletedGame)
+  const lastPlayedGameId = useSeasonStore((state) => state.lastPlayedGameId)
   const pendingSuperSim = useSeasonStore((state) => state.pendingSuperSim)
   const superSimSummary = useSeasonStore((state) => state.superSimSummary)
   const requestSuperSim = useSeasonStore((state) => state.requestSuperSim)
@@ -144,6 +147,33 @@ export function SeasonHubScreen() {
   const controlledTournamentEntry = tournamentField.find(
     (entry) => entry.programId === controlledProgramId,
   )
+  const lastPlayedGame = lastPlayedGameId
+    ? season.schedule.games.find((game) => game.id === lastPlayedGameId)
+    : undefined
+  const lastPlayedResult = lastPlayedGameId
+    ? season.resultsByGameId[lastPlayedGameId]
+    : undefined
+  // Keep the concise result visible only while its round is still the
+  // canonical current round. If this game completed the entire round, normal
+  // Season derivation advances and the next matchup takes its place.
+  const completedHubGame =
+    lastPlayedGame &&
+    lastPlayedResult &&
+    lastPlayedGame.round === currentRound
+      ? { game: lastPlayedGame, result: lastPlayedResult }
+      : undefined
+  const controlledRoundGame =
+    currentRound === undefined
+      ? undefined
+      : season.schedule.games.find(
+          (game) =>
+            game.round === currentRound &&
+            (game.homeProgramId === controlledProgramId ||
+              game.awayProgramId === controlledProgramId),
+        )
+  const controlledRoundGameComplete = Boolean(
+    controlledRoundGame && season.resultsByGameId[controlledRoundGame.id],
+  )
 
   return (
     <>
@@ -190,6 +220,41 @@ export function SeasonHubScreen() {
                 : 'View National Tournament'}
             </button>
           </div>
+        ) : completedHubGame ? (
+          <CompletedMatchupCard
+            roundLabel={`Round ${completedHubGame.game.round}`}
+            overtimeTag={formatOvertimeTag(
+              completedHubGame.result.overtimePeriods,
+            )}
+            home={{
+              name: season.programStates[completedHubGame.game.homeProgramId]!
+                .team.name,
+              accentColor: PROGRAMS_BY_ID.get(
+                completedHubGame.game.homeProgramId,
+              )!.branding.primaryColor,
+              score: completedHubGame.result.homeScore,
+              isWinner:
+                completedHubGame.result.winnerId ===
+                completedHubGame.game.homeProgramId,
+            }}
+            away={{
+              name: season.programStates[completedHubGame.game.awayProgramId]!
+                .team.name,
+              accentColor: PROGRAMS_BY_ID.get(
+                completedHubGame.game.awayProgramId,
+              )!.branding.primaryColor,
+              score: completedHubGame.result.awayScore,
+              isWinner:
+                completedHubGame.result.winnerId ===
+                completedHubGame.game.awayProgramId,
+            }}
+            resultLabel={
+              completedHubGame.result.winnerId === controlledProgramId
+                ? 'Win'
+                : 'Loss'
+            }
+            onViewBoxScore={() => viewCompletedGame(completedHubGame.game.id)}
+          />
         ) : (
           nextGame &&
           opponentProgram &&
@@ -214,7 +279,7 @@ export function SeasonHubScreen() {
                 opponentProgram.id,
               )}
               onSimulate={simulateNextGame}
-              onManageRotation={goToGamePrep}
+              onGamePrep={goToGamePrep}
             />
           )
         )}
@@ -234,7 +299,9 @@ export function SeasonHubScreen() {
                   className="button button--ghost"
                   onClick={simulateRestOfRound}
                 >
-                  Simulate Rest of Round
+                  {controlledRoundGameComplete
+                    ? 'Advance to Next Round'
+                    : 'Simulate Other Games'}
                 </button>
               )}
               <SuperSimMenu

@@ -120,7 +120,7 @@ export interface SeasonSessionState {
    */
   readonly draftRotation: Rotation | null
   readonly view: SeasonSessionView
-  /** The controlled Program's most recently completed ScheduledGame, for postgame. */
+  /** The controlled Program's most recently completed ScheduledGame, for inline Hub feedback or postgame. */
   readonly lastPlayedGameId: string | null
   /** The completed ScheduledGame currently open for historical review, if any. */
   readonly viewedGameId: string | null
@@ -138,7 +138,7 @@ export interface SeasonSessionState {
   readonly postseasonControlledDefaultRotation: Rotation | null
   /** In-progress Postseason Rotation edit, scoped to Tournament Game Prep — same draft-boundary contract as `draftRotation`. */
   readonly postseasonDraftRotation: Rotation | null
-  /** The controlled Program's most recently completed Tournament game, for postgame. */
+  /** The controlled Program's most recently completed Tournament game, for inline Hub feedback or postgame. */
   readonly lastPlayedTournamentGameId: string | null
   /** The completed Tournament game currently open for historical review, if any. */
   readonly viewedTournamentGameId: string | null
@@ -170,7 +170,8 @@ export interface SeasonSessionState {
   /**
    * Dashboard Quick Sim: plays the controlled Program's next ScheduledGame
    * directly from the Season Hub using the canonical committed Season
-   * Rotation. Never reads or is blocked by `draftRotation` — the committed
+   * Rotation, then remains on the Hub. Never reads or is blocked by
+   * `draftRotation` — the committed
    * Rotation is guaranteed legal because only legal edits are ever written
    * through to `season`.
    */
@@ -204,7 +205,7 @@ export interface SeasonSessionState {
   resetPostseasonDraftRotation(): void
   /** No-op if the draft Rotation is invalid or no Tournament game is currently playable. */
   playPostseasonScheduledGame(): void
-  /** Tournament Quick Sim: plays the controlled Program's current-round Tournament game using its canonical committed Postseason Rotation. */
+  /** Tournament Quick Sim: plays the controlled Program's current-round Tournament game using its canonical committed Postseason Rotation, then remains on the Hub. */
   simulateNextPostseasonGame(): void
   /**
    * Advances the bracket's current round via the existing Postseason round
@@ -462,7 +463,7 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     set({
       season: outcome.season,
       lastPlayedGameId: outcome.playedGameId,
-      view: 'postgame',
+      view: 'hub',
     })
   },
 
@@ -704,7 +705,7 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
     set({
       postseason: nextPostseason,
       lastPlayedTournamentGameId: game.id,
-      view: 'postseasonPostgame',
+      view: 'postseasonHub',
     })
   },
 

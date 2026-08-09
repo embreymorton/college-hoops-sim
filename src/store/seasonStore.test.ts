@@ -289,7 +289,7 @@ describe('seasonStore Dashboard Quick Sim', () => {
     useSeasonStore.getState().simulateNextGame()
 
     const state = useSeasonStore.getState()
-    expect(state.view).toBe('postgame')
+    expect(state.view).toBe('hub')
     expect(state.lastPlayedGameId).toBe(game.id)
 
     const recorded = state.season!.resultsByGameId[game.id]
@@ -327,7 +327,7 @@ describe('seasonStore Dashboard Quick Sim', () => {
     useSeasonStore.getState().simulateNextGame()
 
     const state = useSeasonStore.getState()
-    expect(state.view).toBe('postgame')
+    expect(state.view).toBe('hub')
     expect(state.lastPlayedGameId).toBe(game.id)
     expect(state.season!.resultsByGameId[game.id]).toBeDefined()
   })

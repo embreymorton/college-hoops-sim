@@ -1197,6 +1197,58 @@ p {
   gap: var(--space-3);
 }
 
+.next-game-card__final-scores {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.next-game-card__final-team {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  color: var(--ink-1);
+}
+
+.next-game-card__final-team[data-winner='true'] {
+  color: var(--ink-0);
+}
+
+.next-game-card__final-name {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1rem;
+  text-transform: uppercase;
+}
+
+.next-game-card__final-seed {
+  margin-right: var(--space-2);
+  color: var(--ink-1);
+}
+
+.next-game-card__final-score {
+  font-family: var(--font-score);
+  font-weight: 700;
+  font-size: 2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.next-game-card__result-line {
+  margin-bottom: var(--space-4);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
 .round-progress {
   display: flex;
   align-items: center;

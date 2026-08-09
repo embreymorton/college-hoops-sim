@@ -241,7 +241,7 @@ describe('seasonStore postseason — qualified and alive', () => {
     useSeasonStore.getState().simulateNextPostseasonGame()
 
     const state = useSeasonStore.getState()
-    expect(state.view).toBe('postseasonPostgame')
+    expect(state.view).toBe('postseasonHub')
     expect(state.lastPlayedTournamentGameId).toBe(expectedGame.id)
     const recorded = state.postseason!.resultsByGameId[expectedGame.id]
     expect(recorded).toBeDefined()
@@ -281,7 +281,7 @@ describe('seasonStore postseason — qualified and alive', () => {
 
     useSeasonStore.getState().simulateNextPostseasonGame()
 
-    expect(useSeasonStore.getState().view).toBe('postseasonPostgame')
+    expect(useSeasonStore.getState().view).toBe('postseasonHub')
     expect(useSeasonStore.getState().lastPlayedTournamentGameId).not.toBeNull()
   })
 

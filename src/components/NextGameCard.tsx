@@ -20,7 +20,7 @@ interface NextGameCardProps {
   /** Dashboard Quick Sim: plays the game directly with the canonical Season Rotation. */
   readonly onSimulate: () => void
   /** Opens the Rotation Editor / Game Prep workflow instead of simulating immediately. */
-  readonly onManageRotation: () => void
+  readonly onGamePrep: () => void
 }
 
 /** Compact preview of the controlled Program's next ScheduledGame. */
@@ -33,7 +33,7 @@ export function NextGameCard({
   opponentRecord,
   opponentConferenceRecord,
   onSimulate,
-  onManageRotation,
+  onGamePrep,
 }: NextGameCardProps) {
   return (
     <div className="next-game-card">
@@ -73,9 +73,9 @@ export function NextGameCard({
         <button
           type="button"
           className="button button--ghost"
-          onClick={onManageRotation}
+          onClick={onGamePrep}
         >
-          Manage Rotation
+          Game Prep
         </button>
       </div>
     </div>

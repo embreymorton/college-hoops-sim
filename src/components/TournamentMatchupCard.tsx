@@ -15,7 +15,7 @@ interface TournamentMatchupCardProps {
   readonly opponent: TournamentMatchupTeamInfo
   /** Tournament Quick Sim: plays the game through the existing Postseason simulation API. */
   readonly onSimulate: () => void
-  readonly onManageRotation: () => void
+  readonly onGamePrep: () => void
 }
 
 /** Escalated Next-Game equivalent for a live Tournament matchup — always neutral site. */
@@ -24,7 +24,7 @@ export function TournamentMatchupCard({
   controlled,
   opponent,
   onSimulate,
-  onManageRotation,
+  onGamePrep,
 }: TournamentMatchupCardProps) {
   return (
     <div className="next-game-card">
@@ -57,9 +57,9 @@ export function TournamentMatchupCard({
         <button
           type="button"
           className="button button--ghost"
-          onClick={onManageRotation}
+          onClick={onGamePrep}
         >
-          Manage Rotation
+          Game Prep
         </button>
       </div>
     </div>
