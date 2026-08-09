@@ -110,6 +110,56 @@ export function deriveNationalChampion(
   return final ? postseason.resultsByGameId[final.id]?.winnerId : undefined
 }
 
+/**
+ * Finds the TournamentGame a Program occupies at `round`, tracing forward
+ * through the fixed bracket's static `winner(gameId)` links from its
+ * Round-of-16 seed slot — even before every prior-round winner is resolved,
+ * since those links never change. Returns undefined once a recorded result
+ * shows the Program lost an earlier game in the chain, or if it was never in
+ * the field. This performs no advancement or outcome prediction: it only
+ * follows edges already present in `TournamentGame.participantSources`.
+ */
+export function getTournamentGameForProgram(
+  postseason: PostseasonState,
+  programId: string,
+  round: TournamentRound,
+): TournamentGame | undefined {
+  const entry = postseason.field.find(
+    (candidate) => candidate.programId === programId,
+  )
+  if (!entry) return undefined
+
+  let currentGame = postseason.bracket.games.find(
+    (game) =>
+      game.round === 'round-of-16' &&
+      game.participantSources.some(
+        (source) => source.type === 'seed' && source.seed === entry.seed,
+      ),
+  )
+  if (!currentGame) return undefined
+
+  const targetIndex = TOURNAMENT_ROUNDS.indexOf(round)
+
+  for (let roundIndex = 0; roundIndex < targetIndex; roundIndex += 1) {
+    const result = postseason.resultsByGameId[currentGame.id]
+    if (result && result.winnerId !== programId) {
+      return undefined
+    }
+
+    const nextGame: TournamentGame | undefined = postseason.bracket.games.find(
+      (game) =>
+        game.participantSources.some(
+          (source) =>
+            source.type === 'winner' && source.gameId === currentGame!.id,
+        ),
+    )
+    if (!nextGame) return undefined
+    currentGame = nextGame
+  }
+
+  return currentGame
+}
+
 export function deriveRemainingProgramIds(postseason: PostseasonState): string[] {
   const eliminated = new Set(
     Object.values(postseason.resultsByGameId).map((result) =>

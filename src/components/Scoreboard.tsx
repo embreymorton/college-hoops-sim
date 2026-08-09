@@ -33,6 +33,13 @@ interface PregameScoreboardProps {
   readonly actionLabel?: string
   readonly actionDisabled?: boolean
   readonly actionDisabledReason?: string | null
+  /**
+   * Override the "Home"/"Away" side badges — Postseason games are neutral
+   * site, so Tournament callers pass seed labels instead to avoid implying
+   * home-court advantage that the simulation itself never applies.
+   */
+  readonly homeLabel?: string
+  readonly awayLabel?: string
 }
 
 export function PregameScoreboard({
@@ -42,6 +49,8 @@ export function PregameScoreboard({
   actionLabel = 'Simulate Game',
   actionDisabled = false,
   actionDisabledReason = null,
+  homeLabel = 'Home',
+  awayLabel = 'Away',
 }: PregameScoreboardProps) {
   const showReason = actionDisabled && Boolean(actionDisabledReason)
 
@@ -49,11 +58,11 @@ export function PregameScoreboard({
     <div className="scoreboard scoreboard--pregame">
       <ScoreboardCorners />
       <div className="scoreboard-grid">
-        <StrengthSide side="home" team={home} />
+        <StrengthSide side="home" label={homeLabel} team={home} />
         <div className="scoreboard-divider">
           <span className="scoreboard-vs">VS</span>
         </div>
-        <StrengthSide side="away" team={away} />
+        <StrengthSide side="away" label={awayLabel} team={away} />
       </div>
       <div className="scoreboard-cta">
         <button
@@ -77,16 +86,16 @@ export function PregameScoreboard({
 
 function StrengthSide({
   side,
+  label,
   team,
 }: {
   side: ScoreboardSideKey
+  label: string
   team: ScoreboardStrengthTeam
 }) {
   return (
     <div className={`scoreboard-side scoreboard-side--${side}`}>
-      <span className="scoreboard-side__label">
-        {side === 'home' ? 'Home' : 'Away'}
-      </span>
+      <span className="scoreboard-side__label">{label}</span>
       <span className="scoreboard-side__name">{team.name}</span>
       <span
         className="scoreboard-side__accent-bar"
@@ -137,6 +146,9 @@ interface FinalScoreboardProps {
   /** Null when there is nothing left to act on (e.g. no round games remain). */
   readonly primaryAction: FinalScoreboardAction | null
   readonly secondaryAction: FinalScoreboardAction
+  /** Overrides the "Home"/"Away" side badges — see PregameScoreboard for why. */
+  readonly homeLabel?: string
+  readonly awayLabel?: string
 }
 
 export function FinalScoreboard({
@@ -147,6 +159,8 @@ export function FinalScoreboard({
   roundLabel,
   primaryAction,
   secondaryAction,
+  homeLabel = 'Home',
+  awayLabel = 'Away',
 }: FinalScoreboardProps) {
   return (
     <div className="scoreboard scoreboard--final" aria-live="polite">
@@ -157,11 +171,11 @@ export function FinalScoreboard({
         {overtimeTag && <span className="final-tag">{overtimeTag}</span>}
       </div>
       <div className="scoreboard-grid">
-        <ScoreSide side="home" team={home} />
+        <ScoreSide side="home" label={homeLabel} team={home} />
         <div className="scoreboard-divider">
           <span className="scoreboard-vs">–</span>
         </div>
-        <ScoreSide side="away" team={away} />
+        <ScoreSide side="away" label={awayLabel} team={away} />
       </div>
       <p className="final-result-line">{winnerName} wins</p>
       <div className="scoreboard-actions">
@@ -188,9 +202,11 @@ export function FinalScoreboard({
 
 function ScoreSide({
   side,
+  label,
   team,
 }: {
   side: ScoreboardSideKey
+  label: string
   team: ScoreboardScoreTeam
 }) {
   const winnerClass = team.isWinner ? ' scoreboard-side--winner' : ''
@@ -198,7 +214,7 @@ function ScoreSide({
   return (
     <div className={`scoreboard-side scoreboard-side--${side}${winnerClass}`}>
       <span className="scoreboard-side__label">
-        {side === 'home' ? 'Home' : 'Away'}
+        {label}
         {team.isWinner ? ' · Winner' : ''}
       </span>
       <span className="scoreboard-side__name">{team.name}</span>

@@ -22,6 +22,7 @@ import {
   getGamesForTournamentRound,
   getPendingGamesForTournamentRound,
   getReadyGamesForTournamentRound,
+  getTournamentGameForProgram,
   initializePostseason,
   isTournamentComplete,
   rankAutomaticQualifiers,
@@ -576,6 +577,99 @@ describe('postseason state and progression', () => {
         'UNKNOWN_RESULT_GAME',
       ]),
     )
+  })
+})
+
+describe('getTournamentGameForProgram', () => {
+  it("resolves every fielded Program's Round-of-16 slot immediately from its seed", () => {
+    for (const entry of initialPostseason.field) {
+      const game = getTournamentGameForProgram(
+        initialPostseason,
+        entry.programId,
+        'round-of-16',
+      )
+      expect(game).toBeDefined()
+      expect(
+        game!.participantSources.some(
+          (source) => source.type === 'seed' && source.seed === entry.seed,
+        ),
+      ).toBe(true)
+    }
+  })
+
+  it('is undefined for a Program outside the 16-team field', () => {
+    const outsider = UNIVERSE_V0.programs.find(
+      (program) =>
+        !initialPostseason.field.some(
+          (entry) => entry.programId === program.id,
+        ),
+    )!
+    expect(
+      getTournamentGameForProgram(
+        initialPostseason,
+        outsider.id,
+        'round-of-16',
+      ),
+    ).toBeUndefined()
+  })
+
+  it('traces a winner forward to its next-round slot before that slot is otherwise resolvable', () => {
+    const r16Game = getGamesForTournamentRound(initialPostseason, 'round-of-16')[0]!
+    const participants = resolveTournamentGameParticipants(
+      initialPostseason,
+      r16Game.id,
+    )!
+    const winnerId = participants.awayProgramId
+    const current = recordTournamentGameResult(
+      initialPostseason,
+      r16Game.id,
+      manualResult(participants, winnerId),
+    )
+
+    // The quarterfinal's other feeder game has not been played, so its
+    // participants are not fully resolved — yet the winner's own forward
+    // slot is still knowable from the static bracket structure.
+    expect(
+      resolveTournamentGameParticipants(current, 'national-qf-g1'),
+    ).toBeUndefined()
+    const qfGame = getTournamentGameForProgram(current, winnerId, 'quarterfinals')
+    expect(qfGame?.id).toBe('national-qf-g1')
+  })
+
+  it('returns undefined at and beyond the round where a Program was eliminated', () => {
+    const r16Game = getGamesForTournamentRound(initialPostseason, 'round-of-16')[0]!
+    const participants = resolveTournamentGameParticipants(
+      initialPostseason,
+      r16Game.id,
+    )!
+    const loserId = participants.homeProgramId
+    const current = recordTournamentGameResult(
+      initialPostseason,
+      r16Game.id,
+      manualResult(participants, participants.awayProgramId),
+    )
+
+    expect(
+      getTournamentGameForProgram(current, loserId, 'quarterfinals'),
+    ).toBeUndefined()
+    expect(
+      getTournamentGameForProgram(current, loserId, 'semifinals'),
+    ).toBeUndefined()
+    expect(
+      getTournamentGameForProgram(current, loserId, 'championship'),
+    ).toBeUndefined()
+    // Its own completed Round-of-16 game itself remains a valid lookup.
+    expect(
+      getTournamentGameForProgram(current, loserId, 'round-of-16')?.id,
+    ).toBe(r16Game.id)
+  })
+
+  it('follows a champion all the way to the championship slot', () => {
+    const completed = completeTournament(initialPostseason)
+    const champion = deriveNationalChampion(completed)!
+    expect(
+      getTournamentGameForProgram(completed, champion, 'championship')?.id,
+    ).toBe('national-final')
   })
 })
 

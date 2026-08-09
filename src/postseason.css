@@ -1,0 +1,190 @@
+/* ==========================================================================
+   Postseason Presentation — extends styles.css's tokens and components
+   rather than introducing a new visual language. Kept in its own file per
+   the maintainability note in docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md.
+   ========================================================================== */
+
+/* Season header's stat-trio digit slot is sized for short numbers/records;
+   Tournament round names ("Quarterfinals") need a smaller, still-condensed
+   treatment so they never overflow the cell. */
+.stat-trio__value--text {
+  font-size: 1.5rem;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   Tournament status banner (advancing / eliminated / did-not-qualify / champion)
+   ========================================================================== */
+
+.tournament-status-banner__headline {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--ink-0);
+  margin-top: var(--space-2);
+  text-transform: none;
+}
+
+.tournament-status-banner__action {
+  margin-top: var(--space-5);
+}
+
+.tournament-status-banner[data-variant='champion'] {
+  border-width: 2px;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 1px var(--accent-soft), var(--shadow-panel);
+}
+
+/* Entry point back into (or onward to) the Tournament from the Season Hub's
+   completed-season panel. */
+.season-complete-panel__action {
+  margin-top: var(--space-5);
+}
+
+.postseason-hub-footer {
+  display: flex;
+  justify-content: center;
+}
+
+/* ==========================================================================
+   Tournament field table
+   ========================================================================== */
+/* Reuses .data-table and .standings-table (controlled-row highlight) as-is. */
+
+/* ==========================================================================
+   Tournament bracket — the Postseason signature element
+   ========================================================================== */
+
+.tournament-bracket-scroll {
+  overflow-x: auto;
+}
+
+.tournament-bracket {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(14rem, 1fr));
+  column-gap: var(--space-5);
+  min-width: 60rem;
+}
+
+.tournament-bracket__round-header {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--line);
+}
+
+.tournament-bracket__cell {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.bracket-slot {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  padding: 0;
+  cursor: default;
+}
+
+button.bracket-slot--complete {
+  cursor: pointer;
+  border-color: var(--line-strong);
+  transition:
+    border-color var(--duration-fast) var(--ease-standard),
+    background var(--duration-fast) var(--ease-standard);
+}
+
+button.bracket-slot--complete:hover,
+button.bracket-slot--complete:focus-visible {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.bracket-slot__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.4rem 0.6rem;
+  color: var(--ink-2);
+  font-size: 0.78rem;
+}
+
+.bracket-slot__row:first-child {
+  border-bottom: 1px solid var(--line);
+}
+
+.bracket-slot__row[data-winner='true'] {
+  color: var(--ink-0);
+  font-weight: 700;
+}
+
+.bracket-slot__row[data-controlled='true'] {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.bracket-slot__row--tbd {
+  color: var(--ink-2);
+  font-style: italic;
+}
+
+.bracket-slot__seed {
+  font-variant-numeric: tabular-nums;
+  width: 1.3rem;
+  flex-shrink: 0;
+  text-align: right;
+  color: var(--ink-1);
+}
+
+.bracket-slot__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bracket-slot__score {
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.bracket-slot__upset {
+  display: block;
+  padding: 0.2rem 0.6rem 0.4rem;
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .bracket-slot__row {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.74rem;
+    gap: var(--space-1);
+  }
+
+  .stat-trio__value--text {
+    font-size: 1.2rem;
+  }
+}

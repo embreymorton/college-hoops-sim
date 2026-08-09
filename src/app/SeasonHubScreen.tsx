@@ -66,6 +66,8 @@ export function SeasonHubScreen() {
   const dismissSuperSimSummary = useSeasonStore(
     (state) => state.dismissSuperSimSummary,
   )
+  const postseason = useSeasonStore((state) => state.postseason)
+  const enterPostseason = useSeasonStore((state) => state.enterPostseason)
 
   if (!season || !controlledProgramId) {
     return null
@@ -158,6 +160,13 @@ export function SeasonHubScreen() {
               ({formatRecord(conferenceRecord.wins, conferenceRecord.losses)}{' '}
               conference).
             </p>
+            <button
+              type="button"
+              className="button button--primary season-complete-panel__action"
+              onClick={enterPostseason}
+            >
+              {postseason ? 'Return to National Tournament' : 'Enter National Tournament'}
+            </button>
           </div>
         ) : (
           nextGame &&

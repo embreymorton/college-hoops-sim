@@ -1,5 +1,15 @@
 import { create } from 'zustand'
 import { validateRotation, type Rotation, type RngSeed } from '../engine'
+import {
+  getCurrentTournamentRound,
+  getTournamentGameForProgram,
+  initializePostseason,
+  simulatePendingGamesInCurrentTournamentRound,
+  simulateTournamentGame,
+  updatePostseasonProgramRotation,
+  type PostseasonState,
+  type TournamentGame,
+} from '../postseason'
 import { generateRegularSeasonSchedule } from '../schedule'
 import {
   deriveProgramRecord,
@@ -25,6 +35,7 @@ const MASTER_SEED = 'college-hoops-sim:season-presentation:v0:master-seed'
 const UNIVERSE_SEED = `${MASTER_SEED}:universe`
 const SCHEDULE_SEED = `${MASTER_SEED}:schedule:season-1`
 const SEASON_SIMULATION_SEED = `${MASTER_SEED}:season-1:simulation`
+const POSTSEASON_SIMULATION_SEED = `${MASTER_SEED}:season-1:postseason:simulation`
 
 /**
  * Super Sim V0's one fixed checkpoint short of the full 24-round regular
@@ -86,6 +97,10 @@ export type SeasonSessionView =
   | 'gamePrep'
   | 'postgame'
   | 'gameHistory'
+  | 'postseasonHub'
+  | 'postseasonGamePrep'
+  | 'postseasonPostgame'
+  | 'postseasonGameHistory'
 
 export interface SeasonSessionState {
   /** User-controlled Program ownership; intentionally absent from SeasonState itself. */
@@ -110,6 +125,20 @@ export interface SeasonSessionState {
   readonly pendingSuperSim: PendingSuperSim | null
   /** One-time completion feedback for the Super Sim that just ran, if any. */
   readonly superSimSummary: SuperSimSummary | null
+  /**
+   * The active National Tournament, initialized once from the completed
+   * Season. Kept entirely separate from `season` — entering or progressing
+   * Postseason never mutates or replaces the completed regular-season facts.
+   */
+  readonly postseason: PostseasonState | null
+  /** The controlled Program's Rotation as carried into the tournament; the Postseason "reset" target. */
+  readonly postseasonControlledDefaultRotation: Rotation | null
+  /** In-progress Postseason Rotation edit, scoped to Tournament Game Prep — same draft-boundary contract as `draftRotation`. */
+  readonly postseasonDraftRotation: Rotation | null
+  /** The controlled Program's most recently completed Tournament game, for postgame. */
+  readonly lastPlayedTournamentGameId: string | null
+  /** The completed Tournament game currently open for historical review, if any. */
+  readonly viewedTournamentGameId: string | null
   readonly masterSeed: RngSeed
   /** Initializes Universe V0, Season 1, and controls the chosen Program. */
   selectProgram(programId: string): void
@@ -145,6 +174,30 @@ export interface SeasonSessionState {
   confirmSuperSim(): void
   /** Dismisses the completion feedback; Season state is unaffected. */
   dismissSuperSimSummary(): void
+  /**
+   * Initializes Postseason from the completed Season the first time it is
+   * called, then simply navigates on every later call — so re-entering the
+   * Tournament from the Season Hub never re-selects or re-seeds the field.
+   */
+  enterPostseason(): void
+  goToPostseasonHub(): void
+  /** Starts the Postseason Rotation draft from the canonical current Postseason Rotation. */
+  goToPostseasonGamePrep(): void
+  setPostseasonDraftPlayerMinutes(playerId: string, minutes: number): void
+  resetPostseasonDraftRotation(): void
+  /** No-op if the draft Rotation is invalid or no Tournament game is currently playable. */
+  playPostseasonScheduledGame(): void
+  /** Tournament Quick Sim: plays the controlled Program's current-round Tournament game using its canonical committed Postseason Rotation. */
+  simulateNextPostseasonGame(): void
+  /**
+   * Advances the bracket's current round via the existing Postseason round
+   * operation. Works uniformly whether the controlled Program is alive,
+   * already resolved for this round, eliminated, or never qualified —
+   * excluding it is a safety boundary, never a load-bearing branch.
+   */
+  simulateRestOfCurrentTournamentRound(): void
+  /** Opens a historical read of an already-completed Tournament game's result. */
+  viewCompletedTournamentGame(tournamentGameId: string): void
 }
 
 /**
@@ -176,6 +229,30 @@ function runNextGameSimulation(
   return { season: nextSeason, playedGameId: nextGame.id }
 }
 
+/**
+ * Resolves the controlled Program's currently playable Tournament game, if
+ * any: undefined once eliminated, never fielded, already resolved for this
+ * round while the round itself continues, or after the Tournament ends.
+ */
+function resolveControlledTournamentGame(
+  postseason: PostseasonState,
+  controlledProgramId: string,
+): TournamentGame | undefined {
+  const round = getCurrentTournamentRound(postseason)
+
+  if (round === undefined) {
+    return undefined
+  }
+
+  const game = getTournamentGameForProgram(postseason, controlledProgramId, round)
+
+  if (!game || postseason.resultsByGameId[game.id] !== undefined) {
+    return undefined
+  }
+
+  return game
+}
+
 export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   controlledProgramId: null,
   season: null,
@@ -186,6 +263,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
   viewedGameId: null,
   pendingSuperSim: null,
   superSimSummary: null,
+  postseason: null,
+  postseasonControlledDefaultRotation: null,
+  postseasonDraftRotation: null,
+  lastPlayedTournamentGameId: null,
+  viewedTournamentGameId: null,
   masterSeed: MASTER_SEED,
 
   selectProgram(programId) {
@@ -218,6 +300,11 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
       viewedGameId: null,
       pendingSuperSim: null,
       superSimSummary: null,
+      postseason: null,
+      postseasonControlledDefaultRotation: null,
+      postseasonDraftRotation: null,
+      lastPlayedTournamentGameId: null,
+      viewedTournamentGameId: null,
     })
   },
 
@@ -424,5 +511,193 @@ export const useSeasonStore = create<SeasonSessionState>((set, get) => ({
 
   dismissSuperSimSummary() {
     set({ superSimSummary: null })
+  },
+
+  enterPostseason() {
+    const { season, postseason, controlledProgramId } = get()
+
+    if (!season) {
+      return
+    }
+
+    if (postseason) {
+      set({ view: 'postseasonHub', viewedTournamentGameId: null })
+      return
+    }
+
+    const nextPostseason = initializePostseason({
+      universe: UNIVERSE_V0,
+      season,
+    })
+    const controlledState = controlledProgramId
+      ? nextPostseason.programStates[controlledProgramId]
+      : undefined
+
+    set({
+      postseason: nextPostseason,
+      postseasonControlledDefaultRotation: controlledState?.rotation ?? null,
+      postseasonDraftRotation: controlledState?.rotation ?? null,
+      view: 'postseasonHub',
+      viewedTournamentGameId: null,
+    })
+  },
+
+  goToPostseasonHub() {
+    set({ view: 'postseasonHub', viewedTournamentGameId: null })
+  },
+
+  goToPostseasonGamePrep() {
+    const { postseason, controlledProgramId } = get()
+    const controlledState =
+      postseason && controlledProgramId
+        ? postseason.programStates[controlledProgramId]
+        : undefined
+
+    if (!controlledState) {
+      return
+    }
+
+    set({
+      postseasonDraftRotation: controlledState.rotation,
+      view: 'postseasonGamePrep',
+    })
+  },
+
+  setPostseasonDraftPlayerMinutes(playerId, minutes) {
+    const { postseason, controlledProgramId, postseasonDraftRotation } = get()
+    const controlledState =
+      postseason && controlledProgramId
+        ? postseason.programStates[controlledProgramId]
+        : undefined
+
+    if (!postseason || !controlledProgramId || !postseasonDraftRotation || !controlledState) {
+      return
+    }
+
+    const sanitizedMinutes = Math.max(0, Math.round(minutes))
+    const nextMinutes = { ...postseasonDraftRotation.minutes }
+
+    if (sanitizedMinutes === 0) {
+      delete nextMinutes[playerId]
+    } else {
+      nextMinutes[playerId] = sanitizedMinutes
+    }
+
+    const nextDraft: Rotation = { minutes: nextMinutes }
+    const isValid = validateRotation(controlledState.team, nextDraft).valid
+
+    set({
+      postseasonDraftRotation: nextDraft,
+      postseason: isValid
+        ? updatePostseasonProgramRotation(postseason, controlledProgramId, nextDraft)
+        : postseason,
+    })
+  },
+
+  resetPostseasonDraftRotation() {
+    const {
+      postseason,
+      controlledProgramId,
+      postseasonControlledDefaultRotation,
+    } = get()
+
+    if (!postseason || !controlledProgramId || !postseasonControlledDefaultRotation) {
+      return
+    }
+
+    set({
+      postseasonDraftRotation: postseasonControlledDefaultRotation,
+      postseason: updatePostseasonProgramRotation(
+        postseason,
+        controlledProgramId,
+        postseasonControlledDefaultRotation,
+      ),
+    })
+  },
+
+  playPostseasonScheduledGame() {
+    const { postseason, controlledProgramId, postseasonDraftRotation } = get()
+    const controlledState =
+      postseason && controlledProgramId
+        ? postseason.programStates[controlledProgramId]
+        : undefined
+
+    if (!postseason || !controlledProgramId || !postseasonDraftRotation || !controlledState) {
+      return
+    }
+
+    if (!validateRotation(controlledState.team, postseasonDraftRotation).valid) {
+      return
+    }
+
+    const game = resolveControlledTournamentGame(postseason, controlledProgramId)
+
+    if (!game) {
+      return
+    }
+
+    const nextPostseason = simulateTournamentGame({
+      postseason,
+      tournamentGameId: game.id,
+      simulationSeed: POSTSEASON_SIMULATION_SEED,
+    })
+
+    set({
+      postseason: nextPostseason,
+      lastPlayedTournamentGameId: game.id,
+      view: 'postseasonPostgame',
+    })
+  },
+
+  simulateNextPostseasonGame() {
+    const { postseason, controlledProgramId } = get()
+
+    if (!postseason || !controlledProgramId) {
+      return
+    }
+
+    const game = resolveControlledTournamentGame(postseason, controlledProgramId)
+
+    if (!game) {
+      return
+    }
+
+    const nextPostseason = simulateTournamentGame({
+      postseason,
+      tournamentGameId: game.id,
+      simulationSeed: POSTSEASON_SIMULATION_SEED,
+    })
+
+    set({
+      postseason: nextPostseason,
+      lastPlayedTournamentGameId: game.id,
+      view: 'postseasonPostgame',
+    })
+  },
+
+  simulateRestOfCurrentTournamentRound() {
+    const { postseason, controlledProgramId } = get()
+
+    if (!postseason) {
+      return
+    }
+
+    const nextPostseason = simulatePendingGamesInCurrentTournamentRound({
+      postseason,
+      simulationSeed: POSTSEASON_SIMULATION_SEED,
+      excludedProgramIds: controlledProgramId ? [controlledProgramId] : [],
+    })
+
+    set({ postseason: nextPostseason })
+  },
+
+  viewCompletedTournamentGame(tournamentGameId) {
+    const { postseason } = get()
+
+    if (!postseason || postseason.resultsByGameId[tournamentGameId] === undefined) {
+      return
+    }
+
+    set({ viewedTournamentGameId: tournamentGameId, view: 'postseasonGameHistory' })
   },
 }))

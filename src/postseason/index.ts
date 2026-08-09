@@ -9,6 +9,7 @@ export {
   getPendingGamesForTournamentRound,
   getReadyGamesForTournamentRound,
   getTournamentGame,
+  getTournamentGameForProgram,
   isTournamentComplete,
   resolveTournamentGameParticipants,
 } from './queries'
