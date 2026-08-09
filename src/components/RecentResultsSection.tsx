@@ -7,55 +7,74 @@ import {
 } from '../app/seasonFormatters'
 
 interface RecentResultsSectionProps {
-  /** The controlled Program's most recent completed games, newest first. */
+  /** One Program's most recent completed games, newest first. */
   readonly games: readonly CompletedSeasonGame[]
-  readonly controlledProgramId: string
+  readonly programId: string
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
-  /** Opens the recorded historical result for a completed ScheduledGame. */
-  readonly onSelectGame: (scheduledGameId: string) => void
+  /** When supplied, opens the recorded historical result. */
+  readonly onSelectGame?: (scheduledGameId: string) => void
 }
 
 /** Compact recent-form strip derived from Schedule + recorded GameResults. */
 export function RecentResultsSection({
   games,
-  controlledProgramId,
+  programId,
   programsById,
   onSelectGame,
 }: RecentResultsSectionProps) {
   const wins = games.filter(
-    ({ result }) => result.winnerId === controlledProgramId,
+    ({ result }) => result.winnerId === programId,
   ).length
+
+  if (games.length === 0) {
+    return <p className="league-empty-state">No completed games yet.</p>
+  }
 
   return (
     <div className="recent-results">
       <ul className="recent-results__list">
         {games.map(({ game, result }) => {
-          const isControlledHome = game.homeProgramId === controlledProgramId
-          const opponentId = isControlledHome
+          const isProgramHome = game.homeProgramId === programId
+          const opponentId = isProgramHome
             ? game.awayProgramId
             : game.homeProgramId
           const opponent = programsById.get(opponentId)
-          const outcome = formatControlledOutcome(isControlledHome, result)
+          const outcome = formatControlledOutcome(isProgramHome, result)
+          const content = (
+            <>
+              <span className="recent-results__outcome">{outcome}</span>
+              <span className="recent-results__score">
+                {formatControlledScoreLine(isProgramHome, result)}
+              </span>
+              <span className="recent-results__opponent">
+                {formatOpponentLine(
+                  isProgramHome,
+                  opponent?.name ?? opponentId,
+                )}
+              </span>
+            </>
+          )
 
           return (
             <li key={game.id}>
-              <button
-                type="button"
-                className="recent-results__row"
-                data-outcome={outcome === 'W' ? 'win' : 'loss'}
-                onClick={() => onSelectGame(game.id)}
-              >
-                <span className="recent-results__outcome">{outcome}</span>
-                <span className="recent-results__score">
-                  {formatControlledScoreLine(isControlledHome, result)}
-                </span>
-                <span className="recent-results__opponent">
-                  {formatOpponentLine(
-                    isControlledHome,
-                    opponent?.name ?? opponentId,
-                  )}
-                </span>
-              </button>
+              {onSelectGame ? (
+                <button
+                  type="button"
+                  className="recent-results__row"
+                  data-outcome={outcome === 'W' ? 'win' : 'loss'}
+                  onClick={() => onSelectGame(game.id)}
+                >
+                  {content}
+                </button>
+              ) : (
+                <div
+                  className="recent-results__row"
+                  data-outcome={outcome === 'W' ? 'win' : 'loss'}
+                  data-interactive="false"
+                >
+                  {content}
+                </div>
+              )}
             </li>
           )
         })}

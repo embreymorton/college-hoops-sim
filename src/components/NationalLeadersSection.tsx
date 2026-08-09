@@ -7,6 +7,7 @@ interface NationalLeadersSectionProps {
   readonly season: SeasonState
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
   readonly onSelectPlayer: (programId: string, playerId: string) => void
+  readonly onSelectProgram: (programId: string) => void
 }
 
 const CATEGORY_PANELS = [
@@ -23,6 +24,7 @@ export function NationalLeadersSection({
   season,
   programsById,
   onSelectPlayer,
+  onSelectProgram,
 }: NationalLeadersSectionProps) {
   const hasAnyLeaders = CATEGORY_PANELS.some(
     ({ category }) => leaderboards[category].length > 0,
@@ -48,6 +50,7 @@ export function NationalLeadersSection({
           season={season}
           programsById={programsById}
           onSelectPlayer={onSelectPlayer}
+          onSelectProgram={onSelectProgram}
         />
       ))}
     </div>

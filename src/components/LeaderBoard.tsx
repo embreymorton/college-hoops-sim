@@ -10,6 +10,7 @@ interface LeaderBoardProps {
   readonly season: SeasonState
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
   readonly onSelectPlayer: (programId: string, playerId: string) => void
+  readonly onSelectProgram: (programId: string) => void
 }
 
 /** One national leaderboard category — a compact ranked stat table, not a stat card. */
@@ -20,6 +21,7 @@ export function LeaderBoard({
   season,
   programsById,
   onSelectPlayer,
+  onSelectProgram,
 }: LeaderBoardProps) {
   return (
     <div className="leader-board">
@@ -56,7 +58,15 @@ export function LeaderBoard({
                     </button>
                     <span className="leader-board__pos">{player.position}</span>
                   </td>
-                  <td>{program?.name ?? entry.programId}</td>
+                  <td>
+                    <button
+                      type="button"
+                      className="text-link-button"
+                      onClick={() => onSelectProgram(entry.programId)}
+                    >
+                      {program?.name ?? entry.programId}
+                    </button>
+                  </td>
                   <td>{formatRating(entry.value)}</td>
                 </tr>
               )

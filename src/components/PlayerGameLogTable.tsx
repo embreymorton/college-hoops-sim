@@ -5,12 +5,14 @@ import { formatOpponentLine } from '../app/seasonFormatters'
 interface PlayerGameLogTableProps {
   readonly entries: readonly PlayerGameLogEntry[]
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
+  readonly onSelectProgram: (programId: string) => void
 }
 
 /** The Player's completed-game log, DNPs included, straight from the canonical projection. */
 export function PlayerGameLogTable({
   entries,
   programsById,
+  onSelectProgram,
 }: PlayerGameLogTableProps) {
   if (entries.length === 0) {
     return <p className="league-empty-state">No regular-season games played yet.</p>
@@ -44,7 +46,16 @@ export function PlayerGameLogTable({
               >
                 <td>{entry.round}</td>
                 <td className="player-name-cell">
-                  {formatOpponentLine(isHome, opponent?.name ?? entry.opponentProgramId)}
+                  <button
+                    type="button"
+                    className="text-link-button"
+                    onClick={() => onSelectProgram(entry.opponentProgramId)}
+                  >
+                    {formatOpponentLine(
+                      isHome,
+                      opponent?.name ?? entry.opponentProgramId,
+                    )}
+                  </button>
                 </td>
                 <td>
                   {entry.result} {entry.teamScore}-{entry.opponentScore}

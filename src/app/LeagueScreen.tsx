@@ -74,6 +74,7 @@ export function LeagueScreen() {
             season={season}
             programsById={PROGRAMS_BY_ID}
             onSelectPlayer={openPlayerDetails}
+            onSelectProgram={openTeamDetails}
           />
         ) : (
           <LeagueTeamsDirectory

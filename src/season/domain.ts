@@ -71,6 +71,36 @@ export interface PlayerSeasonStats {
   readonly freeThrowPercentage: number
 }
 
+/** Serializable Team totals and derived rates projected from regular-season results. */
+export interface TeamSeasonStats {
+  readonly programId: string
+  readonly gamesPlayed: number
+  readonly points: number
+  readonly pointsAllowed: number
+  readonly rebounds: number
+  readonly assists: number
+  readonly steals: number
+  readonly blocks: number
+  readonly turnovers: number
+  readonly fieldGoalsMade: number
+  readonly fieldGoalsAttempted: number
+  readonly threePointersMade: number
+  readonly threePointersAttempted: number
+  readonly freeThrowsMade: number
+  readonly freeThrowsAttempted: number
+  readonly pointsPerGame: number
+  readonly opponentPointsPerGame: number
+  readonly pointDifferentialPerGame: number
+  readonly reboundsPerGame: number
+  readonly assistsPerGame: number
+  readonly stealsPerGame: number
+  readonly blocksPerGame: number
+  readonly turnoversPerGame: number
+  readonly fieldGoalPercentage: number
+  readonly threePointPercentage: number
+  readonly freeThrowPercentage: number
+}
+
 export type PlayerGameLocation = 'home' | 'away'
 export type PlayerGameOutcome = 'W' | 'L'
 

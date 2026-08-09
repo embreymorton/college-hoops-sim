@@ -22,6 +22,10 @@ export {
   getPlayerGameLog,
 } from './playerStats'
 export {
+  deriveSeasonTeamStats,
+  deriveTeamSeasonStats,
+} from './teamStats'
+export {
   simulatePendingGamesInCurrentRound,
   simulatePendingGamesInRound,
   simulatePendingGamesThroughRound,
@@ -59,4 +63,5 @@ export type {
   StandingRow,
   TeamLeaderEntry,
   TeamPlayerLeaders,
+  TeamSeasonStats,
 } from './domain'

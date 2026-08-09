@@ -1,6 +1,8 @@
 import { calculateTeamStrength } from '../engine'
 import {
   ExplorationBackButton,
+  RecentResultsSection,
+  TeamAverages,
   TeamDetailsHeader,
   TeamLeadersStrip,
   TeamStatsTable,
@@ -9,7 +11,9 @@ import {
   deriveConferenceRecord,
   deriveProgramPlayerSeasonStats,
   deriveProgramRecord,
+  deriveTeamSeasonStats,
   deriveTeamPlayerLeaders,
+  getCompletedGamesForProgram,
 } from '../season'
 import { useSeasonStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -17,6 +21,8 @@ import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
+
+const RECENT_RESULTS_COUNT = 5
 
 /** Team Details: works for any of the 32 Programs, controlled or not. */
 export function TeamDetailsScreen() {
@@ -50,6 +56,7 @@ export function TeamDetailsScreen() {
   const overallRecord = deriveProgramRecord(season, selectedTeamProgramId)
   const conferenceRecord = deriveConferenceRecord(season, selectedTeamProgramId)
   const strength = calculateTeamStrength(programState.team, programState.rotation)
+  const teamStats = deriveTeamSeasonStats(season, selectedTeamProgramId)
   const teamLeaders = deriveTeamPlayerLeaders(season, selectedTeamProgramId)
   const playerStats = deriveProgramPlayerSeasonStats(season, selectedTeamProgramId)
   const statsByPlayerId = new Map(
@@ -61,6 +68,14 @@ export function TeamDetailsScreen() {
     ),
   )
   const backDestination = explorationViewHistory.at(-1) ?? 'hub'
+  const recentGames = getCompletedGamesForProgram(season, selectedTeamProgramId)
+    .slice()
+    .sort(
+      (first, second) =>
+        second.game.round - first.game.round ||
+        second.game.index - first.game.index,
+    )
+    .slice(0, RECENT_RESULTS_COUNT)
 
   return (
     <>
@@ -78,6 +93,27 @@ export function TeamDetailsScreen() {
         conferenceRecord={conferenceRecord}
         strength={strength}
       />
+
+      <section className="section" aria-labelledby="team-averages-heading">
+        <h2 id="team-averages-heading" className="section-title">
+          Team Averages
+        </h2>
+        <TeamAverages stats={teamStats} />
+      </section>
+
+      <section
+        className="section team-details-recent-results"
+        aria-labelledby="team-recent-results-heading"
+      >
+        <h2 id="team-recent-results-heading" className="section-title">
+          Recent Results
+        </h2>
+        <RecentResultsSection
+          games={recentGames}
+          programId={selectedTeamProgramId}
+          programsById={PROGRAMS_BY_ID}
+        />
+      </section>
 
       <section className="section" aria-labelledby="team-leaders-heading">
         <h2 id="team-leaders-heading" className="section-title">

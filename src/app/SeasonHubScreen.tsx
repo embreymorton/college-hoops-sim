@@ -251,7 +251,7 @@ export function SeasonHubScreen() {
           </h2>
           <RecentResultsSection
             games={recentGames}
-            controlledProgramId={controlledProgramId}
+            programId={controlledProgramId}
             programsById={PROGRAMS_BY_ID}
             onSelectGame={viewCompletedGame}
           />

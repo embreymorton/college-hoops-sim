@@ -1,6 +1,11 @@
 import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
-import { getPlayerGameLog, isRegularSeasonComplete } from '../season'
+import {
+  deriveTeamSeasonStats,
+  getCompletedGamesForProgram,
+  getPlayerGameLog,
+  isRegularSeasonComplete,
+} from '../season'
 import { useSeasonStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
@@ -120,6 +125,27 @@ describe('National Leaders', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Regular Season')).toBeInTheDocument()
   })
+
+  it('opens a leader Program separately and returns to League', () => {
+    useSeasonStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    playRounds(3)
+    useSeasonStore.getState().goToLeague()
+    render(<App />)
+
+    const scoringBoard = screen.getByText('Scoring').closest('.leader-board')!
+    const firstRow = scoringBoard.querySelector('tbody tr') as HTMLElement
+    const [playerButton, programButton] = within(firstRow).getAllByRole('button')
+    const programName = programButton!.textContent!
+
+    expect(playerButton).not.toBe(programButton)
+    fireEvent.click(programButton!)
+
+    expect(
+      screen.getByRole('heading', { name: programName }),
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /back to league/i }))
+    expect(screen.getByRole('heading', { name: 'League' })).toBeInTheDocument()
+  })
 })
 
 describe('Teams directory', () => {
@@ -162,7 +188,94 @@ describe('Team Details', () => {
         screen.getByText(`${player.firstName} ${player.lastName}`),
       ).toBeInTheDocument()
     }
-    expect(screen.getByText(/no completed games yet/i)).toBeInTheDocument()
+    expect(screen.getAllByText(/no completed games yet/i)).toHaveLength(2)
+    const averages = screen
+      .getByRole('heading', { name: 'Team Averages' })
+      .closest('section') as HTMLElement
+    expect(within(averages).getAllByText('0.0')).toHaveLength(6)
+    expect(within(averages).getAllByText('0.0%')).toHaveLength(3)
+    const recentResults = screen
+      .getByRole('heading', { name: 'Recent Results' })
+      .closest('section') as HTMLElement
+    expect(
+      within(recentResults).getByText(/no completed games yet/i),
+    ).toBeInTheDocument()
+  })
+
+  it('renders canonical partial-season Team Averages', () => {
+    useSeasonStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    playRounds(3)
+    useSeasonStore.getState().openTeamDetails(OTHER_PROGRAM_ID)
+    render(<App />)
+
+    const stats = deriveTeamSeasonStats(
+      useSeasonStore.getState().season!,
+      OTHER_PROGRAM_ID,
+    )
+    const averages = screen
+      .getByRole('heading', { name: 'Team Averages' })
+      .closest('section') as HTMLElement
+
+    expect(stats.gamesPlayed).toBe(3)
+    expect(
+      within(within(averages).getByText('PPG').parentElement!).getByText(
+        stats.pointsPerGame.toFixed(1),
+      ),
+    ).toBeInTheDocument()
+    expect(
+      within(within(averages).getByText('Opp PPG').parentElement!).getByText(
+        stats.opponentPointsPerGame.toFixed(1),
+      ),
+    ).toBeInTheDocument()
+    expect(
+      within(within(averages).getByText('FG').parentElement!).getByText(
+        `${(stats.fieldGoalPercentage * 100).toFixed(1)}%`,
+      ),
+    ).toBeInTheDocument()
+    const recentResults = screen
+      .getByRole('heading', { name: 'Recent Results' })
+      .closest('section') as HTMLElement
+    expect(
+      recentResults.querySelectorAll('.recent-results__row'),
+    ).toHaveLength(3)
+  })
+
+  it('shows only the five most recent results in order with correct home/away context', () => {
+    useSeasonStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    playRounds(7)
+    useSeasonStore.getState().openTeamDetails(OTHER_PROGRAM_ID)
+    render(<App />)
+
+    const season = useSeasonStore.getState().season!
+    const expected = getCompletedGamesForProgram(season, OTHER_PROGRAM_ID)
+      .slice()
+      .sort(
+        (first, second) =>
+          second.game.round - first.game.round ||
+          second.game.index - first.game.index,
+      )
+      .slice(0, 5)
+    const recentResults = screen
+      .getByRole('heading', { name: 'Recent Results' })
+      .closest('section') as HTMLElement
+    const rows = [...recentResults.querySelectorAll('.recent-results__row')]
+
+    expect(rows).toHaveLength(5)
+    expected.forEach(({ game, result }, index) => {
+      const isHome = game.homeProgramId === OTHER_PROGRAM_ID
+      const opponentId = isHome ? game.awayProgramId : game.homeProgramId
+      const opponent = UNIVERSE_V0.programs.find(
+        (program) => program.id === opponentId,
+      )!
+      const teamScore = isHome ? result.homeScore : result.awayScore
+      const opponentScore = isHome ? result.awayScore : result.homeScore
+      const outcome = result.winnerId === OTHER_PROGRAM_ID ? 'W' : 'L'
+
+      expect(rows[index]).toHaveTextContent(`${outcome}${teamScore}-${opponentScore}`)
+      expect(rows[index]).toHaveTextContent(
+        `${isHome ? 'vs' : '@'} ${opponent.name}`,
+      )
+    })
   })
 
   it('opens the controlled Program too, and Team → Player navigation works from the roster table', () => {
@@ -218,6 +331,41 @@ describe('Player Details', () => {
     // Came from Player Details, so the back step returns there, not to Season.
     expect(
       screen.getByRole('button', { name: /back to player/i }),
+    ).toBeInTheDocument()
+  })
+
+  it('opens a game-log opponent and returns to Player Details', () => {
+    useSeasonStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    playRounds(3)
+    const { season } = useSeasonStore.getState()
+    const player = season!.programStates[CONTROLLED_PROGRAM_ID]!.team.roster[0]!
+    const firstLogEntry = getPlayerGameLog(
+      season!,
+      CONTROLLED_PROGRAM_ID,
+      player.id,
+    )[0]!
+    const opponent = UNIVERSE_V0.programs.find(
+      (program) => program.id === firstLogEntry.opponentProgramId,
+    )!
+    useSeasonStore
+      .getState()
+      .openPlayerDetails(CONTROLLED_PROGRAM_ID, player.id)
+    render(<App />)
+
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: `${firstLogEntry.location === 'home' ? 'vs' : '@'} ${opponent.name}`,
+      }),
+    )
+
+    expect(
+      screen.getByRole('heading', { name: opponent.name }),
+    ).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /back to player/i }))
+    expect(
+      screen.getByRole('heading', {
+        name: `${player.firstName} ${player.lastName}`,
+      }),
     ).toBeInTheDocument()
   })
 })

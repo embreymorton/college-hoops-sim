@@ -132,7 +132,11 @@ export function PlayerDetailsScreen() {
         <h2 id="player-game-log-heading" className="section-title">
           Game Log
         </h2>
-        <PlayerGameLogTable entries={gameLog} programsById={PROGRAMS_BY_ID} />
+        <PlayerGameLogTable
+          entries={gameLog}
+          programsById={PROGRAMS_BY_ID}
+          onSelectProgram={openTeamDetails}
+        />
       </section>
     </>
   )
