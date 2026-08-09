@@ -224,4 +224,40 @@ export default defineConfig([
       ],
     },
   },
+  {
+    files: ['src/dynasty/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-properties': [
+        'error',
+        {
+          object: 'Math',
+          property: 'random',
+          message: 'Dynasty logic must use explicit deterministic inputs.',
+        },
+      ],
+      'no-restricted-globals': [
+        'error',
+        'document',
+        'window',
+        'localStorage',
+        'sessionStorage',
+      ],
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'Dynasty logic must remain framework-independent.' },
+            { name: 'react-dom', message: 'Dynasty logic must remain framework-independent.' },
+            { name: 'zustand', message: 'Application state belongs above Dynasty.' },
+          ],
+          patterns: [
+            {
+              group: ['**/app/**', '**/components/**', '**/demo/**', '**/store/**'],
+              message: 'Presentation and application layers may depend on Dynasty, never the reverse.',
+            },
+          ],
+        },
+      ],
+    },
+  },
 ])
