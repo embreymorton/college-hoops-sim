@@ -137,7 +137,7 @@ Schedule Generation V0 gives every Program a 24-game regular season: 14 Conferen
 
 The schedule uses 24 abstract rounds rather than real dates. All 32 Programs play exactly once in each round. Seeded variation changes legal non-Conference pairings, home/away orientation where choices exist, and ordering without making scheduling depend on prestige, Team Strength, or geography. Universe V0 Conference membership remains fixed.
 
-These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Schedule Generation remains structural only. Calendar dates and postseason scheduling remain future work.
+These choices favor fairness, reproducibility, and manageable dynasty pacing over exact replication of the current NCAA season. Regular-season Schedule Generation remains structural only. Calendar dates and calendar-based tournament scheduling remain future work; the accepted fixed Postseason bracket is documented below.
 
 ## Accepted Season State and progression
 
@@ -185,4 +185,25 @@ Current outputs are limited to the traditional facts already produced by Player 
 
 Acceptance inspection produced a plausible scoring hierarchy and believable game-to-game variance. Those observations are not calibration targets and require no simulation tuning.
 
-Postseason V0's accepted backend uses a 16-Team field: four regular-season Conference champions protected at seeds 1–4 and 12 results-only at-large selections at seeds 5–16. Teams advance through a fixed 15-game neutral-site bracket with no reseeding or Conference separation. The implementation remains under review, and Postseason presentation is not yet designed.
+## Accepted Postseason V0
+
+A completed 32-Program regular season feeds a 16-Team single-elimination national tournament. No Conference tournaments exist in V0.
+
+Qualification and seeding are determined only by completed basketball results:
+
+- Each of the four Conferences receives one automatic bid. Its automatic qualifier is the regular-season Conference champion produced by the existing Conference standings ordering.
+- The remaining 12 places are at-large bids. Candidates are ordered by overall winning percentage; an exact two-Team tie uses completed head-to-head results when decisive, then Conference winning percentage and stable Program ID. A tie group of three or more skips direct head-to-head and uses Conference winning percentage followed by Program ID.
+- Prestige, Team Strength, Player ratings, Conference reputation, geography, and hidden selection ratings do not enter selection.
+- The four Conference champions receive protected seeds 1–4, ordered by overall winning percentage, Conference winning percentage, and stable Program ID. The 12 at-large Programs receive seeds 5–16 in at-large selection order.
+
+Protected champion seeds are an intentional Universe V0 rule. A strong at-large Program can receive a worse numerical seed than a weaker Conference champion because winning a Conference title is meant to have meaningful value in the current 32-Program structure. This protection is not a universal promise for a larger future universe.
+
+The fixed bracket contains eight Round-of-16 games, four quarterfinals, two semifinals, and one Championship: 15 games total. The first-round seed pairings are `1–16`, `8–9`, `5–12`, `4–13`, `3–14`, `6–11`, `7–10`, and `2–15`, with winners advancing through fixed paths. There is no reseeding, third-place game, regional placement, Conference separation, or rematch avoidance. Same-Conference tournament matchups are legal.
+
+Every tournament game is neutral-site. The lower numerical seed is designated home only to preserve stable `GameResult` orientation and future presentation semantics; it receives no normal basketball home-court modifier. The current Team, roster, ratings, and legal Rotation carry forward unchanged from the completed regular season. Legal Rotations may be changed between tournament games, but there are no tournament-specific fatigue, injury, development, or tactics systems.
+
+Tournament results are final canonical facts and retain both Teams' complete Player box scores. The current round, resolved future participants, remaining or eliminated Programs, tournament completion, and National Champion are derived from the fixed bracket and completed results rather than stored as mutable summaries.
+
+Player Season Stats V0 remains regular-season-only. Postseason `GameResult` values preserve the full `PlayerGameStats` needed for future postseason, combined-season, career, or tournament-record projections, but none of those aggregate systems exists yet.
+
+Postseason Domain / Simulation V0 completes the single-season basketball backend from regular season through National Champion. Postseason presentation is still pending, so the browser does not yet expose tournament selection, bracket navigation, or tournament play.

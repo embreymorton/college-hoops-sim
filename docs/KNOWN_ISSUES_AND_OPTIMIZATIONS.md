@@ -47,11 +47,23 @@ The future balance question is whether accepted Rotation V0 eventually needs tig
 
 ### P3 — Protected conference-champion top-four seeds may need revisiting after universe expansion
 
-Postseason V0 intentionally guarantees every regular-season Conference champion a protected seed in the top four. This works cleanly for the current 32 Programs, four Conferences, and 16-Team field because there are exactly four Conference champions, and it intentionally makes Conference titles highly valuable.
+Postseason V0 intentionally guarantees every regular-season Conference champion a protected seed in the top four. This works cleanly for the current 32 Programs, four Conferences, 16-Team field, and four protected Conference champions, and it intentionally makes Conference titles highly valuable.
 
 If the universe later adds substantially more Programs or Conferences, expands the tournament field, introduces Conference tournaments, or develops materially different Conference strengths, automatic qualification and top-seed protection should be reconsidered separately. Future options could include automatic bids without top-four protection, champion seed floors, selection/seeding ratings, or Conference-tournament automatic bids. Do not change V0 behavior now; this is a scaling/design watchpoint, not a bug or MVP blocker.
+
+### P3 — First-round conference rematch avoidance
+
+Postseason V0 intentionally permits same-Conference Round-of-16 matchups under its accepted fixed-seed bracket. The first accepted Postseason inspection produced multiple such Conference rematches; this is valid bracket behavior, not a correctness bug.
+
+Because Conference opponents already play a regular-season double round robin, repeated first-round matchups may eventually make tournament draws feel less fresh. A future improvement could preserve seed lines and bracket fairness while avoiding same-Conference Round-of-16 matchups where possible. Any such system must remain deterministic, avoid materially distorting seed value, terminate reliably, and never depend on an uncontrolled random retry loop. Do not implement this now; revisit after gameplay experience or universe expansion. This is a presentation/game-design quality watchpoint, not an MVP blocker.
 
 ## Accepted non-issues
 
 - A high correlation between initial Team Strength and average wins across many seasons is expected because averaging removes game-level variance. Do not tune the simulator solely for that observation; revisit only if individual seasons become too deterministic.
 - Full-season and Super Sim performance is acceptable at the current 32-Program / 384-game scale. Do not add concurrency, caching, or mutable summary state without profiling evidence.
+
+### Current tournament upset rates are not automatically a tuning problem
+
+The current 16-Team tournament selects the top half of a 32-Program universe. The quality gap between its #1 and #16 seeds is naturally much smaller than the gap between real-world NCAA #1 and #16 seeds selected from hundreds of Division I programs, so lower-seed upset rates may be meaningfully higher than historical March Madness rates.
+
+Do not retune Game Simulation solely because V0 seed upset percentages differ from real NCAA history. Revisit only if repeated gameplay shows that seed value feels meaningless, strong Teams lack a meaningful advantage, or tournament outcomes feel excessively random. The accepted championship seed-band diagnostic currently shows that higher seeds retain strong overall tournament value; deeper seeds still winning occasionally is intentional upset potential, not automatically a defect.

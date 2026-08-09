@@ -71,4 +71,16 @@ The six-program Exhibition workflow may remain accessible as secondary developme
 
 Player Season Stats V0 now provides public domain APIs capable of powering future Team Player-stat tables, Player profiles, Player game logs, and Team leaders. None of those presentation surfaces is implemented or designed yet.
 
-Postseason V0 backend rules now define a 16-Team fixed national tournament, but no Postseason UI or interaction design is implemented. Selection presentation, bracket presentation, Recruiting, and Dynasty history remain future screens.
+## Postseason Presentation V0 — pending
+
+Postseason Domain / Simulation V0 is complete, but no Postseason React or Zustand workflow exists. The browser does not yet present Selection, enter tournament play, navigate a bracket, or display a National Champion.
+
+Future Postseason presentation can consume the existing public domain support for:
+
+- the selected 16-Team field, automatic/at-large bid type, and seeds;
+- the fixed bracket and resolved participants;
+- ready, pending, and completed games by tournament round;
+- stored final scores and complete historical Player box scores; and
+- the derived National Champion.
+
+This is capability context, not a detailed UI design. The accepted Season UI remains unchanged, and future Postseason presentation must consume canonical Postseason facts and projections rather than recreate selection, advancement, or champion logic in React or Zustand. Recruiting and Dynasty history also remain future screens.

@@ -97,7 +97,8 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 020 | Season UX Polish V0 | COMPLETE |
 | 021 | Super Sim V0 | COMPLETE |
 | 022 | Player Season Stats V0 | COMPLETE |
-| 023 | Postseason V0 design and implementation | ACTIVE |
+| 023 | Postseason Domain / Simulation V0 | COMPLETE |
+| 024 | Postseason Presentation V0 | PLANNED |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
@@ -190,13 +191,25 @@ The accepted pure projections support individual, Program-wide, and Season-wide 
 
 No Player totals, averages, percentages, or game logs are stored as mutable `SeasonState` counters. Inspection completed all 384 regular-season games, derived 384 current-roster Player lines, and passed raw-total reconciliation, games-played, finite-number, chronological-order, and JSON-serialization checks.
 
-## Phase 4 — Postseason V0 — ACTIVE
+## Phase 4 — Postseason V0 — COMPLETE
 
 > Feed a completed regular season into the accepted fixed 16-Team national tournament through deterministic selection, seeding, neutral-site simulation, and result-derived advancement.
 
-The accepted backend slice uses four regular-season Conference champions as protected seeds 1–4, 12 results-only at-large selections as seeds 5–16, and a fixed 15-game single-elimination bracket. Implementation is under validation and human review; this milestone is not marked complete, and Postseason presentation remains a later dedicated slice. Conference tournaments are not part of V0.
+Postseason Domain / Simulation V0 is implemented, validated, reviewed, and accepted. A valid completed regular season supplies one automatic qualifier per Conference through the existing Conference standings leader. The four champions receive protected seeds 1–4, ordered by overall winning percentage, Conference winning percentage, and stable Program ID. Twelve results-only at-large selections receive seeds 5–16 using overall winning percentage, decisive head-to-head only for an exact two-Team tie, Conference winning percentage, and stable Program ID; three-or-more-Team ties skip direct head-to-head.
 
-## Phase 5 — Dynasty Loop — PLANNED
+The complete fixed bracket contains eight Round-of-16 games, four quarterfinals, two semifinals, and one Championship. It permits same-Conference matchups, never reseeds, and simulates every game at a neutral site. Qualified Programs carry forward exact Team and current legal Rotation state, can make legal Rotation changes between games, and retain full `GameResult` / `PlayerGameStats` facts. Future participants, current round, remaining Programs, completion, and National Champion are derived rather than stored.
+
+Accepted validation completed 384 of 384 regular-season games, selected 16 Programs with four automatic and 12 at-large bids, completed and validated all 15 tournament games, reproduced same-seed tournaments, preserved ready-game execution-order independence, changed outcomes under a different simulation seed, derived the National Champion, retained complete Player box scores, and confirmed neutral-site simulation removes the normal home-court modifier.
+
+The core single-season basketball backend is now complete from Program initialization through National Champion.
+
+### Postseason Presentation V0 — PLANNED
+
+No Postseason React or Zustand workflow exists yet. A future presentation slice may consume the accepted field, bid types, seeds, fixed bracket, round progression, completed results, champion, and historical tournament box scores. This pending UI distinction does not reopen the accepted Postseason domain and simulation rules.
+
+## Phase 5 — Dynasty Loop — NEXT
+
+> Turn the completed single-season basketball loop into a multi-season Dynasty. Exact progression, graduation, recruiting, and offseason formulas require a separate design milestone.
 
 ### 5.1 Player progression and roster turnover
 
@@ -250,7 +263,7 @@ Persistence should not be implemented before the evolving dynasty-state model is
 - Explicit Player or Team archetype systems
 - Deeper box-score event reconciliation
 
-These are non-blocking polish or depth candidates. None precedes the League and Season Framework.
+These are non-blocking polish or depth candidates. None changes the next major systems phase or enters scope without an explicit milestone.
 
 ## Far-future / optional
 

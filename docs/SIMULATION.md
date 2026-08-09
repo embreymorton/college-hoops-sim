@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, and Player Season Stats V0 constraints.
+This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, and Postseason Simulation V0 constraints.
 
 ## Status and pipeline
 
@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, and Player Season Stats V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season State stores each complete simulator-produced `GameResult` against its ScheduledGame ID without changing any game simulation formula or behavior.
+Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player Season Stats V0, and Postseason Domain / Simulation V0 are complete. Universe initialization only supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation does not alter or invoke simulation rules. Season and Postseason state retain complete simulator-produced `GameResult` facts without changing scoring, variance, overtime, or box-score formulas.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -44,6 +44,39 @@ Each ScheduledGame has an independent derived seed, so changing execution order 
 Dashboard Quick Sim resolves only the controlled Program's next ScheduledGame. AI rest-of-round resolves eligible pending games in the current round. Super Sim repeatedly resolves pending rounds through an inclusive target: Round 12 for Midseason or Round 24 for End of Regular Season. It preserves already-completed results, uses every Program's current committed Rotation, and never simulates postseason games.
 
 Every route records the same full `PlayerGameStats` fields: minutes, points, rebounds, assists, steals, blocks, turnovers, field goals made/attempted, three-pointers made/attempted, and free throws made/attempted. Accepted Player Season Stats V0 derives aggregates and game logs from these stored rows; it does not change the game formulas below or add authoritative mutable stat totals to `SeasonState`.
+
+## Implemented Postseason Simulation V0
+
+Postseason simulation begins only after the regular season is complete. Qualified Programs carry exact end-of-regular-season Team and current legal Rotation state into a separate `PostseasonState`; Teams, rosters, ratings, and default Rotations are not regenerated. Legal Postseason Rotation changes may be made between tournament games.
+
+Each Tournament game receives an independent seed derived from the explicit simulation seed with its numeric/string type, the Postseason and Season identity, Universe identity/version, and stable Tournament game ID:
+
+```text
+postseason simulation namespace
++ typed explicit simulation seed
++ Postseason / Season identity
++ Tournament game ID
+→ independent game simulation seed
+```
+
+There is no evolving tournament RNG stream. Ready games therefore produce the same individual results regardless of execution order. Identical Postseason state and simulation seed reproduce the same complete tournament, while a different simulation seed can change outcomes.
+
+All 15 Tournament games call the existing `simulateGame()` and preserve its complete `GameResult` and full home/away `PlayerGameStats` arrays. Postseason adds no score-only shortcut and does not retune scoring, variance, overtime, Player allocation, or upset probabilities.
+
+Tournament games pass `site: "neutral"`. This sets the normal home-court modifier to zero:
+
+```text
+neutral site
+→ home-court expected-margin modifier = 0
+```
+
+The lower numerical seed remains the designated home Program solely for stable `GameResult` orientation and presentation semantics. In Postseason, home designation does not receive the normal three-point basketball home-court modifier. Regular-season callers omit the location option and preserve the accepted default home-site behavior. All existing overtime termination rules remain unchanged, including the pathological maximum-overtime safety fallback documented below.
+
+Postseason results are stored separately from `SeasonState`, so Player Season Stats V0 remains regular-season-only. The retained tournament `PlayerGameStats` can support future postseason Player stats, combined regular/postseason stats, career stats, and tournament records, but those projections are not implemented.
+
+Accepted inspection completed 384 of 384 regular-season games and all 15 tournament games. Field, bracket, and final Postseason validation passed; same-seed reproduction and ready-game execution-order independence passed; a different seed changed tournament outcomes; National Champion derivation and full Player-stat preservation passed; and neutral-site sampling confirmed removal of the normal home-court effect.
+
+The accepted 200-replay diagnostic used one selected 16-Team field across many tournament simulation seeds. Higher seeds generally won more often, seeds 1–8 dominated championships overall, and deeper seeds retained nonzero title probability. Those observations reflect the actual strengths of that inspected field, not universal historical probabilities or permanent balance targets.
 
 ## Implemented Player Season Stats V0
 
@@ -156,7 +189,7 @@ These formulas are the implemented and validated v0.1 baseline. Their exact cons
 
 ## Implemented Single-Game Simulation V0
 
-`simulateGame` takes two Teams, one valid Rotation per Team, and an explicit numeric or string seed. It returns a serializable `GameResult` containing Team IDs, final integer scores, the winner ID, completed overtime-period count, the reproduction seed, and home/away Player-stat arrays. Team and Rotation inputs are not mutated.
+`simulateGame` takes two Teams, one valid Rotation per Team, an explicit numeric or string seed, and an optional game site. The site defaults to `home`, preserving accepted regular-season behavior; callers may explicitly select `neutral`. It returns a serializable `GameResult` containing Team IDs, final integer scores, the winner ID, completed overtime-period count, the reproduction seed, and home/away Player-stat arrays. Team and Rotation inputs are not mutated.
 
 The accepted team-level model remains authoritative for final scores and winners. The box-score layer only allocates those completed outcomes; it cannot regenerate or modify them.
 
@@ -164,7 +197,7 @@ The accepted team-level model remains authoritative for final scores and winners
 
 The accepted v0.1 calibration uses a neutral Team strength of `70` and a neutral expected score of `72` points per Team. Each point of offense above or below `70` changes that Team's expected score by `0.65` points. Each point of opposing defense above or below `70` changes it in the opposite direction by `0.45` points.
 
-Home court is worth `3` expected margin points. The model applies half to each side so it changes the expected margin without changing the matchup's expected combined score:
+At the default home site, home court is worth `3` expected margin points. The model applies half to each side so it changes the expected margin without changing the matchup's expected combined score:
 
 ```text
 Expected home score = 72
@@ -179,6 +212,8 @@ Expected away score = 72
 ```
 
 Team overall is not used in either equation.
+
+At a neutral site, both `+1.5` and `−1.5` terms become zero. Every other expected-score, variance, score-bound, overtime, and box-score rule remains unchanged. Neutral designation therefore changes no tuning constant other than whether the existing home-court modifier is applied.
 
 ### Regulation variance and score bounds
 

@@ -39,6 +39,7 @@ The project currently includes:
 - Season UX Polish V0 with Dashboard Quick Sim, persistent committed Season Rotations, historical completed-game box-score viewing, and derived Recent Results
 - Super Sim V0 with confirmed pacing checkpoints through Round 12 or Round 24 using the canonical Season simulation pipeline
 - Player Season Stats V0 with individual, Program-wide, and Season-wide derived totals/rates plus chronological DNP-aware Player game logs
+- Postseason Domain / Simulation V0 with results-only qualification, protected Conference-champion seeds, a fixed neutral-site bracket, carried Team/Rotation state, deterministic advancement, full tournament box scores, and National Champion derivation
 
 The accepted outcome model uses derived offense and defense, a small home advantage, and seeded game-level variance. The box-score layer preserves that outcome and allocates internally consistent Player statistics beneath it.
 
@@ -57,6 +58,9 @@ stable fictional Universe
 → canonical GameResults
 → standings and Super Sim
 → derived Player Season Stats / game logs
+→ tournament selection and seeding
+→ fixed 16-Team national tournament
+→ National Champion
 ```
 
 Season State stores the facts needed for progression without duplicating mutable records, round counters, completion flags, standings, Player aggregates, or game logs. Full Player box-score rows remain canonical inside completed Season `GameResult` values, so Player Season Stats can be recalculated from source facts during partial or complete Seasons.
@@ -71,10 +75,28 @@ The application layer lets one controlled Program complete the full 24-round reg
 
 Legal Rotation changes persist in `SeasonState` and affect later games regardless of pacing path. Every completed result is final and retains its full Player box scores. The Hub derives records, current round, standings, Recent Results, and Schedule presentation from Season facts rather than maintaining duplicate UI truth.
 
-## Next major acceptance target
+## Complete single-season basketball backend
 
-> **Postseason V0 — ACTIVE:** validate the accepted deterministic 16-Team national-tournament backend after the completed regular season.
+The project can now complete the basketball lifecycle for one Season:
 
-The accepted backend structure is four Conference-champion automatic bids protected at seeds 1–4 plus 12 results-only at-large bids, feeding a fixed 15-game neutral-site bracket. It remains under human review and has no Postseason UI yet.
+```text
+Program selection
+→ 24-game regular season
+→ Conference standings
+→ four automatic bids + 12 at-large bids
+→ seeds 1–16
+→ 15-game national tournament
+→ National Champion
+```
+
+Postseason V0 includes automatic qualification through existing regular-season Conference standings, deterministic results-only at-large selection, protected Conference-champion seeds 1–4, at-large seeds 5–16, fixed bracket generation, neutral-site game simulation, exact Team and Rotation carryover, legal between-game Rotation changes, result-derived advancement, National Champion derivation, structured validation, and complete retained `PlayerGameStats` for all 15 tournament games.
+
+This is currently a domain/simulation capability, not a browser workflow. Postseason React presentation, Selection presentation, bracket navigation, tournament controls, and historical tournament box-score screens remain unimplemented.
+
+## Next major systems phase
+
+> **Dynasty Loop — NEXT:** turn the accepted single-season basketball loop into a multi-season game.
+
+Postseason Presentation remains a pending application slice, while the next major systems design phase is the Dynasty Loop. Progression, graduation, recruiting, and offseason formulas require separate design and are not defined here.
 
 The project also does not yet contain recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as secondary development tooling.

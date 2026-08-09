@@ -5,14 +5,13 @@
 Dependencies point inward toward pure domain layers:
 
 ```text
-React Season Presentation
-        ↓
-Zustand Season session / navigation
-        ↓
-Season public API
-        ├─ Schedule public API
-        ├─ Universe public API → Engine public API
-        └─ Engine public API
+future Postseason React / Zustand
+              ↓
+         Postseason public API
+          ↙              ↘
+Season public API     Universe public API
+     ├─ Schedule public API    ↓
+     └──────────────→ Engine public API
 
 Schedule public API → Universe public API + Engine public API
 
@@ -33,6 +32,7 @@ src/
   universe/              Stable world definitions and deterministic initialization
   schedule/              Pure regular-season structure, generation, and validation
   season/                Serializable Season facts, operations, and derivations
+  postseason/            Selection, fixed bracket, tournament state, and progression
   engine/
     domain/              Serializable domain types and derived ratings
     generation/          Player/team generation and default rotation derivation
@@ -143,6 +143,37 @@ Game Prep is optional. Dashboard Quick Sim runs the controlled Program's next Sc
 
 Completed games are final. The postgame and historical-result screens read the already-recorded `GameResult`; opening a Schedule or Recent Results entry never re-simulates it. Recent Results is likewise derived from completed Schedule/results facts.
 
+## Postseason State and progression
+
+The framework-independent `src/postseason` layer depends on the public Season, Universe, and Engine APIs. It requires a valid completed regular season, but it does not embed or mutate the completed `SeasonState`. Season, Schedule, Universe, and Engine do not import Postseason; the Engine remains unaware of qualification, seeds, brackets, tournament rounds, and champions.
+
+```text
+future React / Zustand
+        ↓
+     Postseason
+      ↙      ↘
+   Season   Universe
+      \       /
+        Engine
+```
+
+Neutral-site behavior is an Engine-level game-location option. Postseason chooses `site: "neutral"`; the Engine applies zero normal home-court modifier without knowing why the game is neutral or what a seed means.
+
+`PostseasonState` stores only the canonical tournament facts needed to continue play:
+
+```text
+selected TournamentEntry field
++ fixed NationalTournamentBracket
++ copied Team / current Rotation state for qualified Programs
++ completed GameResults keyed by Tournament game ID
+```
+
+At initialization, each qualified Program's exact end-of-regular-season Team and legal current Rotation are copied into Postseason basketball state. Teams and rosters are not regenerated, and later legal Rotation changes are pure Postseason operations. Tournament progression cannot mutate the completed regular season.
+
+The complete 15-game bracket is fixed when Postseason begins. Round-of-16 slots reference seeds; later slots reference stable prior-game winner sources. Completed `GameResult` facts resolve those sources without rebuilding or reseeding the bracket. The current tournament round, ready games, remaining or eliminated Programs, tournament completion, and National Champion are derived projections rather than parallel mutable flags or counters.
+
+Each completed tournament result is canonical and preserves the existing full home/away `PlayerGameStats` arrays. Postseason Player aggregates, combined regular/postseason statistics, career statistics, and tournament records are not yet implemented; future projections should derive them from retained results rather than introduce competing statistical truth.
+
 ## Player Season Stats projections
 
 Player Season Stats V0 is a pure Season projection over canonical completed-game facts:
@@ -167,14 +198,14 @@ Future Player Stats UI should consume these public Season APIs rather than impor
 
 ## Public API and imports
 
-Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, derived Player Season Stats, and Player game logs. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Season.
+Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, derived Player Season Stats, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Schedule and Universe remain independent from mutable Season results, while Season depends only on their public APIs and the engine's Team, Rotation, validation, and GameResult contracts. No lower layer imports Postseason.
 
-Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, and Player Season Stats V0 are complete. React renders Season context, next-game actions, Rotation management, standings, Recent Results, Schedule/results, final scores, and historical full box scores without calculating basketball outcomes, ratings, records, or Rotation legality. Player Season Stats currently has no React presentation.
+Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player Season Stats V0, and Postseason Domain / Simulation V0 are complete. React renders regular-season context, next-game actions, Rotation management, standings, Recent Results, Schedule/results, final scores, and historical full box scores without calculating basketball outcomes, ratings, records, or Rotation legality. Player Season Stats and Postseason currently have no React presentation.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 
-The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. The current regular-season simulation/backend feature set is functionally complete through Player Season Stats V0. Postseason is a framework-independent layer above public Season, Universe, and Engine APIs; its accepted V0 configuration is a 16-Team fixed bracket and is not a generic engine assumption.
+The accepted 32 Programs, 24 rounds, 16 games per round, and 384 total games are consequences of Universe V0 membership plus Schedule V0 configuration; they are not assumptions in the generic engine. Postseason is a framework-independent layer above public Season, Universe, and Engine APIs; its accepted 16-Team field and 15-game fixed bracket are Postseason V0 configuration, not generic engine assumptions. Together the regular season and accepted Postseason backend can progress one basketball season through a derived National Champion.
 
 ## Enforcement
 
-ESLint rejects framework, store, UI-layer imports, and common browser globals in `src/engine`. It also prevents the engine from importing `src/universe`, and keeps framework, presentation, ambient randomness, and browser dependencies out of the universe, schedule, and season layers. Tests must cover domain invariants, serialization, aggregation consistency, and deterministic seeded behavior as those features are added.
+ESLint rejects framework, store, UI-layer imports, and common browser globals in `src/engine`. It also prevents the engine from importing `src/universe` or `src/postseason`, prevents Season, Schedule, and Universe from importing Postseason, and keeps framework, presentation, ambient randomness, and browser dependencies out of all pure domain layers. Tests cover domain invariants, serialization, aggregation consistency, and deterministic seeded behavior.
