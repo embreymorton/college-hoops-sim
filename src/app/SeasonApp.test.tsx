@@ -1,5 +1,6 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
+import { selectNationalTournamentField } from '../postseason'
 import {
   deriveConferenceRecord,
   deriveConferenceStandings,
@@ -46,6 +47,12 @@ function driveSeasonToCompletion(): void {
   }
 
   throw new Error('Season did not complete within the expected round budget.')
+}
+
+function finishRegularSeasonWithSuperSim(): void {
+  useSeasonStore.getState().selectProgram('charlotte-tech')
+  useSeasonStore.getState().requestSuperSim('endOfRegularSeason')
+  useSeasonStore.getState().confirmSuperSim()
 }
 
 beforeEach(() => {
@@ -473,6 +480,78 @@ describe('Season Presentation', () => {
     fireEvent.click(resultButton)
     expect(useSeasonStore.getState().view).toBe('gameHistory')
   })
+
+  it('reveals the canonical automatic, at-large, and non-qualified Tournament states and keeps the field accessible', () => {
+    finishRegularSeasonWithSuperSim()
+    useSeasonStore.getState().dismissSuperSimSummary()
+
+    const season = useSeasonStore.getState().season!
+    const selection = selectNationalTournamentField(UNIVERSE_V0, season)
+    const automaticEntry = selection.field.find(
+      (entry) => entry.bidType === 'automatic',
+    )!
+    const atLargeEntry = selection.field.find(
+      (entry) => entry.bidType === 'at-large',
+    )!
+    const nonQualifiedProgram = UNIVERSE_V0.programs.find(
+      (program) =>
+        !selection.field.some((entry) => entry.programId === program.id),
+    )!
+
+    useSeasonStore.setState({ controlledProgramId: automaticEntry.programId })
+    render(<App />)
+
+    const completionPanel = document.querySelector(
+      '.season-complete-panel',
+    ) as HTMLElement
+    expect(within(completionPanel).getByText('National Tournament')).toBeInTheDocument()
+    expect(
+      within(completionPanel).getByText(
+        `#${automaticEntry.seed} Seed · Automatic Bid`,
+      ),
+    ).toBeInTheDocument()
+    expect(
+      within(completionPanel).getByRole('button', {
+        name: /enter national tournament/i,
+      }),
+    ).toBeInTheDocument()
+
+    act(() => {
+      useSeasonStore.setState({ controlledProgramId: atLargeEntry.programId })
+    })
+    expect(
+      within(completionPanel).getByText(`#${atLargeEntry.seed} Seed · At-Large`),
+    ).toBeInTheDocument()
+    expect(
+      within(completionPanel).getByRole('button', {
+        name: /enter national tournament/i,
+      }),
+    ).toBeInTheDocument()
+
+    act(() => {
+      useSeasonStore.setState({
+        controlledProgramId: nonQualifiedProgram.id,
+      })
+    })
+    const tournamentStatus = completionPanel.querySelector(
+      '.season-complete-panel__tournament-status',
+    ) as HTMLElement
+    expect(tournamentStatus).toHaveTextContent('Did Not Qualify')
+    expect(tournamentStatus).not.toHaveTextContent('#')
+
+    fireEvent.click(
+      within(completionPanel).getByRole('button', {
+        name: /view national tournament/i,
+      }),
+    )
+    expect(useSeasonStore.getState().view).toBe('postseasonHub')
+    expect(useSeasonStore.getState().postseason?.field).toEqual(selection.field)
+    expect(
+      screen.getByText(
+        `${nonQualifiedProgram.name} did not qualify for the National Tournament.`,
+      ),
+    ).toBeInTheDocument()
+  })
 })
 
 function openSuperSimMenu() {
@@ -637,6 +716,52 @@ describe('Super Sim', () => {
     expect(
       screen.queryByRole('button', { name: /^super sim/i }),
     ).not.toBeInTheDocument()
+  })
+
+  it('shows the canonical automatic, at-large, and non-qualified Tournament result in the end-of-season summary', () => {
+    finishRegularSeasonWithSuperSim()
+
+    const season = useSeasonStore.getState().season!
+    const selection = selectNationalTournamentField(UNIVERSE_V0, season)
+    const repeatedSelection = selectNationalTournamentField(UNIVERSE_V0, season)
+    const automaticEntry = selection.field.find(
+      (entry) => entry.bidType === 'automatic',
+    )!
+    const atLargeEntry = selection.field.find(
+      (entry) => entry.bidType === 'at-large',
+    )!
+    const nonQualifiedProgram = UNIVERSE_V0.programs.find(
+      (program) =>
+        !selection.field.some((entry) => entry.programId === program.id),
+    )!
+
+    expect(repeatedSelection).toEqual(selection)
+    useSeasonStore.setState({ controlledProgramId: automaticEntry.programId })
+    render(<App />)
+
+    const summaryDialog = screen.getByRole('dialog', {
+      name: /regular season complete/i,
+    })
+    const tournamentRow = within(summaryDialog)
+      .getByText('Tournament')
+      .closest('div')!
+    expect(
+      within(tournamentRow).getByText(`#${automaticEntry.seed} · Auto`),
+    ).toBeInTheDocument()
+
+    act(() => {
+      useSeasonStore.setState({ controlledProgramId: atLargeEntry.programId })
+    })
+    expect(
+      within(tournamentRow).getByText(`#${atLargeEntry.seed} · At-Large`),
+    ).toBeInTheDocument()
+
+    act(() => {
+      useSeasonStore.setState({
+        controlledProgramId: nonQualifiedProgram.id,
+      })
+    })
+    expect(within(tournamentRow).getByText('Did Not Qualify')).toBeInTheDocument()
   })
 
   it('opens a Super-Sim-generated game as an interactive historical result with a full box score', () => {

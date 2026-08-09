@@ -11,6 +11,7 @@ import {
   SuperSimSummaryDialog,
 } from '../components'
 import { MIDSEASON_ROUND, useSeasonStore } from '../store'
+import { selectNationalTournamentField } from '../postseason'
 import {
   deriveConferenceRecord,
   deriveConferenceStandings,
@@ -24,6 +25,7 @@ import {
   type SeasonState,
 } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
+import { formatTournamentQualification } from './postseasonFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -136,6 +138,12 @@ export function SeasonHubScreen() {
   ).findIndex((row) => row.programId === controlledProgramId)
   const controlledConferenceStanding =
     controlledStandingIndex === -1 ? undefined : controlledStandingIndex + 1
+  const tournamentField = seasonComplete
+    ? postseason?.field ?? selectNationalTournamentField(UNIVERSE_V0, season).field
+    : []
+  const controlledTournamentEntry = tournamentField.find(
+    (entry) => entry.programId === controlledProgramId,
+  )
 
   return (
     <>
@@ -164,12 +172,22 @@ export function SeasonHubScreen() {
               ({formatRecord(conferenceRecord.wins, conferenceRecord.losses)}{' '}
               conference).
             </p>
+            <div className="season-complete-panel__tournament">
+              <p className="season-complete-panel__tournament-label">
+                National Tournament
+              </p>
+              <p className="season-complete-panel__tournament-status">
+                {formatTournamentQualification(controlledTournamentEntry)}
+              </p>
+            </div>
             <button
               type="button"
               className="button button--primary season-complete-panel__action"
               onClick={enterPostseason}
             >
-              {postseason ? 'Return to National Tournament' : 'Enter National Tournament'}
+              {controlledTournamentEntry
+                ? 'Enter National Tournament'
+                : 'View National Tournament'}
             </button>
           </div>
         ) : (
@@ -293,6 +311,7 @@ export function SeasonHubScreen() {
           overallRecord={overallRecord}
           conferenceRecord={conferenceRecord}
           conferenceStanding={controlledConferenceStanding}
+          tournamentEntry={controlledTournamentEntry}
           onContinue={dismissSuperSimSummary}
         />
       )}

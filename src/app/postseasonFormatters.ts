@@ -1,4 +1,8 @@
-import type { TournamentBidType, TournamentRound } from '../postseason'
+import type {
+  TournamentBidType,
+  TournamentEntry,
+  TournamentRound,
+} from '../postseason'
 
 /**
  * Postseason-presentation formatting helpers. These format existing
@@ -24,6 +28,30 @@ export function formatSeedLabel(seed: number): string {
 
 export function formatBidType(bidType: TournamentBidType): string {
   return bidType === 'automatic' ? 'Auto' : 'At-Large'
+}
+
+/** Completion-card wording for the controlled Program's canonical selection result. */
+export function formatTournamentQualification(
+  entry: TournamentEntry | undefined,
+): string {
+  if (!entry) {
+    return 'Did Not Qualify'
+  }
+
+  const bidLabel =
+    entry.bidType === 'automatic' ? 'Automatic Bid' : 'At-Large'
+  return `${formatSeedLabel(entry.seed)} Seed · ${bidLabel}`
+}
+
+/** Concise Super Sim summary wording for the same canonical selection result. */
+export function formatCompactTournamentQualification(
+  entry: TournamentEntry | undefined,
+): string {
+  if (!entry) {
+    return 'Did Not Qualify'
+  }
+
+  return `${formatSeedLabel(entry.seed)} · ${formatBidType(entry.bidType)}`
 }
 
 /** True when the winning seed number is higher (weaker) than the losing seed's. */

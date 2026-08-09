@@ -1,6 +1,8 @@
 import { useId } from 'react'
+import type { TournamentEntry } from '../postseason'
 import type { ProgramRecord } from '../season'
 import type { SuperSimKind } from '../store'
+import { formatCompactTournamentQualification } from '../app/postseasonFormatters'
 import { formatOrdinal, formatRecord } from '../app/seasonFormatters'
 import { ModalOverlay } from './ModalOverlay'
 
@@ -12,6 +14,8 @@ interface SuperSimSummaryDialogProps {
   readonly conferenceRecord: ProgramRecord
   /** 1-based position within the controlled Program's Conference, if derivable. */
   readonly conferenceStanding: number | undefined
+  /** Canonical end-of-season field entry; undefined means the Program was not selected. */
+  readonly tournamentEntry: TournamentEntry | undefined
   readonly onContinue: () => void
 }
 
@@ -23,6 +27,7 @@ export function SuperSimSummaryDialog({
   overallRecord,
   conferenceRecord,
   conferenceStanding,
+  tournamentEntry,
   onContinue,
 }: SuperSimSummaryDialogProps) {
   const titleId = useId()
@@ -57,6 +62,12 @@ export function SuperSimSummaryDialog({
           <div className="modal-stat-list__row">
             <dt>Standing</dt>
             <dd>{formatOrdinal(conferenceStanding)}</dd>
+          </div>
+        )}
+        {isEndOfSeason && (
+          <div className="modal-stat-list__row">
+            <dt>Tournament</dt>
+            <dd>{formatCompactTournamentQualification(tournamentEntry)}</dd>
           </div>
         )}
       </dl>

@@ -85,7 +85,7 @@ describe('Postseason transition', () => {
     useSeasonStore.getState().goToHub()
 
     render(<App />)
-    clickButtonByText(/return to national tournament/i)
+    clickButtonByText(/enter national tournament/i)
 
     const state = useSeasonStore.getState()
     expect(state.postseason).toBe(firstPostseason)
