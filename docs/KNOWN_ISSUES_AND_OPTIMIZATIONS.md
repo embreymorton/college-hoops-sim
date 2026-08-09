@@ -57,6 +57,18 @@ Postseason V0 intentionally permits same-Conference Round-of-16 matchups under i
 
 Because Conference opponents already play a regular-season double round robin, repeated first-round matchups may eventually make tournament draws feel less fresh. A future improvement could preserve seed lines and bracket fairness while avoiding same-Conference Round-of-16 matchups where possible. Any such system must remain deterministic, avoid materially distorting seed value, terminate reliably, and never depend on an uncontrolled random retry loop. Do not implement this now; revisit after gameplay experience or universe expansion. This is a presentation/game-design quality watchpoint, not an MVP blocker.
 
+### P3 — UI stylesheet growth
+
+The primary application stylesheet has grown substantially as the Season UI has expanded. This is not currently a functional or performance problem, and architectural cleanliness alone does not justify a CSS refactor before Postseason Presentation.
+
+If tournament and bracket styles make the main stylesheet difficult to navigate or create accidental cross-feature coupling, consider a small feature-level boundary such as `src/styles.css` plus `src/postseason.css`, or another minimal organization consistent with the project. Do not introduce CSS Modules, Tailwind, CSS-in-JS, or another styling framework without a separate reason. This is a maintainability watchpoint, not an MVP blocker.
+
+### P3 — Application session store growth
+
+The current Zustand Season/application store has grown while coordinating the controlled Program, `SeasonState`, presentation navigation, Quick Sim, Super Sim, and historical-result viewing. Postseason Presentation will add orchestration for the active `PostseasonState` alongside the completed regular season.
+
+Do not refactor or rename the store preemptively. If tournament integration makes it difficult to reason about, consider extracting small Postseason-specific orchestration helpers while preserving one clear application/session state boundary. Do not move basketball rules into Zustand, duplicate Postseason-derived state, or introduce a large generalized state framework. A future Dynasty root state is the more appropriate time to reconsider top-level store naming and organization. This is a maintainability watchpoint, not an MVP blocker.
+
 ## Accepted non-issues
 
 - A high correlation between initial Team Strength and average wins across many seasons is expected because averaging removes game-level variance. Do not tune the simulator solely for that observation; revisit only if individual seasons become too deterministic.

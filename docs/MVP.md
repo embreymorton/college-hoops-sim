@@ -93,10 +93,16 @@ Postseason V0 includes automatic qualification through existing regular-season C
 
 This is currently a domain/simulation capability, not a browser workflow. Postseason React presentation, Selection presentation, bracket navigation, tournament controls, and historical tournament box-score screens remain unimplemented.
 
+## Next presentation milestone
+
+> **Postseason Presentation V0 — NEXT:** expose the accepted tournament field, bracket, progression, results, and champion through the application without duplicating Postseason rules in React or Zustand.
+
+The application/session layer will eventually own both the completed regular-season `SeasonState` and active `PostseasonState`. Postseason initialization and progression must preserve the completed regular-season facts.
+
 ## Next major systems phase
 
 > **Dynasty Loop — NEXT:** turn the accepted single-season basketball loop into a multi-season game.
 
-Postseason Presentation remains a pending application slice, while the next major systems design phase is the Dynasty Loop. Progression, graduation, recruiting, and offseason formulas require separate design and are not defined here.
+Postseason Presentation is the immediate UI milestone, while the next major systems design phase is the Dynasty Loop. Progression, graduation, recruiting, and offseason formulas require separate design and are not defined here.
 
 The project also does not yet contain recruiting, offseason player development, Dynasty persistence, substitutions, fatigue simulation, multi-position eligibility, or possession simulation. The six-program exhibition UI remains available as secondary development tooling.

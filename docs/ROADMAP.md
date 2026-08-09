@@ -98,7 +98,7 @@ These identifiers are planning aids, not immutable contracts. Later implementati
 | 021 | Super Sim V0 | COMPLETE |
 | 022 | Player Season Stats V0 | COMPLETE |
 | 023 | Postseason Domain / Simulation V0 | COMPLETE |
-| 024 | Postseason Presentation V0 | PLANNED |
+| 024 | Postseason Presentation V0 | NEXT |
 
 ## Phase 3 — League and Season Framework — COMPLETE
 
@@ -203,11 +203,11 @@ Accepted validation completed 384 of 384 regular-season games, selected 16 Progr
 
 The core single-season basketball backend is now complete from Program initialization through National Champion.
 
-### Postseason Presentation V0 — PLANNED
+### Postseason Presentation V0 — NEXT UI MILESTONE
 
-No Postseason React or Zustand workflow exists yet. A future presentation slice may consume the accepted field, bid types, seeds, fixed bracket, round progression, completed results, champion, and historical tournament box scores. This pending UI distinction does not reopen the accepted Postseason domain and simulation rules.
+No Postseason React or Zustand workflow exists yet. The next presentation slice may consume the accepted field, bid types, seeds, fixed bracket, round progression, completed results, champion, and historical tournament box scores. The application/session layer will eventually retain the completed regular-season `SeasonState` alongside the active `PostseasonState`; initializing or progressing the tournament must not mutate or replace completed regular-season facts. This pending UI distinction does not reopen the accepted Postseason domain and simulation rules.
 
-## Phase 5 — Dynasty Loop — NEXT
+## Phase 5 — Dynasty Loop — NEXT MAJOR SYSTEMS PHASE
 
 > Turn the completed single-season basketball loop into a multi-season Dynasty. Exact progression, graduation, recruiting, and offseason formulas require a separate design milestone.
 

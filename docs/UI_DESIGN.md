@@ -71,7 +71,7 @@ The six-program Exhibition workflow may remain accessible as secondary developme
 
 Player Season Stats V0 now provides public domain APIs capable of powering future Team Player-stat tables, Player profiles, Player game logs, and Team leaders. None of those presentation surfaces is implemented or designed yet.
 
-## Postseason Presentation V0 — pending
+## Postseason Presentation V0 — next UI milestone
 
 Postseason Domain / Simulation V0 is complete, but no Postseason React or Zustand workflow exists. The browser does not yet present Selection, enter tournament play, navigate a bracket, or display a National Champion.
 
@@ -84,3 +84,5 @@ Future Postseason presentation can consume the existing public domain support fo
 - the derived National Champion.
 
 This is capability context, not a detailed UI design. The accepted Season UI remains unchanged, and future Postseason presentation must consume canonical Postseason facts and projections rather than recreate selection, advancement, or champion logic in React or Zustand. Recruiting and Dynasty history also remain future screens.
+
+The application/session layer will eventually retain the completed regular-season `SeasonState` alongside the active `PostseasonState`. Entering or progressing Postseason must not mutate or replace the completed regular-season facts.
