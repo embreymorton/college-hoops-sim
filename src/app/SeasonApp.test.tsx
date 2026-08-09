@@ -131,12 +131,27 @@ describe('Season Presentation', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
 
+    const matchupCard = document.querySelector('.next-game-card') as HTMLElement
+    const roundProgress = document.querySelector('.round-progress') as HTMLElement
+
     expect(
-      screen.getByRole('button', { name: /^simulate game$/i }),
+      within(matchupCard).getByRole('button', { name: /^simulate game$/i }),
     ).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /manage rotation/i }),
+      within(matchupCard).getByRole('button', { name: /manage rotation/i }),
     ).toBeInTheDocument()
+    expect(
+      within(matchupCard).queryByRole('button', { name: /^super sim/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(roundProgress).getByRole('button', {
+        name: /simulate rest of round/i,
+      }),
+    ).toBeInTheDocument()
+    expect(
+      within(roundProgress).getByRole('button', { name: /^super sim/i }),
+    ).toBeInTheDocument()
+    expect(document.querySelector('.super-sim-row')).toBeNull()
     expect(
       screen.queryByRole('button', { name: /prepare for game/i }),
     ).not.toBeInTheDocument()
@@ -421,6 +436,15 @@ describe('Season Presentation', () => {
     expect(ownGame).toBeDefined()
     expect(ownGame!.round).toBe(1)
     expect(season!.resultsByGameId[ownGame!.id]).toBeUndefined()
+    const roundProgress = document.querySelector('.round-progress') as HTMLElement
+    expect(
+      within(roundProgress).queryByRole('button', {
+        name: /simulate rest of round/i,
+      }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(roundProgress).getByRole('button', { name: /^super sim/i }),
+    ).toBeInTheDocument()
   })
 
   it('shows Regular Season Complete once all 384 games are finished, with no residual game actions', () => {

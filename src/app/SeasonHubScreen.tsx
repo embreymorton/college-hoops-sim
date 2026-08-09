@@ -200,18 +200,7 @@ export function SeasonHubScreen() {
             />
           )
         )}
-        {!seasonComplete && (
-          <div className="super-sim-row">
-            <SuperSimMenu
-              showMidseason={showMidseason}
-              midseasonRound={MIDSEASON_ROUND}
-              endOfSeasonRound={season.schedule.roundCount}
-              onSelect={requestSuperSim}
-              isDialogOpen={isSuperSimDialogOpen}
-            />
-          </div>
-        )}
-        {currentRound !== undefined && hasSimulatableRoundGames && (
+        {currentRound !== undefined && (
           <div className="round-progress">
             <p className="round-progress__text">
               Round {currentRound} —{' '}
@@ -220,13 +209,24 @@ export function SeasonHubScreen() {
                 roundGameCount,
               )}
             </p>
-            <button
-              type="button"
-              className="button button--ghost"
-              onClick={simulateRestOfRound}
-            >
-              Simulate Rest of Round
-            </button>
+            <div className="round-progress__actions">
+              {hasSimulatableRoundGames && (
+                <button
+                  type="button"
+                  className="button button--ghost"
+                  onClick={simulateRestOfRound}
+                >
+                  Simulate Rest of Round
+                </button>
+              )}
+              <SuperSimMenu
+                showMidseason={showMidseason}
+                midseasonRound={MIDSEASON_ROUND}
+                endOfSeasonRound={season.schedule.roundCount}
+                onSelect={requestSuperSim}
+                isDialogOpen={isSuperSimDialogOpen}
+              />
+            </div>
           </div>
         )}
       </section>
