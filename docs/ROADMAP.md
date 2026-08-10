@@ -332,9 +332,15 @@ Recruit generation, Recruiting calibration, Player Development, roster rollover,
 - **6C — Dynasty Transition Orchestration:** explicit championship, Late Recruiting, finalization, Offseason, and rollover boundaries use canonical domain transitions and reset stale session presentation state.
 - **6D — Late Recruiting + Offseason UX:** Late Recruiting, finalized-class feedback, departures, development, incoming class, next-roster preview, and the Season N+1 handoff are player-facing.
 
-## Phase 6E — Playthrough-Driven Polish — NEXT
+## Phase 6E — Playthrough-Driven Calibration & Polish — ACTIVE
 
-Scope will be defined from manual multi-season playtesting. Likely observations include UX friction, transition feedback, navigation issues, simulation/Recruiting feedback, continuity/storytelling needs, and bugs discovered during play. No further feature expansion is committed here.
+This phase uses manual playthrough observations and targeted diagnostics rather than a predetermined feature schedule. `PLAYTESTING.md` is the detailed source of truth for current observations, hypotheses, and next investigations.
+
+- **6E.1 — Recruiting + Talent Balance Investigation:** COMPLETE.
+- **6E.2A — Recruiting Focus Model:** COMPLETE.
+- **6E.2A.2 — AI Recruiting Plan Coherence:** COMPLETE.
+- **6E.2B — Recruit Talent Distribution V1:** COMPLETE.
+- **6E.3 — Development + League Talent Progression Diagnostic:** NEXT. Diagnose Potential realization and mature-league talent shape before approving any calibration change.
 
 ## Non-binding development-agent fit
 
