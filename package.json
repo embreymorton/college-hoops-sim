@@ -21,6 +21,8 @@
     "sim:postseason": "node --import tsx scripts/inspectPostseason.ts",
     "sim:dynasty-foundation": "node --import tsx scripts/inspectDynastyFoundation.ts",
     "sim:recruiting": "node --import tsx scripts/inspectRecruiting.ts",
+    "sim:recruiting-strategy": "node --import tsx scripts/inspectRecruitingStrategy.ts",
+    "sim:talent-distribution": "node --import tsx scripts/inspectTalentDistribution.ts",
     "sim:roster-rollover": "node --import tsx scripts/inspectRosterRollover.ts",
     "sim:season-rollover": "node --import tsx scripts/inspectSeasonRollover.ts",
     "sim:dynasty-long-run": "node --import tsx scripts/inspectDynastyLongRun.ts",
