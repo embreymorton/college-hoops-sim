@@ -4,6 +4,7 @@ import {
   CompletedMatchupCard,
   DynastySectionNav,
   RecruitingHubSummary,
+  SeasonCompleteHandoff,
   TournamentBracket,
   TournamentFieldTable,
   TournamentMatchupCard,
@@ -13,7 +14,7 @@ import {
   type BracketSlotParticipant,
   type TournamentFieldRow,
 } from '../components'
-import { deriveProgramRecruitingBoard } from '../dynasty'
+import { deriveProgramRecruitingBoard, FINAL_RECRUITING_PERIOD } from '../dynasty'
 import {
   deriveNationalChampion,
   getCurrentTournamentRound,
@@ -354,14 +355,6 @@ export function PostseasonHubScreen() {
               ? `${controlledProgram.name}'s tournament run has ended. The completed bracket and every box score remain available below.`
               : `${controlledProgram.name} did not qualify this season. The completed bracket and every box score remain available below.`
         }
-        action={
-          recruiting?.phase === 'regular-season' && recruiting.lastResolvedPeriod === 28
-            ? {
-                label: 'Continue to Late Recruiting',
-                onClick: enterLateRecruiting,
-              }
-            : undefined
-        }
       />
     )
   } else if (!controlledEntry) {
@@ -567,6 +560,14 @@ export function PostseasonHubScreen() {
           </section>
         )}
       </div>
+
+      {tournamentComplete &&
+        recruiting &&
+        recruiting.phase !== 'late' &&
+        recruiting.phase !== 'finalized' &&
+        recruiting.lastResolvedPeriod === FINAL_RECRUITING_PERIOD && (
+          <SeasonCompleteHandoff onContinue={enterLateRecruiting} />
+        )}
 
       <section className="section" aria-labelledby="bracket-heading">
         <h2 id="bracket-heading" className="section-title">

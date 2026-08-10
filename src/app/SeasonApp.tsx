@@ -2,7 +2,7 @@ import { selectControlledProgramId, useDynastyStore } from '../store'
 import { RecruitingSetupDialog } from '../components'
 import { GamePrepScreen } from './GamePrepScreen'
 import { LeagueScreen } from './LeagueScreen'
-import { LifecycleTransitionScreen } from './LifecycleTransitionScreen'
+import { OffseasonScreen } from './OffseasonScreen'
 import { PlayerDetailsScreen } from './PlayerDetailsScreen'
 import { PostseasonHubScreen } from './PostseasonHubScreen'
 import { ProgramSelectScreen } from './ProgramSelectScreen'
@@ -65,8 +65,8 @@ export function DynastyApp() {
     case 'recruiting':
       screen = <RecruitingScreen />
       break
-    case 'lifecycle':
-      screen = <LifecycleTransitionScreen />
+    case 'offseason':
+      screen = <OffseasonScreen />
       break
     case 'hub':
     case 'programSelect':

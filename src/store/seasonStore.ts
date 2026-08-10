@@ -176,7 +176,7 @@ export type SeasonSessionView =
   | 'teamDetails'
   | 'playerDetails'
   | 'recruiting'
-  | 'lifecycle'
+  | 'offseason'
 
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
@@ -1318,7 +1318,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextDynasty = autoFinalizeRecruiting(dynasty).dynasty
       set({
         dynasty: nextDynasty,
-        view: 'lifecycle',
+        view: 'recruiting',
         recruitingActionError: null,
       })
     } catch (error) {
@@ -1343,7 +1343,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextDynasty = beginOffseason(dynasty)
       set({
         dynasty: nextDynasty,
-        view: 'lifecycle',
+        view: 'offseason',
         recruitingActionError: null,
       })
     } catch (error) {

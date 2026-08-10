@@ -404,6 +404,52 @@
 }
 
 /* ==========================================================================
+   Late Recruiting banner
+   ========================================================================== */
+
+.late-recruiting-banner {
+  background: var(--surface-1);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+}
+
+.late-recruiting-banner__stats {
+  margin: var(--space-4) 0 var(--space-5);
+}
+
+.late-recruiting-banner__action {
+  align-self: flex-start;
+}
+
+/* ==========================================================================
+   Recruiting Class Complete summary
+   ========================================================================== */
+
+.recruiting-class-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.recruiting-class-summary__header {
+  align-items: center;
+}
+
+.recruiting-class-summary__stats .stat-trio__value {
+  font-size: 2.1rem;
+}
+
+.recruiting-class-summary__positions {
+  max-width: 28rem;
+}
+
+.recruiting-class-summary__action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 
@@ -419,5 +465,22 @@
   .recruiting-capacity-note {
     max-width: none;
     text-align: left;
+  }
+
+  .late-recruiting-banner__action {
+    align-self: stretch;
+  }
+
+  .recruiting-class-summary__header {
+    align-items: flex-start;
+  }
+
+  .recruiting-class-summary__action {
+    justify-content: stretch;
+  }
+
+  .recruiting-class-summary__action .button {
+    width: 100%;
+    text-align: center;
   }
 }

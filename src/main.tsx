@@ -5,6 +5,7 @@ import './styles.css'
 import './postseason.css'
 import './league.css'
 import './recruiting.css'
+import './offseason.css'
 
 const rootElement = document.getElementById('root')
 

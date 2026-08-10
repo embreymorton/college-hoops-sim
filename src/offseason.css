@@ -1,0 +1,84 @@
+/* ==========================================================================
+   Offseason turnover report V0 — extends styles.css's tokens and components
+   ========================================================================== */
+
+.offseason-header {
+  align-items: center;
+}
+
+.offseason-header .eyebrow-tag {
+  margin-bottom: var(--space-1);
+}
+
+/* ==========================================================================
+   Player development
+   ========================================================================== */
+
+.development-table__change {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.development-table__change[data-positive='true'] {
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Next-season roster
+   ========================================================================== */
+
+.offseason-position-balance {
+  font-family: var(--font-score);
+  font-size: 1.1rem;
+  color: var(--ink-1);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.next-season-roster-table__status {
+  font-size: 0.76rem;
+  color: var(--ink-1);
+}
+
+[data-status='incoming'] .next-season-roster-table__status {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   Begin Season footer
+   ========================================================================== */
+
+.offseason-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--space-3);
+}
+
+.offseason-footer__action {
+  font-size: 0.95rem;
+  padding: 0.85rem 1.8rem;
+}
+
+/* ==========================================================================
+   Responsive
+   ========================================================================== */
+
+@media (max-width: 560px) {
+  .offseason-header {
+    align-items: flex-start;
+  }
+
+  .offseason-position-balance {
+    white-space: normal;
+  }
+
+  .offseason-footer {
+    justify-content: stretch;
+  }
+
+  .offseason-footer__action {
+    width: 100%;
+    text-align: center;
+  }
+}

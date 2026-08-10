@@ -1644,6 +1644,13 @@ p {
   margin-top: var(--space-5);
 }
 
+/* A quieter secondary handoff panel — used below a hero result banner so it
+   never competes with that result (e.g. the tournament-complete handoff). */
+.season-complete-panel--secondary {
+  border-color: var(--line-strong);
+  padding: var(--space-5);
+}
+
 .standings-conference-tabs {
   margin-bottom: var(--space-3);
 }
