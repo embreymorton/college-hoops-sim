@@ -177,6 +177,7 @@ export function deriveProgramRecruitingBoard(
     availableOfferSlotsByPosition: deriveAvailableOfferSlotsByPosition(recruiting, program),
     targets: program.board.map((target) => ({
       ...target,
+      isFocused: target.isFocused ?? false,
       status: deriveTargetStatus(recruiting, programId, target.playerId),
       relationshipProgress: recruiting.relationshipProgressByPlayerId[target.playerId]?.[programId] ?? 0,
       standingRank: standingByPlayer.get(target.playerId)!,

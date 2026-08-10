@@ -74,7 +74,7 @@ describe('Dynasty section navigation', () => {
 })
 
 describe('Recruiting board actions', () => {
-  it('adds a National Class Recruit to the board at the default priority', () => {
+  it('adds a National Class Recruit to the board without automatically focusing them', () => {
     const dynasty = seedRecruitingSession()
     const program = dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!
     // The default board already fills all 10 slots on initialization; make room first.
@@ -97,7 +97,7 @@ describe('Recruiting board actions', () => {
       useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!
     const added = nextProgram.board.find((target) => target.playerId === addable.player.id)
     expect(added).toBeDefined()
-    expect(added!.priority).toBe(3)
+    expect(added!.isFocused).toBe(false)
     expect(useDynastyStore.getState().recruitingActionError).toBeNull()
   })
 
@@ -123,19 +123,17 @@ describe('Recruiting board actions', () => {
     expect(board.some((target) => target.playerId === targetId)).toBe(false)
   })
 
-  it('updates a board target priority through the canonical API', () => {
+  it('updates a board target focus through the canonical API', () => {
     const dynasty = seedRecruitingSession()
     const target = dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board[0]!
-    const nextPriority = target.priority === 5 ? 4 : target.priority + 1
-
-    useDynastyStore.getState().setRecruitingPriority(target.playerId, nextPriority)
+    useDynastyStore.getState().setRecruitingFocus(target.playerId, true)
 
     const updated = useDynastyStore
       .getState()
       .dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board.find(
         (candidate) => candidate.playerId === target.playerId,
       )
-    expect(updated!.priority).toBe(nextPriority)
+    expect(updated!.isFocused).toBe(true)
   })
 
   it('offers and then withdraws a board target through the canonical API', () => {

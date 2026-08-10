@@ -3,7 +3,7 @@ import { UNIVERSE_V0 } from '../../universe'
 import {
   addRecruitingBoardTarget,
   removeRecruitingBoardTarget,
-  updateRecruitingBoardPriority,
+  setRecruitingFocus,
 } from './boards'
 import { RECRUITING_BOARD_LIMIT } from './constants'
 import {
@@ -25,8 +25,7 @@ describe('Program recruiting boards', () => {
       expect(program.board.length).toBeLessThanOrEqual(RECRUITING_BOARD_LIMIT)
       expect(new Set(program.board.map(({ playerId }) => playerId)).size).toBe(program.board.length)
       for (const target of program.board) {
-        expect(target.priority).toBeGreaterThanOrEqual(1)
-        expect(target.priority).toBeLessThanOrEqual(5)
+        expect(target.isFocused).toBeTypeOf('boolean')
         const recruit = getRecruit(recruiting, target.playerId)!
         expect(program.projectedOpeningsByPosition[recruit.player.position]).toBeGreaterThan(0)
       }
@@ -51,7 +50,7 @@ describe('Program recruiting boards', () => {
     )).toBe(false)
   })
 
-  it('supports controlled add/remove/priority edits and retains relationship progress', () => {
+  it('supports controlled add/remove/focus edits and retains relationship progress', () => {
     let dynasty = createRecruitingDynasty('board-editing')
     dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
     dynasty = resolveRecruitingPeriod(dynasty, 1)
@@ -60,25 +59,24 @@ describe('Program recruiting boards', () => {
     const progress = dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId]!
     dynasty = removeRecruitingBoardTarget({ dynasty, playerId: removed.playerId })
     expect(dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId]).toBe(progress)
-    dynasty = addRecruitingBoardTarget({ dynasty, playerId: removed.playerId, priority: 2 })
-    dynasty = updateRecruitingBoardPriority({ dynasty, playerId: removed.playerId, priority: 5 })
+    dynasty = addRecruitingBoardTarget({ dynasty, playerId: removed.playerId })
+    dynasty = setRecruitingFocus({ dynasty, playerId: removed.playerId, isFocused: true })
     expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
-      .find(({ playerId }) => playerId === removed.playerId)?.priority).toBe(5)
+      .find(({ playerId }) => playerId === removed.playerId)?.isFocused).toBe(true)
   })
 
-  it('validates board bounds, duplicates, priorities, commitments, and position eligibility', () => {
+  it('validates board bounds, duplicates, focus, commitments, and position eligibility', () => {
     let dynasty = createRecruitingDynasty('board-validation')
     const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
     const existing = program.board[0]!
-    expect(() => addRecruitingBoardTarget({ dynasty, playerId: existing.playerId, priority: 3 })).toThrow(/already/)
-    expect(() => updateRecruitingBoardPriority({ dynasty, playerId: existing.playerId, priority: 6 })).toThrow(/priority/)
+    expect(() => addRecruitingBoardTarget({ dynasty, playerId: existing.playerId })).toThrow(/already/)
 
     const unnecessary = dynasty.recruiting!.recruits.find(({ player }) =>
       program.projectedOpeningsByPosition[player.position] === 0,
     )
     if (unnecessary) {
       dynasty = removeRecruitingBoardTarget({ dynasty, playerId: program.board.at(-1)!.playerId })
-      expect(() => addRecruitingBoardTarget({ dynasty, playerId: unnecessary.player.id, priority: 3 })).toThrow(/position/)
+      expect(() => addRecruitingBoardTarget({ dynasty, playerId: unnecessary.player.id })).toThrow(/position/)
     }
 
     const committedId = dynasty.recruiting!.recruits.find(({ player }) =>
@@ -93,7 +91,23 @@ describe('Program recruiting boards', () => {
         },
       },
     }
-    expect(() => addRecruitingBoardTarget({ dynasty, playerId: committedId, priority: 3 })).toThrow(/committed/)
+    expect(() => addRecruitingBoardTarget({ dynasty, playerId: committedId })).toThrow(/committed/)
+  })
+
+  it('enforces at most three active focus targets without coupling focus to offers', () => {
+    let dynasty = createRecruitingDynasty('focus-limit')
+    const targetIds = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+      .slice(0, 4).map(({ playerId }) => playerId)
+    for (const playerId of targetIds.slice(0, 3)) {
+      dynasty = setRecruitingFocus({ dynasty, playerId, isFocused: true })
+    }
+    expect(() => setRecruitingFocus({ dynasty, playerId: targetIds[3]!, isFocused: true }))
+      .toThrow(/focus cannot exceed 3/i)
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+      .filter(({ isFocused }) => isFocused)).toHaveLength(3)
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+      .filter(({ isFocused }) => isFocused).every(({ hasActiveOffer }) => !hasActiveOffer || hasActiveOffer))
+      .toBe(true)
   })
 
   it('derives statuses and never exceeds positional commitment capacity', () => {

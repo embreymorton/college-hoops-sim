@@ -1,8 +1,6 @@
 import { calculateOverall } from '../engine'
 import {
   getRecruit,
-  MAX_RECRUITING_PRIORITY,
-  MIN_RECRUITING_PRIORITY,
   type ProgramRecruitingBoard,
   type RecruitingState,
 } from '../dynasty'
@@ -18,49 +16,37 @@ interface RecruitingBoardTableProps {
   readonly board: ProgramRecruitingBoard
   readonly recruiting: RecruitingState
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
-  readonly onSetPriority: (playerId: string, priority: number) => void
+  readonly onSetFocus: (playerId: string, isFocused: boolean) => void
   readonly onOffer: (playerId: string) => void
   readonly onWithdraw: (playerId: string) => void
   readonly onRemove: (playerId: string) => void
 }
 
-interface PriorityStepperProps {
-  readonly value: number
+interface FocusToggleProps {
+  readonly isFocused: boolean
   readonly disabled: boolean
   readonly label: string
-  readonly onChange: (nextValue: number) => void
+  readonly onChange: (nextValue: boolean) => void
 }
 
-function PriorityStepper({ value, disabled, label, onChange }: PriorityStepperProps) {
+function FocusToggle({ isFocused, disabled, label, onChange }: FocusToggleProps) {
   return (
-    <div className="minute-stepper recruiting-priority-stepper">
+    <div className="recruiting-focus-toggle">
       <button
         type="button"
-        className="minute-stepper__button"
-        onClick={() => onChange(value - 1)}
-        disabled={disabled || value <= MIN_RECRUITING_PRIORITY}
-        aria-label={`Decrease ${label} priority`}
+        className="button button--ghost recruiting-action-button"
+        onClick={() => onChange(!isFocused)}
+        disabled={disabled}
+        aria-label={`${isFocused ? 'Unfocus' : 'Focus'} ${label}`}
       >
-        <span aria-hidden="true">−</span>
-      </button>
-      <span className="minute-stepper__input recruiting-priority-stepper__value" aria-label={`${label} priority`}>
-        {value}
-      </span>
-      <button
-        type="button"
-        className="minute-stepper__button"
-        onClick={() => onChange(value + 1)}
-        disabled={disabled || value >= MAX_RECRUITING_PRIORITY}
-        aria-label={`Increase ${label} priority`}
-      >
-        <span aria-hidden="true">+</span>
+        {isFocused ? '★ Focused' : '☆ Focus'}
       </button>
     </div>
   )
 }
 
 /**
- * The controlled Program's board: priority, active-offer, and commitment
+ * The controlled Program's board: focus, active-offer, and commitment
  * status per target. Callers must not render this with an empty board — use
  * `RecruitingBoardEmptyState` instead, since the two empty variants need
  * different copy the table itself doesn't have enough context to choose.
@@ -69,13 +55,13 @@ export function RecruitingBoardTable({
   board,
   recruiting,
   programsById,
-  onSetPriority,
+  onSetFocus,
   onOffer,
   onWithdraw,
   onRemove,
 }: RecruitingBoardTableProps) {
   // Strictly by National Rank — a fixed identity order, so changing a
-  // Recruit's priority never moves their row.
+  // Recruit focus never moves their row.
   const rows = board.targets
     .map((target) => ({ target, recruit: getRecruit(recruiting, target.playerId)! }))
     .sort((first, second) => first.recruit.nationalRank - second.recruit.nationalRank)
@@ -92,7 +78,7 @@ export function RecruitingBoardTable({
             <th scope="col">Ovr</th>
             <th scope="col">Pot</th>
             <th scope="col">Standing</th>
-            <th scope="col">Priority</th>
+            <th scope="col">Focus</th>
             <th scope="col">Status</th>
             <th scope="col">Action</th>
           </tr>
@@ -124,11 +110,11 @@ export function RecruitingBoardTable({
                 <td>{recruit.player.potential}</td>
                 <td>{formatRankLabel(target.standingRank)}</td>
                 <td>
-                  <PriorityStepper
-                    value={target.priority}
+                  <FocusToggle
+                    isFocused={target.isFocused}
                     disabled={!isActive}
                     label={`${recruit.player.firstName} ${recruit.player.lastName}`}
-                    onChange={(next) => onSetPriority(target.playerId, next)}
+                    onChange={(next) => onSetFocus(target.playerId, next)}
                   />
                 </td>
                 <td className="recruiting-status-cell">

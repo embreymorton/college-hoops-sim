@@ -162,8 +162,8 @@ describe('Late Recruiting and finalization', () => {
       phase: 'late',
       recruits: [recruit, fallback],
       programs: {
-        [programA!]: { programId: programA!, projectedOpeningsByPosition: openings, board: [{ playerId: recruit.player.id, priority: 5, hasActiveOffer: true }] },
-        [programB!]: { programId: programB!, projectedOpeningsByPosition: openings, board: [{ playerId: recruit.player.id, priority: 5, hasActiveOffer: true }] },
+        [programA!]: { programId: programA!, projectedOpeningsByPosition: openings, board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }] },
+        [programB!]: { programId: programB!, projectedOpeningsByPosition: openings, board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }] },
       },
       relationshipProgressByPlayerId: {
         [recruit.player.id]: { [programA!]: 200, [programB!]: 0 },
@@ -220,7 +220,7 @@ describe('Late Recruiting and finalization', () => {
         [programB!]: {
           programId: programB!,
           projectedOpeningsByPosition: openings,
-          board: [{ playerId: premium.player.id, priority: 5, hasActiveOffer: true }],
+          board: [{ playerId: premium.player.id, isFocused: true, hasActiveOffer: true }],
         },
       },
       relationshipProgressByPlayerId: {
@@ -256,7 +256,7 @@ describe('Late Recruiting and finalization', () => {
         [programId]: {
           programId,
           projectedOpeningsByPosition: openings,
-          board: [{ playerId: lower.player.id, priority: 5, hasActiveOffer: true }],
+          board: [{ playerId: lower.player.id, isFocused: true, hasActiveOffer: true }],
         },
       },
       relationshipProgressByPlayerId: {
@@ -297,7 +297,7 @@ describe('Late Recruiting and finalization', () => {
         [programId]: {
           programId,
           projectedOpeningsByPosition: openings,
-          board: [{ playerId: lower.player.id, priority: 5, hasActiveOffer: true }],
+          board: [{ playerId: lower.player.id, isFocused: true, hasActiveOffer: true }],
         },
       },
       relationshipProgressByPlayerId: {},

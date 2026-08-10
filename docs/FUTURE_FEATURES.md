@@ -6,7 +6,7 @@ Inclusion does not mean commitment, priority, or an implementation date. An idea
 
 ## Recruiting boundary
 
-In-season Recruiting V0—including national-class generation, rankings/stars, boards, priorities, Active Offers, round-based advancement, commitments, AI Recruiting, Late Recruiting, and finalized incoming classes—is implemented and accepted in Roadmap Phase 5B. Phase 5C is also complete: committed Recruits enroll, next-season rosters are assembled, and the pure backend lifecycle initializes the next Season and Recruiting cycle. Recruiting UI, Dynasty rollover presentation, historical browsing, and persistence remain separate future product work. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` / `SIMULATION.md` for accepted behavior.
+In-season Recruiting V0—including national-class generation, rankings/stars, boards, capped Focus, Active Offers, round-based advancement, commitments, AI Recruiting, Late Recruiting, and finalized incoming classes—is implemented and accepted in Roadmap Phase 5B. Phase 5C is also complete: committed Recruits enroll, next-season rosters are assembled, and the pure backend lifecycle initializes the next Season and Recruiting cycle. Recruiting UI, Dynasty rollover presentation, historical browsing, and persistence remain separate future product work. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` / `SIMULATION.md` for accepted behavior.
 
 ### Recruiting depth — future and non-blocking
 

@@ -11,7 +11,7 @@ import {
   RecruitingNeedsLedger,
   type RecruitingMode,
 } from '../components'
-import { deriveProgramRecruitingBoard, RECRUITING_BOARD_LIMIT } from '../dynasty'
+import { deriveProgramRecruitingBoard, RECRUITING_BOARD_LIMIT, RECRUITING_FOCUS_LIMIT } from '../dynasty'
 import {
   selectActivePostseason,
   useDynastyStore,
@@ -44,7 +44,7 @@ export function RecruitingScreen() {
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const addRecruitingTarget = useDynastyStore((state) => state.addRecruitingTarget)
   const removeRecruitingTarget = useDynastyStore((state) => state.removeRecruitingTarget)
-  const setRecruitingPriority = useDynastyStore((state) => state.setRecruitingPriority)
+  const setRecruitingFocus = useDynastyStore((state) => state.setRecruitingFocus)
   const offerRecruitingTarget = useDynastyStore((state) => state.offerRecruitingTarget)
   const withdrawRecruitingOffer = useDynastyStore((state) => state.withdrawRecruitingOffer)
   const generateControlledDraftBoard = useDynastyStore(
@@ -100,6 +100,7 @@ export function RecruitingScreen() {
   }
 
   const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+  const focusCount = board.targets.filter(({ isFocused, status }) => isFocused && status === 'active').length
   const totals = deriveRecruitingHubTotals(board)
   const showZeroOfferWarning =
     board.targets.length > 0 && totals.remainingTotal > 0 && totals.offersTotal === 0
@@ -121,6 +122,8 @@ export function RecruitingScreen() {
         targetSeasonNumber={dynasty.recruiting.targetSeasonNumber}
         phase={dynasty.recruiting.phase}
         lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
+        focusCount={focusCount}
+        focusLimit={RECRUITING_FOCUS_LIMIT}
       />
 
       {isLate && (
@@ -172,9 +175,8 @@ export function RecruitingScreen() {
         </h2>
         <RecruitingNeedsLedger board={board} />
         <p className="section-hint">
-          Higher priority means a larger share of your recruiting attention each period.
-          Board targets receive recruiting attention; an active offer reserves a positional
-          signing slot if the Recruit commits.
+          Board targets receive normal recruiting effort. Focus up to {RECRUITING_FOCUS_LIMIT}{' '}
+          recruits to give them extra attention. Only recruits with an active offer can commit.
         </p>
         {showZeroOfferWarning && (
           <p className="recruiting-warning" role="status">
@@ -219,7 +221,7 @@ export function RecruitingScreen() {
               board={board}
               recruiting={dynasty.recruiting}
               programsById={PROGRAMS_BY_ID}
-              onSetPriority={setRecruitingPriority}
+              onSetFocus={setRecruitingFocus}
               onOffer={offerRecruitingTarget}
               onWithdraw={withdrawRecruitingOffer}
               onRemove={removeRecruitingTarget}

@@ -293,7 +293,7 @@ Phase 5A intentionally stops at partial offseason rosters. Phase 5C consumes tho
 
 - One deterministic national Recruiting Class targeting Season N+1, with national/position rankings and 2–5-star classifications
 - Strict projected positional needs, boards of up to 10 targets, persistent priorities from 1–5, and capacity-limited Active Offers
-- Normalized relationship progression, quality-dependent decision timing, final commitments, and autonomous AI Recruiting
+- Fixed Board baseline effort plus capped Focus bonuses, quality-dependent decision timing, final commitments, and autonomous AI Recruiting
 - Recruiting periods 1–24 synchronized to regular-season completion and periods 25–28 synchronized to Postseason completion
 - Canonical period-by-period Super Sim equivalence, including offer invalidation and controlled-Program backup promotion from the existing board
 - Distinct Late Recruiting and deterministic finalization using the original class, producing a complete `CompletedRecruitingClass`
@@ -325,7 +325,7 @@ Recruit generation, Recruiting calibration, Player Development, roster rollover,
 ## Phase 6 — Dynasty Application Loop — COMPLETE
 
 - **6A — Dynasty Application State Integration:** Zustand adopts one canonical `DynastyState` for Season, Postseason, Recruiting, and session navigation.
-- **6B — Recruiting Management UI:** Board/National Class, positional needs, priorities, and Active Offers are playable.
+- **6B — Recruiting Management UI:** Board/National Class, positional needs, Focus, and Active Offers are playable.
 - **6B.1 — Recruiting Setup Workflow:** the controlled Program can begin with an empty board while AI plans remain autonomous; first-period progression is guarded until the user chooses a plan.
 - **6B.2 — Recruiting Onboarding + Hub Polish:** clear preseason onboarding and Season/Tournament Recruiting entry points.
 - **Unique interactive Dynasty seed:** each normal new Dynasty receives a unique stored seed while explicit-seed development, tests, and calibration remain deterministic.

@@ -5,7 +5,6 @@ import {
 } from './boards'
 import {
   FINAL_RECRUITING_PERIOD,
-  MAX_RECRUITING_PRIORITY,
   RECRUITING_BOARD_LIMIT,
 } from './constants'
 import type {
@@ -85,7 +84,7 @@ function addTarget(
       }))
       .sort((first, second) =>
         Number(first.status === 'active') - Number(second.status === 'active') ||
-        first.target.priority - second.target.priority ||
+        Number(first.target.isFocused) - Number(second.target.isFocused) ||
         first.standing - second.standing ||
         second.rank - first.rank ||
         second.target.playerId.localeCompare(first.target.playerId),
@@ -99,7 +98,7 @@ function addTarget(
     ...program,
     board: [...board, {
       playerId,
-      priority: MAX_RECRUITING_PRIORITY,
+      isFocused: false,
       hasActiveOffer: false,
     }],
   }
@@ -129,7 +128,7 @@ function boardCandidates(
       ),
     }))
     .sort((first, second) =>
-      second.target.priority - first.target.priority ||
+      Number(second.target.isFocused) - Number(first.target.isFocused) ||
       second.standing - first.standing ||
       first.recruit.nationalRank - second.recruit.nationalRank ||
       first.target.playerId.localeCompare(second.target.playerId),

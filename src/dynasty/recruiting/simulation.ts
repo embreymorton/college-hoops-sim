@@ -14,7 +14,8 @@ import {
 import {
   MIN_MEANINGFUL_RELATIONSHIP,
   FINAL_RECRUITING_PERIOD,
-  RECRUITING_EFFORT_PER_PERIOD,
+  RECRUITING_BOARD_BASE_EFFORT,
+  RECRUITING_FOCUS_BONUS_EFFORT,
   REGULAR_SEASON_RECRUITING_PERIODS,
 } from './constants'
 import type {
@@ -51,13 +52,12 @@ function applyPeriodEffort(recruiting: RecruitingState): RecruitingState {
   for (const programId of Object.keys(recruiting.programs).sort()) {
     const program = recruiting.programs[programId]!
     const targets = activeTargets(recruiting, program)
-    const totalPriority = targets.reduce((sum, target) => sum + target.priority, 0)
-    if (totalPriority === 0) continue
     for (const target of targets) {
       const playerRelationships = relationships[target.playerId] ?? {}
       playerRelationships[programId] = Number(
         ((playerRelationships[programId] ?? 0) +
-          RECRUITING_EFFORT_PER_PERIOD * target.priority / totalPriority).toFixed(4),
+          RECRUITING_BOARD_BASE_EFFORT +
+          (target.isFocused ? RECRUITING_FOCUS_BONUS_EFFORT : 0)).toFixed(4),
       )
       relationships[target.playerId] = playerRelationships
     }
@@ -283,16 +283,20 @@ export function syncRecruitingThroughCompletedPostseasonRounds(
   return current
 }
 
-export function deriveProgramActiveEffortShares(
+/** Absolute per-period effort by active target; never normalized by board size. */
+export function deriveProgramActiveEffort(
   recruiting: RecruitingState,
   programId: string,
 ): Readonly<Record<string, number>> {
   const program = recruiting.programs[programId]
   if (!program) throw new RangeError(`Unknown Recruiting Program "${programId}".`)
   const targets = activeTargets(recruiting, program)
-  const totalPriority = targets.reduce((sum, target) => sum + target.priority, 0)
   return Object.fromEntries(
-    targets.map((target) => [target.playerId, target.priority / totalPriority]),
+    targets.map((target) => [
+      target.playerId,
+      RECRUITING_BOARD_BASE_EFFORT +
+        (target.isFocused ? RECRUITING_FOCUS_BONUS_EFFORT : 0),
+    ]),
   )
 }
 

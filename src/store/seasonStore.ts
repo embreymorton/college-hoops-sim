@@ -13,7 +13,7 @@ import {
   removeRecruitingBoardTarget,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
-  updateRecruitingBoardPriority,
+  setRecruitingFocus,
   withdrawRecruitOffer,
   rolloverDynastyToNextSeason,
   type DynastyState,
@@ -97,15 +97,6 @@ function postseasonSimulationSeed(
  * generic `simulatePendingGamesThroughRound` operation accepts any round.
  */
 export const MIDSEASON_ROUND = 12
-
-/**
- * Priority assigned when the controlled Program manually adds a National
- * Class Recruit to its board. The accepted board API requires an explicit
- * priority with no built-in default; this mirrors the mid-tier value the
- * same 1–5 scale already uses elsewhere (e.g. the AI's own default-board
- * priority table centers on 3) rather than inventing a new convention.
- */
-export const DEFAULT_ADDED_TARGET_PRIORITY = 3
 
 export type SuperSimKind = 'midseason' | 'endOfRegularSeason'
 
@@ -303,14 +294,14 @@ export interface DynastySessionState {
   goToRecruiting(): void
   /**
    * Adds a National Class Recruit to the controlled Program's board at the
-   * default priority. No-op with a surfaced error if the canonical board API
+   * normal Board status. No-op with a surfaced error if the canonical board API
    * rejects it (e.g. already committed, board full, no projected opening).
    */
   addRecruitingTarget(playerId: string): void
   /** Removes a target from the controlled Program's board. */
   removeRecruitingTarget(playerId: string): void
-  /** Updates one board target's 1–5 priority via the canonical Recruiting API. */
-  setRecruitingPriority(playerId: string, priority: number): void
+  /** Focuses or unfocuses one board target through the canonical Recruiting API. */
+  setRecruitingFocus(playerId: string, isFocused: boolean): void
   /** Places a controlled-Program offer on a board target. */
   offerRecruitingTarget(playerId: string): void
   /** Withdraws the controlled Program's active offer on a board target. */
@@ -1150,7 +1141,6 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextDynasty = addRecruitingBoardTarget({
         dynasty,
         playerId,
-        priority: DEFAULT_ADDED_TARGET_PRIORITY,
       })
       set({ dynasty: nextDynasty, recruitingActionError: null })
     } catch (error) {
@@ -1179,7 +1169,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
   },
 
-  setRecruitingPriority(playerId, priority) {
+  setRecruitingFocus(playerId, isFocused) {
     const { dynasty } = get()
 
     if (!dynasty?.recruiting) {
@@ -1187,12 +1177,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
 
     try {
-      const nextDynasty = updateRecruitingBoardPriority({ dynasty, playerId, priority })
+      const nextDynasty = setRecruitingFocus({ dynasty, playerId, isFocused })
       set({ dynasty: nextDynasty, recruitingActionError: null })
     } catch (error) {
       set({
         recruitingActionError:
-          error instanceof Error ? error.message : 'Could not update that priority.',
+          error instanceof Error ? error.message : 'Could not update that focus target.',
       })
     }
   },

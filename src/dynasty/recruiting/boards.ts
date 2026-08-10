@@ -1,10 +1,9 @@
 import type { Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import {
-  MAX_RECRUITING_PRIORITY,
   FINAL_RECRUITING_PERIOD,
-  MIN_RECRUITING_PRIORITY,
   RECRUITING_BOARD_LIMIT,
+  RECRUITING_FOCUS_LIMIT,
 } from './constants'
 import type {
   AddRecruitingBoardTargetOptions,
@@ -12,7 +11,7 @@ import type {
   RecruitingProgramState,
   RecruitingState,
   RemoveRecruitingBoardTargetOptions,
-  UpdateRecruitingBoardPriorityOptions,
+  UpdateRecruitingFocusOptions,
   UpdateRecruitingOfferOptions,
 } from './domain'
 import {
@@ -22,20 +21,6 @@ import {
   deriveTargetStatus,
   getRecruit,
 } from './queries'
-
-const DEFAULT_PRIORITIES = [5, 4, 3, 3, 2, 2, 1, 1, 1, 1] as const
-
-function assertPriority(priority: number): void {
-  if (
-    !Number.isInteger(priority) ||
-    priority < MIN_RECRUITING_PRIORITY ||
-    priority > MAX_RECRUITING_PRIORITY
-  ) {
-    throw new RangeError(
-      `Recruiting priority must be an integer from ${MIN_RECRUITING_PRIORITY} through ${MAX_RECRUITING_PRIORITY}.`,
-    )
-  }
-}
 
 function withProgramBoard(
   dynasty: DynastyState,
@@ -65,9 +50,7 @@ function controlledProgram(dynasty: DynastyState): RecruitingProgramState {
 export function addRecruitingBoardTarget({
   dynasty,
   playerId,
-  priority,
 }: AddRecruitingBoardTargetOptions): DynastyState {
-  assertPriority(priority)
   const program = controlledProgram(dynasty)
   const recruiting = dynasty.recruiting!
   const recruit = getRecruit(recruiting, playerId)
@@ -89,11 +72,11 @@ export function addRecruitingBoardTarget({
   }
   return withProgramBoard(dynasty, program.programId, [
     ...program.board,
-    { playerId, priority, hasActiveOffer: false },
+    { playerId, isFocused: false, hasActiveOffer: false },
   ])
 }
 
-/** Places one controlled-Program offer without changing priority or relationships. */
+/** Places one controlled-Program offer without changing focus or relationships. */
 export function offerRecruit({
   dynasty,
   playerId,
@@ -147,21 +130,31 @@ export function removeRecruitingBoardTarget({
   )
 }
 
-export function updateRecruitingBoardPriority({
+export function setRecruitingFocus({
   dynasty,
   playerId,
-  priority,
-}: UpdateRecruitingBoardPriorityOptions): DynastyState {
-  assertPriority(priority)
+  isFocused,
+}: UpdateRecruitingFocusOptions): DynastyState {
   const program = controlledProgram(dynasty)
-  if (!program.board.some((target) => target.playerId === playerId)) {
+  const target = program.board.find((entry) => entry.playerId === playerId)
+  if (!target) {
     throw new RangeError('Recruit is not on the controlled Program board.')
+  }
+  const recruiting = dynasty.recruiting!
+  if (isFocused && deriveTargetStatus(recruiting, program.programId, playerId) !== 'active') {
+    throw new RangeError('Only active board recruits can be focused.')
+  }
+  if (
+    isFocused && !target.isFocused &&
+    program.board.filter((entry) => entry.isFocused && deriveTargetStatus(recruiting, program.programId, entry.playerId) === 'active').length >= RECRUITING_FOCUS_LIMIT
+  ) {
+    throw new RangeError(`Recruiting focus cannot exceed ${RECRUITING_FOCUS_LIMIT} active targets.`)
   }
   return withProgramBoard(
     dynasty,
     program.programId,
     program.board.map((target) =>
-      target.playerId === playerId ? { ...target, priority } : target,
+      target.playerId === playerId ? { ...target, isFocused } : target,
     ),
   )
 }
@@ -197,7 +190,7 @@ function positionCandidates(
     )
     .map(({ recruit }, index) => ({
       playerId: recruit.player.id,
-      priority: DEFAULT_PRIORITIES[Math.min(index, DEFAULT_PRIORITIES.length - 1)]!,
+      isFocused: index < RECRUITING_FOCUS_LIMIT,
       hasActiveOffer: false,
     }))
 }
@@ -265,7 +258,7 @@ function addPremiumDiscoveryTarget(
       recruit,
       target: {
         playerId: recruit.player.id,
-        priority: 2,
+        isFocused: false,
         hasActiveOffer: false,
       } satisfies RecruitingBoardTarget,
     }))
@@ -357,13 +350,15 @@ export function cleanupInvalidRecruitingOffers(
     const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
     const retainedByPosition: Partial<Record<Position, number>> = {}
     const board = program.board.map((target) => {
-      if (!target.hasActiveOffer) return target
+      const isActive = deriveTargetStatus(recruiting, programId, target.playerId) === 'active'
+      if (!target.hasActiveOffer && (!target.isFocused || isActive)) return target
       const recruit = getRecruit(recruiting, target.playerId)
       if (
         !recruit ||
         recruiting.commitmentsByPlayerId[target.playerId] ||
-        deriveTargetStatus(recruiting, programId, target.playerId) !== 'active'
-      ) return { ...target, hasActiveOffer: false }
+        !isActive
+      ) return { ...target, hasActiveOffer: false, isFocused: false }
+      if (!target.hasActiveOffer) return target
       const position = recruit.player.position
       const retained = retainedByPosition[position] ?? 0
       if (retained >= remaining[position]) return { ...target, hasActiveOffer: false }
@@ -472,7 +467,7 @@ export function promoteControlledRecruitingBackups(
         (after.relationshipProgressByPlayerId[target.playerId]?.[programId] ?? 0)
       return { target, recruit, standing }
     }).sort((first, second) =>
-      second.target.priority - first.target.priority ||
+      Number(second.target.isFocused) - Number(first.target.isFocused) ||
       second.standing - first.standing ||
       first.recruit.nationalRank - second.recruit.nationalRank ||
       first.target.playerId.localeCompare(second.target.playerId),
@@ -534,14 +529,21 @@ export function buildDefaultRecruitingBoard(
       ) continue
       const target = queues[position].shift()
       if (!target) continue
-      board.push({ ...target, priority: DEFAULT_PRIORITIES[board.length]! })
+      board.push(target)
       selected.add(target.playerId)
       addedByPosition[position] += 1
       added = true
     }
     if (!added) break
   }
-  return board
+  const focused = board.filter(({ isFocused }) => isFocused).slice(0, RECRUITING_FOCUS_LIMIT)
+  const focusedIds = new Set(focused.map(({ playerId }) => playerId))
+  return board.map((target, index) => ({
+    ...target,
+    // Existing user focus is retained; a generated plan focuses its first three
+    // deterministic recommended targets and never normalizes unused slots.
+    isFocused: focusedIds.has(target.playerId) || (existingBoard.length === 0 && index < RECRUITING_FOCUS_LIMIT),
+  }))
 }
 
 export function refreshAiRecruitingBoards(
@@ -573,6 +575,21 @@ export function refreshAiRecruitingBoards(
       { ...cleaned, programs },
       programId,
     )
+    const focusIds = new Set(
+      [...programs[programId]!.board]
+        .filter((target) => deriveTargetStatus({ ...cleaned, programs }, programId, target.playerId) === 'active')
+        .sort((first, second) =>
+          Number(second.hasActiveOffer) - Number(first.hasActiveOffer) ||
+          offerUtility(context, { ...cleaned, programs }, programId, second) - offerUtility(context, { ...cleaned, programs }, programId, first) ||
+          first.playerId.localeCompare(second.playerId),
+        )
+        .slice(0, RECRUITING_FOCUS_LIMIT)
+        .map(({ playerId }) => playerId),
+    )
+    programs[programId] = {
+      ...programs[programId]!,
+      board: programs[programId]!.board.map((target) => ({ ...target, isFocused: focusIds.has(target.playerId) })),
+    }
   }
   return { ...cleaned, programs }
 }

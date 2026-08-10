@@ -83,6 +83,10 @@ interface StructuralHealth {
   fallbackMatcherUses: number
   unsignedFiveStarsWithCompatibleCapacity: number
   unsignedFourStarsWithCompatibleCapacity: number
+  invalidFocusStates: number
+  focusLimitViolations: number
+  focusedRecruitNotOnBoard: number
+  duplicateCommitments: number
   lifecycleFailures: number
   serializationFailures: number
 }
@@ -142,6 +146,10 @@ function emptyHealth(): StructuralHealth {
     fallbackMatcherUses: 0,
     unsignedFiveStarsWithCompatibleCapacity: 0,
     unsignedFourStarsWithCompatibleCapacity: 0,
+    invalidFocusStates: 0,
+    focusLimitViolations: 0,
+    focusedRecruitNotOnBoard: 0,
+    duplicateCommitments: 0,
     lifecycleFailures: 0,
     serializationFailures: 0,
   }
@@ -199,6 +207,26 @@ function countCompatibleUnsignedPremium(
       deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position] > 0,
     ),
   ).length
+}
+
+/** Tooling-only audit of the persisted Board-based Focus representation. */
+function auditRecruitingFocus(dynasty: DynastyState, health: StructuralHealth): void {
+  const recruiting = dynasty.recruiting!
+  for (const program of Object.values(recruiting.programs)) {
+    const focused = program.board.filter(({ isFocused }) => isFocused)
+    health.focusLimitViolations += Number(focused.length > 3)
+    const boardIds = new Set(program.board.map(({ playerId }) => playerId))
+    health.focusedRecruitNotOnBoard += focused.filter(
+      ({ playerId }) => !boardIds.has(playerId),
+    ).length
+    health.invalidFocusStates += focused.filter(({ playerId }) =>
+      recruiting.commitmentsByPlayerId[playerId] !== undefined,
+    ).length
+  }
+  const commitments = Object.values(recruiting.commitmentsByPlayerId)
+  health.duplicateCommitments += commitments.length - new Set(
+    commitments.map(({ playerId }) => playerId),
+  ).size
 }
 
 export function runDynastyCalibration(
@@ -284,8 +312,10 @@ export function runDynastyCalibration(
       }
 
       dynasty = { ...dynasty, activePostseason: postseason }
+      auditRecruitingFocus(dynasty, health)
       const finalization = autoFinalizeRecruiting(dynasty)
       dynasty = finalization.dynasty
+      auditRecruitingFocus(dynasty, health)
       health.fallbackMatcherUses += Number(finalization.fallbackMatcherUsed)
       health.emergencyRecruits += finalization.emergencyGeneratedRecruits
       health.unsignedFiveStarsWithCompatibleCapacity +=
@@ -619,6 +649,22 @@ function printReport(
   console.log(`Team OVR ↔ win% correlation: ${fixed(correlation(qualityWinPairs), 3)}`)
   console.log(`Average adjacent-season Team OVR correlation: ${fixed(average(adjacentSeasonCorrelations), 3)}`)
 
+  const teamOvrCheckpoints = [1, 5, 10].filter(
+    (seasonNumber) => seasonNumber <= result.seasonsPerSeed,
+  )
+  console.log('\nTEAM OVR BY PRESTIGE BAND\n')
+  console.log(`PRESTIGE  ${teamOvrCheckpoints.map((seasonNumber) => `S${seasonNumber}`).join('      ')}`)
+  for (const band of PRESTIGE_BANDS) {
+    const values = teamOvrCheckpoints.map((seasonNumber) => average(
+      result.runs.flatMap((run) => run.seasons)
+        .filter(({ seasonNumber: current }) => current === seasonNumber)
+        .flatMap(({ teams }) => teams)
+        .filter(({ prestige }) => prestigeBand(prestige) === band)
+        .map(({ overall }) => overall),
+    ))
+    console.log(`${band.padEnd(8)}  ${values.map((value) => fixed(value)).join('  ')}`)
+  }
+
   const lateRecruitingCycles = result.runs.flatMap(({ recruitingCycles }) =>
     recruitingCycles.filter(({ targetSeasonNumber }) =>
       targetSeasonNumber >= lateStart &&
@@ -689,6 +735,10 @@ function printReport(
   console.log(`Fallback matcher uses: ${health.fallbackMatcherUses}`)
   console.log(`Unsigned 5-stars with compatible capacity: ${health.unsignedFiveStarsWithCompatibleCapacity}`)
   console.log(`Unsigned 4-stars with compatible capacity: ${health.unsignedFourStarsWithCompatibleCapacity}`)
+  console.log(`Invalid Focus states: ${health.invalidFocusStates}`)
+  console.log(`Focus count > 3: ${health.focusLimitViolations}`)
+  console.log(`Focused Recruit not on Board: ${health.focusedRecruitNotOnBoard}`)
+  console.log(`Duplicate commitments: ${health.duplicateCommitments}`)
   console.log(`Lifecycle failures: ${health.lifecycleFailures}`)
   console.log(`Serialization failures: ${health.serializationFailures}`)
 
@@ -731,7 +781,7 @@ function positiveIntegerArgument(name: string, fallback: number): number {
   return value
 }
 
-function main(): void {
+export function main(): void {
   const seasonsPerSeed = positiveIntegerArgument('seasons', DEFAULT_SEASONS)
   const seedCount = positiveIntegerArgument('seeds', DEFAULT_SEED_COUNT)
   const seeds = Array.from(

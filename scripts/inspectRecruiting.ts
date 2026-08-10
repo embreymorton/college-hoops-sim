@@ -309,7 +309,7 @@ function runStrategicScenario(
             [favoriteId]: {
               ...favorite,
               projectedOpeningsByPosition: underdogOpenings,
-              board: [{ playerId: recruit.player.id, priority: 5, hasActiveOffer: true }],
+              board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }],
             },
           },
         },
@@ -332,7 +332,7 @@ function runStrategicScenario(
           [favoriteId]: {
             ...favorite,
             projectedOpeningsByPosition: underdogOpenings,
-            board: [{ playerId: recruit.player.id, priority: 5, hasActiveOffer: true }],
+            board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }],
           },
         },
       },
@@ -423,8 +423,8 @@ function printProtectedOfferScenario(complete: SeasonState): void {
           programId,
           projectedOpeningsByPosition: openings,
           board: [
-            { playerId: premium.player.id, priority: 5, hasActiveOffer: true },
-            { playerId: backup.player.id, priority: 5, hasActiveOffer: false },
+            { playerId: premium.player.id, isFocused: true, hasActiveOffer: true },
+            { playerId: backup.player.id, isFocused: true, hasActiveOffer: false },
           ],
         },
         [spectatorId]: {
@@ -485,11 +485,11 @@ function printSuperSimOfferAutomation(complete: SeasonState): void {
   )
   const promotedTarget = backups[0]!
   const adjustedBoard = program.board.map((target) => {
-    if (target.playerId === offered.playerId) return { ...target, priority: 5 }
-    if (target.playerId === promotedTarget.playerId) return { ...target, priority: 4 }
+    if (target.playerId === offered.playerId) return { ...target, isFocused: true }
+    if (target.playerId === promotedTarget.playerId) return { ...target, isFocused: true }
     return getRecruit(fallbackInitial.recruiting!, target.playerId)!.player.position ===
       offeredRecruit.player.position
-      ? { ...target, priority: 2 }
+      ? { ...target, isFocused: false }
       : target
   })
   const otherProgramId = Object.keys(fallbackInitial.recruiting!.programs).sort()
@@ -526,10 +526,10 @@ function printSuperSimOfferAutomation(complete: SeasonState): void {
   const promotedRecruit = getRecruit(fallbackManual.recruiting!, promoted.playerId)!
   console.log('\nCONTROLLED OFFER FALLBACK')
   console.log(`Position openings: ${program.projectedOpeningsByPosition[offeredRecruit.player.position]}`)
-  console.log(`Lost offer: ${offeredRecruit.player.firstName} ${offeredRecruit.player.lastName} — Priority 5`)
-  console.log(`Promoted: ${promotedRecruit.player.firstName} ${promotedRecruit.player.lastName} — Priority ${promoted.priority} — ${promoted.hasActiveOffer ? 'OFFERED' : 'BACKUP'}`)
+  console.log(`Lost offer: ${offeredRecruit.player.firstName} ${offeredRecruit.player.lastName} — FOCUSED`)
+  console.log(`Promoted: ${promotedRecruit.player.firstName} ${promotedRecruit.player.lastName} — ${promoted.isFocused ? 'FOCUSED' : 'BOARD'} — ${promoted.hasActiveOffer ? 'OFFERED' : 'BACKUP'}`)
   console.log(`Relationship preserved: ${(fallbackManual.recruiting!.relationshipProgressByPlayerId[promoted.playerId]?.[programId] ?? 0) > 0 ? 'PASS' : 'FAIL'}`)
-  console.log(`User priorities unchanged: ${adjustedBoard.every((target) => fallbackManual.recruiting!.programs[programId]!.board.find(({ playerId }) => playerId === target.playerId)?.priority === target.priority) ? 'PASS' : 'FAIL'}`)
+  console.log(`User focus unchanged: ${adjustedBoard.every((target) => fallbackManual.recruiting!.programs[programId]!.board.find(({ playerId }) => playerId === target.playerId)?.isFocused === target.isFocused) ? 'PASS' : 'FAIL'}`)
   console.log(`No new target added: ${fallbackManual.recruiting!.programs[programId]!.board.length === adjustedBoard.length ? 'PASS' : 'FAIL'}`)
   console.log(`Offer-loss backup promotion equivalence: ${JSON.stringify(fallbackManual.recruiting) === JSON.stringify(fallbackBatch.recruiting) ? 'PASS' : 'FAIL'}`)
 }
@@ -723,12 +723,12 @@ function printProgram(final: DynastyState, programId: string): void {
     const timing = commitment.timing.kind === 'period' ? `P${commitment.timing.period}` : 'LATE'
     console.log(`  #${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} ${recruit.player.position} (${STAR_LABELS[recruit.stars]}) ${timing}`)
   }
-  console.log('BOARD (RANK / PLAYER / POS / OVR / POT / STARS / STANDING / PRIORITY / OFFER / STATUS)')
+  console.log('BOARD (RANK / PLAYER / POS / OVR / POT / STARS / STANDING / FOCUS / OFFER / STATUS)')
   for (const target of board.targets.slice(0, 10)) {
     const recruit = getRecruit(final.recruiting!, target.playerId)!
     const standing = deriveRecruitProgramStandings(final, target.playerId)
       .find(({ programId: id }) => id === programId)!
-    console.log(`#${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} | ${recruit.player.position} | ${calculateOverall(recruit.player)} | ${recruit.player.potential} | ${STAR_LABELS[recruit.stars]} | ${standing.standing.toFixed(1)} (#${standing.rank}) | ${target.priority} | ${target.hasActiveOffer ? 'OFFERED' : 'BACKUP'} | ${target.status}`)
+    console.log(`#${recruit.nationalRank} ${recruit.player.firstName} ${recruit.player.lastName} | ${recruit.player.position} | ${calculateOverall(recruit.player)} | ${recruit.player.potential} | ${STAR_LABELS[recruit.stars]} | ${standing.standing.toFixed(1)} (#${standing.rank}) | ${target.isFocused ? 'FOCUSED' : 'BOARD'} | ${target.hasActiveOffer ? 'OFFERED' : 'BACKUP'} | ${target.status}`)
   }
 }
 
@@ -788,7 +788,7 @@ function printPostseasonAndFinalization(
     state.recruiting!.programs[programId]!.board.map(({ playerId, hasActiveOffer }) => ({ playerId, hasActiveOffer })),
   )
   const boardFacts = (state: DynastyState) => Object.keys(state.recruiting!.programs).sort().map((programId) =>
-    state.recruiting!.programs[programId]!.board.map(({ playerId, priority }) => ({ playerId, priority })),
+    state.recruiting!.programs[programId]!.board.map(({ playerId, isFocused }) => ({ playerId, isFocused })),
   )
   console.log(`Offers identical: ${JSON.stringify(offerFacts(sequential)) === JSON.stringify(offerFacts(batched)) ? 'PASS' : 'FAIL'}`)
   console.log(`Boards identical: ${JSON.stringify(boardFacts(sequential)) === JSON.stringify(boardFacts(batched)) ? 'PASS' : 'FAIL'}`)

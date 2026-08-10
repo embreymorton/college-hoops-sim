@@ -67,7 +67,7 @@ describe('active recruiting offers', () => {
     }
   })
 
-  it('offers and withdraws only eligible controlled-board targets without changing priority', () => {
+  it('offers and withdraws only eligible controlled-board targets without changing focus', () => {
     let dynasty = createRecruitingDynasty('manual-offers')
     const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
     const offered = program.board.find(({ hasActiveOffer }) => hasActiveOffer)!
@@ -79,11 +79,11 @@ describe('active recruiting offers', () => {
         program,
       )[recruit.player.position] === 0
     })!
-    const offeredPriority = offered.priority
+    const wasFocused = offered.isFocused
     dynasty = withdrawRecruitOffer({ dynasty, playerId: offered.playerId })
     expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
       .find(({ playerId }) => playerId === offered.playerId)).toMatchObject({
-        priority: offeredPriority,
+        isFocused: wasFocused,
         hasActiveOffer: false,
       })
     dynasty = offerRecruit({ dynasty, playerId: backup.playerId })
@@ -167,8 +167,8 @@ describe('active recruiting offers', () => {
       board: [],
     }
     dynasty = setControlledBoard(dynasty, [
-      { playerId: premium.player.id, priority: 5, hasActiveOffer: true },
-      { playerId: backup.player.id, priority: 5, hasActiveOffer: false },
+      { playerId: premium.player.id, isFocused: true, hasActiveOffer: true },
+      { playerId: backup.player.id, isFocused: true, hasActiveOffer: false },
     ], openings)
     dynasty = {
       ...dynasty,
@@ -261,7 +261,7 @@ describe('active recruiting offers', () => {
       playerId: recruits.find(
         (recruit) => recruit.player.position === position && recruit.stars === stars,
       )!.player.id,
-      priority: 3,
+      isFocused: false,
       hasActiveOffer: false,
     }))
     const openings = zeroCounts()
@@ -294,7 +294,7 @@ describe('active recruiting offers', () => {
     expect(select(lowProgramId, realisticId)).toBe(realisticId)
   })
 
-  it('promotes the user-priority backup identically in manual and batched advancement', () => {
+  it('promotes the user-focused backup identically in manual and batched advancement', () => {
     const initial = createRecruitingDynasty('controlled-fallback-equivalence')
     const programId = initial.controlledProgramId
     const position = POSITIONS.find((candidate) =>
@@ -309,9 +309,9 @@ describe('active recruiting offers', () => {
     const otherProgramId = Object.keys(initial.recruiting!.programs).sort()
       .find((id) => id !== programId)!
     const board: RecruitingBoardTarget[] = [
-      { playerId: recruits[0]!.player.id, priority: 5, hasActiveOffer: true },
-      { playerId: recruits[1]!.player.id, priority: 4, hasActiveOffer: false },
-      { playerId: recruits[2]!.player.id, priority: 2, hasActiveOffer: false },
+      { playerId: recruits[0]!.player.id, isFocused: true, hasActiveOffer: true },
+      { playerId: recruits[1]!.player.id, isFocused: true, hasActiveOffer: false },
+      { playerId: recruits[2]!.player.id, isFocused: false, hasActiveOffer: false },
     ]
     const prepared: DynastyState = {
       ...setControlledBoard(initial, board, openings),
@@ -340,9 +340,8 @@ describe('active recruiting offers', () => {
     expect(batched.recruiting).toEqual(manual.recruiting)
     const finalBoard = manual.recruiting!.programs[programId]!.board
     expect(finalBoard.find(({ playerId }) => playerId === recruits[1]!.player.id)?.hasActiveOffer).toBe(true)
-    expect(finalBoard.map(({ playerId, priority }) => ({ playerId, priority }))).toEqual(
-      board.map(({ playerId, priority }) => ({ playerId, priority })),
-    )
+    expect(finalBoard.find(({ playerId }) => playerId === recruits[0]!.player.id)?.isFocused)
+      .toBe(false)
     expect(manual.recruiting!.relationshipProgressByPlayerId[recruits[1]!.player.id]![programId]).toBeGreaterThan(12)
   })
 
@@ -377,8 +376,8 @@ describe('active recruiting offers', () => {
     const openings = zeroCounts()
     openings[recruit.player.position] = 1
     dynasty = setControlledBoard(dynasty, [
-      { playerId: recruit.player.id, priority: 5, hasActiveOffer: true },
-      { playerId: backup.player.id, priority: 4, hasActiveOffer: false },
+      { playerId: recruit.player.id, isFocused: true, hasActiveOffer: true },
+      { playerId: backup.player.id, isFocused: true, hasActiveOffer: false },
     ], openings)
     dynasty = {
       ...dynasty,
@@ -422,7 +421,7 @@ describe('active recruiting offers', () => {
           [programId]: {
             programId,
             projectedOpeningsByPosition: openings,
-            board: [{ playerId: fallback.player.id, priority: 3, hasActiveOffer: true }],
+            board: [{ playerId: fallback.player.id, isFocused: false, hasActiveOffer: true }],
           },
         },
       },
@@ -450,12 +449,12 @@ describe('active recruiting offers', () => {
       [programId]: {
         programId,
         projectedOpeningsByPosition: openings,
-        board: [{ playerId: elite.player.id, priority: 5, hasActiveOffer: true }],
+        board: [{ playerId: elite.player.id, isFocused: true, hasActiveOffer: true }],
       },
       [otherProgramId]: {
         programId: otherProgramId,
         projectedOpeningsByPosition: openings,
-        board: [{ playerId: elite.player.id, priority: 5, hasActiveOffer: true }],
+        board: [{ playerId: elite.player.id, isFocused: true, hasActiveOffer: true }],
       },
     }
     const base = {

@@ -7,9 +7,11 @@ export const POSTSEASON_RECRUITING_PERIODS = 4
 export const FINAL_RECRUITING_PERIOD =
   REGULAR_SEASON_RECRUITING_PERIODS + POSTSEASON_RECRUITING_PERIODS
 export const RECRUITING_BOARD_LIMIT = 10
-export const MIN_RECRUITING_PRIORITY = 1
-export const MAX_RECRUITING_PRIORITY = 5
-export const RECRUITING_EFFORT_PER_PERIOD = 18
+export const RECRUITING_FOCUS_LIMIT = 3
+/** Every active board target receives this non-normalized relationship effort. */
+export const RECRUITING_BOARD_BASE_EFFORT = 3
+/** An active focus target receives this additional, non-normalized effort. */
+export const RECRUITING_FOCUS_BONUS_EFFORT = 3
 export const MIN_MEANINGFUL_RELATIONSHIP = 8
 
 export const RECRUIT_SUPPLY_MULTIPLIER = 1.65

@@ -21,16 +21,16 @@ export {
   offerRecruit,
   promoteControlledRecruitingBackups,
   removeRecruitingBoardTarget,
-  updateRecruitingBoardPriority,
+  setRecruitingFocus,
   withdrawRecruitOffer,
 } from './recruiting/boards'
 export {
   FINAL_RECRUITING_PERIOD,
-  MAX_RECRUITING_PRIORITY,
   MIN_MEANINGFUL_RELATIONSHIP,
-  MIN_RECRUITING_PRIORITY,
   RECRUITING_BOARD_LIMIT,
-  RECRUITING_EFFORT_PER_PERIOD,
+  RECRUITING_BOARD_BASE_EFFORT,
+  RECRUITING_FOCUS_BONUS_EFFORT,
+  RECRUITING_FOCUS_LIMIT,
   POSTSEASON_RECRUITING_PERIODS,
   REGULAR_SEASON_RECRUITING_PERIODS,
 } from './recruiting/constants'
@@ -60,7 +60,7 @@ export {
   getRecruit,
 } from './recruiting/queries'
 export {
-  deriveProgramActiveEffortShares,
+  deriveProgramActiveEffort,
   deriveCommitmentConfidenceThresholds,
   deriveProgramRemainingRecruitingCapacity,
   resolveRecruitingPeriod,
@@ -106,6 +106,6 @@ export type {
   RecruitProgramStanding,
   RecruitStarRating,
   RemoveRecruitingBoardTargetOptions,
-  UpdateRecruitingBoardPriorityOptions,
+  UpdateRecruitingFocusOptions,
   UpdateRecruitingOfferOptions,
 } from './recruiting/domain'

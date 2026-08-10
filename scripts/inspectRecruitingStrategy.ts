@@ -3,6 +3,7 @@ import {
   initializeDynastyState,
   initializeRecruiting,
   offerRecruit,
+  setRecruitingFocus,
   resolveRecruitingPeriod,
   syncRecruitingThroughCompletedPostseasonRounds,
   type DynastyState,
@@ -19,14 +20,13 @@ import { initializeUniverse, UNIVERSE_V0 } from '../src/universe'
 const TRIALS = Number(process.env.TRIALS ?? 50)
 const PROGRAM_IDS = ['pine-valley', 'charlotte-tech', 'northbridge'] as const
 const STRATEGIES = [
-  { label: 'Top 3 P3', targets: 3, priority: 3 },
-  { label: 'Top 3 P5', targets: 3, priority: 5 },
-  { label: 'Top 4 P5', targets: 4, priority: 5 },
-  { label: 'Top 5 P5', targets: 5, priority: 5 },
-  { label: 'Generated board', targets: 0, priority: 0 },
+  { label: 'Top 3 — all focused', targets: 3, focusCount: 3 },
+  { label: 'Top 4 — best 3 focused', targets: 4, focusCount: 3 },
+  { label: 'Top 5 — best 3 focused', targets: 5, focusCount: 3 },
+  { label: 'Generated board', targets: 0, focusCount: 0 },
 ] as const
 
-interface Outcome { targeted: number; signed: number; rank: number; signedRank: number; stars5: number; signed5: number; offers: number; competitors: number; controlledShare: number; aiShare: number }
+interface Outcome { targeted: number; signed: number; rank: number; signedRank: number; stars5: number; signed5: number; offers: number; competitors: number; controlledEffort: number; aiEffort: number }
 
 function avg(values: readonly number[]) { return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0 }
 
@@ -42,14 +42,13 @@ function createDynasty(seed: string, programId: string): DynastyState {
   return initializeRecruiting(initializeDynastyState({ dynastyId: `strategy:${seed}:${programId}`, dynastySeed: seed, controlledProgramId: programId, universe: UNIVERSE_V0, activeSeason: season }))
 }
 
-function boardShare(dynasty: DynastyState, programId: string, playerId: string): number {
+function boardEffort(dynasty: DynastyState, programId: string, playerId: string): number {
   const board = dynasty.recruiting!.programs[programId]!.board
   const target = board.find((entry) => entry.playerId === playerId)
-  const total = board.reduce((sum, entry) => sum + entry.priority, 0)
-  return target && total ? target.priority / total : 0
+  return target ? (target.isFocused ? 6 : 3) : 0
 }
 
-function configure(dynasty: DynastyState, targets: number, priority: number): { dynasty: DynastyState; targetIds: string[] } {
+function configure(dynasty: DynastyState, targets: number, focusCount: number): { dynasty: DynastyState; targetIds: string[] } {
   if (targets === 0) return { dynasty, targetIds: dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId) }
   const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
   let current: DynastyState = { ...dynasty, recruiting: { ...dynasty.recruiting!, programs: { ...dynasty.recruiting!.programs, [controlled.programId]: { ...controlled, board: [] } } } }
@@ -57,8 +56,9 @@ function configure(dynasty: DynastyState, targets: number, priority: number): { 
   for (const recruit of current.recruiting!.recruits) {
     if (targetIds.length === targets) break
     try {
-      current = addRecruitingBoardTarget({ dynasty: current, playerId: recruit.player.id, priority })
+      current = addRecruitingBoardTarget({ dynasty: current, playerId: recruit.player.id })
       current = offerRecruit({ dynasty: current, playerId: recruit.player.id })
+      if (targetIds.length < focusCount) current = setRecruitingFocus({ dynasty: current, playerId: recruit.player.id, isFocused: true })
       targetIds.push(recruit.player.id)
     } catch { /* Not legally offerable for this Program; try the next national rank. */ }
   }
@@ -75,28 +75,28 @@ function resolve(dynasty: DynastyState): DynastyState {
 
 console.log(`RECRUITING STRATEGY DIAGNOSTIC — ${TRIALS} deterministic trials`) 
 console.log('Selection: highest national-rank Recruits that can be added and legally offered by the selected Program.\n')
-console.log('Program           Strategy          Sign %  Targets  Avg RK  5★ Signed  Avg Offers  Pursuers  Ctrl Share  AI Share')
+console.log('Program           Strategy                    Sign %  Targets  Avg RK  5★ Signed  Avg Offers  Pursuers  Ctrl Effort  AI Effort')
 for (const programId of PROGRAM_IDS) {
   const program = UNIVERSE_V0.programs.find(({ id }) => id === programId)!
   for (const strategy of STRATEGIES) {
     const rows: Outcome[] = []
     for (let trial = 0; trial < TRIALS; trial += 1) {
-      const configured = configure(createDynasty(`recruiting-strategy:${trial}`, programId), strategy.targets, strategy.priority)
+      const configured = configure(createDynasty(`recruiting-strategy:${trial}`, programId), strategy.targets, strategy.focusCount)
       const recruiting = configured.dynasty.recruiting!
       const snapshots = configured.targetIds.map((playerId) => {
         const competitors = Object.values(recruiting.programs).filter(({ board }) => board.some((entry) => entry.playerId === playerId)).length
-        const aiShares = Object.keys(recruiting.programs).filter((id) => id !== programId).map((id) => boardShare(configured.dynasty, id, playerId)).filter(Boolean)
-        return { playerId, competitors, controlledShare: boardShare(configured.dynasty, programId, playerId), aiShare: avg(aiShares) }
+        const aiEfforts = Object.keys(recruiting.programs).filter((id) => id !== programId).map((id) => boardEffort(configured.dynasty, id, playerId)).filter(Boolean)
+        return { playerId, competitors, controlledEffort: boardEffort(configured.dynasty, programId, playerId), aiEffort: avg(aiEfforts) }
       })
       const final = resolve(configured.dynasty).recruiting!
       const selected = snapshots.map(({ playerId }) => recruiting.recruits.find((r) => r.player.id === playerId)!)
       const signed = selected.filter(({ player }) => final.commitmentsByPlayerId[player.id]?.programId === programId)
-      rows.push({ targeted: selected.length, signed: signed.length, rank: avg(selected.map(({ nationalRank }) => nationalRank)), signedRank: avg(signed.map(({ nationalRank }) => nationalRank)), stars5: selected.filter(({ stars }) => stars === 5).length, signed5: signed.filter(({ stars }) => stars === 5).length, offers: selected.length, competitors: avg(snapshots.map(({ competitors }) => competitors)), controlledShare: avg(snapshots.map(({ controlledShare }) => controlledShare)), aiShare: avg(snapshots.map(({ aiShare }) => aiShare)) })
+      rows.push({ targeted: selected.length, signed: signed.length, rank: avg(selected.map(({ nationalRank }) => nationalRank)), signedRank: avg(signed.map(({ nationalRank }) => nationalRank)), stars5: selected.filter(({ stars }) => stars === 5).length, signed5: signed.filter(({ stars }) => stars === 5).length, offers: selected.length, competitors: avg(snapshots.map(({ competitors }) => competitors)), controlledEffort: avg(snapshots.map(({ controlledEffort }) => controlledEffort)), aiEffort: avg(snapshots.map(({ aiEffort }) => aiEffort)) })
     }
     const targeted = rows.reduce((sum, row) => sum + row.targeted, 0)
     const signed = rows.reduce((sum, row) => sum + row.signed, 0)
-    console.log(`${program.name.padEnd(17)} ${strategy.label.padEnd(17)} ${`${(100 * signed / Math.max(1, targeted)).toFixed(1)}%`.padEnd(7)} ${avg(rows.map((r) => r.targeted)).toFixed(1).padEnd(8)} ${avg(rows.map((r) => r.rank)).toFixed(1).padEnd(7)} ${(rows.reduce((sum, r) => sum + r.signed5, 0) / Math.max(1, rows.reduce((sum, r) => sum + r.stars5, 0))).toFixed(2).padEnd(10)} ${avg(rows.map((r) => r.offers)).toFixed(1).padEnd(11)} ${avg(rows.map((r) => r.competitors)).toFixed(1).padEnd(9)} ${(100 * avg(rows.map((r) => r.controlledShare))).toFixed(1).padEnd(10)} ${(100 * avg(rows.map((r) => r.aiShare))).toFixed(1)}`)
+    console.log(`${program.name.padEnd(17)} ${strategy.label.padEnd(27)} ${`${(100 * signed / Math.max(1, targeted)).toFixed(1)}%`.padEnd(7)} ${avg(rows.map((r) => r.targeted)).toFixed(1).padEnd(8)} ${avg(rows.map((r) => r.rank)).toFixed(1).padEnd(7)} ${(rows.reduce((sum, r) => sum + r.signed5, 0) / Math.max(1, rows.reduce((sum, r) => sum + r.stars5, 0))).toFixed(2).padEnd(10)} ${avg(rows.map((r) => r.offers)).toFixed(1).padEnd(11)} ${avg(rows.map((r) => r.competitors)).toFixed(1).padEnd(9)} ${avg(rows.map((r) => r.controlledEffort)).toFixed(1).padEnd(12)} ${avg(rows.map((r) => r.aiEffort)).toFixed(1)}`)
   }
 }
-console.log('\nATTENTION CONCENTRATION: equal priorities yield equal normalized effort; P3/P3/P3 and P5/P5/P5 each give 33.3% per target. Board sizes 3, 4, and 5 yield 33.3%, 25.0%, and 20.0% respectively.')
+console.log('\nEFFORT MODEL: every active board target receives 3 effort; each focused target receives +3. Neither value changes with Board size or unused Focus slots.')
 console.log('Competition counts are programs with the Recruit on their board at strategy setup; no new serious-competitor threshold is invented.')

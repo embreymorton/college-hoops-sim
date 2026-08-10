@@ -71,7 +71,7 @@ function boardTarget(
   priority: number,
   hasActiveOffer: boolean,
 ): RecruitingBoardTarget {
-  return { playerId, priority, hasActiveOffer }
+  return { playerId, isFocused: priority >= 4, hasActiveOffer }
 }
 
 /**
@@ -243,15 +243,15 @@ describe('Positional needs ledger', () => {
 })
 
 describe('Recruiting Board', () => {
-  it('renders every board target with rank, stars, ratings, and priority', () => {
+  it('renders every board target with rank, stars, ratings, and focus', () => {
     renderRecruitingScreen()
 
     const table = document.querySelector('.recruiting-board-table') as HTMLElement
     expect(within(table).getAllByText('Active').length).toBeGreaterThan(0)
     expect(within(table).getByText('FillerOne Fixture')).toBeInTheDocument()
     expect(
-      within(table).getByLabelText('Active Fixture priority'),
-    ).toHaveTextContent('3')
+      within(table).getByRole('button', { name: 'Focus Active Fixture' }),
+    ).toBeInTheDocument()
   })
 
   it('shows an active offer as Offered with a Withdraw control', () => {
@@ -315,22 +315,22 @@ describe('Recruiting Board', () => {
     ).toBe(false)
   })
 
-  it('adjusts priority with the compact stepper', () => {
+  it('toggles focus with the compact control', () => {
     renderRecruitingScreen()
     const row = screen.getByText('Active Fixture').closest('tr')!
 
-    fireEvent.click(within(row).getByRole('button', { name: /Increase .* priority/ }))
+    fireEvent.click(within(row).getByRole('button', { name: /Focus Active Fixture/ }))
 
     expect(
       useDynastyStore
         .getState()
         .dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board.find(
           (target) => target.playerId === 'fx-active-sg',
-        )!.priority,
-    ).toBe(4)
+        )!.isFocused,
+    ).toBe(true)
   })
 
-  it('sorts strictly by National Rank ascending, and priority changes never move rows', () => {
+  it('sorts strictly by National Rank ascending, and focus changes never move rows', () => {
     renderRecruitingScreen()
 
     const table = document.querySelector('.recruiting-board-table') as HTMLElement
@@ -340,15 +340,10 @@ describe('Recruiting Board', () => {
       .map((row) => Number(within(row).getAllByRole('cell')[0]!.textContent))
     expect(rankCells).toEqual([...rankCells].sort((first, second) => first - second))
 
-    // Push "Active Fixture" (rank 2, priority 3) to the max priority — well
-    // above "Signed Fixture" (rank 1, priority 3) — and confirm row order
+    // Focus "Active Fixture" (rank 2) and confirm fixed rank ordering.
     // (by rank) is unaffected.
     const activeRow = screen.getByText('Active Fixture').closest('tr')!
-    const increaseButton = within(activeRow).getByRole('button', {
-      name: /Increase .* priority/,
-    })
-    fireEvent.click(increaseButton)
-    fireEvent.click(increaseButton)
+    fireEvent.click(within(activeRow).getByRole('button', { name: /Focus Active Fixture/ }))
 
     const rowsAfter = within(table).getAllByRole('row').slice(1)
     const namesAfter = rowsAfter.map(

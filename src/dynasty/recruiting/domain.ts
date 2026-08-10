@@ -18,7 +18,8 @@ export interface Recruit {
 
 export interface RecruitingBoardTarget {
   readonly playerId: string
-  readonly priority: number
+  /** One of at most three active targets receiving extra relationship effort. */
+  readonly isFocused?: boolean
   /** Canonical Program intent to accept this Recruit into positional capacity. */
   readonly hasActiveOffer: boolean
 }
@@ -96,7 +97,7 @@ export type RecruitingTargetStatus =
 
 export interface ProgramRecruitingBoardEntry {
   readonly playerId: string
-  readonly priority: number
+  readonly isFocused: boolean
   readonly hasActiveOffer: boolean
   readonly status: RecruitingTargetStatus
   readonly relationshipProgress: number
@@ -115,7 +116,6 @@ export interface ProgramRecruitingBoard {
 export interface AddRecruitingBoardTargetOptions {
   readonly dynasty: import('../domain').DynastyState
   readonly playerId: string
-  readonly priority: number
 }
 
 export interface RemoveRecruitingBoardTargetOptions {
@@ -123,10 +123,10 @@ export interface RemoveRecruitingBoardTargetOptions {
   readonly playerId: string
 }
 
-export interface UpdateRecruitingBoardPriorityOptions {
+export interface UpdateRecruitingFocusOptions {
   readonly dynasty: import('../domain').DynastyState
   readonly playerId: string
-  readonly priority: number
+  readonly isFocused: boolean
 }
 
 export interface UpdateRecruitingOfferOptions {

@@ -202,13 +202,13 @@ standing = roundTo4(base attraction + accumulated relationship progress)
 | 4 | 0.29 | 10–22 | 74–96 | 6–12 |
 | 5 | 0.30 | 11–24 | 64–92 | 4–9 |
 
-All ranges are inclusive seeded integer draws stored on the Recruit. A Program receives 18 relationship-effort units each period, normalized across every active eligible board target whether offered or not:
+All ranges are inclusive seeded integer draws stored on the Recruit. Every active Board target receives 3 relationship-effort units each period, whether offered or not. A Program may Focus at most three active Board targets; each Focus target receives an additional fixed 3 units:
 
 ```text
-target progress = 18 × target priority / sum(active target priorities)
+target progress = 3 + (isFocused ? 3 : 0)
 ```
 
-Priorities are integers 1–5. Inactive targets are excluded, so effort automatically redistributes. Standing order is descending standing with stable Program ID as the tie-breaker.
+Neither term is normalized by Board size, other Focus targets, or unused Focus capacity. Inactive targets receive no effort; invalid Focus is cleared during canonical plan cleanup. Board, Focus, and Offer remain separate facts. Standing order is descending standing with stable Program ID as the tie-breaker.
 
 A Recruit may commit only after his decision-ready period and only to a Program that has a valid Active Offer, unfilled capacity at his position, and at least 8 relationship progress. The leading eligible Program must meet both the Recruit's standing threshold and the required lead over the eligible runner-up. Recruits resolve in National Rank order then Player ID; exact standing ties resolve by Program ID. A recorded commitment is final.
 
@@ -271,7 +271,7 @@ Synchronization is idempotent and resolves each missing Recruiting period one by
 
 Late Recruiting is a distinct reviewable phase available only after Period 28; it is not a fictional Period 29+. Existing relationships and valid offers remain authoritative, and all unsigned Recruits are decision-ready for this conclusion of the same market.
 
-Vacancies first use eligible existing-board backups ordered by priority descending, standing descending, National Rank ascending, then Player ID. Autonomous Programs—and the controlled Program only during full automatic finalization—may search the broader unsigned national pool. National candidates use:
+Vacancies first use eligible existing-board backups ordered by Focus status, standing descending, National Rank ascending, then Player ID. Autonomous Programs—and the controlled Program only during full automatic finalization—may search the broader unsigned national pool. National candidates use:
 
 ```text
 late utility = qualityScore × 1.5

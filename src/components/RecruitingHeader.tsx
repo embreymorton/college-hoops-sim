@@ -8,6 +8,8 @@ interface RecruitingHeaderProps {
   readonly targetSeasonNumber: number
   readonly phase: RecruitingPhase
   readonly lastResolvedPeriod: number
+  readonly focusCount: number
+  readonly focusLimit: number
 }
 
 /** Program/class identity plus the actual derived Recruiting period and phase. */
@@ -17,6 +19,8 @@ export function RecruitingHeader({
   targetSeasonNumber,
   phase,
   lastResolvedPeriod,
+  focusCount,
+  focusLimit,
 }: RecruitingHeaderProps) {
   const accentStyle = { '--team-accent': accentColor } as CSSProperties
 
@@ -33,9 +37,12 @@ export function RecruitingHeader({
           <p className="season-header__meta">Class of Season {targetSeasonNumber}</p>
         </div>
       </div>
-      <p className="eyebrow-tag recruiting-header__period">
-        {formatRecruitingPeriodLine(phase, lastResolvedPeriod)}
-      </p>
+      <div>
+        <p className="eyebrow-tag recruiting-header__period">
+          {formatRecruitingPeriodLine(phase, lastResolvedPeriod)}
+        </p>
+        <p className="season-header__meta">FOCUS {focusCount} / {focusLimit}</p>
+      </div>
     </div>
   )
 }

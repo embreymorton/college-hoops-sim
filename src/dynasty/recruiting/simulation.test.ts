@@ -9,7 +9,7 @@ import {
   getRecruit,
 } from './queries'
 import {
-  deriveProgramActiveEffortShares,
+  deriveProgramActiveEffort,
   resolveRecruitingPeriod,
   syncRecruitingThroughCompletedRounds,
 } from './simulation'
@@ -106,11 +106,11 @@ describe('regular-season Recruiting advancement', () => {
 })
 
 describe('Recruiting strategy model', () => {
-  it('turns relative priority into equal-budget concentrated progress', () => {
-    const initial = createRecruitingDynasty('priority-progress')
+  it('gives focus a fixed bonus without normalizing board effort', () => {
+    const initial = createRecruitingDynasty('focus-progress')
     const programId = initial.controlledProgramId
     const targets = initial.recruiting!.programs[programId]!.board.slice(0, 2)
-    const withPriorities = (firstPriority: number, secondPriority: number) => ({
+    const withFocus = (firstFocused: boolean, secondFocused: boolean) => ({
       ...initial,
       activeSeason: completeRounds(initial.activeSeason!, 1),
       recruiting: {
@@ -120,21 +120,48 @@ describe('Recruiting strategy model', () => {
           [programId]: {
             ...initial.recruiting!.programs[programId]!,
             board: [
-              { ...targets[0]!, priority: firstPriority },
-              { ...targets[1]!, priority: secondPriority },
+              { ...targets[0]!, isFocused: firstFocused },
+              { ...targets[1]!, isFocused: secondFocused },
             ],
           },
         },
       },
     })
-    const focused = resolveRecruitingPeriod(withPriorities(5, 1), 1)
-    const reversed = resolveRecruitingPeriod(withPriorities(1, 5), 1)
+    const focused = resolveRecruitingPeriod(withFocus(true, false), 1)
+    const reversed = resolveRecruitingPeriod(withFocus(false, true), 1)
     const firstId = targets[0]!.playerId
     expect(focused.recruiting!.relationshipProgressByPlayerId[firstId]![programId])
       .toBeGreaterThan(reversed.recruiting!.relationshipProgressByPlayerId[firstId]![programId]!)
-    const total = Object.values(focused.recruiting!.relationshipProgressByPlayerId)
-      .reduce((sum, byProgram) => sum + (byProgram[programId] ?? 0), 0)
-    expect(total).toBeCloseTo(18, 3)
+    expect(focused.recruiting!.relationshipProgressByPlayerId[firstId]![programId]).toBeCloseTo(6, 3)
+  })
+
+  it('keeps baseline and focused effort independent of board size', () => {
+    const initial = createRecruitingDynasty('focus-board-size')
+    const programId = initial.controlledProgramId
+    const targets = initial.recruiting!.programs[programId]!.board
+    const withBoard = (board: typeof targets) => ({
+      ...initial,
+      recruiting: {
+        ...initial.recruiting!,
+        programs: {
+          ...initial.recruiting!.programs,
+          [programId]: { ...initial.recruiting!.programs[programId]!, board },
+        },
+      },
+    })
+    const short = deriveProgramActiveEffort(withBoard([
+      { ...targets[0]!, isFocused: false },
+      { ...targets[1]!, isFocused: true },
+      { ...targets[2]!, isFocused: false },
+    ]).recruiting!, programId)
+    const long = deriveProgramActiveEffort(withBoard(targets.slice(0, 9).map((target, index) => ({
+      ...target,
+      isFocused: index === 1,
+    }))).recruiting!, programId)
+    expect(short[targets[0]!.playerId]).toBe(long[targets[0]!.playerId])
+    expect(short[targets[1]!.playerId]).toBe(long[targets[1]!.playerId])
+    expect(short[targets[0]!.playerId]).toBe(3)
+    expect(short[targets[1]!.playerId]).toBe(6)
   })
 
   it('preserves early work and redistributes all effort away from unavailable targets', () => {
@@ -159,9 +186,9 @@ describe('Recruiting strategy model', () => {
         },
       },
     }
-    const shares = deriveProgramActiveEffortShares(dynasty.recruiting!, programId)
-    expect(shares[unavailableId]).toBeUndefined()
-    expect(Object.values(shares).reduce((sum, share) => sum + share, 0)).toBeCloseTo(1)
+    const effort = deriveProgramActiveEffort(dynasty.recruiting!, programId)
+    expect(effort[unavailableId]).toBeUndefined()
+    expect(Object.values(effort).every((value) => value === 3 || value === 6)).toBe(true)
   })
 
   it('makes elite recruits more prestige-sensitive and generally later-deciding', () => {
@@ -203,7 +230,7 @@ describe('Recruiting strategy model', () => {
             ...dynasty.recruiting!.programs,
             [lateProgramId]: {
               ...lateProgram,
-              board: [{ playerId: earlyCommitment.playerId, priority: 5, hasActiveOffer: true }, ...lateProgram.board].slice(0, 10),
+              board: [{ playerId: earlyCommitment.playerId, isFocused: true, hasActiveOffer: true }, ...lateProgram.board].slice(0, 10),
             },
           },
         },

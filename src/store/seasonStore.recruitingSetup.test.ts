@@ -3,8 +3,7 @@ import { POSITIONS } from '../engine'
 import {
   initializeDynastyState,
   initializeRecruiting,
-  MAX_RECRUITING_PRIORITY,
-  MIN_RECRUITING_PRIORITY,
+  RECRUITING_FOCUS_LIMIT,
   RECRUITING_BOARD_LIMIT,
 } from '../dynasty'
 import { createRecruitingDynasty } from '../dynasty/recruiting/testSupport'
@@ -100,13 +99,7 @@ describe('Generate Draft Board', () => {
     expect(board.length).toBeGreaterThan(0)
     expect(board.length).toBeLessThanOrEqual(RECRUITING_BOARD_LIMIT)
     expect(new Set(board.map(({ playerId }) => playerId)).size).toBe(board.length)
-    expect(
-      board.every(
-        ({ priority }) =>
-          priority >= MIN_RECRUITING_PRIORITY &&
-          priority <= MAX_RECRUITING_PRIORITY,
-      ),
-    ).toBe(true)
+    expect(board.filter(({ isFocused }) => isFocused).length).toBeLessThanOrEqual(RECRUITING_FOCUS_LIMIT)
     expect(
       board.every(({ playerId }) =>
         generated.recruiting!.recruits.some(

@@ -269,7 +269,7 @@ Recruiting belongs exclusively to the Dynasty/cross-season domain. The basketbal
 
 `Recruit.player` is the future Player value, not a disposable profile. Its stable Player ID survives Recruit generation, commitment, the finalized incoming class, and Phase 5C freshman enrollment.
 
-The canonical `RecruitingState` stores the national Recruit class/profiles and class rankings, each Program's projected positional openings and board targets, target priorities and Active Offer intent, accumulated Recruit/Program relationship progress, commitments with period/late timing, current phase, and last resolved period. Current standings, standing order, target status, remaining positional need, Active Offer counts, and available offer capacity are pure projections. This follows the same rule as Season state: store facts, derive summaries.
+The canonical `RecruitingState` stores the national Recruit class/profiles and class rankings, each Program's projected positional openings and Board targets, Focus flags, and Active Offer intent, accumulated Recruit/Program relationship progress, commitments with period/late timing, current phase, and last resolved period. Current standings, standing order, target status, remaining positional need, Active Offer counts, available offer capacity, and Focus counts are pure projections. This follows the same rule as Season state: store facts, derive summaries.
 
 Recruiting advancement attaches to fully completed basketball rounds rather than individual controlled-game completion:
 

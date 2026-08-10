@@ -273,13 +273,13 @@ active offers + existing commitments ≤ projected positional openings
 
 This is explicit Program intent, not hidden star-tier protection. A backup cannot consume capacity reserved by another offered target.
 
-Board priorities are persistent integers from 1–5 and express relative attention. Each period's effort is normalized across all eligible active targets, so inactive, committed, or position-filled targets receive none and their former share automatically redistributes. There is no literal 100-point weekly budget.
+Board targets receive normal recruiting effort. A Program may Focus up to three active Board targets for extra attention; the Focus bonus is fixed and does not grow when the Board is smaller or Focus slots are unused. Inactive, committed, or position-filled targets receive no effort and cannot remain effective Focus targets. There is no points budget or normalized allocation mechanic.
 
-When an offered Recruit becomes unavailable while a controlled Program still has positional need, autonomous progression may promote an eligible same-position backup already on that user's board. Selection is deterministic: priority descending, current standing descending, National Rank ascending, then Player ID. This preserves existing priorities and relationship history, adds no new target, and does not invent a new strategy. Explicit user offer withdrawals are not treated as losses to replace, and AI management does not casually overwrite a controlled Program's otherwise valid offers.
+When an offered Recruit becomes unavailable while a controlled Program still has positional need, autonomous progression may promote an eligible same-position backup already on that user's board. Selection is deterministic: Focus status, current standing descending, National Rank ascending, then Player ID. This preserves the user's Board and relationship history, adds no new target, and does not invent a new Focus strategy. Explicit user offer withdrawals are not treated as losses to replace, and AI management does not casually overwrite a controlled Program's otherwise valid offers.
 
 ### Competition, commitments, and calendar
 
-Lower-ranked prospects are generally less prestige-sensitive, more attainable, and earlier-deciding. Elite prospects are generally more prestige-sensitive, later-deciding, and more contested. Early identification plus heavy priority therefore gives a lower-prestige Program a real chance at an attainable Player, while a higher-prestige Program entering before commitment may overtake it. Standing leaders may change before a decision.
+Lower-ranked prospects are generally less prestige-sensitive, more attainable, and earlier-deciding. Elite prospects are generally more prestige-sensitive, later-deciding, and more contested. Early identification plus Focus gives a lower-prestige Program a real chance at an attainable Player, while a higher-prestige Program entering before commitment may overtake it. Standing leaders may change before a decision.
 
 A commitment is final. V0 has no decommitments, post-commitment flips, or reopened recruitment. A current-season commitment remains a future-roster fact only:
 

@@ -49,14 +49,6 @@ describe('Dynasty transition orchestration', () => {
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
     expect(useDynastyStore.getState().dynasty!.history).toEqual(history)
     expect(useDynastyStore.getState().dynasty!.offseason).toBeNull()
-    const target = useDynastyStore.getState().dynasty!.recruiting!
-      .programs['charlotte-tech']!.board[0]!
-    useDynastyStore.getState().setRecruitingPriority(target.playerId, 5)
-    expect(
-      useDynastyStore.getState().dynasty!.recruiting!.programs['charlotte-tech']!
-        .board.find(({ playerId }) => playerId === target.playerId)?.priority,
-    ).toBe(5)
-
     useDynastyStore.getState().finalizeRecruitingClass()
     const finalized = useDynastyStore.getState().dynasty!
     expect(finalized.recruiting!.phase).toBe('finalized')

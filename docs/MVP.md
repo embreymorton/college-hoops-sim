@@ -102,7 +102,7 @@ projected positional openings
 → CompletedRecruitingClass
 ```
 
-Recruiting supports persistent 1–5 priorities, AI Programs, capacity-limited offers, final commitments, postseason continuation, Late Recruiting, and canonical period-by-period synchronization through ordinary progression or Super Sim. A commitment remains a future-roster fact and does not alter the current Team, Rotation, or Season. Recruit identity is already future Player identity and Phase 5C preserves it through freshman enrollment.
+Recruiting supports a 10-target Board, up to three Focus targets, independent capacity-limited Active Offers, AI Programs, final commitments, postseason continuation, Late Recruiting, and canonical period-by-period synchronization through ordinary progression or Super Sim. Every active Board target receives fixed baseline effort; Focus adds a fixed bonus without redistributing effort. A commitment remains a future-roster fact and does not alter the current Team, Rotation, or Season. Recruit identity is already future Player identity and Phase 5C preserves it through freshman enrollment.
 
 ## Season Rollover V0 — implemented and accepted
 
