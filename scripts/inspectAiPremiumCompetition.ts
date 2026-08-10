@@ -81,6 +81,8 @@ interface HeadToHead {
   attempts: number
   initialBothPriority: number
   elitePriorityAfterFirstPeriod: number
+  elitePriorityAfterFourPeriods: number
+  retainedPeriodsThroughFour: number[]
   controlled: number
   elite: number
   other: number
@@ -104,7 +106,7 @@ function emptyAllocation(): Allocation {
 }
 
 function emptyHeadToHead(): HeadToHead {
-  return { attempts: 0, initialBothPriority: 0, elitePriorityAfterFirstPeriod: 0, controlled: 0, elite: 0, other: 0, unsigned: 0, margins: [] }
+  return { attempts: 0, initialBothPriority: 0, elitePriorityAfterFirstPeriod: 0, elitePriorityAfterFourPeriods: 0, retainedPeriodsThroughFour: [], controlled: 0, elite: 0, other: 0, unsigned: 0, margins: [] }
 }
 
 function average(values: readonly number[]): string {
@@ -333,13 +335,20 @@ function runPriorityBattle(base: DynastyState, controlledId: string, tier: Tier,
   )
   auditState(configured, audit)
   try {
-    const afterFirstPeriod = resolveRecruitingPeriod(configured, 1)
-    totals.elitePriorityAfterFirstPeriod += Number(
-      afterFirstPeriod.recruiting!.programs[eliteId]!.board.some((target) =>
+    const hasElitePriority = (state: DynastyState) =>
+      state.recruiting!.programs[eliteId]!.board.some((target) =>
         target.playerId === recruit.player.id && target.isFocused && target.hasActiveOffer,
-      ),
-    )
-    const final = resolveLifecycle(afterFirstPeriod)
+      )
+    let current = resolveRecruitingPeriod(configured, 1)
+    let retainedPeriods = Number(hasElitePriority(current))
+    totals.elitePriorityAfterFirstPeriod += retainedPeriods
+    for (let period = 2; period <= 4; period += 1) {
+      current = resolveRecruitingPeriod(current, period)
+      if (retainedPeriods === period - 1 && hasElitePriority(current)) retainedPeriods += 1
+    }
+    totals.elitePriorityAfterFourPeriods += Number(retainedPeriods === 4)
+    totals.retainedPeriodsThroughFour.push(retainedPeriods)
+    const final = resolveLifecycle(current)
     recordHeadToHead(final, recruit, controlledId, eliteId, totals)
     auditState(final, audit)
   } catch {
@@ -368,6 +377,10 @@ const pursuitStateCounts: Record<ReturnType<typeof band>, Record<PursuitState, n
   '1–39': { 'board-only': 0, 'offer-only': 0, 'focus-only': 0, 'focus-offer': 0 },
 }
 const pursuitTotals: Record<string, Record<string, { attempts: number; signs: number }>> = {}
+const universeBandCounts = Object.values(UNIVERSE_V0.programs).reduce<Record<ReturnType<typeof band>, number>>(
+  (counts, program) => ({ ...counts, [band(program.basePrestige)]: counts[band(program.basePrestige)] + 1 }),
+  { '80–100': 0, '60–79': 0, '40–59': 0, '1–39': 0 },
+)
 
 console.log(`AI PREMIUM RECRUITING COMPETITION — ${COVERAGE_TRIALS} deterministic world snapshots`)
 for (let trial = 0; trial < COVERAGE_TRIALS; trial += 1) {
@@ -428,6 +441,7 @@ console.log('Tier        Targets  0 offer  1 offer  2+ offer  60+ offer  80+ off
 for (const tier of TIERS) printCoverage(tier, coverage[tier.label])
 
 console.log('\nAI FOCUS AND BOARD ALLOCATION')
+console.log(`Universe V0 prestige audit: 80–100 ${universeBandCounts['80–100']}, 60–79 ${universeBandCounts['60–79']}, 40–59 ${universeBandCounts['40–59']}, 1–39 ${universeBandCounts['1–39']} (Pine Valley base Prestige ${UNIVERSE_V0.programs.find(({ id }) => id === PINE_VALLEY)!.basePrestige}; excluded from AI allocation because it is the controlled Program in this diagnostic).`)
 console.log('Band     Programs   Board   Offer   Focus  Board rank  Offer rank  Focus rank')
 for (const value of ['80–100', '60–79', '40–59', '1–39'] as const) printAllocation(value, allocations[value])
 
@@ -447,11 +461,11 @@ for (const label of ['Elite', '60–79', '40–59']) {
 }
 
 function printHeadToHead(label: string, totals: HeadToHead): void {
-  console.log(`${label.padEnd(25)} ${String(totals.attempts).padStart(4)} attempts  initial both F+O ${percentage(totals.initialBothPriority, totals.attempts)}  elite F+O after first refresh ${percentage(totals.elitePriorityAfterFirstPeriod, totals.attempts)}  controlled ${percentage(totals.controlled, totals.attempts)}  elite ${percentage(totals.elite, totals.attempts)}  other ${percentage(totals.other, totals.attempts)}  unsigned ${percentage(totals.unsigned, totals.attempts)}  elite-minus-controlled standing ${average(totals.margins)}`)
+  console.log(`${label.padEnd(25)} ${String(totals.attempts).padStart(4)} attempts  initial both F+O ${percentage(totals.initialBothPriority, totals.attempts)}  elite F+O after 1 ${percentage(totals.elitePriorityAfterFirstPeriod, totals.attempts)}  after 4 ${percentage(totals.elitePriorityAfterFourPeriods, totals.attempts)}  avg retained periods ${average(totals.retainedPeriodsThroughFour)}  controlled ${percentage(totals.controlled, totals.attempts)}  elite ${percentage(totals.elite, totals.attempts)}  other ${percentage(totals.other, totals.attempts)}  unsigned ${percentage(totals.unsigned, totals.attempts)}  elite-minus-controlled standing ${average(totals.margins)}`)
 }
 
 console.log('\nCONSTRUCTED MATCHED FOCUS + OFFER HEAD-TO-HEAD')
-console.log('Both programs start Focus + Offer; the next column records whether the AI-managed elite retains that state through its first canonical refresh.')
+console.log('Both programs start Focus + Offer; retention records whether the AI-managed elite remains Focus + Offer through canonical refreshes.')
 printHeadToHead('Pine Valley lower 4★', pineHeadToHead)
 printHeadToHead('Charlotte Tech lower 4★', charlotteLower)
 printHeadToHead('Charlotte Tech high 4★', charlotteHigh)

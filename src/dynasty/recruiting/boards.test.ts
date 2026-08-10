@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { UNIVERSE_V0 } from '../../universe'
 import {
   addRecruitingBoardTarget,
+  refreshAiRecruitingBoards,
   removeRecruitingBoardTarget,
   setRecruitingFocus,
 } from './boards'
@@ -108,6 +109,31 @@ describe('Program recruiting boards', () => {
     expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
       .filter(({ isFocused }) => isFocused).every(({ hasActiveOffer }) => !hasActiveOffer || hasActiveOffer))
       .toBe(true)
+  })
+
+  it('keeps valid AI offers aligned with Focus and retains a premium Focus + Offer on refresh', () => {
+    const dynasty = createRecruitingDynasty('coherent-ai-plan')
+    const recruiting = dynasty.recruiting!
+    const aiPrograms = Object.values(recruiting.programs).filter(
+      ({ programId }) => programId !== dynasty.controlledProgramId,
+    )
+    for (const program of aiPrograms) {
+      const offered = program.board.filter(({ hasActiveOffer }) => hasActiveOffer)
+      const focused = program.board.filter(({ isFocused }) => isFocused)
+      expect(focused).toHaveLength(Math.min(3, program.board.length))
+      expect(offered.filter(({ isFocused }) => isFocused)).toHaveLength(
+        Math.min(3, offered.length),
+      )
+    }
+
+    const premium = aiPrograms.flatMap((program) => program.board.map((target) => ({ program, target })))
+      .find(({ target }) => target.hasActiveOffer && target.isFocused && getRecruit(recruiting, target.playerId)!.stars >= 4)
+    expect(premium).toBeDefined()
+
+    const refreshed = refreshAiRecruitingBoards(dynasty, recruiting)
+    const retained = refreshed.programs[premium!.program.programId]!.board
+      .find(({ playerId }) => playerId === premium!.target.playerId)
+    expect(retained).toMatchObject({ hasActiveOffer: true, isFocused: true })
   })
 
   it('derives statuses and never exceeds positional commitment capacity', () => {

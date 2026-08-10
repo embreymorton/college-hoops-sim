@@ -2,6 +2,7 @@ import type { DynastyState } from '../domain'
 import { deriveProjectedRosterOutlook } from '../rosterOutlook'
 import {
   buildDefaultRecruitingBoard,
+  alignAiRecruitingFocus,
   manageProgramRecruitingOffers,
 } from './boards'
 import { RECRUITING_V0_VERSION } from './constants'
@@ -68,6 +69,26 @@ export function initializeRecruiting(dynasty: DynastyState): DynastyState {
           { ...context, recruiting },
           recruiting,
           programId,
+        ),
+      },
+    }
+  }
+
+  // Align the initially generated plans after offers are known. This avoids
+  // advancing premium discovery ahead of the established first refresh while
+  // making Board / Offer / Focus coherent from the opening screen onward.
+  for (const programId of Object.keys(programs).sort()) {
+    if (programId === dynasty.controlledProgramId) continue
+    const program = recruiting.programs[programId]!
+    recruiting = {
+      ...recruiting,
+      programs: {
+        ...recruiting.programs,
+        [programId]: alignAiRecruitingFocus(
+          { ...dynasty, recruiting },
+          recruiting,
+          programId,
+          program,
         ),
       },
     }

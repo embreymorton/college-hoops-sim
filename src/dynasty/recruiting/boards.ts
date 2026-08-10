@@ -423,6 +423,51 @@ export function manageProgramRecruitingOffers(
   return { ...program, board }
 }
 
+/**
+ * Carries an AI's still-legal premium Focus + Offer pursuit through a refresh.
+ * The target can still leave through normal cleanup, capacity exhaustion, or a
+ * later commitment; this only prevents the planner from immediately trading a
+ * coherent primary pursuit for an unrelated backup.
+ */
+function retainAiPremiumPursuits(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+  programId: string,
+  previousBoard: readonly RecruitingBoardTarget[],
+  planned: RecruitingProgramState,
+): RecruitingProgramState {
+  const remaining = deriveRemainingOpeningsByPosition(recruiting, planned)
+  const retainedIds = new Set(
+    previousBoard.filter((target) => {
+      const recruit = getRecruit(recruiting, target.playerId)
+      return target.isFocused && target.hasActiveOffer && recruit !== undefined && recruit.stars >= 4 &&
+        deriveTargetStatus(recruiting, programId, target.playerId) === 'active'
+    }).map(({ playerId }) => playerId),
+  )
+  let board = [...planned.board]
+  for (const playerId of retainedIds) {
+    const recruit = getRecruit(recruiting, playerId)
+    const target = board.find((entry) => entry.playerId === playerId)
+    if (!recruit || !target || target.hasActiveOffer || remaining[recruit.player.position] <= 0) continue
+    const offeredAtPosition = board.filter((entry) =>
+      entry.hasActiveOffer && getRecruit(recruiting, entry.playerId)?.player.position === recruit.player.position,
+    )
+    const replaceable = offeredAtPosition
+      .filter((entry) => !retainedIds.has(entry.playerId))
+      .sort((first, second) =>
+        offerUtility(dynasty, recruiting, programId, first) - offerUtility(dynasty, recruiting, programId, second) ||
+        first.playerId.localeCompare(second.playerId),
+      )[0]
+    if (!replaceable) continue
+    board = board.map((entry) =>
+      entry.playerId === replaceable.playerId
+        ? { ...entry, hasActiveOffer: false }
+        : entry.playerId === playerId ? { ...entry, hasActiveOffer: true } : entry,
+    )
+  }
+  return { ...planned, board }
+}
+
 /** Executes a user-owned fallback plan only when a previously active offer was lost. */
 export function promoteControlledRecruitingBackups(
   dynasty: DynastyState,
@@ -546,6 +591,37 @@ export function buildDefaultRecruitingBoard(
   }))
 }
 
+/**
+ * Produces the AI-only Focus portion of a plan after offers have been chosen.
+ * Existing offered pursuits lead, so Board / Focus / Offer express one plan;
+ * viable backups still fill any unused Focus capacity deterministically.
+ */
+export function alignAiRecruitingFocus(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+  programId: string,
+  program: RecruitingProgramState = recruiting.programs[programId]!,
+): RecruitingProgramState {
+  const activeRecruiting = { ...recruiting, programs: { ...recruiting.programs, [programId]: program } }
+  const focusIds = new Set(
+    [...program.board]
+      .filter((target) => deriveTargetStatus(activeRecruiting, programId, target.playerId) === 'active')
+      .sort((first, second) =>
+        Number(second.hasActiveOffer && second.isFocused) - Number(first.hasActiveOffer && first.isFocused) ||
+        Number(second.hasActiveOffer) - Number(first.hasActiveOffer) ||
+        offerUtility({ ...dynasty, recruiting: activeRecruiting }, activeRecruiting, programId, second) -
+          offerUtility({ ...dynasty, recruiting: activeRecruiting }, activeRecruiting, programId, first) ||
+        first.playerId.localeCompare(second.playerId),
+      )
+      .slice(0, RECRUITING_FOCUS_LIMIT)
+      .map(({ playerId }) => playerId),
+  )
+  return {
+    ...program,
+    board: program.board.map((target) => ({ ...target, isFocused: focusIds.has(target.playerId) })),
+  }
+}
+
 export function refreshAiRecruitingBoards(
   dynasty: DynastyState,
   recruiting: RecruitingState,
@@ -575,21 +651,19 @@ export function refreshAiRecruitingBoards(
       { ...cleaned, programs },
       programId,
     )
-    const focusIds = new Set(
-      [...programs[programId]!.board]
-        .filter((target) => deriveTargetStatus({ ...cleaned, programs }, programId, target.playerId) === 'active')
-        .sort((first, second) =>
-          Number(second.hasActiveOffer) - Number(first.hasActiveOffer) ||
-          offerUtility(context, { ...cleaned, programs }, programId, second) - offerUtility(context, { ...cleaned, programs }, programId, first) ||
-          first.playerId.localeCompare(second.playerId),
-        )
-        .slice(0, RECRUITING_FOCUS_LIMIT)
-        .map(({ playerId }) => playerId),
+    programs[programId] = retainAiPremiumPursuits(
+      context,
+      { ...cleaned, programs },
+      programId,
+      program.board,
+      programs[programId]!,
     )
-    programs[programId] = {
-      ...programs[programId]!,
-      board: programs[programId]!.board.map((target) => ({ ...target, isFocused: focusIds.has(target.playerId) })),
-    }
+    programs[programId] = alignAiRecruitingFocus(
+      context,
+      { ...cleaned, programs },
+      programId,
+      programs[programId]!,
+    )
   }
   return { ...cleaned, programs }
 }
