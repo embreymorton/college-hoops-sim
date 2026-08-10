@@ -44,7 +44,7 @@ describe('CompletedMatchupCard', () => {
         overtimeTag={ot}
         {...teams}
         resultLabel="Win"
-        resultDetail="3-Point Victory"
+        resultTone="positive"
         leaders={leaders}
         onViewBoxScore={vi.fn()}
       />,
@@ -53,14 +53,34 @@ describe('CompletedMatchupCard', () => {
     expect(screen.getByText(label)).toBeInTheDocument()
   })
 
-  it('renders stat-first whole-game leaders, Program identity, margin, and an empty state', () => {
+  it('shows the result tag beside the round label, colored by tone', () => {
     render(
       <CompletedMatchupCard
         roundLabel="Round 1"
         siteLabel="Home"
         {...teams}
         resultLabel="Win"
-        resultDetail="3-Point Victory"
+        resultTone="positive"
+        leaders={leaders}
+        onViewBoxScore={vi.fn()}
+      />,
+    )
+
+    const eyebrowLeft = document.querySelector('.next-game-card__eyebrow-left') as HTMLElement
+    expect(eyebrowLeft).toHaveTextContent('Round 1')
+    const resultTag = screen.getByText('Win')
+    expect(resultTag).toHaveAttribute('data-tone', 'positive')
+    expect(eyebrowLeft.contains(resultTag)).toBe(true)
+  })
+
+  it('renders stat-first whole-game leaders, Program identity, and an empty state', () => {
+    render(
+      <CompletedMatchupCard
+        roundLabel="Round 1"
+        siteLabel="Home"
+        {...teams}
+        resultLabel="Loss"
+        resultTone="negative"
         leaders={leaders}
         onViewBoxScore={vi.fn()}
       />,
@@ -81,6 +101,6 @@ describe('CompletedMatchupCard', () => {
       background: '#654321',
     })
     expect(document.querySelector('[data-stat="ast"]')).toHaveTextContent('—')
-    expect(screen.getByText('3-Point Victory')).toBeInTheDocument()
+    expect(screen.getByText('Loss')).toHaveAttribute('data-tone', 'negative')
   })
 })

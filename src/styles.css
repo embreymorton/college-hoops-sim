@@ -1148,9 +1148,35 @@ p {
 
 .next-game-card__eyebrow {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
+  flex-wrap: wrap;
+  row-gap: var(--space-1);
   margin-bottom: var(--space-2);
+}
+
+.next-game-card__eyebrow-left {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.next-game-card__result-tag {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.next-game-card__result-tag[data-tone='positive'] {
+  color: var(--accent);
+}
+
+.next-game-card__result-tag[data-tone='negative'] {
+  color: var(--ink-2);
 }
 
 .next-game-card__home-away {
@@ -1267,32 +1293,8 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
-.next-game-card__result-summary {
-  margin-bottom: var(--space-3);
-  text-align: center;
-}
-
-.next-game-card__result-line {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 0.82rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.next-game-card__result-detail {
-  margin-top: var(--space-1);
-  font-family: var(--font-display);
-  font-size: 0.66rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: var(--ink-2);
-}
-
 .game-leaders {
-  margin: 0 auto var(--space-4);
+  margin: 0 auto var(--space-3);
   width: min(100%, 52rem);
 }
 
@@ -1321,7 +1323,7 @@ p {
   justify-items: center;
   gap: var(--space-1);
   min-width: 0;
-  padding: var(--space-3);
+  padding: var(--space-2) var(--space-3);
   text-align: center;
 }
 

@@ -74,13 +74,11 @@ export function RecruitingBoardTable({
   onWithdraw,
   onRemove,
 }: RecruitingBoardTableProps) {
+  // Strictly by National Rank — a fixed identity order, so changing a
+  // Recruit's priority never moves their row.
   const rows = board.targets
     .map((target) => ({ target, recruit: getRecruit(recruiting, target.playerId)! }))
-    .sort(
-      (first, second) =>
-        second.target.priority - first.target.priority ||
-        first.recruit.nationalRank - second.recruit.nationalRank,
-    )
+    .sort((first, second) => first.recruit.nationalRank - second.recruit.nationalRank)
 
   return (
     <div className="table-scroll">

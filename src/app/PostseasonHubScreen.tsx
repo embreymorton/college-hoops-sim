@@ -285,6 +285,13 @@ export function PostseasonHubScreen() {
     const controlledWon =
       completedHubTournamentGame.result.winnerId === controlledProgramId
 
+    const tournamentOutcome =
+      championProgramId === controlledProgramId
+        ? 'champion'
+        : isEliminated || !controlledWon
+          ? 'eliminated'
+          : 'advanced'
+
     matchup = (
       <CompletedMatchupCard
         roundLabel={formatTournamentRoundName(completedHubTournamentGame.game.round)}
@@ -308,17 +315,12 @@ export function PostseasonHubScreen() {
           isWinner:
             completedHubTournamentGame.result.winnerId === awayProgram.id,
         }}
-        resultLabel={
-          formatTournamentQuickResult(
-            controlledProgram.name,
-            completedHubTournamentGame.game.round,
-            championProgramId === controlledProgramId
-              ? 'champion'
-              : isEliminated || !controlledWon
-                ? 'eliminated'
-                : 'advanced',
-          )
-        }
+        resultLabel={formatTournamentQuickResult(
+          controlledProgram.name,
+          completedHubTournamentGame.game.round,
+          tournamentOutcome,
+        )}
+        resultTone={tournamentOutcome === 'eliminated' ? 'negative' : 'positive'}
         leaders={deriveGameLeaders(
           completedHubTournamentGame.result,
           postseason.programStates[completedHubTournamentGame.result.homeTeamId]!
@@ -490,62 +492,70 @@ export function PostseasonHubScreen() {
         }
       />
 
-      <section className="section" aria-labelledby="tournament-status-heading">
-        <h2 id="tournament-status-heading" className="visually-hidden">
-          Tournament status
-        </h2>
-        {matchup}
-        {(isAliveWithPendingGame || completedHubTournamentGame) &&
-          hasOtherSimulatableGames &&
-          currentRound && (
-          <div className="round-progress">
-            <div>
-              <p className="round-progress__text">
-                {formatTournamentProgressRoundName(currentRound)} —{' '}
-                {describeRoundProgress(
-                  roundGameCount - pendingRoundGames.length,
-                  roundGameCount,
-                )}
-              </p>
-              {completedHubTournamentGame && pendingRoundGames.length > 0 && (
-                <p className="round-progress__detail">
-                  {describeRemainingTournamentGames(
-                    currentRound,
-                    pendingRoundGames.length,
+      <div className="hub-primary-grid">
+        <section
+          className="section hub-primary-grid__game"
+          aria-labelledby="tournament-status-heading"
+        >
+          <h2 id="tournament-status-heading" className="visually-hidden">
+            Tournament status
+          </h2>
+          {matchup}
+          {(isAliveWithPendingGame || completedHubTournamentGame) &&
+            hasOtherSimulatableGames &&
+            currentRound && (
+            <div className="round-progress">
+              <div>
+                <p className="round-progress__text">
+                  {formatTournamentProgressRoundName(currentRound)} —{' '}
+                  {describeRoundProgress(
+                    roundGameCount - pendingRoundGames.length,
+                    roundGameCount,
                   )}
                 </p>
-              )}
+                {completedHubTournamentGame && pendingRoundGames.length > 0 && (
+                  <p className="round-progress__detail">
+                    {describeRemainingTournamentGames(
+                      currentRound,
+                      pendingRoundGames.length,
+                    )}
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                className="button button--ghost"
+                onClick={simulateRestOfCurrentTournamentRound}
+              >
+                {completedHubTournamentGame
+                  ? 'Advance to Next Round'
+                  : 'Simulate Other Games'}
+              </button>
             </div>
-            <button
-              type="button"
-              className="button button--ghost"
-              onClick={simulateRestOfCurrentTournamentRound}
-            >
-              {completedHubTournamentGame
-                ? 'Advance to Next Round'
-                : 'Simulate Other Games'}
-            </button>
-          </div>
-          )}
-      </section>
-
-      {recruiting && recruitingBoard && (
-        <section className="section" aria-labelledby="recruiting-summary-heading">
-          <h2 id="recruiting-summary-heading" className="visually-hidden">
-            Recruiting
-          </h2>
-          <RecruitingHubSummary
-            targetSeasonNumber={recruiting.targetSeasonNumber}
-            phase={recruiting.phase}
-            lastResolvedPeriod={recruiting.lastResolvedPeriod}
-            board={recruitingBoard}
-            recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
-            onManageRecruiting={goToRecruiting}
-            onGenerateDraftBoard={generateControlledDraftBoard}
-            onBuildManually={goToRecruiting}
-          />
+            )}
         </section>
-      )}
+
+        {recruiting && recruitingBoard && (
+          <section
+            className="section hub-primary-grid__recruiting"
+            aria-labelledby="recruiting-summary-heading"
+          >
+            <h2 id="recruiting-summary-heading" className="visually-hidden">
+              Recruiting
+            </h2>
+            <RecruitingHubSummary
+              targetSeasonNumber={recruiting.targetSeasonNumber}
+              phase={recruiting.phase}
+              lastResolvedPeriod={recruiting.lastResolvedPeriod}
+              board={recruitingBoard}
+              recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
+              onManageRecruiting={goToRecruiting}
+              onGenerateDraftBoard={generateControlledDraftBoard}
+              onBuildManually={goToRecruiting}
+            />
+          </section>
+        )}
+      </div>
 
       <section className="section" aria-labelledby="bracket-heading">
         <h2 id="bracket-heading" className="section-title">

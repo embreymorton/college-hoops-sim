@@ -35,7 +35,7 @@ import {
 } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
-import { deriveGameLeaders, formatControlledMargin } from './gameLeaders'
+import { deriveGameLeaders } from './gameLeaders'
 import { formatTournamentQualification } from './postseasonFormatters'
 import { deriveRecentControlledCommitment } from './recruitingFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
@@ -286,10 +286,11 @@ export function SeasonHubScreen() {
                 ? 'Win'
                 : 'Loss'
             }
-            resultDetail={formatControlledMargin(
-              completedHubGame.result,
-              controlledProgramId,
-            )}
+            resultTone={
+              completedHubGame.result.winnerId === controlledProgramId
+                ? 'positive'
+                : 'negative'
+            }
             leaders={deriveGameLeaders(
               completedHubGame.result,
               season.programStates[completedHubGame.result.homeTeamId]!.team,

@@ -13,7 +13,7 @@ import {
 import { MIDSEASON_ROUND, useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
-import { deriveGameLeaders, formatControlledMargin } from './gameLeaders'
+import { deriveGameLeaders } from './gameLeaders'
 
 function resetStore() {
   useDynastyStore.setState(useDynastyStore.getInitialState())
@@ -199,16 +199,14 @@ describe('Season Presentation', () => {
     const leaders = deriveGameLeaders(result!, homeTeam, awayTeam)
     expect(within(completedCard).getByText(String(result!.homeScore))).toBeInTheDocument()
     expect(within(completedCard).getByText(String(result!.awayScore))).toBeInTheDocument()
-    expect(
-      within(completedCard).getByText(
-        result!.winnerId === controlledProgramId ? 'Win' : 'Loss',
-      ),
-    ).toBeInTheDocument()
-    expect(
-      within(completedCard).getByText(
-        formatControlledMargin(result!, controlledProgramId!),
-      ),
-    ).toBeInTheDocument()
+    const resultTag = within(completedCard).getByText(
+      result!.winnerId === controlledProgramId ? 'Win' : 'Loss',
+    )
+    expect(resultTag).toBeInTheDocument()
+    expect(resultTag).toHaveAttribute(
+      'data-tone',
+      result!.winnerId === controlledProgramId ? 'positive' : 'negative',
+    )
     expect(
       within(completedCard).getByText(
         `${game.homeProgramId === controlledProgramId ? 'Home' : 'Away'} · Final`,

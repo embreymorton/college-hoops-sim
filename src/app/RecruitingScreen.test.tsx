@@ -330,6 +330,38 @@ describe('Recruiting Board', () => {
     ).toBe(4)
   })
 
+  it('sorts strictly by National Rank ascending, and priority changes never move rows', () => {
+    renderRecruitingScreen()
+
+    const table = document.querySelector('.recruiting-board-table') as HTMLElement
+    const rankCells = within(table)
+      .getAllByRole('row')
+      .slice(1) // drop the header row
+      .map((row) => Number(within(row).getAllByRole('cell')[0]!.textContent))
+    expect(rankCells).toEqual([...rankCells].sort((first, second) => first - second))
+
+    // Push "Active Fixture" (rank 2, priority 3) to the max priority — well
+    // above "Signed Fixture" (rank 1, priority 3) — and confirm row order
+    // (by rank) is unaffected.
+    const activeRow = screen.getByText('Active Fixture').closest('tr')!
+    const increaseButton = within(activeRow).getByRole('button', {
+      name: /Increase .* priority/,
+    })
+    fireEvent.click(increaseButton)
+    fireEvent.click(increaseButton)
+
+    const rowsAfter = within(table).getAllByRole('row').slice(1)
+    const namesAfter = rowsAfter.map(
+      (row) => within(row).getAllByRole('cell')[1]!.textContent,
+    )
+    expect(namesAfter[0]).toContain('Signed Fixture')
+    expect(namesAfter[1]).toContain('Active Fixture')
+    const rankCellsAfter = rowsAfter.map((row) =>
+      Number(within(row).getAllByRole('cell')[0]!.textContent),
+    )
+    expect(rankCellsAfter).toEqual([...rankCellsAfter].sort((first, second) => first - second))
+  })
+
   it('removes an eligible target from the board', () => {
     renderRecruitingScreen()
     const row = screen.getByText('Active Fixture').closest('tr')!

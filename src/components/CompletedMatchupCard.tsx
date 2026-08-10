@@ -25,12 +25,17 @@ interface CompletedMatchupCardProps {
   readonly home: CompletedMatchupTeamInfo
   readonly away: CompletedMatchupTeamInfo
   readonly resultLabel: string
-  readonly resultDetail?: string
+  /** Colors the result tag — positive (accent) for a win/advance/title, muted for a loss/elimination. */
+  readonly resultTone: 'positive' | 'negative'
   readonly leaders: CompletedGameTeamLeaders
   readonly onViewBoxScore: () => void
 }
 
-/** Concise Hub presentation of one already-recorded canonical GameResult. */
+/**
+ * Concise Hub presentation of one already-recorded canonical GameResult. The
+ * result tag lives in the header, next to the round — not a separate block —
+ * so this card's height stays close to the pre-game matchup card it replaces.
+ */
 export function CompletedMatchupCard({
   roundLabel,
   siteLabel,
@@ -38,14 +43,19 @@ export function CompletedMatchupCard({
   home,
   away,
   resultLabel,
-  resultDetail,
+  resultTone,
   leaders,
   onViewBoxScore,
 }: CompletedMatchupCardProps) {
   return (
     <div className="next-game-card next-game-card--final" aria-live="polite">
       <div className="next-game-card__eyebrow">
-        <span className="eyebrow">{roundLabel}</span>
+        <span className="next-game-card__eyebrow-left">
+          <span className="eyebrow">{roundLabel}</span>
+          <span className="next-game-card__result-tag" data-tone={resultTone}>
+            {resultLabel}
+          </span>
+        </span>
         <span className="next-game-card__home-away">
           {siteLabel} · Final{overtimeTag ? `/${overtimeTag}` : ''}
         </span>
@@ -53,12 +63,6 @@ export function CompletedMatchupCard({
       <div className="next-game-card__final-scores">
         <CompletedTeamRow team={away} />
         <CompletedTeamRow team={home} />
-      </div>
-      <div className="next-game-card__result-summary">
-        <p className="next-game-card__result-line">{resultLabel}</p>
-        {resultDetail && (
-          <p className="next-game-card__result-detail">{resultDetail}</p>
-        )}
       </div>
       <div className="game-leaders" aria-label="Game leaders">
         <p className="game-leaders__heading">Game Leaders</p>
