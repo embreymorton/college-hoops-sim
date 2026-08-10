@@ -2,16 +2,20 @@ import { create } from 'zustand'
 import { validateRotation, type Rotation, type RngSeed } from '../engine'
 import {
   addRecruitingBoardTarget,
+  autoFinalizeRecruiting,
+  beginOffseason,
   buildDefaultRecruitingBoard,
   initializeDynastyState,
   initializeRecruiting,
   manageProgramRecruitingOffers,
   offerRecruit,
+  prepareLateRecruiting,
   removeRecruitingBoardTarget,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
   updateRecruitingBoardPriority,
   withdrawRecruitOffer,
+  rolloverDynastyToNextSeason,
   type DynastyState,
   type RecruitingState,
 } from '../dynasty'
@@ -172,6 +176,7 @@ export type SeasonSessionView =
   | 'teamDetails'
   | 'playerDetails'
   | 'recruiting'
+  | 'lifecycle'
 
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
@@ -320,6 +325,14 @@ export interface DynastySessionState {
   reviewRecruitingSetup(): void
   /** Dismisses onboarding without changing basketball or Recruiting facts. */
   cancelRecruitingSetup(): void
+  /** Opens the user-reviewable Late Recruiting phase after the championship boundary. */
+  enterLateRecruiting(): void
+  /** Resolves and archives the active Late Recruiting class without starting Offseason. */
+  finalizeRecruitingClass(): void
+  /** Archives the completed year and prepares Offseason without rolling over. */
+  beginDynastyOffseason(): void
+  /** Atomically rolls the prepared Dynasty into its next active Season. */
+  beginNextSeason(): void
 }
 
 export const selectActiveSeason = (
@@ -1270,5 +1283,113 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       pendingRecruitingSetupIntent: null,
       pendingSuperSim: cancelsSuperSim ? null : get().pendingSuperSim,
     })
+  },
+
+  enterLateRecruiting() {
+    const { dynasty } = get()
+    if (!dynasty) return
+
+    try {
+      const nextDynasty = prepareLateRecruiting(dynasty)
+      set({
+        dynasty: nextDynasty,
+        view: 'recruiting',
+        recruitingActionError: null,
+      })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not enter Late Recruiting.',
+      })
+    }
+  },
+
+  finalizeRecruitingClass() {
+    const { dynasty } = get()
+    if (!dynasty) return
+    if (dynasty.recruiting?.phase !== 'late') {
+      set({
+        recruitingActionError: 'Recruiting must be in Late Recruiting before it can be finalized.',
+      })
+      return
+    }
+
+    try {
+      const nextDynasty = autoFinalizeRecruiting(dynasty).dynasty
+      set({
+        dynasty: nextDynasty,
+        view: 'lifecycle',
+        recruitingActionError: null,
+      })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not finalize Recruiting.',
+      })
+    }
+  },
+
+  beginDynastyOffseason() {
+    const { dynasty } = get()
+    if (!dynasty) return
+    if (dynasty.recruiting?.phase !== 'finalized') {
+      set({
+        recruitingActionError: 'Recruiting must be finalized before Offseason can begin.',
+      })
+      return
+    }
+
+    try {
+      const nextDynasty = beginOffseason(dynasty)
+      set({
+        dynasty: nextDynasty,
+        view: 'lifecycle',
+        recruitingActionError: null,
+      })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not begin Offseason.',
+      })
+    }
+  },
+
+  beginNextSeason() {
+    const { dynasty } = get()
+    if (!dynasty) return
+
+    try {
+      const nextDynasty = withoutControlledRecruitingStrategy(
+        rolloverDynastyToNextSeason(dynasty),
+      )
+      const controlledRotation = nextDynasty.activeSeason!
+        .programStates[nextDynasty.controlledProgramId]!.rotation
+
+      set({
+        dynasty: nextDynasty,
+        controlledProgramDefaultRotation: controlledRotation,
+        draftRotation: controlledRotation,
+        view: 'hub',
+        lastPlayedGameId: null,
+        viewedGameId: null,
+        pendingSuperSim: null,
+        superSimSummary: null,
+        postseasonControlledDefaultRotation: null,
+        postseasonDraftRotation: null,
+        lastPlayedTournamentGameId: null,
+        viewedTournamentGameId: null,
+        explorationViewHistory: [],
+        selectedTeamProgramId: null,
+        selectedPlayerProgramId: null,
+        selectedPlayerId: null,
+        recruitingActionError: null,
+        pendingRecruitingSetupIntent: null,
+      })
+    } catch (error) {
+      set({
+        recruitingActionError:
+          error instanceof Error ? error.message : 'Could not begin the next Season.',
+      })
+    }
   },
 }))

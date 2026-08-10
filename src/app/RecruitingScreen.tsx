@@ -42,6 +42,9 @@ export function RecruitingScreen() {
   const generateControlledDraftBoard = useDynastyStore(
     (state) => state.generateControlledDraftBoard,
   )
+  const finalizeRecruitingClass = useDynastyStore(
+    (state) => state.finalizeRecruitingClass,
+  )
 
   if (!dynasty || !dynasty.recruiting) {
     return (
@@ -79,6 +82,21 @@ export function RecruitingScreen() {
         phase={dynasty.recruiting.phase}
         lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
       />
+
+      {dynasty.recruiting.phase === 'late' && (
+        <section className="section" aria-label="Late Recruiting transition">
+          <p className="section-hint">
+            Late Recruiting remains editable until you finalize this class.
+          </p>
+          <button
+            type="button"
+            className="button button--primary"
+            onClick={finalizeRecruitingClass}
+          >
+            Finalize Recruiting
+          </button>
+        </section>
+      )}
 
       <section className="section" aria-labelledby="recruiting-needs-heading">
         <h2 id="recruiting-needs-heading" className="section-title">

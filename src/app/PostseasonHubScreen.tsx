@@ -166,6 +166,9 @@ export function PostseasonHubScreen() {
     (state) => state.generateControlledDraftBoard,
   )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
+  const enterLateRecruiting = useDynastyStore(
+    (state) => state.enterLateRecruiting,
+  )
 
   if (!season || !postseason || !controlledProgramId) {
     return null
@@ -350,6 +353,14 @@ export function PostseasonHubScreen() {
             : controlledEntry
               ? `${controlledProgram.name}'s tournament run has ended. The completed bracket and every box score remain available below.`
               : `${controlledProgram.name} did not qualify this season. The completed bracket and every box score remain available below.`
+        }
+        action={
+          recruiting?.phase === 'regular-season' && recruiting.lastResolvedPeriod === 28
+            ? {
+                label: 'Continue to Late Recruiting',
+                onClick: enterLateRecruiting,
+              }
+            : undefined
         }
       />
     )
