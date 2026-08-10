@@ -44,6 +44,7 @@ describe('Dynasty section navigation', () => {
 
   it('remains reachable while a Postseason is active, alongside the Tournament section', () => {
     useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    useDynastyStore.getState().generateControlledDraftBoard()
     for (let round = 0; round < 30; round += 1) {
       if (useDynastyStore.getState().dynasty!.activeSeason!.schedule.games.every(
         ({ id }) => useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId[id],

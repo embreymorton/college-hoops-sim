@@ -2,8 +2,10 @@ import { create } from 'zustand'
 import { validateRotation, type Rotation, type RngSeed } from '../engine'
 import {
   addRecruitingBoardTarget,
+  buildDefaultRecruitingBoard,
   initializeDynastyState,
   initializeRecruiting,
+  manageProgramRecruitingOffers,
   offerRecruit,
   removeRecruitingBoardTarget,
   syncRecruitingThroughCompletedPostseasonRounds,
@@ -29,6 +31,7 @@ import {
   getCurrentRound,
   getNextGameForProgram,
   initializeSeason,
+  isRoundComplete,
   simulatePendingGamesInCurrentRound,
   simulatePendingGamesInRound,
   simulatePendingGamesThroughRound,
@@ -84,6 +87,13 @@ export interface SuperSimSummary {
   readonly segmentWins: number
   readonly segmentLosses: number
 }
+
+export type PendingRecruitingSetupIntent =
+  | 'game-prep-catch-up'
+  | 'play-scheduled-game'
+  | 'quick-sim-controlled-game'
+  | 'simulate-other-games'
+  | 'confirm-super-sim'
 
 /**
  * Resolves every round strictly before `beforeRound` so AI games never pile
@@ -180,6 +190,8 @@ export interface DynastySessionState {
    * Recruiting action or Dynasty-section navigation.
    */
   readonly recruitingActionError: string | null
+  /** Serializable UI intent paused before the first Recruiting period can resolve. */
+  readonly pendingRecruitingSetupIntent: PendingRecruitingSetupIntent | null
   readonly masterSeed: RngSeed
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string): void
@@ -266,6 +278,14 @@ export interface DynastySessionState {
   withdrawRecruitingOffer(playerId: string): void
   /** Dismisses the most recent Recruiting action error without changing Dynasty state. */
   dismissRecruitingActionError(): void
+  /** Creates the accepted deterministic default board/offers only while the controlled board is empty. */
+  generateControlledDraftBoard(): void
+  /** Generates the suggested plan and resumes the exact paused basketball action. */
+  generateDraftBoardAndContinue(): void
+  /** Discards the paused basketball action and opens existing Recruiting management. */
+  reviewRecruitingSetup(): void
+  /** Dismisses onboarding without changing basketball or Recruiting facts. */
+  cancelRecruitingSetup(): void
 }
 
 export const selectActiveSeason = (
@@ -283,6 +303,79 @@ export const selectActiveRecruiting = (
 export const selectControlledProgramId = (
   state: DynastySessionState,
 ): string | null => state.dynasty?.controlledProgramId ?? null
+
+function controlledRecruitingBoardIsEmpty(dynasty: DynastyState): boolean {
+  const recruiting = dynasty.recruiting
+  return Boolean(
+    recruiting &&
+      recruiting.programs[dynasty.controlledProgramId]?.board.length === 0,
+  )
+}
+
+/** Pure preflight using the same completed-Round 1 gate as Recruiting synchronization. */
+export function needsRecruitingSetupBeforeAdvance(
+  dynasty: DynastyState,
+  proposedSeason: SeasonState,
+): boolean {
+  return Boolean(
+    dynasty.recruiting?.lastResolvedPeriod === 0 &&
+      controlledRecruitingBoardIsEmpty(dynasty) &&
+      isRoundComplete(proposedSeason, 1),
+  )
+}
+
+/** Interactive-only policy: preserve the plan and class, but start user strategy empty. */
+function withoutControlledRecruitingStrategy(dynasty: DynastyState): DynastyState {
+  const recruiting = dynasty.recruiting
+  const program = recruiting?.programs[dynasty.controlledProgramId]
+  if (!recruiting || !program) return dynasty
+  return {
+    ...dynasty,
+    recruiting: {
+      ...recruiting,
+      programs: {
+        ...recruiting.programs,
+        [program.programId]: { ...program, board: [] },
+      },
+    },
+  }
+}
+
+function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState {
+  const recruiting = dynasty.recruiting
+  const program = recruiting?.programs[dynasty.controlledProgramId]
+  if (!recruiting || !program || program.board.length > 0) return dynasty
+
+  const board = buildDefaultRecruitingBoard(
+    dynasty,
+    recruiting,
+    dynasty.controlledProgramId,
+  )
+  const recruitingWithBoard: RecruitingState = {
+    ...recruiting,
+    programs: {
+      ...recruiting.programs,
+      [program.programId]: { ...program, board },
+    },
+  }
+  const context = { ...dynasty, recruiting: recruitingWithBoard }
+  const managedProgram = manageProgramRecruitingOffers(
+    context,
+    recruitingWithBoard,
+    dynasty.controlledProgramId,
+  )
+
+  return {
+    ...context,
+    recruiting: {
+      ...recruitingWithBoard,
+      programs: {
+        ...recruitingWithBoard.programs,
+        [program.programId]: managedProgram,
+      },
+    },
+  }
+}
 
 function withActiveSeason(
   dynasty: DynastyState,
@@ -372,6 +465,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   selectedPlayerProgramId: null,
   selectedPlayerId: null,
   recruitingActionError: null,
+  pendingRecruitingSetupIntent: null,
   masterSeed: MASTER_SEED,
 
   selectProgram(programId) {
@@ -394,13 +488,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       throw new RangeError(`Unknown Universe V0 program ID "${programId}"`)
     }
 
-    const dynasty = initializeRecruiting(initializeDynastyState({
-      dynastyId: `dynasty:${programId}`,
-      dynastySeed: MASTER_SEED,
-      controlledProgramId: programId,
-      universe: UNIVERSE_V0,
-      activeSeason: season,
-    }))
+    const dynasty = withoutControlledRecruitingStrategy(
+      initializeRecruiting(initializeDynastyState({
+        dynastyId: `dynasty:${programId}`,
+        dynastySeed: MASTER_SEED,
+        controlledProgramId: programId,
+        universe: UNIVERSE_V0,
+        activeSeason: season,
+      })),
+    )
 
     set({
       dynasty,
@@ -420,6 +516,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       selectedPlayerProgramId: null,
       selectedPlayerId: null,
       recruitingActionError: null,
+      pendingRecruitingSetupIntent: null,
     })
   },
 
@@ -500,6 +597,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const caughtUpSeason = nextGame
       ? catchUpRoundsBefore(season, controlledProgramId, nextGame.round)
       : season
+    if (needsRecruitingSetupBeforeAdvance(dynasty, caughtUpSeason)) {
+      set({ pendingRecruitingSetupIntent: 'game-prep-catch-up' })
+      return
+    }
     // Always start the draft from the canonical committed Rotation, so a
     // temporary invalid edit left over from a previous prep visit can never
     // reappear here or leak into the Dashboard Quick Sim boundary.
@@ -543,6 +644,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
+    if (needsRecruitingSetupBeforeAdvance(dynasty, outcome.season)) {
+      set({ pendingRecruitingSetupIntent: 'play-scheduled-game' })
+      return
+    }
+
     set({
       dynasty: withActiveSeason(dynasty, outcome.season),
       lastPlayedGameId: outcome.playedGameId,
@@ -562,6 +668,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const outcome = runNextGameSimulation(season, controlledProgramId)
 
     if (!outcome) {
+      return
+    }
+
+    if (needsRecruitingSetupBeforeAdvance(dynasty, outcome.season)) {
+      set({ pendingRecruitingSetupIntent: 'quick-sim-controlled-game' })
       return
     }
 
@@ -587,6 +698,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       excludedProgramIds: [controlledProgramId],
     })
 
+    if (needsRecruitingSetupBeforeAdvance(dynasty, nextSeason)) {
+      set({ pendingRecruitingSetupIntent: 'simulate-other-games' })
+      return
+    }
+
     set({ dynasty: withActiveSeason(dynasty, nextSeason) })
   },
 
@@ -601,20 +717,35 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   requestSuperSim(kind) {
-    const season = get().dynasty?.activeSeason
+    const dynasty = get().dynasty
+    const season = dynasty?.activeSeason
 
-    if (!season) {
+    if (!dynasty || !season) {
       return
     }
 
     const throughRound =
       kind === 'midseason' ? MIDSEASON_ROUND : season.schedule.roundCount
 
-    set({ pendingSuperSim: { kind, throughRound } })
+    const pendingSuperSim = { kind, throughRound }
+    const proposedSeason = simulatePendingGamesThroughRound({
+      season,
+      throughRound,
+      simulationSeed: SEASON_SIMULATION_SEED,
+    })
+    set({
+      pendingSuperSim,
+      pendingRecruitingSetupIntent: needsRecruitingSetupBeforeAdvance(
+        dynasty,
+        proposedSeason,
+      )
+        ? 'confirm-super-sim'
+        : null,
+    })
   },
 
   cancelSuperSim() {
-    set({ pendingSuperSim: null })
+    set({ pendingSuperSim: null, pendingRecruitingSetupIntent: null })
   },
 
   confirmSuperSim() {
@@ -635,6 +766,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       throughRound: pendingSuperSim.throughRound,
       simulationSeed: SEASON_SIMULATION_SEED,
     })
+    if (needsRecruitingSetupBeforeAdvance(dynasty, nextSeason)) {
+      set({ pendingRecruitingSetupIntent: 'confirm-super-sim' })
+      return
+    }
     const after: ProgramRecord = deriveProgramRecord(
       nextSeason,
       controlledProgramId,
@@ -1018,5 +1153,53 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
   dismissRecruitingActionError() {
     set({ recruitingActionError: null })
+  },
+
+  generateControlledDraftBoard() {
+    const { dynasty } = get()
+    if (!dynasty?.recruiting) return
+    const nextDynasty = withGeneratedControlledDraftBoard(dynasty)
+    if (nextDynasty === dynasty) return
+    set({ dynasty: nextDynasty, recruitingActionError: null })
+  },
+
+  generateDraftBoardAndContinue() {
+    const intent = get().pendingRecruitingSetupIntent
+    if (!intent) return
+
+    get().generateControlledDraftBoard()
+    set({ pendingRecruitingSetupIntent: null })
+
+    switch (intent) {
+      case 'game-prep-catch-up':
+        get().goToGamePrep()
+        break
+      case 'play-scheduled-game':
+        get().playScheduledGame()
+        break
+      case 'quick-sim-controlled-game':
+        get().simulateNextGame()
+        break
+      case 'simulate-other-games':
+        get().simulateRestOfRound()
+        break
+      case 'confirm-super-sim':
+        get().confirmSuperSim()
+        break
+    }
+  },
+
+  reviewRecruitingSetup() {
+    set({ pendingRecruitingSetupIntent: null, pendingSuperSim: null })
+    get().goToRecruiting()
+  },
+
+  cancelRecruitingSetup() {
+    const cancelsSuperSim =
+      get().pendingRecruitingSetupIntent === 'confirm-super-sim'
+    set({
+      pendingRecruitingSetupIntent: null,
+      pendingSuperSim: cancelsSuperSim ? null : get().pendingSuperSim,
+    })
   },
 }))

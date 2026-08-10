@@ -16,8 +16,14 @@ function resetStore() {
   useDynastyStore.setState(useDynastyStore.getInitialState())
 }
 
+function selectProgram(): void {
+  useDynastyStore.getState().selectProgram('charlotte-tech')
+  useDynastyStore.getState().generateControlledDraftBoard()
+}
+
 /** Drives the current Season to completion; capped so a real bug fails fast. */
 function driveSeasonToCompletion(): void {
+  useDynastyStore.getState().generateControlledDraftBoard()
   for (let iteration = 0; iteration < 30; iteration += 1) {
     const season = useDynastyStore.getState().dynasty!.activeSeason!
 
@@ -44,7 +50,7 @@ describe('seasonStore initialization', () => {
   })
 
   it('initializes a structurally valid Season for the 32-Program Universe V0', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const state = useDynastyStore.getState()
     expect(state.dynasty!.activeSeason).not.toBeNull()
@@ -55,7 +61,7 @@ describe('seasonStore initialization', () => {
   })
 
   it('stores controlled Program ownership outside SeasonState', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const state = useDynastyStore.getState()
     expect(state.dynasty!.controlledProgramId).toBe('charlotte-tech')
@@ -69,12 +75,12 @@ describe('seasonStore initialization', () => {
   })
 
   it('navigates to the Season Hub after selecting a Program', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     expect(useDynastyStore.getState().view).toBe('hub')
   })
 
   it('shows 0-0 initial overall and Conference records for the controlled Program', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const state = useDynastyStore.getState()
     const record = deriveProgramRecord(state.dynasty!.activeSeason!, 'charlotte-tech')
@@ -82,25 +88,25 @@ describe('seasonStore initialization', () => {
   })
 
   it('starts at Round 1', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const state = useDynastyStore.getState()
     expect(getCurrentRound(state.dynasty!.activeSeason!)).toBe(1)
   })
 
   it('produces a deterministic Season for a given Program across store instances', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const first = useDynastyStore.getState().dynasty!.activeSeason
 
     resetStore()
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const second = useDynastyStore.getState().dynasty!.activeSeason
 
     expect(second).toEqual(first)
   })
 
   it('does not duplicate record, standings, or current-round state alongside SeasonState', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const stateKeys = Object.keys(useDynastyStore.getState())
     for (const forbidden of [
@@ -119,7 +125,7 @@ describe('seasonStore initialization', () => {
 
 describe('seasonStore next opponent', () => {
   it('matches the Schedule query for the controlled Program', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const state = useDynastyStore.getState()
     const expectedGame = getNextGameForProgram(state.dynasty!.activeSeason!, 'charlotte-tech')
@@ -130,7 +136,7 @@ describe('seasonStore next opponent', () => {
 
 describe('seasonStore Rotation editing', () => {
   it('reflects the current Season Rotation in Team Strength once legally edited', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
@@ -152,7 +158,7 @@ describe('seasonStore Rotation editing', () => {
   })
 
   it('persists a legal Rotation edit into SeasonState', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
@@ -176,7 +182,7 @@ describe('seasonStore Rotation editing', () => {
   })
 
   it('does not persist a temporarily invalid draft into SeasonState', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const originalRotation =
       useDynastyStore.getState().dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
@@ -196,7 +202,7 @@ describe('seasonStore Rotation editing', () => {
   })
 
   it('preserves a custom Rotation into future rounds', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
@@ -229,7 +235,7 @@ describe('seasonStore Rotation editing', () => {
 
 describe('seasonStore game simulation', () => {
   it('records the actual ScheduledGame result using the current Team/Rotation', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const game = getNextGameForProgram(season!, 'charlotte-tech')!
     const home = season!.programStates[game.homeProgramId]!
@@ -258,7 +264,7 @@ describe('seasonStore game simulation', () => {
   })
 
   it('does not simulate while the controlled draft Rotation is invalid', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const [firstPlayer] = getPlayersByMinutes(
@@ -279,7 +285,7 @@ describe('seasonStore game simulation', () => {
 
 describe('seasonStore Dashboard Quick Sim', () => {
   it('uses the canonical current Season Rotation, matching a reproduction from the committed Team/Rotation', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const game = getNextGameForProgram(season!, 'charlotte-tech')!
     const home = season!.programStates[game.homeProgramId]!
@@ -305,7 +311,7 @@ describe('seasonStore Dashboard Quick Sim', () => {
   })
 
   it('is not blocked by a stale, invalid Rotation draft left over from Game Prep', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const [firstPlayer] = getPlayersByMinutes(
@@ -332,7 +338,7 @@ describe('seasonStore Dashboard Quick Sim', () => {
   })
 
   it('resets a stale invalid draft back to the canonical Rotation when Game Prep is (re-)entered', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const canonicalRotation =
@@ -356,7 +362,7 @@ describe('seasonStore Dashboard Quick Sim', () => {
 
 describe('seasonStore historical game viewing', () => {
   it('opens a completed ScheduledGame for historical review without resimulating it', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().playScheduledGame()
     const { lastPlayedGameId } = useDynastyStore.getState()
     const seasonAfterGame = useDynastyStore.getState().dynasty!.activeSeason
@@ -376,7 +382,7 @@ describe('seasonStore historical game viewing', () => {
   })
 
   it('is a no-op for a ScheduledGame that has not been played yet', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const pendingGame = getNextGameForProgram(
       useDynastyStore.getState().dynasty!.activeSeason!,
       'charlotte-tech',
@@ -392,7 +398,7 @@ describe('seasonStore historical game viewing', () => {
 
 describe('seasonStore rest-of-round simulation', () => {
   it('preserves the controlled Program result and completes remaining Round 1 games', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().playScheduledGame()
     const userResult =
       useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId[
@@ -415,7 +421,7 @@ describe('seasonStore rest-of-round simulation', () => {
   })
 
   it('never simulates the controlled Program pending game as a safety boundary', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const controlledGameId = getNextGameForProgram(
       useDynastyStore.getState().dynasty!.activeSeason!,
       'charlotte-tech',
@@ -434,7 +440,7 @@ describe('seasonStore rest-of-round simulation', () => {
 
 describe('seasonStore backlog catch-up', () => {
   it('resolves fully-past rounds when preparing for a later game, without ever calling Simulate Rest of Round', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     // Play three rounds back to back; never touch simulateRestOfRound().
     for (let round = 0; round < 3; round += 1) {
@@ -467,7 +473,7 @@ describe('seasonStore backlog catch-up', () => {
   })
 
   it('catches up Round 1 when entering game prep for Round 2, without disturbing the recorded Round 1 result or pre-simulating Round 2', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().goToGamePrep()
     useDynastyStore.getState().playScheduledGame()
     const round1GameId = useDynastyStore.getState().lastPlayedGameId!
@@ -508,7 +514,7 @@ describe('seasonStore regular-season completion', () => {
 
 describe('seasonStore Super Sim', () => {
   it('requests Midseason with throughRound = 12 and does not touch Season state', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const before = useDynastyStore.getState().dynasty!.activeSeason
 
     useDynastyStore.getState().requestSuperSim('midseason')
@@ -522,7 +528,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('requests End of Regular Season with throughRound = the Schedule round count', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
 
     useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
 
@@ -534,7 +540,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('cancelSuperSim clears the pending request without simulating anything', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const before = useDynastyStore.getState().dynasty!.activeSeason
     useDynastyStore.getState().requestSuperSim('midseason')
 
@@ -546,7 +552,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('confirmSuperSim completes every pending game through Round 12 and derives the segment record', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().requestSuperSim('midseason')
 
     useDynastyStore.getState().confirmSuperSim()
@@ -570,7 +576,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('confirmSuperSim through End of Regular Season completes all 384 games', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
 
     useDynastyStore.getState().confirmSuperSim()
@@ -586,7 +592,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('preserves an already in-progress segment record (before/after, not from a fresh 0-0 Season)', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     // Play a few rounds by hand first, establishing a non-zero "before" record.
     for (let round = 0; round < 3; round += 1) {
       useDynastyStore.getState().simulateNextGame()
@@ -610,7 +616,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('dismissSuperSimSummary clears the feedback without altering Season state', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().requestSuperSim('midseason')
     useDynastyStore.getState().confirmSuperSim()
     const seasonAfterSim = useDynastyStore.getState().dynasty!.activeSeason
@@ -623,7 +629,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it("uses each Program's current committed Rotation, unaffected by a stale invalid Game Prep draft", () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const canonicalRotation = season!.programStates['charlotte-tech']!.rotation
@@ -650,7 +656,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('preserves a custom, legally committed Rotation across the entire bulk simulation', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const forwards = getPlayersByMinutes(
@@ -676,7 +682,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('preserves already-completed results exactly when Super Sim runs from a partial Season', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().simulateNextGame()
     useDynastyStore.getState().simulateRestOfRound()
     const round1Results = { ...useDynastyStore.getState().dynasty!.activeSeason!.resultsByGameId }
@@ -691,7 +697,7 @@ describe('seasonStore Super Sim', () => {
   })
 
   it('produces full PlayerGameStats, still available as historical results', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().requestSuperSim('midseason')
     useDynastyStore.getState().confirmSuperSim()
 
@@ -721,7 +727,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   const NON_CONTROLLED_PROGRAM_ID = 'northbridge'
 
   it('opens League from the Hub and records the Hub as the return step', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().goToLeague()
 
     const state = useDynastyStore.getState()
@@ -730,7 +736,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   })
 
   it('opens Team Details for any Program, controlled or not', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
 
     const state = useDynastyStore.getState()
@@ -739,7 +745,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   })
 
   it('opens Player Details for a Player on any Program', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     const roster =
       useDynastyStore.getState().dynasty!.activeSeason!.programStates[NON_CONTROLLED_PROGRAM_ID]!
         .team.roster
@@ -754,7 +760,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   })
 
   it('unwinds a multi-hop trip (Hub → League → Team → Player) one step at a time', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().goToLeague()
     useDynastyStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
     const playerId =
@@ -780,7 +786,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   })
 
   it('returns Standings → Team Details directly back to the Hub in one step', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
 
     expect(useDynastyStore.getState().explorationViewHistory).toEqual(['hub'])
@@ -790,7 +796,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   })
 
   it('remains reachable from the Postseason Hub and returns there', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     for (let round = 0; round < 30; round += 1) {
       if (isRegularSeasonComplete(useDynastyStore.getState().dynasty!.activeSeason!)) break
       useDynastyStore.getState().simulateNextGame()
@@ -809,7 +815,7 @@ describe('seasonStore League & Player exploration navigation', () => {
   })
 
   it('resets exploration navigation state when a new Program is selected', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
 
     useDynastyStore.getState().selectProgram('northbridge')

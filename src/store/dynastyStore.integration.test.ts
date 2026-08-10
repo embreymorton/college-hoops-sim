@@ -13,6 +13,7 @@ const TEST_SIMULATION_SEED =
 function resetAndSelectProgram(): void {
   useDynastyStore.setState(useDynastyStore.getInitialState())
   useDynastyStore.getState().selectProgram(PROGRAM_ID)
+  useDynastyStore.getState().generateControlledDraftBoard()
 }
 
 function finishRegularSeasonManually(): void {

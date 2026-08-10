@@ -1,4 +1,4 @@
-import { calculateTeamStrength, POSITIONS, type Team, type TeamStrength } from '../engine'
+import { calculateTeamStrength, type Team, type TeamStrength } from '../engine'
 import {
   CompletedMatchupCard,
   ConferenceStandingsSection,
@@ -75,6 +75,9 @@ export function SeasonHubScreen() {
   const viewCompletedGame = useDynastyStore((state) => state.viewCompletedGame)
   const lastPlayedGameId = useDynastyStore((state) => state.lastPlayedGameId)
   const pendingSuperSim = useDynastyStore((state) => state.pendingSuperSim)
+  const pendingRecruitingSetupIntent = useDynastyStore(
+    (state) => state.pendingRecruitingSetupIntent,
+  )
   const superSimSummary = useDynastyStore((state) => state.superSimSummary)
   const requestSuperSim = useDynastyStore((state) => state.requestSuperSim)
   const cancelSuperSim = useDynastyStore((state) => state.cancelSuperSim)
@@ -86,6 +89,9 @@ export function SeasonHubScreen() {
   const enterPostseason = useDynastyStore((state) => state.enterPostseason)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
+  const generateControlledDraftBoard = useDynastyStore(
+    (state) => state.generateControlledDraftBoard,
+  )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !controlledProgramId) {
@@ -104,18 +110,6 @@ export function SeasonHubScreen() {
   const recruiting = dynasty?.recruiting
   const recruitingBoard =
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
-  const recruitingProjectedTotal = recruitingBoard
-    ? POSITIONS.reduce(
-        (sum, position) => sum + recruitingBoard.projectedOpeningsByPosition[position],
-        0,
-      )
-    : 0
-  const recruitingRemainingTotal = recruitingBoard
-    ? POSITIONS.reduce(
-        (sum, position) => sum + recruitingBoard.remainingOpeningsByPosition[position],
-        0,
-      )
-    : 0
 
   const overallRecord = deriveProgramRecord(season, controlledProgramId)
   const conferenceRecord = deriveConferenceRecord(season, controlledProgramId)
@@ -223,7 +217,8 @@ export function SeasonHubScreen() {
         isComplete={seasonComplete}
       />
 
-      <section className="section" aria-labelledby="next-game-heading">
+      <div className="hub-primary-grid">
+      <section className="section hub-primary-grid__game" aria-labelledby="next-game-heading">
         <h2 id="next-game-heading" className="visually-hidden">
           Next game
         </h2>
@@ -372,7 +367,10 @@ export function SeasonHubScreen() {
       </section>
 
       {recruiting && recruitingBoard && (
-        <section className="section" aria-labelledby="recruiting-summary-heading">
+        <section
+          className="section hub-primary-grid__recruiting"
+          aria-labelledby="recruiting-summary-heading"
+        >
           <h2 id="recruiting-summary-heading" className="visually-hidden">
             Recruiting
           </h2>
@@ -380,14 +378,15 @@ export function SeasonHubScreen() {
             targetSeasonNumber={recruiting.targetSeasonNumber}
             phase={recruiting.phase}
             lastResolvedPeriod={recruiting.lastResolvedPeriod}
-            boardSize={recruitingBoard.targets.length}
-            signedTotal={recruitingProjectedTotal - recruitingRemainingTotal}
-            projectedTotal={recruitingProjectedTotal}
+            board={recruitingBoard}
             recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
             onManageRecruiting={goToRecruiting}
+            onGenerateDraftBoard={generateControlledDraftBoard}
+            onBuildManually={goToRecruiting}
           />
         </section>
       )}
+      </div>
 
       <section className="section" aria-labelledby="standings-heading">
         <h2 id="standings-heading" className="section-title">
@@ -430,7 +429,7 @@ export function SeasonHubScreen() {
         />
       </section>
 
-      {pendingSuperSim && (
+      {pendingSuperSim && !pendingRecruitingSetupIntent && (
         <SuperSimConfirmDialog
           kind={pendingSuperSim.kind}
           throughRound={pendingSuperSim.throughRound}

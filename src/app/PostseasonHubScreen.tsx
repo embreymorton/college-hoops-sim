@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { calculateTeamStrength, POSITIONS } from '../engine'
+import { calculateTeamStrength } from '../engine'
 import {
   CompletedMatchupCard,
   DynastySectionNav,
@@ -162,6 +162,9 @@ export function PostseasonHubScreen() {
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
+  const generateControlledDraftBoard = useDynastyStore(
+    (state) => state.generateControlledDraftBoard,
+  )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
   if (!season || !postseason || !controlledProgramId) {
@@ -177,18 +180,6 @@ export function PostseasonHubScreen() {
   const recruiting = dynasty?.recruiting
   const recruitingBoard =
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
-  const recruitingProjectedTotal = recruitingBoard
-    ? POSITIONS.reduce(
-        (sum, position) => sum + recruitingBoard.projectedOpeningsByPosition[position],
-        0,
-      )
-    : 0
-  const recruitingRemainingTotal = recruitingBoard
-    ? POSITIONS.reduce(
-        (sum, position) => sum + recruitingBoard.remainingOpeningsByPosition[position],
-        0,
-      )
-    : 0
 
   const controlledEntry = postseason.field.find(
     (entry) => entry.programId === controlledProgramId,
@@ -547,11 +538,11 @@ export function PostseasonHubScreen() {
             targetSeasonNumber={recruiting.targetSeasonNumber}
             phase={recruiting.phase}
             lastResolvedPeriod={recruiting.lastResolvedPeriod}
-            boardSize={recruitingBoard.targets.length}
-            signedTotal={recruitingProjectedTotal - recruitingRemainingTotal}
-            projectedTotal={recruitingProjectedTotal}
+            board={recruitingBoard}
             recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
             onManageRecruiting={goToRecruiting}
+            onGenerateDraftBoard={generateControlledDraftBoard}
+            onBuildManually={goToRecruiting}
           />
         </section>
       )}

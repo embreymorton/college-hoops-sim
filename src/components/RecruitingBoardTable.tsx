@@ -59,7 +59,12 @@ function PriorityStepper({ value, disabled, label, onChange }: PriorityStepperPr
   )
 }
 
-/** The controlled Program's board: priority, active-offer, and commitment status per target. */
+/**
+ * The controlled Program's board: priority, active-offer, and commitment
+ * status per target. Callers must not render this with an empty board — use
+ * `RecruitingBoardEmptyState` instead, since the two empty variants need
+ * different copy the table itself doesn't have enough context to choose.
+ */
 export function RecruitingBoardTable({
   board,
   recruiting,
@@ -69,14 +74,6 @@ export function RecruitingBoardTable({
   onWithdraw,
   onRemove,
 }: RecruitingBoardTableProps) {
-  if (board.targets.length === 0) {
-    return (
-      <p className="league-empty-state">
-        Your board is empty. Add targets from the National Class to start recruiting.
-      </p>
-    )
-  }
-
   const rows = board.targets
     .map((target) => ({ target, recruit: getRecruit(recruiting, target.playerId)! }))
     .sort(

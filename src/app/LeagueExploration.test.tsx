@@ -18,6 +18,7 @@ function resetStore() {
 }
 
 function playRounds(count: number) {
+  useDynastyStore.getState().generateControlledDraftBoard()
   for (let i = 0; i < count; i += 1) {
     if (isRegularSeasonComplete(useDynastyStore.getState().dynasty!.activeSeason!)) {
       return
@@ -28,6 +29,7 @@ function playRounds(count: number) {
 }
 
 function driveSeasonToCompletion(): void {
+  useDynastyStore.getState().generateControlledDraftBoard()
   for (let iteration = 0; iteration < 30; iteration += 1) {
     if (isRegularSeasonComplete(useDynastyStore.getState().dynasty!.activeSeason!)) {
       return

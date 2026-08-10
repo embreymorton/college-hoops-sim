@@ -52,6 +52,7 @@ function stat(playerId: string, points: number): PlayerGameStats {
 }
 
 function completeRegularSeasonAndEnterPostseason() {
+  useDynastyStore.getState().generateControlledDraftBoard()
   useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
   useDynastyStore.getState().confirmSuperSim()
   useDynastyStore.getState().dismissSuperSimSummary()
@@ -69,6 +70,7 @@ beforeEach(() => {
 describe('Postseason transition', () => {
   it('shows the National Tournament entry point once the regular season completes, and enters it', () => {
     useDynastyStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().generateControlledDraftBoard()
     useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
     useDynastyStore.getState().confirmSuperSim()
     useDynastyStore.getState().dismissSuperSimSummary()

@@ -1,4 +1,5 @@
 import { selectControlledProgramId, useDynastyStore } from '../store'
+import { RecruitingSetupDialog } from '../components'
 import { GamePrepScreen } from './GamePrepScreen'
 import { LeagueScreen } from './LeagueScreen'
 import { PlayerDetailsScreen } from './PlayerDetailsScreen'
@@ -15,35 +16,71 @@ import { TournamentPostgameScreen } from './TournamentPostgameScreen'
 export function DynastyApp() {
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const view = useDynastyStore((state) => state.view)
+  const pendingRecruitingSetupIntent = useDynastyStore(
+    (state) => state.pendingRecruitingSetupIntent,
+  )
+  const generateDraftBoardAndContinue = useDynastyStore(
+    (state) => state.generateDraftBoardAndContinue,
+  )
+  const reviewRecruitingSetup = useDynastyStore(
+    (state) => state.reviewRecruitingSetup,
+  )
+  const cancelRecruitingSetup = useDynastyStore(
+    (state) => state.cancelRecruitingSetup,
+  )
 
   if (!controlledProgramId) {
     return <ProgramSelectScreen />
   }
 
+  let screen
   switch (view) {
     case 'gamePrep':
-      return <GamePrepScreen />
+      screen = <GamePrepScreen />
+      break
     case 'postgame':
     case 'gameHistory':
-      return <SeasonPostgameScreen />
+      screen = <SeasonPostgameScreen />
+      break
     case 'postseasonHub':
-      return <PostseasonHubScreen />
+      screen = <PostseasonHubScreen />
+      break
     case 'postseasonGamePrep':
-      return <TournamentGamePrepScreen />
+      screen = <TournamentGamePrepScreen />
+      break
     case 'postseasonPostgame':
     case 'postseasonGameHistory':
-      return <TournamentPostgameScreen />
+      screen = <TournamentPostgameScreen />
+      break
     case 'league':
-      return <LeagueScreen />
+      screen = <LeagueScreen />
+      break
     case 'teamDetails':
-      return <TeamDetailsScreen />
+      screen = <TeamDetailsScreen />
+      break
     case 'playerDetails':
-      return <PlayerDetailsScreen />
+      screen = <PlayerDetailsScreen />
+      break
     case 'recruiting':
-      return <RecruitingScreen />
+      screen = <RecruitingScreen />
+      break
     case 'hub':
     case 'programSelect':
     default:
-      return <SeasonHubScreen />
+      screen = <SeasonHubScreen />
+      break
   }
+
+  return (
+    <>
+      {screen}
+      {pendingRecruitingSetupIntent && (
+        <RecruitingSetupDialog
+          onGenerateAndContinue={generateDraftBoardAndContinue}
+          onReviewRecruiting={reviewRecruitingSetup}
+          onCancel={cancelRecruitingSetup}
+        />
+      )}
+    </>
+  )
 }

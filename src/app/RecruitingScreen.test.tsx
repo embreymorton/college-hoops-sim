@@ -410,22 +410,298 @@ describe('National Class', () => {
 })
 
 describe('Season Hub Recruiting module', () => {
-  it('summarizes period/phase, signed count, and board size, and opens Recruiting', () => {
+  it('summarizes period/phase, roster needs, signed count, board, and offers, and opens Recruiting', () => {
     const dynasty = buildFixtureDynasty()
     useDynastyStore.setState({ dynasty, view: 'hub', explorationViewHistory: [] })
     render(<App />)
 
     const summary = document.querySelector('.recruiting-hub-summary') as HTMLElement
     expect(within(summary).getByText(`Class of Season ${dynasty.recruiting!.targetSeasonNumber}`)).toBeInTheDocument()
-    expect(within(summary).getByText('0 / 24')).toBeInTheDocument()
+    // Period 0 presents as Preseason, not a raw "0 / 24" fraction.
+    expect(within(summary).getByText('PRESEASON')).toBeInTheDocument()
+    expect(within(summary).getByText('SG 1 · PF 1')).toBeInTheDocument()
     expect(within(summary).getByText('2 / 4')).toBeInTheDocument()
     expect(within(summary).getByText('10 / 10')).toBeInTheDocument()
+    expect(within(summary).getByText('1 / 2')).toBeInTheDocument()
 
     fireEvent.click(within(summary).getByRole('button', { name: 'Manage Recruiting' }))
     expect(screen.getByRole('button', { name: 'Recruiting' })).toHaveAttribute(
       'aria-pressed',
       'true',
     )
+  })
+
+  it('shows onboarding CTAs when preseason and the board is empty, and normal facts otherwise', () => {
+    const dynasty = buildFixtureDynasty()
+    const emptyBoardDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: [],
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({
+      dynasty: emptyBoardDynasty,
+      view: 'hub',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    const summary = document.querySelector('.recruiting-hub-summary') as HTMLElement
+    expect(within(summary).getByText('Your Board Is Empty')).toBeInTheDocument()
+    expect(
+      within(summary).getByRole('button', { name: 'Generate Draft Board' }),
+    ).toBeInTheDocument()
+    expect(within(summary).getByRole('button', { name: 'Build Manually' })).toBeInTheDocument()
+    expect(within(summary).queryByText('Manage Recruiting')).not.toBeInTheDocument()
+
+    fireEvent.click(within(summary).getByRole('button', { name: 'Generate Draft Board' }))
+
+    const updatedSummary = document.querySelector('.recruiting-hub-summary') as HTMLElement
+    expect(within(updatedSummary).queryByText('Your Board Is Empty')).not.toBeInTheDocument()
+    expect(
+      within(updatedSummary).getByRole('button', { name: 'Manage Recruiting' }),
+    ).toBeInTheDocument()
+    expect(
+      useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board
+        .length,
+    ).toBeGreaterThan(0)
+    expect(useDynastyStore.getState().dynasty!.recruiting!.lastResolvedPeriod).toBe(0)
+  })
+
+  it('Build Manually opens Recruiting without generating a board', () => {
+    const dynasty = buildFixtureDynasty()
+    const emptyBoardDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: [],
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({
+      dynasty: emptyBoardDynasty,
+      view: 'hub',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Build Manually' }))
+
+    expect(useDynastyStore.getState().view).toBe('recruiting')
+    expect(
+      useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board,
+    ).toEqual([])
+    expect(useDynastyStore.getState().dynasty!.recruiting!.lastResolvedPeriod).toBe(0)
+  })
+})
+
+describe('Full Recruiting Board empty state', () => {
+  it('shows preseason onboarding with needs and both CTAs when the board is empty at Period 0', () => {
+    const dynasty = buildFixtureDynasty()
+    const emptyBoardDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: [],
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({
+      dynasty: emptyBoardDynasty,
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    expect(screen.getByText('Your Recruiting Board')).toBeInTheDocument()
+    // getByText normalizes whitespace; the DOM itself keeps the wider gap.
+    expect(screen.getByText('SG 1 PF 1')).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Generate Draft Board' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Browse National Class' }),
+    ).toBeInTheDocument()
+    expect(document.querySelector('.recruiting-board-table')).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Generate Draft Board' }))
+    expect(
+      useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board
+        .length,
+    ).toBeGreaterThan(0)
+    expect(document.querySelector('.recruiting-board-table')).toBeInTheDocument()
+  })
+
+  it('switches to National Class via Browse National Class, with no domain mutation', () => {
+    const dynasty = buildFixtureDynasty()
+    const emptyBoardDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: [],
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({
+      dynasty: emptyBoardDynasty,
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Browse National Class' }))
+
+    expect(screen.getByRole('button', { name: 'National Class' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(
+      useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board,
+    ).toEqual([])
+  })
+
+  it('shows a lighter "No Active Targets" warning, not onboarding language, once Recruiting has begun', () => {
+    const dynasty = buildFixtureDynasty()
+    const postPeriodEmptyDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        lastResolvedPeriod: 3,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: [],
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({
+      dynasty: postPeriodEmptyDynasty,
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    expect(screen.getByText('No Active Targets')).toBeInTheDocument()
+    expect(screen.queryByText('Your Recruiting Board')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('button', { name: 'Generate Draft Board' }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Browse National Class' }),
+    ).toBeInTheDocument()
+  })
+})
+
+describe('PRESEASON presentation', () => {
+  it('shows PRESEASON at period 0', () => {
+    const dynasty = buildFixtureDynasty()
+    useDynastyStore.setState({ dynasty, view: 'recruiting', explorationViewHistory: [] })
+    render(<App />)
+
+    expect(screen.getByText('REGULAR SEASON · PRESEASON')).toBeInTheDocument()
+  })
+
+  it('shows PERIOD 1 / 24 once period 1 resolves', () => {
+    const dynasty = buildFixtureDynasty()
+    const advancedDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: { ...dynasty.recruiting!, lastResolvedPeriod: 1 },
+    }
+    useDynastyStore.setState({
+      dynasty: advancedDynasty,
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    expect(screen.getByText('REGULAR SEASON · PERIOD 1 / 24')).toBeInTheDocument()
+  })
+})
+
+describe('Zero active-offer guidance', () => {
+  it('shows a non-blocking warning when the board has openings but no active offers', () => {
+    const dynasty = buildFixtureDynasty()
+    const noOffersDynasty: typeof dynasty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: dynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board.map((target) => ({
+              ...target,
+              hasActiveOffer: false,
+            })),
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({
+      dynasty: noOffersDynasty,
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    expect(screen.getByText('No Active Offers')).toBeInTheDocument()
+    expect(
+      screen.getByText('Recruits can only commit to programs that have offered them.'),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(
+      useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board,
+    ).toEqual(noOffersDynasty.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board)
+  })
+})
+
+describe('first-period setup confirmation', () => {
+  it('appears only when the next Hub action would complete Round 1 and can open Recruiting', () => {
+    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Simulate Game' }))
+    expect(
+      screen.queryByRole('heading', { name: 'Recruiting Board Not Set' }),
+    ).not.toBeInTheDocument()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Advance to Next Round' }),
+    )
+    expect(
+      screen.getByRole('heading', { name: 'Recruiting Board Not Set' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Review Recruiting' }))
+    expect(useDynastyStore.getState().view).toBe('recruiting')
+    expect(
+      screen.getByRole('heading', { name: 'Charlotte Tech Recruiting' }),
+    ).toBeInTheDocument()
+    expect(useDynastyStore.getState().dynasty!.recruiting!.lastResolvedPeriod).toBe(0)
   })
 })
 

@@ -35,6 +35,7 @@ function selectProgramViaUI(programName: string) {
   }
 
   fireEvent.click(button)
+  useDynastyStore.getState().generateControlledDraftBoard()
 }
 
 function clickButtonByText(pattern: RegExp) {
@@ -42,6 +43,7 @@ function clickButtonByText(pattern: RegExp) {
 }
 
 function driveSeasonToCompletion(): void {
+  useDynastyStore.getState().generateControlledDraftBoard()
   for (let iteration = 0; iteration < 30; iteration += 1) {
     const season = useDynastyStore.getState().dynasty!.activeSeason!
 
@@ -58,6 +60,7 @@ function driveSeasonToCompletion(): void {
 
 function finishRegularSeasonWithSuperSim(): void {
   useDynastyStore.getState().selectProgram('charlotte-tech')
+  useDynastyStore.getState().generateControlledDraftBoard()
   useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
   useDynastyStore.getState().confirmSuperSim()
 }
@@ -112,6 +115,7 @@ describe('Season Presentation', () => {
 
   it('shows the opponent overall and Conference record on the hub, matching the Season-derived record', () => {
     useDynastyStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().generateControlledDraftBoard()
 
     // Play a few rounds so the next opponent has a non-trivial record to show.
     for (let round = 0; round < 3; round += 1) {
@@ -488,6 +492,7 @@ describe('Season Presentation', () => {
 
   it('shows Recent Results derived from actual completed games, with a matching Last-N record', () => {
     useDynastyStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().generateControlledDraftBoard()
 
     for (let round = 0; round < 2; round += 1) {
       useDynastyStore.getState().simulateNextGame()
@@ -662,6 +667,7 @@ describe('Super Sim', () => {
 
   it('hides Midseason once Round 12 has fully completed, while End of Regular Season remains available', () => {
     useDynastyStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore.getState().generateControlledDraftBoard()
     // Drive past Round 12 using the existing bulk operation directly.
     useDynastyStore.getState().requestSuperSim('midseason')
     useDynastyStore.getState().confirmSuperSim()

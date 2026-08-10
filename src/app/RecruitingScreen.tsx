@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   DynastySectionNav,
   NationalRecruitTable,
+  RecruitingBoardEmptyState,
   RecruitingBoardTable,
   RecruitingHeader,
   RecruitingModeTabs,
@@ -14,6 +15,7 @@ import {
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
+import { deriveRecruitingHubTotals } from './recruitingFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -37,6 +39,9 @@ export function RecruitingScreen() {
   const setRecruitingPriority = useDynastyStore((state) => state.setRecruitingPriority)
   const offerRecruitingTarget = useDynastyStore((state) => state.offerRecruitingTarget)
   const withdrawRecruitingOffer = useDynastyStore((state) => state.withdrawRecruitingOffer)
+  const generateControlledDraftBoard = useDynastyStore(
+    (state) => state.generateControlledDraftBoard,
+  )
 
   if (!dynasty || !dynasty.recruiting) {
     return (
@@ -53,6 +58,9 @@ export function RecruitingScreen() {
   }
 
   const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+  const totals = deriveRecruitingHubTotals(board)
+  const showZeroOfferWarning =
+    board.targets.length > 0 && totals.remainingTotal > 0 && totals.offersTotal === 0
 
   return (
     <>
@@ -82,6 +90,12 @@ export function RecruitingScreen() {
           Board targets receive recruiting attention; an active offer reserves a positional
           signing slot if the Recruit commits.
         </p>
+        {showZeroOfferWarning && (
+          <p className="recruiting-warning" role="status">
+            <span className="recruiting-warning__tag">No Active Offers</span>
+            Recruits can only commit to programs that have offered them.
+          </p>
+        )}
       </section>
 
       <section className="section" aria-labelledby="recruiting-mode-heading">
@@ -106,15 +120,25 @@ export function RecruitingScreen() {
         )}
 
         {mode === 'board' ? (
-          <RecruitingBoardTable
-            board={board}
-            recruiting={dynasty.recruiting}
-            programsById={PROGRAMS_BY_ID}
-            onSetPriority={setRecruitingPriority}
-            onOffer={offerRecruitingTarget}
-            onWithdraw={withdrawRecruitingOffer}
-            onRemove={removeRecruitingTarget}
-          />
+          board.targets.length === 0 ? (
+            <RecruitingBoardEmptyState
+              lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
+              needsByPosition={totals.needsByPosition}
+              remainingTotal={totals.remainingTotal}
+              onGenerateDraftBoard={generateControlledDraftBoard}
+              onBrowseNationalClass={() => setMode('national')}
+            />
+          ) : (
+            <RecruitingBoardTable
+              board={board}
+              recruiting={dynasty.recruiting}
+              programsById={PROGRAMS_BY_ID}
+              onSetPriority={setRecruitingPriority}
+              onOffer={offerRecruitingTarget}
+              onWithdraw={withdrawRecruitingOffer}
+              onRemove={removeRecruitingTarget}
+            />
+          )
         ) : (
           <NationalRecruitTable
             dynasty={dynasty}

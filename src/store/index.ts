@@ -14,6 +14,7 @@ export {
   useDynastyStore,
 } from './seasonStore'
 export type {
+  PendingRecruitingSetupIntent,
   PendingSuperSim,
   DynastySessionState,
   SeasonSessionView,

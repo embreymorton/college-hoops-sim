@@ -1,7 +1,9 @@
+import { POSITIONS, type Position } from '../engine'
 import {
   FINAL_RECRUITING_PERIOD,
   getRecruit,
   REGULAR_SEASON_RECRUITING_PERIODS,
+  type ProgramRecruitingBoard,
   type RecruitingPhase,
   type RecruitingState,
   type RecruitingTargetStatus,
@@ -38,13 +40,27 @@ export function getRecruitingPeriodDenominator(phase: RecruitingPhase): number {
     : FINAL_RECRUITING_PERIOD
 }
 
-/** "Regular Season · Period 8 / 24" / "Postseason · Period 26 / 28". */
+/**
+ * "Preseason" before any Recruiting period has resolved, otherwise
+ * "Period N / D". Presentation-only — the underlying period number is
+ * unchanged; Period 0 simply reads better as Preseason than "0 / 24".
+ */
+export function formatRecruitingPeriodLabel(
+  phase: RecruitingPhase,
+  lastResolvedPeriod: number,
+): string {
+  if (lastResolvedPeriod === 0) {
+    return 'Preseason'
+  }
+  return `Period ${lastResolvedPeriod} / ${getRecruitingPeriodDenominator(phase)}`
+}
+
+/** "Regular Season · Preseason" / "Regular Season · Period 8 / 24" / "Postseason · Period 26 / 28". */
 export function formatRecruitingPeriodLine(
   phase: RecruitingPhase,
   lastResolvedPeriod: number,
 ): string {
-  const denominator = getRecruitingPeriodDenominator(phase)
-  return `${formatRecruitingPhaseLabel(phase).toUpperCase()} · PERIOD ${lastResolvedPeriod} / ${denominator}`
+  return `${formatRecruitingPhaseLabel(phase).toUpperCase()} · ${formatRecruitingPeriodLabel(phase, lastResolvedPeriod).toUpperCase()}`
 }
 
 /** "#1", "#7" — a 1-based rank, used for both national rank and Program standing. */
@@ -100,6 +116,57 @@ export function formatOfferCapacityMessage(
   remainingOpenings: number,
 ): string {
   return `${activeOfferCount} / ${remainingOpenings} ${position} offers currently active`
+}
+
+export interface RecruitingPositionNeed {
+  readonly position: Position
+  readonly remaining: number
+}
+
+/** Serializable roll-up of one Program's `ProgramRecruitingBoard` for compact summaries. */
+export interface RecruitingHubTotals {
+  readonly projectedTotal: number
+  readonly remainingTotal: number
+  readonly signedTotal: number
+  readonly offersTotal: number
+  /** Only positions with a remaining opening, in roster-position order. */
+  readonly needsByPosition: readonly RecruitingPositionNeed[]
+}
+
+/**
+ * Aggregates an already-derived `ProgramRecruitingBoard` into the compact
+ * facts the Hub summary and Board empty state both need — never a new
+ * Recruiting query, just presentation-layer arithmetic over public fields.
+ */
+export function deriveRecruitingHubTotals(
+  board: ProgramRecruitingBoard,
+): RecruitingHubTotals {
+  const projectedTotal = POSITIONS.reduce(
+    (sum, position) => sum + board.projectedOpeningsByPosition[position],
+    0,
+  )
+  const remainingTotal = POSITIONS.reduce(
+    (sum, position) => sum + board.remainingOpeningsByPosition[position],
+    0,
+  )
+  const offersTotal = POSITIONS.reduce(
+    (sum, position) => sum + board.activeOfferCountsByPosition[position],
+    0,
+  )
+  const needsByPosition = POSITIONS.filter(
+    (position) => board.remainingOpeningsByPosition[position] > 0,
+  ).map((position) => ({
+    position,
+    remaining: board.remainingOpeningsByPosition[position],
+  }))
+
+  return {
+    projectedTotal,
+    remainingTotal,
+    signedTotal: projectedTotal - remainingTotal,
+    offersTotal,
+    needsByPosition,
+  }
 }
 
 export interface RecentControlledCommitment {
