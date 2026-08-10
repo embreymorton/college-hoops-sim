@@ -68,9 +68,40 @@ export function deriveRecruitSupplyByPosition(
   ) as PositionCounts
 }
 
-function generateTalentLevel(rng: ReturnType<typeof createRng>): number {
-  // Most freshmen are developmental; the long upper tail creates rare impact talent.
-  return Math.min(88, Math.max(52, Math.round(56 + 31 * rng.next() ** 1.55)))
+interface RecruitTalentProfile {
+  readonly readiness: number
+  readonly ceiling: number
+}
+
+/**
+ * Readiness and ceiling are deliberately separate, deterministic qualities.
+ * The buckets create a broad freshman population without storing an OVR: the
+ * Player generator still creates the positional attributes and derives OVR.
+ */
+function generateRecruitTalentProfile(
+  rng: ReturnType<typeof createRng>,
+): RecruitTalentProfile {
+  const readinessRoll = rng.next()
+  const readiness = readinessRoll < 0.003
+    ? rng.int(86, 92) // extremely rare immediate impact prospect
+    : readinessRoll < 0.085
+      ? rng.int(78, 86) // ready-now blue chip
+      : readinessRoll < 0.30
+        ? rng.int(71, 79) // good college player
+        : readinessRoll < 0.76
+          ? rng.int(60, 72) // normal developmental freshman
+          : rng.int(47, 61) // raw project / depth prospect
+
+  const ceilingRoll = rng.next()
+  const ceiling = ceilingRoll < 0.025
+    ? rng.int(88, 99) // high-upside prospect, independent of readiness
+    : ceilingRoll < 0.175
+      ? rng.int(80, 90)
+      : ceilingRoll < 0.60
+        ? rng.int(70, 82)
+        : rng.int(60, 74)
+
+  return { readiness, ceiling }
 }
 
 function starsForRank(rank: number, classSize: number): RecruitStarRating {
@@ -118,22 +149,26 @@ export function generateRecruitingClass({
   for (const position of POSITIONS) {
     for (let index = 0; index < supply[position]; index += 1) {
       const stream = `class:${position}:${index}`
-      const rng = createRng(seedNamespace(dynastySeed, targetSeasonNumber, stream))
+      const profile = generateRecruitTalentProfile(createRng(
+        seedNamespace(dynastySeed, targetSeasonNumber, `${stream}:profile`),
+      ))
       const generated = generatePlayer({
         position,
-        talentLevel: generateTalentLevel(rng),
+        talentLevel: profile.readiness,
         classYear: 'FR',
-        rng,
+        rng: createRng(seedNamespace(dynastySeed, targetSeasonNumber, `${stream}:player`)),
       })
+      const currentOverall = calculateOverall(generated)
       const player = {
         ...generated,
         id: `recruit-${targetSeasonNumber}-${position.toLowerCase()}-${String(index + 1).padStart(3, '0')}-${generated.id.slice(-8)}`,
+        potential: Math.max(currentOverall, profile.ceiling),
       }
       const overall = calculateOverall(player)
 
       unranked.push({
         player,
-        qualityScore: Number((overall * 0.72 + player.potential * 0.28).toFixed(2)),
+        qualityScore: Number((overall * 0.56 + player.potential * 0.44).toFixed(2)),
       })
     }
   }

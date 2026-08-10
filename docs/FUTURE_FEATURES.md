@@ -27,7 +27,7 @@ In-season Recruiting V0—including national-class generation, rankings/stars, b
 
 These enhancements are intentionally unscheduled and are not Recruiting V0 or Dynasty MVP requirements. Current V0 exposes exact ratings/Potential, gives no winning or Tournament attraction bonus, and treats commitments as final.
 
-The current V0 talent economy is accepted and frozen. Transfer-portal behavior, NIL, facilities, staff modifiers, or other future Recruiting inputs may require a new long-run calibration after their design is implemented; their possibility is not a reason to retune the present system.
+Recruit Talent Distribution V1 and the current talent economy are accepted and frozen. Transfer-portal behavior, NIL, facilities, staff modifiers, NBA/early-departure rules, or other future Recruiting inputs may require a new long-run calibration after their design is implemented; their possibility is not a reason to retune the present system.
 
 ## Statistics and League immersion
 

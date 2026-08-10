@@ -12,6 +12,16 @@ import {
 } from './generation'
 import { createRecruitingDynasty } from './testSupport'
 
+function correlation(first: readonly number[], second: readonly number[]): number {
+  const firstMean = first.reduce((sum, value) => sum + value, 0) / first.length
+  const secondMean = second.reduce((sum, value) => sum + value, 0) / second.length
+  const covariance = first.reduce((sum, value, index) => sum +
+    (value - firstMean) * (second[index]! - secondMean), 0)
+  const firstDeviation = Math.sqrt(first.reduce((sum, value) => sum + (value - firstMean) ** 2, 0))
+  const secondDeviation = Math.sqrt(second.reduce((sum, value) => sum + (value - secondMean) ** 2, 0))
+  return covariance / (firstDeviation * secondDeviation)
+}
+
 describe('national recruiting class generation', () => {
   it('is deterministic, seed-sensitive, serializable, and Program-order independent', () => {
     const first = createRecruitingDynasty('class-determinism')
@@ -115,5 +125,31 @@ describe('national recruiting class generation', () => {
       .map(({ decisionReadyPeriod }) => decisionReadyPeriod))).toBeLessThanOrEqual(15)
     expect(averageReady(5)).toBeGreaterThan(averageReady(4))
     expect(averageReady(4)).toBeGreaterThan(averageReady(3))
+  })
+
+  it('creates deterministic readiness-versus-ceiling variety without breaking rank or Player invariants', () => {
+    const season = createRecruitingDynasty('readiness-ceiling-source').activeSeason!
+    const samples = Array.from({ length: 20 }, (_, index) => generateRecruitingClass({
+      dynastySeed: `readiness-ceiling:${index}`,
+      targetSeasonNumber: 2,
+      season,
+    })).flat()
+    const overalls = samples.map(({ player }) => calculateOverall(player))
+    const potentials = samples.map(({ player }) => player.potential)
+    const ranks = samples.map(({ nationalRank }) => nationalRank)
+    const rawProjects = samples.filter(({ player }) => {
+      const overall = calculateOverall(player)
+      return overall >= 55 && overall <= 64 && player.potential >= 85
+    })
+    const readyNow = samples.filter(({ player }) =>
+      calculateOverall(player) >= 75 && player.potential - calculateOverall(player) <= 5,
+    )
+
+    expect(rawProjects.length).toBeGreaterThan(0)
+    expect(readyNow.length).toBeGreaterThan(0)
+    expect(samples.every(({ player }) => player.potential >= calculateOverall(player))).toBe(true)
+    expect(Math.abs(correlation(ranks, overalls))).toBeLessThan(0.95)
+    expect(Math.abs(correlation(ranks, potentials))).toBeLessThan(0.9)
+    expect(Math.abs(correlation(overalls, potentials))).toBeLessThan(0.75)
   })
 })

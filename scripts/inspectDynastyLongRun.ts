@@ -41,6 +41,7 @@ import {
   graduatingPlayers,
   linearSlope,
   playerCeilingRates,
+  percentile,
   prestigeBand,
   serializedSizeBytes,
   summarizeDistribution,
@@ -516,6 +517,33 @@ function printReport(
         fixed(season.classOverall[classYear].average, 1).padStart(5),
       ),
     ].join('  '))
+  }
+
+  const talentCheckpoints = [1, 2, 5, 10].filter(
+    (seasonNumber) => seasonNumber <= result.seasonsPerSeed,
+  )
+  console.log('\nACTIVE PLAYER CHECKPOINTS — MULTI-SEED')
+  console.log('SEASON  P10   P25   MED   P75   P90   P95   80+   85+   90+   95+  <70  <65')
+  for (const seasonNumber of talentCheckpoints) {
+    const players = result.runs.flatMap((run) => run.seasons)
+      .filter((season) => season.seasonNumber === seasonNumber)
+      .flatMap(({ players }) => players)
+    const overalls = players.map(({ overall }) => overall)
+    const distribution = summarizeDistribution(overalls)
+    const count = (predicate: (overall: number) => boolean) =>
+      average(result.runs.map((run) => run.seasons.find((season) =>
+        season.seasonNumber === seasonNumber,
+      )!.players.filter(({ overall }) => predicate(overall)).length))
+    console.log(`${String(seasonNumber).padStart(6)}  ${fixed(distribution.p10, 1).padStart(4)}  ${fixed(distribution.p25, 1).padStart(4)}  ${fixed(distribution.median, 1).padStart(4)}  ${fixed(distribution.p75, 1).padStart(4)}  ${fixed(distribution.p90, 1).padStart(4)}  ${fixed(percentile(overalls, 0.95), 1).padStart(4)}  ${fixed(count((overall) => overall >= 80), 1).padStart(4)}  ${fixed(count((overall) => overall >= 85), 1).padStart(4)}  ${fixed(count((overall) => overall >= 90), 1).padStart(4)}  ${fixed(count((overall) => overall >= 95), 1).padStart(4)}  ${fixed(count((overall) => overall < 70), 1).padStart(3)}  ${fixed(count((overall) => overall < 65), 1).padStart(3)}`)
+  }
+
+  console.log('\nTEAM OVR CHECKPOINTS — MULTI-SEED')
+  console.log('SEASON  MIN   P10   P25   MED   P75   P90   MAX')
+  for (const seasonNumber of talentCheckpoints) {
+    const distribution = summarizeDistribution(result.runs.flatMap((run) => run.seasons)
+      .filter((season) => season.seasonNumber === seasonNumber)
+      .flatMap(({ teams }) => teams.map(({ overall }) => overall)))
+    console.log(`${String(seasonNumber).padStart(6)}  ${fixed(distribution.minimum, 1).padStart(4)}  ${fixed(distribution.p10, 1).padStart(4)}  ${fixed(distribution.p25, 1).padStart(4)}  ${fixed(distribution.median, 1).padStart(4)}  ${fixed(distribution.p75, 1).padStart(4)}  ${fixed(distribution.p90, 1).padStart(4)}  ${fixed(distribution.maximum, 1).padStart(4)}`)
   }
 
   console.log('\nTEAM TALENT EQUILIBRIUM\n')

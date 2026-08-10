@@ -17,6 +17,7 @@ function format(values: readonly number[]) {
 }
 
 const recruits: Recruit[] = []
+const recruitingClasses: Array<readonly Recruit[]> = []
 const activePlayers: { overall: number; potential: number; classYear: string; prestige: number }[] = []
 const teamOveralls: number[] = []
 for (let index = 0; index < CLASSES; index += 1) {
@@ -24,7 +25,9 @@ for (let index = 0; index < CLASSES; index += 1) {
   const initialized = initializeUniverse(UNIVERSE_V0, `${seed}:universe`)
   const season = initializeSeason({ universe: UNIVERSE_V0, initializedUniverse: initialized, schedule: generateRegularSeasonSchedule({ universe: UNIVERSE_V0, seed: `${seed}:schedule` }), seasonNumber: 1 })
   const dynasty = initializeRecruiting(initializeDynastyState({ dynastyId: seed, dynastySeed: seed, controlledProgramId: 'charlotte-tech', universe: UNIVERSE_V0, activeSeason: season }))
-  recruits.push(...dynasty.recruiting!.recruits)
+  const recruitingClass = dynasty.recruiting!.recruits
+  recruitingClasses.push(recruitingClass)
+  recruits.push(...recruitingClass)
   for (const { team, rotation } of Object.values(season.programStates)) {
     teamOveralls.push(calculateTeamStrength(team, rotation).overall)
     for (const player of team.roster) activePlayers.push({ overall: calculateOverall(player), potential: player.potential, classYear: player.classYear, prestige: team.prestige })
@@ -40,17 +43,46 @@ console.log('\nSTARS  COUNT  OVR AVG/MED/RANGE  POT AVG/MED/RANGE')
 for (const stars of [5, 4, 3, 2] as const) {
   const tier = recruits.filter((recruit) => recruit.stars === stars)
   const tierOvr = tier.map(({ player }) => calculateOverall(player)); const tierPot = tier.map(({ player }) => player.potential)
-  console.log(`${stars}★     ${String(tier.length).padEnd(6)} ${summarizeDistribution(tierOvr).average.toFixed(1)}/${summarizeDistribution(tierOvr).median.toFixed(1)}/${Math.min(...tierOvr)}–${Math.max(...tierOvr)}       ${summarizeDistribution(tierPot).average.toFixed(1)}/${summarizeDistribution(tierPot).median.toFixed(1)}/${Math.min(...tierPot)}–${Math.max(...tierPot)}`)
+  const ovrSummary = summarizeDistribution(tierOvr); const potSummary = summarizeDistribution(tierPot)
+  console.log(`${stars}★     ${String(tier.length).padEnd(6)} ${ovrSummary.average.toFixed(1)}/${ovrSummary.median.toFixed(1)}/P10 ${ovrSummary.p10.toFixed(0)}/P90 ${ovrSummary.p90.toFixed(0)}       ${potSummary.average.toFixed(1)}/${potSummary.median.toFixed(1)}/P10 ${potSummary.p10.toFixed(0)}/P90 ${potSummary.p90.toFixed(0)}       gap ${averageGap(tier).toFixed(1)}`)
 }
-for (const threshold of [90, 88, 85, 80]) console.log(`${threshold}+ OVR per class: ${(ovr.filter((value) => value >= threshold).length / CLASSES).toFixed(2)}`)
-for (const threshold of [70, 65, 60]) console.log(`OVR < ${threshold} per class: ${(ovr.filter((value) => value < threshold).length / CLASSES).toFixed(2)}`)
-const raw = recruits.filter(({ player }) => calculateOverall(player) >= 55 && calculateOverall(player) <= 64 && player.potential >= 85)
-console.log(`Raw 55–64 OVR / 85+ POT per class: ${(raw.length / CLASSES).toFixed(2)}`)
+
+function averageGap(values: readonly Recruit[]) {
+  return values.reduce((sum, { player }) => sum + player.potential - calculateOverall(player), 0) / Math.max(1, values.length)
+}
+
+function frequency(label: string, predicate: (recruit: Recruit) => boolean) {
+  const counts = recruitingClasses.map((recruitingClass) => recruitingClass.filter(predicate).length)
+  const summary = summarizeDistribution(counts)
+  console.log(`${label.padEnd(27)} mean ${summary.average.toFixed(2)} | med ${summary.median.toFixed(1)} | max ${summary.maximum.toFixed(0)} | classes ≥1 ${((counts.filter((value) => value > 0).length / CLASSES) * 100).toFixed(1)}%`)
+}
+
+console.log('\nTHRESHOLD FREQUENCIES PER CLASS')
+for (const threshold of [90, 88, 85, 80]) frequency(`${threshold}+ OVR`, ({ player }) => calculateOverall(player) >= threshold)
+for (const threshold of [70, 65, 60]) frequency(`OVR < ${threshold}`, ({ player }) => calculateOverall(player) < threshold)
+console.log('\nARCHETYPE FREQUENCIES PER CLASS')
+frequency('55–64 OVR / 80+ POT', ({ player }) => calculateOverall(player) >= 55 && calculateOverall(player) <= 64 && player.potential >= 80)
+frequency('55–64 OVR / 85+ POT', ({ player }) => calculateOverall(player) >= 55 && calculateOverall(player) <= 64 && player.potential >= 85)
+frequency('60–69 OVR / 85+ POT', ({ player }) => calculateOverall(player) >= 60 && calculateOverall(player) <= 69 && player.potential >= 85)
+frequency('60–69 OVR / 90+ POT', ({ player }) => calculateOverall(player) >= 60 && calculateOverall(player) <= 69 && player.potential >= 90)
+frequency('70–79 OVR / 90+ POT', ({ player }) => calculateOverall(player) >= 70 && calculateOverall(player) <= 79 && player.potential >= 90)
+frequency('75+ OVR / gap ≤ 5', ({ player }) => calculateOverall(player) >= 75 && player.potential - calculateOverall(player) <= 5)
+frequency('80+ OVR / gap ≤ 5', ({ player }) => calculateOverall(player) >= 80 && player.potential - calculateOverall(player) <= 5)
 console.log(`Correlations: rank↔OVR ${correlation(recruits.map((r) => ({ first: r.nationalRank, second: calculateOverall(r.player) }))).toFixed(3)} | rank↔POT ${correlation(recruits.map((r) => ({ first: r.nationalRank, second: r.player.potential }))).toFixed(3)} | OVR↔POT ${correlation(recruits.map((r) => ({ first: calculateOverall(r.player), second: r.player.potential }))).toFixed(3)}`)
 console.log('\nACTIVE SEASON 1 PLAYERS')
 console.log(`OVR: ${format(activePlayers.map(({ overall }) => overall))}`)
 console.log(`80+/85+/90+/95+: ${[80,85,90,95].map((t) => `${t}+ ${(activePlayers.filter(({ overall }) => overall >= t).length / CLASSES).toFixed(1)}`).join(' | ')}`)
 console.log(`Team OVR (rotation-weighted): ${format(teamOveralls)}`)
 for (const year of ['FR', 'SO', 'JR', 'SR']) console.log(`${year}: ${format(activePlayers.filter(({ classYear }) => classYear === year).map(({ overall }) => overall))}`)
-console.log('\nRepresentative raw high-upside prospects:')
-for (const recruit of raw.slice(0, 8)) console.log(`#${recruit.nationalRank} ${recruit.stars}★ ${recruit.player.position} OVR ${calculateOverall(recruit.player)} POT ${recruit.player.potential}`)
+console.log('\nREPRESENTATIVE PROSPECTS')
+for (const [label, predicate] of [
+  ['elite ready-now', ({ player }: Recruit) => calculateOverall(player) >= 85 && player.potential - calculateOverall(player) <= 6],
+  ['elite upside', ({ player }: Recruit) => calculateOverall(player) >= 70 && calculateOverall(player) <= 79 && player.potential >= 92],
+  ['good immediate', ({ player }: Recruit) => calculateOverall(player) >= 74 && calculateOverall(player) <= 78 && player.potential <= 84],
+  ['developmental', ({ player }: Recruit) => calculateOverall(player) >= 65 && calculateOverall(player) <= 70 && player.potential >= 84],
+  ['raw sleeper', ({ player }: Recruit) => calculateOverall(player) >= 55 && calculateOverall(player) <= 64 && player.potential >= 85],
+  ['limited ceiling', ({ player }: Recruit) => calculateOverall(player) >= 64 && calculateOverall(player) <= 70 && player.potential <= 74],
+] as const) {
+  const recruit = recruits.find(predicate)
+  if (recruit) console.log(`${label.padEnd(17)} #${recruit.nationalRank} ${recruit.stars}★ ${recruit.player.firstName} ${recruit.player.lastName} ${recruit.player.position} OVR ${calculateOverall(recruit.player)} POT ${recruit.player.potential}`)
+}

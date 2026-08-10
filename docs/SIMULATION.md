@@ -456,9 +456,42 @@ Strict positional Recruiting remained stable at approximately 76–77 active Pla
 
 ### V0 calibration freeze
 
-Recruit generation, Recruiting calibration, Player Development, roster rollover, and the combined Dynasty talent economy are frozen for current V0 rules. Do not casually retune them. Reopen calibration only when new evidence reveals a genuine problem or a future system materially changes talent flow—for example transfers, early professional departures, redshirts/fifth years, dynamic prestige, roster-size or position-flexibility changes, or staff/Development modifiers. UI and application integration alone do not justify recalibration.
+The pre-V1 Recruit-generation calibration is superseded by the accepted V1 distribution below. Recruiting mechanics, Player Development, roster rollover, and the remaining Dynasty rules are otherwise frozen. Do not casually retune them. Reopen calibration only when new evidence reveals a genuine problem or a future system materially changes talent flow—for example transfers, early professional departures, redshirts/fifth years, dynamic prestige, roster-size or position-flexibility changes, or staff/Development modifiers. UI and application integration alone do not justify recalibration.
 
 The full-snapshot `DynastyState` remained serializable but measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. This approximately linear storage growth is tracked separately as an architecture/scaling watchpoint in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; it does not change the stable talent-economy conclusion.
+
+## Accepted Recruit Talent Distribution V1
+
+This section supersedes the earlier Recruit-generation and long-run talent-density observations above. The earlier V0 figures remain historical calibration evidence only; V1 is the source-of-truth distribution for current Dynasty Recruiting.
+
+Recruit generation now samples two separate deterministic qualities before calling the existing position-aware Player generator:
+
+```text
+readiness → Player attributes → derived current OVR
+ceiling   → Player Potential
+```
+
+Readiness is sampled from these organic generation bands: `0.3%` at `86–92`, `8.2%` at `78–86`, `21.5%` at `71–79`, `46.0%` at `60–72`, and `24.0%` at `47–61`. Ceiling is independently sampled: `2.5%` at `88–99`, `15.0%` at `80–90`, `42.5%` at `70–82`, and `40.0%` at `60–74`. A Recruit's Potential is `max(derived OVR, sampled ceiling)`, preserving the fundamental `POT ≥ OVR` invariant without storing mutable OVR.
+
+National Rank remains meaningful but is not an OVR ladder: its deterministic quality score is `56% derived OVR + 44% Potential`, before stable OVR, Potential, and Player-ID tie-breakers. Stars continue to derive from National Rank percentiles. Position-aware attributes, height, identity, position-based OVR calculation, legal Player bounds, and typed seeded namespaces remain unchanged. Season 1 roster generation is intentionally separate and unchanged.
+
+Across 50 deterministic Recruiting classes of the current V0 supply size (about 161 Recruits per class), V1 observed:
+
+| Metric | V1 observed per class |
+| --- | ---: |
+| 90+ OVR | 0.38 |
+| 85+ OVR | 3.84 |
+| 80+ OVR | 14.02 |
+| OVR below 70 / 65 / 60 | 98.78 / 68.60 / 39.36 |
+| 55–64 OVR with 85+ POT | 5.04 |
+| 60–69 OVR with 85+ POT | 6.14 |
+| 75+ OVR with POT gap at most 5 | 29.74 |
+
+The same sample observed Recruit OVR `P10/P25/P50/P75/P90 = 53/60/66/73/79`, Potential `67/71/76/81/86`, and Potential-minus-OVR `0/0/8/16/24`. Correlations became Rank↔OVR `-0.889`, Rank↔POT `-0.685`, and OVR↔POT `0.342` (versus the earlier near-perfect V0 ordering). This is accepted evidence of meaningful readiness/ceiling variation, not hardcoded class quotas.
+
+The current 5-seed × 10-season equilibrium smoke remained deterministic and structurally valid: all 50 recruiting cycles filled every opening with zero fallback/emergency Recruits, invalid Focus states, duplicate commitments, or lifecycle failures. By Season 10 it averaged `74.2` active Players at 80+, `20.2` at 85+, and `2.0` at 90+ per 384-player League, down from the pre-V1 talent-rich equilibrium. Team OVR averaged `76.28` in the late window, with clear Prestige separation (`79.36`, `77.41`, `73.28`, `66.74` for 80–100 through 1–39 bands).
+
+Player Development is unchanged. The V1 smoke shows no continuing talent inflation; its mature high end is below the earlier directional density target, so Development is not currently a candidate for an inflation reduction. Any future adjustment to Development, NBA/early departures, transfers, redshirts, roster capacity, or Recruit supply requires a new isolated talent-flow calibration.
 
 ## Implemented Player Season Stats V0
 
