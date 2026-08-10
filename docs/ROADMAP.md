@@ -251,7 +251,7 @@ The complete single-season game loop is implemented and exposed through the UI, 
 
 ## Phase 5 — Dynasty Loop Backend — COMPLETE
 
-> The backend now supports the complete repeatable cross-season lifecycle. React/Zustand Dynasty integration remains separate future application work.
+> The backend and application now support the complete repeatable cross-season lifecycle.
 
 The intended high-level lifecycle is:
 
@@ -287,7 +287,7 @@ REGULAR SEASON
 
 The accepted canonical inspection archived all 384 regular-season and 15 Postseason games, graduated 92 of 384 Players, and created 292 returning Player values across all 32 Programs without changing IDs or historical snapshots. All Dynasty/archive/offseason values passed JSON serialization; same-seed reproduction and Program/Player-order independence passed. The observed development curve was approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% stagnation. These are calibration observations for one deterministic population, not guaranteed outcomes.
 
-Phase 5A intentionally stops at partial offseason rosters. Phase 5C now consumes those values with finalized incoming classes. The current application store remains on the accepted single-season ownership model.
+Phase 5A intentionally stops at partial offseason rosters. Phase 5C consumes those values with finalized incoming classes; Phase 6 exposes the lifecycle through the player-facing application.
 
 ### Phase 5B — In-Season Recruiting V0 — COMPLETE / ACCEPTED
 
@@ -322,23 +322,19 @@ Recruiting, Player Development, graduation, and rollover produced a stable endog
 
 Recruit generation, Recruiting calibration, Player Development, roster rollover, and their combined talent economy are frozen for V0. Reopen them only with new evidence or a future system that materially changes talent flow.
 
-## Playable Dynasty Integration / Dynasty UX — NEXT
+## Phase 6 — Dynasty Application Loop — COMPLETE
 
-Expose the accepted Dynasty lifecycle through the application so a user can move from the Season through Recruiting, Postseason, Late Recruiting, offseason, and rollover into the next Season. Detailed screen design and subphases remain intentionally uncommitted; this milestone changes presentation/application orchestration, not the frozen basketball economy.
+- **6A — Dynasty Application State Integration:** Zustand adopts one canonical `DynastyState` for Season, Postseason, Recruiting, and session navigation.
+- **6B — Recruiting Management UI:** Board/National Class, positional needs, priorities, and Active Offers are playable.
+- **6B.1 — Recruiting Setup Workflow:** the controlled Program can begin with an empty board while AI plans remain autonomous; first-period progression is guarded until the user chooses a plan.
+- **6B.2 — Recruiting Onboarding + Hub Polish:** clear preseason onboarding and Season/Tournament Recruiting entry points.
+- **Unique interactive Dynasty seed:** each normal new Dynasty receives a unique stored seed while explicit-seed development, tests, and calibration remain deterministic.
+- **6C — Dynasty Transition Orchestration:** explicit championship, Late Recruiting, finalization, Offseason, and rollover boundaries use canonical domain transitions and reset stale session presentation state.
+- **6D — Late Recruiting + Offseason UX:** Late Recruiting, finalized-class feedback, departures, development, incoming class, next-roster preview, and the Season N+1 handoff are player-facing.
 
-## Phase 6 — Persistence and History — PLANNED
+## Phase 6E — Playthrough-Driven Polish — NEXT
 
-- A durable persistence format for the serializable `DynastyState`
-- Save and load workflows
-- Season and program history
-- Previous champions
-- Player career statistics
-
-Persistence planning must account for the measured full-snapshot history growth documented in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; no storage mechanism is committed yet.
-
-## Phase 7 — Post-MVP Depth — DEFERRED
-
-Optional product/gameplay ideas are deliberately separated into `FUTURE_FEATURES.md`. They are not scheduled roadmap commitments or Dynasty MVP blockers. Engineering-quality follow-ups and scaling risks remain in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
+Scope will be defined from manual multi-season playtesting. Likely observations include UX friction, transition feedback, navigation issues, simulation/Recruiting feedback, continuity/storytelling needs, and bugs discovered during play. No further feature expansion is committed here.
 
 ## Non-binding development-agent fit
 

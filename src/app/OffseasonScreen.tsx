@@ -8,7 +8,6 @@ import {
 } from '../components'
 import { assembleNextSeasonRosters } from '../dynasty'
 import { useDynastyStore } from '../store'
-import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import {
   deriveDepartures,
   deriveDevelopmentRows,
@@ -17,10 +16,6 @@ import {
   deriveRosterAverageOverall,
   formatAverage,
 } from './offseasonFormatters'
-
-const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
-  UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
-)
 
 /** The turnover report: who left, who improved, who arrived, what's next. */
 export function OffseasonScreen() {
@@ -32,7 +27,9 @@ export function OffseasonScreen() {
 
   const offseason = dynasty.offseason
   const controlledProgramId = dynasty.controlledProgramId
-  const controlledProgram = PROGRAMS_BY_ID.get(controlledProgramId)
+  const controlledProgram = dynasty.universe.programs.find(
+    ({ id }) => id === controlledProgramId,
+  )
   const archive = dynasty.history.find(
     ({ seasonNumber }) => seasonNumber === offseason.completedSeasonNumber,
   )
@@ -91,7 +88,7 @@ export function OffseasonScreen() {
         <div className="stat-trio season-header__stats">
           <div className="stat-trio__item">
             <span className="stat-trio__value">{formatAverage(outlookOverall)}</span>
-            <span className="stat-trio__label">Next Season Outlook · Ovr</span>
+            <span className="stat-trio__label">ROSTER AVG OVR</span>
           </div>
         </div>
       </div>

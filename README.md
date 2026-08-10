@@ -4,16 +4,17 @@ A deterministic fictional college basketball dynasty simulator built with React,
 
 ## Current status
 
-The complete single-season experience is playable from Program selection through a National Champion:
+The playable Dynasty loop is repeatable from Program selection through consecutive Seasons:
 
 - **Basketball Engine V0:** deterministic Player and 12-Player roster generation, Rotation Management, derived Player/Team ratings, game simulation, overtime, and complete Player box scores.
 - **Fictional Universe V0:** 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
 - **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed Game Prep, Super Sim, historical results, and full box-score inspection.
 - **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details, Player Details, and cross-Program navigation.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, protected Conference-champion seeds, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
-- **Repeatable Dynasty backend:** serializable cross-season state, immutable Season/Recruiting histories, graduation and Player development, finalized Recruiting, exact next-season roster construction, fresh Teams/Rotations/Schedules, and automatic initialization of the following Recruiting cycle. Its V0 talent economy is accepted as stable after deterministic validation across 250 completed Seasons.
+- **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, enter Late Recruiting, finalize the class, review departures/development/incoming Players in Offseason, begin the next Season, and repeat.
+- **Deterministic replayability:** each interactive Dynasty receives one unique creation seed; all rosters, schedules, Recruiting, and simulations remain deterministic from that stored seed. Explicit-seed tests and inspection workflows remain repeatable.
 
-> **Next major focus: Playable Dynasty Integration / Dynasty UX.** The backend lifecycle and current talent calibration are complete; React/Zustand has not yet exposed Recruiting, offseason rollover, consecutive Seasons, or history/save workflows to the user.
+The current playable core is complete. Intentionally deferred systems include persistence/save-load, Dynasty history browsing, career stats, awards, transfers, injuries, staff, rankings, and deeper offseason decisions.
 
 ## Commands
 

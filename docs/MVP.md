@@ -16,7 +16,7 @@ choose Program
 
 This file defines that playable target. It is not a general feature backlog; desirable non-blocking ideas live in `FUTURE_FEATURES.md`.
 
-## Playable single-season product — implemented
+## Playable Dynasty core — implemented
 
 The user can now:
 
@@ -28,6 +28,10 @@ choose one of 32 fictional Programs across four Conferences
 → manage or simulate a fixed 16-Team neutral-site Tournament
 → continue the bracket after elimination or non-qualification
 → reach a National Champion
+→ explicitly enter Late Recruiting and finalize the class
+→ review Offseason departures, development, incoming Players, and the next roster
+→ begin the next Season with a fresh Recruiting cycle
+→ repeat
 ```
 
 The implemented foundation includes seeded Player/Team/roster generation, serializable Rotation and Team Strength systems, deterministic game outcomes and overtime, complete Player box scores, stable Universe and Schedule definitions, canonical Season/Postseason state, AI progression, Super Sim, historical results, Player Season Stats/game logs, Team Season Stats/averages, national Player leaders, Teams/Team Details/Player Details exploration, and complete Postseason presentation.
@@ -125,14 +129,14 @@ Complete backend Dynasty MVP items:
 - [x] Immediate next Recruiting-cycle initialization
 - [x] Repeatable multi-season lifecycle and JSON-safe state
 
-This completion is domain/backend-only. Long-run calibration across five deterministic seeds and 250 completed Seasons classified the current Recruiting + Development + graduation economy as stable, with no structural failures. The current React/Zustand application still exposes the accepted single-season experience and does not orchestrate Recruiting or Dynasty rollover.
+Long-run calibration across five deterministic seeds and 250 completed Seasons classified the current Recruiting + Development + graduation economy as stable, with no structural failures. React/Zustand now orchestrates the same accepted lifecycle without duplicating its domain facts.
 
 ## Dynasty Long-Run Calibration V0 — implemented and accepted
 
 The backend loop reproducibly reaches a stable endogenous talent level under current V0 rules. The initial generated Universe transitions upward during the first several Seasons, while the Seasons 16–50 Team OVR slope averages approximately zero across seeds. Incoming and graduating populations have nearly identical average Potential, and Player Development creates the expected average progression from freshman to senior.
 
-The simulation/domain Dynasty MVP is therefore complete and its current talent economy is frozen. The playable product Dynasty MVP is not: application integration must still expose Recruiting, Late Recruiting, offseason, rollover, consecutive Seasons, and historical context.
+The simulation/domain and player-facing Dynasty MVP are complete, and the current talent economy is frozen. The player controls each major lifecycle checkpoint rather than being advanced automatically through Recruiting finalization, Offseason, or rollover.
 
 ## Not currently implemented
 
-The project does not yet include Dynasty/Recruiting UI-store integration, rollover presentation, Recruiting/history screens, or save/load. Possession play-by-play, live coaching, injuries, transfers, basketball rankings, awards, and other optional depth are not backend Dynasty MVP requirements; see `FUTURE_FEATURES.md`.
+The project does not yet include persistence/save-load, Dynasty history browsing, career statistics, awards, possession play-by-play, live coaching, injuries, transfers, rankings, or deeper offseason decisions. These are future expansion, not playable-core requirements; see `FUTURE_FEATURES.md`.

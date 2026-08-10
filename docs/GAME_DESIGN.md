@@ -233,6 +233,18 @@ Recruiting through a finalized incoming class and freshman enrollment during rol
 
 Recruiting is an ongoing Dynasty layer that runs alongside current-season basketball while targeting Season N+1. One shared national class exposes exact Player attributes, OVR, POT, National Rank, Position Rank, and 2–5-star classification. V0 has no scouting uncertainty or hidden Potential; Recruit rankings are immutable class-history facts and do not change when the future Player develops.
 
+The player-facing annual rhythm is:
+
+```text
+Preseason
+→ Regular Season + Recruiting
+→ National Tournament
+→ Late Recruiting
+→ Final Recruiting Class
+→ Offseason turnover
+→ Next Season
+```
+
 ```text
 maintain board, priorities, and Active Offers
 → complete basketball rounds
@@ -300,11 +312,13 @@ plus CompletedRecruitingClass incoming Recruits
 → exact 12-Player next-season roster
 ```
 
-Late Recruiting deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Exact formulas and accepted calibration are documented in `SIMULATION.md`.
+Late Recruiting is a distinct, user-reviewed final signing phase. It deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Major lifecycle checkpoints never advance automatically. Exact formulas and accepted calibration are documented in `SIMULATION.md`.
 
 ## Accepted Dynasty Season Rollover V0
 
 At the season boundary, seniors leave; freshmen, sophomores, and juniors have already developed and advanced class; and committed Recruits enroll as freshmen without rerolled identity, ratings, or Potential. Every Program must return to exactly 12 Players. V0 has no cuts, transfers, redshirts, fifth-year Players, early professional departures, walk-ons, or position changes.
+
+Offseason V0 is a focused review/turnover phase, not a decision-heavy system: the player reviews departures, automatic Development, the incoming class, and the next roster before explicitly beginning the next Season. Returning Players retain their IDs across Seasons; enrolled Recruits preserve their Recruit/Player identity.
 
 Every new roster receives a fresh generated default Rotation, including the controlled Program. Prior user/AI minute distributions are not carried between seasons. Rotation preference carryover is future depth.
 
@@ -312,7 +326,7 @@ Every new roster receives a fresh generated default Rotation, including the cont
 
 Each Season receives a fresh deterministic Schedule under the accepted 24-game format: 14 Conference and 10 non-Conference games across 24 rounds, split 12 home and 12 away. The new Season begins with zero results and default Rotations, while the prior Season remains historical.
 
-Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from the senior positions on the new rosters. Prior projected needs are not reused. This closes the repeatable backend loop while the current React/Zustand product remains single-season-only.
+Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from the senior positions on the new rosters. Prior projected needs are not reused. Interactive play begins that new controlled Program board empty while AI plans remain autonomous; the user again chooses when to create a strategy. This closes the repeatable player-facing loop.
 
 ## Accepted long-run Dynasty economy
 

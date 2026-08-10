@@ -6,7 +6,7 @@ Dependencies point inward toward pure domain layers:
 
 ```text
 Current application:
-React / Zustand → Season / Postseason → Schedule / Universe / Engine
+React → Zustand session orchestration → Dynasty / Season / Postseason → Schedule / Universe / Engine
 
 Cross-season domain:
 Dynasty → Season / Postseason / Universe → Schedule / Engine
@@ -46,16 +46,16 @@ Folders describe ownership, not permission to implement future systems early.
 ## Implemented application flow
 
 ```text
-React Season + Postseason Presentation
+React Dynasty presentation
 → Zustand application session / navigation
-→ Season and Postseason public APIs
+→ canonical DynastyState + Season and Postseason public APIs
 → Schedule + Universe + Engine outputs
 → stored GameResult facts and derived projections
 ```
 
-The engine owns basketball generation, ratings, Rotation legality, game outcomes, and Player box scores. The Season layer composes those capabilities with a Schedule and current Program basketball state; Postseason composes the completed Season with selection, a fixed bracket, and tournament progression. Zustand owns the controlled Program, completed `SeasonState`, active `PostseasonState`, navigation, Rotation drafts, viewed-result IDs, and transient confirmation/completion UI. React presents that state and dispatches user intent back through the store.
+The engine owns basketball generation, ratings, Rotation legality, game outcomes, and Player box scores. The Season layer composes those capabilities with a Schedule and current Program basketball state; Postseason composes the completed Season with selection, a fixed bracket, and tournament progression. `DynastyState` is the canonical multi-season domain state. Zustand owns application/session orchestration—navigation, Rotation drafts, viewed-result IDs, and transient confirmation/completion UI—and commits pure returned Dynasty values without separate canonical Late Recruiting, Offseason, next-Season, history, or Recruiting state. React presents that state and dispatches user intent back through the store.
 
-Phases 5A–5C add a pure `src/dynasty` layer above those accepted domains, including Recruiting V0 and Season Rollover V0. It is not yet wired into React or Zustand; the current application remains the single-season presentation while Dynasty provides the accepted repeatable backend lifecycle for future integration.
+Phases 5A–5C add the pure `src/dynasty` layer above those accepted domains; Phases 6A–6D wire that lifecycle into React/Zustand without changing domain rules. The lifecycle is explicit: active Season → Postseason → Late Recruiting → finalized Recruiting → Offseason → rollover → next Season.
 
 `DynastyState` is the serializable owner of cross-season lifecycle and identity:
 
@@ -314,7 +314,7 @@ assembled rosters
 
 The returned `DynastyState` preserves `controlledProgramId`, `history`, and `completedRecruitingHistory`; sets `activeSeason` to N+1; keeps `activePostseason` null; clears `offseason`; and replaces finalized active Recruiting with a fresh period-zero `RecruitingState` for N+2. New Recruit IDs are audited against completed Seasons, active Players, and all prior Recruiting-class identities. Season, Schedule, Postseason, Universe, and Engine remain unaware of this orchestration.
 
-The backend can now repeat Season → Recruiting → Postseason → Offseason → rollover indefinitely. React/Zustand has not adopted this `DynastyState` lifecycle yet.
+The application can repeat Season → Recruiting → Postseason → Late Recruiting → Offseason → rollover. A new interactive Dynasty receives one unique creation seed; all domain systems remain deterministic from that stored seed, while explicit-seed test, inspection, and calibration workflows retain their fixed behavior. Interactive rollover clears only the controlled Program's fresh Recruiting board/offers; autonomous/default domain Recruiting plans remain unchanged for AI Programs.
 
 The immutable full-snapshot architecture remained correct and JSON-serializable through accepted 50-Season Dynasty runs: no history overwrite, identity collision, Schedule/Game-ID collision, or serialization failure occurred. Full snapshots have a measurable storage cost, however. One canonical serialized `DynastyState` measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50—approximately linear growth near 3 MB per completed Season. Persistence architecture must evaluate this before production-scale saves or very long user Dynasties, without prematurely prescribing compression, pruning, database storage, or another representation.
 
@@ -371,7 +371,7 @@ Player Season Stats and Team Season Stats remain regular-season-only. Postseason
 
 Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, optional lifecycle Game-ID namespacing, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, Player/Team Season Stats, national/Team leader projections, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Dynasty consumers use `src/dynasty/index.ts` for initialization, offseason transition, roster assembly/validation, atomic Season rollover, projected/offseason roster outlooks, returning-Player development, Recruiting class/board/offer operations, period synchronization, finalization, queries, and public Dynasty/Recruiting/archive/offseason types. No lower layer imports Dynasty.
 
-Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League & Player Exploration V0, Postseason Domain / Simulation V0, Postseason Presentation V0, the shared fast/detailed game-flow QOL, Dynasty Foundation + Progression V0, Recruiting V0, Season Rollover V0, and Dynasty Long-Run Calibration V0 are complete. React renders the accepted single-season experience; the repeatable and calibrated Dynasty backend is not yet orchestrated by the application store.
+Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League & Player Exploration V0, Postseason Domain / Simulation V0, Postseason Presentation V0, the shared fast/detailed game-flow QOL, Dynasty Foundation + Progression V0, Recruiting V0, Season Rollover V0, Dynasty Long-Run Calibration V0, and the player-facing Dynasty application loop are complete. Rollover preserves canonical history and controlled Program identity while resetting stale season-specific session presentation state.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 

@@ -83,9 +83,9 @@ Optional Tournament-depth ideas are listed separately in `FUTURE_FEATURES.md`; t
 
 ### P3 — Application session store growth
 
-The current Zustand application/session store owns the controlled Program, completed `SeasonState`, active `PostseasonState`, regular-season and Tournament Rotation drafts, viewed-result IDs, navigation, Quick Sim, Super Sim, and round progression. It remains manageable at the current scale.
+The current Zustand application/session store orchestrates canonical `DynastyState` plus controlled-Program session presentation: regular-season and Tournament Rotation drafts, viewed-result IDs, navigation, Quick Sim, Super Sim, round progression, and lifecycle handoffs. It remains manageable at the current scale, but serialized Dynasty/history state grows materially across many Seasons as documented above.
 
-Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball, Tournament, and Recruiting rules in their domain layers, and avoid duplicate derived state or a generalized state framework. Reconsider the top-level application boundary when React/Zustand actually adopts the implemented `DynastyState` and adds Recruiting/rollover orchestration. The pure Dynasty/Recruiting domain alone does not require a store refactor. This is a maintainability watchpoint, not an MVP blocker.
+Do not refactor merely for cleanliness. Preserve one clear application/session boundary, keep basketball, Tournament, and Recruiting rules in their domain layers, and avoid duplicate derived state or a generalized state framework. This is a maintainability watchpoint, not an MVP blocker.
 
 ### P3 — Render-time navigation side effects
 
