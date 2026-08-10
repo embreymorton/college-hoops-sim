@@ -10,14 +10,20 @@ import {
   validateSeasonState,
 } from '../season'
 import { UNIVERSE_V0 } from '../universe'
-import { MIDSEASON_ROUND, useDynastyStore } from './seasonStore'
+import {
+  DEFAULT_INTERACTIVE_TEST_SEED,
+  MIDSEASON_ROUND,
+  useDynastyStore,
+} from './seasonStore'
 
 function resetStore() {
   useDynastyStore.setState(useDynastyStore.getInitialState())
 }
 
-function selectProgram(): void {
-  useDynastyStore.getState().selectProgram('charlotte-tech')
+function selectProgram(programId = 'charlotte-tech'): void {
+  useDynastyStore
+    .getState()
+    .selectProgram(programId, DEFAULT_INTERACTIVE_TEST_SEED)
   useDynastyStore.getState().generateControlledDraftBoard()
 }
 
@@ -498,7 +504,7 @@ describe('seasonStore regular-season completion', () => {
   it(
     'reaches Regular Season Complete after all 384 games finish',
     () => {
-      useDynastyStore.getState().selectProgram('pine-valley')
+      selectProgram('pine-valley')
 
       driveSeasonToCompletion()
 
@@ -818,7 +824,7 @@ describe('seasonStore League & Player exploration navigation', () => {
     selectProgram()
     useDynastyStore.getState().openTeamDetails(NON_CONTROLLED_PROGRAM_ID)
 
-    useDynastyStore.getState().selectProgram('northbridge')
+    selectProgram('northbridge')
 
     const state = useDynastyStore.getState()
     expect(state.view).toBe('hub')

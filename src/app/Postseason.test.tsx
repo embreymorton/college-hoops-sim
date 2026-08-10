@@ -13,13 +13,19 @@ import {
   TOURNAMENT_ROUNDS,
   type PostseasonState,
 } from '../postseason'
-import { useDynastyStore } from '../store'
+import { DEFAULT_INTERACTIVE_TEST_SEED, useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
 import { deriveGameLeaders } from './gameLeaders'
 
 function resetStore() {
   useDynastyStore.setState(useDynastyStore.getInitialState())
+}
+
+function selectProgram(programId = 'charlotte-tech'): void {
+  useDynastyStore
+    .getState()
+    .selectProgram(programId, DEFAULT_INTERACTIVE_TEST_SEED)
 }
 
 function setActivePostseason(activePostseason: PostseasonState): void {
@@ -69,7 +75,7 @@ beforeEach(() => {
 
 describe('Postseason transition', () => {
   it('shows the National Tournament entry point once the regular season completes, and enters it', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     useDynastyStore.getState().generateControlledDraftBoard()
     useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
     useDynastyStore.getState().confirmSuperSim()
@@ -87,7 +93,7 @@ describe('Postseason transition', () => {
   })
 
   it('re-entering later only navigates and never replaces the initialized Postseason or the completed Season', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     const firstPostseason = useDynastyStore.getState().dynasty!.activePostseason
     const season = useDynastyStore.getState().dynasty!.activeSeason
@@ -105,7 +111,7 @@ describe('Postseason transition', () => {
 
 describe('Postseason — qualified and alive', () => {
   it('shows the correct seed, bid, and canonical next Tournament matchup', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
@@ -143,7 +149,7 @@ describe('Postseason — qualified and alive', () => {
   })
 
   it('Quick Sim stays on the Tournament Hub with the stored result and optional Box Score', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
@@ -218,7 +224,7 @@ describe('Postseason — qualified and alive', () => {
   })
 
   it('renders full Player box scores for the just-played Tournament game, with a neutral-site round tag', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -242,7 +248,7 @@ describe('Postseason — qualified and alive', () => {
   })
 
   it('Game Prep opens Tournament Rotation editing without mutating the completed Season', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
@@ -293,7 +299,7 @@ describe('Postseason — qualified and alive', () => {
   })
 
   it('Advance to Next Round resolves the remaining bracket games and preserves the controlled result', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -320,7 +326,7 @@ describe('Postseason — eliminated', () => {
     // of 16, then loses the Quarterfinal — regression coverage for a real
     // bug where a resolved loss in the *current* round was misread as an
     // already-won game still waiting on the rest of the round.
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -344,7 +350,7 @@ describe('Postseason — eliminated', () => {
   })
 
   it('lets the AI Tournament continue past the eliminated controlled Program toward a Champion', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -368,7 +374,7 @@ describe('Postseason — eliminated', () => {
 
 describe('Postseason — did not qualify', () => {
   it('shows No Bid with no fake matchup, and the Tournament remains simulatable to a Champion', () => {
-    useDynastyStore.getState().selectProgram('pine-valley')
+    selectProgram('pine-valley')
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
@@ -397,7 +403,7 @@ describe('Postseason — did not qualify', () => {
 
 describe('Postseason — bracket and historical results', () => {
   it('reveals future participants one feeder at a time, then preserves completed scores and winner styling', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
 
@@ -509,7 +515,7 @@ describe('Postseason — bracket and historical results', () => {
   })
 
   it('opens a completed Tournament game as a read-only historical result with the full box score', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)
@@ -547,7 +553,7 @@ describe('Postseason — bracket and historical results', () => {
 
 describe('Postseason — Champion', () => {
   it('renders the National Champions state when the controlled Program wins it all', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
 
     const { activePostseason: postseason, controlledProgramId } = useDynastyStore.getState().dynasty!
@@ -595,7 +601,7 @@ describe('Postseason — Champion', () => {
   })
 
   it('renders another Program as National Champion when the controlled Program does not win it', () => {
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    selectProgram()
     completeRegularSeasonAndEnterPostseason()
     render(<App />)
     clickButtonByText(/^simulate game$/i)

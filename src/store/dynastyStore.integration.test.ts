@@ -4,7 +4,10 @@ import {
   getNextGameForProgram,
   simulateScheduledGame,
 } from '../season'
-import { useDynastyStore } from './seasonStore'
+import {
+  DEFAULT_INTERACTIVE_TEST_SEED,
+  useDynastyStore,
+} from './seasonStore'
 
 const PROGRAM_ID = 'charlotte-tech'
 const TEST_SIMULATION_SEED =
@@ -12,7 +15,9 @@ const TEST_SIMULATION_SEED =
 
 function resetAndSelectProgram(): void {
   useDynastyStore.setState(useDynastyStore.getInitialState())
-  useDynastyStore.getState().selectProgram(PROGRAM_ID)
+  useDynastyStore
+    .getState()
+    .selectProgram(PROGRAM_ID, DEFAULT_INTERACTIVE_TEST_SEED)
   useDynastyStore.getState().generateControlledDraftBoard()
 }
 

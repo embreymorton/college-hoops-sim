@@ -42,16 +42,50 @@ import {
 } from '../season'
 import { initializeUniverse, UNIVERSE_V0 } from '../universe'
 
+/** Stable explicit seed retained for tests and any caller needing the former fixed world. */
+export const DEFAULT_INTERACTIVE_TEST_SEED =
+  'college-hoops-sim:season-presentation:v0:master-seed'
+
+let interactiveSeedSequence = 0
+
 /**
- * One stable master seed for Season Presentation V0, namespaced into the
- * deterministic concepts it drives. Reproducible development behavior only —
- * never exposed as a user-facing seed editor.
+ * Application-boundary entropy for a new user session only. The resulting
+ * value becomes the Dynasty's immutable canonical seed; no domain code reads
+ * browser randomness.
  */
-const MASTER_SEED = 'college-hoops-sim:season-presentation:v0:master-seed'
-const UNIVERSE_SEED = `${MASTER_SEED}:universe`
-const SCHEDULE_SEED = `${MASTER_SEED}:schedule:season-1`
-const SEASON_SIMULATION_SEED = `${MASTER_SEED}:season-1:simulation`
-const POSTSEASON_SIMULATION_SEED = `${MASTER_SEED}:season-1:postseason:simulation`
+export function createInteractiveDynastySeed(): string {
+  const uuid = globalThis.crypto?.randomUUID?.()
+  if (uuid) return `interactive-dynasty:${uuid}`
+
+  interactiveSeedSequence += 1
+  return `interactive-dynasty:fallback:${Date.now()}:${interactiveSeedSequence}`
+}
+
+function seedValue(seed: RngSeed): string {
+  return typeof seed === 'string' ? seed : String(seed)
+}
+
+/** Preserves the former string namespaces for explicit fixed-seed workflows. */
+function deriveInteractiveSeed(dynastySeed: RngSeed, stream: string): string {
+  return `${seedValue(dynastySeed)}:${stream}`
+}
+
+function regularSeasonSimulationSeed(
+  dynastySeed: RngSeed,
+  seasonNumber: number,
+): string {
+  return deriveInteractiveSeed(dynastySeed, `season-${seasonNumber}:simulation`)
+}
+
+function postseasonSimulationSeed(
+  dynastySeed: RngSeed,
+  seasonNumber: number,
+): string {
+  return deriveInteractiveSeed(
+    dynastySeed,
+    `season-${seasonNumber}:postseason:simulation`,
+  )
+}
 
 /**
  * Super Sim V0's one fixed checkpoint short of the full 24-round regular
@@ -106,6 +140,7 @@ function catchUpRoundsBefore(
   season: SeasonState,
   controlledProgramId: string,
   beforeRound: number,
+  simulationSeed: RngSeed,
 ): SeasonState {
   let current = season
   let round = getCurrentRound(current)
@@ -114,7 +149,7 @@ function catchUpRoundsBefore(
     current = simulatePendingGamesInRound({
       season: current,
       round,
-      simulationSeed: SEASON_SIMULATION_SEED,
+      simulationSeed,
       excludedProgramIds: [controlledProgramId],
     })
     round = getCurrentRound(current)
@@ -192,9 +227,8 @@ export interface DynastySessionState {
   readonly recruitingActionError: string | null
   /** Serializable UI intent paused before the first Recruiting period can resolve. */
   readonly pendingRecruitingSetupIntent: PendingRecruitingSetupIntent | null
-  readonly masterSeed: RngSeed
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
-  selectProgram(programId: string): void
+  selectProgram(programId: string, dynastySeed?: RngSeed): void
   /** Zero minutes omits the Player, preserving canonical Rotation shape. */
   setDraftPlayerMinutes(playerId: string, minutes: number): void
   resetDraftRotation(): void
@@ -402,6 +436,7 @@ function withActivePostseason(
 function runNextGameSimulation(
   season: SeasonState,
   controlledProgramId: string,
+  simulationSeed: RngSeed,
 ): { season: SeasonState; playedGameId: string } | null {
   const nextGame = getNextGameForProgram(season, controlledProgramId)
 
@@ -413,11 +448,12 @@ function runNextGameSimulation(
     season,
     controlledProgramId,
     nextGame.round,
+    simulationSeed,
   )
   const nextSeason = simulateScheduledGame({
     season: caughtUpSeason,
     scheduledGameId: nextGame.id,
-    simulationSeed: SEASON_SIMULATION_SEED,
+    simulationSeed,
   })
 
   return { season: nextSeason, playedGameId: nextGame.id }
@@ -466,13 +502,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   selectedPlayerId: null,
   recruitingActionError: null,
   pendingRecruitingSetupIntent: null,
-  masterSeed: MASTER_SEED,
-
-  selectProgram(programId) {
-    const initializedUniverse = initializeUniverse(UNIVERSE_V0, UNIVERSE_SEED)
+  selectProgram(programId, explicitDynastySeed) {
+    const dynastySeed = explicitDynastySeed ?? createInteractiveDynastySeed()
+    const initializedUniverse = initializeUniverse(
+      UNIVERSE_V0,
+      deriveInteractiveSeed(dynastySeed, 'universe'),
+    )
     const schedule = generateRegularSeasonSchedule({
       universe: UNIVERSE_V0,
-      seed: SCHEDULE_SEED,
+      seed: deriveInteractiveSeed(dynastySeed, 'schedule:season-1'),
     })
     const season = initializeSeason({
       universe: UNIVERSE_V0,
@@ -490,8 +528,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     const dynasty = withoutControlledRecruitingStrategy(
       initializeRecruiting(initializeDynastyState({
-        dynastyId: `dynasty:${programId}`,
-        dynastySeed: MASTER_SEED,
+        dynastyId: `dynasty:${programId}:${seedValue(dynastySeed)}`,
+        dynastySeed,
         controlledProgramId: programId,
         universe: UNIVERSE_V0,
         activeSeason: season,
@@ -595,7 +633,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     const nextGame = getNextGameForProgram(season, controlledProgramId)
     const caughtUpSeason = nextGame
-      ? catchUpRoundsBefore(season, controlledProgramId, nextGame.round)
+      ? catchUpRoundsBefore(
+          season,
+          controlledProgramId,
+          nextGame.round,
+          regularSeasonSimulationSeed(dynasty.dynastySeed, season.seasonNumber),
+        )
       : season
     if (needsRecruitingSetupBeforeAdvance(dynasty, caughtUpSeason)) {
       set({ pendingRecruitingSetupIntent: 'game-prep-catch-up' })
@@ -638,7 +681,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
-    const outcome = runNextGameSimulation(season, controlledProgramId)
+    const outcome = runNextGameSimulation(
+      season,
+      controlledProgramId,
+      regularSeasonSimulationSeed(dynasty.dynastySeed, season.seasonNumber),
+    )
 
     if (!outcome) {
       return
@@ -665,7 +712,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
-    const outcome = runNextGameSimulation(season, controlledProgramId)
+    const outcome = runNextGameSimulation(
+      season,
+      controlledProgramId,
+      regularSeasonSimulationSeed(dynasty.dynastySeed, season.seasonNumber),
+    )
 
     if (!outcome) {
       return
@@ -694,7 +745,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     const nextSeason = simulatePendingGamesInCurrentRound({
       season,
-      simulationSeed: SEASON_SIMULATION_SEED,
+      simulationSeed: regularSeasonSimulationSeed(
+        dynasty.dynastySeed,
+        season.seasonNumber,
+      ),
       excludedProgramIds: [controlledProgramId],
     })
 
@@ -731,7 +785,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const proposedSeason = simulatePendingGamesThroughRound({
       season,
       throughRound,
-      simulationSeed: SEASON_SIMULATION_SEED,
+      simulationSeed: regularSeasonSimulationSeed(
+        dynasty.dynastySeed,
+        season.seasonNumber,
+      ),
     })
     set({
       pendingSuperSim,
@@ -764,7 +821,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const nextSeason = simulatePendingGamesThroughRound({
       season,
       throughRound: pendingSuperSim.throughRound,
-      simulationSeed: SEASON_SIMULATION_SEED,
+      simulationSeed: regularSeasonSimulationSeed(
+        dynasty.dynastySeed,
+        season.seasonNumber,
+      ),
     })
     if (needsRecruitingSetupBeforeAdvance(dynasty, nextSeason)) {
       set({ pendingRecruitingSetupIntent: 'confirm-super-sim' })
@@ -943,7 +1003,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const nextPostseason = simulateTournamentGame({
       postseason,
       tournamentGameId: game.id,
-      simulationSeed: POSTSEASON_SIMULATION_SEED,
+      simulationSeed: postseasonSimulationSeed(
+        dynasty.dynastySeed,
+        dynasty.activeSeason!.seasonNumber,
+      ),
     })
 
     set({
@@ -971,7 +1034,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const nextPostseason = simulateTournamentGame({
       postseason,
       tournamentGameId: game.id,
-      simulationSeed: POSTSEASON_SIMULATION_SEED,
+      simulationSeed: postseasonSimulationSeed(
+        dynasty.dynastySeed,
+        dynasty.activeSeason!.seasonNumber,
+      ),
     })
 
     set({
@@ -992,7 +1058,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     const nextPostseason = simulatePendingGamesInCurrentTournamentRound({
       postseason,
-      simulationSeed: POSTSEASON_SIMULATION_SEED,
+      simulationSeed: postseasonSimulationSeed(
+        dynasty.dynastySeed,
+        dynasty.activeSeason!.seasonNumber,
+      ),
       excludedProgramIds: controlledProgramId ? [controlledProgramId] : [],
     })
 

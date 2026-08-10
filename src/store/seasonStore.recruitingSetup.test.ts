@@ -13,14 +13,19 @@ import {
   isRoundComplete,
   simulateScheduledGame,
 } from '../season'
-import { useDynastyStore } from './seasonStore'
+import {
+  DEFAULT_INTERACTIVE_TEST_SEED,
+  useDynastyStore,
+} from './seasonStore'
 
 const PROGRAM_ID = 'charlotte-tech'
 const FIXTURE_SIMULATION_SEED = 'recruiting-setup-catch-up-fixture'
 
 function initializeInteractiveDynasty(): void {
   useDynastyStore.setState(useDynastyStore.getInitialState())
-  useDynastyStore.getState().selectProgram(PROGRAM_ID)
+  useDynastyStore
+    .getState()
+    .selectProgram(PROGRAM_ID, DEFAULT_INTERACTIVE_TEST_SEED)
 }
 
 function controlledBoard() {

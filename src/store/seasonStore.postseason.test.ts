@@ -29,7 +29,10 @@ import {
   type SeasonState,
 } from '../season'
 import { initializeUniverse, UNIVERSE_V0 } from '../universe'
-import { useDynastyStore } from './seasonStore'
+import {
+  DEFAULT_INTERACTIVE_TEST_SEED,
+  useDynastyStore,
+} from './seasonStore'
 
 function resetStore() {
   useDynastyStore.setState(useDynastyStore.getInitialState())
@@ -142,7 +145,9 @@ function buildCompletedSeason(seedSuffix: string): SeasonState {
 function primeStore(seedSuffix = 'fixture') {
   const season = buildCompletedSeason(seedSuffix)
   const postseason = initializePostseason({ universe: UNIVERSE_V0, season })
-  useDynastyStore.getState().selectProgram('charlotte-tech')
+  useDynastyStore
+    .getState()
+    .selectProgram('charlotte-tech', DEFAULT_INTERACTIVE_TEST_SEED)
   const dynasty = useDynastyStore.getState().dynasty!
   const synchronized = syncRecruitingThroughCompletedRounds({
     ...dynasty,
@@ -200,7 +205,9 @@ beforeEach(() => {
 describe('seasonStore postseason transition', () => {
   it('initializes Postseason once from the completed Season; re-entry only navigates', () => {
     const season = buildCompletedSeason('init-once')
-    useDynastyStore.getState().selectProgram('charlotte-tech')
+    useDynastyStore
+      .getState()
+      .selectProgram('charlotte-tech', DEFAULT_INTERACTIVE_TEST_SEED)
     updateDynasty({ activeSeason: season })
 
     useDynastyStore.getState().enterPostseason()
