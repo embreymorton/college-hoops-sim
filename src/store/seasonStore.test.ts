@@ -173,10 +173,15 @@ describe('seasonStore Rotation editing', () => {
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const forwards = getPlayersByMinutesV1(
-      controlledTeam,
-      season!.programStates['charlotte-tech']!.rotation,
-    ).filter(({ player }) => player.position === 'SF')
+    const rotation = season!.programStates['charlotte-tech']!.rotation
+    const forwards = controlledTeam.roster
+      .filter(({ position }) => position === 'SF')
+      .map((player) => ({
+        player,
+        minutes: rotation.minutesByPosition.SF[player.id] ?? 0,
+      }))
+      .filter(({ minutes }) => minutes > 0)
+      .sort((first, second) => second.minutes - first.minutes)
 
     useDynastyStore
       .getState()
@@ -726,10 +731,15 @@ describe('seasonStore Super Sim', () => {
     selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const forwards = getPlayersByMinutesV1(
-      controlledTeam,
-      season!.programStates['charlotte-tech']!.rotation,
-    ).filter(({ player }) => player.position === 'SF')
+    const rotation = season!.programStates['charlotte-tech']!.rotation
+    const forwards = controlledTeam.roster
+      .filter(({ position }) => position === 'SF')
+      .map((player) => ({
+        player,
+        minutes: rotation.minutesByPosition.SF[player.id] ?? 0,
+      }))
+      .filter(({ minutes }) => minutes > 0)
+      .sort((first, second) => second.minutes - first.minutes)
 
     useDynastyStore
       .getState()

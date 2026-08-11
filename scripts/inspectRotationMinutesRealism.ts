@@ -28,6 +28,9 @@ function printSummary(label: string, summary: RotationMinutesSummary): void {
   console.log(`Leaders: PPG ${ratio(summary.eliteRates.topTenPpg)} | APG ${ratio(summary.eliteRates.topTenApg)} | RPG ${ratio(summary.eliteRates.topTenRpg)}`)
   console.log(`Position exact-40: ${Object.entries(summary.exact40ByPosition).map(([position, value]) => `${position} ${ratio(value)}`).join(' | ')}`)
   console.log(`OVR exact-40: ${Object.entries(summary.exact40ByOverallBand).map(([band, value]) => `${band} ${ratio(value)}`).join(' | ')}`)
+  console.log(`Natural 36: ${ratio(summary.natural36.countRate)}, avg/median OVR ${summary.natural36.averageOverall.toFixed(1)}/${summary.natural36.medianOverall.toFixed(1)}, Team #1/top 3 ${ratio(summary.natural36.teamHighestOverall)} / ${ratio(summary.natural36.teamTopThreeOverall)}, 90+ receiving 36 ${ratio(summary.natural36.ninetyPlusReceiving36)}`)
+  console.log(`Natural-36 OVR mix: ${Object.entries(summary.natural36.overallBands).map(([band, value]) => `${band} ${ratio(value)}`).join(' | ')}`)
+  console.log(`Starter-gap 36 rates: ${Object.entries(summary.natural36.byStarterBackupGap).map(([band, value]) => `${band} ${ratio(value)}`).join(' | ')}; natural-36 avg/median gap ${summary.natural36.averageStarterBackupGap.toFixed(1)}/${summary.natural36.medianStarterBackupGap.toFixed(1)}`)
   console.log(`Exact-40 natural / secondary minute totals: ${summary.exact40NaturalMinutes} / ${summary.exact40SecondaryMinutes}`)
   console.log(`Exact-40 secondary paths: ${Object.entries(summary.exact40SecondaryPaths).sort(([, first], [, second]) => second.minutes - first.minutes).map(([path, value]) => `${path} ${value.players} Players/${value.minutes} min`).join(' | ') || 'none'}`)
   const mpg = summary.assigned40ActualMpg

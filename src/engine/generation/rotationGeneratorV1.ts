@@ -20,10 +20,10 @@ const DEFAULT_ROTATION_V1_CONFIG = {
   maximumSecondaryMinutesPerPlayer: 8,
   /** Matches 6E.5's focus on replacing a real floor-position incumbent. */
   minimumDisplacedPlayerMinutes: 20,
+  /** Lets useful legal secondary Players absorb the candidate's weak-backup share. */
+  maximumReplaceableWeakBackupMinutes: 8,
   /** Matches 6E.5's definition of talent buried by natural-position depth. */
   buriedPlayerMaximumMinutes: 9,
-  /** Preserves the V0 generator's four-minute headroom for a capped starter. */
-  v0CappedPlayerMinutes: MAX_PLAYER_MINUTES - 4,
 } as const
 
 function playerContribution(player: Player): number {
@@ -53,10 +53,8 @@ export function generateDefaultRotationV1(team: Team): RotationV1 {
           return (
             player.position !== floorPosition &&
             getEligibleRotationPositions(player).includes(floorPosition) &&
-            (baselineMinutes <=
-              DEFAULT_ROTATION_V1_CONFIG.buriedPlayerMaximumMinutes ||
-              baselineMinutes ===
-                DEFAULT_ROTATION_V1_CONFIG.v0CappedPlayerMinutes)
+            baselineMinutes <=
+              DEFAULT_ROTATION_V1_CONFIG.buriedPlayerMaximumMinutes
           )
         },
       )
@@ -68,10 +66,16 @@ export function generateDefaultRotationV1(team: Team): RotationV1 {
       )
     const recipients = team.roster
       .filter(
-        (player) =>
-          player.position === floorPosition &&
-          (rotationV0.minutes[player.id] ?? 0) >=
-            DEFAULT_ROTATION_V1_CONFIG.minimumDisplacedPlayerMinutes,
+        (player) => {
+          const baselineMinutes = rotationV0.minutes[player.id] ?? 0
+          return player.position === floorPosition && (
+            baselineMinutes >=
+              DEFAULT_ROTATION_V1_CONFIG.minimumDisplacedPlayerMinutes ||
+            (baselineMinutes > 0 &&
+              baselineMinutes <=
+                DEFAULT_ROTATION_V1_CONFIG.maximumReplaceableWeakBackupMinutes)
+          )
+        },
       )
       .sort(
         (first, second) =>

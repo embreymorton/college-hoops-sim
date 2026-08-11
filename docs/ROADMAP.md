@@ -363,11 +363,11 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.7B — Tournament Seeding Candidate:** COMPLETE — ACCEPTED / FROZEN. The exact same four automatic qualifiers and 12 at-larges are now seeded together through the existing deterministic results-only résumé comparator. Paired STANDARD and FULL `5 × 10` evidence improved mature seed/OVR alignment and extreme 3/14 matchup truthfulness while strengthening résumé correlation, preserving Tournament variance, and leaving Game Sim and Team Strength unchanged.
 - **6E.8 — Player Details + Development History UX:** COMPLETE. Player Details now shows a compact nine-attribute ratings grid, a prominent Career Progression table (Season/Class/OVR/Dev/PPG/RPG/APG) derived purely from archived Dynasty Season snapshots plus the active Season, and a compact Recruiting Origin section for Players resolved from finalized Recruiting history. No new persisted history state was added; `derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts` connects existing canonical facts by stable Player ID. Existing current-season stats, shooting splits, game log, and Team/Player navigation are unchanged. See `UI_DESIGN.md` and `PLAYTESTING.md`.
 - **6E.9 — Rotation Minutes Realism Diagnostic:** COMPLETE — OUTCOME A + C. Production-lifecycle STANDARD `3 × 10` evidence found exact-40 defaults uncommon across active Rotation Players (`2.9%`) but common among top-10 scorers (`51.0%`) and 90+ OVR Players (`51.5%`). All `301` cases were natural `36 → 40` through four flexible secondary minutes; none originated at natural 40. Season 5+ incidence was slightly lower than Season 1, and assigned-40 Players averaged `40.035 MPG`. Rotation V1 remains accepted/frozen overall; no production behavior changed.
+- **6E.9B — Starter Minutes Realism Candidate:** COMPLETE — ACCEPTED / FROZEN. Team top-three OVR role now gates the 36-minute natural ceiling; other Players with a backup use 32, natural-36 Players are excluded from automatic secondary promotion, and useful legal secondary Players may absorb positive weak-backup shares up to eight minutes. STANDARD improved natural-36 quality and removed all `301` baseline exact-40 defaults while preserving secondary access and Team Strength; FULL `5 × 10` observed zero exact-40 defaults across `16,717` active Rotation Players with deterministic structural health.
 
 ### Current planning horizon
 
-- **6E.9B — Exact-40 Flexible Default Guardrail Candidate:** NEXT — CODEX. Test one isolated paired candidate: remove natural-36 Players from the flexible generator's automatic secondary recipient path while preserving the legal 40-minute maximum, manual assignments, natural defaults, and buried-Player flexibility. This is a candidate, not accepted behavior.
-- **6E.10 — Postseason Hub + Season-Complete Presentation Polish:** QUEUED — CLAUDE CODE. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff after the narrow Rotation candidate reaches a green checkpoint.
+- **6E.10 — Postseason Hub + Season-Complete Presentation Polish:** NEXT — CLAUDE CODE. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
 
 Repeated near-term QOL priorities include Sim to Season Complete, Recruiting
 Focus/commitment visibility, Assistant Fill Remaining Board, Coaching/roster
@@ -376,8 +376,8 @@ League context, records, shot-selection investigation, and minor presentation
 polish remain observed/later rather than a fixed feature schedule.
 
 This order is evidence-driven: Tournament seeding and Game Sim remain closed;
-Player Details is complete and positively received; the completed Rotation
-diagnostic earned one narrow candidate before queued Postseason presentation.
+Player Details is complete and positively received; the narrow Rotation
+candidate is accepted/frozen, so Postseason presentation is next.
 
 ## Non-binding development-agent fit
 

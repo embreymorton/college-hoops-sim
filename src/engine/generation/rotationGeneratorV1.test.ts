@@ -141,7 +141,7 @@ describe('generateDefaultRotationV1', () => {
     },
   )
 
-  it('uses only the superior Player capacity remaining below 40 minutes', () => {
+  it('does not automatically turn a natural 36-minute star into a 40-minute Player', () => {
     const star = makePlayer('PG-star', 'PG', 99)
     const team = makeTeam({
       PG: [star, makePlayer('PG-backup', 'PG', 50)],
@@ -155,8 +155,33 @@ describe('generateDefaultRotationV1', () => {
     const totals = derivePlayerMinutesV1(rotation)
 
     expect(baseline.minutes[star.id]).toBe(36)
-    expect(rotation.minutesByPosition.SG[star.id]).toBe(4)
-    expect(totals[star.id]).toBe(40)
+    expect(rotation.minutesByPosition.SG[star.id]).toBeUndefined()
+    expect(totals[star.id]).toBe(36)
+    expect(validateRotationV1(team, rotation).valid).toBe(true)
+  })
+
+  it('lets useful buried secondary talent absorb a weak backup role', () => {
+    const usefulPg = makePlayer('PG-useful-secondary', 'PG', 85)
+    const team = makeTeam({
+      PG: [makePlayer('PG-starter', 'PG', 96), usefulPg],
+      SG: [
+        makePlayer('SG-good-starter', 'SG', 79),
+        makePlayer('SG-weak-backup', 'SG', 62),
+      ],
+      SF: [makePlayer('SF-elite', 'SF', 99), makePlayer('SF-backup', 'SF', 75)],
+      PF: [makePlayer('PF-elite', 'PF', 98), makePlayer('PF-backup', 'PF', 75)],
+      C: [makePlayer('C-elite', 'C', 97), makePlayer('C-backup', 'C', 75)],
+    })
+    const natural = generateDefaultRotation(team)
+    const rotation = generateDefaultRotationV1(team)
+    const totals = derivePlayerMinutesV1(rotation)
+
+    expect(natural.minutes['SG-good-starter']).toBe(32)
+    expect(natural.minutes['SG-weak-backup']).toBe(8)
+    expect(natural.minutes[usefulPg.id]).toBe(8)
+    expect(rotation.minutesByPosition.SG[usefulPg.id]).toBe(8)
+    expect(rotation.minutesByPosition.SG['SG-weak-backup']).toBeUndefined()
+    expect(totals[usefulPg.id]).toBe(16)
     expect(validateRotationV1(team, rotation).valid).toBe(true)
   })
 

@@ -31,6 +31,9 @@ export interface RotationMinuteObservation {
   readonly teamOverall: number
   readonly assignedMinutes: number
   readonly naturalMinutes: number
+  readonly isNaturalPositionStarter: boolean
+  readonly backupOverall: number | undefined
+  readonly starterBackupGap: number | undefined
   readonly naturalPositionMinutes: number
   readonly secondaryMinutes: number
   readonly secondaryByPath: Readonly<Record<string, number>>
@@ -61,6 +64,18 @@ export interface RotationMinutesSummary {
   readonly exact40Origins: Readonly<Record<Exact40Origin, CountRate>>
   readonly exact40ByPosition: Readonly<Record<Position, CountRate>>
   readonly exact40ByOverallBand: Readonly<Record<string, CountRate>>
+  readonly natural36: {
+    readonly countRate: CountRate
+    readonly averageOverall: number
+    readonly medianOverall: number
+    readonly overallBands: Readonly<Record<string, CountRate>>
+    readonly teamHighestOverall: CountRate
+    readonly teamTopThreeOverall: CountRate
+    readonly ninetyPlusReceiving36: CountRate
+    readonly averageStarterBackupGap: number
+    readonly medianStarterBackupGap: number
+    readonly byStarterBackupGap: Readonly<Record<string, CountRate>>
+  }
   readonly exact40SecondaryPaths: Readonly<Record<string, { players: number; minutes: number }>>
   readonly exact40NaturalMinutes: number
   readonly exact40SecondaryMinutes: number
@@ -141,7 +156,21 @@ export function extractSeasonRotationMinuteObservations(
       const topThree = new Set(rankings.slice(0, 3))
       const teamOverall = calculateTeamStrength(team, rotation).overall
 
+      const naturalPositionRankings = new Map(POSITIONS.map((position) => [
+        position,
+        team.roster.filter((player) => player.position === position)
+          .map((player) => ({ id: player.id, overall: calculateOverall(player) }))
+          .sort((first, second) =>
+            second.overall - first.overall || first.id.localeCompare(second.id),
+          ),
+      ]))
+
       return team.roster.map((player) => {
+        const positionRankings = naturalPositionRankings.get(player.position) ?? []
+        const isNaturalPositionStarter = positionRankings[0]?.id === player.id
+        const backupOverall = isNaturalPositionStarter
+          ? positionRankings[1]?.overall
+          : undefined
         const secondaryByPath: Record<string, number> = {}
         let secondaryMinutes = 0
         for (const floorPosition of POSITIONS) {
@@ -161,6 +190,11 @@ export function extractSeasonRotationMinuteObservations(
           teamOverall,
           assignedMinutes: flexibleMinutes[player.id] ?? 0,
           naturalMinutes: naturalMinutes[player.id] ?? 0,
+          isNaturalPositionStarter,
+          backupOverall,
+          starterBackupGap: backupOverall === undefined
+            ? undefined
+            : calculateOverall(player) - backupOverall,
           naturalPositionMinutes:
             rotation.minutesByPosition[player.position][player.id] ?? 0,
           secondaryMinutes,
@@ -196,6 +230,28 @@ function overallBand(overall: number): string {
   return 'below 75'
 }
 
+function backupGapBand(gap: number): string {
+  if (gap >= 15) return '15+'
+  if (gap >= 10) return '10–14'
+  if (gap >= 5) return '5–9'
+  return 'below 5'
+}
+
+function average(values: readonly number[]): number {
+  return values.length === 0
+    ? 0
+    : values.reduce((sum, value) => sum + value, 0) / values.length
+}
+
+function median(values: readonly number[]): number {
+  if (values.length === 0) return 0
+  const sorted = [...values].sort((first, second) => first - second)
+  const middle = Math.floor(sorted.length / 2)
+  return sorted.length % 2 === 0
+    ? (sorted[middle - 1]! + sorted[middle]!) / 2
+    : sorted[middle]!
+}
+
 export function summarizeRotationMinutes(
   observations: readonly RotationMinuteObservation[],
 ): RotationMinutesSummary {
@@ -222,6 +278,16 @@ export function summarizeRotationMinutes(
     }
   }
   const mpg = exact40.map(({ minutesPerGame }) => minutesPerGame)
+  const naturalRotationPlayers = observations.filter(({ naturalMinutes }) => naturalMinutes > 0)
+  const natural36 = naturalRotationPlayers.filter(({ naturalMinutes }) => naturalMinutes === 36)
+  const natural36Overalls = natural36.map(({ overall }) => overall)
+  const natural36Gaps = natural36.flatMap(({ starterBackupGap }) =>
+    starterBackupGap === undefined ? [] : [starterBackupGap],
+  )
+  const startersWithBackups = observations.filter(
+    ({ isNaturalPositionStarter, starterBackupGap }) =>
+      isNaturalPositionStarter && starterBackupGap !== undefined,
+  )
 
   return {
     observations: observations.length,
@@ -249,6 +315,48 @@ export function summarizeRotationMinutes(
     exact40ByOverallBand: Object.fromEntries([
       '90+', '85–89', '80–84', '75–79', 'below 75',
     ].map((band) => [band, rateFor(rotationPlayers, (value) => overallBand(value.overall) === band)])),
+    natural36: {
+      countRate: countRate(natural36.length, naturalRotationPlayers.length),
+      averageOverall: average(natural36Overalls),
+      medianOverall: median(natural36Overalls),
+      overallBands: Object.fromEntries([
+        '90+', '85–89', '80–84', '75–79', 'below 75',
+      ].map((band) => [
+        band,
+        countRate(
+          natural36.filter((value) => overallBand(value.overall) === band).length,
+          natural36.length,
+        ),
+      ])),
+      teamHighestOverall: countRate(
+        natural36.filter(({ isTeamHighestOverall }) => isTeamHighestOverall).length,
+        natural36.length,
+      ),
+      teamTopThreeOverall: countRate(
+        natural36.filter(({ isTeamTopThreeOverall }) => isTeamTopThreeOverall).length,
+        natural36.length,
+      ),
+      ninetyPlusReceiving36: countRate(
+        natural36.filter(({ overall }) => overall >= 90).length,
+        observations.filter(({ overall }) => overall >= 90).length,
+      ),
+      averageStarterBackupGap: average(natural36Gaps),
+      medianStarterBackupGap: median(natural36Gaps),
+      byStarterBackupGap: Object.fromEntries([
+        '15+', '10–14', '5–9', 'below 5',
+      ].map((band) => {
+        const starters = startersWithBackups.filter(
+          ({ starterBackupGap }) => backupGapBand(starterBackupGap!) === band,
+        )
+        return [
+          band,
+          countRate(
+            starters.filter(({ naturalMinutes }) => naturalMinutes === 36).length,
+            starters.length,
+          ),
+        ]
+      })),
+    },
     exact40SecondaryPaths: paths,
     exact40NaturalMinutes: exact40.reduce((sum, value) => sum + value.naturalPositionMinutes, 0),
     exact40SecondaryMinutes: exact40.reduce((sum, value) => sum + value.secondaryMinutes, 0),

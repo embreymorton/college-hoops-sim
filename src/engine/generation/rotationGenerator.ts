@@ -13,6 +13,8 @@ const DEFAULT_ROTATION_CONFIG = {
   qualityTemperature: 5,
   /** Applies only when a player has at least one natural-position backup. */
   maximumMinutesWithBackup: MAX_PLAYER_MINUTES - 4,
+  /** Reserves the star workload ceiling for a Team's top three Players. */
+  maximumMinutesOutsideTeamTopThree: MAX_PLAYER_MINUTES - 8,
   /** Third-or-deeper players below this initial share remain on the bench. */
   minimumAdditionalPlayerShare: 5,
 } as const
@@ -21,6 +23,7 @@ interface PlayerAllocation {
   readonly player: Player
   readonly overall: number
   readonly weight: number
+  readonly maximumMinutes: number
   rawMinutes: number
   minutes: number
 }
@@ -33,7 +36,10 @@ function comparePlayerIds(firstId: string, secondId: string): number {
   return firstId < secondId ? -1 : 1
 }
 
-function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[] {
+function allocatePositionMinutes(
+  players: readonly Player[],
+  teamTopThreePlayerIds: ReadonlySet<string>,
+): PlayerAllocation[] {
   if (players.length === 0) {
     throw new RangeError('Cannot generate a rotation without every position')
   }
@@ -53,6 +59,7 @@ function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[]
       {
         ...onlyPlayer,
         weight: 1,
+        maximumMinutes: MINUTES_PER_POSITION,
         rawMinutes: MINUTES_PER_POSITION,
         minutes: MINUTES_PER_POSITION,
       },
@@ -85,6 +92,9 @@ function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[]
         (overall - bestOverall) /
           DEFAULT_ROTATION_CONFIG.qualityTemperature,
       ),
+      maximumMinutes: teamTopThreePlayerIds.has(player.id)
+        ? DEFAULT_ROTATION_CONFIG.maximumMinutesWithBackup
+        : DEFAULT_ROTATION_CONFIG.maximumMinutesOutsideTeamTopThree,
       rawMinutes: 0,
       minutes: 0,
     }),
@@ -98,9 +108,9 @@ function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[]
       0,
     )
     const newlyCapped = uncappedAllocations.filter(
-      ({ weight }) =>
+      ({ weight, maximumMinutes }) =>
         (weight / remainingWeight) * remainingMinutes >
-        DEFAULT_ROTATION_CONFIG.maximumMinutesWithBackup,
+        maximumMinutes,
     )
 
     if (newlyCapped.length === 0) {
@@ -114,10 +124,9 @@ function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[]
     }
 
     for (const allocation of newlyCapped) {
-      allocation.rawMinutes =
-        DEFAULT_ROTATION_CONFIG.maximumMinutesWithBackup
-      allocation.minutes = DEFAULT_ROTATION_CONFIG.maximumMinutesWithBackup
-      remainingMinutes -= DEFAULT_ROTATION_CONFIG.maximumMinutesWithBackup
+      allocation.rawMinutes = allocation.maximumMinutes
+      allocation.minutes = allocation.maximumMinutes
+      remainingMinutes -= allocation.maximumMinutes
     }
 
     uncappedAllocations = uncappedAllocations.filter(
@@ -132,8 +141,7 @@ function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[]
   while (unassignedMinutes > 0) {
     const nextAllocation = [...allocations]
       .filter(
-        ({ minutes }) =>
-          minutes < DEFAULT_ROTATION_CONFIG.maximumMinutesWithBackup,
+        ({ minutes, maximumMinutes }) => minutes < maximumMinutes,
       )
       .sort(
         (first, second) =>
@@ -160,9 +168,21 @@ function allocatePositionMinutes(players: readonly Player[]): PlayerAllocation[]
  * overall. Zero-minute players are omitted from the returned mapping.
  */
 export function generateDefaultRotation(team: Team): Rotation {
+  const teamTopThreePlayerIds = new Set(
+    team.roster
+      .map((player) => ({ player, overall: calculateOverall(player) }))
+      .sort(
+        (first, second) =>
+          second.overall - first.overall ||
+          comparePlayerIds(first.player.id, second.player.id),
+      )
+      .slice(0, 3)
+      .map(({ player }) => player.id),
+  )
   const entries = POSITIONS.flatMap((position) =>
     allocatePositionMinutes(
       team.roster.filter((player) => player.position === position),
+      teamTopThreePlayerIds,
     )
       .filter(({ minutes }) => minutes > 0)
       .map(({ player, minutes }) => [player.id, minutes] as const),

@@ -367,6 +367,37 @@ recipient path while preserving the legal 40-minute maximum, manual Rotation,
 natural defaults, and buried-Player flexibility. Do not implement or accept
 that candidate without paired validation.
 
+### Phase 6E.9B Starter Minutes Realism Candidate
+
+Baseline STANDARD characterized `845` natural-36 Players: average/median OVR
+`80.9/81`, only `41.3%` were Team-highest OVR, `27.2%` were outside the Team top
+three, and `41.3%` were below 80 OVR. Every starter with a 15+ OVR backup gap
+received 36; 10–14 gaps produced 36 at `73.8%`. Backup weakness was therefore
+too influential by itself.
+
+The accepted candidate reserves the 36-minute natural ceiling for each Team's
+deterministic top three Players by OVR; other Players with a backup use a
+32-minute ceiling. The flexible pass no longer promotes natural-36 Players and
+may replace the candidate's positive weak-backup shares of at most eight
+minutes under the existing legal-path and five-point improvement safeguards.
+The manual 40-minute maximum and sole-position 40-minute defaults remain legal.
+
+Paired-seed STANDARD reduced natural-36 Players `845 → 615`; every remaining
+case was Team top-three, average/median OVR rose to `83.1/83`, and below-75
+share fell `15.0% → 4.4%`. Exact-40 defaults fell `301 → 0`. Direct evidence
+preserved flexibility: `34/96` Teams changed, 275 secondary minutes reached 39
+Players, 30 buried Players reached 10+ minutes, eight zero-minute Players
+entered, and average Team OVR improved `+0.104` with zero regressions. Paired
+STANDARD natural-versus-flexible movement remained negligible (`+0.094` Team
+OVR, `+0.010` points per Team-game, effectively unchanged close/blowout rates).
+
+FULL `5 × 10` acceptance passed deterministic replay and structural audits. It
+observed zero exact-40 defaults across `16,717` active Rotation Players and
+`1,109` natural-36 Players, all Team top-three, averaging `83.3` OVR. **Decision:
+ACCEPT / RESOLVED / FROZEN.** Rotation V1 remains broadly frozen. Continue
+watching secondary-path mix and rare large displacement; do not add fatigue or
+reduce the legal/manual 40-minute maximum.
+
 ## Game Simulation — Shot Selection — OBSERVED
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
@@ -531,7 +562,7 @@ Future history could include program single-game points, season scoring, and car
 
 Conference standings are rarely used in their current prominent placement and can push more meaningful information below the fold. A future hierarchy might prioritize the game and Recruiting context, important updates, schedule/recent results, and a smaller conference snapshot with a route to the full view. Do not redesign it here.
 
-## Postseason Hub + Season-Complete Presentation Polish — QUEUED
+## Postseason Hub + Season-Complete Presentation Polish — NEXT
 
 Repeated feedback notes awkward Tournament Complete and Season Complete card
 placement, excess dead space beneath Tournament Complete, and a visually
@@ -539,9 +570,9 @@ disconnected Late Recruiting handoff. The bracket is good and must remain
 intact. A likely desktop direction groups Tournament/championship and Season
 Complete status on the left and Recruiting/Late-Recruiting context on the
 right. This presentation milestone is separate from Tournament balance/seeding.
-It remains near-term behind Phase 6E.9B because the Tournament is the Season
-payoff and one of the strongest generators of stories already present in the
-game.
+It is next after accepted/frozen Phase 6E.9B because the Tournament is the
+Season payoff and one of the strongest generators of stories already present
+in the game.
 
 ## Minor UX Polish — OBSERVED
 
@@ -598,20 +629,19 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Exact-40 Flexible Default Guardrail Candidate (Phase 6E.9B)
-2. Postseason Hub + Season-Complete Presentation Polish
-3. Super Sim — Season Complete target
-4. Recruiting Focus-target / commitment visibility
-5. Assistant Fill Remaining Recruiting Board
-6. Coaching navigation / permanent Rotation home
-7. Followed Players / Favorites
-8. Recruit POT-gap diagnostic
-9. League News / Round Recap
-10. Season Hub information hierarchy
-11. Offseason around-the-league context
-12. Program records / deeper statistical history
-13. Shot-selection diagnostic
-14. Minor Player Details / Quick Sim / Last 5 polish
+1. Postseason Hub + Season-Complete Presentation Polish
+2. Super Sim — Season Complete target
+3. Recruiting Focus-target / commitment visibility
+4. Assistant Fill Remaining Recruiting Board
+5. Coaching navigation / permanent Rotation home
+6. Followed Players / Favorites
+7. Recruit POT-gap diagnostic
+8. League News / Round Recap
+9. Season Hub information hierarchy
+10. Offseason around-the-league context
+11. Program records / deeper statistical history
+12. Shot-selection diagnostic
+13. Minor Player Details / Quick Sim / Last 5 polish
 
 Player Details + Development History UX is RESOLVED — see above.
 

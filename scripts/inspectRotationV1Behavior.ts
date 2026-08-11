@@ -299,10 +299,14 @@ export function inspectPairedSeasonBehavior(args: readonly string[]) {
       const pairSeed = `${seed}:rotation-v1:${seasonNumber}`
       const initializedUniverse = initializeUniverse(UNIVERSE_V0, pairSeed)
       const schedule = generateRegularSeasonSchedule({ universe: UNIVERSE_V0, seed: `${pairSeed}:schedule` })
-      const natural = initializeSeason({ universe: UNIVERSE_V0, initializedUniverse, schedule, seasonNumber })
+      const initializedSeason = initializeSeason({ universe: UNIVERSE_V0, initializedUniverse, schedule, seasonNumber })
+      const natural: SeasonState = {
+        ...initializedSeason,
+        programStates: Object.fromEntries(Object.entries(initializedSeason.programStates).map(([id, state]) => [id, { ...state, rotation: generateNaturalDefaultRotationV1(state.team) }])),
+      }
       const flexible: SeasonState = {
-        ...natural,
-        programStates: Object.fromEntries(Object.entries(natural.programStates).map(([id, state]) => [id, { ...state, rotation: generateDefaultRotationV1(state.team) }])),
+        ...initializedSeason,
+        programStates: Object.fromEntries(Object.entries(initializedSeason.programStates).map(([id, state]) => [id, { ...state, rotation: generateDefaultRotationV1(state.team) }])),
       }
       const completedNatural = completeSeason(natural, `${pairSeed}:games`)
       const completedFlexible = completeSeason(flexible, `${pairSeed}:games`)

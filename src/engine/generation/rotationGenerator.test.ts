@@ -114,6 +114,22 @@ describe('generateDefaultRotation', () => {
     )
   })
 
+  it('reserves 36 minutes for Team top-three Players rather than backup weakness alone', () => {
+    const elite = makePlayer('elite-pg', 'PG', 95)
+    const good = makePlayer('good-sg', 'SG', 79)
+    const team = makeFixtureTeam({
+      PG: [elite, makePlayer('weak-pg', 'PG', 60)],
+      SG: [good, makePlayer('weak-sg', 'SG', 62)],
+      SF: [makePlayer('elite-sf', 'SF', 94), makePlayer('backup-sf', 'SF', 75)],
+      PF: [makePlayer('elite-pf', 'PF', 93), makePlayer('backup-pf', 'PF', 75)],
+    })
+    const rotation = generateDefaultRotation(team)
+
+    expect(rotation.minutes[elite.id]).toBe(36)
+    expect(rotation.minutes[good.id]).toBe(32)
+    expect(rotation.minutes['weak-sg']).toBe(8)
+  })
+
   it('allocates similar players more evenly than an extreme talent gap', () => {
     const extremeTeam = makeFixtureTeam({
       PG: [makePlayer('extreme-high', 'PG', 88), makePlayer('extreme-low', 'PG', 68)],

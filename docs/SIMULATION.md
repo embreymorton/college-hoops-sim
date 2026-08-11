@@ -587,18 +587,23 @@ C  → C / PF
 ```
 
 Fresh Universe, Exhibition, and Dynasty rollover defaults use the deterministic
-flexible generator. It begins with the unchanged V0 natural allocation, converts
-it losslessly, and applies legal substitutions using balanced contribution
-`(OFF + DEF) / 2`: minimum advantage `5`, maximum secondary minutes per Player
-`8`, maximum aggregate minutes `40`, buried baseline maximum `9`, displaced
-incumbent minimum `20`, and the accepted V0-capped-player exception at `36`.
-Tie-breaking is stable and consumes no RNG.
+flexible generator. The natural allocation uses Player OVR and positional depth,
+but only the Team's deterministic top three Players by OVR may use the
+36-minute ceiling when a backup exists; all other Players with a backup have a
+32-minute ceiling. Sole natural-position Players may still fill all 40 minutes.
+The flexible pass converts the natural allocation losslessly and applies legal
+substitutions using balanced contribution `(OFF + DEF) / 2`: minimum advantage
+`5`, maximum secondary minutes per Player `8`, maximum aggregate minutes `40`,
+and buried baseline maximum `9`. It may replace either a 20+ minute incumbent or
+a positive weak-backup share of at most `8` minutes. Natural-36 Players are not
+automatic secondary candidates. Tie-breaking is stable and consumes no RNG.
 
 Existing V1 rotations are never regenerated during Season progression,
 Postseason transition, cloning, archives, drafts, or simulation. V0 remains only
 at compatibility, normalization, conversion, equivalence-test, and historical
-diagnostic boundaries. Accepted WATCH metrics are 36→40-minute frequency,
-interior/forward-heavy secondary paths, and rare large incumbent displacement.
+diagnostic boundaries. The exact-40/star-workload watchpoint is resolved and
+frozen after Phase 6E.9B. Interior/forward-heavy secondary paths and rare large
+incumbent displacement remain WATCH.
 
 ## Implemented v0.1 derived strength
 

@@ -20,6 +20,9 @@ function observation(
     teamOverall: 80,
     assignedMinutes: 40,
     naturalMinutes: 36,
+    isNaturalPositionStarter: true,
+    backupOverall: 70,
+    starterBackupGap: 20,
     naturalPositionMinutes: 36,
     secondaryMinutes: 4,
     secondaryByPath: { 'PG→SG': 4 },
@@ -84,6 +87,11 @@ describe('rotation-minute realism metrics', () => {
     expect(summary.exact40Origins.natural36ToFlexible40.count).toBe(1)
     expect(summary.exact40Origins.naturalAlready40.count).toBe(1)
     expect(summary.exact40SecondaryPaths['PG→SG']).toEqual({ players: 1, minutes: 4 })
+    expect(summary.natural36).toMatchObject({
+      countRate: { count: 2 },
+      averageStarterBackupGap: 20,
+      medianStarterBackupGap: 20,
+    })
     expect(summary.exact40NaturalMinutes).toBe(76)
     expect(summary.exact40SecondaryMinutes).toBe(4)
     expect(summary.eliteRates.teamHighestOverall).toMatchObject({ count: 1, total: 1 })

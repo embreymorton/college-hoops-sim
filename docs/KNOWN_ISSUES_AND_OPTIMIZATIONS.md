@@ -38,7 +38,7 @@ If later injuries, availability changes, Player decisions, or explicitly designe
 
 Exhibition remains useful for isolated simulation, Rotation, and presentation testing. Keep useful shared tooling, but do not let it compete with the permanent Season flow as primary product navigation.
 
-### P2 — Exact-40-minute flexible defaults — CONFIRMED / CANDIDATE SELECTED
+### P2 — Exact-40-minute flexible defaults — RESOLVED
 
 Player Season Stats inspection observed a Season in which all 12 Charlotte Tech Players recorded positive minutes in all 24 games. The stats layer is behaving correctly: positive minutes count as a game played, while zero minutes produce a DNP without incrementing `gamesPlayed`.
 
@@ -47,8 +47,11 @@ evidence found `301/10,297` active Rotation Players (`2.9%`) at exactly 40, but
 `153/300` top-10 scorers and `50/97` 90+ OVR Players. Every case began at a
 natural 36 minutes and gained four flexible secondary minutes; natural defaults
 produced none. Season 5+ incidence was slightly lower than Season 1, and actual
-MPG averaged `40.035`. Phase 6E.9B may test excluding natural-36 Players from
-the automatic secondary recipient path. No production change is accepted.
+MPG averaged `40.035`. Phase 6E.9B now reserves natural 36 for Team top-three
+OVR Players, prevents their automatic secondary promotion, and lets useful
+legal secondary Players absorb weak-backup shares. FULL `5 × 10` acceptance
+found zero exact-40 defaults across `16,717` active Rotation Players while
+preserving structural health and flexibility. The watchpoint is resolved/frozen.
 
 ### P3 — Concentrated single-attribute offseason gains
 

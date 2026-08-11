@@ -102,8 +102,13 @@ deterministic flexible generator, while existing rotations persist exactly
 through Season/Postseason progression and history.
 
 The generator begins with the historical natural-position allocation and makes
-only accepted conservative substitutions. Exact constants, validation, and
-behavioral evidence live in `SIMULATION.md`.
+only accepted conservative substitutions. A 36-minute natural default is
+reserved for Players in their Team's top three by OVR; other Players with a
+natural-position backup use a lower ceiling, leaving weak-backup shares
+available for useful legal secondary Players. Natural-36 Players do not
+automatically become 40-minute flexible defaults. Manual legal assignments may
+still reach 40. Exact constants, validation, and behavioral evidence live in
+`SIMULATION.md`.
 
 ## Initial derived team strength
 
