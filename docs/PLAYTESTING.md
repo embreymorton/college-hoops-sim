@@ -182,6 +182,7 @@ Keep below the foundational investigations:
 
 - Quick Sim recap / Game Leaders layout feels awkward.
 - “Last 5” is preferred to “Last 4.”
+- Seeing current seed would be fun, potential to choose seed when starting dynasty (compete with others on same field)
 
 ## Current Playtesting Priorities
 
