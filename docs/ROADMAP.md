@@ -365,20 +365,19 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 
 ### Current planning horizon
 
-- **6E.9 — Postseason Hub + Season-Complete Presentation Polish:** PLANNED. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
+- **6E.9 — Rotation Minutes Realism Diagnostic:** NEXT — CODEX. Diagnostic only: measure exact-40-minute default usage across production Dynasties, concentration among stars/statistical leaders, natural-default versus flexible `36→40` origins, secondary-position contribution, and Season 1 versus Season 5+ behavior. Rotation V1 remains accepted/frozen overall; do not tune until evidence identifies the source.
+- **6E.10 — Postseason Hub + Season-Complete Presentation Polish:** QUEUED — CLAUDE CODE. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff after the Rotation diagnostic reaches a green checkpoint.
 
-Near-term high-value QOL candidates after this selected slice are Recruiting
-Focus/commitment visibility, Assistant Fill Remaining Board, Coaching navigation
-with a permanent Rotation home, and Sim to Season Complete. League News, Season
-Hub hierarchy, offseason League context, followed Players, records, shot
-selection investigation, and minor recap polish remain observed/later rather
-than a fixed feature schedule.
+Repeated near-term QOL priorities include Sim to Season Complete, Recruiting
+Focus/commitment visibility, Assistant Fill Remaining Board, Coaching/roster
+navigation, and Followed Players. League News, Season Hub hierarchy, offseason
+League context, records, shot-selection investigation, and minor presentation
+polish remain observed/later rather than a fixed feature schedule.
 
-This order is evidence-driven: Tournament seeding is resolved and frozen while
-Game Sim remains closed; Player Details now surfaces the careers Players users
-already cared about; next, polish the Postseason handoff because the bracket
-already generates strong stories while its surrounding presentation repeatedly
-feels awkward.
+This order is evidence-driven: Tournament seeding and Game Sim remain closed;
+Player Details is complete and positively received; repeated exact-40-minute
+usage now earns a narrow diagnostic before the queued Postseason presentation
+work.
 
 ## Non-binding development-agent fit
 

@@ -38,15 +38,17 @@ If later injuries, availability changes, Player decisions, or explicitly designe
 
 Exhibition remains useful for isolated simulation, Rotation, and presentation testing. Keep useful shared tooling, but do not let it compete with the permanent Season flow as primary product navigation.
 
-### P3 — Rotation depth / universal games-played watchpoint
+### P2 — Exact-40-minute default usage — DIAGNOSTIC SELECTED
 
 Player Season Stats inspection observed a Season in which all 12 Charlotte Tech Players recorded positive minutes in all 24 games. The stats layer is behaving correctly: positive minutes count as a game played, while zero minutes produce a DNP without incrementing `gamesPlayed`.
 
-Rotation V1 is current and frozen. Continue watching whether deep-bench
-participation makes roster management or Player production less believable,
-alongside the accepted V1 watchpoints: 36→40-minute stars,
-interior/forward-heavy secondary paths, and rare large incumbent displacement.
-These are not defects or blockers; reopen generation only with new evidence.
+Rotation V1 remains accepted/frozen overall. Repeated Great Lakes play showed
+Paul Martin, Mason Webb, and multiple League leaders playing exactly 40 minutes
+every game across Seasons, strengthening the earlier measured `36→40` flexible
+default watchpoint. Phase 6E.9 is diagnostic-only: measure frequency,
+star/leader concentration, natural versus flexible origins, secondary minutes,
+and Season 1 versus Season 5+. No cap, fatigue, eligibility, or generator change
+is approved.
 
 ### P3 — Concentrated single-attribute offseason gains
 
@@ -72,9 +74,14 @@ Accepted long-run calibration measured the full-snapshot serialized `DynastyStat
 
 Before production-scale save support or very long playable Dynasties, evaluate save-file size, browser persistence limits, load/parse time, memory use, and history-rendering cost. Preserve canonical historical `GameResult`, Player, Team, and Recruiting facts. Do not prematurely prescribe a database, compression format, pruning policy, binary serialization, IndexedDB, backend persistence, or stat-reconstruction model. This is a measured scaling watchpoint, not a current correctness defect.
 
-### P3 — Rotation Editor ordering and announcements
+### P3 — Rotation Editor stable validation layout
 
-Player rows may reorder when ratings/minutes change, and dynamic Rotation validation could provide stronger live-region announcements. Both are accepted at the current scale. Revisit stable editing order or accessibility announcements only if user testing shows the current interaction is distracting or unclear.
+Repeated play confirmed that the `Player total must remain within 0–40`
+validation message dynamically changes row/table height and causes distracting
+layout resizing. Preserve invalid-state feedback, but a future presentation fix
+should keep row height stable and surface the reason in a fixed validation area
+or summary. Validation logic itself is not at issue. Player reordering and
+live-region announcements remain lower-priority watchpoints.
 
 ### P3 — Cross-team box-score reconciliation
 

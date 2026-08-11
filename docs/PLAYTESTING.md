@@ -177,6 +177,11 @@ Useful future feedback includes a compact Focus-target table and events for comm
 
 **Design principle:** more feedback, not more Recruiting mechanics. Exact presentation is intentionally undesigned.
 
+The Great Lakes Dynasty repeated this friction while quick-simming: Focus
+targets, commitments, lost targets, and meaningful Recruiting changes were easy
+to miss. Treat this as a feedback/presentation priority; Board + Focus + Offer
+and AI Recruiting mechanics remain frozen.
+
 ## Recruiting Assistant — Fill Remaining Board — OBSERVED — REPEATED HIGH-VALUE QOL REQUEST
 
 Desired future behavior:
@@ -228,9 +233,27 @@ Recruiting Origin cleanly omitted, with no placeholder or fake data. In every
 case a fresh viewer could reconstruct the Player's career without recalling
 prior Seasons themselves.
 
-## Followed Players / Favorites — OBSERVED
+The Great Lakes follow-up reinforced the value of 6E.8. Mason Webb progressed
+from roughly `89/99` to `96` OVR and finished his senior Season at `22.7 PPG`,
+`4.1 RPG`, `9.3 APG`, `1.8 SPG`, and `0.0 BPG` with `48.4/41.9/84.0`
+shooting splits.
+The added career facts were useful in real play. A minor presentation watch is
+that current-season production may deserve greater hierarchy directly beneath
+Player identity, potentially as a denser horizontal summary rather than the
+current compact cards. This is polish, not a failure or reopening of 6E.8.
 
-Following Silas Matthews after he joined another Program was enjoyable. A future favorite/followed-player concept could surface current Team, class, OVR, statistics, development, and notable performances. Do not commit to notifications or permanent history design yet.
+## Followed Players / Favorites — OBSERVED — REPEATED QOL SIGNAL
+
+Following Silas Matthews after he joined another Program was enjoyable. The
+Great Lakes Dynasty repeated the behavior with Jalen Crawford at Pine Valley: a
+roughly `57/82`, three-star, #97 Recruit progressed through approximately
+`69`, `75`, and `81` OVR while his scoring rose from about `3` to `12`, `14`,
+and `23 PPG`, eventually reaching roughly fifth in League scoring. The user
+repeatedly checked his career across Seasons.
+
+Following/Favorites is therefore evidence-supported future QOL rather than a
+speculative idea. Do not commit to notifications or permanent history design
+yet or move it ahead of the active Rotation diagnostic.
 
 ## Playtest Stories / Why This Is Fun
 
@@ -303,6 +326,19 @@ exactly-40-minute frequency, the interior-heavy path mix, and rare large
 incumbent displacement; current evidence does not justify tuning the cap,
 threshold, eligibility mapping, or any frozen simulation system.
 
+### Great Lakes follow-up — exact-40-minute usage
+
+Repeated real play showed Paul Martin, Mason Webb, and multiple League leaders
+playing exactly 40 minutes every game across multiple Seasons. The frequency
+was noticeable and felt unrealistic rather than merely exceptional.
+
+**Status: Rotation V1 remains accepted/frozen overall.** Only the
+exact-40-minute default-usage watchpoint has enough evidence for a narrow
+diagnostic. Phase 6E.9 should measure prevalence, star/leader concentration,
+natural-default versus flexible `36→40` origins, secondary-position
+contribution, and Season 1 versus Season 5+ behavior. Do not prescribe a new
+minute cap, fatigue, reduced secondary usage, or a Rotation redesign first.
+
 ## Game Simulation — Shot Selection — OBSERVED
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
@@ -318,6 +354,10 @@ SEASON | COACHING | RECRUITING | LEAGUE
 Initial Coaching scope could be Rotation only. Rotation V1 now makes this a
 useful information-architecture improvement; tactics and other coaching systems
 remain uncommitted, and Game Prep may still link to Rotation.
+
+The Great Lakes follow-up repeated the desire for both a persistent Coaching
+home and easier current-roster review. Keep this behind the active Rotation
+diagnostic.
 
 ## Round Complete Review — OBSERVED
 
@@ -409,6 +449,18 @@ persisted. **Decision: ACCEPT / RESOLVED.** Automatic qualification now
 guarantees entry but not a seed from 1–4. Freeze this results-only seeding rule;
 Game Sim and Team Strength remain unchanged.
 
+Great Lakes follow-up outcomes remained consistent with that decision: Great
+Lakes lost in the semifinal as #1 to an approximately `85` OVR #5 Northbridge,
+which won the title over #3 Golden Bay; later Great Lakes lost in the
+quarterfinal as a #3 automatic qualifier; and a #15 won a title over #12
+despite being the League's highest-rated Team after a poor regular season. The
+#15 champion illustrates résumé seeding versus roster strength—it does not
+reopen seeding or Game Sim.
+
+Great Lakes falling from roughly `89` to `78` Team OVR while Pine Valley rose
+from the mid-60s into the low-70s is healthy Dynasty turnover evidence. Recruit
+Talent V1 and Development V1 remain closed.
+
 ## Super Sim — Season Complete Target — OBSERVED / HIGH-VALUE QOL
 
 Desired user-facing target:
@@ -427,9 +479,17 @@ That stopping point should expose final standings, bracket/champion, Player
 stats and leaders, Recruiting status, and remaining Late Recruiting decisions
 before any roster turnover.
 
+The Great Lakes playthrough repeated this request while moving quickly through
+Dynasty Seasons. It is established pacing friction and should remain ahead of
+lower-value polish, without changing the documented stopping point.
+
 ## League News / Round Recap — OBSERVED
 
 A future “Around the Country” recap could derive concise updates from canonical prior-round facts rather than storing permanent prose. Useful events include upsets, big performances, Recruit commitments or lost Focus targets, conference/milestone movement, and Cinderella runs.
+
+Paul Martin's 51-point Season opener was experienced as a missed storytelling
+opportunity, not evidence of a Game Sim problem. This strengthens the case for
+derived League News/Round Recap, but does not make News the next milestone.
 
 ## Offseason — Around the League — OBSERVED
 
@@ -443,7 +503,7 @@ Future history could include program single-game points, season scoring, and car
 
 Conference standings are rarely used in their current prominent placement and can push more meaningful information below the fold. A future hierarchy might prioritize the game and Recruiting context, important updates, schedule/recent results, and a smaller conference snapshot with a route to the full view. Do not redesign it here.
 
-## Postseason Hub + Season-Complete Presentation Polish — PLANNED
+## Postseason Hub + Season-Complete Presentation Polish — QUEUED
 
 Repeated feedback notes awkward Tournament Complete and Season Complete card
 placement, excess dead space beneath Tournament Complete, and a visually
@@ -451,8 +511,9 @@ disconnected Late Recruiting handoff. The bracket is good and must remain
 intact. A likely desktop direction groups Tournament/championship and Season
 Complete status on the left and Recruiting/Late-Recruiting context on the
 right. This presentation milestone is separate from Tournament balance/seeding.
-It is near-term because the Tournament is the Season payoff and one of the
-strongest generators of stories already present in the game.
+It remains near-term behind Phase 6E.9 because the Tournament is the Season
+payoff and one of the strongest generators of stories already present in the
+game.
 
 ## Minor UX Polish — OBSERVED
 
@@ -509,19 +570,20 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Postseason Hub + Season-Complete Presentation Polish
-2. Recruiting Focus-target / commitment visibility
-3. Assistant Fill Remaining Recruiting Board
-4. Coaching navigation / permanent Rotation home
-5. Super Sim — Season Complete target
-6. Recruit POT-gap diagnostic
-7. League News / Round Recap
-8. Season Hub information hierarchy
-9. Offseason around-the-league context
-10. Followed Players / Favorites
-11. Program records / deeper statistical history
-12. Shot-selection diagnostic
-13. Minor Quick Sim / Last 5 polish
+1. Rotation Minutes Realism Diagnostic (Phase 6E.9)
+2. Postseason Hub + Season-Complete Presentation Polish
+3. Super Sim — Season Complete target
+4. Recruiting Focus-target / commitment visibility
+5. Assistant Fill Remaining Recruiting Board
+6. Coaching navigation / permanent Rotation home
+7. Followed Players / Favorites
+8. Recruit POT-gap diagnostic
+9. League News / Round Recap
+10. Season Hub information hierarchy
+11. Offseason around-the-league context
+12. Program records / deeper statistical history
+13. Shot-selection diagnostic
+14. Minor Player Details / Quick Sim / Last 5 polish
 
 Player Details + Development History UX is RESOLVED — see above.
 
