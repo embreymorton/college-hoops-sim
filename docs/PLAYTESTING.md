@@ -1,6 +1,6 @@
 # Playtesting Log
 
-`PLAYTESTING.md` records observations and hypotheses from actual gameplay. Each entry follows a small empirical loop:
+`PLAYTESTING.md` records observations and hypotheses from actual gameplay. Each entry follows a small empirical loop; see `CALIBRATION.md` for the tuning and validation methodology:
 
 ```text
 observation → evidence → question / hypothesis → next investigation → decision

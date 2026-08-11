@@ -334,7 +334,7 @@ Recruit generation, Recruiting calibration, Player Development, roster rollover,
 
 ## Phase 6E — Playthrough-Driven Calibration & Polish — ACTIVE
 
-This phase uses manual playthrough observations and targeted diagnostics rather than a predetermined feature schedule. `PLAYTESTING.md` is the detailed source of truth for current observations, hypotheses, and next investigations.
+This phase uses manual playthrough observations and targeted diagnostics rather than a predetermined feature schedule. `PLAYTESTING.md` is the detailed source of truth for current observations, hypotheses, and next investigations; `CALIBRATION.md` defines the validation methodology.
 
 - **6E.1 — Recruiting + Talent Balance Investigation:** COMPLETE.
 - **6E.2A — Recruiting Focus Model:** COMPLETE.

@@ -50,9 +50,10 @@ import {
   type SeasonTalentMetrics,
   type SignedRecruitRecord,
 } from './dynastyLongRunMetrics'
+import type { AuditLevel } from './calibration/presets'
+import { calibrationSeeds, resolveLongRunCliConfig } from './calibration/presets'
+import { runLongRunCalibrationParallel } from './longRunCalibrationRunner'
 
-const DEFAULT_SEASONS = 50
-const DEFAULT_SEED_COUNT = 5
 const CONTROLLED_PROGRAM_ID = 'charlotte-tech'
 const CHECKPOINTS = new Set([10, 25, 50])
 const TRAJECTORY_SEASONS = new Set([1, 2, 3, 4, 5, 10, 15, 20, 25, 30, 40, 50])
@@ -233,6 +234,7 @@ function auditRecruitingFocus(dynasty: DynastyState, health: StructuralHealth): 
 export function runDynastyCalibration(
   seed: string,
   seasonsToComplete: number,
+  auditLevel: AuditLevel = 'full',
 ): DynastyRunResult {
   let dynasty = createDynasty(seed)
   const seasons: SeasonTalentMetrics[] = []
@@ -283,9 +285,11 @@ export function runDynastyCalibration(
         programIdByPlayerId,
       ))
 
-      for (const game of season.schedule.games) {
-        if (historicalGameIds.has(game.id)) health.gameIdCollisions += 1
-        historicalGameIds.add(game.id)
+      if (auditLevel === 'full') {
+        for (const game of season.schedule.games) {
+          if (historicalGameIds.has(game.id)) health.gameIdCollisions += 1
+          historicalGameIds.add(game.id)
+        }
       }
 
       let postseason = initializePostseason({ universe: dynasty.universe, season })
@@ -357,10 +361,10 @@ export function runDynastyCalibration(
       const priorSeasonSnapshots = archivedSeasonSnapshots
       const priorRecruitingSnapshots = archivedRecruitingSnapshots
       dynasty = beginOffseason(dynasty)
-      if (
+      if (auditLevel === 'full' && (
         CHECKPOINTS.has(season.seasonNumber) ||
         season.seasonNumber === seasonsToComplete
-      ) {
+      )) {
         health.historyOverwriteEvents += priorSeasonSnapshots.filter(
           (snapshot, index) => snapshotHash(dynasty.history[index]) !== snapshot,
         ).length
@@ -370,22 +374,24 @@ export function runDynastyCalibration(
         ).length
       }
       developments.push(...deriveDevelopmentRecords(season, dynasty.offseason!))
-      archivedSeasonSnapshots = [
-        ...archivedSeasonSnapshots,
-        snapshotHash(dynasty.history.at(-1)),
-      ]
-      archivedRecruitingSnapshots = [
-        ...archivedRecruitingSnapshots,
-        snapshotHash(dynasty.completedRecruitingHistory.at(-1)),
-      ]
-      const seasonHistoryNumbers = dynasty.history.map(({ seasonNumber }) => seasonNumber)
-      const recruitingHistoryNumbers = dynasty.completedRecruitingHistory.map(
-        ({ targetSeasonNumber }) => targetSeasonNumber,
-      )
-      health.historyCollisions +=
-        seasonHistoryNumbers.length - new Set(seasonHistoryNumbers).size
-      health.historyCollisions +=
-        recruitingHistoryNumbers.length - new Set(recruitingHistoryNumbers).size
+      if (auditLevel === 'full') {
+        archivedSeasonSnapshots = [
+          ...archivedSeasonSnapshots,
+          snapshotHash(dynasty.history.at(-1)),
+        ]
+        archivedRecruitingSnapshots = [
+          ...archivedRecruitingSnapshots,
+          snapshotHash(dynasty.completedRecruitingHistory.at(-1)),
+        ]
+        const seasonHistoryNumbers = dynasty.history.map(({ seasonNumber }) => seasonNumber)
+        const recruitingHistoryNumbers = dynasty.completedRecruitingHistory.map(
+          ({ targetSeasonNumber }) => targetSeasonNumber,
+        )
+        health.historyCollisions +=
+          seasonHistoryNumbers.length - new Set(seasonHistoryNumbers).size
+        health.historyCollisions +=
+          recruitingHistoryNumbers.length - new Set(recruitingHistoryNumbers).size
+      }
 
       dynasty = rolloverDynastyToNextSeason(dynasty)
       rollovers += 1
@@ -404,7 +410,7 @@ export function runDynastyCalibration(
         identityAudit.newRecruitExistingPersonCollisions
       for (const id of nextRecruitIds) knownPersonIds.add(id)
 
-      if (CHECKPOINTS.has(season.seasonNumber) || season.seasonNumber === seasonsToComplete) {
+      if (auditLevel === 'full' && (CHECKPOINTS.has(season.seasonNumber) || season.seasonNumber === seasonsToComplete)) {
         const bytes = serializedSizeBytes(dynasty)
         stateGrowth.push({
           season: season.seasonNumber,
@@ -444,11 +450,13 @@ export function runDynastyCalibration(
 export function runLongRunCalibration(options: {
   readonly seasonsPerSeed: number
   readonly seeds: readonly string[]
+  readonly auditLevel?: AuditLevel
 }): LongRunCalibrationResult {
   return {
-    ...options,
+    seeds: options.seeds,
+    seasonsPerSeed: options.seasonsPerSeed,
     runs: options.seeds.map((seed) =>
-      runDynastyCalibration(seed, options.seasonsPerSeed),
+      runDynastyCalibration(seed, options.seasonsPerSeed, options.auditLevel),
     ),
   }
 }
@@ -481,6 +489,7 @@ function printReport(
   result: LongRunCalibrationResult,
   runtimeSeconds: number,
   determinismPassed: boolean,
+  configuration: { readonly preset: string; readonly workers: number; readonly audit: AuditLevel },
 ): void {
   const allSeasons = result.runs.flatMap(({ seasons }) => seasons)
   const lateStart = Math.min(16, result.seasonsPerSeed)
@@ -495,10 +504,13 @@ function printReport(
   )))
   const canonical = result.runs[0]!
 
-  console.log('COLLEGE HOOPS SIM — DYNASTY LONG-RUN CALIBRATION V0\n')
+  console.log('COLLEGE HOOPS SIM — DYNASTY LONG-RUN CALIBRATION V1\n')
   console.log('CONFIGURATION\n')
+  console.log(`Preset: ${configuration.preset}`)
   console.log(`Seeds: ${result.seeds.length}`)
   console.log(`Seasons per seed: ${result.seasonsPerSeed}`)
+  console.log(`Workers: ${configuration.workers}`)
+  console.log(`Audit: ${configuration.audit.toUpperCase()}`)
   console.log(`Total Season observations: ${allSeasons.length}`)
   console.log(`Approx runtime: ${runtimeSeconds.toFixed(1)} seconds\n`)
 
@@ -799,38 +811,44 @@ function printReport(
   console.log(`LONG-RUN DETERMINISM: ${determinismPassed ? 'PASS' : 'FAIL'}`)
 }
 
-function positiveIntegerArgument(name: string, fallback: number): number {
-  const index = process.argv.indexOf(`--${name}`)
-  if (index < 0) return fallback
-  const value = Number(process.argv[index + 1])
-  if (!Number.isSafeInteger(value) || value < 1) {
-    throw new RangeError(`--${name} must be a positive integer.`)
-  }
-  return value
-}
-
-export function main(): void {
-  const seasonsPerSeed = positiveIntegerArgument('seasons', DEFAULT_SEASONS)
-  const seedCount = positiveIntegerArgument('seeds', DEFAULT_SEED_COUNT)
-  const seeds = Array.from(
-    { length: seedCount },
-    (_, index) => `dynasty-long-run-v0:seed-${index + 1}`,
-  )
+export async function main(): Promise<void> {
+  const config = resolveLongRunCliConfig(process.argv.slice(2))
+  const seeds = calibrationSeeds(config.seeds)
   const determinismConfig = {
-    seasonsPerSeed: Math.min(2, seasonsPerSeed),
+    seasonsPerSeed: Math.min(2, config.seasons),
     seeds: ['dynasty-long-run-v0:determinism'],
+    auditLevel: config.audit,
   }
   const deterministicFirst = runLongRunCalibration(determinismConfig)
   const deterministicSecond = runLongRunCalibration(determinismConfig)
   const determinismPassed = JSON.stringify(deterministicFirst) ===
     JSON.stringify(deterministicSecond)
   const start = performance.now()
-  const result = runLongRunCalibration({ seasonsPerSeed, seeds })
+  const result = config.workers === 1
+    ? runLongRunCalibration({
+      seasonsPerSeed: config.seasons,
+      seeds,
+      auditLevel: config.audit,
+    })
+    : await runLongRunCalibrationParallel({
+      seasonsPerSeed: config.seasons,
+      seeds,
+      auditLevel: config.audit,
+      workers: config.workers,
+    })
   const runtimeSeconds = (performance.now() - start) / 1_000
-  printReport(result, runtimeSeconds, determinismPassed)
+  if (config.json) {
+    console.log(JSON.stringify({ config, result, determinismPassed, runtimeSeconds }))
+  } else {
+    printReport(result, runtimeSeconds, determinismPassed, {
+      preset: config.preset ?? 'custom',
+      workers: config.workers,
+      audit: config.audit,
+    })
+  }
   if (!determinismPassed) process.exitCode = 1
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-  main()
+  void main()
 }

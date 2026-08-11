@@ -1,3 +1,3 @@
 import { main } from './inspectDynastyLongRun'
 
-main()
+void main()
