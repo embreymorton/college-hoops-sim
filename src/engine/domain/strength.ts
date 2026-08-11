@@ -4,11 +4,13 @@ import {
   type PlayerAttributes,
   type Position,
 } from './player'
+import { TOTAL_ROTATION_MINUTES } from './rotation'
 import {
-  TOTAL_ROTATION_MINUTES,
-  validateRotation,
-  type Rotation,
-} from './rotation'
+  derivePlayerMinutes,
+  validateRotationInput,
+  type AggregatePlayerMinutes,
+  type RotationInput,
+} from './rotationInput'
 import type { Team } from './team'
 
 type OffensiveAttribute =
@@ -169,8 +171,11 @@ export function calculatePlayerDefense(player: Player): number {
   )
 }
 
-function assertValidStrengthRotation(team: Team, rotation: Rotation): void {
-  const validation = validateRotation(team, rotation)
+function assertValidStrengthRotation(
+  team: Team,
+  rotation: RotationInput,
+): void {
+  const validation = validateRotationInput(team, rotation)
 
   if (!validation.valid) {
     throw new RangeError(
@@ -183,12 +188,12 @@ function assertValidStrengthRotation(team: Team, rotation: Rotation): void {
 
 function calculateTeamRating(
   team: Team,
-  rotation: Rotation,
+  playerMinutes: AggregatePlayerMinutes,
   calculatePlayerRating: (player: Player) => number,
 ): number {
   return (
     team.roster.reduce((total, player) => {
-      const minutes = rotation.minutes[player.id] ?? 0
+      const minutes = playerMinutes[player.id] ?? 0
 
       return minutes === 0
         ? total
@@ -200,36 +205,45 @@ function calculateTeamRating(
 /** Calculates rotation-weighted team offense from exactly 200 minutes. */
 export function calculateTeamOffense(
   team: Team,
-  rotation: Rotation,
+  rotation: RotationInput,
 ): number {
   assertValidStrengthRotation(team, rotation)
-  return calculateTeamRating(team, rotation, calculatePlayerOffense)
+  return calculateTeamRating(
+    team,
+    derivePlayerMinutes(rotation),
+    calculatePlayerOffense,
+  )
 }
 
 /** Calculates rotation-weighted team defense from exactly 200 minutes. */
 export function calculateTeamDefense(
   team: Team,
-  rotation: Rotation,
+  rotation: RotationInput,
 ): number {
   assertValidStrengthRotation(team, rotation)
-  return calculateTeamRating(team, rotation, calculatePlayerDefense)
+  return calculateTeamRating(
+    team,
+    derivePlayerMinutes(rotation),
+    calculatePlayerDefense,
+  )
 }
 
 /** Returns primary OFF/DEF ratings and their balanced summary average. */
 export function calculateTeamStrength(
   team: Team,
-  rotation: Rotation,
+  rotation: RotationInput,
 ): TeamStrength {
   assertValidStrengthRotation(team, rotation)
+  const playerMinutes = derivePlayerMinutes(rotation)
 
   const offense = calculateTeamRating(
     team,
-    rotation,
+    playerMinutes,
     calculatePlayerOffense,
   )
   const defense = calculateTeamRating(
     team,
-    rotation,
+    playerMinutes,
     calculatePlayerDefense,
   )
 

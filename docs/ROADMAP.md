@@ -344,6 +344,7 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.4 — Player Development V1:** COMPLETE. Class baseline, headroom-sensitive opportunity, stable hidden tendency, annual variance, rare breakouts, and the Potential cap now create deterministic career diversity without a Prestige multiplier; see `SIMULATION.md` and `PLAYTESTING.md`.
 - **6E.5 — Position / Rotation Flexibility diagnostic:** COMPLETE. The diagnostic confirmed the strict natural-position limitation; no production secondary-position Rotation system has been accepted.
 - **6E.6A — Rotation V1 Engine Foundation:** COMPLETE. A parallel floor-position-aware domain representation, natural-position-derived eligibility, structured validation, aggregate-minute projections, and a lossless V0-to-natural-only-V1 adapter now exist. Production state, simulation, default Rotation generation, and UI remain on Rotation V0.
+- **6E.6B — Engine Read Boundary + V0/V1 Equivalence:** COMPLETE. Team Strength, game simulation, and box-score allocation accept V0 or V1 through one aggregate Player-minute read path. Paired normal, strength-gap, overtime, mixed-representation, and true-secondary tests preserve exact deterministic results and natural-position ratings/tendencies.
 - **Rotation V1 production migration:** pending separate review and implementation.
 
 ## Non-binding development-agent fit

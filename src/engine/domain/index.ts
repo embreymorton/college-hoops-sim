@@ -23,6 +23,14 @@ export type {
   RotationValidationResult,
 } from './rotation'
 export {
+  derivePlayerMinutes,
+  validateRotationInput,
+} from './rotationInput'
+export type {
+  AggregatePlayerMinutes,
+  RotationInput,
+} from './rotationInput'
+export {
   calculatePlayerMinutesV1,
   convertRotationV0ToV1,
   derivePlayerMinutesV1,

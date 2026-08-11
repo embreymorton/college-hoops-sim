@@ -1,6 +1,6 @@
 import {
   calculateTeamStrength,
-  type Rotation,
+  type RotationInput,
   type Team,
   type TeamStrength,
 } from '../domain'
@@ -13,8 +13,8 @@ import {
 export interface SimulateGameOptions {
   homeTeam: Team
   awayTeam: Team
-  homeRotation: Rotation
-  awayRotation: Rotation
+  homeRotation: RotationInput
+  awayRotation: RotationInput
   seed: RngSeed
   /** Defaults to the existing home-site behavior for backward compatibility. */
   site?: GameSite

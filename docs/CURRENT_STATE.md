@@ -117,10 +117,19 @@ canonical natural position (`PG → PG/SG`, `SG → SG/SF`, `SF → SF/PF`,
 minutes are derived from floor assignments rather than stored independently.
 A valid Rotation V0 can be losslessly converted to natural-position-only V1.
 
-No production caller has migrated: Universe initialization, default Rotation
-generation, Team Strength, game simulation, box scores, Season, Postseason,
-Dynasty, Zustand, and React all continue to use Rotation V0 with unchanged
-behavior.
+Phase 6E.6B adds a representation-neutral engine read boundary. Team Strength,
+game simulation, and box-score allocation can consume either valid V0 or V1 by
+converging both into derived aggregate Player minutes before basketball math.
+Paired deterministic tests prove natural-position-converted V1 produces exactly
+the same OFF/DEF/OVR, scores, overtime, winners, and complete Player box scores
+as V0, including mixed V0/V1 matchups. Legal true-secondary assignments also
+flow through the boundary while natural Player position continues to determine
+ratings and statistical tendencies.
+
+No application or production state has migrated: Universe initialization,
+default Rotation generation, Season, Postseason, Dynasty, Zustand, and React
+all continue to store and produce Rotation V0. No default generator assigns
+secondary minutes, and `Player` has no secondary-position field.
 
 > **IMPORTANT — REVERTED WORK**  
 > Previous Phase 6E.6 floor-aware Rotation / Secondary Position attempts were reverted. The current repository intentionally uses the clean accepted Rotation V0 implementation. Do not assume `FloorRotation`, `minutesByPosition`, `secondaryPosition`, floor-aware Zustand drafts, secondary-aware default Rotations, or secondary-position UI exist in production. No such artifacts are present under `src` in this clean state. If this changes, report the actual artifact rather than treating it as accepted architecture.
@@ -150,9 +159,10 @@ Repeated play has produced 1/16 upsets, low-seed championship runs, and memorabl
 ## Next engineering area
 
 **Position / Rotation Flexibility** remains the next high-priority engineering
-area. Phase 6E.6A's isolated Rotation V1 domain foundation is complete; any
-production migration belongs to a separately reviewed later phase. Rotation V0
-remains authoritative for every application and simulation caller until then.
+area. Phase 6E.6B's representation-neutral engine read boundary and exact V0/V1
+simulation equivalence coverage are complete; any application-state or default
+generation migration belongs to a separately reviewed later phase. Rotation V0
+remains authoritative for all persisted production and application state.
 
 ## Documentation map
 

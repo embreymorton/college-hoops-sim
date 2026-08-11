@@ -1,8 +1,9 @@
 import {
   calculatePlayerOffense,
+  derivePlayerMinutes,
   type Player,
   type Position,
-  type Rotation,
+  type RotationInput,
   type Team,
 } from '../domain'
 import type { Rng } from '../random'
@@ -94,7 +95,7 @@ const BOX_SCORE_CONFIG = {
 
 interface TeamBoxScoreOptions {
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationInput
   readonly teamScore: number
   readonly overtimePeriods: number
   readonly rng: Rng
@@ -147,12 +148,13 @@ function comparePlayerIds(first: Player, second: Player): number {
 
 function allocateMinutes(
   team: Team,
-  rotation: Rotation,
+  rotation: RotationInput,
   overtimePeriods: number,
 ): Map<string, number> {
+  const regulationMinutes = derivePlayerMinutes(rotation)
   const minutes = new Map(
     team.roster.map(
-      (player) => [player.id, rotation.minutes[player.id] ?? 0] as const,
+      (player) => [player.id, regulationMinutes[player.id] ?? 0] as const,
     ),
   )
   const activePlayers = team.roster
