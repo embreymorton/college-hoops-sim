@@ -74,7 +74,7 @@ These ranges describe initial generation only. They do not implement or guarante
 
 A Team is a plain serializable record containing ID, name, abbreviation, prestige, and exactly 12 players. It does not store overall rating, record, ranking, rotation, coaching, recruiting, conference, or schedule state.
 
-Prestige is long-term program quality and reputation on an inclusive 1–100 scale. In implemented systems it affects initial roster talent and Recruit attraction, and it is preserved unchanged into offseason state. It does not modify Player Development V0.
+Prestige is long-term program quality and reputation on an inclusive 1–100 scale. In implemented systems it affects initial roster talent and Recruit attraction, and it is preserved unchanged into offseason state. It does not modify Player Development V1.
 
 Each roster contains two players at every natural position plus one extra player at two distinct, seeded positions. Position counts therefore vary between two and three while always covering `PG`, `SG`, `SF`, `PF`, and `C`.
 
@@ -184,7 +184,7 @@ Quick Sim
 
 This is factual storytelling from stored simulated production, not a separate authored-star system. The regular-season leaderboards, Team averages/leaders, Player profiles, and game logs likewise reflect canonical completed games.
 
-## Accepted Dynasty Foundation and Player Development V0
+## Accepted Dynasty Foundation and Player Development V1
 
 Phase 5A establishes the first implemented cross-season gameplay boundary:
 
@@ -197,9 +197,9 @@ complete regular season and National Tournament
 → expose partial offseason rosters and open spots
 ```
 
-This creates recognizable multi-year Player arcs without requiring training micromanagement in V0. Freshmen generally have the greatest development opportunity, sophomores less, and juniors the least before their senior year. Potential distinguishes longer-term upside, while deterministic Player-specific variation allows stagnation and different attribute-development shapes among otherwise similar Players.
+This creates recognizable multi-year Player arcs without requiring training micromanagement. Freshmen generally have the greatest development opportunity, sophomores less, and juniors the least before their senior year. Potential distinguishes longer-term upside through deterministic headroom-sensitive opportunity, while a hidden stable Player tendency and annual variance permit busts, modest outcomes, hits, and rare breakouts among otherwise similar Players.
 
-Development changes current basketball attributes rather than adding a mutable OVR bonus. It is deliberately uneven and position-aware instead of applying `+1` to every skill. Returning Players keep their stable ID, name, height, position, and Potential; class and attributes advance in new immutable Player values. Overall remains derived from the accepted positional formula. Players do not regress in V0.
+Development changes current basketball attributes rather than adding a mutable OVR bonus. It is deliberately uneven and position-aware instead of applying `+1` to every skill. Returning Players keep their stable ID, name, height, position, and Potential; class and attributes advance in new immutable Player values. Overall remains derived from the accepted positional formula. Players do not regress in Development V1.
 
 Development uses the class just completed:
 
@@ -212,9 +212,9 @@ SR → graduates
 
 Graduation V0 is the entire departure model: seniors leave and freshmen, sophomores, and juniors return. Transfers, early professional departures, fifth years, redshirts, hardship exemptions, and dismissals are deferred rather than implicit Phase 5A rules.
 
-Potential is a fixed ceiling, not a promised destination. Low headroom constrains growth, Players at the ceiling receive no attribute development, and Players may graduate below Potential. Playing time, starts, box-score production, Team success, Postseason results, Program prestige, conference, user control, coaching, and facilities do not affect V0 development.
+Potential is a fixed ceiling, not a promised destination. Low headroom constrains growth, Players at the ceiling receive no attribute development, and Players may graduate below Potential. Playing time, starts, box-score production, Team success, Postseason results, Program prestige, conference, user control, coaching, and facilities do not affect Development V1.
 
-The accepted canonical inspection observed approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% of returners stagnating. These population observations validate the intended younger-player-heavy curve; they are not guaranteed individual gains and vary with the Player population, Potential headroom, and deterministic seed.
+Development V1 remains younger-player-heavy while allowing high-headroom opportunities above the former hard annual ceilings. Its accepted direct diagnostic confirms visible Potential creates meaningful, but non-guaranteed, career-outcome variance. Exact constants and validation results live in `SIMULATION.md`.
 
 The stable identity and archive rules support the intended long-term roster story:
 

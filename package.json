@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "sim:players": "node --import tsx scripts/inspectPlayerGeneration.ts",
+    "sim:player-development": "node --import tsx scripts/playerDevelopmentDiagnostic.ts",
+    "sim:development-league": "node --import tsx scripts/inspectDevelopmentLeagueProgression.ts",
     "sim:rosters": "node --import tsx scripts/inspectRosterGeneration.ts",
     "sim:rotations": "node --import tsx scripts/inspectRotationGeneration.ts",
     "sim:strength": "node --import tsx scripts/inspectTeamStrength.ts",

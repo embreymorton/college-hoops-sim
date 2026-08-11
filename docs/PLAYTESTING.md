@@ -71,7 +71,7 @@ The change is accepted: it creates meaningful ready-now, developmental, and raw 
 - Season 1 still uses the older initial-roster generator and may differ from the mature V1 ecosystem.
 - Do not retune Recruit generation without additional playthrough evidence.
 
-## Player Development / Potential Realization — INVESTIGATING
+## Player Development / Potential Realization — RESOLVED / WATCH
 
 ### Observation
 
@@ -86,7 +86,7 @@ Manual play produced examples including:
 
 Visible Potential naturally creates an expectation that a high-Potential raw prospect has a meaningful chance to become impactful. Potential must not guarantee its ceiling, and busts should remain possible. Rare breakouts and major development trajectories should also be possible.
 
-### Next investigation
+### Original investigation
 
 **Phase 6E.3 — Development + League Talent Progression Diagnostic** will measure:
 
@@ -96,9 +96,27 @@ Visible Potential naturally creates an expectation that a high-Potential raw pro
 - how often Players approach Potential; and
 - whether variance supports distinct career stories.
 
-No Development tuning is approved. These observations do not establish that the system is broken.
+### Phase 6E.3 diagnostic result
 
-## Mature League Powerhouse Ceiling — INVESTIGATING
+The direct production-API diagnostic ran 5,500 deterministic careers: 500 for each of eleven readiness/Potential profiles. Current annual OVR-gain ranges are structurally capped at `+5` for FR→SO, `+4` for SO→JR, and `+3` for JR→SR. Across the diagnostic, annual gain median/P90/max was `+2 / +4 / +5`; `+6`, `+8`, and `+10` seasons were impossible.
+
+Potential primarily acts as a ceiling. It constrains Players near their ceiling, but it does not increase the independently drawn class-based gain target for Players with large headroom. Representative median senior outcomes were `62` for actual-55/90, `72` for actual-65/90, `73` for actual-65/99, `82` for actual-75/99, and `92` for actual-85/99. Raw 55/90 and 65/90 prospects had no diagnostic HIT or BREAKOUT outcomes under the defined career-gain buckets.
+
+This confirms a player-facing mismatch: visible high Potential permits upside but currently does not create meaningful upside-outcome variance for raw prospects. It does not mean Potential should guarantee its ceiling.
+
+### Phase 6E.4 resolution
+
+Development V1 is accepted. It combines class baseline, POT-headroom opportunity, a stable hidden Player tendency, annual variance, rare breakout draws, and the existing hard Potential cap. Direct 5,500-career validation now shows materially different equal-OVR outcomes by POT: 55/60 finished at senior median/P90 `60/60`, while 55/90 finished `69/81`; 65/90 finished `76/86`, and 65/99 finished `78/90`. High-POT busts remain, and raw high-POT hit/breakout outcomes now exist.
+
+The full 5×10 acceptance run stayed structurally healthy and well below pre-Talent-V1 inflation. It improved the active upper tail modestly, while mature 85+ Team seasons remain uncommon because Recruit Talent V1 intentionally supplies a scarce high-Potential upper tail. Continue manual playtesting before treating that separate supply/league-shape question as a confirmed Recruit-generation defect.
+
+### Playthrough 3 follow-up
+
+Manual play now shows the intended career spread. Jayden Wright gained `+6` as a freshman; Lucas Webb (`68/87`) finished near `84` after gains of `+12`, `+3`, and `+1`; Aaron Jackson (`55/97`) made `+12` and `+10` jumps before reaching `84` as a senior; and Ashton Hunt (`69/80`) gained `+7`. Nolan Evans had a raw/upside rise of `+10` followed by `+6`, while Silas Matthews progressed from `57/85` freshman to `69`, `78`, and `82` as a senior. Omari Watson and Terrence Hines developed much less.
+
+**Decision:** Development V1 now produces busts, modest outcomes, hits, and memorable breakouts. Freeze it unless new evidence identifies a structural failure.
+
+## Mature League Powerhouse Ceiling — WATCH
 
 ### Observation
 
@@ -108,7 +126,17 @@ Around Season 8, the best observed Team was roughly `83 OVR`; most Programs were
 
 Talent Distribution V1 reduced league-wide inflation, but may have reduced the upper end too far. The desired qualitative shape is a few legitimately scary Teams, strong Tournament Teams, a large middle class, bad Teams, and an occasional disaster Team.
 
-Do not prescribe Team-OVR targets or retune Recruit generation yet. Diagnose this alongside Potential realization.
+### Phase 6E.3 diagnostic result
+
+The STANDARD 3×10 and ACCEPTANCE 5×10 production-Dynasty runs agreed. At Season 10, the five-seed sample had Team OVR P10/P25/P50/P75/P90/max of `70.7/74.5/77.1/78.7/80.3/83.0`, an average `0.0` Teams at 85+, `0.0` at 83+, and `4.4` at 80+. Champions averaged `80.5` Team OVR (median `80.3`, range `71.7–86.9`). Northbridge retained an average `4.4` 80+ Players and `1.2` 85+ Players at Season 10, but its Team OVR was `79.8`; Pine Valley averaged `66.7` with `0.2` 80+ Players.
+
+The mature league does not collapse into one flat tier—Prestige separation and Tournament contender strength remain real—but 85+ Team seasons remain uncommon after the high-OVR Season 1 roster population turns over. Development V1 now converts high-headroom prospects into diverse outcomes and allows rare strong contenders; future manual play should determine whether the remaining scarce Team upper tail warrants a separate Recruit Talent supply investigation.
+
+### Playthrough 3 follow-up
+
+Northbridge reached roughly `87` Team OVR once, with three `90+` Players, three additional `85+` Players, and an `84` freshman. Later rosters were mostly in the 70s, with leaders around `81–83`.
+
+Strong powerhouses are mechanically possible, but their frequency and persistence under Recruit Talent V1 remain a watchpoint. Development V1 can create strong upperclassmen without returning to the prior inflation; do not reopen Recruiting or Development from this evidence alone.
 
 ## Low-Prestige Rebuild Experience — WATCH
 
@@ -126,9 +154,13 @@ Repeated playtesting asks for clearer Recruiting feedback:
 - updates when a Board or Focus target commits elsewhere; and
 - final national Recruiting results/classes after Late Recruiting.
 
+Playthrough 3 also showed missed commitments, early low-star commitments, and confusing headline counts. Players need to understand interest, standing, active battles, and material changes without reverse-engineering the system.
+
+Useful future feedback includes a compact Focus-target table and events for commitments, lost targets, and meaningful standing changes.
+
 **Design principle:** more feedback, not more Recruiting mechanics. Exact presentation is intentionally undesigned.
 
-## Recruiting Assistant — Fill Remaining Board — OBSERVED
+## Recruiting Assistant — Fill Remaining Board — OBSERVED — REPEATED HIGH-VALUE QOL REQUEST
 
 Desired future behavior:
 
@@ -140,21 +172,39 @@ Assistant fills unused Board capacity with sensible backups
 
 It must never replace user-selected targets or overwrite Focus choices or Offers. It should use existing deterministic AI/default planning where possible and remain separate from **Generate Draft Board**, which begins with an empty Board.
 
+The assistant should fill only unused capacity; manual targets, Focus, and Offers remain authoritative.
+
+## Elite Recruit POT Gap — WATCH
+
+Manual classes included high-OVR recruits at their ceiling, such as `85/85`, `84/84`, and `87/87`. Recruit Talent V1 intentionally calculates `POT = max(OVR, ceiling)`, so this is permitted.
+
+Future diagnostics should measure `POT === OVR` by OVR and star tier, plus POT-gap distributions. Do not change Recruit Talent V1 from this observation alone.
+
 ## Generated Draft Board Ambition — WATCH
 
-Pine Valley's generated Board sometimes immediately offers low-tier/2★ targets. This is not a bug. Future diagnostics should evaluate whether generated Boards have an appropriate reaches / realistic-targets / safe-backups mix for each Prestige level.
+Pine Valley's generated Board sometimes immediately offers low-tier/2★ targets, while Charlotte Tech can appropriately pursue many 4★ recruits. This likely reflects Prestige scaling, not a bug. Future diagnostics should evaluate whether generated Boards have an appropriate reaches / realistic-targets / safe-backups mix for each Prestige level.
 
-## Player Connection / Player Detail — OBSERVED
+## Player Connection / Player Detail — OBSERVED — HIGH PRIORITY UX
 
-High-value playtest needs include inspecting individual attributes, understanding Player behavior, viewing Season statistics, following development, and building attachment to long-term projects. Examples include following a `54/90` prospect's progression or assessing whether a Center attempting ten threes has enough Shooting to justify it.
+Playthrough attachment formed around Lucas Webb, Aaron Jackson, Josiah Hughes, Nolan Evans, and Silas Matthews. Webb led the league in scoring and assists and had a 38-point game; Jackson rose from `55/97` to `84`; Silas rose from `57/85` to `82`; and Josiah led the league in scoring. Losing productive seniors made the rebuild feel meaningfully different.
 
-A future Player detail view may show identity, position/class, OVR/POT, nine attributes, current-season statistics, and development history where it exists. Do not assume career-stat persistence or design the full screen here.
+A future Player Detail view may show identity, position/class, OVR/POT, nine attributes, season statistics, game highs, and development history (for example, freshman OVR then each later OVR and gain). It should derive from archived Dynasty facts and stable IDs rather than duplicate mutable history. Do not design the full screen here.
+
+## Followed Players / Favorites — OBSERVED
+
+Following Silas Matthews after he joined another Program was enjoyable. A future favorite/followed-player concept could surface current Team, class, OVR, statistics, development, and notable performances. Do not commit to notifications or permanent history design yet.
+
+## Position / Rotation Flexibility — INVESTIGATING
+
+Manual rosters exposed a strict natural-position constraint: an `SG 69` could receive roughly 36 MPG behind a weak backup, while a `PG 78` received about five MPG because he could not play another spot. Multiple strong players at one natural position can therefore produce visibly inferior lineups.
+
+The current rule is strictly natural-position only. Investigate whether it systematically suppresses talented rosters or creates poor AI/default Rotations before committing to secondary positions, multiple eligible positions, or a limited adjacent-position rule. Any future change affects default AI Rotations, Team Strength, roster construction, and Recruiting needs.
 
 ## Game Simulation — Shot Selection — OBSERVED
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
 
-## Coaching / Rotation Navigation — OBSERVED
+## Coaching / Rotation Navigation — OBSERVED — REPEATED UX REQUEST
 
 Playtesting suggests Rotation deserves a persistent home rather than existing only in Game Prep. A future navigation concept could be:
 
@@ -162,7 +212,7 @@ Playtesting suggests Rotation deserves a persistent home rather than existing on
 SEASON | COACHING | RECRUITING | LEAGUE
 ```
 
-Initial Coaching scope could be Rotation only. Tactics and other coaching systems are not committed; Game Prep may still link to Rotation.
+Initial Coaching scope could be Rotation only. Position flexibility should be investigated before or alongside this work. Tactics and other coaching systems are not committed; Game Prep may still link to Rotation.
 
 ## Round Complete Review — OBSERVED
 
@@ -176,6 +226,57 @@ Simulate other games
 
 A future review boundary could allow users to inspect their result, league results, standings movement, and Recruiting changes before manually advancing. Do not design or implement it here.
 
+Round Review and League News could eventually complement one another:
+
+```text
+Round completes
+→ review result
+→ meaningful league/recruiting updates
+→ Advance Round
+```
+
+Do not merge them into one committed feature yet.
+
+## Tournament Balance / Seeding — INVESTIGATING
+
+Manual play saw multiple `16 > 1` upsets, two championship games between `16` and `14` seeds, and frequent upsets despite many Team OVR gaps being closer to `81` versus `77`. Northbridge fell early, while Franklin Metro made a Cinderella run.
+
+Cinderellas are desirable; this is not evidence that Game Simulation variance is wrong. A future diagnostic should separate seed quality from actual matchup-upset variance by measuring seed relationships to Team OVR, record, and win percentage; average seed-pair gaps; favorite win rates by OVR difference; matchup upsets; and Final Four/champion seeds. The question is whether seed labels or true basketball upsets drive the observed bracket shape.
+
+## Super Sim — Season Complete Target — OBSERVED / HIGH-VALUE QOL
+
+Desired user-facing target:
+
+```text
+SIM TO SEASON COMPLETE
+→ finish regular season
+→ finish Tournament and National Championship
+→ synchronize Recruiting to postseason Period 28
+→ stop
+```
+
+It must not enter Late Recruiting, finalize Recruiting, run the offseason, develop Players, or assemble next season's roster. This should reuse the existing Super Sim target model, alongside Midseason and end-of-regular-season targets, so players can inspect the final state and make late-Recruiting decisions through the existing lifecycle.
+
+## League News / Round Recap — OBSERVED
+
+A future “Around the Country” recap could derive concise updates from canonical prior-round facts rather than storing permanent prose. Useful events include upsets, big performances, Recruit commitments or lost Focus targets, conference/milestone movement, and Cinderella runs.
+
+## Offseason — Around the League — OBSERVED
+
+Future offseason context could surface the biggest development jumps, notable returners, and incoming recruits from derived existing data. Do not implement or define a presentation yet.
+
+## Program Records / Statistical History — OBSERVED
+
+Future history could include program single-game points, season scoring, and career points/assists. It should follow Player Detail/development-history work rather than precede it.
+
+## Season Hub Information Hierarchy — OBSERVED
+
+Conference standings are rarely used in their current prominent placement and can push more meaningful information below the fold. A future hierarchy might prioritize the game and Recruiting context, important updates, schedule/recent results, and a smaller conference snapshot with a route to the full view. Do not redesign it here.
+
+## Tournament Hub Layout — OBSERVED
+
+Repeated visual feedback notes awkward Tournament Complete and Season Complete card placement, excess space beneath Tournament Complete, and inconsistent top-dashboard composition. The bracket itself is good and should remain unchanged. A future layout could stack Tournament Complete and Season Complete on the left with Recruiting on the right. This is presentation-only and separate from the Tournament balance/seeding investigation.
+
 ## Minor UX Polish — OBSERVED
 
 Keep below the foundational investigations:
@@ -184,16 +285,33 @@ Keep below the foundational investigations:
 - “Last 5” is preferred to “Last 4.”
 - Seeing current seed would be fun, potential to choose seed when starting dynasty (compete with others on same field)
 
+## Currently Frozen Unless New Evidence Appears
+
+- Board + Focus + Offer Recruiting
+- AI Recruiting plan coherence
+- Prestige / attraction
+- Recruit Talent Distribution V1 (except the explicit POT-gap and mature-supply watchpoints)
+- Player Development V1
+- Calibration methodology
+
+Do not reopen these systems casually.
+
 ## Current Playtesting Priorities
 
-1. Development / Potential realization diagnostic
-2. Mature league powerhouse ceiling
-3. Player detail / player connection UX
-4. Recruiting Focus-target and Recruiting-update visibility
-5. Assistant fill remaining Recruiting Board
-6. Shot-selection diagnostic
+1. Position / Rotation flexibility investigation
+2. Tournament balance / seeding diagnostic
+3. Player Detail + development-history UX
+4. Recruiting Focus-target / Recruiting-update visibility
+5. Assistant Fill Remaining Recruiting Board
+6. Recruit POT-gap diagnostic
 7. Coaching / Rotation navigation
-8. Round-complete review
-9. Minor Quick Sim / Last 5 polish
+8. Super Sim — Season Complete target
+9. League News / Round Recap
+10. Season Hub + Tournament Hub composition polish
+11. Shot-selection diagnostic
+12. Offseason around-the-league context
+13. Followed Players / Favorites
+14. Program records / deeper statistical history
+15. Minor Quick Sim / Last 5 polish
 
-This order may change as new evidence emerges.
+This ordering remains playthrough-driven and may change with new evidence.

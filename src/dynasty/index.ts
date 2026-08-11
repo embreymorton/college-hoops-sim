@@ -2,6 +2,7 @@ export { beginOffseason, initializeDynastyState } from './dynastyState'
 export {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
+  deriveDevelopmentTendency,
   developReturningPlayer,
 } from './development'
 export {

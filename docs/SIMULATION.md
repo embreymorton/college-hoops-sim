@@ -1,6 +1,6 @@
 # Simulation Specification
 
-This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, Player Development V0, Recruiting V0, Next-Season Roster Assembly V0, and Dynasty Season Rollover V0 constraints.
+This document records the implemented Team Strength, Single-Game Simulation V0, Player Box Scores V0, Player Season Stats V0, Postseason Simulation V0, Player Development V1, Recruiting V0, Next-Season Roster Assembly V0, and Dynasty Season Rollover V0 constraints.
 
 ## Status and pipeline
 
@@ -78,26 +78,34 @@ Accepted inspection completed 384 of 384 regular-season games and all 15 tournam
 
 The accepted 200-replay diagnostic used one selected 16-Team field across many tournament simulation seeds. Higher seeds generally won more often, seeds 1–8 dominated championships overall, and deeper seeds retained nonzero title probability. Those observations reflect the actual strengths of that inspected field, not universal historical probabilities or permanent balance targets.
 
-## Implemented Player Development V0
+## Implemented Player Development V1
 
 Player Development is a pure Dynasty-layer operation over one returning Player. It changes Player attributes and advances class while reusing the existing position-aware `calculateOverall()` function; OVR is never stored or incremented directly. Potential remains fixed.
 
-The development class is the class just completed:
+Development V1 remains a pure Dynasty-layer operation over one returning Player. It changes position-aware attributes and advances class while reusing `calculateOverall()`; OVR is never stored or incremented directly. Potential remains fixed and is always a hard ceiling.
 
-| Completed class | Next class | Seeded target OVR-gain range |
+The completed class provides a baseline, not an absolute gain ceiling:
+
+| Completed class | Next class | Baseline range | Headroom multiplier | Per-offseason cap |
 | --- | --- | ---: |
-| FR | SO | 2–5 |
-| SO | JR | 1–4 |
-| JR | SR | 0–3 |
+| FR | SO | 1–4 | 1.20 | 12 |
+| SO | JR | 1–3 | 0.90 | 10 |
+| JR | SR | 0–2 | 0.65 | 8 |
 
-The target is selected as an inclusive deterministic integer, then constrained by pre-development headroom:
+For each offseason, Development derives `headroom = POT − current OVR`, selects a stable hidden Player tendency from the Dynasty seed and Player ID, then derives a target increment:
 
 ```text
-current OVR = calculateOverall(Player before development)
-target OVR = min(POT, current OVR + seeded class-range draw)
+baseline = inclusive class-range draw
+opportunity = floor((headroom / 8) × class multiplier × tendency multiplier)
+variance = inclusive draw from -1 to +1
+breakout = 0, or +3 to +6 when headroom is at least 8
+target increment = min(class cap, max(0, baseline + tendency adjustment + opportunity + variance + breakout))
+target OVR = min(POT, current OVR + target increment)
 ```
 
-These target ranges are mechanics, not guaranteed gains. Attribute caps, positional OVR weights, and the Potential ceiling govern how allocation reaches the target. A Player with `current OVR >= POT` receives no attribute changes, though a non-senior still advances class. Seniors graduate before development and are rejected by `developReturningPlayer()`.
+Tendencies are deterministic but not stored Player attributes: `30%` weak (`0.40×` opportunity, `−1` baseline, `0.30×` breakout chance), `50%` steady (`1.00×`, `0`, `1.00×`), and `20%` strong (`2.10×`, `+2`, `2.00×`). Annual variance remains independent, so a strong developer can disappoint and a weaker developer can still have a good year. Breakout chance is `6% / 3.5% / 1.5%` for FR/SO/JR, multiplied by `min(2, headroom / 20)` and the tendency breakout multiplier.
+
+These are target opportunities, not guaranteed derived gains. Attribute caps, position weights, and the Potential ceiling govern whether allocation reaches the target. A Player at POT receives no attribute changes but still advances class; seniors graduate before Development.
 
 Attribute gains are allocated one point at a time. Every attribute remains eligible while below 99, but position changes its relative selection weight:
 
@@ -109,45 +117,25 @@ Attribute gains are allocated one point at a time. Every attribute remains eligi
 | PF | 6 | 2 | 1 | 1 | 2 | 5 | 6 | 5 | 3 |
 | C | 5 | 1 | 1 | 1 | 1 | 7 | 7 | 5 | 3 |
 
-For each allocation draw, each eligible base weight receives independent Player-RNG variation from `0.75×` inclusive to below `1.25×`. A weighted draw selects the attribute. The implementation tentatively adds one point and accepts it only when the existing derived OVR remains at or below POT. Allocation stops when the target OVR or POT is reached, the opportunity is exhausted, or no attribute remains below 99. This creates intentionally uneven Player-specific profiles rather than uniform attribute boosts.
+For each allocation draw, each eligible base weight receives independent Player-RNG variation from `0.75×` inclusive to below `1.25×`. Repeated gains to the same attribute are damped by `1 / (1 + 0.35 × prior gains that offseason)`. A weighted draw selects the attribute. The implementation tentatively adds one point and accepts it only when the derived OVR remains at or below POT. Allocation stops at target OVR/POT, opportunity exhaustion, or all attributes reaching 99. This preserves uneven position-aware profiles without requiring every large offseason to concentrate in one skill.
 
 Development randomness uses an independent RNG created from a JSON seed namespace containing:
 
 ```text
-namespace = college-hoops-sim:player-development:v0
+namespace = college-hoops-sim:player-development:v1
 typed numeric/string Dynasty seed
 completed season number
 Program ID
 Player ID
 ```
 
-There is no shared evolving offseason RNG. The same inputs reproduce the same Player; changing the Dynasty seed changes at least some development, while Program and Player processing order do not affect per-Player results. Development never calls `Math.random()`.
+The stable tendency uses a separate `college-hoops-sim:player-development-tendency:v1` namespace containing the typed Dynasty seed and Player ID. There is no shared evolving offseason RNG. The same inputs reproduce the same Player; changing the Dynasty seed changes at least some development, while Program and Player processing order do not affect per-Player results. Development never calls `Math.random()`.
 
-V0 development has no regression and no dependency on playing time, starts, rotation role, Player statistics, Team wins, Postseason success, controlled/AI ownership, Program prestige, conference, coaching, or facilities. All attributes remain within 40–99, Potential does not change, and derived OVR cannot exceed Potential. A Player may stagnate or graduate below Potential.
+Development V1 has no regression and no dependency on playing time, starts, rotation role, Player statistics, Team wins, Postseason success, controlled/AI ownership, Program prestige, conference, coaching, or facilities. All attributes remain within 40–99, Potential does not change, and derived OVR cannot exceed Potential. A Player may stagnate or graduate well below Potential.
 
-The accepted canonical 292-returner inspection observed:
+The accepted direct diagnostic ran 5,500 deterministic production-API careers. Annual OVR gain median/P90/P95/max was `+2/+7/+9/+12`; `+6`, `+8`, and `+10` gains occurred in `16.0%`, `8.4%`, and `4.4%` of the deliberately high-headroom-balanced sample. High-Potential raw outcomes remained diverse: 55/90 careers were `23.0%` bust, `11.6%` low, `27.6%` solid, `16.0%` hit, and `21.8%` breakout under diagnostic-only total-gain labels. Their senior OVR median/P90/P95/max was `69/81/82/85`, compared with `60/60/60/61` for 55/60.
 
-| Transition | Count | Average ΔOVR | P50 | P95 | Maximum |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| FR → SO | 96 | +3.56 | +4 | +5 | +5 |
-| SO → JR | 98 | +2.63 | +3 | +4 | +4 |
-| JR → SR | 98 | +1.28 | +1 | +3 | +3 |
-
-Overall stagnation was 30 of 292 returners, or 10.3%. The observed +5 maximum is not a separately imposed universal rule; it follows from the implemented target ranges and this population's constraints.
-
-Pre-development Potential headroom also showed the intended relationship:
-
-| Headroom | Count | Average ΔOVR | P50 | Maximum | Stagnated |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| 0 | 0 | 0.00 | 0 | 0 | 0.0% |
-| 1–2 | 30 | +0.97 | +1 | +2 | 33.3% |
-| 3–5 | 64 | +1.88 | +2 | +4 | 18.8% |
-| 6–9 | 113 | +2.65 | +3 | +5 | 7.1% |
-| 10+ | 85 | +3.26 | +3 | +5 | 0.0% |
-
-The empty zero-headroom bucket reflects this generated sample; direct invariant tests confirm a Player at POT cannot improve. These values are validation observations, not guaranteed distributions. The accepted behavior is that low headroom constrains growth, high headroom permits greater opportunity, and completed class remains independently meaningful.
-
-Inspection found zero Potential violations, attributes above 99, regressions, changed returning IDs, or mutated archived Player snapshots. Same-seed, different-seed, Program-order, Player-order, and JSON-serialization checks all passed.
+The full 5-seed × 10-season acceptance run retained valid rosters, Rotations, schedules, Focus state, commitments, lifecycle, history, serialization, and deterministic replay. Season 10 averaged `78.8` active Players at 80+, `21.4` at 85+, `1.8` at 90+, and `0.2` at 95+—well below the pre-Recruit-Talent-V1 inflated ecosystem. It produced a Season-10 Team OVR median/P90/max of `77.3/80.3/84.6`; rare strong contenders remained possible (champion/runner-up strengths ranged to `89.1/88.9`) without a hidden Prestige Development multiplier.
 
 ## Implemented Recruiting V0
 

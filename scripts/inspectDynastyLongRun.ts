@@ -72,6 +72,13 @@ interface RecruitingCycleMetric {
   readonly programClassSizes: readonly number[]
 }
 
+export interface TournamentStrengthRecord {
+  readonly seasonNumber: number
+  readonly programId: string
+  readonly role: 'champion' | 'runnerUp' | 'semifinalist'
+  readonly overall: number
+}
+
 interface StructuralHealth {
   invalidRosters: number
   invalidRotations: number
@@ -103,6 +110,7 @@ export interface DynastyRunResult {
   readonly champions: Readonly<Record<string, number>>
   readonly semifinalAppearances: Readonly<Record<string, number>>
   readonly stateGrowth: readonly StateGrowthCheckpoint[]
+  readonly tournamentStrengths: readonly TournamentStrengthRecord[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -245,6 +253,7 @@ export function runDynastyCalibration(
   const champions: Record<string, number> = {}
   const semifinalAppearances: Record<string, number> = {}
   const stateGrowth: StateGrowthCheckpoint[] = []
+  const tournamentStrengths: TournamentStrengthRecord[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -307,9 +316,32 @@ export function runDynastyCalibration(
       const champion = postseason.resultsByGameId[
         getGamesForTournamentRound(postseason, 'championship')[0]!.id
       ]!.winnerId
+      const championshipGame = getGamesForTournamentRound(postseason, 'championship')[0]!
+      const championshipResult = postseason.resultsByGameId[championshipGame.id]!
+      const teamOverallByProgramId = new Map(
+        seasonMetrics.teams.map(({ programId, overall }) => [programId, overall]),
+      )
+      for (const programId of [championshipResult.homeTeamId, championshipResult.awayTeamId]) {
+        tournamentStrengths.push({
+          seasonNumber: season.seasonNumber,
+          programId,
+          role: programId === championshipResult.winnerId ? 'champion' : 'runnerUp',
+          overall: teamOverallByProgramId.get(programId)!,
+        })
+      }
       champions[champion] = (champions[champion] ?? 0) + 1
       for (const game of getGamesForTournamentRound(postseason, 'semifinals')) {
         const result = postseason.resultsByGameId[game.id]!
+        for (const programId of [result.homeTeamId, result.awayTeamId]) {
+          if (programId !== championshipResult.homeTeamId && programId !== championshipResult.awayTeamId) {
+            tournamentStrengths.push({
+              seasonNumber: season.seasonNumber,
+              programId,
+              role: 'semifinalist',
+              overall: teamOverallByProgramId.get(programId)!,
+            })
+          }
+        }
         semifinalAppearances[result.homeTeamId] =
           (semifinalAppearances[result.homeTeamId] ?? 0) + 1
         semifinalAppearances[result.awayTeamId] =
@@ -442,6 +474,7 @@ export function runDynastyCalibration(
     champions,
     semifinalAppearances,
     stateGrowth,
+    tournamentStrengths,
     health,
     rollovers,
   }

@@ -282,7 +282,7 @@ REGULAR SEASON
 - Stable returning Player identity with immutable historical Player snapshots
 - In-season `deriveProjectedRosterOutlook()` for deterministic senior departures, returners, and next-season openings
 - Senior graduation; `FR → SO`, `SO → JR`, and `JR → SR` class advancement
-- Deterministic, position-aware, Potential-constrained Player Development V0
+- Deterministic, position-aware, Potential-constrained Player Development V1
 - Temporary incomplete `OffseasonState` rosters with preserved current Program prestige and derived open spots
 
 The accepted canonical inspection archived all 384 regular-season and 15 Postseason games, graduated 92 of 384 Players, and created 292 returning Player values across all 32 Programs without changing IDs or historical snapshots. All Dynasty/archive/offseason values passed JSON serialization; same-seed reproduction and Program/Player-order independence passed. The observed development curve was approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% stagnation. These are calibration observations for one deterministic population, not guaranteed outcomes.
@@ -340,7 +340,8 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.2A — Recruiting Focus Model:** COMPLETE.
 - **6E.2A.2 — AI Recruiting Plan Coherence:** COMPLETE.
 - **6E.2B — Recruit Talent Distribution V1:** COMPLETE.
-- **6E.3 — Development + League Talent Progression Diagnostic:** NEXT. Diagnose Potential realization and mature-league talent shape before approving any calibration change.
+- **6E.3 — Development + League Talent Progression Diagnostic:** COMPLETE. Direct careers and 3×10/5×10 production-Dynasty runs found capped annual growth, weak high-headroom differentiation, and a thin mature powerhouse tier; see `PLAYTESTING.md`.
+- **6E.4 — Player Development V1:** COMPLETE. Class baseline, headroom-sensitive opportunity, stable hidden tendency, annual variance, rare breakouts, and the Potential cap now create deterministic career diversity without a Prestige multiplier; see `SIMULATION.md` and `PLAYTESTING.md`.
 
 ## Non-binding development-agent fit
 

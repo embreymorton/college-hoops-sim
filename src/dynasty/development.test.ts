@@ -8,6 +8,7 @@ import {
 } from '../engine'
 import {
   deriveAttributeDevelopmentGains,
+  deriveDevelopmentTendency,
   deriveDevelopmentSummary,
   developReturningPlayer,
 } from './index'
@@ -56,7 +57,7 @@ function develop(source: Player, seed: string | number = 'development-test') {
   })
 }
 
-describe('Player Development V0', () => {
+describe('Player Development V1', () => {
   it.each([
     ['FR', 'SO'],
     ['SO', 'JR'],
@@ -139,6 +140,38 @@ describe('Player Development V0', () => {
 
     expect(developAll('same', [...players].reverse())).toEqual(developAll('same'))
     expect(developAll('different')).not.toEqual(developAll('same'))
+  })
+
+  it('derives one stable hidden tendency per Player and Dynasty seed', () => {
+    const source = player('FR', 'tendency-player')
+    expect(deriveDevelopmentTendency(source, 'same')).toBe(
+      deriveDevelopmentTendency(source, 'same'),
+    )
+    expect(['weak', 'steady', 'strong']).toContain(
+      deriveDevelopmentTendency(source, 'same'),
+    )
+  })
+
+  it('gives high-headroom Players a wider deterministic upside distribution', () => {
+    const outcomes = (potential: number) => Array.from({ length: 80 }, (_, index) => {
+      const source = player('FR', `headroom-v1-${index}`)
+      source.potential = potential
+      let current = source
+      for (let season = 1; season <= 3; season += 1) {
+        current = developReturningPlayer({
+          player: current,
+          dynastySeed: 'headroom-v1',
+          completedSeasonNumber: season,
+          programId: 'charlotte-tech',
+        })
+      }
+      return calculateOverall(current) - calculateOverall(source)
+    })
+    const low = outcomes(78)
+    const high = outcomes(99)
+    const average = (values: readonly number[]) => values.reduce((sum, value) => sum + value, 0) / values.length
+    expect(average(high)).toBeGreaterThan(average(low) + 3)
+    expect(Math.max(...high)).toBeGreaterThanOrEqual(15)
   })
 
   it('derives only positive attribute gains in deterministic gain/order priority', () => {

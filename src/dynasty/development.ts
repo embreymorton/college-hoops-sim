@@ -36,11 +36,38 @@ const NEXT_CLASS = {
   JR: 'SR',
 } as const satisfies Readonly<Record<ReturningClass, ClassYear>>
 
-const TARGET_OVR_GAIN_RANGE = {
-  FR: [2, 5],
-  SO: [1, 4],
-  JR: [0, 3],
+const CLASS_BASE_GAIN_RANGE = {
+  FR: [1, 4],
+  SO: [1, 3],
+  JR: [0, 2],
 } as const satisfies Readonly<Record<ReturningClass, readonly [number, number]>>
+
+const HEADROOM_OPPORTUNITY_MULTIPLIER = {
+  FR: 1.2,
+  SO: 0.9,
+  JR: 0.65,
+} as const satisfies Readonly<Record<ReturningClass, number>>
+
+const BREAKOUT_CHANCE = {
+  FR: 0.05,
+  SO: 0.03,
+  JR: 0.01,
+} as const satisfies Readonly<Record<ReturningClass, number>>
+
+export type DevelopmentTendency = 'weak' | 'steady' | 'strong'
+
+interface TendencyProfile {
+  readonly band: DevelopmentTendency
+  readonly opportunityMultiplier: number
+  readonly baselineAdjustment: number
+  readonly breakoutMultiplier: number
+}
+
+const TENDENCY_PROFILES: Readonly<Record<DevelopmentTendency, TendencyProfile>> = {
+  weak: { band: 'weak', opportunityMultiplier: 0.4, baselineAdjustment: -1, breakoutMultiplier: 0.3 },
+  steady: { band: 'steady', opportunityMultiplier: 1, baselineAdjustment: 0, breakoutMultiplier: 1 },
+  strong: { band: 'strong', opportunityMultiplier: 2.1, baselineAdjustment: 2, breakoutMultiplier: 2 },
+}
 
 /** Relative opportunity only; all nine attributes always retain non-zero weight. */
 const POSITION_DEVELOPMENT_WEIGHTS = {
@@ -62,7 +89,7 @@ function developmentSeed(
 ): string {
   assertSeed(options.dynastySeed)
   return JSON.stringify({
-    namespace: 'college-hoops-sim:player-development:v0',
+    namespace: 'college-hoops-sim:player-development:v1',
     dynastySeed: {
       type: typeof options.dynastySeed === 'number' ? 'number' : 'string',
       value: options.dynastySeed,
@@ -73,15 +100,41 @@ function developmentSeed(
   })
 }
 
+function tendencySeed(dynastySeed: number | string, playerId: string): string {
+  return JSON.stringify({
+    namespace: 'college-hoops-sim:player-development-tendency:v1',
+    dynastySeed: {
+      type: typeof dynastySeed === 'number' ? 'number' : 'string',
+      value: dynastySeed,
+    },
+    playerId,
+  })
+}
+
+/** Stable hidden career tendency; it shifts opportunity without guaranteeing outcomes. */
+export function deriveDevelopmentTendency(
+  player: Pick<Player, 'id'>,
+  dynastySeed: number | string,
+): DevelopmentTendency {
+  assertSeed(dynastySeed)
+  const roll = createRng(tendencySeed(dynastySeed, player.id)).next()
+  return roll < 0.3 ? 'weak' : roll < 0.8 ? 'steady' : 'strong'
+}
+
 function weightedAttribute(
   position: Position,
   attributes: PlayerAttributes,
+  gains: Readonly<Record<AttributeName, number>>,
   rng: Rng,
 ): AttributeName | undefined {
   const candidates = ATTRIBUTE_NAMES.flatMap((name, index) => {
     if (attributes[name] >= MAX_PLAYER_RATING) return []
     const baseWeight = POSITION_DEVELOPMENT_WEIGHTS[position][index] ?? 1
-    return [{ name, weight: baseWeight * (0.75 + rng.next() * 0.5) }]
+    return [{
+      name,
+      // Preserve positional identity while making large development more broadly plausible.
+      weight: (baseWeight * (0.75 + rng.next() * 0.5)) / (1 + gains[name] * 0.35),
+    }]
   })
   const total = candidates.reduce((sum, candidate) => sum + candidate.weight, 0)
   if (total === 0) return undefined
@@ -122,12 +175,32 @@ export function developReturningPlayer({
       playerId: player.id,
     }),
   )
-  const [minimumGain, maximumGain] = TARGET_OVR_GAIN_RANGE[completedClass]
+  const tendency = TENDENCY_PROFILES[deriveDevelopmentTendency(player, dynastySeed)]
+  const headroom = player.potential - currentOverall
+  const [minimumGain, maximumGain] = CLASS_BASE_GAIN_RANGE[completedClass]
+  const headroomOpportunity = Math.floor(
+    (headroom / 8) * HEADROOM_OPPORTUNITY_MULTIPLIER[completedClass] *
+      tendency.opportunityMultiplier,
+  )
+  const seasonalVariance = rng.int(-1, 1)
+  const breakoutChance = BREAKOUT_CHANCE[completedClass] *
+    Math.min(2, headroom / 20) * tendency.breakoutMultiplier
+  const breakoutGain = headroom >= 8 && rng.chance(breakoutChance)
+    ? rng.int(3, 6)
+    : 0
   const targetOverall = Math.min(
     player.potential,
-    currentOverall + rng.int(minimumGain, maximumGain),
+    currentOverall + Math.max(
+      0,
+      Math.min(
+        completedClass === 'FR' ? 12 : completedClass === 'SO' ? 10 : 8,
+        rng.int(minimumGain, maximumGain) + tendency.baselineAdjustment +
+        headroomOpportunity + seasonalVariance + breakoutGain,
+      ),
+    ),
   )
   const maximumAttempts = ATTRIBUTE_NAMES.length * MAX_PLAYER_RATING
+  const attributeGains = Object.fromEntries(ATTRIBUTE_NAMES.map((name) => [name, 0])) as Record<AttributeName, number>
 
   for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
     const overall = calculateOverall(developed)
@@ -135,6 +208,7 @@ export function developReturningPlayer({
     const attribute = weightedAttribute(
       developed.position,
       developed.attributes,
+      attributeGains,
       rng,
     )
     if (!attribute) break
@@ -142,6 +216,7 @@ export function developReturningPlayer({
     candidate.attributes[attribute] += 1
     if (calculateOverall(candidate) <= player.potential) {
       developed.attributes[attribute] += 1
+      attributeGains[attribute] += 1
     }
   }
 
