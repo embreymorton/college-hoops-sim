@@ -396,7 +396,144 @@ When an agent repeatedly times out or stops mid-migration, reduce scope rather t
 
 ---
 
-# Agent Selection Guidance
+# Codex vs Claude Code Workflow
+
+Choose the implementation agent by the nature of the work—not by token, credit,
+quota, or cost concerns.
+
+## Codex — behavior, engineering, and deterministic systems
+
+Prefer Codex when the primary question is:
+
+> What should the system do, how should that behavior be represented, and how
+> do we make it deterministic and testable?
+
+Codex normally owns simulation/domain mechanics, deterministic generation and
+RNG-sensitive work, calibration and diagnostics, balance investigations,
+canonical representations, architecture/migrations, Zustand/application
+orchestration, lifecycle transitions, data/query/action surfaces required by
+UI, structural bugs, integration tests, and acceptance validation. Typical
+systems include Recruiting, Development, Game Sim, Tournament/seeding,
+Rotation, Super Sim, rollover, and deterministic automation.
+
+Project examples include Recruiting Focus and AI coherence, Recruit Talent V1,
+Development V1, Rotation V1, Dynasty rollover, Tournament diagnostics, Super
+Sim behavior, and Assistant Fill Remaining Board behavior.
+
+## Claude Code — presentation, interaction, and player understanding
+
+Prefer Claude Code when the primary question is:
+
+> How should the player understand, interact with, and feel behavior that is
+> already defined?
+
+Claude normally owns React composition, visual hierarchy, CSS/layout,
+responsive behavior, accessibility, interaction polish, dense tables,
+sports/broadcast presentation, onboarding and empty states, lifecycle
+presentation, information architecture, visual feedback, component tests, and
+visual inspection. When applicable, Claude should read and follow
+`.claude/skills/frontend-design/SKILL.md`.
+
+Project examples include Recruiting Management UI and onboarding, Season Hub
+composition, Late Recruiting and Offseason UX, Player Details UX, Postseason
+Hub/Season Complete polish, and Coaching/Rotation presentation.
+
+## Mixed milestones: Codex → Claude
+
+When a feature needs both behavior and presentation:
+
+```text
+Codex
+→ establish canonical behavior, data, queries, and actions
+→ validate and leave the repository green
+
+then
+
+Claude
+→ implement or polish the player-facing experience
+→ validate UI and visual behavior
+```
+
+Behavior comes first. Do not ask Claude to invent domain architecture while
+designing the screen, and do not ask Codex to spend a domain milestone on a
+broad visual redesign.
+
+Codex may create minimal functional UI when needed to exercise behavior, expose
+a transition for testing, or keep a migration functional. Keep it deliberately
+plain and hand meaningful visual/product design to Claude afterward—for example,
+Codex adds a lifecycle action and minimal Continue button; Claude turns that
+state into the final experience.
+
+## Boundary and escalation rules
+
+If Claude discovers that good UX requires a new canonical fact, simulation or
+legality rule, lifecycle transition, non-trivial Zustand orchestration,
+persistence/history representation, or deterministic generation behavior, stop
+and describe the missing capability. Return that slice to Codex, then resume UI
+work after it is accepted. Small pure presentation selectors are fine.
+
+If Codex completes the requested behavior and the remaining problem is visual
+hierarchy, layout, responsive composition, accessibility, or presentation
+polish, avoid broad UI churn. Validate the behavior and recommend Claude.
+
+Route bugs by root cause, not by the file showing the symptom:
+
+| Prefer Codex | Prefer Claude Code |
+| --- | --- |
+| Wrong simulation result | Awkward spacing or hierarchy |
+| Incorrect Recruiting commitment | Responsive overflow |
+| Incorrect Rotation legality | Confusing but technically correct presentation |
+| Wrong lifecycle/Super Sim transition | Accessibility or focus problem |
+| State/history corruption | Table density or alignment |
+| Incorrect derived data | Visual lifecycle handoff |
+| Determinism failure | Presentation polish |
+
+If uncertain, diagnose the root cause first.
+
+## Handoff discipline
+
+One agent owns overlapping code surfaces at a time:
+
+```text
+Agent A implements
+→ validates
+→ updates docs under DOCUMENTATION_POLICY.md
+→ reaches an accepted green checkpoint
+→ Agent B begins
+```
+
+Do not have Codex and Claude edit overlapping files simultaneously. Do not hand
+Claude a half-complete domain migration or Codex a half-complete visual redesign
+unless the latter has explicitly become a behavior-bug investigation.
+
+Every agent starts from the latest accepted green repository state and reads
+`CURRENT_STATE.md` first. Current repository state beats old chat context; failed
+or reverted work does not exist for the next agent.
+
+## Planning responsibility and current examples
+
+Every milestone recommendation should name `Codex`, `Claude Code`, or
+`Codex → Claude` and briefly justify the routing as behavior/architecture,
+presentation/UX, or both.
+
+- **Tournament Balance / Seeding Diagnostic:** Codex—deterministic simulation
+  diagnosis and metrics, no visual work.
+- **Player Details + Development History UX:** Claude if existing facts support
+  it cleanly; otherwise a small Codex query/helper slice, then Claude.
+- **Postseason Hub + Season-Complete Polish:** Claude—the bracket behavior is
+  accepted; this is layout and lifecycle communication.
+- **Assistant Fill Remaining Board:** Codex for deterministic behavior, store
+  action, and tests; Claude afterward only if CTA/feedback needs visual polish.
+- **Sim to Season Complete:** Codex for lifecycle/Super Sim behavior; Claude only
+  if the new review state needs meaningful presentation work.
+
+This distinction should scale to transfers, the NBA Draft, tactics, staff,
+history, records, and save/load without rewriting the policy.
+
+# Agent Selection and Reasoning Guidance
+
+First choose Codex versus Claude based on the type of work. Then choose reasoning
+effort based on complexity and ambiguity; these are separate decisions.
 
 Use stronger reasoning for:
 

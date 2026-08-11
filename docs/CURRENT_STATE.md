@@ -183,6 +183,8 @@ Repeated play has produced 1/16 upsets, low-seed championship runs, and memorabl
 5. Identify what is already fun, repeated friction, frozen systems, genuinely
    unresolved questions, and future ideas that should remain deferred.
 6. Recommend the smallest next milestone.
+   State whether Codex, Claude Code, or Codex → Claude should own it, following
+   the division of labor in `COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md`.
 7. For simulation/balance, diagnose first and follow `CALIBRATION.md`.
 8. Prefer small green implementation milestones.
 9. Validate fully before acceptance.
