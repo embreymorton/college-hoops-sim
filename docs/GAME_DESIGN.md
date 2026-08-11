@@ -88,15 +88,22 @@ baseline talent = 42 + (prestige × 0.42) + team variance (-3 to +3)
 
 Twelve ordered slot offsets (`+9, +6, +4, +3, +2, +1, 0, -1, -2, -3, -5, -7`) create a star-to-depth hierarchy. Each slot also receives `-3` to `+3` variance. The top slot has a 12% chance of an additional `+4` to `+9` breakout, allowing occasional standout players at lower-prestige programs. Final player talent inputs remain bounded to 40–99 and are passed through the existing Player generator unchanged.
 
-## Initial rotation model
+## Accepted Rotation V1 model
 
-A Rotation is a plain serializable mapping from player ID to assigned minutes. Missing player IDs mean zero minutes; generated rotations omit zero-minute entries. Total minutes, positional totals, starters, roles, and depth-chart ranks are derived rather than stored.
+Rotation V1 stores Player minutes by floor position. PG, SG, SF, PF, and C each
+require exactly 40 minutes, for 200 total; a Player may receive at most 40
+aggregate minutes. Aggregate Player minutes are derived rather than stored.
 
-The v0.1 model assigns each natural position exactly 40 minutes, for 200 total player-minutes. Players may consume minutes only at their listed position. This restriction is intentionally temporary: flexible positional eligibility can replace it in a later explicitly scoped milestone.
+Legal floor eligibility is derived from natural position: `PG → PG/SG`,
+`SG → SG/SF`, `SF → SF/PF`, `PF → PF/C`, and `C → C/PF`. Player retains only
+his natural position—there is no stored secondary-position field. Users may
+assign legal secondary minutes manually. Fresh defaults use the accepted
+deterministic flexible generator, while existing rotations persist exactly
+through Season/Postseason progression and history.
 
-Default rotations are deterministic and allocate each position independently. Player overall feeds a softmax weighting with a quality temperature of 5, so larger talent gaps produce more top-heavy minutes while close players split more evenly. The top two natural-position players remain eligible; a third-or-deeper player must project to at least five initial weighted minutes or remains at zero. When backups exist, a player is capped at 36 minutes; a sole player at a position may play all 40. Integer rounding preserves exactly 40 minutes per position. Stamina is not weighted separately because it already contributes to derived overall, and no fatigue behavior exists yet.
-
-Rotation validation returns structured, serializable issues for unknown players, non-finite or out-of-range player minutes, positional totals other than 40, and team totals other than 200.
+The generator begins with the historical natural-position allocation and makes
+only accepted conservative substitutions. Exact constants, validation, and
+behavioral evidence live in `SIMULATION.md`.
 
 ## Initial derived team strength
 
@@ -118,7 +125,7 @@ Game Presentation V0 exposes this information through deterministic demo matchup
 
 ## Initial coaching agency — implemented
 
-Rotation Management is the first direct coaching decision available to the user. In the current exhibition workflow, HOME is the coached Team and AWAY retains its generated default Rotation. The coach distributes the home Team's available 200 player-minutes within the v0.1 natural-position constraint: exactly 40 minutes at each position.
+Rotation Management is the first direct coaching decision available to the user. In the current exhibition workflow, HOME is the coached Team and AWAY retains its generated default Rotation. The coach distributes 200 minutes across five 40-minute floor positions using Rotation V1's derived legal eligibility and 40-minute aggregate Player cap.
 
 Because Team Strength weights Player influence by assigned minutes, a legal Rotation change alters Team OFF, DEF, and OVR and therefore affects game outcomes probabilistically. Better Players should usually deserve more minutes, but differences between Player offense, Player defense, and roster depth can make choices contextual. The interface exposes those consequences without declaring one Rotation strategically correct.
 
@@ -246,7 +253,7 @@ Preseason
 ```
 
 ```text
-maintain board, priorities, and Active Offers
+maintain Board, Focus, and Active Offers
 → complete basketball rounds
 → recruiting periods advance
 → relationships and standings evolve
@@ -259,9 +266,14 @@ The saved plan supports both pacing styles already established by Quick Sim and 
 - A hands-on user may revisit and adjust the recruiting plan frequently.
 - A fast user may set persistent choices and allow them to advance automatically through ordinary round progression or Super Sim.
 
-### Positional needs, boards, priorities, and offers
+### Positional needs, Board, Focus, and Offers
 
-Projected graduating positions create strict natural-position Recruiting capacity. Two graduating SGs and one graduating C create two SG openings and one C opening—not three interchangeable slots. This preserves the current natural-position roster and Rotation model; multi-position eligibility, position changes, generic scholarships, roster cuts, transfers, and other flexibility are future systems.
+Projected graduating positions create strict natural-position Recruiting
+capacity. Two graduating SGs and one graduating C create two SG openings and
+one C opening—not three interchangeable slots. Rotation V1 eligibility changes
+floor minutes only: a natural PG who may play SG floor minutes does not satisfy
+an SG Recruiting opening. Stored multi-position identity, position changes,
+generic scholarships, cuts, and transfers remain separate future systems.
 
 A Program may place up to 10 Recruits on its board, including backups and reaches beyond its available openings. Board membership means the Program is recruiting/following that Player. An Active Offer means the Program is currently willing to consume one projected opening at that Player's position if he commits. Only an active board target with a valid Active Offer may commit; an unoffered backup may still build relationship progress.
 
@@ -332,7 +344,12 @@ Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from th
 
 Across 250 completed Seasons, the current Recruiting, graduation, Development, and rollover rules settled into a stable long-run talent level. Upperclassmen were stronger on average (`FR < SO < JR < SR`), prestige created a meaningful but non-absolute Program hierarchy, better Teams won more often, and 26 of 32 Programs won at least one simulated championship.
 
-The current talent economy is frozen for V0. Do not casually retune Recruit generation, Recruiting, Development, or rollover. Recalibration becomes appropriate if new evidence reveals a real problem or a future system—such as transfers, early professional departures, redshirts/fifth years, dynamic prestige, roster-size or position-flexibility changes, or staff/Development modifiers—materially changes talent flow.
+The current talent economy is frozen around Recruit Talent Distribution V1 and
+Player Development V1. The earlier long-run V0 evidence remains historical,
+but its talent-generation and Development behavior was superseded after manual
+playtesting. Do not casually retune Recruiting, Talent V1, Development V1, or
+rollover without new evidence or a future system that materially changes talent
+flow.
 
 ## Accepted Player Season Stats V0
 

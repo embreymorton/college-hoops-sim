@@ -13,7 +13,7 @@ Player/Team generation → Rotation → Player OFF/DEF → Team OFF/DEF/overall
 
 The completed single-game pipeline remains a game-level model. Possessions, play-by-play, substitutions, and fatigue remain separate future work.
 
-Single-Game Simulation, Player Box Scores V0, Game Presentation V0, Rotation Management V0, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason Domain / Simulation and presentation, Dynasty Foundation + Progression V0, Recruiting V0, Next-Season Roster Assembly V0, Dynasty Season Rollover V0, and the player-facing Dynasty lifecycle are complete. Universe initialization supplies deterministic Teams and legal default Rotations to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season/Postseason `GameResult` facts and finalized Recruiting facts are preserved in their separate Dynasty histories.
+Single-Game Simulation, Player Box Scores V0, Rotation V1, Stable Fictional Basketball Universe V0, Schedule Generation V0, Season State and Progression V0, Super Sim V0, Player/Team Season Stats, League exploration, Postseason, Dynasty progression, Recruiting, rollover, and the player-facing Dynasty lifecycle are complete. Universe initialization supplies deterministic Teams and legal flexible V1 defaults to this accepted pipeline; Schedule Generation and Dynasty progression do not alter game scoring, variance, overtime, or box-score formulas. Completed Season/Postseason `GameResult` facts and finalized Recruiting facts are preserved in their separate Dynasty histories.
 
 AI Round Simulation and Standings V0 is complete and accepted. Season-level automatic simulation composes the existing single-game model without changing its scoring, variance, overtime, or box-score behavior. Each ScheduledGame receives an independent seed derived conceptually as:
 
@@ -393,7 +393,7 @@ The canonical seed followed this representative path:
 | 40 | 81.15 |
 | 50 | 81.22 |
 
-The late-window Team OVR distribution retained meaningful separation: P10 `75.2`, P25 `78.7`, median `81.9`, P75 `84.6`, and P90 `86.4`. Equilibrium near 81 is an observed outcome of current V0 rules, not a target constant.
+The late-window Team OVR distribution retained meaningful separation: P10 `75.2`, P25 `78.7`, median `81.9`, P75 `84.6`, and P90 `86.4`. Equilibrium near 81 was an observed outcome of that historical V0 talent model, not a current target; Recruit Talent Distribution V1 and Development V1 later superseded it.
 
 ### Player lifecycle and Development
 
@@ -563,9 +563,36 @@ Shooting percentages use aggregate makes divided by aggregate attempts, never av
 
 The completed Quick Sim card derives whole-game PTS, REB, and AST leaders from the canonical home plus away `PlayerGameStats` in one stored `GameResult`. A leader may come from either Program. Ties resolve deterministically by the target statistic, minutes, then stable Player ID; an all-zero category displays no arbitrary leader. This is presentation projection only and creates no alternate result, leaderboard state, or simulation formula.
 
-## Implemented Rotation constraint
+## Accepted Rotation V1
 
-Each natural position owns exactly 40 minutes, producing 200 regulation player-minutes per Team. Missing Player IDs in a Rotation mean zero minutes. Players cannot consume minutes at another position. This is an intentionally temporary simplification until flexible positional eligibility is explicitly designed.
+Canonical `RotationV1.minutesByPosition` stores Player-minute assignments for
+each floor position. PG, SG, SF, PF, and C each total exactly 40 minutes, Team
+minutes total 200, and no Player may exceed 40 aggregate minutes. Aggregate
+Player minutes are derived from the five buckets.
+
+Eligibility is derived from natural position and is not stored on Player:
+
+```text
+PG → PG / SG
+SG → SG / SF
+SF → SF / PF
+PF → PF / C
+C  → C / PF
+```
+
+Fresh Universe, Exhibition, and Dynasty rollover defaults use the deterministic
+flexible generator. It begins with the unchanged V0 natural allocation, converts
+it losslessly, and applies legal substitutions using balanced contribution
+`(OFF + DEF) / 2`: minimum advantage `5`, maximum secondary minutes per Player
+`8`, maximum aggregate minutes `40`, buried baseline maximum `9`, displaced
+incumbent minimum `20`, and the accepted V0-capped-player exception at `36`.
+Tie-breaking is stable and consumes no RNG.
+
+Existing V1 rotations are never regenerated during Season progression,
+Postseason transition, cloning, archives, drafts, or simulation. V0 remains only
+at compatibility, normalization, conversion, equivalence-test, and historical
+diagnostic boundaries. Accepted WATCH metrics are 36→40-minute frequency,
+interior/forward-heavy secondary paths, and rare large incumbent displacement.
 
 ## Implemented v0.1 derived strength
 

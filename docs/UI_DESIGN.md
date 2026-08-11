@@ -48,7 +48,13 @@ Super Sim remains a confirmed secondary pacing control for Midseason (through Ro
 
 ## Rotation and Box Score presentation
 
-Game Prep reuses the accepted Rotation Editor: compact minute steppers, position and Team minute budgets, engine-authored legality, default/current OFF/DEF/OVR comparison, reset, and disabled simulation while invalid. A legal draft commits to the current competition state; temporary invalid drafts do not affect Quick Sim.
+Game Prep reuses the accepted Rotation V1 Editor: five floor-position sections,
+only legally eligible Players in each section, compact minute steppers, floor
+and Team budgets, derived aggregate Player totals, engine-authored legality,
+default/current OFF/DEF/OVR comparison, reset, and disabled simulation while
+invalid. Legal secondary assignments may be made manually. A legal draft
+commits to current competition state; temporary invalid drafts do not affect
+Quick Sim.
 
 Postgame and historical views use the accepted final-score and full Player box-score presentation. Historical results are read-only. Exhibition retains home-Team editing and deterministic re-simulation for isolated development testing, but it does not define the permanent Season workflow.
 
@@ -67,6 +73,18 @@ Tournament Hub
 The controlled Program may be qualified/alive, eliminated, or did not qualify. These are distinct legitimate states; the wider Tournament remains simulatable after elimination or non-qualification. Tournament Quick Sim preserves NEUTRAL context and milestone language such as advancement, National Championship qualification, Tournament Run Ends, and National Champions. The bracket progressively resolves canonical participant sources and remains horizontally scrollable on narrow screens.
 
 Postseason-specific styles live in `src/postseason.css` beside shared `src/styles.css`. React and Zustand present and orchestrate public Postseason facts; they do not recreate selection, advancement, or champion rules.
+
+### Planned Postseason presentation polish
+
+The bracket is accepted and should remain intact. The top Tournament/Season
+Complete lifecycle composition remains a playtesting-driven near-term target:
+on desktop, likely group Tournament/championship status and Season Complete
+handoff coherently on the left, with Recruiting/Late-Recruiting context on the
+right, avoiding the current large dead space. Fresh visual inspection should
+refine the composition without redesigning the bracket.
+
+This is presentation work. Tournament balance/seeding is a separate simulation
+diagnostic and must not be conflated with layout polish.
 
 ## Dynasty lifecycle and Recruiting — implemented
 

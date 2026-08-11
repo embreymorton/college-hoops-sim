@@ -4,9 +4,17 @@ This file contains desirable product/gameplay ideas that are intentionally unsch
 
 Inclusion does not mean commitment, priority, or an implementation date. An idea may move into `ROADMAP.md` only after it is deliberately selected as planned work. Bugs, technical debt, maintainability risks, and current-design scaling watchpoints belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` instead.
 
+This file is a parking lot: an idea may remain here indefinitely. When repeated
+Playtesting evidence supports it and the project deliberately selects it, move
+the selected work into Roadmap and remove or reword duplicate future-only text.
+See `DOCUMENTATION_POLICY.md`.
+
 ## Recruiting boundary
 
-In-season Recruiting V0—including national-class generation, rankings/stars, boards, capped Focus, Active Offers, round-based advancement, commitments, AI Recruiting, Late Recruiting, and finalized incoming classes—is implemented and accepted in Roadmap Phase 5B. Phase 5C is also complete: committed Recruits enroll, next-season rosters are assembled, and the pure backend lifecycle initializes the next Season and Recruiting cycle. Recruiting UI, Dynasty rollover presentation, historical browsing, and persistence remain separate future product work. See `ROADMAP.md` for sequencing and `GAME_DESIGN.md` / `ARCHITECTURE.md` / `SIMULATION.md` for accepted behavior.
+Board + Focus + Offer Recruiting, its player-facing UI, Late Recruiting,
+finalization, freshman enrollment, Offseason presentation, and repeatable Dynasty
+rollover are implemented. Historical browsing and persistence remain future
+product work. See `ROADMAP.md` for deliberately selected sequencing.
 
 ### Recruiting depth — future and non-blocking
 
@@ -25,7 +33,9 @@ In-season Recruiting V0—including national-class generation, rankings/stars, b
 - Recruiting battles, class-history UI, and retrospectives
 - Recruiting class rankings, awards, and recognition
 
-These enhancements are intentionally unscheduled and are not Recruiting V0 or Dynasty MVP requirements. Current V0 exposes exact ratings/Potential, gives no winning or Tournament attraction bonus, and treats commitments as final.
+These enhancements are intentionally unscheduled and are not Dynasty MVP
+requirements. Current Recruiting exposes exact ratings/Potential, gives no
+winning or Tournament attraction bonus, and treats commitments as final.
 
 Recruit Talent Distribution V1 and the current talent economy are accepted and frozen. Transfer-portal behavior, NIL, facilities, staff modifiers, NBA/early-departure rules, or other future Recruiting inputs may require a new long-run calibration after their design is implemented; their possibility is not a reason to retune the present system.
 
@@ -83,7 +93,7 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 - Playing-time expectations
 - Generic roster spots or scholarship accounting
 - Roster-size changes
-- Multi-position eligibility
+- Persistent Player secondary-position identity beyond current derived Rotation V1 eligibility
 - Position changes
 - Roster cuts and walk-ons
 - Transfer portal
@@ -93,11 +103,14 @@ For protected Conference-champion seed scaling and first-round Conference-rematc
 - Rotation-preference carryover between seasons
 - Staff and coaching carousel
 
-None is required for the current Dynasty MVP. These systems may eventually loosen Recruiting V0's strict natural-position capacity, but they are not implicit in Phase 5C.
+None is required for the current Dynasty MVP. Rotation V1 already permits
+derived adjacent-position floor minutes, but Recruiting openings, roster
+construction, Offers, and Player identity still use natural position. These
+future systems would change that deeper boundary.
 
 ### Player-development depth
 
-Player Development V0 is accepted. Optional later depth may include:
+Player Development V1 is accepted and frozen. Optional later depth may include:
 
 - age/class-based regression
 - playing-time or statistical-performance development effects
@@ -110,8 +123,6 @@ These are unscheduled enhancements, not prerequisites for the accepted Season Ro
 
 ## Presentation and broader modes
 
-- Dynasty lifecycle and Recruiting UI over the accepted backend domain
-- Completed-season, offseason, rollover, and next-season transition presentation
 - Save/load and persistence UX
 - Starting-five, matchup-comparison, or positional-insight presentation
 - Explicit Player or Team archetype presentation
@@ -138,4 +149,7 @@ The accepted Dynasty archive and stable returning Player identity preserve the s
 
 Expansion details remain intentionally high-level and must not turn Universe V0's `32 / 4 / 8` configuration into generic engine assumptions.
 
-Systems that change departures, eligibility, roster capacity, Player Development, position capacity, or prestige should rerun long-run talent calibration when implemented. Ordinary presentation and application-integration work should not reopen the frozen V0 calibration.
+Systems that change departures, eligibility, roster capacity, Player Development,
+position capacity, or prestige should rerun long-run talent calibration when
+implemented. Ordinary presentation work should not reopen frozen Talent V1,
+Development V1, Recruiting, or Rotation V1.

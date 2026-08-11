@@ -133,7 +133,11 @@ Long-run calibration across five deterministic seeds and 250 completed Seasons c
 
 ## Dynasty Long-Run Calibration V0 — implemented and accepted
 
-The backend loop reproducibly reaches a stable endogenous talent level under current V0 rules. The initial generated Universe transitions upward during the first several Seasons, while the Seasons 16–50 Team OVR slope averages approximately zero across seeds. Incoming and graduating populations have nearly identical average Potential, and Player Development creates the expected average progression from freshman to senior.
+The backend loop reproducibly reached a stable endogenous talent level in the
+historical V0 calibration. Manual play later intentionally reopened and
+superseded its talent-generation and Development behavior with Recruit Talent
+Distribution V1 and Player Development V1; those current systems are validated
+and frozen.
 
 The simulation/domain and player-facing Dynasty MVP are complete, and the current talent economy is frozen. The player controls each major lifecycle checkpoint rather than being advanced automatically through Recruiting finalization, Offseason, or rollover.
 

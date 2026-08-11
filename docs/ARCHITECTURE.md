@@ -92,10 +92,19 @@ The Season store is not authoritative for Program records, Conference records, s
 
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
+Canonical live rotation state is `RotationV1`, with isolated Player-minute maps
+for each floor position. Aggregate minutes and legal secondary eligibility are
+derived. Universe, Season, Postseason, Dynasty, Exhibition, Zustand drafts, and
+React editing use V1; the engine's broader `RotationInput` and
+`normalizeRotationToV1()` exist only at intentional compatibility/migration
+boundaries. Fresh Universe, Exhibition, and rollover defaults use the accepted
+flexible V1 generator. Existing assignments are deep-cloned and preserved rather
+than regenerated.
+
 ```text
 Game Prep
 → Zustand draft
-→ validateRotation()
+→ validateRotationV1()
 → updateProgramRotation()
 → canonical Season Rotation
 → scheduled-game simulation
@@ -118,7 +127,7 @@ The six-program exhibition catalog remains a presentation adapter. Charlotte Tec
 
 `SeasonProgramState` owns the current `Team` and legal current `Rotation` needed to play games for one Program. Universe definitions remain stable world configuration outside Season basketball state, while the regular-season Schedule remains unchanged structural data inside the Season. `resultsByGameId` is the single canonical completed-game collection and preserves each full engine-produced `GameResult`, including Player box scores.
 
-Season operations are pure: `recordGameResult()` and `updateProgramRotation()` return new Season values without mutating their inputs. Recorded results are immutable facts and cannot be silently overwritten. Result recording validates the ScheduledGame ID, exact home/away orientation, score/winner consistency, and that Player points reconstruct each Team score. Rotation updates delegate legality to the engine's existing `validateRotation()` contract.
+Season operations are pure: `recordGameResult()` and `updateProgramRotation()` return new Season values without mutating their inputs. Recorded results are immutable facts and cannot be silently overwritten. Result recording validates the ScheduledGame ID, exact home/away orientation, score/winner consistency, and that Player points reconstruct each Team score. Rotation updates delegate legality to the engine's `validateRotationV1()` contract.
 
 Partial rounds and out-of-order result insertion are supported. Current round is the lowest Schedule round with a pending game; round completion, regular-season completion, overall Program records, and Conference records are projections over Schedule plus recorded results. `controlledProgramId` is intentionally absent because user ownership belongs to application session state or future Dynasty state rather than the generic Season domain.
 
@@ -318,7 +327,10 @@ The application can repeat Season → Recruiting → Postseason → Late Recruit
 
 The immutable full-snapshot architecture remained correct and JSON-serializable through accepted 50-Season Dynasty runs: no history overwrite, identity collision, Schedule/Game-ID collision, or serialization failure occurred. Full snapshots have a measurable storage cost, however. One canonical serialized `DynastyState` measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50—approximately linear growth near 3 MB per completed Season. Persistence architecture must evaluate this before production-scale saves or very long user Dynasties, without prematurely prescribing compression, pruning, database storage, or another representation.
 
-Long-run calibration changes no ownership boundary. Recruit generation, Recruiting calibration, Player Development, roster rollover, and the combined talent economy are frozen for current V0 rules. Recalibration requires new evidence or a future system that changes talent flow; ordinary UI integration does not.
+Long-run calibration changes no ownership boundary. Board + Focus + Offer,
+Recruit Talent Distribution V1, Player Development V1, Rotation V1, Prestige,
+and roster rollover are frozen unless new evidence or a future system changes
+their underlying assumptions. Ordinary UI integration does not reopen them.
 
 ## Player Season Stats projections
 
@@ -371,7 +383,11 @@ Player Season Stats and Team Season Stats remain regular-season-only. Postseason
 
 Consumers import engine capabilities and types through `src/engine/index.ts`; the box-score allocator remains an internal simulation detail. Universe consumers use the public `src/universe/index.ts` surface for `UNIVERSE_V0`, definition validation, deterministic dynasty initialization, and public universe types. Schedule consumers use `src/schedule/index.ts`, which exposes the accepted V0 configuration and version, schedule generation, optional lifecycle Game-ID namespacing, structured validation, Program-game lookup, and schedule domain types. Season consumers use `src/season/index.ts` for initialization, strict result recording, legal Rotation replacement, structured validation, round/program queries, completion checks, record derivation, scheduled-game, round, and through-round simulation, derived Conference standings, Player/Team Season Stats, national/Team leader projections, and Player game logs. Postseason consumers use `src/postseason/index.ts` for deterministic selection, bracket creation, initialization, validation, participant and round queries, Rotation replacement, tournament simulation, and National Champion derivation. Dynasty consumers use `src/dynasty/index.ts` for initialization, offseason transition, roster assembly/validation, atomic Season rollover, projected/offseason roster outlooks, returning-Player development, Recruiting class/board/offer operations, period synchronization, finalization, queries, and public Dynasty/Recruiting/archive/offseason types. No lower layer imports Dynasty.
 
-Game Presentation V0, Rotation Management V0, Season Presentation V0, Season UX Polish V0, Super Sim V0, Player/Team Season Stats, League & Player Exploration V0, Postseason Domain / Simulation V0, Postseason Presentation V0, the shared fast/detailed game-flow QOL, Dynasty Foundation + Progression V0, Recruiting V0, Season Rollover V0, Dynasty Long-Run Calibration V0, and the player-facing Dynasty application loop are complete. Rollover preserves canonical history and controlled Program identity while resetting stale season-specific session presentation state.
+Rotation V1, Season presentation, Super Sim, Player/Team Season Stats, League and
+Player exploration, Postseason, Recruiting UI, Late Recruiting, Offseason,
+rollover presentation, and the repeatable player-facing Dynasty loop are
+complete. Rollover preserves canonical history and controlled Program identity
+while resetting stale season-specific session presentation state.
 
 The engine was not changed for Rotation Management, Universe V0, Schedule Generation V0, or Season State V0. Editable exhibition Rotation state lives in the application layer, while Season Rotations live in `SeasonProgramState`; both rely on engine validation. The universe consumes only the engine public API; `src/engine` never imports universe, schedule, or Season definitions. Universe initialization uses an isolated deterministic RNG stream per Program, so one Program's roster is reproducible and unaffected by Program definition order or unrelated Programs. It also produces a valid default Rotation for every initialized Team. The Schedule module remains structure-only; the Season layer composes its output with initialized basketball state and completed results.
 

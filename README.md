@@ -6,7 +6,7 @@ A deterministic fictional college basketball dynasty simulator built with React,
 
 The playable Dynasty loop is repeatable from Program selection through consecutive Seasons:
 
-- **Basketball Engine V0:** deterministic Player and 12-Player roster generation, Rotation Management, derived Player/Team ratings, game simulation, overtime, and complete Player box scores.
+- **Basketball engine:** deterministic Player and 12-Player roster generation, floor-position-aware Rotation V1 with legal secondary-position flexibility, derived Player/Team ratings, game simulation, overtime, and complete Player box scores.
 - **Fictional Universe V0:** 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
 - **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed Game Prep, Super Sim, historical results, and full box-score inspection.
 - **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details, Player Details, and cross-Program navigation.
@@ -38,4 +38,10 @@ The current playable core is complete. Intentionally deferred systems include pe
 - `npm run sim:roster-rollover` and `sim:season-rollover`
 - `npm run sim:dynasty-long-run`
 
-Project constraints live in [`docs/`](docs/). Start with the [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [game design](docs/GAME_DESIGN.md). Optional product ideas belong in [future features](docs/FUTURE_FEATURES.md); engineering risks and follow-ups belong in [known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md).
+Project constraints live in [`docs/`](docs/). For ongoing work, start with
+[current state](docs/CURRENT_STATE.md), then [playtesting](docs/PLAYTESTING.md),
+then the [roadmap](docs/ROADMAP.md). Optional ideas belong in
+[future features](docs/FUTURE_FEATURES.md); confirmed risks belong in
+[known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md). The
+[documentation policy](docs/DOCUMENTATION_POLICY.md) explains how these sources
+are maintained after accepted milestones.

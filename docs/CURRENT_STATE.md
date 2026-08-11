@@ -1,6 +1,29 @@
 # Current Repository State
 
+> **Fresh planning and engineering sessions must read this document first.**
+
 This is the concise handoff for the repository as it exists today. It records accepted production truth, not future design. The repository is authoritative when this document and code disagree.
+
+Then read [PLAYTESTING.md](PLAYTESTING.md) for why current priorities exist,
+[ROADMAP.md](ROADMAP.md) for selected sequencing, [CALIBRATION.md](CALIBRATION.md)
+before proposing simulation tuning, and
+[COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md](COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md)
+for project working style.
+
+Before modifying documentation, follow
+[DOCUMENTATION_POLICY.md](DOCUMENTATION_POLICY.md). Documentation is maintained
+incrementally as part of milestone acceptance, not through routine broad syncs.
+
+> **Fresh Context Rules**
+>
+> - Current repository state beats old chat history.
+> - Read `PLAYTESTING.md` before choosing product priorities.
+> - Frozen systems require new evidence to reopen.
+> - `FUTURE_FEATURES.md` is an idea bank, not a roadmap.
+> - `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` is not a feature backlog.
+> - Simulation changes follow `CALIBRATION.md`.
+> - Documentation changes follow `DOCUMENTATION_POLICY.md`.
+> - Prefer small green milestones.
 
 ## Current product
 
@@ -22,7 +45,7 @@ New Dynasty
 The player-facing product includes:
 
 - deterministic game simulation, Hub Quick Sim, Game Prep, and Box Score presentation;
-- V0 Rotation editing;
+- floor-position-aware Rotation V1 editing, including derived legal secondary-position assignments and deterministic flexible defaults;
 - schedules, standings, League exploration, and Player season statistics;
 - the national Tournament;
 - Board + Focus + Offer Recruiting, a generated national board, onboarding, Late Recruiting, and finalization;
@@ -57,6 +80,10 @@ Maximum Focus targets = 3
 
 Priority `1–5` and normalized attention are removed. AI plans coherently align Focus and Offers and retain valid premium pursuits. Prestige/attraction is accepted.
 
+Recruiting and roster construction continue using each Player's one natural
+position. Rotation eligibility affects floor minutes only; it does not satisfy
+another position's Recruiting opening or Offer capacity.
+
 ### Recruit Talent Distribution V1
 
 Recruit Talent V1 uses partially independent readiness and ceiling, with `POT >= OVR`. National Rank uses `56% OVR / 44% POT`. It intentionally creates fewer immediately elite freshmen, raw high-upside prospects, ready-now lower-ceiling prospects, and a wider OVR/POT relationship.
@@ -81,6 +108,12 @@ class baseline
 | JR | 0–2 | 0.65 | 8 |
 
 Tendency shares are weak `30%`, steady `50%`, and strong `20%`. There is no Prestige-based Development modifier. Development V1 is frozen unless new evidence appears.
+
+### Rotation V1
+
+Rotation V1 is implemented, activated, behaviorally validated, and frozen.
+Its documented watchpoints—36→40-minute stars, interior/forward-heavy
+secondary usage, and rare large incumbent displacement—are not blockers.
 
 ### Calibration
 
@@ -199,7 +232,12 @@ accepted, subject to the documented WATCH metrics.
 
 ## Current playtesting and watchpoints
 
-[PLAYTESTING.md](PLAYTESTING.md) is the detailed empirical source of truth. High-value active observations include Position/Rotation flexibility; Tournament balance/seeding; Player Detail and development-history UX; Recruiting Focus-target and commitment visibility; Assistant Fill Remaining Board; the elite Recruit POT-gap watchpoint; persistent Coaching/Rotation navigation; a Season Complete Super Sim idea; League News/Round Recap; Hub/Tournament layout polish; shot selection; offseason League context; followed/favorite Players; and Program records/deeper statistical history. These are observations, not completed features.
+[PLAYTESTING.md](PLAYTESTING.md) is the detailed empirical source of truth. The
+next unresolved simulation question is Tournament balance/seeding. Leading UX
+opportunities are Player Details + Development History and Postseason Hub +
+Season-Complete Presentation Polish. Recruiting feedback and Assistant Fill
+Remaining Board are high-value QOL candidates. Rotation implementation is no
+longer active work.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
@@ -207,12 +245,32 @@ True powerhouse states can occur: one Northbridge roster reached roughly `87` Te
 
 Repeated play has produced 1/16 upsets, low-seed championship runs, and memorable Cinderella outcomes, but extreme seed differences can sometimes hide modest Team OVR differences. Tournament variance is **not** confirmed broken. Diagnose seeding quality versus actual game upset variance before tuning Game Sim.
 
-## Next engineering area
+## Planning From This State
 
-Rotation V1 is now the frozen production Rotation system: canonical V1 state,
-derived secondary eligibility, manual floor-position editing, flexible
-deterministic defaults, and the retained V0 compatibility boundary. Reopen it
-only if future playtesting or diagnostics produce new evidence.
+1. Read `CURRENT_STATE.md`.
+2. Read current priorities and unresolved evidence in `PLAYTESTING.md`.
+3. Check `ROADMAP.md` for completed work and intentional sequencing.
+4. Inspect the current relevant code before proposing architecture.
+5. Use `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` only for confirmed engineering risks.
+6. Use `FUTURE_FEATURES.md` only as an unscheduled idea bank.
+7. If work changes simulation or balance, follow `CALIBRATION.md`.
+8. Preserve frozen systems unless new evidence justifies reopening them.
+9. Prefer small green milestones.
+10. Feed observations from meaningful manual play back into `PLAYTESTING.md`.
+
+## For the Next Planning Session
+
+Start here. Read this file completely, then `PLAYTESTING.md`—especially Current
+Playtesting Priorities and Playtest Stories / Design Signals—then Roadmap Phase
+6E. Inspect current code before designing implementation. Treat frozen systems
+as closed without new evidence; use Future Features for optional discovery, not
+priority, and Known Issues for confirmed risks, not a feature backlog.
+
+Rotation V1 is complete and frozen. The next unresolved simulation question is
+Tournament seeding versus actual upset behavior. The next major UX/storytelling
+opportunities are Player Details + Development History and Postseason Hub +
+Season-Complete Presentation Polish. Use Playtesting and Roadmap to select later
+QOL work.
 
 ## Documentation map
 
@@ -224,7 +282,10 @@ only if future playtesting or diagnostics produce new evidence.
 | [ARCHITECTURE](ARCHITECTURE.md) | System boundaries |
 | [SIMULATION](SIMULATION.md) | Accepted production formulas and rules |
 | [GAME_DESIGN](GAME_DESIGN.md) | Accepted game rules |
+| [UI_DESIGN](UI_DESIGN.md) | Implemented presentation patterns and selected near-term UI direction |
 | [PLAYTESTING](PLAYTESTING.md) | Observations and evidence |
 | [CALIBRATION](CALIBRATION.md) | Tuning methodology |
 | [KNOWN_ISSUES_AND_OPTIMIZATIONS](KNOWN_ISSUES_AND_OPTIMIZATIONS.md) | Confirmed unresolved technical/calibration issues |
 | [FUTURE_FEATURES](FUTURE_FEATURES.md) | Deferred feature ideas |
+| [ASSISTANT OPERATING GUIDE](COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md) | How a fresh assistant should reason, plan, calibrate, and hand off work |
+| [DOCUMENTATION POLICY](DOCUMENTATION_POLICY.md) | Event-driven ownership and acceptance rules for maintaining project docs |

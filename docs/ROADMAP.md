@@ -6,6 +6,10 @@ Exact formulas and constants become source-of-truth documentation after implemen
 
 This file contains work intentionally placed in the development sequence. It is not a wishlist: unscheduled product ideas live in `FUTURE_FEATURES.md`, while engineering bugs, debt, and scaling watchpoints live in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
+Empirical priority changes originate in `PLAYTESTING.md`; only deliberately
+selected work moves here. Documentation updates follow
+`DOCUMENTATION_POLICY.md`.
+
 ## Phase 0 — Foundation — COMPLETE
 
 - React, TypeScript, Vite, Zustand, Vitest, and Testing Library foundation
@@ -292,7 +296,7 @@ Phase 5A intentionally stops at partial offseason rosters. Phase 5C consumes tho
 ### Phase 5B — In-Season Recruiting V0 — COMPLETE / ACCEPTED
 
 - One deterministic national Recruiting Class targeting Season N+1, with national/position rankings and 2–5-star classifications
-- Strict projected positional needs, boards of up to 10 targets, persistent priorities from 1–5, and capacity-limited Active Offers
+- Strict projected positional needs, boards of up to 10 targets, and capacity-limited Active Offers; the original Priority 1–5 mechanic was later superseded by Phase 6E.2A's accepted Board + Focus + Offer model
 - Fixed Board baseline effort plus capped Focus bonuses, quality-dependent decision timing, final commitments, and autonomous AI Recruiting
 - Recruiting periods 1–24 synchronized to regular-season completion and periods 25–28 synchronized to Postseason completion
 - Canonical period-by-period Super Sim equivalence, including offer invalidation and controlled-Program backup promotion from the existing board
@@ -320,7 +324,10 @@ Five deterministic Dynasty seeds completed 50 Seasons each for 250 Season observ
 
 Recruiting, Player Development, graduation, and rollover produced a stable endogenous V0 talent economy. All 250 lifecycle iterations retained valid rosters, Rotations, Schedules, Recruiting completion, identity/history integrity, and serialization. No gameplay calibration changed. Exact observations live in `SIMULATION.md`.
 
-Recruit generation, Recruiting calibration, Player Development, roster rollover, and their combined talent economy are frozen for V0. Reopen them only with new evidence or a future system that materially changes talent flow.
+This historical V0 equilibrium established lifecycle stability, but its Recruit
+talent distribution and Development behavior were intentionally superseded by
+Phase 6E.2B and Phase 6E.4 after manual playtesting. Current frozen production
+truth is Recruit Talent Distribution V1 plus Player Development V1.
 
 ## Phase 6 — Dynasty Application Loop — COMPLETE
 
@@ -350,6 +357,16 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.6E — Rotation V1 Production Representation Migration:** COMPLETE. Universe, Exhibition, Season, Postseason, Dynasty, Zustand, and React now store/edit canonical V1; existing assignments deep-clone across transitions, while all new production defaults preserve V0 behavior through lossless V0-to-V1 conversion. Manual legal secondary assignments are supported. The flexible V1 generator remains opt-in and inactive.
 - **6E.6F — Rotation V1 Generator Behavioral Validation:** COMPLETE — WATCH / ACCEPT. Paired direct, QUICK 1×3, and STANDARD 3×10 comparisons found real congestion relief, zero Team Strength regressions, stable rotation depth, and negligible ecosystem movement. Monitor the frequency of 36→40-minute stars and the interior-heavy secondary-position mix after activation; no generator tuning was warranted.
 - **6E.6G — Rotation V1 Production Activation + Freeze:** COMPLETE. Fresh Universe, Exhibition, and Dynasty rollover defaults now use the accepted deterministic flexible generator. Existing V1 rotations remain exact across cloning, Season/Postseason transitions, archives, drafts, and simulation. Rotation V1 is frozen subject to the accepted 40-minute, interior-path, and rare displacement watchpoints; V0 remains only at intentional compatibility/equivalence boundaries.
+- **6E.7 — Tournament Balance / Seeding Diagnostic:** NEXT. Separate ranking/seeding quality and actual Team-strength gaps from game-level upset variance before considering any tuning; Cinderella potential remains desirable.
+- **6E.8 — Player Details + Development History UX:** PLANNED. Extend the existing Player Details surface over current and archived facts so memorable careers and offseason gains are easier to follow.
+- **6E.9 — Postseason Hub + Season-Complete Presentation Polish:** PLANNED. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
+
+Near-term high-value QOL candidates after those selected slices are Recruiting
+Focus/commitment visibility, Assistant Fill Remaining Board, Coaching navigation
+with a permanent Rotation home, and Sim to Season Complete. League News, Season
+Hub hierarchy, offseason League context, followed Players, records, shot
+selection investigation, and minor recap polish remain observed/later rather
+than a fixed feature schedule.
 
 ## Non-binding development-agent fit
 

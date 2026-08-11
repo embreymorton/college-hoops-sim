@@ -23,7 +23,10 @@ Do not blindly add features. Help decide what is worth building, what should be 
 
 # Source-of-Truth Discipline
 
-Before making architectural or implementation recommendations, inspect the CURRENT repository state and relevant project docs.
+Before making architectural or implementation recommendations, read
+`docs/CURRENT_STATE.md` completely and inspect the current repository state.
+Then use `PLAYTESTING.md` as the empirical priority source and `ROADMAP.md` as
+the deliberately selected sequence.
 
 Prefer current code + current docs over assumptions from old chats.
 
@@ -44,6 +47,11 @@ Typical source-of-truth docs:
 If conversation history conflicts with the current repo, the repo wins.
 
 If prior implementation attempts were reverted, do not treat them as current architecture.
+
+`FUTURE_FEATURES.md` is an unscheduled idea bank, not a priority list.
+`KNOWN_ISSUES_AND_OPTIMIZATIONS.md` records confirmed risks and watchpoints, not
+a product roadmap. Observations in `PLAYTESTING.md` are hypotheses/evidence
+until their documented status says otherwise.
 
 ---
 
@@ -290,7 +298,9 @@ If an acceptance gate fails, do not paper over it with compatibility hacks or we
 
 # Documentation Rules
 
-Do not perform a broad docs rewrite after every small code change.
+Follow `docs/DOCUMENTATION_POLICY.md`. Documentation updates are
+acceptance-driven and targeted; do not perform broad docs syncs after normal
+milestones.
 
 Update source-of-truth docs after a system is actually accepted.
 
@@ -307,6 +317,10 @@ Typical roles:
 Do not document speculative formulas as if implemented.
 
 Do not mark a full feature complete after only an internal migration checkpoint.
+
+Final implementation responses must include `## Documentation` and identify the
+docs updated, the docs intentionally not updated, or that no accepted
+source-of-truth fact changed.
 
 ---
 
@@ -357,6 +371,11 @@ targeted tests
 → build
 → calibration if relevant
 
+# Documentation
+Follow docs/DOCUMENTATION_POLICY.md.
+Only after acceptance gates pass, update only the docs whose owned facts changed.
+Do not document speculative or failed behavior.
+
 # Do NOT change
 - ...
 
@@ -365,6 +384,7 @@ Report:
 - implementation
 - decisions
 - validation
+- documentation impact
 - deferred work
 
 Stop after Phase X.

@@ -8,6 +8,10 @@ observation → evidence → question / hypothesis → next investigation → de
 
 It is not a raw notes dump or an issue tracker. A single playthrough observation is not automatically a confirmed problem.
 
+When manual play changes product priorities, update this evidence first. Only
+deliberately selected work moves into `ROADMAP.md`; follow
+`DOCUMENTATION_POLICY.md` for acceptance-driven updates.
+
 - `PLAYTESTING.md`: gameplay observations and hypotheses
 - `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`: confirmed technical or calibration problems, debt, and scaling risks
 - `FUTURE_FEATURES.md`: intentionally deferred systems and features
@@ -178,7 +182,9 @@ The assistant should fill only unused capacity; manual targets, Focus, and Offer
 
 Manual classes included high-OVR recruits at their ceiling, such as `85/85`, `84/84`, and `87/87`. Recruit Talent V1 intentionally calculates `POT = max(OVR, ceiling)`, so this is permitted.
 
-Future diagnostics should measure `POT === OVR` by OVR and star tier, plus POT-gap distributions. Do not change Recruit Talent V1 from this observation alone.
+Future diagnostics should measure `POT === OVR` for all Recruits, 5★, 4★,
+80+, 85+, and 90+, plus POT-gap buckets `0`, `1–3`, `4–7`, `8–12`, and
+`13+`. Do not change Recruit Talent V1 from this observation alone.
 
 ## Generated Draft Board Ambition — WATCH
 
@@ -188,11 +194,40 @@ Pine Valley's generated Board sometimes immediately offers low-tier/2★ targets
 
 Playthrough attachment formed around Lucas Webb, Aaron Jackson, Josiah Hughes, Nolan Evans, and Silas Matthews. Webb led the league in scoring and assists and had a 38-point game; Jackson rose from `55/97` to `84`; Silas rose from `57/85` to `82`; and Josiah led the league in scoring. Losing productive seniors made the rebuild feel meaningfully different.
 
-A future Player Detail view may show identity, position/class, OVR/POT, nine attributes, season statistics, game highs, and development history (for example, freshman OVR then each later OVR and gain). It should derive from archived Dynasty facts and stable IDs rather than duplicate mutable history. Do not design the full screen here.
+The existing Player Details view should be extended as **Player Details +
+Development History UX**, not replaced by a new Player system. Preserve identity,
+natural/floor eligibility where useful, class, OVR/POT, nine attributes, season
+stats, shooting splits, game log, and derivable highs. Add a career progression
+view such as FR OVR, then SO/JR/SR OVR plus offseason gain. Derive history from
+stable Player IDs and archived Dynasty Season snapshots rather than duplicate
+mutable career state.
 
 ## Followed Players / Favorites — OBSERVED
 
 Following Silas Matthews after he joined another Program was enjoyable. A future favorite/followed-player concept could surface current Team, class, OVR, statistics, development, and notable performances. Do not commit to notifications or permanent history design yet.
+
+## Playtest Stories / Design Signals
+
+These are empirical examples, not permanent lore or guaranteed outcomes.
+
+- **Lucas Webb — Pine Valley:** a `68 OVR / 87 POT` Recruit developed by
+  `+12`, `+3`, and `+1` to roughly `84` as a senior, became a League leader in
+  scoring and assists, and scored 38 in a win over Wasatch. Player careers can
+  create attachment; the UI should make them easier to follow.
+- **Aaron Jackson:** a raw `55 / 97` Recruit gained `+12` and `+10` before
+  reaching roughly `84` as a senior. Talent V1 plus Development V1 can produce
+  genuine long-term upside stories.
+- **Silas Matthews:** approximately `57 / 85` at Pine Valley, then `69`, `78`,
+  and `82` as a senior. Following him while controlling another Program was
+  enjoyable, supporting League-wide Player following/history concepts.
+- **Northbridge powerhouse:** one roster reached about `87` Team OVR with three
+  `90+` Players, three more at `85+`, and an `84` freshman, yet did not remain
+  permanently dominant and suffered an early Tournament upset. Powerhouses can
+  exist without erasing memorable uncertainty.
+- **Franklin Metro Cinderella:** a low seed upset #1 Northbridge, beat the
+  controlled Team heavily in the semifinal, and lost the title game by two.
+  Cinderellas are fun; repeated extreme seeds should prompt diagnosis of seeding
+  quality versus actual variance, not automatic Game Sim tuning.
 
 ## Position / Rotation Flexibility — RESOLVED / WATCH
 
@@ -250,7 +285,9 @@ Playtesting suggests Rotation deserves a persistent home rather than existing on
 SEASON | COACHING | RECRUITING | LEAGUE
 ```
 
-Initial Coaching scope could be Rotation only. Position flexibility should be investigated before or alongside this work. Tactics and other coaching systems are not committed; Game Prep may still link to Rotation.
+Initial Coaching scope could be Rotation only. Rotation V1 now makes this a
+useful information-architecture improvement; tactics and other coaching systems
+remain uncommitted, and Game Prep may still link to Rotation.
 
 ## Round Complete Review — OBSERVED
 
@@ -275,11 +312,17 @@ Round completes
 
 Do not merge them into one committed feature yet.
 
-## Tournament Balance / Seeding — INVESTIGATING
+## Tournament Balance / Seeding — INVESTIGATING / NEXT DIAGNOSTIC
 
 Manual play saw multiple `16 > 1` upsets, two championship games between `16` and `14` seeds, and frequent upsets despite many Team OVR gaps being closer to `81` versus `77`. Northbridge fell early, while Franklin Metro made a Cinderella run.
 
-Cinderellas are desirable; this is not evidence that Game Simulation variance is wrong. A future diagnostic should separate seed quality from actual matchup-upset variance by measuring seed relationships to Team OVR, record, and win percentage; average seed-pair gaps; favorite win rates by OVR difference; matchup upsets; and Final Four/champion seeds. The question is whether seed labels or true basketball upsets drive the observed bracket shape.
+Cinderellas are desirable; seed labels alone are not evidence that Game
+Simulation variance is wrong. The next diagnostic must distinguish seeding and
+ranking quality, underlying Team-strength gaps, and actual matchup variance.
+Measure seed relationships to Team OVR and regular-season win percentage,
+average OVR by seed, 1/16–3/14 OVR gaps, favorite win rates by OVR difference,
+matchup upsets, and Final Four/champion seed distributions. No Tournament
+balance change is approved.
 
 ## Super Sim — Season Complete Target — OBSERVED / HIGH-VALUE QOL
 
@@ -294,6 +337,10 @@ SIM TO SEASON COMPLETE
 ```
 
 It must not enter Late Recruiting, finalize Recruiting, run the offseason, develop Players, or assemble next season's roster. This should reuse the existing Super Sim target model, alongside Midseason and end-of-regular-season targets, so players can inspect the final state and make late-Recruiting decisions through the existing lifecycle.
+
+That stopping point should expose final standings, bracket/champion, Player
+stats and leaders, Recruiting status, and remaining Late Recruiting decisions
+before any roster turnover.
 
 ## League News / Round Recap — OBSERVED
 
@@ -311,9 +358,16 @@ Future history could include program single-game points, season scoring, and car
 
 Conference standings are rarely used in their current prominent placement and can push more meaningful information below the fold. A future hierarchy might prioritize the game and Recruiting context, important updates, schedule/recent results, and a smaller conference snapshot with a route to the full view. Do not redesign it here.
 
-## Tournament Hub Layout — OBSERVED
+## Postseason Hub + Season-Complete Presentation Polish — PLANNED
 
-Repeated visual feedback notes awkward Tournament Complete and Season Complete card placement, excess space beneath Tournament Complete, and inconsistent top-dashboard composition. The bracket itself is good and should remain unchanged. A future layout could stack Tournament Complete and Season Complete on the left with Recruiting on the right. This is presentation-only and separate from the Tournament balance/seeding investigation.
+Repeated feedback notes awkward Tournament Complete and Season Complete card
+placement, excess dead space beneath Tournament Complete, and a visually
+disconnected Late Recruiting handoff. The bracket is good and must remain
+intact. A likely desktop direction groups Tournament/championship and Season
+Complete status on the left and Recruiting/Late-Recruiting context on the
+right. This presentation milestone is separate from Tournament balance/seeding.
+It is near-term because the Tournament is the Season payoff and one of the
+strongest generators of stories already present in the game.
 
 ## Minor UX Polish — OBSERVED
 
@@ -330,26 +384,27 @@ Keep below the foundational investigations:
 - Prestige / attraction
 - Recruit Talent Distribution V1 (except the explicit POT-gap and mature-supply watchpoints)
 - Player Development V1
+- Rotation V1
 - Calibration methodology
 
 Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Position / Rotation flexibility investigation
-2. Tournament balance / seeding diagnostic
-3. Player Detail + development-history UX
-4. Recruiting Focus-target / Recruiting-update visibility
+1. Tournament balance / seeding diagnostic
+2. Player Details + Development History UX
+3. Postseason Hub + Season-Complete Presentation Polish
+4. Recruiting Focus-target / commitment visibility
 5. Assistant Fill Remaining Recruiting Board
-6. Recruit POT-gap diagnostic
-7. Coaching / Rotation navigation
-8. Super Sim — Season Complete target
+6. Coaching navigation / permanent Rotation home
+7. Super Sim — Season Complete target
+8. Recruit POT-gap diagnostic
 9. League News / Round Recap
-10. Season Hub + Tournament Hub composition polish
-11. Shot-selection diagnostic
-12. Offseason around-the-league context
-13. Followed Players / Favorites
-14. Program records / deeper statistical history
+10. Season Hub information hierarchy
+11. Offseason around-the-league context
+12. Followed Players / Favorites
+13. Program records / deeper statistical history
+14. Shot-selection diagnostic
 15. Minor Quick Sim / Last 5 polish
 
 This ordering remains playthrough-driven and may change with new evidence.

@@ -2,6 +2,11 @@
 
 This file tracks accepted bugs, technical debt, maintainability concerns, performance/scaling risks, and current-design watchpoints. It is not a roadmap or product-feature backlog. Unscheduled gameplay/presentation ideas belong in `FUTURE_FEATURES.md`; deliberately sequenced work belongs in `ROADMAP.md`. Remove or mark an item resolved when implementation addresses it.
 
+A `PLAYTESTING.md` observation is not a known issue. Add it here only after
+diagnostic or engineering evidence confirms a real unresolved defect, debt item,
+measured scaling risk, or validated watchpoint. Follow
+`DOCUMENTATION_POLICY.md` when status changes.
+
 ## Open items
 
 ### P1 — Correct Super Sim completion-summary wording
@@ -37,17 +42,27 @@ Exhibition remains useful for isolated simulation, Rotation, and presentation te
 
 Player Season Stats inspection observed a Season in which all 12 Charlotte Tech Players recorded positive minutes in all 24 games. The stats layer is behaving correctly: positive minutes count as a game played, while zero minutes produce a DNP without incrementing `gamesPlayed`.
 
-The future balance question is whether accepted Rotation V0 eventually needs tighter seven-to-ten-Player regular rotations, occasional deep-bench DNPs, or more situational participation. Do not tune Rotation generation now. Revisit only if universal bench participation makes roster management less meaningful, Player season production less believable, or future development decisions less interesting. This is a low-priority design watchpoint, not an implementation defect or MVP blocker.
+Rotation V1 is current and frozen. Continue watching whether deep-bench
+participation makes roster management or Player production less believable,
+alongside the accepted V1 watchpoints: 36→40-minute stars,
+interior/forward-heavy secondary paths, and rare large incumbent displacement.
+These are not defects or blockers; reopen generation only with new evidence.
 
 ### P3 — Concentrated single-attribute offseason gains
 
-Aggregate Player Development V0 calibration is accepted. Its intentionally uneven, position-aware allocation can occasionally produce large gains in one skill; the canonical single-offseason inspection included examples such as `INT D +8` and `ATH +7` while overall development, Potential limits, and class curves remained healthy.
+The `INT D +8` and `ATH +7` examples came from the superseded Development V0
+checkpoint and are historical, not confirmed descriptions of Development V1.
+Development V1 still allocates attribute-level growth unevenly and may warrant a
+future population-shape diagnostic only if new play exposes a problem.
 
 This is a non-blocking micro-level calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Dynasty Long-Run Calibration V0 validated League-wide OVR equilibrium and class progression, but it did not deeply evaluate the basketball flavor of individual attribute shapes. Revisit only with attribute-level population evidence; do not conflate it with the now-resolved talent-inflation question.
 
 ### P3 — Strict positional Recruiting capacity may become restrictive
 
-Recruiting V0 intentionally replaces projected departures by exact natural position. Long-run calibration found stable positional populations, zero unfilled openings, and no premium Recruit stranded while compatible capacity remained, so the current model is structurally healthy.
+Recruiting intentionally replaces projected departures by exact natural
+position. Rotation V1 floor flexibility does not change roster construction,
+Recruiting openings, Offer capacity, or Player positional identity. Long-run
+calibration found this structure healthy.
 
 Revisit only if future generic scholarships, multi-position Players, position changes, cuts, walk-ons, transfers, or early departures loosen the roster model. Any change must update roster construction, offer capacity, and Rotation legality together rather than weakening only Recruiting validation.
 
@@ -99,7 +114,10 @@ Do not refactor this during Postseason polish. Future cleanup should prevent inv
 
 Dynasty Long-Run Calibration V0 completed 250 Seasons across five deterministic seeds. Average Team OVR stabilized at `81.25` over Seasons 16–50 with a mean slope of `+0.003` per Season; individual seed slopes ranged from `−0.016` to `+0.012`. The earlier Season 1 → 2 increase was part of the initial generated-roster transition, not persistent inflation. Incoming and graduating populations had nearly identical average Potential, while accepted Development bridged their OVR difference.
 
-Recruit generation, Recruiting calibration, Player Development, roster rollover, and their combined V0 talent economy are frozen. Reopen only with new evidence or a future talent-flow system such as transfers, early departures, eligibility changes, dynamic prestige, roster/position flexibility, or staff/Development modifiers.
+The V0 equilibrium result is historical lifecycle evidence. Its talent and
+Development behavior was superseded by Recruit Talent Distribution V1 and
+Player Development V1, which are the current frozen production systems. Reopen
+only with new evidence or a future talent-flow system.
 
 ### P2 — Recruit enrollment and exact next-season rosters — RESOLVED
 
@@ -131,3 +149,7 @@ Postseason Presentation established the anticipated feature-level boundary with 
 The current 16-Team tournament selects the top half of a 32-Program universe. The quality gap between its #1 and #16 seeds is naturally much smaller than the gap between real-world NCAA #1 and #16 seeds selected from hundreds of Division I programs, so lower-seed upset rates may be meaningfully higher than historical March Madness rates.
 
 Do not retune Game Simulation solely because V0 seed upset percentages differ from real NCAA history. Revisit only if repeated gameplay shows that seed value feels meaningless, strong Teams lack a meaningful advantage, or tournament outcomes feel excessively random. The accepted championship seed-band diagnostic currently shows that higher seeds retain strong overall tournament value; deeper seeds still winning occasionally is intentional upset potential, not automatically a defect.
+
+Repeated manual play now justifies the planned diagnostic in `PLAYTESTING.md`:
+measure seeding/ranking quality, actual OVR gaps, and matchup variance separately
+before changing anything. This investigation does not itself establish a bug.
