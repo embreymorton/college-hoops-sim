@@ -163,11 +163,13 @@ secondary paths, and rare large incumbent displacement.
 [PLAYTESTING.md](PLAYTESTING.md) is the detailed empirical source of truth. The
 Tournament seeding now preserves the selected four automatic qualifiers and 12
 at-larges, then seeds all 16 together through the accepted results-only résumé
-comparator. Leading UX
-opportunities are Player Details + Development History and Postseason Hub +
-Season-Complete Presentation Polish. Recruiting feedback and Assistant Fill
-Remaining Board are high-value QOL candidates. Rotation implementation is no
-longer active work.
+comparator. Player Details + Development History UX (Phase 6E.8) is complete:
+Player Details now shows a compact nine-attribute ratings grid, a prominent
+Career Progression table, and a compact Recruiting Origin section, all derived
+from existing canonical facts. The leading remaining UX opportunity is
+Postseason Hub + Season-Complete Presentation Polish. Recruiting feedback and
+Assistant Fill Remaining Board are high-value QOL candidates. Rotation
+implementation is no longer active work.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
@@ -196,11 +198,10 @@ remains closed.
 9. Validate fully before acceptance.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
-Rotation V1 and Tournament seeding are complete and frozen; Game Sim remains
-closed. The next major UX/storytelling
-opportunities are Player Details + Development History and Postseason Hub +
-Season-Complete Presentation Polish. Use Playtesting and Roadmap to select later
-QOL work.
+Rotation V1, Tournament seeding, and Player Details + Development History UX
+are complete. Game Sim remains closed. The next major UX/storytelling
+opportunity is Postseason Hub + Season-Complete Presentation Polish. Use
+Playtesting and Roadmap to select later QOL work.
 
 ## Documentation map
 

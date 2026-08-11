@@ -106,9 +106,18 @@ League
 │   ├── recent results
 │   └── roster / Player stats
 └── Player Details
-    ├── identity and ratings summary
+    ├── identity and OVR/POT summary
+    ├── compact nine-attribute ratings grid
+    ├── Recruiting Origin (Recruits only; omitted cleanly otherwise)
+    ├── Career Progression (Season/Class/OVR/Dev/PPG/RPG/APG)
     ├── regular-season statistics
     └── chronological game log
 ```
 
 Conference standings, Tournament field rows, Team rosters, national leader rows, Player game-log opponents, and Program links support cross-League Team/Player exploration with context-aware return navigation. These views consume derived regular-season projections and stable Universe identities rather than duplicating statistical state in Zustand.
+
+### Player Details + Development History — implemented (6E.8)
+
+Player Details now tells a Player's career story without duplicating any canonical facts. Nine current-ability ratings display as a compact three-column grid — deliberately not nine oversized cards — directly below identity/OVR/POT. Career Progression is a dense, prominent table (not a secondary tab) with one row per Season the Player is found on a roster in, current or archived: Season number, class, OVR, offseason development gain (`overall[n] − overall[n-1]`, blank for the earliest known Season), and PPG/RPG/APG. The active partial Season is included as the latest row and stays visibly partial. Recruiting Origin — star rating, national/position rank, entry OVR/POT, and signed Program — appears only for Players resolved from finalized Recruiting history and is omitted entirely, with no placeholder, for original Universe Players.
+
+All of this is a pure read-model (`derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts`) over existing archived Dynasty Season snapshots, the active Season, and finalized Recruiting history, connected by stable Player ID. It reuses the existing Player Season Stats projection for every Season, including archived ones, and introduces no new persisted career-history state. Existing current-season stats, shooting splits, game log, and Team ↔ Player navigation are unchanged.

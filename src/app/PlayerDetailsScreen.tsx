@@ -1,8 +1,12 @@
 import {
   ExplorationBackButton,
+  PlayerCareerProgressionTable,
   PlayerDetailsHeader,
   PlayerGameLogTable,
+  PlayerRatingsGrid,
+  PlayerRecruitingOrigin,
 } from '../components'
+import { derivePlayerCareerHistory } from '../dynasty'
 import { derivePlayerSeasonStats, getPlayerGameLog } from '../season'
 import { selectActiveSeason, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -12,9 +16,10 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
 
-/** Player Details: identity/ratings plus regular-season stats and game log, for any Player. */
+/** Player Details: identity/ratings, career progression, Recruiting origin, regular-season stats, and game log, for any Player. */
 export function PlayerDetailsScreen() {
   const season = useDynastyStore(selectActiveSeason)
+  const dynasty = useDynastyStore((state) => state.dynasty)
   const selectedPlayerProgramId = useDynastyStore(
     (state) => state.selectedPlayerProgramId,
   )
@@ -27,7 +32,7 @@ export function PlayerDetailsScreen() {
   )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
-  if (!season || !selectedPlayerProgramId || !selectedPlayerId) {
+  if (!season || !dynasty || !selectedPlayerProgramId || !selectedPlayerId) {
     return null
   }
 
@@ -48,6 +53,10 @@ export function PlayerDetailsScreen() {
   )
   const gameLog = getPlayerGameLog(season, selectedPlayerProgramId, selectedPlayerId)
   const backDestination = explorationViewHistory.at(-1) ?? 'hub'
+  const careerHistory = derivePlayerCareerHistory(dynasty, selectedPlayerId)
+  const committedProgram = careerHistory.recruitingOrigin?.committedProgramId
+    ? (PROGRAMS_BY_ID.get(careerHistory.recruitingOrigin.committedProgramId) ?? null)
+    : null
 
   return (
     <>
@@ -62,6 +71,32 @@ export function PlayerDetailsScreen() {
         accentColor={program.branding.primaryColor}
         onSelectTeam={() => openTeamDetails(selectedPlayerProgramId)}
       />
+
+      <section className="section" aria-labelledby="player-ratings-heading">
+        <h2 id="player-ratings-heading" className="section-title">
+          Ratings
+        </h2>
+        <PlayerRatingsGrid player={player} />
+      </section>
+
+      {careerHistory.recruitingOrigin ? (
+        <section className="section" aria-labelledby="player-recruiting-origin-heading">
+          <h2 id="player-recruiting-origin-heading" className="section-title">
+            Recruiting Origin
+          </h2>
+          <PlayerRecruitingOrigin
+            origin={careerHistory.recruitingOrigin}
+            committedProgram={committedProgram}
+          />
+        </section>
+      ) : null}
+
+      <section className="section" aria-labelledby="player-career-heading">
+        <h2 id="player-career-heading" className="section-title">
+          Career Progression
+        </h2>
+        <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
+      </section>
 
       <section className="section" aria-labelledby="player-stats-heading">
         <div className="section-heading">

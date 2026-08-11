@@ -361,13 +361,13 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.6G — Rotation V1 Production Activation + Freeze:** COMPLETE. Fresh Universe, Exhibition, and Dynasty rollover defaults now use the accepted deterministic flexible generator. Existing V1 rotations remain exact across cloning, Season/Postseason transitions, archives, drafts, and simulation. Rotation V1 is frozen subject to the accepted 40-minute, interior-path, and rare displacement watchpoints; V0 remains only at intentional compatibility/equivalence boundaries.
 - **6E.7 — Tournament Balance / Seeding Diagnostic:** COMPLETE — OUTCOME A. Production-lifecycle STANDARD `3 × 10` evidence plus a bounded `5 × 10` expansion separated seed upsets from strength upsets. Seed quality tracked win percentage strongly but Team OVR only moderately, with weaker alignment in Season 5+; the stronger-Team win curve rose from competitive tiny gaps to an `82.8%` win rate at `8+` OVR. The evidence identifies a likely seeding/ranking issue while leaving Game Sim closed. No production behavior changed.
 - **6E.7B — Tournament Seeding Candidate:** COMPLETE — ACCEPTED / FROZEN. The exact same four automatic qualifiers and 12 at-larges are now seeded together through the existing deterministic results-only résumé comparator. Paired STANDARD and FULL `5 × 10` evidence improved mature seed/OVR alignment and extreme 3/14 matchup truthfulness while strengthening résumé correlation, preserving Tournament variance, and leaving Game Sim and Team Strength unchanged.
+- **6E.8 — Player Details + Development History UX:** COMPLETE. Player Details now shows a compact nine-attribute ratings grid, a prominent Career Progression table (Season/Class/OVR/Dev/PPG/RPG/APG) derived purely from archived Dynasty Season snapshots plus the active Season, and a compact Recruiting Origin section for Players resolved from finalized Recruiting history. No new persisted history state was added; `derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts` connects existing canonical facts by stable Player ID. Existing current-season stats, shooting splits, game log, and Team/Player navigation are unchanged. See `UI_DESIGN.md` and `PLAYTESTING.md`.
 
 ### Current planning horizon
 
-- **6E.8 — Player Details + Development History UX:** PLANNED. Extend the existing Player Details surface over current and archived facts so memorable careers and offseason gains are easier to follow.
 - **6E.9 — Postseason Hub + Season-Complete Presentation Polish:** PLANNED. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
 
-Near-term high-value QOL candidates after those selected slices are Recruiting
+Near-term high-value QOL candidates after this selected slice are Recruiting
 Focus/commitment visibility, Assistant Fill Remaining Board, Coaching navigation
 with a permanent Rotation home, and Sim to Season Complete. League News, Season
 Hub hierarchy, offseason League context, followed Players, records, shot
@@ -375,11 +375,10 @@ selection investigation, and minor recap polish remain observed/later rather
 than a fixed feature schedule.
 
 This order is evidence-driven: Tournament seeding is resolved and frozen while
-Game Sim remains closed; extend Player Details because the simulation creates
-Players users
-care about but does not surface their careers well enough; then polish the
-Postseason handoff because the bracket already generates strong stories while
-its surrounding presentation repeatedly feels awkward.
+Game Sim remains closed; Player Details now surfaces the careers Players users
+already cared about; next, polish the Postseason handoff because the bracket
+already generates strong stories while its surrounding presentation repeatedly
+feels awkward.
 
 ## Non-binding development-agent fit
 

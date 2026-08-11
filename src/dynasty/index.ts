@@ -1,4 +1,5 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
+export { derivePlayerCareerHistory } from './careerHistory'
 export {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
@@ -88,6 +89,11 @@ export type {
   PlayerDevelopmentSummary,
   ProjectedRosterOutlook,
 } from './domain'
+export type {
+  PlayerCareerHistory,
+  PlayerCareerSeasonRow,
+  PlayerRecruitingOrigin,
+} from './careerHistory'
 export type {
   AddRecruitingBoardTargetOptions,
   CommitmentTiming,

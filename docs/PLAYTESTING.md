@@ -203,17 +203,30 @@ Future diagnostics should measure `POT === OVR` for all Recruits, 5★, 4★,
 
 Pine Valley's generated Board sometimes immediately offers low-tier/2★ targets, while Charlotte Tech can appropriately pursue many 4★ recruits. This likely reflects Prestige scaling, not a bug. Future diagnostics should evaluate whether generated Boards have an appropriate reaches / realistic-targets / safe-backups mix for each Prestige level.
 
-## Player Connection / Player Detail — OBSERVED — HIGH PRIORITY UX
+## Player Connection / Player Detail — RESOLVED (Phase 6E.8)
 
 Playthrough attachment formed around Lucas Webb, Aaron Jackson, Josiah Hughes, Nolan Evans, and Silas Matthews. Webb led the league in scoring and assists and had a 38-point game; Jackson rose from `55/97` to `84`; Silas rose from `57/85` to `82`; and Josiah led the league in scoring. Losing productive seniors made the rebuild feel meaningfully different.
 
-The existing Player Details view should be extended as **Player Details +
-Development History UX**, not replaced by a new Player system. Preserve identity,
-natural/floor eligibility where useful, class, OVR/POT, nine attributes, season
-stats, shooting splits, game log, and derivable highs. Add a career progression
-view such as FR OVR, then SO/JR/SR OVR plus offseason gain. Derive history from
-stable Player IDs and archived Dynasty Season snapshots rather than duplicate
-mutable career state.
+Phase 6E.8 extended the existing Player Details view as **Player Details +
+Development History UX** rather than replacing it with a new Player system.
+Identity, natural position, class, OVR/POT, the nine current-ability
+attributes, current-season stats, shooting splits, and game log are preserved.
+A prominent Career Progression table (Season/Class/OVR/Dev/PPG/RPG/APG) and a
+compact Recruiting Origin section were added, both derived purely from stable
+Player IDs plus archived Dynasty Season snapshots, the active Season, and
+finalized Recruiting history — no mutable career state was introduced. See
+`UI_DESIGN.md` for the accepted presentation and `src/dynasty/careerHistory.ts`
+for the read-model.
+
+Manual acceptance play confirmed the intended effect across four cases: a
+breakout upperclassman's Career Progression table made a large multi-Season
+OVR jump immediately legible; an ordinary upperclassman's flatter table read
+correctly as unremarkable rather than broken; a freshman recruit showed one
+career row plus a populated Recruiting Origin section; and an original
+Universe Player with no canonical Recruiting record showed one career row with
+Recruiting Origin cleanly omitted, with no placeholder or fake data. In every
+case a fresh viewer could reconstruct the Player's career without recalling
+prior Seasons themselves.
 
 ## Followed Players / Favorites — OBSERVED
 
@@ -496,19 +509,20 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Player Details + Development History UX
-2. Postseason Hub + Season-Complete Presentation Polish
-3. Recruiting Focus-target / commitment visibility
-4. Assistant Fill Remaining Recruiting Board
-5. Coaching navigation / permanent Rotation home
-6. Super Sim — Season Complete target
-7. Recruit POT-gap diagnostic
-8. League News / Round Recap
-9. Season Hub information hierarchy
-10. Offseason around-the-league context
-11. Followed Players / Favorites
-12. Program records / deeper statistical history
-13. Shot-selection diagnostic
-14. Minor Quick Sim / Last 5 polish
+1. Postseason Hub + Season-Complete Presentation Polish
+2. Recruiting Focus-target / commitment visibility
+3. Assistant Fill Remaining Recruiting Board
+4. Coaching navigation / permanent Rotation home
+5. Super Sim — Season Complete target
+6. Recruit POT-gap diagnostic
+7. League News / Round Recap
+8. Season Hub information hierarchy
+9. Offseason around-the-league context
+10. Followed Players / Favorites
+11. Program records / deeper statistical history
+12. Shot-selection diagnostic
+13. Minor Quick Sim / Last 5 polish
+
+Player Details + Development History UX is RESOLVED — see above.
 
 This ordering remains playthrough-driven and may change with new evidence.
