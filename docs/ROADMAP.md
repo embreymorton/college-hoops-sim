@@ -342,6 +342,8 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.2B — Recruit Talent Distribution V1:** COMPLETE.
 - **6E.3 — Development + League Talent Progression Diagnostic:** COMPLETE. Direct careers and 3×10/5×10 production-Dynasty runs found capped annual growth, weak high-headroom differentiation, and a thin mature powerhouse tier; see `PLAYTESTING.md`.
 - **6E.4 — Player Development V1:** COMPLETE. Class baseline, headroom-sensitive opportunity, stable hidden tendency, annual variance, rare breakouts, and the Potential cap now create deterministic career diversity without a Prestige multiplier; see `SIMULATION.md` and `PLAYTESTING.md`.
+- **6E.5 — Position / Rotation Flexibility diagnostic:** COMPLETE. The diagnostic confirmed the strict natural-position limitation; no production secondary-position Rotation system has been accepted.
+- **Secondary Position / Rotation V1:** planning/implementation pending. A fresh architecture review must begin from the accepted Rotation V0 baseline.
 
 ## Non-binding development-agent fit
 

@@ -194,7 +194,7 @@ A future Player Detail view may show identity, position/class, OVR/POT, nine att
 
 Following Silas Matthews after he joined another Program was enjoyable. A future favorite/followed-player concept could surface current Team, class, OVR, statistics, development, and notable performances. Do not commit to notifications or permanent history design yet.
 
-## Position / Rotation Flexibility — INVESTIGATING
+## Position / Rotation Flexibility — DIAGNOSTIC CONFIRMED / IMPLEMENTATION PENDING
 
 Manual rosters exposed a strict natural-position constraint: an `SG 69` could receive roughly 36 MPG behind a weak backup, while a `PG 78` received about five MPG because he could not play another spot. Multiple strong players at one natural position can therefore produce visibly inferior lineups.
 
@@ -208,13 +208,11 @@ The diagnostic-only universal adjacent model increased Team OVR by `+2.21` mean 
 
 Northbridge/Great Lakes improved `+1.88` under universal adjacency and `+1.67` under the narrow model; Pine Valley improved `+2.28` and `+2.05`. Rigidity can suppress elite rosters, but flexibility does not magically erase weak-team separation. The height audit found some small-wing/SF and undersized-C assignments in both simple tables, reinforcing the case for a future generated or explicit secondary-position model rather than universal adjacency.
 
-### Architecture and recommendation
+### Current production constraint
 
-V0 `Rotation.minutes` is one aggregate player-minute map, and validation derives each 40-minute slot from natural position. Default Rotation generation, the grouped Rotation editor, Season/Postseason Rotation state, and validation all rely on that representation. Team Strength can keep its current aggregate minute-weighted OFF/DEF formula for a no-penalty V1, but a future Rotation must record floor-position assignments to validate eligibility; a later slot-specific penalty would broaden the Strength work.
+V0 `Rotation.minutes` is one aggregate player-minute map, and validation derives each 40-minute slot from natural position. Default Rotation generation, the grouped Rotation editor, Season/Postseason Rotation state, and validation all rely on that representation.
 
-Recruiting openings, roster generation, and roster assembly can remain natural-position based initially: flexible eligibility changes minute allocation, not the desired 2–3-player structural balance at each natural position.
-
-**Recommendation:** pursue **Secondary-Position Model V1** next, not universal adjacency and not user-controlled position changes. Add one deterministic secondary position/eligibility per Player, then update Rotation validation/default AI allocation/UI together. Keep Recruiting and roster construction frozen unless that implementation produces new evidence.
+The strict-position limitation is confirmed. Production implementation remains pending; a future session must inspect the clean V0 architecture before proposing any change. No reverted migration plan is authoritative.
 
 ## Game Simulation — Shot Selection — OBSERVED
 
