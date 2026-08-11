@@ -38,21 +38,6 @@ If later injuries, availability changes, Player decisions, or explicitly designe
 
 Exhibition remains useful for isolated simulation, Rotation, and presentation testing. Keep useful shared tooling, but do not let it compete with the permanent Season flow as primary product navigation.
 
-### P2 — Exact-40-minute flexible defaults — RESOLVED
-
-Player Season Stats inspection observed a Season in which all 12 Charlotte Tech Players recorded positive minutes in all 24 games. The stats layer is behaving correctly: positive minutes count as a game played, while zero minutes produce a DNP without incrementing `gamesPlayed`.
-
-Rotation V1 remains accepted/frozen overall. Phase 6E.9 STANDARD `3 × 10`
-evidence found `301/10,297` active Rotation Players (`2.9%`) at exactly 40, but
-`153/300` top-10 scorers and `50/97` 90+ OVR Players. Every case began at a
-natural 36 minutes and gained four flexible secondary minutes; natural defaults
-produced none. Season 5+ incidence was slightly lower than Season 1, and actual
-MPG averaged `40.035`. Phase 6E.9B now reserves natural 36 for Team top-three
-OVR Players, prevents their automatic secondary promotion, and lets useful
-legal secondary Players absorb weak-backup shares. FULL `5 × 10` acceptance
-found zero exact-40 defaults across `16,717` active Rotation Players while
-preserving structural health and flexibility. The watchpoint is resolved/frozen.
-
 ### P3 — Concentrated single-attribute offseason gains
 
 The `INT D +8` and `ATH +7` examples came from the superseded Development V0
@@ -76,6 +61,15 @@ Revisit only if future generic scholarships, multi-position Players, position ch
 Accepted long-run calibration measured the full-snapshot serialized `DynastyState` at `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. Growth is approximately linear at roughly 3 MB per completed Season and is material even though 50-Season JSON serialization remained correct.
 
 Before production-scale save support or very long playable Dynasties, evaluate save-file size, browser persistence limits, load/parse time, memory use, and history-rendering cost. Preserve canonical historical `GameResult`, Player, Team, and Recruiting facts. Do not prematurely prescribe a database, compression format, pruning policy, binary serialization, IndexedDB, backend persistence, or stat-reconstruction model. This is a measured scaling watchpoint, not a current correctness defect.
+
+### P3 — Active Dynasty persistence / browser navigation — FUTURE
+
+Current active Dynasty state is session/in-memory limited. One browser-Back
+incident lost unsaved progress, strengthening the future need to restore an
+active Dynasty and validate navigation/reload behavior. This is not yet evidence
+of an intended in-app navigation regression and is not an active blocker or a
+reason to displace Phase 6E.10. Do not prescribe storage, save-slot, backend, or
+routing architecture before that work is selected.
 
 ### P3 — Rotation Editor stable validation layout
 
@@ -111,6 +105,17 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
 ## Resolved / monitor-only
+
+### P2 — Exact-40-minute flexible defaults — RESOLVED / MANUALLY CONFIRMED
+
+Phase 6E.9 found `301/10,297` active Rotation Players at exactly 40, all from
+flexible natural `36→40` promotion. Phase 6E.9B reserved natural 36 for Team
+top-three OVR Players and removed that automatic promotion; FULL `5 × 10`
+acceptance found zero exact-40 defaults across `16,717` active Rotation Players.
+Charlotte Tech/Northbridge manual play then found no default above 36, a
+reasonable elite-core `36/29/29/29` distribution, and no universal 40-minute
+League leaders. The watchpoint is closed/frozen. Secondary-path mix and rare
+large incumbent displacement remain observational WATCH items.
 
 ### P2 — Tournament seed-label alignment — RESOLVED
 

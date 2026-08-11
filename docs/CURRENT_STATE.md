@@ -122,6 +122,9 @@ Rotation V1 is implemented, activated, behaviorally validated, and frozen.
 Phase 6E.9B reserves natural 36-minute defaults for Team top-three OVR Players,
 uses a 32-minute ceiling for other Players with a backup, and prevents automatic
 natural `36→40` secondary promotion. The candidate is accepted and frozen.
+Manual Charlotte Tech/Northbridge play confirmed no default above 36, a
+plausible elite-core `36/29/29/29` shape, and no universal 40-minute League
+leaders. The exact-40 automatic-default watchpoint is closed.
 
 ### Calibration
 
@@ -169,8 +172,10 @@ comparator. Player Details + Development History UX (Phase 6E.8) is complete:
 Player Details now shows a compact nine-attribute ratings grid, a prominent
 Career Progression table, and a compact Recruiting Origin section, all derived
 from existing canonical facts. Phase 6E.9B is accepted/frozen; the next milestone
-is Phase 6E.10 Postseason Hub + Season-Complete Presentation Polish. Sim to Season Complete, Recruiting visibility,
-Coaching/roster navigation, and Followed Players have repeated QOL evidence.
+is Phase 6E.10 Postseason Hub + Season-Complete Presentation Polish. Sim to
+Season Complete, Recruiting visibility, Coaching/roster navigation, Followed
+Players, offseason progression visibility, Awards, and Save/Persistence have
+future QOL evidence; none displaces 6E.10.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 

@@ -252,8 +252,12 @@ and `23 PPG`, eventually reaching roughly fifth in League scoring. The user
 repeatedly checked his career across Seasons.
 
 Following/Favorites is therefore evidence-supported future QOL rather than a
-speculative idea. Do not commit to notifications or permanent history design
-yet or move it ahead of the active Rotation diagnostic.
+speculative idea. Northbridge's young core and a Pine Valley `48/89` freshman
+project repeated the same behavior: an interesting Player on another Team
+naturally creates a desire to track his development across Seasons. This signal
+now spans Silas Matthews, Jalen Crawford, Northbridge, and Pine Valley. Do not
+commit to notifications or permanent history design yet or move it ahead of
+Phase 6E.10.
 
 ## Playtest Stories / Why This Is Fun
 
@@ -273,6 +277,18 @@ These are empirical examples, not permanent lore or guaranteed outcomes.
   `90+` Players, three more at `85+`, and an `84` freshman, yet did not remain
   permanently dominant and suffered an early Tournament upset. Powerhouses can
   exist without erasing memorable uncertainty.
+- **Christian Douglas — Northbridge:** roughly `97/99` as a sophomore, about
+  `25 PPG`, and 36 MPG before reaching 99 OVR. Northbridge absorbed early
+  Tournament exits while its young core developed, then won the championship
+  in Douglas's senior Season. Development continues to create memorable
+  multi-year stars; do not reopen Development V1.
+- **Northbridge young core:** Douglas developed alongside Khalil Black
+  (`91/99`, freshman C), Rashad Webb (`90/97`, freshman PG), and Justin Wright
+  (`81/90`, sophomore PF). Their progression strengthened offseason recap and
+  Following/Favorites demand without creating new Development mechanics.
+- **Pine Valley project:** a weak Pine Valley signed a roughly `48/89`
+  freshman who immediately became interesting to follow. The recruit → develop
+  → follow-career loop is working without changing Recruit Talent or Development.
 - **Franklin Metro Cinderella:** a low seed upset #1 Northbridge, beat the
   controlled Team heavily in the semifinal, and lost the title game by two.
   Cinderellas are fun; repeated extreme seeds should prompt diagnosis of seeding
@@ -398,6 +414,14 @@ ACCEPT / RESOLVED / FROZEN.** Rotation V1 remains broadly frozen. Continue
 watching secondary-path mix and rare large displacement; do not add fatigue or
 reduce the legal/manual 40-minute maximum.
 
+Manual Charlotte Tech/Northbridge play then confirmed the accepted shape:
+Charlotte Tech had no default above 36; Northbridge's elite young core used a
+plausible distribution—Christian Douglas `36`, Khalil Black `29`, Rashad Webb
+`29`, and Justin Wright `29`—and League leaders were no longer universally
+assigned 40. The user explicitly found the distribution reasonable. **Manual
+acceptance: PASS.** The exact-40 automatic-default watchpoint is closed; reopen
+starter-minute realism only with genuinely new, repeated evidence.
+
 ## Game Simulation — Shot Selection — OBSERVED
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
@@ -415,8 +439,7 @@ useful information-architecture improvement; tactics and other coaching systems
 remain uncommitted, and Game Prep may still link to Rotation.
 
 The Great Lakes follow-up repeated the desire for both a persistent Coaching
-home and easier current-roster review. Keep this behind the active Rotation
-diagnostic.
+home and easier current-roster review. Keep this behind Phase 6E.10.
 
 ## Round Complete Review — OBSERVED
 
@@ -520,6 +543,12 @@ Great Lakes falling from roughly `89` to `78` Team OVR while Pine Valley rose
 from the mid-60s into the low-70s is healthy Dynasty turnover evidence. Recruit
 Talent V1 and Development V1 remain closed.
 
+The Charlotte Tech/Northbridge follow-up added more plausible variance:
+Charlotte Tech went `24-0` without winning the title; a young Northbridge lost
+in Round 1 to a #14, then an `88` OVR Northbridge lost to an approximately `78`
+OVR #15, before winning the title in Douglas's senior Season. These anecdotes
+do not supersede the accepted Tournament diagnostics or reopen seeding/Game Sim.
+
 ## Super Sim — Season Complete Target — OBSERVED / HIGH-VALUE QOL
 
 Desired user-facing target:
@@ -553,6 +582,28 @@ derived League News/Round Recap, but does not make News the next milestone.
 ## Offseason — Around the League — OBSERVED
 
 Future offseason context could surface the biggest development jumps, notable returners, and incoming recruits from derived existing data. Do not implement or define a presentation yet.
+
+Northbridge's young core strengthened this signal: the user wanted to inspect
+its development changes immediately after the offseason rather than wait for
+the next Season, navigate back to Northbridge, and open Players individually.
+Treat this as progression visibility from existing outcomes, not new
+Development mechanics.
+
+## Awards / Season Honors — OBSERVED — EVIDENCE-SUPPORTED FUTURE
+
+Christian Douglas's elite multi-Season career naturally created an expectation
+of Player of the Year, All-Conference, All-American-style, or similar honors.
+Awards are now evidence-supported future storytelling, but their rules and
+presentation remain undesigned and they do not move ahead of current QOL work.
+
+## Save / Persistence — OBSERVED FUTURE CONCERN
+
+Using browser Back lost an active Dynasty. Current Dynasty progress is
+session/in-memory limited, so browser navigation or reload can lose unsaved
+progress. Future Save/Persistence work should restore an active Dynasty and
+validate navigation/reload behavior, but this anecdote is not evidence that
+normal intended in-app navigation destroys state. Do not prescribe storage,
+save-slot, backend, or routing architecture here or promote this above 6E.10.
 
 ## Program Records / Statistical History — OBSERVED
 
@@ -644,5 +695,8 @@ Do not reopen these systems casually.
 13. Minor Player Details / Quick Sim / Last 5 polish
 
 Player Details + Development History UX is RESOLVED — see above.
+
+Awards, offseason progression visibility, and Save/Persistence have stronger
+future evidence but are intentionally not promoted into the active horizon.
 
 This ordering remains playthrough-driven and may change with new evidence.
