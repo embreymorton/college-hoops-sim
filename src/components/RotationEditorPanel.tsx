@@ -3,15 +3,15 @@ import {
   calculateOverall,
   calculatePlayerDefense,
   calculatePlayerOffense,
-  calculatePositionMinutes,
-  calculateTotalMinutes,
-  getPlayersByMinutes,
+  derivePlayerMinutesV1,
+  getEligibleRotationPositions,
   MAX_PLAYER_MINUTES,
   MINUTES_PER_POSITION,
   POSITIONS,
   TOTAL_ROTATION_MINUTES,
-  type Rotation,
-  type RotationValidationResult,
+  type Position,
+  type RotationV1,
+  type RotationV1ValidationResult,
   type Team,
   type TeamStrength,
 } from '../engine'
@@ -23,14 +23,18 @@ import type { BrandingSource } from './branding'
 
 interface RotationEditorPanelProps {
   readonly team: Team
-  readonly defaultRotation: Rotation
-  readonly currentRotation: Rotation
+  readonly defaultRotation: RotationV1
+  readonly currentRotation: RotationV1
   readonly program: BrandingSource
-  readonly validation: RotationValidationResult
+  readonly validation: RotationV1ValidationResult
   readonly defaultStrength: TeamStrength
   readonly currentStrength: TeamStrength | null
   readonly pendingStrengthReason: string | null
-  readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
+  readonly onSetPlayerPositionMinutes: (
+    playerId: string,
+    floorPosition: Position,
+    minutes: number,
+  ) => void
   readonly onReset: () => void
   readonly headingId: string
 }
@@ -44,16 +48,19 @@ export function RotationEditorPanel({
   defaultStrength,
   currentStrength,
   pendingStrengthReason,
-  onSetPlayerMinutes,
+  onSetPlayerPositionMinutes,
   onReset,
   headingId,
 }: RotationEditorPanelProps) {
   const accentStyle = {
     '--team-accent': program.primaryColor,
   } as CSSProperties
-  const totalMinutes = calculateTotalMinutes(currentRotation)
+  const aggregateMinutes = derivePlayerMinutesV1(currentRotation)
+  const totalMinutes = Object.values(aggregateMinutes).reduce(
+    (total, minutes) => total + minutes,
+    0,
+  )
   const isChanged = !areRotationsEqual(team, defaultRotation, currentRotation)
-  const rankedRoster = getPlayersByMinutes(team, currentRotation)
 
   return (
     <div className="team-panel" style={accentStyle}>
@@ -96,23 +103,32 @@ export function RotationEditorPanel({
               <th scope="col">Ovr</th>
               <th scope="col">Off</th>
               <th scope="col">Def</th>
-              <th scope="col">Minutes</th>
+              <th scope="col">Floor Min</th>
+              <th scope="col">Total</th>
             </tr>
           </thead>
           {POSITIONS.map((position) => {
-            const positionActual = calculatePositionMinutes(
-              team,
-              currentRotation,
-              position,
+            const assignments = currentRotation.minutesByPosition[position]
+            const positionActual = Object.values(assignments).reduce(
+              (total, minutes) => total + minutes,
+              0,
             )
             const isPositionInvalid = validation.issues.some(
               (issue) =>
                 issue.code === 'INVALID_POSITION_TOTAL' &&
                 issue.position === position,
             )
-            const positionPlayers = rankedRoster.filter(
-              ({ player }) => player.position === position,
-            )
+            const positionPlayers = team.roster
+              .filter((player) =>
+                getEligibleRotationPositions(player).includes(position),
+              )
+              .sort(
+                (first, second) =>
+                  (assignments[second.id] ?? 0) -
+                    (assignments[first.id] ?? 0) ||
+                  calculateOverall(second) - calculateOverall(first) ||
+                  first.id.localeCompare(second.id),
+              )
 
             return (
               <tbody key={position}>
@@ -120,7 +136,7 @@ export function RotationEditorPanel({
                   className="rotation-group-row"
                   data-status={isPositionInvalid ? 'invalid' : 'valid'}
                 >
-                  <th scope="colgroup" colSpan={6}>
+                  <th scope="colgroup" colSpan={7}>
                     <div className="rotation-group-row__inner">
                       <span className="rotation-group-row__position">
                         {position}
@@ -137,40 +153,52 @@ export function RotationEditorPanel({
                     </div>
                   </th>
                 </tr>
-                {positionPlayers.map(({ player, minutes }) => {
+                {positionPlayers.map((player) => {
+                  const minutes = assignments[player.id] ?? 0
+                  const playerTotal = aggregateMinutes[player.id] ?? 0
                   const playerIssue = validation.issues.find(
                     (issue) =>
-                      issue.code === 'INVALID_PLAYER_MINUTES' &&
+                      (issue.code === 'INVALID_PLAYER_MINUTES' ||
+                        issue.code === 'INVALID_PLAYER_TOTAL') &&
                       issue.playerId === player.id,
                   )
                   const playerLabel = `${player.firstName} ${player.lastName}`
+                  const eligibility = getEligibleRotationPositions(player).join('/')
 
                   return (
                     <tr
-                      key={player.id}
+                      key={`${position}:${player.id}`}
                       data-player-id={player.id}
+                      data-floor-position={position}
                       data-zero-minutes={minutes === 0}
                     >
-                      <td className="player-name-cell">{playerLabel}</td>
+                      <td className="player-name-cell">
+                        {playerLabel} — {eligibility}
+                      </td>
                       <td>{player.classYear}</td>
                       <td>{calculateOverall(player)}</td>
                       <td>{formatRating(calculatePlayerOffense(player))}</td>
                       <td>{formatRating(calculatePlayerDefense(player))}</td>
                       <td className="rotation-minutes-cell">
                         <MinuteStepper
-                          id={`minutes-${player.id}`}
+                          id={`minutes-${position}-${player.id}`}
                           value={minutes}
-                          label={`Minutes for ${playerLabel}`}
+                          label={`${position} floor minutes for ${playerLabel}`}
                           onChange={(nextMinutes) =>
-                            onSetPlayerMinutes(player.id, nextMinutes)
+                            onSetPlayerPositionMinutes(
+                              player.id,
+                              position,
+                              nextMinutes,
+                            )
                           }
                         />
                         {playerIssue && (
                           <span className="rotation-player-note">
-                            Outside 0–{MAX_PLAYER_MINUTES} minutes
+                            Player total must remain within 0–{MAX_PLAYER_MINUTES}
                           </span>
                         )}
                       </td>
+                      <td>{playerTotal} / {MAX_PLAYER_MINUTES}</td>
                     </tr>
                   )
                 })}

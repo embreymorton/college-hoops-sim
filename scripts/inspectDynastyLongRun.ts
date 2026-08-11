@@ -5,7 +5,7 @@ import {
   POSITIONS,
   TEAM_ROSTER_SIZE,
   calculateOverall,
-  validateRotation,
+  validateRotationV1,
 } from '../src/engine'
 import {
   autoFinalizeRecruiting,
@@ -179,7 +179,7 @@ function auditActiveSeason(dynasty: DynastyState, health: StructuralHealth): voi
     programs.some(({ team }) => team.roster.length !== TEAM_ROSTER_SIZE),
   )
   health.invalidRotations += programs.filter(
-    ({ team, rotation }) => !validateRotation(team, rotation).valid,
+    ({ team, rotation }) => !validateRotationV1(team, rotation).valid,
   ).length
   health.invalidSchedules += Number(
     !validateRegularSeasonSchedule(UNIVERSE_V0, season.schedule).valid,

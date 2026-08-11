@@ -1,4 +1,4 @@
-import { validateRotation } from '../engine'
+import { validateRotationV1 } from '../engine'
 import { isRegularSeasonComplete, type SeasonState } from '../season'
 import type { UniverseDefinition } from '../universe'
 import { createNationalTournamentBracket } from './bracket'
@@ -238,7 +238,7 @@ export function validatePostseasonState(
         programId: entry.programId,
       })
     }
-    if (!validateRotation(state.team, state.rotation).valid) {
+    if (!validateRotationV1(state.team, state.rotation).valid) {
       pushIssue(issues, 'INVALID_ROTATION', `Program "${entry.programId}" has an invalid Rotation.`, {
         programId: entry.programId,
       })

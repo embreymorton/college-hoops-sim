@@ -1,4 +1,4 @@
-import { validateRotation } from '../engine'
+import { validateRotationV1 } from '../engine'
 import { validateRegularSeasonSchedule } from '../schedule'
 import { cloneRotation, cloneTeam } from './cloning'
 import type {
@@ -74,7 +74,7 @@ export function initializeSeason({
       )
     }
 
-    const rotationValidation = validateRotation(
+    const rotationValidation = validateRotationV1(
       initialized.team,
       initialized.rotation,
     )

@@ -129,7 +129,10 @@ function buildSeason(
     programStates: Object.fromEntries(
       Object.entries(programRosters).map(([programId, playerIds]) => [
         programId,
-        { team: team(programId, playerIds), rotation: { minutes: {} } },
+        {
+          team: team(programId, playerIds),
+          rotation: { minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} } },
+        },
       ]),
     ),
     resultsByGameId,

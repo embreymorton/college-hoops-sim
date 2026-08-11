@@ -1,4 +1,4 @@
-import { calculateTeamStrength, validateRotation } from '../engine'
+import { calculateTeamStrength, validateRotationV1 } from '../engine'
 import {
   PregameScoreboard,
   RotationEditorPanel,
@@ -25,8 +25,8 @@ export function GamePrepScreen() {
   const controlledProgramDefaultRotation = useDynastyStore(
     (state) => state.controlledProgramDefaultRotation,
   )
-  const setDraftPlayerMinutes = useDynastyStore(
-    (state) => state.setDraftPlayerMinutes,
+  const setDraftPlayerPositionMinutes = useDynastyStore(
+    (state) => state.setDraftPlayerPositionMinutes,
   )
   const resetDraftRotation = useDynastyStore(
     (state) => state.resetDraftRotation,
@@ -65,7 +65,7 @@ export function GamePrepScreen() {
   const opponentTeam = season.programStates[opponentId]!.team
   const opponentRotation = season.programStates[opponentId]!.rotation
 
-  const validation = validateRotation(controlledTeam, draftRotation)
+  const validation = validateRotationV1(controlledTeam, draftRotation)
   const isValid = validation.valid
   const controlledCurrentStrength = isValid
     ? calculateTeamStrength(controlledTeam, draftRotation)
@@ -131,7 +131,7 @@ export function GamePrepScreen() {
             defaultStrength={controlledDefaultStrength}
             currentStrength={controlledCurrentStrength}
             pendingStrengthReason={blockingReason}
-            onSetPlayerMinutes={setDraftPlayerMinutes}
+            onSetPlayerPositionMinutes={setDraftPlayerPositionMinutes}
             onReset={resetDraftRotation}
             headingId="controlled-team-heading"
           />

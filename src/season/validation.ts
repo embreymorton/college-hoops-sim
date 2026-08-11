@@ -1,4 +1,4 @@
-import { validateRotation } from '../engine'
+import { validateRotationV1 } from '../engine'
 import { validateRegularSeasonSchedule } from '../schedule'
 import type { UniverseDefinition } from '../universe'
 import type {
@@ -160,7 +160,7 @@ export function validateSeasonState(
       )
     }
 
-    const rotationValidation = validateRotation(
+    const rotationValidation = validateRotationV1(
       programState.team,
       programState.rotation,
     )

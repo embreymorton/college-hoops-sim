@@ -1,13 +1,15 @@
 import { create } from 'zustand'
 import {
   calculateTeamStrength,
+  cloneRotationV1,
   createRng,
-  generateDefaultRotation,
+  generateDefaultRotationV1,
   generateTeam,
   simulateGame,
-  validateRotation,
+  validateRotationV1,
   type GameResult,
-  type Rotation,
+  type Position,
+  type RotationV1,
   type Team,
   type TeamStrength,
 } from '../engine'
@@ -20,7 +22,7 @@ import {
 /** One demo program's generated Team, its default Rotation, and derived Team Strength. */
 export interface DemoTeamSetup {
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationV1
   readonly strength: TeamStrength
 }
 
@@ -34,7 +36,7 @@ function buildDemoTeamSetup(programId: string): DemoTeamSetup {
     prestige: program.prestige,
     rng: createRng(program.seed),
   })
-  const rotation = generateDefaultRotation(team)
+  const rotation = generateDefaultRotationV1(team)
   const strength = calculateTeamStrength(team, rotation)
 
   return { team, rotation, strength }
@@ -75,7 +77,7 @@ export interface GamePresentationState {
    * and may be temporarily invalid while the coach reallocates minutes; only
    * the away Team's Rotation remains the fixed generated default.
    */
-  readonly homeRotation: Rotation
+  readonly homeRotation: RotationV1
   readonly phase: GamePresentationPhase
   readonly result: GameResult | null
   /** Number of games simulated for the current home/away pairing. */
@@ -85,7 +87,11 @@ export interface GamePresentationState {
   /** No-op if programId matches the current home program. */
   setAwayProgram(programId: string): void
   /** Assigns one Player's minutes; zero minutes omits the Player, preserving canonical Rotation shape. */
-  setHomePlayerMinutes(playerId: string, minutes: number): void
+  setHomePlayerPositionMinutes(
+    playerId: string,
+    floorPosition: Position,
+    minutes: number,
+  ): void
   /** Restores the coached home Rotation to the current Team's generated default. */
   resetHomeRotation(): void
   /** No-op if the current home Rotation is invalid; never simulates an illegal Rotation. */
@@ -135,9 +141,10 @@ export const useGamePresentationStore = create<GamePresentationState>(
       })
     },
 
-    setHomePlayerMinutes(playerId, minutes) {
+    setHomePlayerPositionMinutes(playerId, floorPosition, minutes) {
       const sanitizedMinutes = Math.max(0, Math.round(minutes))
-      const nextMinutes = { ...get().homeRotation.minutes }
+      const nextRotation = cloneRotationV1(get().homeRotation)
+      const nextMinutes = nextRotation.minutesByPosition[floorPosition]
 
       if (sanitizedMinutes === 0) {
         delete nextMinutes[playerId]
@@ -145,7 +152,7 @@ export const useGamePresentationStore = create<GamePresentationState>(
         nextMinutes[playerId] = sanitizedMinutes
       }
 
-      set({ homeRotation: { minutes: nextMinutes } })
+      set({ homeRotation: nextRotation })
     },
 
     resetHomeRotation() {
@@ -162,7 +169,7 @@ export const useGamePresentationStore = create<GamePresentationState>(
         simulationSequence,
       } = get()
 
-      if (!validateRotation(homeSetup.team, homeRotation).valid) {
+      if (!validateRotationV1(homeSetup.team, homeRotation).valid) {
         return
       }
 

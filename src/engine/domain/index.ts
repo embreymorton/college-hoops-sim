@@ -22,6 +22,7 @@ export type {
   RotationValidationIssueCode,
   RotationValidationResult,
 } from './rotation'
+export { normalizeRotationToV1 } from './rotationCompatibility'
 export {
   derivePlayerMinutes,
   validateRotationInput,
@@ -31,10 +32,15 @@ export type {
   RotationInput,
 } from './rotationInput'
 export {
+  areRotationsV1Equal,
+  calculateFloorPositionMinutesV1,
   calculatePlayerMinutesV1,
+  calculateTotalMinutesV1,
+  cloneRotationV1,
   convertRotationV0ToV1,
   derivePlayerMinutesV1,
   getEligibleRotationPositions,
+  getPlayersByMinutesV1,
   validateRotationV1,
 } from './rotationV1'
 export type {
@@ -42,6 +48,7 @@ export type {
   RotationV1ValidationIssue,
   RotationV1ValidationIssueCode,
   RotationV1ValidationResult,
+  PlayerRotationMinutesV1,
 } from './rotationV1'
 export {
   calculatePlayerDefense,

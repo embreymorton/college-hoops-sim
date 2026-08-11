@@ -1,7 +1,7 @@
 import {
   calculateRosterAverage,
   calculateTeamStrength,
-  validateRotation,
+  validateRotationV1,
 } from '../src/engine'
 import {
   initializeUniverse,
@@ -80,7 +80,7 @@ function main(): void {
     ({ program, team }) => team.id === program.id,
   )
   const validRotations = initialized.programs.every(
-    ({ team, rotation }) => validateRotation(team, rotation).valid,
+    ({ team, rotation }) => validateRotationV1(team, rotation).valid,
   )
   const orderIndependent = UNIVERSE_V0.programs.every(({ id }) =>
     JSON.stringify(original.get(id)) === JSON.stringify(reversed.get(id)),

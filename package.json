@@ -13,6 +13,8 @@
     "sim:rosters": "node --import tsx scripts/inspectRosterGeneration.ts",
     "sim:rotations": "node --import tsx scripts/inspectRotationGeneration.ts",
     "sim:rotation-flexibility": "node --import tsx scripts/rotationFlexibilityDiagnostic.ts",
+    "sim:rotation-v1-generation": "node --import tsx scripts/inspectRotationV1Generation.ts",
+    "sim:rotation-v1-behavior": "node --import tsx scripts/inspectRotationV1Behavior.ts",
     "sim:strength": "node --import tsx scripts/inspectTeamStrength.ts",
     "sim:games": "node --import tsx scripts/inspectGameSimulation.ts",
     "sim:boxscores": "node --import tsx scripts/inspectBoxScores.ts",

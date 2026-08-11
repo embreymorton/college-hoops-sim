@@ -1,4 +1,4 @@
-import type { GameResult, Rotation, Team } from '../engine'
+import { cloneRotationV1, type GameResult, type RotationV1, type Team } from '../engine'
 
 export function cloneTeam(team: Team): Team {
   return {
@@ -10,8 +10,8 @@ export function cloneTeam(team: Team): Team {
   }
 }
 
-export function cloneRotation(rotation: Rotation): Rotation {
-  return { minutes: { ...rotation.minutes } }
+export function cloneRotation(rotation: RotationV1): RotationV1 {
+  return cloneRotationV1(rotation)
 }
 
 export function cloneGameResult(result: GameResult): GameResult {

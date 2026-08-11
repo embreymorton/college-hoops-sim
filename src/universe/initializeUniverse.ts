@@ -1,6 +1,6 @@
 import {
   createRng,
-  generateDefaultRotation,
+  generateDefaultRotationV1,
   generateTeam,
   type RngSeed,
   type Team,
@@ -65,7 +65,7 @@ function initializeProgram(
     id: program.id,
     prestige: program.basePrestige,
   }
-  const rotation = generateDefaultRotation(team)
+  const rotation = generateDefaultRotationV1(team)
 
   return { program, team, rotation }
 }

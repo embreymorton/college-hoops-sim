@@ -1,10 +1,11 @@
 import { beforeAll, describe, expect, it, vi } from 'vitest'
 import {
   simulateGame,
-  validateRotation,
+  cloneRotationV1,
+  validateRotationV1,
   type GameResult,
   type PlayerGameStats,
-  type Rotation,
+  type RotationV1,
 } from '../engine'
 import { generateRegularSeasonSchedule, type ScheduledGame } from '../schedule'
 import {
@@ -115,23 +116,24 @@ function manualResult(
   }
 }
 
-function alternativeRotation(postseason: PostseasonState, programId: string): Rotation {
+function alternativeRotation(postseason: PostseasonState, programId: string): RotationV1 {
   const state = postseason.programStates[programId]!
-  const rotation: Rotation = { minutes: { ...state.rotation.minutes } }
+  const rotation = cloneRotationV1(state.rotation)
   for (const player of state.team.roster) {
     const teammate = state.team.roster.find(
       (candidate) =>
         candidate.id !== player.id &&
         candidate.position === player.position &&
-        (rotation.minutes[candidate.id] ?? 0) < 40,
+        (rotation.minutesByPosition[player.position][candidate.id] ?? 0) < 40,
     )
-    const minutes = rotation.minutes[player.id] ?? 0
+    const assignments = rotation.minutesByPosition[player.position]
+    const minutes = assignments[player.id] ?? 0
     if (!teammate || minutes < 1) continue
-    rotation.minutes[player.id] = minutes - 1
-    rotation.minutes[teammate.id] = (rotation.minutes[teammate.id] ?? 0) + 1
-    if (validateRotation(state.team, rotation).valid) return rotation
-    rotation.minutes[player.id] = minutes
-    rotation.minutes[teammate.id] = (rotation.minutes[teammate.id] ?? 0) - 1
+    assignments[player.id] = minutes - 1
+    assignments[teammate.id] = (assignments[teammate.id] ?? 0) + 1
+    if (validateRotationV1(state.team, rotation).valid) return rotation
+    assignments[player.id] = minutes
+    assignments[teammate.id] = (assignments[teammate.id] ?? 0) - 1
   }
   throw new Error(`Could not alter Rotation for ${programId}.`)
 }
@@ -607,7 +609,7 @@ describe('postseason state and progression', () => {
         ...initialPostseason.programStates,
         [first.programId]: {
           ...initialPostseason.programStates[first.programId]!,
-          rotation: { minutes: {} },
+          rotation: { minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} } },
         },
       },
       resultsByGameId: {
@@ -804,7 +806,9 @@ describe('determinism and Rotation state', () => {
       updatePostseasonProgramRotation(initialPostseason, 'not-in-field', rotation),
     ).toThrow(/Unknown Postseason Program/)
     expect(() =>
-      updatePostseasonProgramRotation(initialPostseason, programId, { minutes: {} }),
+      updatePostseasonProgramRotation(initialPostseason, programId, {
+        minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} },
+      }),
     ).toThrow(/invalid Rotation/)
   })
 })

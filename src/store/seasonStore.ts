@@ -1,5 +1,11 @@
 import { create } from 'zustand'
-import { validateRotation, type Rotation, type RngSeed } from '../engine'
+import {
+  cloneRotationV1,
+  validateRotationV1,
+  type Position,
+  type RotationV1,
+  type RngSeed,
+} from '../engine'
 import {
   addRecruitingBoardTarget,
   autoFinalizeRecruiting,
@@ -173,7 +179,7 @@ export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
   readonly dynasty: DynastyState | null
   /** Retained separately because SeasonState only stores the current Rotation. */
-  readonly controlledProgramDefaultRotation: Rotation | null
+  readonly controlledProgramDefaultRotation: RotationV1 | null
   /**
    * The controlled Program's in-progress Rotation edit, scoped to the Game
    * Prep presentation. May be temporarily invalid; only legal values are
@@ -181,7 +187,7 @@ export interface DynastySessionState {
    * Rotation whenever Game Prep is (re-)entered so a stale invalid edit can
    * never leak into the Dashboard Quick Sim boundary.
    */
-  readonly draftRotation: Rotation | null
+  readonly draftRotation: RotationV1 | null
   readonly view: SeasonSessionView
   /** The controlled Program's most recently completed ScheduledGame, for inline Hub feedback or postgame. */
   readonly lastPlayedGameId: string | null
@@ -192,9 +198,9 @@ export interface DynastySessionState {
   /** One-time completion feedback for the Super Sim that just ran, if any. */
   readonly superSimSummary: SuperSimSummary | null
   /** The controlled Program's Rotation as carried into the tournament; the Postseason "reset" target. */
-  readonly postseasonControlledDefaultRotation: Rotation | null
+  readonly postseasonControlledDefaultRotation: RotationV1 | null
   /** In-progress Postseason Rotation edit, scoped to Tournament Game Prep — same draft-boundary contract as `draftRotation`. */
-  readonly postseasonDraftRotation: Rotation | null
+  readonly postseasonDraftRotation: RotationV1 | null
   /** The controlled Program's most recently completed Tournament game, for inline Hub feedback or postgame. */
   readonly lastPlayedTournamentGameId: string | null
   /** The completed Tournament game currently open for historical review, if any. */
@@ -226,7 +232,11 @@ export interface DynastySessionState {
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string, dynastySeed?: RngSeed): void
   /** Zero minutes omits the Player, preserving canonical Rotation shape. */
-  setDraftPlayerMinutes(playerId: string, minutes: number): void
+  setDraftPlayerPositionMinutes(
+    playerId: string,
+    floorPosition: Position,
+    minutes: number,
+  ): void
   resetDraftRotation(): void
   /** Also catches up any fully-past rounds so AI results never lag behind. */
   goToGamePrep(): void
@@ -267,7 +277,11 @@ export interface DynastySessionState {
   goToPostseasonHub(): void
   /** Starts the Postseason Rotation draft from the canonical current Postseason Rotation. */
   goToPostseasonGamePrep(): void
-  setPostseasonDraftPlayerMinutes(playerId: string, minutes: number): void
+  setPostseasonDraftPlayerPositionMinutes(
+    playerId: string,
+    floorPosition: Position,
+    minutes: number,
+  ): void
   resetPostseasonDraftRotation(): void
   /** No-op if the draft Rotation is invalid or no Tournament game is currently playable. */
   playPostseasonScheduledGame(): void
@@ -562,7 +576,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     })
   },
 
-  setDraftPlayerMinutes(playerId, minutes) {
+  setDraftPlayerPositionMinutes(playerId, floorPosition, minutes) {
     const { dynasty, draftRotation } = get()
     const season = dynasty?.activeSeason
     const controlledProgramId = dynasty?.controlledProgramId
@@ -578,7 +592,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
 
     const sanitizedMinutes = Math.max(0, Math.round(minutes))
-    const nextMinutes = { ...draftRotation.minutes }
+    const nextDraft = cloneRotationV1(draftRotation)
+    const nextMinutes = nextDraft.minutesByPosition[floorPosition]
 
     if (sanitizedMinutes === 0) {
       delete nextMinutes[playerId]
@@ -586,8 +601,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       nextMinutes[playerId] = sanitizedMinutes
     }
 
-    const nextDraft: Rotation = { minutes: nextMinutes }
-    const isValid = validateRotation(controlledTeam, nextDraft).valid
+    const isValid = validateRotationV1(controlledTeam, nextDraft).valid
 
     set({
       draftRotation: nextDraft,
@@ -681,7 +695,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     const controlledTeam = season.programStates[controlledProgramId]?.team
 
-    if (!controlledTeam || !validateRotation(controlledTeam, draftRotation).valid) {
+    if (!controlledTeam || !validateRotationV1(controlledTeam, draftRotation).valid) {
       return
     }
 
@@ -916,7 +930,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     })
   },
 
-  setPostseasonDraftPlayerMinutes(playerId, minutes) {
+  setPostseasonDraftPlayerPositionMinutes(playerId, floorPosition, minutes) {
     const { dynasty, postseasonDraftRotation } = get()
     const postseason = dynasty?.activePostseason
     const controlledProgramId = dynasty?.controlledProgramId
@@ -930,7 +944,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
 
     const sanitizedMinutes = Math.max(0, Math.round(minutes))
-    const nextMinutes = { ...postseasonDraftRotation.minutes }
+    const nextDraft = cloneRotationV1(postseasonDraftRotation)
+    const nextMinutes = nextDraft.minutesByPosition[floorPosition]
 
     if (sanitizedMinutes === 0) {
       delete nextMinutes[playerId]
@@ -938,8 +953,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       nextMinutes[playerId] = sanitizedMinutes
     }
 
-    const nextDraft: Rotation = { minutes: nextMinutes }
-    const isValid = validateRotation(controlledState.team, nextDraft).valid
+    const isValid = validateRotationV1(controlledState.team, nextDraft).valid
 
     set({
       postseasonDraftRotation: nextDraft,
@@ -994,7 +1008,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
-    if (!validateRotation(controlledState.team, postseasonDraftRotation).valid) {
+    if (!validateRotationV1(controlledState.team, postseasonDraftRotation).valid) {
       return
     }
 

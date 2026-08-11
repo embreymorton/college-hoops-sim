@@ -1,4 +1,5 @@
 import { POSITIONS, type Player, type Position } from './player'
+import { calculateOverall } from './overall'
 import {
   MAX_PLAYER_MINUTES,
   MINUTES_PER_POSITION,
@@ -11,6 +12,39 @@ import type { Team } from './team'
 /** Canonical V1 assignments: each Player's minutes live at one floor position. */
 export interface RotationV1 {
   minutesByPosition: Record<Position, Record<string, number>>
+}
+
+/** Deeply clones all canonical floor-position assignment buckets. */
+export function cloneRotationV1(rotation: RotationV1): RotationV1 {
+  return {
+    minutesByPosition: Object.fromEntries(
+      POSITIONS.map((position) => [
+        position,
+        { ...rotation.minutesByPosition[position] },
+      ]),
+    ) as RotationV1['minutesByPosition'],
+  }
+}
+
+/** Compares canonical floor assignments, not merely aggregate Player minutes. */
+export function areRotationsV1Equal(
+  first: RotationV1,
+  second: RotationV1,
+): boolean {
+  return POSITIONS.every((position) => {
+    const firstAssignments = first.minutesByPosition[position]
+    const secondAssignments = second.minutesByPosition[position]
+    const playerIds = new Set([
+      ...Object.keys(firstAssignments),
+      ...Object.keys(secondAssignments),
+    ])
+
+    return [...playerIds].every(
+      (playerId) =>
+        (firstAssignments[playerId] ?? 0) ===
+        (secondAssignments[playerId] ?? 0),
+    )
+  })
 }
 
 export type RotationV1ValidationIssueCode =
@@ -34,6 +68,11 @@ export interface RotationV1ValidationIssue {
 export interface RotationV1ValidationResult {
   readonly valid: boolean
   readonly issues: RotationV1ValidationIssue[]
+}
+
+export interface PlayerRotationMinutesV1 {
+  readonly player: Player
+  readonly minutes: number
 }
 
 const ELIGIBLE_ROTATION_POSITIONS: Readonly<
@@ -84,6 +123,42 @@ export function derivePlayerMinutesV1(
   }
 
   return playerMinutes
+}
+
+export function calculateTotalMinutesV1(rotation: RotationV1): number {
+  return Object.values(derivePlayerMinutesV1(rotation)).reduce(
+    (total, minutes) => total + minutes,
+    0,
+  )
+}
+
+export function calculateFloorPositionMinutesV1(
+  rotation: RotationV1,
+  position: Position,
+): number {
+  return Object.values(rotation.minutesByPosition[position]).reduce(
+    (total, minutes) => total + minutes,
+    0,
+  )
+}
+
+export function getPlayersByMinutesV1(
+  team: Team,
+  rotation: RotationV1,
+): PlayerRotationMinutesV1[] {
+  const aggregateMinutes = derivePlayerMinutesV1(rotation)
+
+  return team.roster
+    .map((player) => ({
+      player,
+      minutes: aggregateMinutes[player.id] ?? 0,
+    }))
+    .sort(
+      (first, second) =>
+        second.minutes - first.minutes ||
+        calculateOverall(second.player) - calculateOverall(first.player) ||
+        first.player.id.localeCompare(second.player.id),
+    )
 }
 
 /** Validates canonical floor assignments and returns every discovered issue. */

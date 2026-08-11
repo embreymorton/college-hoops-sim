@@ -1,9 +1,11 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import {
+  generateDefaultRotationV1,
+  POSITIONS,
   TEAM_ROSTER_SIZE,
   TOTAL_ROTATION_MINUTES,
-  calculateTotalMinutes,
-  validateRotation,
+  calculateTotalMinutesV1,
+  validateRotationV1,
 } from '../engine'
 import {
   initializePostseason,
@@ -79,6 +81,7 @@ describe('Dynasty Season Rollover V0', () => {
     const next = rolloverDynastyToNextSeason(canonical)
     const priorArchive = canonical.history[0]!
     const archivedBefore = structuredClone(priorArchive)
+    let teamsWithSecondaryMinutes = 0
 
     expect(Object.keys(next.activeSeason!.programStates)).toHaveLength(32)
     for (const definition of UNIVERSE_V0.programs) {
@@ -91,9 +94,23 @@ describe('Dynasty Season Rollover V0', () => {
         prestige: offseason.prestige,
       })
       expect(state.team.roster).toHaveLength(TEAM_ROSTER_SIZE)
-      expect(validateRotation(state.team, state.rotation).valid).toBe(true)
-      expect(calculateTotalMinutes(state.rotation)).toBe(TOTAL_ROTATION_MINUTES)
+      expect(validateRotationV1(state.team, state.rotation).valid).toBe(true)
+      expect(state.rotation).toEqual(generateDefaultRotationV1(state.team))
+      expect(calculateTotalMinutesV1(state.rotation)).toBe(TOTAL_ROTATION_MINUTES)
+      if (
+        POSITIONS.some((position) =>
+          Object.entries(state.rotation.minutesByPosition[position]).some(
+            ([playerId, minutes]) =>
+              minutes > 0 &&
+              state.team.roster.find((player) => player.id === playerId)
+                ?.position !== position,
+          ),
+        )
+      ) {
+        teamsWithSecondaryMinutes += 1
+      }
     }
+    expect(teamsWithSecondaryMinutes).toBeGreaterThan(0)
     expect(priorArchive).toEqual(archivedBefore)
   })
 

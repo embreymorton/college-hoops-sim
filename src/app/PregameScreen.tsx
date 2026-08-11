@@ -6,7 +6,7 @@ import {
 } from '../components'
 import { useGamePresentationStore } from '../store'
 import { DEMO_PROGRAMS, getDemoProgram } from '../demo/demoPrograms'
-import { calculateTeamStrength, validateRotation } from '../engine'
+import { calculateTeamStrength, validateRotationV1 } from '../engine'
 import { describeRotationBlockingReason } from './formatters'
 
 export function PregameScreen() {
@@ -17,8 +17,8 @@ export function PregameScreen() {
   const homeRotation = useGamePresentationStore((state) => state.homeRotation)
   const setHomeProgram = useGamePresentationStore((state) => state.setHomeProgram)
   const setAwayProgram = useGamePresentationStore((state) => state.setAwayProgram)
-  const setHomePlayerMinutes = useGamePresentationStore(
-    (state) => state.setHomePlayerMinutes,
+  const setHomePlayerPositionMinutes = useGamePresentationStore(
+    (state) => state.setHomePlayerPositionMinutes,
   )
   const resetHomeRotation = useGamePresentationStore(
     (state) => state.resetHomeRotation,
@@ -34,7 +34,7 @@ export function PregameScreen() {
     (program) => program.id !== homeProgramId,
   )
 
-  const rotationValidation = validateRotation(homeSetup.team, homeRotation)
+  const rotationValidation = validateRotationV1(homeSetup.team, homeRotation)
   const isRotationValid = rotationValidation.valid
   const currentHomeStrength = isRotationValid
     ? calculateTeamStrength(homeSetup.team, homeRotation)
@@ -107,7 +107,7 @@ export function PregameScreen() {
             defaultStrength={homeSetup.strength}
             currentStrength={currentHomeStrength}
             pendingStrengthReason={blockingReason}
-            onSetPlayerMinutes={setHomePlayerMinutes}
+            onSetPlayerPositionMinutes={setHomePlayerPositionMinutes}
             onReset={resetHomeRotation}
             headingId="home-team-heading"
           />

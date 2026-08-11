@@ -3,6 +3,7 @@ import { generateDefaultRotation, generateTeam } from '../generation'
 import { createRng } from '../random'
 import {
   calculatePlayerMinutesV1,
+  cloneRotationV1 as cloneCanonicalRotationV1,
   convertRotationV0ToV1,
   derivePlayerMinutesV1,
   getEligibleRotationPositions,
@@ -46,6 +47,22 @@ function playerIdAt(rotation: RotationV1, position: Position): string {
 }
 
 describe('Rotation V1 domain foundation', () => {
+  it('deep-clones every floor-position bucket', () => {
+    const original = makeNaturalRotationV1()
+    const cloned = cloneCanonicalRotationV1(original)
+    const playerId = playerIdAt(cloned, 'PG')
+
+    cloned.minutesByPosition.PG[playerId] = 39
+
+    expect(cloned).not.toEqual(original)
+    expect(original.minutesByPosition.PG[playerId]).toBe(40)
+    for (const position of POSITIONS) {
+      expect(cloned.minutesByPosition[position]).not.toBe(
+        original.minutesByPosition[position],
+      )
+    }
+  })
+
   it('derives fixed secondary eligibility from natural position', () => {
     const team = makeTeam()
     const expected: Record<Position, readonly Position[]> = {

@@ -1,4 +1,4 @@
-import type { GameResult, RngSeed, Rotation, Team } from '../engine'
+import type { GameResult, RngSeed, RotationV1, Team } from '../engine'
 import type { SeasonState } from '../season'
 import type { UniverseDefinition } from '../universe'
 
@@ -48,7 +48,7 @@ export interface NationalTournamentBracket {
 
 export interface PostseasonProgramState {
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationV1
 }
 
 /** Canonical tournament facts. Advancement and champion are projections. */

@@ -120,7 +120,7 @@ describe('Season State validation', () => {
     const state = season.programStates[programId] as SeasonProgramState
     season.programStates[programId] = {
       ...state,
-      rotation: { minutes: {} },
+      rotation: { minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} } },
     }
     const validation = validateSeasonState(UNIVERSE_V0, season)
 

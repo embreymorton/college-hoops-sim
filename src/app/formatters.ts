@@ -1,9 +1,10 @@
 import type {
   Position,
-  Rotation,
-  RotationValidationResult,
+  RotationV1,
+  RotationV1ValidationResult,
   Team,
 } from '../engine'
+import { areRotationsV1Equal } from '../engine'
 
 /**
  * Presentation-only formatting helpers. These format existing engine output
@@ -59,14 +60,11 @@ export function formatSignedRating(value: number): string {
  * A pure value comparison, not a legality judgment.
  */
 export function areRotationsEqual(
-  team: Team,
-  first: Rotation,
-  second: Rotation,
+  _team: Team,
+  first: RotationV1,
+  second: RotationV1,
 ): boolean {
-  return team.roster.every(
-    (player) =>
-      (first.minutes[player.id] ?? 0) === (second.minutes[player.id] ?? 0),
-  )
+  return areRotationsV1Equal(first, second)
 }
 
 /** "Valid", "N minutes remaining", or "N minutes over" for one position group. */
@@ -95,7 +93,7 @@ export function describePositionMinutes(
  * issues — this only chooses which issue to describe and how to phrase it.
  */
 export function describeRotationBlockingReason(
-  validation: RotationValidationResult,
+  validation: RotationV1ValidationResult,
 ): string {
   const totalIssue = validation.issues.find(
     (issue) => issue.code === 'INVALID_TOTAL_MINUTES',

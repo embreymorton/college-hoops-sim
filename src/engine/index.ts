@@ -1,4 +1,6 @@
 export {
+  areRotationsV1Equal,
+  calculateFloorPositionMinutesV1,
   calculateOverall,
   CLASS_YEARS,
   MAX_PLAYER_RATING,
@@ -12,6 +14,8 @@ export {
   calculateRosterAverage,
   calculatePlayerDefense,
   calculatePlayerMinutesV1,
+  calculateTotalMinutesV1,
+  cloneRotationV1,
   calculatePlayerOffense,
   calculatePositionMinutes,
   calculateTeamDefense,
@@ -23,8 +27,10 @@ export {
   derivePlayerMinutes,
   derivePlayerMinutesV1,
   getEligibleRotationPositions,
+  getPlayersByMinutesV1,
   getPlayersByMinutes,
   MAX_PLAYER_MINUTES,
+  normalizeRotationToV1,
   validateRotation,
   validateRotationInput,
   validateRotationV1,
@@ -35,6 +41,7 @@ export type {
   Player,
   PlayerAttributes,
   PlayerRotationMinutes,
+  PlayerRotationMinutesV1,
   Position,
   Rotation,
   RotationInput,
@@ -50,6 +57,8 @@ export type {
 } from './domain'
 export {
   generateDefaultRotation,
+  generateDefaultRotationV1,
+  generateNaturalDefaultRotationV1,
   generatePlayer,
   generateTeam,
   PLAYER_NAME_POOL_COUNTS,

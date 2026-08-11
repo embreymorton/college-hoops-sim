@@ -1,12 +1,12 @@
 import type { CSSProperties } from 'react'
-import type { Rotation, Team } from '../engine'
+import type { RotationV1, Team } from '../engine'
 import { RosterTable } from './RosterTable'
 import { TeamPanelHeader } from './TeamPanelHeader'
 import type { BrandingSource } from './branding'
 
 interface TeamRosterPanelProps {
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationV1
   readonly program: BrandingSource
   readonly headingId: string
 }

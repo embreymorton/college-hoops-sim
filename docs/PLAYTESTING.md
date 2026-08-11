@@ -194,11 +194,12 @@ A future Player Detail view may show identity, position/class, OVR/POT, nine att
 
 Following Silas Matthews after he joined another Program was enjoyable. A future favorite/followed-player concept could surface current Team, class, OVR, statistics, development, and notable performances. Do not commit to notifications or permanent history design yet.
 
-## Position / Rotation Flexibility — DIAGNOSTIC CONFIRMED / IMPLEMENTATION PENDING
+## Position / Rotation Flexibility — RESOLVED / WATCH
 
 Manual rosters exposed a strict natural-position constraint: an `SG 69` could receive roughly 36 MPG behind a weak backup, while a `PG 78` received about five MPG because he could not play another spot. Multiple strong players at one natural position can therefore produce visibly inferior lineups.
 
-The current rule is strictly natural-position only. Investigate whether it systematically suppresses talented rosters or creates poor AI/default Rotations before committing to secondary positions, multiple eligible positions, or a limited adjacent-position rule. Any future change affects default AI Rotations, Team Strength, roster construction, and Recruiting needs.
+Rotation V1 is canonical; manual legal secondary assignments and accepted
+flexible deterministic AI/default generation are live.
 
 ### Phase 6E.5 diagnostic result
 
@@ -208,11 +209,34 @@ The diagnostic-only universal adjacent model increased Team OVR by `+2.21` mean 
 
 Northbridge/Great Lakes improved `+1.88` under universal adjacency and `+1.67` under the narrow model; Pine Valley improved `+2.28` and `+2.05`. Rigidity can suppress elite rosters, but flexibility does not magically erase weak-team separation. The height audit found some small-wing/SF and undersized-C assignments in both simple tables, reinforcing the case for a future generated or explicit secondary-position model rather than universal adjacency.
 
-### Current production constraint
+### Phase 6E.6F behavioral validation
 
-V0 `Rotation.minutes` is one aggregate player-minute map, and validation derives each 40-minute slot from natural position. Default Rotation generation, the grouped Rotation editor, Season/Postseason Rotation state, and validation all rely on that representation.
+The paired direct audit compared natural and flexible defaults on the same 96
+generated Teams. Flexible rotations changed `41/96` Teams (`42.71%`), assigned
+`264` secondary minutes to 51 Players, moved 11 buried Players from at most nine
+minutes to at least ten, and brought two zero-minute Players into the Rotation.
+Average Team OVR increased `+0.1142` (median `0`, P90 `+0.3423`, maximum
+`+0.6956`) with zero regressions.
 
-The strict-position limitation is confirmed. Production implementation remains pending; a future session must inspect the clean V0 architecture before proposing any change. No reverted migration plan is authoritative.
+Rotation depth stayed stable: Players above zero minutes changed from `10.77`
+to `10.78` per Team, while 10+ minute Players changed from `7.80` to `7.91`.
+The meaningful watchpoint is the accepted 36-minute exception: 38 Players moved
+from 36 to exactly 40 minutes. Interior/forward flexibility also dominated with
+`PF→C 84`, `SF→PF 80`, and `C→PF 40` minutes versus `PG→SG 40` and `SG→SF 20`.
+
+Paired QUICK (1 seed × 3 Seasons, 1,152 games per branch) and STANDARD (3 seeds
+× 10 Seasons, 11,520 games per branch) comparisons used identical Teams,
+Schedules, and game seeds. STANDARD movement was negligible: scoring `+0.012`
+points per Team-game, Team OVR `+0.092`, FG% `+0.002` percentage points, close
+games `+0.087` percentage points, blowouts `+0.052` percentage points, and win
+spread `+0.004`. No accepted calibration band failed.
+
+**Decision: RESOLVED / WATCH.** Phase 6E.6G activated the accepted generator for
+fresh Universe, Exhibition, and new-season Dynasty defaults without changing
+its behavior. Production structural and full-Season smoke tests passed. Monitor
+exactly-40-minute frequency, the interior-heavy path mix, and rare large
+incumbent displacement; current evidence does not justify tuning the cap,
+threshold, eligibility mapping, or any frozen simulation system.
 
 ## Game Simulation — Shot Selection — OBSERVED
 

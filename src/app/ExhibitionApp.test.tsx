@@ -2,7 +2,7 @@ import { fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
   calculateTeamStrength,
-  getPlayersByMinutes,
+  getPlayersByMinutesV1,
   type GameResult,
   type PlayerGameStats,
 } from '../engine'
@@ -106,7 +106,7 @@ describe('ExhibitionApp', () => {
   it('renders the read-only away roster with default rotation minutes from the generated Team', () => {
     render(<ExhibitionApp />)
     const { awaySetup } = useGamePresentationStore.getState()
-    const topPlayer = getPlayersByMinutes(
+    const topPlayer = getPlayersByMinutesV1(
       awaySetup.team,
       awaySetup.rotation,
     )[0]!
@@ -285,12 +285,13 @@ describe('Rotation editor', () => {
     const homePanel = getHomeRotationPanel()
     const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
     const playerId = row.getAttribute('data-player-id')!
+    const position = row.getAttribute('data-floor-position') as 'PG'
     const input = within(row).getByRole('spinbutton')
 
     fireEvent.change(input, { target: { value: '17' } })
 
     expect(
-      useGamePresentationStore.getState().homeRotation.minutes[playerId],
+      useGamePresentationStore.getState().homeRotation.minutesByPosition[position][playerId],
     ).toBe(17)
     expect((input as HTMLInputElement).value).toBe('17')
   })
@@ -301,20 +302,21 @@ describe('Rotation editor', () => {
     const homePanel = getHomeRotationPanel()
     const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
     const playerId = row.getAttribute('data-player-id')!
+    const position = row.getAttribute('data-floor-position') as 'PG'
     const startingMinutes =
-      useGamePresentationStore.getState().homeRotation.minutes[playerId] ?? 0
+      useGamePresentationStore.getState().homeRotation.minutesByPosition[position][playerId] ?? 0
     const increase = within(row).getByRole('button', { name: /increase/i })
     const decrease = within(row).getByRole('button', { name: /decrease/i })
 
     fireEvent.click(increase)
     expect(
-      useGamePresentationStore.getState().homeRotation.minutes[playerId],
+      useGamePresentationStore.getState().homeRotation.minutesByPosition[position][playerId],
     ).toBe(startingMinutes + 1)
 
     fireEvent.click(decrease)
     fireEvent.click(decrease)
     expect(
-      useGamePresentationStore.getState().homeRotation.minutes[playerId],
+      useGamePresentationStore.getState().homeRotation.minutesByPosition[position][playerId],
     ).toBe(startingMinutes - 1)
   })
 
@@ -345,15 +347,15 @@ describe('Rotation editor', () => {
     render(<ExhibitionApp />)
 
     const { homeSetup } = useGamePresentationStore.getState()
-    const pointGuards = getPlayersByMinutes(
+    const pointGuards = getPlayersByMinutesV1(
       homeSetup.team,
       homeSetup.rotation,
     ).filter(({ player }) => player.position === 'PG')
     const donorRow = document.querySelector(
-      `tr[data-player-id="${pointGuards[0]!.player.id}"]`,
+      `tr[data-player-id="${pointGuards[0]!.player.id}"][data-floor-position="PG"]`,
     ) as HTMLElement
     const recipientRow = document.querySelector(
-      `tr[data-player-id="${pointGuards[1]!.player.id}"]`,
+      `tr[data-player-id="${pointGuards[1]!.player.id}"][data-floor-position="PG"]`,
     ) as HTMLElement
 
     fireEvent.change(within(donorRow).getByRole('spinbutton'), {

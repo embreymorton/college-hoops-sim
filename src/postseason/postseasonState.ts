@@ -1,4 +1,4 @@
-import { validateRotation, type GameResult, type Rotation } from '../engine'
+import { validateRotationV1, type GameResult, type RotationV1 } from '../engine'
 import { cloneGameResult, cloneRotation } from './cloning'
 import type { PostseasonState } from './domain'
 import { resolveTournamentGameParticipants } from './queries'
@@ -44,11 +44,11 @@ export function recordTournamentGameResult(
 export function updatePostseasonProgramRotation(
   postseason: PostseasonState,
   programId: string,
-  rotation: Rotation,
+  rotation: RotationV1,
 ): PostseasonState {
   const state = postseason.programStates[programId]
   if (!state) throw new RangeError(`Unknown Postseason Program ID "${programId}".`)
-  const validation = validateRotation(state.team, rotation)
+  const validation = validateRotationV1(state.team, rotation)
   if (!validation.valid) {
     throw new RangeError(
       `Cannot store invalid Rotation for Program "${programId}": ${validation.issues

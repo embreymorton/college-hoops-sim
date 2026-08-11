@@ -1,8 +1,9 @@
 import {
+  cloneRotationV1,
   simulateGame,
-  validateRotation,
+  validateRotationV1,
   type GameResult,
-  type Rotation,
+  type RotationV1,
 } from '../src/engine'
 import { generateRegularSeasonSchedule, type ScheduledGame } from '../src/schedule'
 import {
@@ -71,39 +72,38 @@ function simulateAndRecord(
 function createAlternativeRotation(
   season: SeasonState,
   programId: string,
-): Rotation {
+): RotationV1 {
   const state = season.programStates[programId]
 
   if (!state) {
     throw new Error(`Missing Season Program "${programId}".`)
   }
 
-  const rotation: Rotation = { minutes: { ...state.rotation.minutes } }
+  const rotation = cloneRotationV1(state.rotation)
 
   for (const player of state.team.roster) {
     const teammate = state.team.roster.find(
       (candidate) =>
         candidate.id !== player.id &&
         candidate.position === player.position &&
-        (rotation.minutes[candidate.id] ?? 0) < 40,
+        (rotation.minutesByPosition[player.position][candidate.id] ?? 0) < 40,
     )
-    const playerMinutes = rotation.minutes[player.id] ?? 0
+    const assignments = rotation.minutesByPosition[player.position]
+    const playerMinutes = assignments[player.id] ?? 0
 
     if (!teammate || playerMinutes < 1) {
       continue
     }
 
-    rotation.minutes[player.id] = playerMinutes - 1
-    rotation.minutes[teammate.id] =
-      (rotation.minutes[teammate.id] ?? 0) + 1
+    assignments[player.id] = playerMinutes - 1
+    assignments[teammate.id] = (assignments[teammate.id] ?? 0) + 1
 
-    if (validateRotation(state.team, rotation).valid) {
+    if (validateRotationV1(state.team, rotation).valid) {
       return rotation
     }
 
-    rotation.minutes[player.id] = playerMinutes
-    rotation.minutes[teammate.id] =
-      (rotation.minutes[teammate.id] ?? 0) - 1
+    assignments[player.id] = playerMinutes
+    assignments[teammate.id] = (assignments[teammate.id] ?? 0) - 1
   }
 
   throw new Error('Could not create a different legal inspection Rotation.')
@@ -207,8 +207,8 @@ function main(): void {
 
   process.stdout.write(
     'ROTATION UPDATE — CHARLOTTE TECH\n' +
-      `Default Rotation valid: ${yesNo(validateRotation(stateBefore.team, stateBefore.rotation).valid)}\n` +
-      `Current Rotation valid: ${yesNo(Boolean(stateAfter && validateRotation(stateAfter.team, stateAfter.rotation).valid))}\n` +
+      `Default Rotation valid: ${yesNo(validateRotationV1(stateBefore.team, stateBefore.rotation).valid)}\n` +
+      `Current Rotation valid: ${yesNo(Boolean(stateAfter && validateRotationV1(stateAfter.team, stateAfter.rotation).valid))}\n` +
       `Rotation changed: ${yesNo(JSON.stringify(stateBefore.rotation) !== JSON.stringify(stateAfter?.rotation))}\n` +
       `Team unchanged: ${yesNo(JSON.stringify(stateBefore.team) === JSON.stringify(stateAfter?.team))}\n` +
       `Season validation after update: ${updatedValidation.valid ? 'PASS' : 'FAIL'}\n\n`,
@@ -229,7 +229,9 @@ function main(): void {
     recordGameResult(initialSeason, 'unknown-scheduled-game', firstResult),
   )
   const invalidRotationRejected = rejectionPassed(() =>
-    updateProgramRotation(updatedSeason, programId, { minutes: {} }),
+    updateProgramRotation(updatedSeason, programId, {
+      minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} },
+    }),
   )
   const roundTripped = JSON.parse(
     JSON.stringify(updatedSeason),

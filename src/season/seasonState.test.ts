@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   simulateGame,
-  validateRotation,
+  cloneRotationV1,
+  validateRotationV1,
   type GameResult,
-  type Rotation,
 } from '../engine'
 import {
   generateRegularSeasonSchedule,
@@ -96,31 +96,28 @@ function createAlternativeRotation(season: SeasonState, programId: string) {
     throw new Error(`Missing test Program "${programId}".`)
   }
 
-  const rotation: Rotation = {
-    minutes: { ...programState.rotation.minutes },
-  }
+  const rotation = cloneRotationV1(programState.rotation)
 
   for (const player of programState.team.roster) {
     const teammate = programState.team.roster.find(
       (candidate) =>
         candidate.id !== player.id &&
         candidate.position === player.position &&
-        (rotation.minutes[candidate.id] ?? 0) < 40,
+        (rotation.minutesByPosition[player.position][candidate.id] ?? 0) < 40,
     )
-    const playerMinutes = rotation.minutes[player.id] ?? 0
+    const assignments = rotation.minutesByPosition[player.position]
+    const playerMinutes = assignments[player.id] ?? 0
 
     if (teammate && playerMinutes > 0) {
-      rotation.minutes[player.id] = playerMinutes - 1
-      rotation.minutes[teammate.id] =
-        (rotation.minutes[teammate.id] ?? 0) + 1
+      assignments[player.id] = playerMinutes - 1
+      assignments[teammate.id] = (assignments[teammate.id] ?? 0) + 1
 
-      if (validateRotation(programState.team, rotation).valid) {
+      if (validateRotationV1(programState.team, rotation).valid) {
         return rotation
       }
 
-      rotation.minutes[player.id] = playerMinutes
-      rotation.minutes[teammate.id] =
-        (rotation.minutes[teammate.id] ?? 0) - 1
+      assignments[player.id] = playerMinutes
+      assignments[teammate.id] = (assignments[teammate.id] ?? 0) - 1
     }
   }
 
@@ -157,7 +154,7 @@ describe('Season State initialization', () => {
       const state = season.programStates[id]
       expect(state).toBeDefined()
       expect(state?.team.id).toBe(id)
-      expect(validateRotation(state!.team, state!.rotation).valid).toBe(true)
+      expect(validateRotationV1(state!.team, state!.rotation).valid).toBe(true)
     }
 
     expect(validateSeasonState(UNIVERSE_V0, season)).toEqual({
@@ -421,10 +418,14 @@ describe('persistent Rotation updates and purity', () => {
     const season = createSeason()
 
     expect(() =>
-      updateProgramRotation(season, 'unknown-program', { minutes: {} }),
+      updateProgramRotation(season, 'unknown-program', {
+        minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} },
+      }),
     ).toThrow(/Unknown Season Program/)
     expect(() =>
-      updateProgramRotation(season, 'charlotte-tech', { minutes: {} }),
+      updateProgramRotation(season, 'charlotte-tech', {
+        minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} },
+      }),
     ).toThrow(/invalid Rotation/)
   })
 

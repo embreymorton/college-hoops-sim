@@ -1,9 +1,10 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
   simulateGame,
-  validateRotation,
+  cloneRotationV1,
+  validateRotationV1,
   type GameResult,
-  type Rotation,
+  type RotationV1,
 } from '../engine'
 import {
   generateRegularSeasonSchedule,
@@ -67,34 +68,33 @@ function resultFor(season: SeasonState, game: ScheduledGame): GameResult {
 function alternativeRotation(
   season: SeasonState,
   programId: string,
-): Rotation {
+): RotationV1 {
   const state = season.programStates[programId]!
-  const rotation: Rotation = { minutes: { ...state.rotation.minutes } }
+  const rotation = cloneRotationV1(state.rotation)
 
   for (const player of state.team.roster) {
     const teammate = state.team.roster.find(
       (candidate) =>
         candidate.id !== player.id &&
         candidate.position === player.position &&
-        (rotation.minutes[candidate.id] ?? 0) < 40,
+        (rotation.minutesByPosition[player.position][candidate.id] ?? 0) < 40,
     )
-    const minutes = rotation.minutes[player.id] ?? 0
+    const assignments = rotation.minutesByPosition[player.position]
+    const minutes = assignments[player.id] ?? 0
 
     if (!teammate || minutes < 1) {
       continue
     }
 
-    rotation.minutes[player.id] = minutes - 1
-    rotation.minutes[teammate.id] =
-      (rotation.minutes[teammate.id] ?? 0) + 1
+    assignments[player.id] = minutes - 1
+    assignments[teammate.id] = (assignments[teammate.id] ?? 0) + 1
 
-    if (validateRotation(state.team, rotation).valid) {
+    if (validateRotationV1(state.team, rotation).valid) {
       return rotation
     }
 
-    rotation.minutes[player.id] = minutes
-    rotation.minutes[teammate.id] =
-      (rotation.minutes[teammate.id] ?? 0) - 1
+    assignments[player.id] = minutes
+    assignments[teammate.id] = (assignments[teammate.id] ?? 0) - 1
   }
 
   throw new Error(`Could not alter Rotation for ${programId}.`)

@@ -1,4 +1,4 @@
-import type { GameResult, Player, Team } from '../engine'
+import { cloneRotationV1, type GameResult, type Player, type Team } from '../engine'
 import type { PostseasonState } from '../postseason'
 import type { SeasonState } from '../season'
 
@@ -38,7 +38,7 @@ export function cloneSeason(season: SeasonState): SeasonState {
         programId,
         {
           team: cloneTeam(state.team),
-          rotation: { minutes: { ...state.rotation.minutes } },
+          rotation: cloneRotationV1(state.rotation),
         },
       ]),
     ),
@@ -65,7 +65,7 @@ export function clonePostseason(postseason: PostseasonState): PostseasonState {
         programId,
         {
           team: cloneTeam(state.team),
-          rotation: { minutes: { ...state.rotation.minutes } },
+          rotation: cloneRotationV1(state.rotation),
         },
       ]),
     ),

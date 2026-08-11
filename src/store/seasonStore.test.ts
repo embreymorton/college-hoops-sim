@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { getPlayersByMinutes, simulateGame, validateRotation } from '../engine'
+import {
+  derivePlayerMinutesV1,
+  getPlayersByMinutesV1,
+  simulateGame,
+  validateRotationV1,
+} from '../engine'
 import {
   deriveProgramRecord,
   getCompletedGamesForProgram,
@@ -146,20 +151,20 @@ describe('seasonStore Rotation editing', () => {
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const pointGuards = getPlayersByMinutes(
+    const pointGuards = getPlayersByMinutesV1(
       controlledTeam,
       season!.programStates['charlotte-tech']!.rotation,
     ).filter(({ player }) => player.position === 'PG')
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(pointGuards[0]!.player.id, pointGuards[0]!.minutes - 2)
+      .setDraftPlayerPositionMinutes(pointGuards[0]!.player.id, 'PG', pointGuards[0]!.minutes - 2)
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(pointGuards[1]!.player.id, pointGuards[1]!.minutes + 2)
+      .setDraftPlayerPositionMinutes(pointGuards[1]!.player.id, 'PG', pointGuards[1]!.minutes + 2)
 
     const state = useDynastyStore.getState()
-    expect(validateRotation(controlledTeam, state.draftRotation!).valid).toBe(true)
+    expect(validateRotationV1(controlledTeam, state.draftRotation!).valid).toBe(true)
     expect(state.draftRotation).not.toEqual(season!.programStates['charlotte-tech']!.rotation)
   })
 
@@ -168,17 +173,17 @@ describe('seasonStore Rotation editing', () => {
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const forwards = getPlayersByMinutes(
+    const forwards = getPlayersByMinutesV1(
       controlledTeam,
       season!.programStates['charlotte-tech']!.rotation,
     ).filter(({ player }) => player.position === 'SF')
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(forwards[0]!.player.id, forwards[0]!.minutes - 3)
+      .setDraftPlayerPositionMinutes(forwards[0]!.player.id, 'SF', forwards[0]!.minutes - 3)
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(forwards[1]!.player.id, forwards[1]!.minutes + 3)
+      .setDraftPlayerPositionMinutes(forwards[1]!.player.id, 'SF', forwards[1]!.minutes + 3)
 
     const editedRotation = useDynastyStore.getState().draftRotation
     const persisted =
@@ -194,14 +199,14 @@ describe('seasonStore Rotation editing', () => {
       useDynastyStore.getState().dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const [firstPlayer] = getPlayersByMinutes(controlledTeam, originalRotation)
+    const [firstPlayer] = getPlayersByMinutesV1(controlledTeam, originalRotation)
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setDraftPlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
 
     const state = useDynastyStore.getState()
-    expect(validateRotation(controlledTeam, state.draftRotation!).valid).toBe(false)
+    expect(validateRotationV1(controlledTeam, state.draftRotation!).valid).toBe(false)
     expect(state.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation).toEqual(
       originalRotation,
     )
@@ -212,17 +217,17 @@ describe('seasonStore Rotation editing', () => {
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const centers = getPlayersByMinutes(
+    const centers = getPlayersByMinutesV1(
       controlledTeam,
       season!.programStates['charlotte-tech']!.rotation,
     ).filter(({ player }) => player.position === 'C')
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(centers[0]!.player.id, centers[0]!.minutes - 1)
+      .setDraftPlayerPositionMinutes(centers[0]!.player.id, 'C', centers[0]!.minutes - 1)
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(centers[1]!.player.id, centers[1]!.minutes + 1)
+      .setDraftPlayerPositionMinutes(centers[1]!.player.id, 'C', centers[1]!.minutes + 1)
     const editedRotation = useDynastyStore.getState().draftRotation
 
     useDynastyStore.getState().playScheduledGame()
@@ -240,6 +245,62 @@ describe('seasonStore Rotation editing', () => {
 })
 
 describe('seasonStore game simulation', () => {
+  it('preserves a true secondary assignment from Zustand draft through Season simulation', () => {
+    selectProgram()
+    const initialSeason = useDynastyStore.getState().dynasty!.activeSeason!
+    const controlled = initialSeason.programStates['charlotte-tech']!
+    const aggregate = derivePlayerMinutesV1(controlled.rotation)
+    const pointGuard = controlled.team.roster.find(
+      (player) => player.position === 'PG' && (aggregate[player.id] ?? 0) < 40,
+    )!
+    const shootingGuard = controlled.team.roster.find(
+      (player) =>
+        player.position === 'SG' &&
+        (controlled.rotation.minutesByPosition.SG[player.id] ?? 0) > 0,
+    )!
+    const transferredMinutes = Math.min(
+      2,
+      controlled.rotation.minutesByPosition.SG[shootingGuard.id]!,
+      40 - (aggregate[pointGuard.id] ?? 0),
+    )
+
+    expect(transferredMinutes).toBeGreaterThan(0)
+    useDynastyStore.getState().setDraftPlayerPositionMinutes(
+      shootingGuard.id,
+      'SG',
+      controlled.rotation.minutesByPosition.SG[shootingGuard.id]! -
+        transferredMinutes,
+    )
+    useDynastyStore.getState().setDraftPlayerPositionMinutes(
+      pointGuard.id,
+      'SG',
+      transferredMinutes,
+    )
+
+    const committed = useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!.rotation
+    expect(committed.minutesByPosition.SG[pointGuard.id]).toBe(
+      transferredMinutes,
+    )
+    expect(derivePlayerMinutesV1(committed)[pointGuard.id]).toBe(
+      (aggregate[pointGuard.id] ?? 0) + transferredMinutes,
+    )
+    expect(validateRotationV1(controlled.team, committed).valid).toBe(true)
+
+    const game = getNextGameForProgram(
+      useDynastyStore.getState().dynasty!.activeSeason!,
+      'charlotte-tech',
+    )!
+    useDynastyStore.getState().playScheduledGame()
+
+    const state = useDynastyStore.getState()
+    expect(state.dynasty!.activeSeason!.resultsByGameId[game.id]).toBeDefined()
+    expect(
+      state.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
+        .minutesByPosition.SG[pointGuard.id],
+    ).toBe(transferredMinutes)
+  })
+
   it('records the actual ScheduledGame result using the current Team/Rotation', () => {
     selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
@@ -273,14 +334,14 @@ describe('seasonStore game simulation', () => {
     selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const [firstPlayer] = getPlayersByMinutes(
+    const [firstPlayer] = getPlayersByMinutesV1(
       controlledTeam,
       season!.programStates['charlotte-tech']!.rotation,
     )
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setDraftPlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
     useDynastyStore.getState().playScheduledGame()
 
     const state = useDynastyStore.getState()
@@ -320,7 +381,7 @@ describe('seasonStore Dashboard Quick Sim', () => {
     selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const [firstPlayer] = getPlayersByMinutes(
+    const [firstPlayer] = getPlayersByMinutesV1(
       controlledTeam,
       season!.programStates['charlotte-tech']!.rotation,
     )
@@ -329,9 +390,9 @@ describe('seasonStore Dashboard Quick Sim', () => {
     // Leave an invalid edit in the draft without committing or fixing it.
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setDraftPlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
     expect(
-      validateRotation(controlledTeam, useDynastyStore.getState().draftRotation!)
+      validateRotationV1(controlledTeam, useDynastyStore.getState().draftRotation!)
         .valid,
     ).toBe(false)
 
@@ -349,17 +410,17 @@ describe('seasonStore Dashboard Quick Sim', () => {
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const canonicalRotation =
       season!.programStates['charlotte-tech']!.rotation
-    const [firstPlayer] = getPlayersByMinutes(controlledTeam, canonicalRotation)
+    const [firstPlayer] = getPlayersByMinutesV1(controlledTeam, canonicalRotation)
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setDraftPlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
     useDynastyStore.getState().goToHub()
 
     useDynastyStore.getState().goToGamePrep()
 
     const state = useDynastyStore.getState()
-    expect(validateRotation(controlledTeam, state.draftRotation!).valid).toBe(
+    expect(validateRotationV1(controlledTeam, state.draftRotation!).valid).toBe(
       true,
     )
     expect(state.draftRotation).toEqual(canonicalRotation)
@@ -639,14 +700,14 @@ describe('seasonStore Super Sim', () => {
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
     const canonicalRotation = season!.programStates['charlotte-tech']!.rotation
-    const [firstPlayer] = getPlayersByMinutes(controlledTeam, canonicalRotation)
+    const [firstPlayer] = getPlayersByMinutesV1(controlledTeam, canonicalRotation)
 
     // Leave an invalid draft behind, exactly like the Dashboard Quick Sim boundary test.
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setDraftPlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
     expect(
-      validateRotation(controlledTeam, useDynastyStore.getState().draftRotation!)
+      validateRotationV1(controlledTeam, useDynastyStore.getState().draftRotation!)
         .valid,
     ).toBe(false)
 
@@ -665,17 +726,17 @@ describe('seasonStore Super Sim', () => {
     selectProgram()
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const controlledTeam = season!.programStates['charlotte-tech']!.team
-    const forwards = getPlayersByMinutes(
+    const forwards = getPlayersByMinutesV1(
       controlledTeam,
       season!.programStates['charlotte-tech']!.rotation,
     ).filter(({ player }) => player.position === 'SF')
 
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(forwards[0]!.player.id, forwards[0]!.minutes - 3)
+      .setDraftPlayerPositionMinutes(forwards[0]!.player.id, 'SF', forwards[0]!.minutes - 3)
     useDynastyStore
       .getState()
-      .setDraftPlayerMinutes(forwards[1]!.player.id, forwards[1]!.minutes + 3)
+      .setDraftPlayerPositionMinutes(forwards[1]!.player.id, 'SF', forwards[1]!.minutes + 3)
     const customRotation = useDynastyStore.getState().draftRotation!
 
     useDynastyStore.getState().requestSuperSim('midseason')

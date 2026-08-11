@@ -3,8 +3,8 @@ import {
   TOTAL_ROTATION_MINUTES,
   calculateOverall,
   calculateTeamStrength,
-  calculateTotalMinutes,
-  validateRotation,
+  calculateTotalMinutesV1,
+  validateRotationV1,
 } from '../src/engine'
 import {
   assembleNextSeasonRosters,
@@ -229,11 +229,11 @@ function main(): void {
   console.log(`Program identity preserved: ${pass(UNIVERSE_V0.programs.every((program) => season2.programStates[program.id]!.team.id === program.id && season2.programStates[program.id]!.team.name === program.name && season2.programStates[program.id]!.team.abbreviation === program.abbreviation))}`)
   console.log(`Prestige preserved: ${pass(UNIVERSE_V0.programs.every((program) => season2.programStates[program.id]!.team.prestige === source.offseason!.programs[program.id]!.prestige))}\n`)
 
-  const validRotations = season2Programs.filter(({ team, rotation }) => validateRotation(team, rotation).valid)
+  const validRotations = season2Programs.filter(({ team, rotation }) => validateRotationV1(team, rotation).valid)
   console.log('SEASON 2 ROTATIONS\n')
   console.log(`Valid Rotations: ${validRotations.length} / ${season2Programs.length}`)
-  console.log(`Exactly 200 regulation minutes: ${season2Programs.filter(({ rotation }) => calculateTotalMinutes(rotation) === TOTAL_ROTATION_MINUTES).length} / ${season2Programs.length}`)
-  console.log(`Invalid position assignments: ${season2Programs.reduce((sum, { team, rotation }) => sum + validateRotation(team, rotation).issues.filter(({ code }) => code === 'INVALID_POSITION_TOTAL').length, 0)}\n`)
+  console.log(`Exactly 200 regulation minutes: ${season2Programs.filter(({ rotation }) => calculateTotalMinutesV1(rotation) === TOTAL_ROTATION_MINUTES).length} / ${season2Programs.length}`)
+  console.log(`Invalid position assignments: ${season2Programs.reduce((sum, { team, rotation }) => sum + validateRotationV1(team, rotation).issues.filter(({ code }) => code === 'INVALID_POSITION_TOTAL').length, 0)}\n`)
 
   console.log('SEASON 2 SCHEDULE\n')
   console.log(`Games: ${season2.schedule.games.length}`)
@@ -290,7 +290,7 @@ function main(): void {
     console.log(`${player.firstName} ${player.lastName} | ${player.position} | ${player.classYear} | OVR ${calculateOverall(player)} | POT ${player.potential}${class2IncomingIds.has(player.id) ? ' | INCOMING' : ''}`)
   }
   console.log(`Team OFF/DEF/OVR: ${charlotteStrength.offense.toFixed(1)} / ${charlotteStrength.defense.toFixed(1)} / ${charlotteStrength.overall.toFixed(1)}`)
-  console.log(`Rotation validation: ${pass(validateRotation(charlotte.team, charlotte.rotation).valid)}`)
+  console.log(`Rotation validation: ${pass(validateRotationV1(charlotte.team, charlotte.rotation).valid)}`)
   console.log('\nSEASON 3 PROJECTED OPENINGS')
   const charlotteNeeds = next.recruiting!.programs[CHARLOTTE_ID]!.projectedOpeningsByPosition
   console.log(Object.entries(charlotteNeeds).map(([position, count]) => `${position} ${count}`).join(' | '))
@@ -323,7 +323,7 @@ function main(): void {
   console.log(`Completed Season archives: ${smoke.history.map(({ seasonNumber }) => seasonNumber).join(' → ')}`)
   console.log(`Completed Recruiting classes: ${smoke.completedRecruitingHistory.map(({ targetSeasonNumber }) => targetSeasonNumber).join(' → ')}`)
   console.log(`All rosters exactly 12: ${pass(smokePrograms.every(({ team }) => team.roster.length === TEAM_ROSTER_SIZE))}`)
-  console.log(`All Rotations valid: ${pass(smokePrograms.every(({ team, rotation }) => validateRotation(team, rotation).valid))}`)
+  console.log(`All Rotations valid: ${pass(smokePrograms.every(({ team, rotation }) => validateRotationV1(team, rotation).valid))}`)
   console.log(`All Schedules valid: ${pass(allSchedules.every((schedule) => validateRegularSeasonSchedule(UNIVERSE_V0, schedule).valid))}`)
   console.log(`All Recruiting cycles finalized: ${pass(smoke.completedRecruitingHistory.length === smoke.history.length)}`)
   console.log('Unfilled roster openings: 0')

@@ -88,11 +88,10 @@ Tendency shares are weak `30%`, steady `50%`, and strong `20%`. There is no Pres
 
 ## Current Rotation production baseline — critical
 
-Current production is **Rotation V0**.
+Current production uses **Rotation V1** as its canonical live representation.
 
 ```text
-Rotation stores aggregate Player minutes.
-Players may receive minutes only at their natural position.
+RotationV1 stores minutes by floor position and Player ID.
 
 PG = 40
 SG = 40
@@ -102,13 +101,9 @@ C  = 40
 Total = 200
 ```
 
-There are **no production secondary positions, cross-position minutes, floor-aware canonical Rotation, or user position changes**.
+Phase 6E.6A introduced the engine/domain representation:
 
-Phase 6E.6A adds a parallel, isolated engine/domain `RotationV1` capability:
-
-```text
-RotationV1.minutesByPosition[Floor Position][Player ID] = minutes
-```
+`RotationV1.minutesByPosition[Floor Position][Player ID] = minutes`.
 
 Every floor position must total 40 minutes, the Team must total 200, and a
 Player may total at most 40. Rotation eligibility is derived from the Player's
@@ -126,13 +121,67 @@ as V0, including mixed V0/V1 matchups. Legal true-secondary assignments also
 flow through the boundary while natural Player position continues to determine
 ratings and statistical tendencies.
 
-No application or production state has migrated: Universe initialization,
-default Rotation generation, Season, Postseason, Dynasty, Zustand, and React
-all continue to store and produce Rotation V0. No default generator assigns
-secondary minutes, and `Player` has no secondary-position field.
+Phase 6E.6C adds the opt-in deterministic `generateDefaultRotationV1(team)`.
+It starts from the unchanged V0 default, converts it losslessly to V1, and then
+applies only clear legal secondary-position substitutions. The pass uses the
+Phase 6E.5 five-point balanced OFF/DEF contribution threshold, focuses on
+buried or V0-capped eligible Players displacing 20-plus-minute incumbents, and
+limits each Player to eight secondary minutes and 40 total minutes. If no
+qualifying opportunity exists, it returns the exact converted V0 allocation.
 
-> **IMPORTANT — REVERTED WORK**  
-> Previous Phase 6E.6 floor-aware Rotation / Secondary Position attempts were reverted. The current repository intentionally uses the clean accepted Rotation V0 implementation. Do not assume `FloorRotation`, `minutesByPosition`, `secondaryPosition`, floor-aware Zustand drafts, secondary-aware default Rotations, or secondary-position UI exist in production. No such artifacts are present under `src` in this clean state. If this changes, report the actual artifact rather than treating it as accepted architecture.
+At the 6E.6C checkpoint the generator was an isolated callable engine capability;
+Phase 6E.6G later activates it at the fresh-default production boundaries
+documented below.
+
+Phase 6E.6D adds the centralized persistence compatibility boundary
+`normalizeRotationToV1(team, rotationLike)`. The repository currently has no
+Zustand persistence middleware, browser storage, save import/export, hydration
+pipeline, or formal save schema version; state is in-memory and domain values
+are only required to survive cloning and ordinary JSON serialization.
+Accordingly, the boundary uses the unambiguous existing structural distinction
+between V0 `minutes` and V1 `minutesByPosition` rather than adding a dormant
+version marker. It validates before migrating or copying, rejects malformed and
+ambiguous data explicitly, losslessly converts legacy V0 through the established
+adapter, and preserves valid V1 secondary assignments in an isolated copy.
+
+Phase 6E.6E makes Rotation V1 canonical throughout Universe, Exhibition,
+Season, Postseason, Dynasty, Zustand drafts, and the React Rotation editor.
+Existing V1 assignments are deep-cloned across state transitions, including
+Season-to-Postseason.
+
+The editor now treats its five groups as floor positions, lists Players through
+the shared derived-eligibility rules, edits one floor bucket at a time, and
+shows derived aggregate Player totals. Legal manual secondary minutes can be
+committed and simulated; temporary invalid drafts remain isolated from
+canonical state. The 40-minute aggregate Player cap is enforced by V1
+validation. No `secondaryPosition` field was added to `Player`.
+
+The engine simulation boundary continues to accept V0 and V1 for compatibility
+and equivalence testing. Legacy V0 can still be validated and losslessly
+normalized via `normalizeRotationToV1()`. There is still no persistence,
+hydration, browser-storage, import/export, or formal save-schema boundary.
+
+Phase 6E.6F behaviorally validates the dormant flexible generator as
+**WATCH / ACCEPT**. A paired 96-Team direct audit changed 41 Teams, assigned
+264 secondary minutes to 51 Players, improved average Team OVR by `+0.1142`,
+and produced zero strength regressions. QUICK (1×3) and STANDARD (3×10) paired
+Season comparisons found only negligible movement in scoring, shooting,
+standings spread, close games, and blowouts. Real generated congestion cases
+gave buried Players meaningful adjacent-position minutes.
+
+Two post-activation watchpoints remain: 38 of 96 sampled Teams moved a V0-capped
+36-minute Player to exactly 40, and interior/forward paths supplied 204 of 264
+secondary minutes. Neither shortened overall rotations or caused broader
+simulation harm in the paired validation, so no constants were changed.
+
+Phase 6E.6G activates and freezes the accepted flexible generator. Fresh
+Universe Teams, Exhibition defaults/resets, and Dynasty rollover/new-season
+rosters now use `generateDefaultRotationV1(team)`. Season-to-Postseason,
+cloning, archives, drafts, simulation, and manual updates continue preserving
+existing V1 assignments exactly and never regenerate them. The natural-default
+helper remains available only for paired diagnostics and equivalence evidence.
+Rotation V0 remains intentional compatibility, conversion, and historical-test
+infrastructure; it is no longer a live production default path.
 
 ## Position-flexibility diagnostic
 
@@ -144,7 +193,9 @@ Phase 6E.5 is accepted evidence, not an accepted implementation.
 - Candidate Team OVR changes: universal adjacent `+2.21` mean; narrow secondary candidate `+1.92` mean, `+1.74` median, `+5.13` maximum.
 - Northbridge / Great Lakes gained approximately `+1.67` under the narrow candidate. Pine Valley gained approximately `+2.05`, without erasing the broader talent hierarchy.
 
-Conclusion: strict natural-position Rotation is a confirmed gameplay limitation. A narrow secondary-position candidate looked more promising than universal adjacency. No production implementation has been accepted.
+Conclusion: strict natural-position defaults were a confirmed gameplay
+limitation. Manual and deterministic AI/default flexibility are now live and
+accepted, subject to the documented WATCH metrics.
 
 ## Current playtesting and watchpoints
 
@@ -158,11 +209,10 @@ Repeated play has produced 1/16 upsets, low-seed championship runs, and memorabl
 
 ## Next engineering area
 
-**Position / Rotation Flexibility** remains the next high-priority engineering
-area. Phase 6E.6B's representation-neutral engine read boundary and exact V0/V1
-simulation equivalence coverage are complete; any application-state or default
-generation migration belongs to a separately reviewed later phase. Rotation V0
-remains authoritative for all persisted production and application state.
+Rotation V1 is now the frozen production Rotation system: canonical V1 state,
+derived secondary eligibility, manual floor-position editing, flexible
+deterministic defaults, and the retained V0 compatibility boundary. Reopen it
+only if future playtesting or diagnostics produce new evidence.
 
 ## Documentation map
 

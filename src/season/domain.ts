@@ -2,7 +2,7 @@ import type {
   GameResult,
   PlayerGameStats,
   RngSeed,
-  Rotation,
+  RotationV1,
   Team,
 } from '../engine'
 import type { RegularSeasonSchedule, ScheduledGame } from '../schedule'
@@ -10,7 +10,7 @@ import type { InitializedUniverse, UniverseDefinition } from '../universe'
 
 export interface SeasonProgramState {
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationV1
 }
 
 /** Canonical mutable basketball facts for one regular season. */

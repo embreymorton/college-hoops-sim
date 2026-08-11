@@ -1,4 +1,4 @@
-import { simulateGame, validateRotation, type RngSeed } from '../engine'
+import { simulateGame, validateRotationV1, type RngSeed } from '../engine'
 import type {
   PostseasonState,
   SimulatePendingCurrentTournamentRoundOptions,
@@ -74,7 +74,7 @@ export function simulateTournamentGame({
     [participants.homeProgramId, home],
     [participants.awayProgramId, away],
   ] as const) {
-    const validation = validateRotation(state.team, state.rotation)
+    const validation = validateRotationV1(state.team, state.rotation)
     if (!validation.valid) {
       throw new RangeError(
         `Postseason Program "${programId}" has an invalid Rotation.`,

@@ -2,19 +2,30 @@ import {
   calculateOverall,
   calculatePlayerDefense,
   calculatePlayerOffense,
-  getPlayersByMinutes,
-  type Rotation,
+  derivePlayerMinutesV1,
+  type RotationV1,
   type Team,
 } from '../engine'
 import { formatHeight, formatRating } from '../app/formatters'
 
 interface RosterTableProps {
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationV1
 }
 
 export function RosterTable({ team, rotation }: RosterTableProps) {
-  const rows = getPlayersByMinutes(team, rotation)
+  const aggregateMinutes = derivePlayerMinutesV1(rotation)
+  const rows = team.roster
+    .map((player) => ({
+      player,
+      minutes: aggregateMinutes[player.id] ?? 0,
+    }))
+    .sort(
+      (first, second) =>
+        second.minutes - first.minutes ||
+        calculateOverall(second.player) - calculateOverall(first.player) ||
+        first.player.id.localeCompare(second.player.id),
+    )
 
   return (
     <div className="table-scroll">

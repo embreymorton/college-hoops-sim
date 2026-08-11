@@ -1,7 +1,12 @@
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import {
+  calculatePlayerMinutesV1,
+  calculateTotalMinutesV1,
+  generateDefaultRotationV1,
+  generateNaturalDefaultRotationV1,
+  POSITIONS,
   TEAM_ROSTER_SIZE,
-  validateRotation,
+  validateRotationV1,
   type Team,
 } from '../engine'
 import {
@@ -123,11 +128,54 @@ describe('initializeUniverse', () => {
       expect(team.abbreviation).toBe(program.abbreviation)
       expect(team.prestige).toBe(program.basePrestige)
       expect(team.roster).toHaveLength(TEAM_ROSTER_SIZE)
-      expect(validateRotation(team, rotation)).toEqual({
+      expect(validateRotationV1(team, rotation)).toEqual({
         valid: true,
         issues: [],
       })
     }
+  })
+
+  it('uses deterministic flexible V1 defaults while preserving every structural invariant', () => {
+    const initialized = initializeUniverse(UNIVERSE_V0, 'v1-default-proof')
+    let teamsWithSecondaryMinutes = 0
+    let teamsRemainingNaturalOnly = 0
+
+    for (const { team, rotation } of initialized.programs) {
+      const expected = generateDefaultRotationV1(team)
+      const natural = generateNaturalDefaultRotationV1(team)
+      const hasSecondaryMinutes = POSITIONS.some((position) =>
+        Object.entries(rotation.minutesByPosition[position]).some(
+          ([playerId, minutes]) =>
+            minutes > 0 &&
+            team.roster.find((player) => player.id === playerId)?.position !==
+              position,
+        ),
+      )
+
+      expect(rotation).toEqual(expected)
+      expect(validateRotationV1(team, rotation).valid).toBe(true)
+      expect(calculateTotalMinutesV1(rotation)).toBe(200)
+      expect(
+        team.roster.every(
+          (player) => calculatePlayerMinutesV1(rotation, player.id) <= 40,
+        ),
+      ).toBe(true)
+      for (const position of POSITIONS) {
+        expect(
+          Object.values(rotation.minutesByPosition[position]).reduce(
+            (total, minutes) => total + minutes,
+            0,
+          ),
+        ).toBe(40)
+      }
+      if (hasSecondaryMinutes) teamsWithSecondaryMinutes += 1
+      if (rotation.minutesByPosition && JSON.stringify(rotation) === JSON.stringify(natural)) {
+        teamsRemainingNaturalOnly += 1
+      }
+    }
+
+    expect(teamsWithSecondaryMinutes).toBeGreaterThan(0)
+    expect(teamsRemainingNaturalOnly).toBeGreaterThan(0)
   })
 
   it('returns serializable output without mutating its Universe input', () => {

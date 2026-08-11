@@ -1,4 +1,4 @@
-import { validateRotation, type GameResult, type Rotation } from '../engine'
+import { validateRotationV1, type GameResult, type RotationV1 } from '../engine'
 import { cloneGameResult, cloneRotation } from './cloning'
 import type { SeasonState } from './domain'
 import {
@@ -66,7 +66,7 @@ export function recordGameResult(
 export function updateProgramRotation(
   season: SeasonState,
   programId: string,
-  rotation: Rotation,
+  rotation: RotationV1,
 ): SeasonState {
   const programState = season.programStates[programId]
 
@@ -74,7 +74,7 @@ export function updateProgramRotation(
     throw new RangeError(`Unknown Season Program ID "${programId}".`)
   }
 
-  const validation = validateRotation(programState.team, rotation)
+  const validation = validateRotationV1(programState.team, rotation)
 
   if (!validation.valid) {
     throw new RangeError(

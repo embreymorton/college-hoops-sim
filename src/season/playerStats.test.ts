@@ -225,11 +225,11 @@ function fixtureSeason(
     programStates: {
       [PROGRAM_ID]: {
         team: team(PROGRAM_ID, [PLAYER_ID, DNP_PLAYER_ID, 'alpha-3']),
-        rotation: { minutes: {} },
+        rotation: { minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} } },
       },
       [OPPONENT_ID]: {
         team: team(OPPONENT_ID, ['beta-1']),
-        rotation: { minutes: {} },
+        rotation: { minutesByPosition: { PG: {}, SG: {}, SF: {}, PF: {}, C: {} } },
       },
     },
     resultsByGameId,

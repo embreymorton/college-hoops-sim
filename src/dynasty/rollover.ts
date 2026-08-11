@@ -1,6 +1,6 @@
 import {
-  generateDefaultRotation,
-  validateRotation,
+  generateDefaultRotationV1,
+  validateRotationV1,
   type RngSeed,
   type Team,
 } from '../engine'
@@ -143,8 +143,8 @@ export function rolloverDynastyToNextSeason(
       prestige: offseasonProgram.prestige,
       roster: assembled.players.map((player) => structuredClone(player)),
     }
-    const rotation = generateDefaultRotation(team)
-    const rotationValidation = validateRotation(team, rotation)
+    const rotation = generateDefaultRotationV1(team)
+    const rotationValidation = validateRotationV1(team, rotation)
     if (!rotationValidation.valid) {
       throw new RangeError(
         `Program "${program.id}" cannot produce a valid default Rotation.`,

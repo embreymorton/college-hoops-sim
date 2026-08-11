@@ -84,7 +84,12 @@ describe('Dynasty transition orchestration', () => {
       superSimSummary: { kind: 'midseason', throughRound: 12, segmentWins: 8, segmentLosses: 4 },
       lastPlayedTournamentGameId: 'national-final',
       viewedTournamentGameId: 'national-final',
-      postseasonDraftRotation: { minutes: { 'retired-player': 40 } },
+      postseasonDraftRotation: {
+        minutesByPosition: {
+          PG: { 'retired-player': 40 },
+          SG: {}, SF: {}, PF: {}, C: {},
+        },
+      },
       explorationViewHistory: ['league'],
       selectedTeamProgramId: 'northbridge',
       selectedPlayerProgramId: 'northbridge',

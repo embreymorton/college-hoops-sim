@@ -1,4 +1,4 @@
-import type { Rotation, Team } from '../engine'
+import type { RotationV1, Team } from '../engine'
 
 export interface UniverseConfiguration {
   readonly programCount: number
@@ -84,7 +84,7 @@ export interface UniverseValidationResult {
 export interface InitializedProgram {
   readonly program: ProgramDefinition
   readonly team: Team
-  readonly rotation: Rotation
+  readonly rotation: RotationV1
 }
 
 export interface InitializedUniverse {

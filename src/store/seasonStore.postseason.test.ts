@@ -4,11 +4,12 @@ import {
   type DynastyState,
 } from '../dynasty'
 import {
+  cloneRotationV1,
   simulateGame,
-  validateRotation,
+  validateRotationV1,
   type GameResult,
   type PlayerGameStats,
-  type Rotation,
+  type RotationV1,
 } from '../engine'
 import {
   deriveNationalChampion,
@@ -83,32 +84,34 @@ function forcedResult(
 }
 
 /** Nudges one minute between two same-position teammates, keeping the Rotation legal. */
-function nudgeRotation(postseason: PostseasonState, programId: string): Rotation {
+function nudgeRotation(postseason: PostseasonState, programId: string): RotationV1 {
   const state = postseason.programStates[programId]!
-  const rotation: Rotation = { minutes: { ...state.rotation.minutes } }
+  const rotation = cloneRotationV1(state.rotation)
 
   for (const player of state.team.roster) {
     const teammate = state.team.roster.find(
       (candidate) =>
         candidate.id !== player.id &&
         candidate.position === player.position &&
-        (rotation.minutes[candidate.id] ?? 0) < 40,
+        (rotation.minutesByPosition[player.position][candidate.id] ?? 0) < 40,
     )
-    const minutes = rotation.minutes[player.id] ?? 0
+    const minutes = rotation.minutesByPosition[player.position][player.id] ?? 0
 
     if (!teammate || minutes < 1) {
       continue
     }
 
-    rotation.minutes[player.id] = minutes - 1
-    rotation.minutes[teammate.id] = (rotation.minutes[teammate.id] ?? 0) + 1
+    rotation.minutesByPosition[player.position][player.id] = minutes - 1
+    rotation.minutesByPosition[player.position][teammate.id] =
+      (rotation.minutesByPosition[player.position][teammate.id] ?? 0) + 1
 
-    if (validateRotation(state.team, rotation).valid) {
+    if (validateRotationV1(state.team, rotation).valid) {
       return rotation
     }
 
-    rotation.minutes[player.id] = minutes
-    rotation.minutes[teammate.id] = (rotation.minutes[teammate.id] ?? 0) - 1
+    rotation.minutesByPosition[player.position][player.id] = minutes
+    rotation.minutesByPosition[player.position][teammate.id] =
+      (rotation.minutesByPosition[player.position][teammate.id] ?? 0) - 1
   }
 
   throw new Error(`Could not nudge Rotation for ${programId}.`)
@@ -288,18 +291,25 @@ describe('seasonStore postseason — qualified and alive', () => {
     const controlledProgramId = postseason.field[0]!.programId
     assignControlledProgram(postseason, controlledProgramId)
     const controlledTeam = postseason.programStates[controlledProgramId]!.team
-    const [firstPlayerId] = Object.keys(
-      postseason.programStates[controlledProgramId]!.rotation.minutes,
-    )
+    const firstPlayer = controlledTeam.roster.find(
+      (player) =>
+        (postseason.programStates[controlledProgramId]!.rotation
+          .minutesByPosition[player.position][player.id] ?? 0) > 0,
+    )!
 
     useDynastyStore.getState().goToPostseasonGamePrep()
     const currentMinutes =
-      useDynastyStore.getState().postseasonDraftRotation!.minutes[firstPlayerId!] ?? 0
+      useDynastyStore.getState().postseasonDraftRotation!
+        .minutesByPosition[firstPlayer.position][firstPlayer.id] ?? 0
     useDynastyStore
       .getState()
-      .setPostseasonDraftPlayerMinutes(firstPlayerId!, currentMinutes + 5)
+      .setPostseasonDraftPlayerPositionMinutes(
+        firstPlayer.id,
+        firstPlayer.position,
+        currentMinutes + 5,
+      )
     expect(
-      validateRotation(
+      validateRotationV1(
         controlledTeam,
         useDynastyStore.getState().postseasonDraftRotation!,
       ).valid,
@@ -319,8 +329,14 @@ describe('seasonStore postseason — qualified and alive', () => {
     const nudged = nudgeRotation(postseason, controlledProgramId)
 
     useDynastyStore.getState().goToPostseasonGamePrep()
-    for (const [playerId, minutes] of Object.entries(nudged.minutes)) {
-      useDynastyStore.getState().setPostseasonDraftPlayerMinutes(playerId, minutes)
+    for (const position of ['PG', 'SG', 'SF', 'PF', 'C'] as const) {
+      for (const [playerId, minutes] of Object.entries(nudged.minutesByPosition[position])) {
+        useDynastyStore.getState().setPostseasonDraftPlayerPositionMinutes(
+          playerId,
+          position,
+          minutes,
+        )
+      }
     }
 
     const state = useDynastyStore.getState()
@@ -340,8 +356,14 @@ describe('seasonStore postseason — qualified and alive', () => {
     const nudged = nudgeRotation(postseason, controlledProgramId)
 
     useDynastyStore.getState().goToPostseasonGamePrep()
-    for (const [playerId, minutes] of Object.entries(nudged.minutes)) {
-      useDynastyStore.getState().setPostseasonDraftPlayerMinutes(playerId, minutes)
+    for (const position of ['PG', 'SG', 'SF', 'PF', 'C'] as const) {
+      for (const [playerId, minutes] of Object.entries(nudged.minutesByPosition[position])) {
+        useDynastyStore.getState().setPostseasonDraftPlayerPositionMinutes(
+          playerId,
+          position,
+          minutes,
+        )
+      }
     }
     useDynastyStore.getState().resetPostseasonDraftRotation()
 

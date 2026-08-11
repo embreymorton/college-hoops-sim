@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import {
-  getPlayersByMinutes,
+  generateDefaultRotationV1,
+  getPlayersByMinutesV1,
   simulateGame,
-  validateRotation,
+  validateRotationV1,
 } from '../engine'
 import { DEMO_PROGRAMS, getDemoProgram } from '../demo/demoPrograms'
 import { buildGameSeed, useGamePresentationStore } from './gamePresentationStore'
@@ -74,32 +75,33 @@ describe('gamePresentationStore home Rotation editing', () => {
   it('starts with the home Rotation equal to the generated default', () => {
     const { homeSetup, homeRotation } = useGamePresentationStore.getState()
     expect(homeRotation).toEqual(homeSetup.rotation)
+    expect(homeSetup.rotation).toEqual(generateDefaultRotationV1(homeSetup.team))
   })
 
   it('updates a single Player minutes without discarding the rest of the Rotation', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(homeSetup.team, homeSetup.rotation)
+    const [firstPlayer] = getPlayersByMinutesV1(homeSetup.team, homeSetup.rotation)
 
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, 12)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, 12)
 
     const { homeRotation } = useGamePresentationStore.getState()
-    expect(homeRotation.minutes[firstPlayer!.player.id]).toBe(12)
+    expect(homeRotation.minutesByPosition[firstPlayer!.player.position][firstPlayer!.player.id]).toBe(12)
   })
 
   it('omits a Player from the Rotation at zero minutes, preserving the canonical shape', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(homeSetup.team, homeSetup.rotation)
+    const [firstPlayer] = getPlayersByMinutesV1(homeSetup.team, homeSetup.rotation)
 
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, 0)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, 0)
 
     const { homeRotation } = useGamePresentationStore.getState()
     expect(
       Object.prototype.hasOwnProperty.call(
-        homeRotation.minutes,
+        homeRotation.minutesByPosition[firstPlayer!.player.position],
         firstPlayer!.player.id,
       ),
     ).toBe(false)
@@ -107,25 +109,25 @@ describe('gamePresentationStore home Rotation editing', () => {
 
   it('allows a temporarily invalid Rotation while editing', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(homeSetup.team, homeSetup.rotation)
+    const [firstPlayer] = getPlayersByMinutesV1(homeSetup.team, homeSetup.rotation)
 
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
 
     const { homeSetup: currentSetup, homeRotation } =
       useGamePresentationStore.getState()
-    expect(validateRotation(currentSetup.team, homeRotation).valid).toBe(
+    expect(validateRotationV1(currentSetup.team, homeRotation).valid).toBe(
       false,
     )
   })
 
   it('does not simulate while the home Rotation is invalid', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(homeSetup.team, homeSetup.rotation)
+    const [firstPlayer] = getPlayersByMinutesV1(homeSetup.team, homeSetup.rotation)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
 
     useGamePresentationStore.getState().simulate()
 
@@ -137,13 +139,13 @@ describe('gamePresentationStore home Rotation editing', () => {
 
   it('simulates once the Rotation returns to a legal total', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(homeSetup.team, homeSetup.rotation)
+    const [firstPlayer] = getPlayersByMinutesV1(homeSetup.team, homeSetup.rotation)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 5)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 5)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes)
 
     useGamePresentationStore.getState().simulate()
 
@@ -156,7 +158,7 @@ describe('gamePresentationStore home Rotation editing', () => {
   it('uses the actual edited home Rotation and the away Team default Rotation when simulating', () => {
     const { homeSetup, awaySetup, homeProgramId, awayProgramId } =
       useGamePresentationStore.getState()
-    const pointGuards = getPlayersByMinutes(
+    const pointGuards = getPlayersByMinutesV1(
       homeSetup.team,
       homeSetup.rotation,
     ).filter(({ player }) => player.position === 'PG')
@@ -165,13 +167,13 @@ describe('gamePresentationStore home Rotation editing', () => {
 
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(donor.player.id, donor.minutes - 2)
+      .setHomePlayerPositionMinutes(donor.player.id, 'PG', donor.minutes - 2)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(recipient.player.id, recipient.minutes + 2)
+      .setHomePlayerPositionMinutes(recipient.player.id, 'PG', recipient.minutes + 2)
 
     const editedRotation = useGamePresentationStore.getState().homeRotation
-    expect(validateRotation(homeSetup.team, editedRotation).valid).toBe(true)
+    expect(validateRotationV1(homeSetup.team, editedRotation).valid).toBe(true)
     expect(editedRotation).not.toEqual(homeSetup.rotation)
 
     useGamePresentationStore.getState().simulate()
@@ -194,10 +196,10 @@ describe('gamePresentationStore home Rotation editing', () => {
 
   it('restores the generated default Rotation on resetHomeRotation', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(homeSetup.team, homeSetup.rotation)
+    const [firstPlayer] = getPlayersByMinutesV1(homeSetup.team, homeSetup.rotation)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 3)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 3)
     expect(useGamePresentationStore.getState().homeRotation).not.toEqual(
       homeSetup.rotation,
     )
@@ -211,7 +213,7 @@ describe('gamePresentationStore home Rotation editing', () => {
 
   it('preserves the custom home Rotation when returning from postgame to the matchup screen', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const shootingGuards = getPlayersByMinutes(
+    const shootingGuards = getPlayersByMinutesV1(
       homeSetup.team,
       homeSetup.rotation,
     ).filter(({ player }) => player.position === 'SG')
@@ -219,10 +221,10 @@ describe('gamePresentationStore home Rotation editing', () => {
     const recipient = shootingGuards[1]!
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(donor.player.id, donor.minutes - 3)
+      .setHomePlayerPositionMinutes(donor.player.id, 'SG', donor.minutes - 3)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(recipient.player.id, recipient.minutes + 3)
+      .setHomePlayerPositionMinutes(recipient.player.id, 'SG', recipient.minutes + 3)
     const editedRotation = useGamePresentationStore.getState().homeRotation
 
     useGamePresentationStore.getState().simulate()
@@ -237,7 +239,7 @@ describe('gamePresentationStore home Rotation editing', () => {
 
   it('preserves the custom Rotation and advances the deterministic seed sequence on Simulate Again', () => {
     const { homeSetup } = useGamePresentationStore.getState()
-    const forwards = getPlayersByMinutes(
+    const forwards = getPlayersByMinutesV1(
       homeSetup.team,
       homeSetup.rotation,
     ).filter(({ player }) => player.position === 'SF')
@@ -245,10 +247,10 @@ describe('gamePresentationStore home Rotation editing', () => {
     const recipient = forwards[1]!
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(donor.player.id, donor.minutes - 1)
+      .setHomePlayerPositionMinutes(donor.player.id, 'SF', donor.minutes - 1)
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(recipient.player.id, recipient.minutes + 1)
+      .setHomePlayerPositionMinutes(recipient.player.id, 'SF', recipient.minutes + 1)
     const editedRotation = useGamePresentationStore.getState().homeRotation
 
     useGamePresentationStore.getState().simulate()
@@ -266,13 +268,13 @@ describe('gamePresentationStore home Rotation editing', () => {
 
   it('replaces the custom Rotation with the new Team default when the home program changes', () => {
     const initial = useGamePresentationStore.getState()
-    const [firstPlayer] = getPlayersByMinutes(
+    const [firstPlayer] = getPlayersByMinutesV1(
       initial.homeSetup.team,
       initial.homeSetup.rotation,
     )
     useGamePresentationStore
       .getState()
-      .setHomePlayerMinutes(firstPlayer!.player.id, firstPlayer!.minutes + 2)
+      .setHomePlayerPositionMinutes(firstPlayer!.player.id, firstPlayer!.player.position, firstPlayer!.minutes + 2)
     expect(useGamePresentationStore.getState().homeRotation).not.toEqual(
       initial.homeSetup.rotation,
     )
