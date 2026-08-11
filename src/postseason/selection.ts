@@ -189,7 +189,6 @@ export function selectNationalTournamentField(
     )
   }
 
-  const orderedAutomaticIds = rankAutomaticQualifiers(season, automaticIds)
   const orderedAtLargeIds = rankAtLargeCandidates(
     season,
     universe.programs
@@ -197,19 +196,20 @@ export function selectNationalTournamentField(
       .filter((programId) => !automaticSet.has(programId)),
   )
   const atLargeCount =
-    POSTSEASON_V0_CONFIGURATION.fieldSize - orderedAutomaticIds.length
-  const field: TournamentEntry[] = [
-    ...orderedAutomaticIds.map((programId, index) => ({
-      programId,
-      seed: index + 1,
-      bidType: 'automatic' as const,
-    })),
-    ...orderedAtLargeIds.slice(0, atLargeCount).map((programId, index) => ({
-      programId,
-      seed: orderedAutomaticIds.length + index + 1,
-      bidType: 'at-large' as const,
-    })),
-  ]
+    POSTSEASON_V0_CONFIGURATION.fieldSize - automaticIds.length
+  const selectedAtLargeIds = orderedAtLargeIds.slice(0, atLargeCount)
+  const bidTypeByProgramId = new Map<string, TournamentEntry['bidType']>([
+    ...automaticIds.map((programId) => [programId, 'automatic'] as const),
+    ...selectedAtLargeIds.map((programId) => [programId, 'at-large'] as const),
+  ])
+  const field: TournamentEntry[] = rankAtLargeCandidates(
+    season,
+    [...automaticIds, ...selectedAtLargeIds],
+  ).map((programId, index) => ({
+    programId,
+    seed: index + 1,
+    bidType: bidTypeByProgramId.get(programId)!,
+  }))
 
   return {
     field,

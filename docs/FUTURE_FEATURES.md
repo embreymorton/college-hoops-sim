@@ -84,7 +84,9 @@ These require separate basketball and presentation design; they are not cosmetic
 - Regional structure if the universe expands
 - More sophisticated selection and seeding after scaling
 
-For protected Conference-champion seed scaling and first-round Conference-rematch avoidance, see `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; those are current-design scaling/quality watchpoints rather than duplicate feature entries here.
+For first-round Conference-rematch avoidance, see
+`KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; that is a current-design quality watchpoint
+rather than a duplicate feature entry here.
 
 ## Roster and coaching depth
 

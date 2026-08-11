@@ -24,6 +24,7 @@
     "sim:season": "node --import tsx scripts/inspectSeason.ts",
     "sim:player-stats": "node --import tsx scripts/inspectPlayerStats.ts",
     "sim:postseason": "node --import tsx scripts/inspectPostseason.ts",
+    "sim:tournament-balance": "node --import tsx scripts/inspectTournamentBalance.ts",
     "sim:dynasty-foundation": "node --import tsx scripts/inspectDynastyFoundation.ts",
     "sim:recruiting": "node --import tsx scripts/inspectRecruiting.ts",
     "sim:recruiting-strategy": "node --import tsx scripts/inspectRecruitingStrategy.ts",

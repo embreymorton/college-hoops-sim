@@ -376,9 +376,15 @@ Qualification and seeding are determined only by completed basketball results:
 - Each of the four Conferences receives one automatic bid. Its automatic qualifier is the regular-season Conference champion produced by the existing Conference standings ordering.
 - The remaining 12 places are at-large bids. Candidates are ordered by overall winning percentage; an exact two-Team tie uses completed head-to-head results when decisive, then Conference winning percentage and stable Program ID. A tie group of three or more skips direct head-to-head and uses Conference winning percentage followed by Program ID.
 - Prestige, Team Strength, Player ratings, Conference reputation, geography, and hidden selection ratings do not enter selection.
-- The four Conference champions receive protected seeds 1–4, ordered by overall winning percentage, Conference winning percentage, and stable Program ID. The 12 at-large Programs receive seeds 5–16 in at-large selection order.
+- After the four automatic qualifiers and 12 at-larges are selected, all 16
+  Programs are seeded together using the same accepted résumé ordering: overall
+  winning percentage; decisive head-to-head for an exact two-Team tie; then
+  Conference winning percentage and stable Program ID. Automatic qualification
+  guarantees entry, not a protected seed.
 
-Protected champion seeds are an intentional Universe V0 rule. A strong at-large Program can receive a worse numerical seed than a weaker Conference champion because winning a Conference title is meant to have meaningful value in the current 32-Program structure. This protection is not a universal promise for a larger future universe.
+Team OVR, Team Strength, Prestige, and Conference reputation remain excluded
+from seeding. Seed labels represent the accepted results-only résumé ordering,
+not a direct power ranking.
 
 The fixed bracket contains eight Round-of-16 games, four quarterfinals, two semifinals, and one Championship: 15 games total. The first-round seed pairings are `1–16`, `8–9`, `5–12`, `4–13`, `3–14`, `6–11`, `7–10`, and `2–15`, with winners advancing through fixed paths. There is no reseeding, third-place game, regional placement, Conference separation, or rematch avoidance. Same-Conference tournament matchups are legal.
 

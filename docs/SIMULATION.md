@@ -49,6 +49,12 @@ Every route records the same full `PlayerGameStats` fields: minutes, points, reb
 
 Postseason simulation begins only after the regular season is complete. Qualified Programs carry exact end-of-regular-season Team and current legal Rotation state into a separate `PostseasonState`; Teams, rosters, ratings, and default Rotations are not regenerated. Legal Postseason Rotation changes may be made between tournament games.
 
+Selection retains one automatic qualifier per Conference and 12 at-larges.
+After membership is fixed, all 16 Programs are seeded together through the
+existing deterministic results-only résumé comparator. Automatic bids are not
+protected on seeds 1–4. Team OVR and Team Strength remain diagnostic facts and
+do not enter production seeding.
+
 Each Tournament game receives an independent seed derived from the explicit simulation seed with its numeric/string type, the Postseason and Season identity, Universe identity/version, and stable Tournament game ID:
 
 ```text

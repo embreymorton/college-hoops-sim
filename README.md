@@ -10,7 +10,7 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
 - **Fictional Universe V0:** 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
 - **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed Game Prep, Super Sim, historical results, and full box-score inspection.
 - **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details, Player Details, and cross-Program navigation.
-- **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, protected Conference-champion seeds, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
+- **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, unified results-only résumé seeding, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
 - **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, enter Late Recruiting, finalize the class, review departures/development/incoming Players in Offseason, begin the next Season, and repeat.
 - **Deterministic replayability:** each interactive Dynasty receives one unique creation seed; all rosters, schedules, Recruiting, and simulations remain deterministic from that stored seed. Explicit-seed tests and inspection workflows remain repeatable.
 

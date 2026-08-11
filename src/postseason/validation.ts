@@ -214,15 +214,11 @@ export function validatePostseasonState(
       pushIssue(issues, 'DUPLICATE_SEED', `Duplicate tournament seed "${entry.seed}".`)
     }
     seenSeeds.add(entry.seed)
-    const protectedAutomatic = entry.seed <= universe.conferences.length
-    if (
-      (protectedAutomatic && entry.bidType !== 'automatic') ||
-      (!protectedAutomatic && entry.bidType !== 'at-large')
-    ) {
+    if (entry.bidType !== 'automatic' && entry.bidType !== 'at-large') {
       pushIssue(
         issues,
-        protectedAutomatic ? 'INVALID_AUTOMATIC_BID' : 'INVALID_AT_LARGE_BID',
-        `Seed ${entry.seed} has an invalid V0 bid type.`,
+        'INVALID_BID_TYPE',
+        `Seed ${entry.seed} has an invalid bid type.`,
         { programId: entry.programId },
       )
     }
@@ -243,6 +239,17 @@ export function validatePostseasonState(
         programId: entry.programId,
       })
     }
+  }
+  const automaticBidCount = postseason.field.filter(
+    ({ bidType }) => bidType === 'automatic',
+  ).length
+  if (automaticBidCount !== universe.conferences.length) {
+    pushIssue(
+      issues,
+      'INVALID_AUTOMATIC_BID',
+      `Postseason must contain ${universe.conferences.length} automatic bids.`,
+      { expected: universe.conferences.length, actual: automaticBidCount },
+    )
   }
   for (const programId of Object.keys(postseason.programStates)) {
     if (!fieldIds.has(programId)) {

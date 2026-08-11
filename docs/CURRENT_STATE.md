@@ -161,7 +161,9 @@ secondary paths, and rare large incumbent displacement.
 ## Current playtesting and watchpoints
 
 [PLAYTESTING.md](PLAYTESTING.md) is the detailed empirical source of truth. The
-next unresolved simulation question is Tournament balance/seeding. Leading UX
+Tournament seeding now preserves the selected four automatic qualifiers and 12
+at-larges, then seeds all 16 together through the accepted results-only résumé
+comparator. Leading UX
 opportunities are Player Details + Development History and Postseason Hub +
 Season-Complete Presentation Polish. Recruiting feedback and Assistant Fill
 Remaining Board are high-value QOL candidates. Rotation implementation is no
@@ -171,7 +173,11 @@ Manual Development V1 play produced the intended divergent stories: Lucas Webb m
 
 True powerhouse states can occur: one Northbridge roster reached roughly `87` Team OVR with multiple `90+` and `85+` Players. Mature seasons can still be mostly 70s with the best Teams in the low/mid 80s. Powerhouse frequency and persistence remain a WATCH; current evidence does not justify reopening Recruit Talent V1 or Development V1.
 
-Repeated play has produced 1/16 upsets, low-seed championship runs, and memorable Cinderella outcomes, but extreme seed differences can sometimes hide modest Team OVR differences. Tournament variance is **not** confirmed broken. Diagnose seeding quality versus actual game upset variance before tuning Game Sim.
+Phase 6E.7B resolved the measured seed-label issue by removing protected
+automatic-qualifier seeds while preserving automatic entry and exact field
+selection. Paired STANDARD and FULL evidence improved mature alignment without
+adding OVR to seeding. The accepted results-only rule is frozen; Game Sim
+remains closed.
 
 ## Planning From Here
 
@@ -190,8 +196,8 @@ Repeated play has produced 1/16 upsets, low-seed championship runs, and memorabl
 9. Validate fully before acceptance.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
-Rotation V1 is complete and frozen. The next unresolved simulation question is
-Tournament seeding versus actual upset behavior. The next major UX/storytelling
+Rotation V1 and Tournament seeding are complete and frozen; Game Sim remains
+closed. The next major UX/storytelling
 opportunities are Player Details + Development History and Postseason Hub +
 Season-Complete Presentation Polish. Use Playtesting and Roadmap to select later
 QOL work.

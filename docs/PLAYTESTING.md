@@ -329,17 +329,72 @@ Round completes
 
 Do not merge them into one committed feature yet.
 
-## Tournament Balance / Seeding — INVESTIGATING / NEXT DIAGNOSTIC
+## Tournament Balance / Seeding — CONFIRMED SEEDING ISSUE / GAME SIM CLOSED
 
 Manual play saw multiple `16 > 1` upsets, two championship games between `16` and `14` seeds, and frequent upsets despite many Team OVR gaps being closer to `81` versus `77`. Northbridge fell early, while Franklin Metro made a Cinderella run.
 
 Cinderellas are desirable; seed labels alone are not evidence that Game
-Simulation variance is wrong. The next diagnostic must distinguish seeding and
-ranking quality, underlying Team-strength gaps, and actual matchup variance.
-Measure seed relationships to Team OVR and regular-season win percentage,
-average OVR by seed, 1/16–3/14 OVR gaps, favorite win rates by OVR difference,
-matchup upsets, and Final Four/champion seed distributions. No Tournament
-balance change is approved.
+Simulation variance is wrong. Phase 6E.7 therefore measured seed quality and
+actual Team-strength outcomes separately through the production Dynasty,
+Recruiting, Postseason, Development, and rollover lifecycle.
+
+### Phase 6E.7 diagnostic result
+
+The STANDARD `3 × 10` run captured 30 Tournament fields and 450 games; a
+bounded `5 × 10` expansion captured 50 fields and 750 games after one OVR-gap
+bucket remained sparse. Deterministic replay passed.
+
+Across the expanded sample, seed quality correlated strongly with win
+percentage (`0.858`) but only moderately with Team OVR (`0.509`). Mean absolute
+seed-versus-OVR-rank error was `3.50`; the #1 seed was actually strongest by OVR
+only `30.0%` of the time, and seeds 1–4 were actually top-four Teams only
+`50.0%` of the time. The disconnect widened in fully endogenous Season 5+
+fields: OVR correlation fell to `0.386`, mean rank error rose to `3.99`, seeds
+1–4 were actually top-four only `42.5%`, and seeds 13–16 were actually top-eight
+`27.5%` of the time.
+
+Protected automatic qualifiers remained stronger on average than at-larges
+(`80.77` versus `78.42` OVR), but an at-large Team exceeded an automatic
+qualifier in `28.1%` of pairwise comparisons and `35.6%` in Season 5+. Mature
+1/16, 2/15, and 3/14 median OVR gaps were only `3.68`, `2.90`, and `2.74`; the
+lower seed was actually stronger in `10.0%`, `23.3%`, and `46.7%` of those
+matchups.
+
+Ignoring seeds, stronger-Team win rates by OVR gap were `50.4%`, `57.3%`,
+`66.4%`, `68.2%`, and `82.8%` for `0–<2`, `2–<4`, `4–<6`, `6–<8`, and `8+`.
+That is a sensible qualitative favorite curve: tiny gaps are competitive and
+large gaps provide a strong advantage. Seed upsets (`45.6%`) exceeded strength
+upsets (`40.9%`), proving that dramatic labels often overstate the underlying
+result. Champions averaged `80.76` OVR and OVR rank `5.84`, although rare
+low-strength champions remained part of the observed variance.
+
+**Decision: Outcome A.** Poor seed/OVR alignment—especially in mature
+Dynasties—plus a healthy actual-strength win curve points to a Tournament
+seeding/ranking issue, not a Game Sim variance problem. Game Sim remains closed.
+Select a separate 6E.7B Tournament Seeding Candidate; do not change selection,
+seeding, automatic-bid treatment, or simulation behavior as part of this
+diagnostic.
+
+### Phase 6E.7B resolution
+
+One isolated candidate preserved the exact four automatic qualifiers and 12
+at-larges, then seeded all 16 together through the existing results-only résumé
+comparator. Paired STANDARD `3 × 10` evidence improved Season 5+ seed/OVR
+correlation from `0.386` to `0.448`, mean seed/OVR-rank error from `4.01` to
+`3.80`, and top-four OVR accuracy from `38.9%` to `47.2%`, while résumé
+correlation strengthened from `0.833` to `0.925`.
+
+The FULL `5 × 10` acceptance audit confirmed the direction. In Season 5+,
+seed/OVR correlation improved `0.386 → 0.439`, rank error `3.99 → 3.80`, #1-seed
+OVR accuracy `26.7% → 33.3%`, and top-four accuracy `42.5% → 49.2%`. The
+lower-seed-stronger rate in 3/14 games fell `46.7% → 33.3%`; 2/15 worsened
+slightly `23.3% → 26.7%`, which reinforces that résumé seeding is not intended
+to be perfect OVR ordering.
+
+The candidate stronger-Team curve remained healthy and Cinderella outcomes
+persisted. **Decision: ACCEPT / RESOLVED.** Automatic qualification now
+guarantees entry but not a seed from 1–4. Freeze this results-only seeding rule;
+Game Sim and Team Strength remain unchanged.
 
 ## Super Sim — Season Complete Target — OBSERVED / HIGH-VALUE QOL
 
@@ -434,26 +489,26 @@ These are product questions, not automated invariants.
 - Recruit Talent Distribution V1 (except the explicit POT-gap and mature-supply watchpoints)
 - Player Development V1
 - Rotation V1
+- Tournament results-only résumé seeding
 - Calibration methodology
 
 Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Tournament balance / seeding diagnostic
-2. Player Details + Development History UX
-3. Postseason Hub + Season-Complete Presentation Polish
-4. Recruiting Focus-target / commitment visibility
-5. Assistant Fill Remaining Recruiting Board
-6. Coaching navigation / permanent Rotation home
-7. Super Sim — Season Complete target
-8. Recruit POT-gap diagnostic
-9. League News / Round Recap
-10. Season Hub information hierarchy
-11. Offseason around-the-league context
-12. Followed Players / Favorites
-13. Program records / deeper statistical history
-14. Shot-selection diagnostic
-15. Minor Quick Sim / Last 5 polish
+1. Player Details + Development History UX
+2. Postseason Hub + Season-Complete Presentation Polish
+3. Recruiting Focus-target / commitment visibility
+4. Assistant Fill Remaining Recruiting Board
+5. Coaching navigation / permanent Rotation home
+6. Super Sim — Season Complete target
+7. Recruit POT-gap diagnostic
+8. League News / Round Recap
+9. Season Hub information hierarchy
+10. Offseason around-the-league context
+11. Followed Players / Favorites
+12. Program records / deeper statistical history
+13. Shot-selection diagnostic
+14. Minor Quick Sim / Last 5 polish
 
 This ordering remains playthrough-driven and may change with new evidence.

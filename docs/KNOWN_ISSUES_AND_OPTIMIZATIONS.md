@@ -80,14 +80,6 @@ Player rows may reorder when ratings/minutes change, and dynamic Rotation valida
 
 Player Box Scores V0 reconciles Player points, shooting arithmetic, and Team minutes, but assists, rebounds, and defensive events are not possession-linked to opponent events. This is an accepted game-level allocation model. Revisit only if future advanced statistics or possession-level features require stronger cross-team event consistency; do not add a second outcome model.
 
-### P3 — Protected conference-champion top-four seeds may need revisiting after universe expansion
-
-Postseason V0 intentionally guarantees every regular-season Conference champion a protected seed in the top four. This works cleanly for the current 32 Programs, four Conferences, 16-Team field, and four protected Conference champions, and it intentionally makes Conference titles highly valuable.
-
-If the universe later adds substantially more Programs or Conferences, expands the tournament field, introduces Conference tournaments, or develops materially different Conference strengths, automatic qualification and top-seed protection should be reconsidered separately. Future options could include automatic bids without top-four protection, champion seed floors, selection/seeding ratings, or Conference-tournament automatic bids. Do not change V0 behavior now; this is a scaling/design watchpoint, not a bug or MVP blocker.
-
-Optional Tournament-expansion ideas are listed separately in `FUTURE_FEATURES.md`.
-
 ### P3 — First-round conference rematch avoidance
 
 Postseason V0 intentionally permits same-Conference Round-of-16 matchups under its accepted fixed-seed bracket. The first accepted Postseason inspection produced multiple such Conference rematches; this is valid bracket behavior, not a correctness bug.
@@ -109,6 +101,17 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
 ## Resolved / monitor-only
+
+### P2 — Tournament seed-label alignment — RESOLVED
+
+Phase 6E.7 confirmed weak mature seed/OVR alignment while the actual-strength
+win curve remained healthy. Phase 6E.7B preserved the exact selected field and
+seeded all 16 Programs together through the existing results-only résumé
+comparator. FULL `5 × 10` paired acceptance improved Season 5+ seed/OVR
+correlation from `0.386` to `0.439`, mean rank error from `3.99` to `3.80`, and
+top-four accuracy from `42.5%` to `49.2%`; résumé correlation rose to `0.927`.
+Automatic bids still guarantee entry, Game Sim remains unchanged, and the new
+seeding rule is frozen unless new evidence appears.
 
 ### P2 — Long-run talent equilibrium / initial OVR inflation — RESOLVED
 

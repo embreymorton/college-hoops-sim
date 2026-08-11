@@ -69,6 +69,37 @@ function tournamentHeader(): HTMLElement {
   return document.querySelector('.season-header') as HTMLElement
 }
 
+function forceControlledProgramLoss(): void {
+  const dynasty = useDynastyStore.getState().dynasty!
+  const controlledProgramId = dynasty.controlledProgramId
+  let postseason = dynasty.activePostseason!
+  const round = getCurrentTournamentRound(postseason)!
+  postseason = simulatePendingGamesInTournamentRound({
+    postseason,
+    round,
+    simulationSeed: 'forced-controlled-loss:ai',
+    excludedProgramIds: [controlledProgramId],
+  })
+  const game = getTournamentGameForProgram(postseason, controlledProgramId, round)!
+  const participants = resolveTournamentGameParticipants(postseason, game.id)!
+  const winnerId = participants.homeProgramId === controlledProgramId
+    ? participants.awayProgramId
+    : participants.homeProgramId
+  const result: GameResult = {
+    homeTeamId: participants.homeProgramId,
+    awayTeamId: participants.awayProgramId,
+    homeScore: participants.homeProgramId === winnerId ? 80 : 60,
+    awayScore: participants.awayProgramId === winnerId ? 80 : 60,
+    winnerId,
+    overtimePeriods: 0,
+    seed: `forced:${game.id}`,
+    homePlayerStats: [stat(`${participants.homeProgramId}:player`, participants.homeProgramId === winnerId ? 80 : 60)],
+    awayPlayerStats: [stat(`${participants.awayProgramId}:player`, participants.awayProgramId === winnerId ? 80 : 60)],
+  }
+  setActivePostseason(recordTournamentGameResult(postseason, game.id, result))
+  useDynastyStore.setState({ lastPlayedTournamentGameId: game.id })
+}
+
 beforeEach(() => {
   resetStore()
 })
@@ -322,16 +353,12 @@ describe('Postseason — qualified and alive', () => {
 
 describe('Postseason — eliminated', () => {
   it('shows Eliminated (not Advancing) immediately after a current-round loss, and removes user game/Rotation actions', () => {
-    // Deterministic under the fixed master seed: Charlotte Tech wins Round
-    // of 16, then loses the Quarterfinal — regression coverage for a real
-    // bug where a resolved loss in the *current* round was misread as an
-    // already-won game still waiting on the rest of the round.
+    // Construct the loss directly so this presentation regression does not
+    // depend on a particular accepted seeding rule or simulation outcome.
     selectProgram()
     completeRegularSeasonAndEnterPostseason()
+    forceControlledProgramLoss()
     render(<App />)
-    clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/advance to next round/i)
-    clickButtonByText(/^simulate game$/i)
 
     const { lastPlayedTournamentGameId } = useDynastyStore.getState()
     const { activePostseason: postseason, controlledProgramId } =
@@ -339,7 +366,7 @@ describe('Postseason — eliminated', () => {
     const result = postseason!.resultsByGameId[lastPlayedTournamentGameId!]!
     expect(result.winnerId).not.toBe(controlledProgramId)
 
-    expect(screen.getByText('Tournament Run Ends')).toBeInTheDocument()
+    expect(screen.getByText('Eliminated')).toBeInTheDocument()
     expect(screen.queryByText('Advancing')).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^simulate game$/i }),
@@ -352,11 +379,8 @@ describe('Postseason — eliminated', () => {
   it('lets the AI Tournament continue past the eliminated controlled Program toward a Champion', () => {
     selectProgram()
     completeRegularSeasonAndEnterPostseason()
+    forceControlledProgramLoss()
     render(<App />)
-    clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/advance to next round/i)
-    clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/advance to next round/i)
 
     for (let round = 0; round < 3; round += 1) {
       const button = screen.queryByRole('button', { name: /^simulate/i })
@@ -603,11 +627,8 @@ describe('Postseason — Champion', () => {
   it('renders another Program as National Champion when the controlled Program does not win it', () => {
     selectProgram()
     completeRegularSeasonAndEnterPostseason()
+    forceControlledProgramLoss()
     render(<App />)
-    clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/advance to next round/i)
-    clickButtonByText(/^simulate game$/i)
-    clickButtonByText(/advance to next round/i)
 
     for (let round = 0; round < 3; round += 1) {
       const button = screen.queryByRole('button', { name: /^simulate/i })

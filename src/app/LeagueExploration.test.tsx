@@ -6,7 +6,7 @@ import {
   getPlayerGameLog,
   isRegularSeasonComplete,
 } from '../season'
-import { useDynastyStore } from '../store'
+import { DEFAULT_INTERACTIVE_TEST_SEED, useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
 
@@ -15,6 +15,13 @@ const OTHER_PROGRAM_ID = 'northbridge'
 
 function resetStore() {
   useDynastyStore.setState(useDynastyStore.getInitialState())
+}
+
+function selectControlledProgram(): void {
+  useDynastyStore.getState().selectProgram(
+    CONTROLLED_PROGRAM_ID,
+    DEFAULT_INTERACTIVE_TEST_SEED,
+  )
 }
 
 function playRounds(count: number) {
@@ -61,7 +68,7 @@ beforeEach(() => {
 
 describe('League navigation', () => {
   it('opens League from the Season Hub via the section tabs', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'League' }))
@@ -73,7 +80,7 @@ describe('League navigation', () => {
   })
 
   it('returns to the Season Hub via the back button', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'League' }))
@@ -85,7 +92,7 @@ describe('League navigation', () => {
   })
 
   it('remains accessible from the Postseason Hub', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     driveSeasonToCompletion()
     useDynastyStore.getState().enterPostseason()
     render(<App />)
@@ -101,7 +108,7 @@ describe('League navigation', () => {
 
 describe('National Leaders', () => {
   it('shows a clear empty state before any regular-season game completes', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     useDynastyStore.getState().goToLeague()
     render(<App />)
 
@@ -109,7 +116,7 @@ describe('National Leaders', () => {
   })
 
   it('shows partial-Season leaders and opens Player Details from a leader row', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(5)
     useDynastyStore.getState().goToLeague()
     render(<App />)
@@ -129,7 +136,7 @@ describe('National Leaders', () => {
   })
 
   it('opens a leader Program separately and returns to League', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(3)
     useDynastyStore.getState().goToLeague()
     render(<App />)
@@ -152,7 +159,7 @@ describe('National Leaders', () => {
 
 describe('Teams directory', () => {
   it('lists every Conference and opens Team Details for a non-controlled Program', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     useDynastyStore.getState().goToLeague()
     render(<App />)
 
@@ -178,7 +185,7 @@ describe('Teams directory', () => {
 
 describe('Team Details', () => {
   it('shows the full current roster and a zero-game-safe Team Leaders state before any games', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     useDynastyStore.getState().openTeamDetails(OTHER_PROGRAM_ID)
     render(<App />)
 
@@ -205,7 +212,7 @@ describe('Team Details', () => {
   })
 
   it('renders canonical partial-season Team Averages', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(3)
     useDynastyStore.getState().openTeamDetails(OTHER_PROGRAM_ID)
     render(<App />)
@@ -243,7 +250,7 @@ describe('Team Details', () => {
   })
 
   it('shows only the five most recent results in order with correct home/away context', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(7)
     useDynastyStore.getState().openTeamDetails(OTHER_PROGRAM_ID)
     render(<App />)
@@ -281,7 +288,7 @@ describe('Team Details', () => {
   })
 
   it('opens the controlled Program too, and Team → Player navigation works from the roster table', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(3)
     useDynastyStore.getState().openTeamDetails(CONTROLLED_PROGRAM_ID)
     render(<App />)
@@ -303,7 +310,7 @@ describe('Team Details', () => {
 
 describe('Player Details', () => {
   it('shows a DNP entry in the game log using the canonical game-log projection', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(6)
     const playerId = findPlayerWithDnp(CONTROLLED_PROGRAM_ID)
     useDynastyStore.getState().openPlayerDetails(CONTROLLED_PROGRAM_ID, playerId)
@@ -313,7 +320,7 @@ describe('Player Details', () => {
   })
 
   it('works during a partial Season and returns to Team Details via the Program link', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(4)
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const otherPlayer = season!.programStates[OTHER_PROGRAM_ID]!.team.roster[0]!
@@ -337,7 +344,7 @@ describe('Player Details', () => {
   })
 
   it('opens a game-log opponent and returns to Player Details', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     playRounds(3)
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const player = season!.programStates[CONTROLLED_PROGRAM_ID]!.team.roster[0]!
@@ -377,7 +384,7 @@ describe('Standings → Team cross-navigation', () => {
   const CONFERENCE_MATE_ID = 'crescent-city'
 
   it('opens Team Details from a Conference Standings row and returns to the Season Hub', () => {
-    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    selectControlledProgram()
     render(<App />)
 
     const standingsSection = screen

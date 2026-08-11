@@ -23,6 +23,7 @@ import {
   initializePostseason,
   simulatePendingGamesInTournamentRound,
   TOURNAMENT_ROUNDS,
+  type PostseasonState,
 } from '../src/postseason'
 import { generateRegularSeasonSchedule, validateRegularSeasonSchedule } from '../src/schedule'
 import {
@@ -53,6 +54,12 @@ import {
 import type { AuditLevel } from './calibration/presets'
 import { calibrationSeeds, resolveLongRunCliConfig } from './calibration/presets'
 import { runLongRunCalibrationParallel } from './longRunCalibrationRunner'
+import {
+  extractTournamentBalanceObservation,
+  seedSelectedFieldTogether,
+  seedSelectedFieldWithProtectedAutomatics,
+  type TournamentBalanceObservation,
+} from './tournamentBalanceMetrics'
 
 const CONTROLLED_PROGRAM_ID = 'charlotte-tech'
 const CHECKPOINTS = new Set([10, 25, 50])
@@ -111,6 +118,8 @@ export interface DynastyRunResult {
   readonly semifinalAppearances: Readonly<Record<string, number>>
   readonly stateGrowth: readonly StateGrowthCheckpoint[]
   readonly tournamentStrengths: readonly TournamentStrengthRecord[]
+  readonly tournamentBalance: readonly TournamentBalanceObservation[]
+  readonly tournamentBalanceCandidate: readonly TournamentBalanceObservation[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -254,6 +263,8 @@ export function runDynastyCalibration(
   const semifinalAppearances: Record<string, number> = {}
   const stateGrowth: StateGrowthCheckpoint[] = []
   const tournamentStrengths: TournamentStrengthRecord[] = []
+  const tournamentBalance: TournamentBalanceObservation[] = []
+  const tournamentBalanceCandidate: TournamentBalanceObservation[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -301,8 +312,24 @@ export function runDynastyCalibration(
         }
       }
 
-      let postseason = initializePostseason({ universe: dynasty.universe, season })
+      const initializedPostseason = initializePostseason({ universe: dynasty.universe, season })
+      let baselinePostseason: PostseasonState = {
+        ...initializedPostseason,
+        field: seedSelectedFieldWithProtectedAutomatics(
+          season,
+          initializedPostseason.field,
+        ),
+      }
+      let postseason: PostseasonState = {
+        ...initializedPostseason,
+        field: seedSelectedFieldTogether(season, initializedPostseason.field),
+      }
       for (const round of TOURNAMENT_ROUNDS) {
+        baselinePostseason = simulatePendingGamesInTournamentRound({
+          postseason: baselinePostseason,
+          round,
+          simulationSeed: `${seed}:season-${season.seasonNumber}:postseason`,
+        })
         postseason = simulatePendingGamesInTournamentRound({
           postseason,
           round,
@@ -313,6 +340,12 @@ export function runDynastyCalibration(
           activePostseason: postseason,
         })
       }
+      tournamentBalance.push(
+        extractTournamentBalanceObservation(season, baselinePostseason),
+      )
+      tournamentBalanceCandidate.push(
+        extractTournamentBalanceObservation(season, postseason),
+      )
       const champion = postseason.resultsByGameId[
         getGamesForTournamentRound(postseason, 'championship')[0]!.id
       ]!.winnerId
@@ -475,6 +508,8 @@ export function runDynastyCalibration(
     semifinalAppearances,
     stateGrowth,
     tournamentStrengths,
+    tournamentBalance,
+    tournamentBalanceCandidate,
     health,
     rollovers,
   }

@@ -222,7 +222,7 @@ All statistical and navigation summaries are derived from stable Universe identi
 
 > Feed a completed regular season into the accepted fixed 16-Team national tournament through deterministic selection, seeding, neutral-site simulation, and result-derived advancement.
 
-Postseason Domain / Simulation V0 is implemented, validated, reviewed, and accepted. A valid completed regular season supplies one automatic qualifier per Conference through the existing Conference standings leader. The four champions receive protected seeds 1–4, ordered by overall winning percentage, Conference winning percentage, and stable Program ID. Twelve results-only at-large selections receive seeds 5–16 using overall winning percentage, decisive head-to-head only for an exact two-Team tie, Conference winning percentage, and stable Program ID; three-or-more-Team ties skip direct head-to-head.
+Postseason Domain / Simulation V0 is implemented, validated, reviewed, and accepted. A valid completed regular season supplies one automatic qualifier per Conference through the existing Conference standings leader and 12 at-large selections. Phase 6E.7B superseded protected automatic-qualifier seeds: after selection, all 16 Programs are seeded together using overall winning percentage, decisive head-to-head only for an exact two-Team tie, Conference winning percentage, and stable Program ID; three-or-more-Team ties skip direct head-to-head.
 
 The complete fixed bracket contains eight Round-of-16 games, four quarterfinals, two semifinals, and one Championship. It permits same-Conference matchups, never reseeds, and simulates every game at a neutral site. Qualified Programs carry forward exact Team and current legal Rotation state, can make legal Rotation changes between games, and retain full `GameResult` / `PlayerGameStats` facts. Future participants, current round, remaining Programs, completion, and National Champion are derived rather than stored.
 
@@ -359,10 +359,11 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.6E — Rotation V1 Production Representation Migration:** COMPLETE. Universe, Exhibition, Season, Postseason, Dynasty, Zustand, and React now store/edit canonical V1; existing assignments deep-clone across transitions, while all new production defaults preserve V0 behavior through lossless V0-to-V1 conversion. Manual legal secondary assignments are supported. The flexible V1 generator remains opt-in and inactive.
 - **6E.6F — Rotation V1 Generator Behavioral Validation:** COMPLETE — WATCH / ACCEPT. Paired direct, QUICK 1×3, and STANDARD 3×10 comparisons found real congestion relief, zero Team Strength regressions, stable rotation depth, and negligible ecosystem movement. Monitor the frequency of 36→40-minute stars and the interior-heavy secondary-position mix after activation; no generator tuning was warranted.
 - **6E.6G — Rotation V1 Production Activation + Freeze:** COMPLETE. Fresh Universe, Exhibition, and Dynasty rollover defaults now use the accepted deterministic flexible generator. Existing V1 rotations remain exact across cloning, Season/Postseason transitions, archives, drafts, and simulation. Rotation V1 is frozen subject to the accepted 40-minute, interior-path, and rare displacement watchpoints; V0 remains only at intentional compatibility/equivalence boundaries.
+- **6E.7 — Tournament Balance / Seeding Diagnostic:** COMPLETE — OUTCOME A. Production-lifecycle STANDARD `3 × 10` evidence plus a bounded `5 × 10` expansion separated seed upsets from strength upsets. Seed quality tracked win percentage strongly but Team OVR only moderately, with weaker alignment in Season 5+; the stronger-Team win curve rose from competitive tiny gaps to an `82.8%` win rate at `8+` OVR. The evidence identifies a likely seeding/ranking issue while leaving Game Sim closed. No production behavior changed.
+- **6E.7B — Tournament Seeding Candidate:** COMPLETE — ACCEPTED / FROZEN. The exact same four automatic qualifiers and 12 at-larges are now seeded together through the existing deterministic results-only résumé comparator. Paired STANDARD and FULL `5 × 10` evidence improved mature seed/OVR alignment and extreme 3/14 matchup truthfulness while strengthening résumé correlation, preserving Tournament variance, and leaving Game Sim and Team Strength unchanged.
 
 ### Current planning horizon
 
-- **6E.7 — Tournament Balance / Seeding Diagnostic:** NEXT. Separate ranking/seeding quality and actual Team-strength gaps from game-level upset variance before considering any tuning; Cinderella potential remains desirable.
 - **6E.8 — Player Details + Development History UX:** PLANNED. Extend the existing Player Details surface over current and archived facts so memorable careers and offseason gains are easier to follow.
 - **6E.9 — Postseason Hub + Season-Complete Presentation Polish:** PLANNED. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
 
@@ -373,9 +374,9 @@ Hub hierarchy, offseason League context, followed Players, records, shot
 selection investigation, and minor recap polish remain observed/later rather
 than a fixed feature schedule.
 
-This order is evidence-driven: diagnose Tournament outcomes first because March
-Madness is the Season payoff and repeated unusual results now justify
-measurement; extend Player Details because the simulation creates Players users
+This order is evidence-driven: Tournament seeding is resolved and frozen while
+Game Sim remains closed; extend Player Details because the simulation creates
+Players users
 care about but does not surface their careers well enough; then polish the
 Postseason handoff because the bracket already generates strong stories while
 its surrounding presentation repeatedly feels awkward.

@@ -222,7 +222,7 @@ describe('national tournament selection', () => {
     })
   })
 
-  it('selects one champion per conference, 12 distinct at-larges, and seeds 1-16', () => {
+  it('selects unchanged automatic/at-large membership and seeds all 16 together', () => {
     const selection = selectNationalTournamentField(UNIVERSE_V0, completeSeason)
     const automatic = selection.field.filter(({ bidType }) => bidType === 'automatic')
     const atLarge = selection.field.filter(({ bidType }) => bidType === 'at-large')
@@ -235,10 +235,23 @@ describe('national tournament selection', () => {
     expect(atLarge).toHaveLength(12)
     expect(new Set(selection.field.map(({ programId }) => programId)).size).toBe(16)
     expect(automatic.map(({ programId }) => programId).sort()).toEqual(champions.sort())
-    expect(automatic.map(({ seed }) => seed)).toEqual([1, 2, 3, 4])
-    expect(atLarge.map(({ seed }) => seed)).toEqual(
-      Array.from({ length: 12 }, (_, index) => index + 5),
+    expect(selection.field.map(({ seed }) => seed)).toEqual(
+      Array.from({ length: 16 }, (_, index) => index + 1),
     )
+    expect(selection.field.map(({ programId }) => programId)).toEqual(
+      rankAtLargeCandidates(
+        completeSeason,
+        selection.field.map(({ programId }) => programId),
+      ),
+    )
+    const orderedEligibleAtLarges = rankAtLargeCandidates(
+      completeSeason,
+      UNIVERSE_V0.programs.map(({ id }) => id).filter((id) => !champions.includes(id)),
+    )
+    expect(atLarge.map(({ programId }) => programId).sort()).toEqual(
+      orderedEligibleAtLarges.slice(0, 12).sort(),
+    )
+    expect(selection.firstFourOutProgramIds).toEqual(orderedEligibleAtLarges.slice(12, 16))
     expect(selection.firstFourOutProgramIds).toHaveLength(4)
     expect(validateTournamentSelection(UNIVERSE_V0, completeSeason, selection.field).valid).toBe(true)
   })
