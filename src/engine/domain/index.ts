@@ -23,6 +23,19 @@ export type {
   RotationValidationResult,
 } from './rotation'
 export {
+  calculatePlayerMinutesV1,
+  convertRotationV0ToV1,
+  derivePlayerMinutesV1,
+  getEligibleRotationPositions,
+  validateRotationV1,
+} from './rotationV1'
+export type {
+  RotationV1,
+  RotationV1ValidationIssue,
+  RotationV1ValidationIssueCode,
+  RotationV1ValidationResult,
+} from './rotationV1'
+export {
   calculatePlayerDefense,
   calculatePlayerOffense,
   calculateTeamDefense,

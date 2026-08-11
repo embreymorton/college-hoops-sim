@@ -104,6 +104,24 @@ Total = 200
 
 There are **no production secondary positions, cross-position minutes, floor-aware canonical Rotation, or user position changes**.
 
+Phase 6E.6A adds a parallel, isolated engine/domain `RotationV1` capability:
+
+```text
+RotationV1.minutesByPosition[Floor Position][Player ID] = minutes
+```
+
+Every floor position must total 40 minutes, the Team must total 200, and a
+Player may total at most 40. Rotation eligibility is derived from the Player's
+canonical natural position (`PG → PG/SG`, `SG → SG/SF`, `SF → SF/PF`,
+`PF → PF/C`, `C → C/PF`); it is not persisted on `Player`. Aggregate Player
+minutes are derived from floor assignments rather than stored independently.
+A valid Rotation V0 can be losslessly converted to natural-position-only V1.
+
+No production caller has migrated: Universe initialization, default Rotation
+generation, Team Strength, game simulation, box scores, Season, Postseason,
+Dynasty, Zustand, and React all continue to use Rotation V0 with unchanged
+behavior.
+
 > **IMPORTANT — REVERTED WORK**  
 > Previous Phase 6E.6 floor-aware Rotation / Secondary Position attempts were reverted. The current repository intentionally uses the clean accepted Rotation V0 implementation. Do not assume `FloorRotation`, `minutesByPosition`, `secondaryPosition`, floor-aware Zustand drafts, secondary-aware default Rotations, or secondary-position UI exist in production. No such artifacts are present under `src` in this clean state. If this changes, report the actual artifact rather than treating it as accepted architecture.
 
@@ -131,7 +149,10 @@ Repeated play has produced 1/16 upsets, low-seed championship runs, and memorabl
 
 ## Next engineering area
 
-**Position / Rotation Flexibility** is the next high-priority engineering area. The next session should inspect clean Rotation V0 and propose the safest Secondary Position / Rotation V1 plan based on the Phase 6E.5 evidence. No previous failed migration plan is authoritative.
+**Position / Rotation Flexibility** remains the next high-priority engineering
+area. Phase 6E.6A's isolated Rotation V1 domain foundation is complete; any
+production migration belongs to a separately reviewed later phase. Rotation V0
+remains authoritative for every application and simulation caller until then.
 
 ## Documentation map
 
