@@ -119,9 +119,9 @@ Tendency shares are weak `30%`, steady `50%`, and strong `20%`. There is no Pres
 ### Rotation V1
 
 Rotation V1 is implemented, activated, behaviorally validated, and frozen.
-Repeated play has promoted only the exact-40-minute default-usage watchpoint to
-a narrow diagnostic. Rotation V1 is not broadly reopened; interior/forward-heavy
-secondary usage and rare large incumbent displacement remain watchpoints.
+Phase 6E.9 confirmed that exact-40 defaults originate narrowly when flexible
+generation converts natural 36-minute Players to 40 through secondary minutes.
+Rotation V1 is not broadly reopened; one isolated 6E.9B candidate is next.
 
 ### Calibration
 
@@ -156,9 +156,10 @@ diagnostic boundaries. Exact generator rules and validation live in
 `SIMULATION.md`; representation boundaries live in `ARCHITECTURE.md`; migration
 history lives in `ROADMAP.md`; causal evidence lives in `PLAYTESTING.md`.
 
-ACTIVE NARROW DIAGNOSTIC: exact-40-minute default usage and its natural versus
-flexible/secondary origins. WATCH—not blockers: interior/forward-heavy secondary
-paths and rare large incumbent displacement. Rotation V1 remains frozen overall.
+CONFIRMED NARROW WATCHPOINT: exact-40-minute defaults are a flexible `36→40`
+elite-Player concentration issue, not natural allocation. Phase 6E.9B may test
+one isolated guardrail candidate. Interior/forward-heavy secondary paths and
+rare large incumbent displacement remain WATCH. Rotation V1 is frozen overall.
 
 ## Current playtesting and watchpoints
 
@@ -168,9 +169,9 @@ at-larges, then seeds all 16 together through the accepted results-only résumé
 comparator. Player Details + Development History UX (Phase 6E.8) is complete:
 Player Details now shows a compact nine-attribute ratings grid, a prominent
 Career Progression table, and a compact Recruiting Origin section, all derived
-from existing canonical facts. The next milestone is Phase 6E.9 Rotation
-Minutes Realism Diagnostic. Postseason Hub + Season-Complete presentation
-remains queued behind it. Sim to Season Complete, Recruiting visibility,
+from existing canonical facts. Phase 6E.9 is complete; the next milestone is
+Phase 6E.9B Exact-40 Flexible Default Guardrail Candidate. Postseason Hub +
+Season-Complete presentation remains queued behind it. Sim to Season Complete, Recruiting visibility,
 Coaching/roster navigation, and Followed Players have repeated QOL evidence.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
@@ -200,11 +201,10 @@ remains closed.
 9. Validate fully before acceptance.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
-Rotation V1 remains accepted/frozen overall, with only exact-40-minute usage
-open for diagnosis. Tournament seeding and Player Details + Development History
-UX are complete; Game Sim remains closed. Next is Phase 6E.9 Rotation Minutes
-Realism Diagnostic, followed by Postseason Hub + Season-Complete presentation
-polish.
+Rotation V1 remains accepted/frozen overall; Phase 6E.9 confirmed one narrow
+flexible-default issue without changing production behavior. Tournament seeding
+and Player Details + Development History UX are complete; Game Sim remains
+closed. Next is Phase 6E.9B, followed by Postseason Hub + Season-Complete polish.
 
 ## Documentation map
 

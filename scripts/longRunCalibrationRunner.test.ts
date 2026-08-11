@@ -12,6 +12,7 @@ function basketballFacts(result: Awaited<ReturnType<typeof runLongRunCalibration
     graduating: run.graduating,
     champions: run.champions,
     semifinalAppearances: run.semifinalAppearances,
+    rotationMinutes: run.rotationMinutes,
     rollovers: run.rollovers,
   }))
 }

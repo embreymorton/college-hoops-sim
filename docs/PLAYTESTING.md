@@ -339,6 +339,34 @@ natural-default versus flexible `36→40` origins, secondary-position
 contribution, and Season 1 versus Season 5+ behavior. Do not prescribe a new
 minute cap, fatigue, reduced secondary usage, or a Rotation redesign first.
 
+### Phase 6E.9 diagnostic result
+
+Production-lifecycle QUICK `1 × 3` and STANDARD `3 × 10` LIGHT runs passed
+deterministic replay. STANDARD observed `301/10,297` active Rotation Players
+at exactly 40 assigned minutes (`2.9%`) across `281/960` Team-Seasons
+(`29.3%`); `20/960` Teams had two and none had three. Every exact-40 case was
+natural `36 → 40` through exactly four legal secondary-position minutes;
+natural allocation produced zero exact-40 Players. Contributions were spread
+across every production path: `C→PF 73`, `PF→C 64`, `SF→PF 61`, `SG→SF 57`,
+and `PG→SG 46` Players.
+
+The small population rate understates visibility. Exact-40 usage reached
+`219/960` Team-highest-OVR Players (`22.8%`), `153/300` top-10 scorers
+(`51.0%`), `121/300` top-10 rebounders (`40.3%`), `45/300` top-10 assist
+leaders (`15.0%`), and `50/97` Players rated 90+ (`51.5%`). Season 5+ was not
+worse than Season 1 (`2.7%` versus `3.0%` of active Rotation Players), so
+Dynasty maturity is not the source. Assigned-40 Players averaged `40.035 MPG`
+with a `40.000–40.208` range; no simulation behavior reduced them below 40,
+while overtime explains values above 40.
+
+**Decision: OUTCOME A + C / CONFIRMED.** The issue is narrow flexible-default
+behavior concentrated among visible elite Players, not natural allocation or a
+broad Rotation failure. Phase 6E.9B should test one isolated candidate:
+remove natural-36 Players from the flexible generator's automatic secondary
+recipient path while preserving the legal 40-minute maximum, manual Rotation,
+natural defaults, and buried-Player flexibility. Do not implement or accept
+that candidate without paired validation.
+
 ## Game Simulation — Shot Selection — OBSERVED
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
@@ -511,7 +539,7 @@ disconnected Late Recruiting handoff. The bracket is good and must remain
 intact. A likely desktop direction groups Tournament/championship and Season
 Complete status on the left and Recruiting/Late-Recruiting context on the
 right. This presentation milestone is separate from Tournament balance/seeding.
-It remains near-term behind Phase 6E.9 because the Tournament is the Season
+It remains near-term behind Phase 6E.9B because the Tournament is the Season
 payoff and one of the strongest generators of stories already present in the
 game.
 
@@ -570,7 +598,7 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Rotation Minutes Realism Diagnostic (Phase 6E.9)
+1. Exact-40 Flexible Default Guardrail Candidate (Phase 6E.9B)
 2. Postseason Hub + Season-Complete Presentation Polish
 3. Super Sim — Season Complete target
 4. Recruiting Focus-target / commitment visibility

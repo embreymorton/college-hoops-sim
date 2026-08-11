@@ -60,6 +60,10 @@ import {
   seedSelectedFieldWithProtectedAutomatics,
   type TournamentBalanceObservation,
 } from './tournamentBalanceMetrics'
+import {
+  extractSeasonRotationMinuteObservations,
+  type RotationMinuteObservation,
+} from './rotationMinutesRealismMetrics'
 
 const CONTROLLED_PROGRAM_ID = 'charlotte-tech'
 const CHECKPOINTS = new Set([10, 25, 50])
@@ -120,6 +124,7 @@ export interface DynastyRunResult {
   readonly tournamentStrengths: readonly TournamentStrengthRecord[]
   readonly tournamentBalance: readonly TournamentBalanceObservation[]
   readonly tournamentBalanceCandidate: readonly TournamentBalanceObservation[]
+  readonly rotationMinutes: readonly RotationMinuteObservation[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -265,6 +270,7 @@ export function runDynastyCalibration(
   const tournamentStrengths: TournamentStrengthRecord[] = []
   const tournamentBalance: TournamentBalanceObservation[] = []
   const tournamentBalanceCandidate: TournamentBalanceObservation[] = []
+  const rotationMinutes: RotationMinuteObservation[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -299,6 +305,7 @@ export function runDynastyCalibration(
       }
       const seasonMetrics = extractSeasonTalentMetrics(season)
       seasons.push(seasonMetrics)
+      rotationMinutes.push(...extractSeasonRotationMinuteObservations(season, seed))
       graduating.push(...playerRecords(
         season.seasonNumber,
         graduatingPlayers(season),
@@ -510,6 +517,7 @@ export function runDynastyCalibration(
     tournamentStrengths,
     tournamentBalance,
     tournamentBalanceCandidate,
+    rotationMinutes,
     health,
     rollovers,
   }
