@@ -200,6 +200,22 @@ Manual rosters exposed a strict natural-position constraint: an `SG 69` could re
 
 The current rule is strictly natural-position only. Investigate whether it systematically suppresses talented rosters or creates poor AI/default Rotations before committing to secondary positions, multiple eligible positions, or a limited adjacent-position rule. Any future change affects default AI Rotations, Team Strength, roster construction, and Recruiting needs.
 
+### Phase 6E.5 diagnostic result
+
+A direct production-path diagnostic sampled 288 deterministic rosters (three seeds at Seasons 1, 5, and 10). It defined a clear opportunity as a Player below 10 MPG whose current balanced OFF/DEF contribution exceeded an adjacent-position Player at 20+ MPG by at least five points. `38/288` Teams (`13.2%`) had at least one such opportunity; there were 63 player-pair opportunities with an average contribution gap of `7.54`. SF/PF/SG were the most common source positions (`21/16/13` opportunities); C was rare (`3`).
+
+The diagnostic-only universal adjacent model increased Team OVR by `+2.21` mean (`+2.09` median, `+3.37` P90, `+6.21` max), but its unrestricted optimizer can place SG/SF/PF Players across three slots and produced visibly broad lineups. A narrower one-secondary-slot model retained most of the measured gain (`+1.92` mean, `+1.74` median, `+3.10` P90, `+5.13` max) with clearer basketball semantics. Both results are no-penalty allocation ceilings, not accepted balance changes.
+
+Northbridge/Great Lakes improved `+1.88` under universal adjacency and `+1.67` under the narrow model; Pine Valley improved `+2.28` and `+2.05`. Rigidity can suppress elite rosters, but flexibility does not magically erase weak-team separation. The height audit found some small-wing/SF and undersized-C assignments in both simple tables, reinforcing the case for a future generated or explicit secondary-position model rather than universal adjacency.
+
+### Architecture and recommendation
+
+V0 `Rotation.minutes` is one aggregate player-minute map, and validation derives each 40-minute slot from natural position. Default Rotation generation, the grouped Rotation editor, Season/Postseason Rotation state, and validation all rely on that representation. Team Strength can keep its current aggregate minute-weighted OFF/DEF formula for a no-penalty V1, but a future Rotation must record floor-position assignments to validate eligibility; a later slot-specific penalty would broaden the Strength work.
+
+Recruiting openings, roster generation, and roster assembly can remain natural-position based initially: flexible eligibility changes minute allocation, not the desired 2–3-player structural balance at each natural position.
+
+**Recommendation:** pursue **Secondary-Position Model V1** next, not universal adjacency and not user-controlled position changes. Add one deterministic secondary position/eligibility per Player, then update Rotation validation/default AI allocation/UI together. Keep Recruiting and roster construction frozen unless that implementation produces new evidence.
+
 ## Game Simulation — Shot Selection — OBSERVED
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
