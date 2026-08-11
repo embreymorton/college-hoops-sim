@@ -40,8 +40,10 @@ The current playable core is complete. Intentionally deferred systems include pe
 
 Project constraints live in [`docs/`](docs/). For ongoing work, start with
 [current state](docs/CURRENT_STATE.md), then [playtesting](docs/PLAYTESTING.md),
-then the [roadmap](docs/ROADMAP.md). Optional ideas belong in
+the [roadmap](docs/ROADMAP.md), and the
+[assistant operating guide](docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md).
+Read [calibration](docs/CALIBRATION.md) when changing simulation/balance and the
+[documentation policy](docs/DOCUMENTATION_POLICY.md) when updating docs.
+Optional ideas belong in
 [future features](docs/FUTURE_FEATURES.md); confirmed risks belong in
-[known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md). The
-[documentation policy](docs/DOCUMENTATION_POLICY.md) explains how these sources
-are maintained after accepted milestones.
+[known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md).

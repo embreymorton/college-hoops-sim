@@ -343,13 +343,15 @@ truth is Recruit Talent Distribution V1 plus Player Development V1.
 
 This phase uses manual playthrough observations and targeted diagnostics rather than a predetermined feature schedule. `PLAYTESTING.md` is the detailed source of truth for current observations, hypotheses, and next investigations; `CALIBRATION.md` defines the validation methodology.
 
+### Historical completed implementation sequence
+
 - **6E.1 — Recruiting + Talent Balance Investigation:** COMPLETE.
 - **6E.2A — Recruiting Focus Model:** COMPLETE.
 - **6E.2A.2 — AI Recruiting Plan Coherence:** COMPLETE.
 - **6E.2B — Recruit Talent Distribution V1:** COMPLETE.
 - **6E.3 — Development + League Talent Progression Diagnostic:** COMPLETE. Direct careers and 3×10/5×10 production-Dynasty runs found capped annual growth, weak high-headroom differentiation, and a thin mature powerhouse tier; see `PLAYTESTING.md`.
 - **6E.4 — Player Development V1:** COMPLETE. Class baseline, headroom-sensitive opportunity, stable hidden tendency, annual variance, rare breakouts, and the Potential cap now create deterministic career diversity without a Prestige multiplier; see `SIMULATION.md` and `PLAYTESTING.md`.
-- **6E.5 — Position / Rotation Flexibility diagnostic:** COMPLETE. The diagnostic confirmed the strict natural-position limitation; no production secondary-position Rotation system has been accepted.
+- **6E.5 — Position / Rotation Flexibility diagnostic:** COMPLETE. At this checkpoint the strict natural-position limitation was confirmed and narrow secondary flexibility remained diagnostic-only; its recommendation was subsequently implemented and accepted through Rotation V1 in 6E.6.
 - **6E.6A — Rotation V1 Engine Foundation:** COMPLETE. A parallel floor-position-aware domain representation, natural-position-derived eligibility, structured validation, aggregate-minute projections, and a lossless V0-to-natural-only-V1 adapter now exist. Production state, simulation, default Rotation generation, and UI remain on Rotation V0.
 - **6E.6B — Engine Read Boundary + V0/V1 Equivalence:** COMPLETE. Team Strength, game simulation, and box-score allocation accept V0 or V1 through one aggregate Player-minute read path. Paired normal, strength-gap, overtime, mixed-representation, and true-secondary tests preserve exact deterministic results and natural-position ratings/tendencies.
 - **6E.6C — Opt-In Rotation V1 Default Generator:** COMPLETE. The isolated deterministic generator begins with the unchanged V0 default and applies conservative legal secondary substitutions only for clear five-point balanced-contribution upgrades, with incumbent, secondary-minute, and total-minute safeguards. Production generation and persisted/application state remain V0.
@@ -357,6 +359,9 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.6E — Rotation V1 Production Representation Migration:** COMPLETE. Universe, Exhibition, Season, Postseason, Dynasty, Zustand, and React now store/edit canonical V1; existing assignments deep-clone across transitions, while all new production defaults preserve V0 behavior through lossless V0-to-V1 conversion. Manual legal secondary assignments are supported. The flexible V1 generator remains opt-in and inactive.
 - **6E.6F — Rotation V1 Generator Behavioral Validation:** COMPLETE — WATCH / ACCEPT. Paired direct, QUICK 1×3, and STANDARD 3×10 comparisons found real congestion relief, zero Team Strength regressions, stable rotation depth, and negligible ecosystem movement. Monitor the frequency of 36→40-minute stars and the interior-heavy secondary-position mix after activation; no generator tuning was warranted.
 - **6E.6G — Rotation V1 Production Activation + Freeze:** COMPLETE. Fresh Universe, Exhibition, and Dynasty rollover defaults now use the accepted deterministic flexible generator. Existing V1 rotations remain exact across cloning, Season/Postseason transitions, archives, drafts, and simulation. Rotation V1 is frozen subject to the accepted 40-minute, interior-path, and rare displacement watchpoints; V0 remains only at intentional compatibility/equivalence boundaries.
+
+### Current planning horizon
+
 - **6E.7 — Tournament Balance / Seeding Diagnostic:** NEXT. Separate ranking/seeding quality and actual Team-strength gaps from game-level upset variance before considering any tuning; Cinderella potential remains desirable.
 - **6E.8 — Player Details + Development History UX:** PLANNED. Extend the existing Player Details surface over current and archived facts so memorable careers and offseason gains are easier to follow.
 - **6E.9 — Postseason Hub + Season-Complete Presentation Polish:** PLANNED. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
@@ -367,6 +372,13 @@ with a permanent Rotation home, and Sim to Season Complete. League News, Season
 Hub hierarchy, offseason League context, followed Players, records, shot
 selection investigation, and minor recap polish remain observed/later rather
 than a fixed feature schedule.
+
+This order is evidence-driven: diagnose Tournament outcomes first because March
+Madness is the Season payoff and repeated unusual results now justify
+measurement; extend Player Details because the simulation creates Players users
+care about but does not surface their careers well enough; then polish the
+Postseason handoff because the bracket already generates strong stories while
+its surrounding presentation repeatedly feels awkward.
 
 ## Non-binding development-agent fit
 

@@ -24,6 +24,19 @@ deliberately selected work moves into `ROADMAP.md`; follow
 - **RESOLVED** — implemented and validated.
 - **WATCH** — currently acceptable, but worth monitoring in future play.
 
+## What Is Working / Fun Right Now
+
+- Recruiting creates real risk/reward choices rather than automatic elite classes.
+- Pine Valley feels like a genuine multi-year grind instead of an instant rebuild.
+- High-POT projects can bust, develop modestly, hit, or rarely become stars.
+- Large offseason jumps and recognizable League leaders create memorable careers.
+- Strong Programs can assemble scary rosters without remaining dominant forever.
+- Tournament Cinderellas, upsets, and painful exits create distinct Season stories.
+- Graduation, Recruiting, Development, and rollover make rebuilding cyclical and meaningful.
+
+Preserve these strengths. A surprising outcome is evidence to interpret—not
+automatically a defect.
+
 ## Recruiting concentration exploit — RESOLVED
 
 ### Observation and evidence
@@ -92,7 +105,7 @@ Visible Potential naturally creates an expectation that a high-Potential raw pro
 
 ### Original investigation
 
-**Phase 6E.3 — Development + League Talent Progression Diagnostic** will measure:
+**Phase 6E.3 — Development + League Talent Progression Diagnostic** was scoped to measure:
 
 - senior OVR conditional on freshman OVR/Potential;
 - high-Potential bust and good/star outcome rates;
@@ -206,7 +219,7 @@ mutable career state.
 
 Following Silas Matthews after he joined another Program was enjoyable. A future favorite/followed-player concept could surface current Team, class, OVR, statistics, development, and notable performances. Do not commit to notifications or permanent history design yet.
 
-## Playtest Stories / Design Signals
+## Playtest Stories / Why This Is Fun
 
 These are empirical examples, not permanent lore or guaranteed outcomes.
 
@@ -243,6 +256,10 @@ A direct production-path diagnostic sampled 288 deterministic rosters (three see
 The diagnostic-only universal adjacent model increased Team OVR by `+2.21` mean (`+2.09` median, `+3.37` P90, `+6.21` max), but its unrestricted optimizer can place SG/SF/PF Players across three slots and produced visibly broad lineups. A narrower one-secondary-slot model retained most of the measured gain (`+1.92` mean, `+1.74` median, `+3.10` P90, `+5.13` max) with clearer basketball semantics. Both results are no-penalty allocation ceilings, not accepted balance changes.
 
 Northbridge/Great Lakes improved `+1.88` under universal adjacency and `+1.67` under the narrow model; Pine Valley improved `+2.28` and `+2.05`. Rigidity can suppress elite rosters, but flexibility does not magically erase weak-team separation. The height audit found some small-wing/SF and undersized-C assignments in both simple tables, reinforcing the case for a future generated or explicit secondary-position model rather than universal adjacency.
+
+At the end of 6E.5 this remained diagnostic evidence only. Its conservative
+narrow-secondary recommendation was subsequently implemented, validated,
+activated, and frozen through Rotation V1.
 
 ### Phase 6E.6F behavioral validation
 
@@ -376,6 +393,38 @@ Keep below the foundational investigations:
 - Quick Sim recap / Game Leaders layout feels awkward.
 - “Last 5” is preferred to “Last 4.”
 - Seeing current seed would be fun, potential to choose seed when starting dynasty (compete with others on same field)
+
+## Repeated Playtest Friction
+
+Highest-value repeated signals:
+
+- interesting Player careers are difficult to follow across Seasons;
+- Recruiting commitments, lost targets, and which signees were backups are easy to miss;
+- Focus-target context is not visible enough on the Season Hub;
+- users want Assistant Fill Remaining Board without losing manual choices;
+- Rotation deserves a permanent Coaching home;
+- Tournament/Season Complete composition and the Late Recruiting handoff feel
+  awkward even though the bracket is good; and
+- Season Complete needs a deliberate final inspection checkpoint before turnover.
+
+Lower-priority friction: full Conference standings create substantial Hub
+scrolling, Quick Sim leader composition is awkward, and Last 5 is preferred to
+Last 4.
+
+## Testing for Fun
+
+After meaningful gameplay or UI changes, manual acceptance should ask:
+
+- Did I understand what happened?
+- Did I have an interesting decision?
+- Did I care about the outcome?
+- Did the system create a memorable Player, Team, or Season story?
+- Did anything feel like busywork?
+- Did anything important happen without me noticing?
+- Did an unusual result feel exciting or merely random/confusing?
+- Did I naturally want to inspect another screen, Player, or Recruit afterward?
+
+These are product questions, not automated invariants.
 
 ## Currently Frozen Unless New Evidence Appears
 

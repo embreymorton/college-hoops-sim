@@ -486,6 +486,30 @@ is preferable to forcing players to allocate hidden recruiting percentages or po
 
 # Product Judgment Rules
 
+## Discuss the game before the backlog
+
+After a handoff or meaningful manual play, summarize these before recommending
+the next milestone:
+
+```text
+What is fun / working?
+What Player or Team stories are emerging?
+What repeatedly annoys or confuses the user?
+What is frozen?
+What is genuinely unresolved?
+What is only a future idea?
+```
+
+Do not prioritize solely from technical backlog order, file order,
+`FUTURE_FEATURES.md`, or `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
+
+Treat emergent basketball stories as product evidence: a raw prospect becoming
+a star, a senior leading the League, a powerhouse declining, a rebuild finally
+improving, a Cinderella reaching the title game, or a painful Recruiting miss.
+Do not praise every surprise or label it a bug automatically. Analyze whether it
+creates fun, meaning, strategy, attachment, or confusion, and preserve systems
+that reliably produce good stories.
+
 When evaluating a proposed feature/change, ask:
 
 1. Does this solve a repeated playtest problem?
@@ -502,6 +526,11 @@ When evaluating a proposed feature/change, ask:
 Do not chase realism for its own sake.
 
 A believable, understandable, fun system is more important than reproducing NCAA basketball perfectly.
+
+For meaningful gameplay/UI work, manual acceptance should also use the
+questions in `PLAYTESTING.md` under **Testing for Fun**. Engineering rigor still
+applies: diagnose → implement → targeted tests → full tests → lint → typecheck →
+build → calibration where relevant → manual play where relevant → freeze.
 
 ---
 

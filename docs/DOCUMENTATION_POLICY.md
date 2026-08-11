@@ -14,6 +14,10 @@ implementation / diagnostic
 Each accepted milestone updates only the documents whose source-of-truth facts
 changed. Broad documentation reconciliation is not the default.
 
+The Final Documentation Cohesion + Fresh-Context Handoff V1 reconciliation is
+complete. Do not schedule repeated documentation-sync milestones; normal future
+work follows this policy's targeted acceptance updates.
+
 ## Ownership matrix
 
 | Document | Owns | Update when | Do not use for |
