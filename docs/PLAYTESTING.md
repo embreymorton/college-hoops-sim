@@ -793,9 +793,44 @@ save-slot, backend, or routing architecture here or promote this above 6E.10.
 
 Future history could include program single-game points, season scoring, and career points/assists. It should follow Player Detail/development-history work rather than precede it.
 
-## Season Hub Information Hierarchy — OBSERVED
+## UI Polish Checkpoint — CONFIRMED
 
-Conference standings are rarely used in their current prominent placement and can push more meaningful information below the fold. A future hierarchy might prioritize the game and Recruiting context, important updates, schedule/recent results, and a smaller conference snapshot with a route to the full view. Do not redesign it here.
+The current Recruiting page has too much vertical separation between navigation,
+identity, needs, and Board management. Board capacity is duplicated, the
+Positional Needs table carries more visual weight than its importance warrants,
+and scattered Board/Focus/Offer guidance is easy to miss. Readiness help also
+needs a more coherent long-term home than a large tooltip. The selected direction
+is one concise Recruiting overview plus one clear guide/help destination covering
+Board, Focus, Offers, Readiness, and standing language. Preserve Board =
+management, Battles = intelligence, National Class = discovery; Battles is
+working well and National Class needs no redesign.
+
+Late Recruiting has one narrow copy issue: when projected openings are zero,
+automatic-resolution warning language is unnecessary. The required Finalize
+Class action remains, but the state should read as a completed class with all
+projected openings filled. This is presentation only.
+
+The Season Hub similarly has excess space before primary content. Its Quick Sim
+result card changes footprint materially and presents leaders awkwardly; pregame
+and result states should read as two dense, stable states of one game card. Focus
+rows have an unnecessary gutter, and Recruiting Update remains useful but feels
+detached from the Recruiting module. The desired information split is unresolved
+Focus Targets versus controlled-Program Commits; a signed Focus Recruit should
+move to a compact Commits status instead of remaining presented as active. The
+update recap should retain its current session semantics while composing inside
+the Recruiting module.
+
+The Hub needs only the controlled Conference snapshot. Recent Results and that
+snapshot are narrow enough to compose side-by-side on desktop. League remains
+the league-wide destination: Teams already groups Programs by Conference in
+standings order, so a new Conference Standings tab would duplicate useful
+information. Root League navigation/context chrome can be reduced because the
+primary Dynasty nav already establishes location, while Team/Player detail Back
+navigation remains useful.
+
+Postseason bracket, National Class, Recruiting Class Complete, and Offseason
+received positive/no-action feedback and stay outside this checkpoint, apart
+from the narrow zero-openings Late Recruiting copy above.
 
 ## Postseason Hub + Season-Complete Presentation Polish — RESOLVED (Phase 6E.10)
 
@@ -820,7 +855,6 @@ seeding, or Recruiting mechanic changed.
 
 Keep below the foundational investigations:
 
-- Quick Sim recap / Game Leaders layout feels awkward.
 - “Last 5” is preferred to “Last 4.”
 - Seeing current seed would be fun, potential to choose seed when starting dynasty (compete with others on same field)
 
@@ -831,14 +865,15 @@ Highest-value repeated signals:
 - interesting Player careers are difficult to follow across Seasons;
 - Recruiting commitments, lost targets, and which signees were backups are easy to miss;
 - Focus-target context is not visible enough on the Season Hub;
-- users want Assistant Fill Remaining Board without losing manual choices;
+- Assistant Fill Remaining Board without losing manual choices (RESOLVED by
+  Phase 6E.15);
 - Rotation deserves a permanent Coaching home; and
 - Tournament/Season Complete composition and the Late Recruiting handoff
   (RESOLVED by Phase 6E.10 — see above).
 
-Lower-priority friction: full Conference standings create substantial Hub
-scrolling, Quick Sim leader composition is awkward, and Last 5 is preferred to
-Last 4.
+The current presentation priority is the confirmed Recruiting-page density and
+guidance friction, followed immediately by Hub/League information hierarchy and
+Quick Sim card stability. Last 5 remains lower-priority polish.
 
 ## Testing for Fun
 
@@ -870,20 +905,25 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Assistant Fill Remaining Recruiting Board
-2. Coaching navigation / permanent Rotation home
-3. Followed Players / Favorites
-4. Recruit POT-gap diagnostic
-5. League News / Round Recap
-6. Season Hub information hierarchy
+1. Phase 6E.16A — Recruiting Page Density + Guidance Polish
+2. Phase 6E.16B — Season Hub + League Information Hierarchy Polish
+3. Coaching navigation / permanent Rotation home
+4. Followed Players / Favorites
+5. Recruit POT-gap diagnostic
+6. League News / Round Recap
 7. Offseason around-the-league context
 8. Program records / deeper statistical history
 9. Shot-selection diagnostic
-10. Minor Player Details / Quick Sim / Last 5 polish
+10. Minor Player Details / Last 5 polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /
 commitment visibility presentation (6E.12) are RESOLVED — see above.
+Assistant Fill Remaining Board is also RESOLVED by accepted Phase 6E.15.
+
+Premium Offer allocation remains WATCH only and is not part of either UI polish
+milestone. Existing future product ideas remain future rather than promoted by
+this audit.
 
 Awards, offseason progression visibility, and Save/Persistence have stronger
 future evidence but are intentionally not promoted into the active horizon.

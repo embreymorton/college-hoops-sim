@@ -9,6 +9,33 @@ measured scaling risk, or validated watchpoint. Follow
 
 ## Open items
 
+### P3 — Recruiting page density and fragmented guidance — POLISH
+
+The current page repeats Board capacity, gives Positional Needs disproportionate
+visual weight, and separates status and explanatory material across a tall
+layout. Consolidate the overview and establish one coherent help destination
+without redesigning the accepted Board/Battles/National architecture or changing
+Recruiting mechanics. When Late Recruiting has zero projected openings, present
+the class as filled while retaining the required Finalize action.
+
+### P3 — Season Hub and League information hierarchy — POLISH
+
+The Hub has excess vertical space, shows more Conference standings context than
+the controlled coach needs, and leaves Recruiting Update visually detached.
+Retain the controlled Conference snapshot, integrate it more tightly with Recent
+Results and Recruiting status, and distinguish unresolved Focus Targets from
+controlled-Program Commits. League → Teams already provides all Conferences in
+standings order; do not add a duplicative Conference Standings tab. Root League
+chrome may be reduced, but Team/Player detail Back navigation remains useful.
+
+### P3 — Quick Sim game-card footprint and result hierarchy — POLISH
+
+Pregame and completed Quick Sim cards have materially different footprints, and
+the result/leaders composition is visually awkward enough to make the transition
+distracting. Treat them as stable states of the same dense sports-result card;
+do not change stored results, statistics, simulation, or prescribe a fixed pixel
+height.
+
 ### P1 — Correct Super Sim completion-summary wording
 
 The current summary derives “games simulated” from the controlled Program's record delta. If its target-round game was already complete but Super Sim resolves only remaining AI games, the UI can misleadingly show `0 games simulated` and a `0-0` segment.

@@ -243,7 +243,13 @@ it reuses the accepted deterministic Board target planner to append only legal
 targets up to unused capacity, while preserving every existing Board entry in
 place with its exact Focus and Offer state. New targets are Board-only; the
 action never runs automatically and does not alter Generate Draft Board or AI
-Recruiting. Coaching/roster navigation, Followed Players,
+Recruiting. Generated-plan coherence, readiness semantics, and the Battles
+information architecture are frozen. The immediate work is a deliberate
+presentation-only checkpoint: Phase 6E.16A Recruiting Page Density + Guidance
+Polish is NEXT, followed immediately by Phase 6E.16B Season Hub + League
+Information Hierarchy Polish. Both are Claude Code UI milestones using the
+`frontend-design` skill; no simulation or Recruiting mechanic is currently
+open. Coaching/roster navigation, Followed Players,
 offseason progression visibility, Awards, and Save/Persistence retain
 future QOL evidence.
 
