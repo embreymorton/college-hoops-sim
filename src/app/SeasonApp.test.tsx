@@ -911,3 +911,135 @@ describe('Super Sim', () => {
     expect(getCurrentRound(useDynastyStore.getState().dynasty!.activeSeason!)).toBe(13)
   })
 })
+
+describe('Recruiting Focus targets and commitment activity presentation (6E.12B)', () => {
+  it('surfaces the default-generated Focus targets on the Season Hub with readiness and battle context, staying compact', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const board = useDynastyStore
+      .getState()
+      .dynasty!.recruiting!.programs['charlotte-tech']!.board
+    const focusedCount = board.filter((target) => target.isFocused).length
+    expect(focusedCount).toBeGreaterThan(0)
+
+    expect(document.querySelector('.season-hub-focus-targets')).not.toBeNull()
+    expect(document.querySelectorAll('.season-hub-focus-target').length).toBe(
+      focusedCount,
+    )
+    // Compact: never more than the canonical Focus limit, so the module
+    // cannot balloon into a second full Board table on the Hub.
+    expect(document.querySelectorAll('.season-hub-focus-target').length).toBeLessThanOrEqual(3)
+    expect(document.querySelector('.recruiting-readiness-badge')).not.toBeNull()
+    expect(document.querySelector('.recruiting-standing-badge')).not.toBeNull()
+  })
+
+  it('shows no Focus targets module once every Board target is unfocused', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const board = useDynastyStore
+      .getState()
+      .dynasty!.recruiting!.programs['charlotte-tech']!.board
+    act(() => {
+      for (const target of board) {
+        if (target.isFocused) {
+          useDynastyStore.getState().setRecruitingFocus(target.playerId, false)
+        }
+      }
+    })
+
+    expect(document.querySelector('.season-hub-focus-targets')).toBeNull()
+  })
+
+  it('surfaces commitment activity across a simulation boundary and lets the player dismiss it', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const dynasty = useDynastyStore.getState().dynasty!
+    const recruiting = dynasty.recruiting!
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    // Deliberately not Focused, so this test isolates the commitment-activity
+    // banner from the separate Focus-target standing badge.
+    const target = controlledBoard.find((candidate) => !candidate.isFocused)!
+    const rivalProgramId = Object.keys(recruiting.programs).find(
+      (programId) => programId !== dynasty.controlledProgramId,
+    )!
+
+    act(() => {
+      useDynastyStore.setState({
+        dynasty: {
+          ...dynasty,
+          recruiting: {
+            ...recruiting,
+            lastResolvedPeriod: 4,
+            commitmentsByPlayerId: {
+              [target.playerId]: {
+                playerId: target.playerId,
+                programId: rivalProgramId,
+                timing: { kind: 'period', period: 4 },
+                targetSeasonNumber: recruiting.targetSeasonNumber,
+              },
+            },
+          },
+        },
+        recruitingActivityBaselinePeriod: 3,
+      })
+    })
+
+    expect(document.querySelector('.recruiting-commitment-alerts')).not.toBeNull()
+    expect(screen.getByText('Committed Elsewhere')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
+
+    expect(document.querySelector('.recruiting-commitment-alerts')).toBeNull()
+    expect(useDynastyStore.getState().recruitingActivityBaselinePeriod).toBeNull()
+  })
+
+  it('shows no commitment activity for commitments before the supplied baseline', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const dynasty = useDynastyStore.getState().dynasty!
+    const recruiting = dynasty.recruiting!
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    // Deliberately not Focused, so this test isolates the commitment-activity
+    // banner from the separate Focus-target standing badge.
+    const target = controlledBoard.find((candidate) => !candidate.isFocused)!
+    const rivalProgramId = Object.keys(recruiting.programs).find(
+      (programId) => programId !== dynasty.controlledProgramId,
+    )!
+
+    act(() => {
+      useDynastyStore.setState({
+        dynasty: {
+          ...dynasty,
+          recruiting: {
+            ...recruiting,
+            lastResolvedPeriod: 4,
+            commitmentsByPlayerId: {
+              [target.playerId]: {
+                playerId: target.playerId,
+                programId: rivalProgramId,
+                timing: { kind: 'period', period: 2 },
+                targetSeasonNumber: recruiting.targetSeasonNumber,
+              },
+            },
+          },
+        },
+        // Baseline is after the commitment's period — nothing new to show.
+        recruitingActivityBaselinePeriod: 3,
+      })
+    })
+
+    expect(document.querySelector('.recruiting-commitment-alerts')).toBeNull()
+  })
+})

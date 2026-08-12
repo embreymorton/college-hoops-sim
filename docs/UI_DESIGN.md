@@ -111,6 +111,37 @@ Regular navigation is `SEASON / RECRUITING / LEAGUE`; Tournament navigation is `
 
 After the championship, the player explicitly enters the distinct Late Recruiting mode, may make final legal Board/Offer changes, and finalizes the Recruiting class. A focused Offseason turnover screen presents departures, automatic Player Development, incoming Recruits, and the next roster before the explicit Season N+1 handoff returns to the normal Hub. These screens preserve the established modern-collegiate-athletics, broadcast-graphics, management-simulation visual direction rather than introducing a separate product style.
 
+### Recruiting battle, readiness, and commitment visibility — implemented (6E.12B)
+
+Recruiting presents the domain's player-safe `deriveRecruitingBattleView` / `deriveRecruitingCommitmentActivity` projections (`src/dynasty/recruiting/battleView.ts`) instead of a static Board:
+
+```text
+Season Hub Recruiting column
+├── SeasonHubFocusTargets (up to 3 Focused Recruits, always first)
+│   ├── identity (rank, name, position, stars)
+│   ├── readiness badge (Early Interest / Developing / Serious Battle /
+│   │   Decision Imminent / Committed)
+│   ├── standing badge (We Lead / Competitive Battle / We Trail /
+│   │   Committed To Us / Committed Elsewhere)
+│   ├── Offered tag when applicable
+│   └── compact competitor list (Program dot + name + standing + Offer)
+└── RecruitingHubSummary (existing Board/Offer/Signed facts, unchanged)
+
+Recruiting Hub board table
+└── Readiness + Battle columns (same badges/competitor list) replace the
+    old bare numeric Standing column
+
+RecruitingCommitmentAlerts (Season Hub and Postseason Hub, above the grid)
+└── dismissible banner of commitment-only activity since the last
+    unviewed Quick Sim / Super Sim boundary
+```
+
+Readiness and standing use restrained categorical badges (color via the existing amber-accent/ink-1/ink-2 tokens, never a percentage, progress bar, or raw score) driven by `data-readiness` / `data-position` attributes, matching the `data-status` pattern already used for Board rows. Competitor lists cap at 2–3 entries plus a "+N more" overflow rather than listing every pursuer, and always exclude the controlled Program (it is represented by the standing badge, not a self-referential competitor row).
+
+Commitment activity is deliberately conservative: `useDynastyStore` tracks a transient `recruitingActivityBaselinePeriod` (the `recruiting.lastResolvedPeriod` value from just before an unviewed Quick Sim / Super Sim / Tournament-round simulation), not a persisted history log. It is held — not overwritten — across further quiet simulation until the player dismisses the banner or opens full Recruiting, so a no-op Quick Sim never erases an earlier unseen commitment. The banner shows only commitments the selector already proves (to the controlled Program, or to another Program for a tracked Board/Focus Recruit) and never claims standing movement, since canonical Recruiting stores no historical standing snapshots.
+
+This is presentation-only: Board + Focus + Offer mechanics, AI Recruiting, and all existing Board/Focus/Offer/navigation actions are unchanged.
+
 ## League and Player exploration — implemented
 
 ```text

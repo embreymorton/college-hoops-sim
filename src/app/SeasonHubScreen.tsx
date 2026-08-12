@@ -5,9 +5,11 @@ import {
   DynastySectionNav,
   NextGameCard,
   RecentResultsSection,
+  RecruitingCommitmentAlerts,
   RecruitingHubSummary,
   ScheduleTable,
   SeasonHeader,
+  SeasonHubFocusTargets,
   SuperSimConfirmDialog,
   SuperSimMenu,
   SuperSimSummaryDialog,
@@ -37,6 +39,10 @@ import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
 import { deriveGameLeaders } from './gameLeaders'
 import { formatTournamentQualification } from './postseasonFormatters'
+import {
+  deriveFocusTargetSummaries,
+  deriveRecruitingActivityDescriptions,
+} from './recruitingBattleFormatters'
 import { deriveRecentControlledCommitment } from './recruitingFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
@@ -93,6 +99,12 @@ export function SeasonHubScreen() {
     (state) => state.generateControlledDraftBoard,
   )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
+  const recruitingActivityBaselinePeriod = useDynastyStore(
+    (state) => state.recruitingActivityBaselinePeriod,
+  )
+  const dismissRecruitingActivity = useDynastyStore(
+    (state) => state.dismissRecruitingActivity,
+  )
 
   if (!season || !controlledProgramId) {
     return null
@@ -110,6 +122,16 @@ export function SeasonHubScreen() {
   const recruiting = dynasty?.recruiting
   const recruitingBoard =
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
+  const focusTargets =
+    dynasty && recruitingBoard ? deriveFocusTargetSummaries(dynasty, recruitingBoard) : []
+  const recruitingActivity =
+    dynasty && recruiting && recruitingActivityBaselinePeriod !== null
+      ? deriveRecruitingActivityDescriptions(
+          dynasty,
+          recruitingActivityBaselinePeriod,
+          PROGRAMS_BY_ID,
+        )
+      : []
 
   const overallRecord = deriveProgramRecord(season, controlledProgramId)
   const conferenceRecord = deriveConferenceRecord(season, controlledProgramId)
@@ -215,6 +237,11 @@ export function SeasonHubScreen() {
         currentRound={currentRound}
         roundCount={season.schedule.roundCount}
         isComplete={seasonComplete}
+      />
+
+      <RecruitingCommitmentAlerts
+        activity={recruitingActivity}
+        onDismiss={dismissRecruitingActivity}
       />
 
       <div className="hub-primary-grid">
@@ -390,6 +417,12 @@ export function SeasonHubScreen() {
           <h2 id="recruiting-summary-heading" className="visually-hidden">
             Recruiting
           </h2>
+          <SeasonHubFocusTargets
+            focusTargets={focusTargets}
+            controlledProgramId={controlledProgramId}
+            programsById={PROGRAMS_BY_ID}
+            onManageRecruiting={goToRecruiting}
+          />
           <RecruitingHubSummary
             targetSeasonNumber={recruiting.targetSeasonNumber}
             phase={recruiting.phase}

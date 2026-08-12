@@ -238,6 +238,16 @@ export interface DynastySessionState {
   readonly recruitingActionError: string | null
   /** Serializable UI intent paused before the first Recruiting period can resolve. */
   readonly pendingRecruitingSetupIntent: PendingRecruitingSetupIntent | null
+  /**
+   * The canonical `recruiting.lastResolvedPeriod` value from just before the
+   * most recent unviewed Quick Sim / Super Sim simulation boundary, or `null`
+   * when there is no pending commitment activity to surface. Transient
+   * session state only — never a persisted history log. Once set, it is held
+   * (not overwritten) across further simulation until explicitly dismissed or
+   * the player opens full Recruiting, so a quiet Quick Sim never erases an
+   * earlier unseen commitment.
+   */
+  readonly recruitingActivityBaselinePeriod: number | null
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string, dynastySeed?: RngSeed): void
   /** Zero minutes omits the Player, preserving canonical Rotation shape. */
@@ -347,6 +357,8 @@ export interface DynastySessionState {
   beginDynastyOffseason(): void
   /** Atomically rolls the prepared Dynasty into its next active Season. */
   beginNextSeason(): void
+  /** Clears pending commitment-activity feedback without changing Recruiting state. */
+  dismissRecruitingActivity(): void
 }
 
 export const selectActiveSeason = (
@@ -436,6 +448,19 @@ function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState 
       },
     },
   }
+}
+
+/**
+ * Holds the earliest unviewed simulation-boundary baseline rather than
+ * resetting it on every call, so a Quick Sim that produces no commitments
+ * never erases an earlier unseen one still awaiting dismissal.
+ */
+function nextRecruitingActivityBaseline(
+  dynasty: DynastyState,
+  currentBaseline: number | null,
+): number | null {
+  if (currentBaseline !== null) return currentBaseline
+  return dynasty.recruiting?.lastResolvedPeriod ?? null
 }
 
 function withActiveSeason(
@@ -570,6 +595,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   selectedPlayerId: null,
   recruitingActionError: null,
   pendingRecruitingSetupIntent: null,
+  recruitingActivityBaselinePeriod: null,
   selectProgram(programId, explicitDynastySeed) {
     const dynastySeed = explicitDynastySeed ?? createInteractiveDynastySeed()
     const initializedUniverse = initializeUniverse(
@@ -623,6 +649,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       selectedPlayerId: null,
       recruitingActionError: null,
       pendingRecruitingSetupIntent: null,
+      recruitingActivityBaselinePeriod: null,
     })
   },
 
@@ -799,6 +826,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty: withActiveSeason(dynasty, outcome.season),
       lastPlayedGameId: outcome.playedGameId,
       view: 'hub',
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
+        dynasty,
+        get().recruitingActivityBaselinePeriod,
+      ),
     })
   },
 
@@ -825,7 +856,13 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
-    set({ dynasty: withActiveSeason(dynasty, nextSeason) })
+    set({
+      dynasty: withActiveSeason(dynasty, nextSeason),
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
+        dynasty,
+        get().recruitingActivityBaselinePeriod,
+      ),
+    })
   },
 
   viewCompletedGame(scheduledGameId) {
@@ -908,6 +945,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
+    const recruitingActivityBaselinePeriod = nextRecruitingActivityBaseline(
+      dynasty,
+      get().recruitingActivityBaselinePeriod,
+    )
+
     if (pendingSuperSim.kind === 'seasonComplete') {
       const nextDynasty = simulateDynastyToSeasonComplete(dynasty)
       const controlledState =
@@ -923,6 +965,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         lastPlayedTournamentGameId: null,
         viewedTournamentGameId: null,
         view: 'postseasonHub',
+        recruitingActivityBaselinePeriod,
       })
       return
     }
@@ -940,6 +983,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         segmentWins: after.wins - before.wins,
         segmentLosses: after.losses - before.losses,
       },
+      recruitingActivityBaselinePeriod,
     })
   },
 
@@ -1140,6 +1184,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty: withActivePostseason(dynasty, nextPostseason),
       lastPlayedTournamentGameId: game.id,
       view: 'postseasonHub',
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
+        dynasty,
+        get().recruitingActivityBaselinePeriod,
+      ),
     })
   },
 
@@ -1161,7 +1209,13 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       excludedProgramIds: controlledProgramId ? [controlledProgramId] : [],
     })
 
-    set({ dynasty: withActivePostseason(dynasty, nextPostseason) })
+    set({
+      dynasty: withActivePostseason(dynasty, nextPostseason),
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
+        dynasty,
+        get().recruitingActivityBaselinePeriod,
+      ),
+    })
   },
 
   viewCompletedTournamentGame(tournamentGameId) {
@@ -1219,7 +1273,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       view: 'recruiting',
       explorationViewHistory: [],
       recruitingActionError: null,
+      recruitingActivityBaselinePeriod: null,
     })
+  },
+
+  dismissRecruitingActivity() {
+    set({ recruitingActivityBaselinePeriod: null })
   },
 
   addRecruitingTarget(playerId) {
@@ -1466,6 +1525,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         selectedPlayerId: null,
         recruitingActionError: null,
         pendingRecruitingSetupIntent: null,
+        recruitingActivityBaselinePeriod: null,
       })
     } catch (error) {
       set({

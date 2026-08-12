@@ -161,9 +161,9 @@ Pine Valley is now genuinely difficult: `2–22`-type seasons can occur, generat
 
 The concern is that a hard rebuild must not become a structurally trapped rebuild. Future playtesting should determine whether strong manual Recruiting, high-upside projects, Development, and time can create a contender without weakening Prestige. Do not reopen Recruiting difficulty yet.
 
-## Recruiting Feedback / Visibility — DOMAIN READY / UI OPEN
+## Recruiting Feedback / Visibility — RESOLVED (Phase 6E.12)
 
-Repeated playtesting asks for clearer Recruiting feedback:
+Repeated playtesting asked for clearer Recruiting feedback:
 
 - the three Focus targets on the Season Hub;
 - current standing, leader, and major competitors for Focus targets;
@@ -171,28 +171,35 @@ Repeated playtesting asks for clearer Recruiting feedback:
 - updates when a Board or Focus target commits elsewhere; and
 - final national Recruiting results/classes after Late Recruiting.
 
-Playthrough 3 also showed missed commitments, early low-star commitments, and confusing headline counts. Players need to understand interest, standing, active battles, and material changes without reverse-engineering the system.
+Playthrough 3 also showed missed commitments, early low-star commitments, and confusing headline counts. Players needed to understand interest, standing, active battles, and material changes without reverse-engineering the system. The Great Lakes Dynasty repeated this friction while quick-simming.
 
-Useful future feedback includes a compact Focus-target table and events for commitments, lost targets, and meaningful standing changes.
+**Design principle:** more feedback, not more Recruiting mechanics. Board + Focus + Offer and AI Recruiting mechanics remain frozen and unchanged.
 
-**Design principle:** more feedback, not more Recruiting mechanics. Exact presentation is intentionally undesigned.
+Phase 6E.12A (COMPLETE) established the player-safe domain contract:
+`deriveRecruitingBattleView` and `deriveRecruitingCommitmentActivity` in
+`src/dynasty/recruiting/battleView.ts` project the real decision, standing,
+and separation gates into coarse readiness (`early`/`developing`/`serious`/
+`decision-imminent`/`committed`), active Board pursuers, Offer presence,
+categorical leading/competitive/trailing context, and commitment-to-us versus
+commitment-elsewhere outcomes, without exposing raw attraction, relationship
+totals, thresholds, probabilities, AI utility, other Programs' Focus choices,
+or hidden rolls.
 
-The Great Lakes Dynasty repeated this friction while quick-simming: Focus
-targets, commitments, lost targets, and meaningful Recruiting changes were easy
-to miss. Treat this as a feedback/presentation priority; Board + Focus + Offer
-and AI Recruiting mechanics remain frozen.
-
-Phase 6E.12A established the player-safe domain contract without changing those
-mechanics. The future UI can derive coarse readiness from the real decision,
-standing, and separation gates; show active Board pursuers, Offer presence, and
-categorical leading/competitive/trailing context; distinguish commitments to
-the controlled Program from commitments elsewhere; and derive tracked
-commitment activity from stable IDs and stored timing. Raw attraction,
-relationship totals, exact thresholds/probabilities, AI utility, Focus choices
-of other Programs, and hidden rolls remain internal. Canonical state has no
-period-by-period standing snapshots, so historical battle movement cannot be
-claimed; the presentation phase should show commitment events only unless it
-compares two live projections at an explicit session boundary.
+Phase 6E.12B (COMPLETE) presents that contract. The Season Hub now leads with
+a compact `SeasonHubFocusTargets` module showing every Focused Recruit's
+readiness, controlled standing, Offer status, and top competitors before the
+existing Board/Offer summary. The Recruiting Hub board table gained Readiness
+and Battle columns using the same selector and deterministic competitor
+ordering. `RecruitingCommitmentAlerts` surfaces commitment-only activity
+(`deriveRecruitingCommitmentActivity`) across a Quick Sim / Super Sim
+simulation boundary — captured as a transient `recruitingActivityBaselinePeriod`
+session field in `useDynastyStore`, never a persisted history log — and
+distinguishes commitments to the controlled Program from commitments
+elsewhere, including for tracked (non-Focused) Board Recruits. No standing
+movement or "moved into first" language is produced, because canonical state
+still has no period-by-period standing snapshots; only provable commitment
+events cross a simulation boundary. See `UI_DESIGN.md` for the accepted
+presentation.
 
 ## Recruiting Assistant — Fill Remaining Board — OBSERVED — REPEATED HIGH-VALUE QOL REQUEST
 
@@ -703,20 +710,20 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Recruiting Focus-target / commitment visibility presentation (6E.12B)
-2. Assistant Fill Remaining Recruiting Board
-3. Coaching navigation / permanent Rotation home
-4. Followed Players / Favorites
-5. Recruit POT-gap diagnostic
-6. League News / Round Recap
-7. Season Hub information hierarchy
-8. Offseason around-the-league context
-9. Program records / deeper statistical history
-10. Shot-selection diagnostic
-11. Minor Player Details / Quick Sim / Last 5 polish
+1. Assistant Fill Remaining Recruiting Board
+2. Coaching navigation / permanent Rotation home
+3. Followed Players / Favorites
+4. Recruit POT-gap diagnostic
+5. League News / Round Recap
+6. Season Hub information hierarchy
+7. Offseason around-the-league context
+8. Program records / deeper statistical history
+9. Shot-selection diagnostic
+10. Minor Player Details / Quick Sim / Last 5 polish
 
-Player Details + Development History UX and Postseason Hub +
-Season-Complete Presentation Polish are RESOLVED — see above.
+Player Details + Development History UX, Postseason Hub +
+Season-Complete Presentation Polish, and Recruiting Focus-target /
+commitment visibility presentation (6E.12) are RESOLVED — see above.
 
 Awards, offseason progression visibility, and Save/Persistence have stronger
 future evidence but are intentionally not promoted into the active horizon.

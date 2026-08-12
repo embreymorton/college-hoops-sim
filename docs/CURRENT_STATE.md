@@ -182,16 +182,19 @@ did-not-qualify completed states. The accepted bracket, seeding, and Recruiting
 mechanics are unchanged. Phase 6E.11 Super Sim to Season Complete is accepted:
 it reuses canonical Season, Tournament, and Recruiting progression to finish
 competitive basketball and synchronize Period 28, then stops at the existing
-Season Complete checkpoint before Late Recruiting. Phase 6E.12's domain
-foundation is ready for presentation work: pure Recruiting battle projections
-now derive coarse commitment readiness, active Board pursuers and Offers,
-categorical controlled-Program standing, commitment outcomes, and canonical
-commitment activity without exposing raw attraction, thresholds, AI utility,
-or probability. Standing-movement events remain unavailable because canonical
-Recruiting stores no historical standing snapshots. Recruiting battle and
-commitment UI is the selected Claude presentation handoff. Coaching/roster
-navigation, Followed Players, offseason progression visibility, Awards, and
-Save/Persistence retain future QOL evidence.
+Season Complete checkpoint before Late Recruiting. Phase 6E.12 Recruiting
+Battles + Commitment Visibility is complete/accepted: pure selectors
+(`deriveRecruitingBattleView`, `deriveRecruitingCommitmentActivity` in
+`src/dynasty/recruiting/battleView.ts`) derive coarse commitment readiness,
+active Board pursuers and Offers, categorical controlled-Program standing, and
+commitment outcomes without exposing raw attraction, thresholds, AI utility,
+or probability; the Season Hub, Recruiting Hub, and a Quick-Sim/Super-Sim
+commitment-activity banner now present that projection (`UI_DESIGN.md`).
+Standing-movement events remain unavailable because canonical Recruiting
+stores no historical standing snapshots, so only provable commitment events
+are ever shown. Coaching/roster navigation, Followed Players, offseason
+progression visibility, Awards, and Save/Persistence retain future QOL
+evidence.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
@@ -220,10 +223,11 @@ remains closed.
 9. Validate fully before acceptance.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
-Rotation V1, Tournament seeding, Player Details + Development History UX, and
-Postseason Hub + Season-Complete Presentation Polish (6E.10) are
-accepted/frozen; Game Sim remains closed. A fresh planning session should
-select the next milestone from the current `PLAYTESTING.md` priorities.
+Rotation V1, Tournament seeding, Player Details + Development History UX,
+Postseason Hub + Season-Complete Presentation Polish (6E.10), and Recruiting
+Battles + Commitment Visibility (6E.12) are accepted/frozen; Game Sim remains
+closed. A fresh planning session should select the next milestone from the
+current `PLAYTESTING.md` priorities.
 
 ## Documentation map
 

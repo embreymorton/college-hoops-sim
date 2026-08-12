@@ -272,7 +272,9 @@ describe('Recruiting Board', () => {
   it('shows a controlled-Program commitment as a clean COMMITTED status with Remove disabled', () => {
     renderRecruitingScreen()
     const row = screen.getByText('Signed Fixture').closest('tr')!
-    expect(within(row).getByText('Committed')).toBeInTheDocument()
+    expect(
+      within(row).getByText('Committed', { selector: '.recruiting-status-cell' }),
+    ).toBeInTheDocument()
     expect(within(row).queryByText('Remove')).not.toBeInTheDocument()
     expect(within(row).queryByRole('button', { name: 'Offer' })).not.toBeInTheDocument()
   })

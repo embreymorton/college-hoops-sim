@@ -218,8 +218,8 @@ export function RecruitingScreen() {
             />
           ) : (
             <RecruitingBoardTable
+              dynasty={dynasty}
               board={board}
-              recruiting={dynasty.recruiting}
               programsById={PROGRAMS_BY_ID}
               onSetFocus={setRecruitingFocus}
               onOffer={offerRecruitingTarget}

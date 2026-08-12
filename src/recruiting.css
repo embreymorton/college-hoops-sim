@@ -459,6 +459,248 @@
 }
 
 /* ==========================================================================
+   Readiness / Battle badges (6E.12B)
+   ========================================================================== */
+
+.recruiting-readiness-badge,
+.recruiting-standing-badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink-1);
+}
+
+.recruiting-readiness-badge[data-readiness='decision-imminent'],
+.recruiting-readiness-badge[data-readiness='committed'] {
+  color: var(--accent);
+}
+
+.recruiting-standing-badge[data-position='leading'],
+.recruiting-standing-badge[data-position='committed-to-us'] {
+  color: var(--accent);
+}
+
+.recruiting-standing-badge[data-position='trailing'],
+.recruiting-standing-badge[data-position='committed-elsewhere'],
+.recruiting-standing-badge[data-position='not-pursuing'] {
+  color: var(--ink-2);
+}
+
+.recruiting-board-table__battle-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+  min-width: 9rem;
+}
+
+/* ==========================================================================
+   Competitor list
+   ========================================================================== */
+
+.recruiting-competitor-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.recruiting-competitor-list__item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  color: var(--ink-1);
+}
+
+.recruiting-competitor-list__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.recruiting-competitor-list__name {
+  color: var(--ink-0);
+}
+
+.recruiting-competitor-list__position {
+  color: var(--ink-2);
+  text-transform: uppercase;
+  font-size: 0.62rem;
+  letter-spacing: 0.06em;
+}
+
+.recruiting-competitor-list__offer {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.recruiting-competitor-list__overflow {
+  font-size: 0.68rem;
+  color: var(--ink-2);
+}
+
+/* ==========================================================================
+   Season/Postseason Hub Focus Targets (6E.12B)
+   ========================================================================== */
+
+.season-hub-focus-targets {
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.season-hub-focus-targets__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.season-hub-focus-targets__manage {
+  font-size: 0.7rem;
+}
+
+.season-hub-focus-targets__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.season-hub-focus-target {
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.season-hub-focus-target[data-readiness='decision-imminent'] {
+  border-color: var(--accent);
+}
+
+.season-hub-focus-target__identity {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.season-hub-focus-target__rank {
+  color: var(--ink-2);
+  font-family: var(--font-score);
+  font-size: 0.9rem;
+}
+
+.season-hub-focus-target__name {
+  color: var(--ink-0);
+  font-weight: 600;
+}
+
+.season-hub-focus-target__pos {
+  color: var(--ink-1);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.season-hub-focus-target__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.season-hub-focus-target__offer {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ==========================================================================
+   Commitment activity alerts (6E.12B)
+   ========================================================================== */
+
+.recruiting-commitment-alerts {
+  margin-bottom: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+.recruiting-commitment-alerts__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.recruiting-commitment-alerts__dismiss {
+  font-size: 0.7rem;
+}
+
+.recruiting-commitment-alerts__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.recruiting-commitment-alert {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+  color: var(--ink-0);
+}
+
+.recruiting-commitment-alert__tag {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.64rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.recruiting-commitment-alert[data-kind='tracked-committed-elsewhere'] .recruiting-commitment-alert__tag {
+  color: var(--ink-2);
+}
+
+.recruiting-commitment-alert__focus {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  padding: 0.1rem 0.4rem;
+}
+
+.recruiting-commitment-alert__detail {
+  color: var(--ink-1);
+}
+
+/* ==========================================================================
    Responsive
    ========================================================================== */
 
