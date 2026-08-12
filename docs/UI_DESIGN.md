@@ -74,17 +74,36 @@ The controlled Program may be qualified/alive, eliminated, or did not qualify. T
 
 Postseason-specific styles live in `src/postseason.css` beside shared `src/styles.css`. React and Zustand present and orchestrate public Postseason facts; they do not recreate selection, advancement, or champion rules.
 
-### Planned Postseason presentation polish
+### Postseason Tournament-complete / Season-Complete composition — accepted (Phase 6E.10)
 
-The bracket is accepted and should remain intact. The top Tournament/Season
-Complete lifecycle composition remains a playtesting-driven near-term target:
-on desktop, likely group Tournament/championship status and Season Complete
-handoff coherently on the left, with Recruiting/Late-Recruiting context on the
-right, avoiding the current large dead space. Fresh visual inspection should
-refine the composition without redesigning the bracket.
+The bracket is accepted and remains unchanged. On the completed-Tournament
+Hub, `hub-primary-grid` keeps its existing two-column shape, but the
+lifecycle content now composes coherently instead of the Season Complete
+handoff trailing as a separate full-width section:
 
-This is presentation work. Tournament balance/seeding is a separate simulation
-diagnostic and must not be conflated with layout polish.
+```text
+hub-primary-grid__game (left)         hub-primary-grid__recruiting (right)
+├── Tournament outcome banner         ├── Recruiting summary
+│   (champion / eliminated /          │   (board, needs, signed/offers)
+│    did-not-qualify)                 └── "Late Recruiting is next —
+└── SeasonCompleteHandoff                 this board carries forward."
+    ("Season Complete" checkpoint,        (shown once the Tournament is
+     Continue to Late Recruiting)          complete)
+```
+
+`SeasonCompleteHandoff` renders as a quieter sub-panel (`.season-complete-panel--secondary`)
+directly beneath the Tournament outcome banner in the same column, rather than
+as an isolated full-width panel below the grid. `RecruitingHubSummary` accepts
+an `isSeasonComplete` flag that adds the handoff hint without introducing any
+new Recruiting fact, mechanic, or persisted state. The responsive
+single-column breakpoint (`≤1040px`) stacks the same content in the same
+priority order: Tournament outcome, Season Complete, Recruiting, then
+bracket/field. This establishes the accepted pattern for a two-tier lifecycle
+banner (hero result + quieter next-step checkpoint) composing inside an
+existing primary grid column rather than as a trailing full-width section.
+
+This is presentation work only. Tournament balance/seeding is a separate
+simulation diagnostic and was not touched by this milestone.
 
 ## Dynasty lifecycle and Recruiting — implemented
 

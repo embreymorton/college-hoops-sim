@@ -364,21 +364,23 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 - **6E.8 — Player Details + Development History UX:** COMPLETE. Player Details now shows a compact nine-attribute ratings grid, a prominent Career Progression table (Season/Class/OVR/Dev/PPG/RPG/APG) derived purely from archived Dynasty Season snapshots plus the active Season, and a compact Recruiting Origin section for Players resolved from finalized Recruiting history. No new persisted history state was added; `derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts` connects existing canonical facts by stable Player ID. Existing current-season stats, shooting splits, game log, and Team/Player navigation are unchanged. See `UI_DESIGN.md` and `PLAYTESTING.md`.
 - **6E.9 — Rotation Minutes Realism Diagnostic:** COMPLETE — OUTCOME A + C. Production-lifecycle STANDARD `3 × 10` evidence found exact-40 defaults uncommon across active Rotation Players (`2.9%`) but common among top-10 scorers (`51.0%`) and 90+ OVR Players (`51.5%`). All `301` cases were natural `36 → 40` through four flexible secondary minutes; none originated at natural 40. Season 5+ incidence was slightly lower than Season 1, and assigned-40 Players averaged `40.035 MPG`. Rotation V1 remains accepted/frozen overall; no production behavior changed.
 - **6E.9B — Starter Minutes Realism Candidate:** COMPLETE — ACCEPTED / FROZEN. Team top-three OVR role now gates the 36-minute natural ceiling; other Players with a backup use 32, natural-36 Players are excluded from automatic secondary promotion, and useful legal secondary Players may absorb positive weak-backup shares up to eight minutes. STANDARD improved natural-36 quality and removed all `301` baseline exact-40 defaults while preserving secondary access and Team Strength; FULL `5 × 10` observed zero exact-40 defaults across `16,717` active Rotation Players with deterministic structural health.
+- **6E.10 — Postseason Hub + Season-Complete Presentation Polish:** COMPLETE — ACCEPTED. The completed-Tournament outcome banner, the `SeasonCompleteHandoff` checkpoint, and the Recruiting summary now compose inside the same `hub-primary-grid` two-column layout instead of `SeasonCompleteHandoff` rendering as a separate full-width section: the Tournament outcome banner and Season Complete checkpoint stack together in the left/game column, and `RecruitingHubSummary` gains an `isSeasonComplete` hint ("Late Recruiting is next — this board carries forward.") in the right column. This removes the large dead space and duplicated-message full-width panel previously seen after Tournament completion, for the controlled-champion, controlled-eliminated, and did-not-qualify completed states alike, without changing the accepted bracket, seeding, or any Tournament/Recruiting mechanics. Manual play confirmed the composition across all three outcome states and both desktop and narrow layouts.
 
 ### Current planning horizon
 
-- **6E.10 — Postseason Hub + Season-Complete Presentation Polish:** NEXT — CLAUDE CODE. Preserve the accepted bracket while improving Tournament/championship status, Season Complete composition, Recruiting context, and the Late Recruiting handoff.
+- **6E.11 — Super Sim to Season Complete:** NEXT — CANDIDATE. The next-highest repeated-friction QOL priority in `PLAYTESTING.md` once Postseason presentation is resolved; a fresh planning session should confirm scope before implementation.
 
-Repeated near-term QOL priorities include Sim to Season Complete, Recruiting
-Focus/commitment visibility, Assistant Fill Remaining Board, Coaching/roster
-navigation, and Followed Players. League News, Season Hub hierarchy, offseason
+Repeated near-term QOL priorities include Recruiting Focus/commitment
+visibility, Assistant Fill Remaining Board, Coaching/roster navigation, and
+Followed Players. League News, Season Hub hierarchy, offseason
 progression/League context, Awards, Save/Persistence, records, shot-selection
 investigation, and minor presentation polish remain observed/later rather than
 a fixed feature schedule.
 
 This order is evidence-driven: Tournament seeding and Game Sim remain closed;
 Player Details is complete and positively received; the narrow Rotation
-candidate is accepted/frozen, so Postseason presentation is next.
+candidate is accepted/frozen; and Postseason Hub + Season-Complete Presentation
+Polish is now accepted/complete.
 
 ## Non-binding development-agent fit
 

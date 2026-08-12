@@ -171,11 +171,18 @@ at-larges, then seeds all 16 together through the accepted results-only résumé
 comparator. Player Details + Development History UX (Phase 6E.8) is complete:
 Player Details now shows a compact nine-attribute ratings grid, a prominent
 Career Progression table, and a compact Recruiting Origin section, all derived
-from existing canonical facts. Phase 6E.9B is accepted/frozen; the next milestone
-is Phase 6E.10 Postseason Hub + Season-Complete Presentation Polish. Sim to
-Season Complete, Recruiting visibility, Coaching/roster navigation, Followed
-Players, offseason progression visibility, Awards, and Save/Persistence have
-future QOL evidence; none displaces 6E.10.
+from existing canonical facts. Phase 6E.9B is accepted/frozen. Phase 6E.10
+Postseason Hub + Season-Complete Presentation Polish is complete/accepted: the
+completed-Tournament outcome banner, the Season Complete checkpoint, and the
+Recruiting summary now compose inside one `hub-primary-grid` two-column layout
+instead of the Season Complete handoff rendering as a separate full-width
+section beneath it, removing the previous dead space and duplicated-message
+composition across the controlled-champion, controlled-eliminated, and
+did-not-qualify completed states. The accepted bracket, seeding, and Recruiting
+mechanics are unchanged. Sim to Season Complete, Recruiting Focus/commitment
+visibility, Coaching/roster navigation, Followed Players, offseason progression
+visibility, Awards, and Save/Persistence have future QOL evidence and remain
+candidates for the next selected milestone.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
@@ -204,9 +211,10 @@ remains closed.
 9. Validate fully before acceptance.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
-Rotation V1, Tournament seeding, and Player Details + Development History UX
-are accepted/frozen; Game Sim remains closed. Next is Phase 6E.10 Postseason
-Hub + Season-Complete Presentation Polish.
+Rotation V1, Tournament seeding, Player Details + Development History UX, and
+Postseason Hub + Season-Complete Presentation Polish (6E.10) are
+accepted/frozen; Game Sim remains closed. A fresh planning session should
+select the next milestone from the current `PLAYTESTING.md` priorities.
 
 ## Documentation map
 

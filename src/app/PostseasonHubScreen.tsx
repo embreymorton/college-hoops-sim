@@ -196,6 +196,13 @@ export function PostseasonHubScreen() {
   const championProgram = championProgramId
     ? PROGRAMS_BY_ID.get(championProgramId)
     : undefined
+  const isLateRecruitingHandoffAvailable = Boolean(
+    tournamentComplete &&
+      recruiting &&
+      recruiting.phase !== 'late' &&
+      recruiting.phase !== 'finalized' &&
+      recruiting.lastResolvedPeriod === FINAL_RECRUITING_PERIOD,
+  )
 
   const controlledGame =
     currentRound !== undefined && controlledEntry
@@ -537,6 +544,10 @@ export function PostseasonHubScreen() {
               </button>
             </div>
             )}
+
+          {isLateRecruitingHandoffAvailable && (
+            <SeasonCompleteHandoff onContinue={enterLateRecruiting} />
+          )}
         </section>
 
         {recruiting && recruitingBoard && (
@@ -556,18 +567,11 @@ export function PostseasonHubScreen() {
               onManageRecruiting={goToRecruiting}
               onGenerateDraftBoard={generateControlledDraftBoard}
               onBuildManually={goToRecruiting}
+              isSeasonComplete={tournamentComplete}
             />
           </section>
         )}
       </div>
-
-      {tournamentComplete &&
-        recruiting &&
-        recruiting.phase !== 'late' &&
-        recruiting.phase !== 'finalized' &&
-        recruiting.lastResolvedPeriod === FINAL_RECRUITING_PERIOD && (
-          <SeasonCompleteHandoff onContinue={enterLateRecruiting} />
-        )}
 
       <section className="section" aria-labelledby="bracket-heading">
         <h2 id="bracket-heading" className="section-title">

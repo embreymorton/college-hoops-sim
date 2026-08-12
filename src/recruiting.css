@@ -214,6 +214,15 @@
   margin: var(--space-1) 0 var(--space-4);
 }
 
+/* Connects this module to the Season Complete checkpoint in the left column
+   once the Tournament has concluded — a hint, not a new Recruiting fact. */
+.recruiting-hub-summary__handoff-note {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--ink-1);
+  margin: 0 0 var(--space-4);
+}
+
 .recruiting-hub-summary__needs {
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-4);

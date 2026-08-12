@@ -613,17 +613,24 @@ Future history could include program single-game points, season scoring, and car
 
 Conference standings are rarely used in their current prominent placement and can push more meaningful information below the fold. A future hierarchy might prioritize the game and Recruiting context, important updates, schedule/recent results, and a smaller conference snapshot with a route to the full view. Do not redesign it here.
 
-## Postseason Hub + Season-Complete Presentation Polish — NEXT
+## Postseason Hub + Season-Complete Presentation Polish — RESOLVED (Phase 6E.10)
 
-Repeated feedback notes awkward Tournament Complete and Season Complete card
+Repeated feedback noted awkward Tournament Complete and Season Complete card
 placement, excess dead space beneath Tournament Complete, and a visually
-disconnected Late Recruiting handoff. The bracket is good and must remain
-intact. A likely desktop direction groups Tournament/championship and Season
-Complete status on the left and Recruiting/Late-Recruiting context on the
-right. This presentation milestone is separate from Tournament balance/seeding.
-It is next after accepted/frozen Phase 6E.9B because the Tournament is the
-Season payoff and one of the strongest generators of stories already present
-in the game.
+disconnected Late Recruiting handoff. Phase 6E.10 moved `SeasonCompleteHandoff`
+from a separate full-width section beneath `hub-primary-grid` to a panel
+stacked directly under the Tournament outcome banner inside the grid's left
+`hub-primary-grid__game` column, and added an `isSeasonComplete` hint
+("Late Recruiting is next — this board carries forward.") to
+`RecruitingHubSummary` in the right column. The bracket itself is unchanged.
+
+Manual play confirmed the composition for all three controlled-Program
+completed states — National Champion, eliminated with another Program
+champion, and did-not-qualify — on both desktop (two-column, no meaningful
+dead space) and a narrow single-column layout (Tournament outcome → Season
+Complete → Recruiting → bracket/field, in that order). This presentation
+milestone stayed separate from Tournament balance/seeding; no bracket,
+seeding, or Recruiting mechanic changed.
 
 ## Minor UX Polish — OBSERVED
 
@@ -641,10 +648,9 @@ Highest-value repeated signals:
 - Recruiting commitments, lost targets, and which signees were backups are easy to miss;
 - Focus-target context is not visible enough on the Season Hub;
 - users want Assistant Fill Remaining Board without losing manual choices;
-- Rotation deserves a permanent Coaching home;
-- Tournament/Season Complete composition and the Late Recruiting handoff feel
-  awkward even though the bracket is good; and
-- Season Complete needs a deliberate final inspection checkpoint before turnover.
+- Rotation deserves a permanent Coaching home; and
+- Tournament/Season Complete composition and the Late Recruiting handoff
+  (RESOLVED by Phase 6E.10 — see above).
 
 Lower-priority friction: full Conference standings create substantial Hub
 scrolling, Quick Sim leader composition is awkward, and Last 5 is preferred to
@@ -680,21 +686,21 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Postseason Hub + Season-Complete Presentation Polish
-2. Super Sim — Season Complete target
-3. Recruiting Focus-target / commitment visibility
-4. Assistant Fill Remaining Recruiting Board
-5. Coaching navigation / permanent Rotation home
-6. Followed Players / Favorites
-7. Recruit POT-gap diagnostic
-8. League News / Round Recap
-9. Season Hub information hierarchy
-10. Offseason around-the-league context
-11. Program records / deeper statistical history
-12. Shot-selection diagnostic
-13. Minor Player Details / Quick Sim / Last 5 polish
+1. Super Sim — Season Complete target
+2. Recruiting Focus-target / commitment visibility
+3. Assistant Fill Remaining Recruiting Board
+4. Coaching navigation / permanent Rotation home
+5. Followed Players / Favorites
+6. Recruit POT-gap diagnostic
+7. League News / Round Recap
+8. Season Hub information hierarchy
+9. Offseason around-the-league context
+10. Program records / deeper statistical history
+11. Shot-selection diagnostic
+12. Minor Player Details / Quick Sim / Last 5 polish
 
-Player Details + Development History UX is RESOLVED — see above.
+Player Details + Development History UX and Postseason Hub +
+Season-Complete Presentation Polish are RESOLVED — see above.
 
 Awards, offseason progression visibility, and Save/Persistence have stronger
 future evidence but are intentionally not promoted into the active horizon.

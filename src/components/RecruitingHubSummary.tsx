@@ -16,6 +16,8 @@ interface RecruitingHubSummaryProps {
   readonly onManageRecruiting: () => void
   readonly onGenerateDraftBoard: () => void
   readonly onBuildManually: () => void
+  /** True once the Tournament has concluded — reframes this module as the Late Recruiting lead-in rather than mid-Season status. */
+  readonly isSeasonComplete?: boolean
 }
 
 /** A compact Season/Postseason Hub module — high-value Recruiting facts only, not the full page. */
@@ -28,6 +30,7 @@ export function RecruitingHubSummary({
   onManageRecruiting,
   onGenerateDraftBoard,
   onBuildManually,
+  isSeasonComplete = false,
 }: RecruitingHubSummaryProps) {
   const totals = deriveRecruitingHubTotals(board)
   const periodLabel = formatRecruitingPeriodLabel(phase, lastResolvedPeriod)
@@ -40,6 +43,11 @@ export function RecruitingHubSummary({
       <p className="eyebrow-tag">Recruiting</p>
       <p className="recruiting-hub-summary__class">Class of Season {targetSeasonNumber}</p>
       <p className="recruiting-hub-summary__period">{periodLabel.toUpperCase()}</p>
+      {isSeasonComplete && (
+        <p className="recruiting-hub-summary__handoff-note">
+          Late Recruiting is next — this board carries forward.
+        </p>
+      )}
 
       {needsOnboarding ? (
         <div className="recruiting-hub-summary__onboarding">

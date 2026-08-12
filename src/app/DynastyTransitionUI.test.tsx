@@ -14,13 +14,17 @@ import {
   syncRecruitingThroughCompletedRounds,
   type DynastyState,
 } from '../dynasty'
-import { useDynastyStore } from '../store'
+import { DEFAULT_INTERACTIVE_TEST_SEED, useDynastyStore } from '../store'
 import { App } from './App'
 
 const CONTROLLED_PROGRAM_ID = 'charlotte-tech'
 
 function resetStore(): void {
   useDynastyStore.setState(useDynastyStore.getInitialState())
+}
+
+function selectProgram(programId = CONTROLLED_PROGRAM_ID): void {
+  useDynastyStore.getState().selectProgram(programId, DEFAULT_INTERACTIVE_TEST_SEED)
 }
 
 function championshipBoundary(): DynastyState {
@@ -61,6 +65,44 @@ describe('Season-complete handoff', () => {
 
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
     expect(useDynastyStore.getState().view).toBe('recruiting')
+  })
+
+  it('composes the Season Complete checkpoint inside the Tournament lifecycle column, not as an isolated full-width panel', () => {
+    const boundary = championshipBoundary()
+    useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
+    render(<App />)
+
+    const gameColumn = document.querySelector('.hub-primary-grid__game') as HTMLElement
+    expect(gameColumn).not.toBeNull()
+    expect(
+      within(gameColumn).getByRole('button', { name: 'Continue to Late Recruiting' }),
+    ).toBeInTheDocument()
+    expect(within(gameColumn).getByText('Season Complete')).toBeInTheDocument()
+
+    // Recruiting composes naturally alongside the checkpoint rather than as a detached sidebar.
+    const recruitingColumn = document.querySelector(
+      '.hub-primary-grid__recruiting',
+    ) as HTMLElement
+    expect(recruitingColumn).not.toBeNull()
+    expect(
+      within(recruitingColumn).getByText(/late recruiting is next/i),
+    ).toBeInTheDocument()
+  })
+
+  it('does not show the Season Complete handoff or its Recruiting hint while the Tournament is still in progress', () => {
+    selectProgram()
+    useDynastyStore.getState().generateControlledDraftBoard()
+    useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
+    useDynastyStore.getState().confirmSuperSim()
+    useDynastyStore.getState().dismissSuperSimSummary()
+    useDynastyStore.getState().enterPostseason()
+    render(<App />)
+
+    expect(
+      screen.queryByRole('button', { name: 'Continue to Late Recruiting' }),
+    ).not.toBeInTheDocument()
+    expect(screen.queryByText('Season Complete')).not.toBeInTheDocument()
+    expect(screen.queryByText(/late recruiting is next/i)).not.toBeInTheDocument()
   })
 })
 

@@ -3,22 +3,18 @@ interface SeasonCompleteHandoffProps {
 }
 
 /**
- * The end-of-tournament continuation panel. Deliberately quieter than the
- * championship/elimination banner above it — it hands the Dynasty off to
- * Late Recruiting without competing with that result.
+ * The final-inspection checkpoint directly beneath the Tournament outcome
+ * banner in the same lifecycle column. Deliberately quieter than that
+ * banner — it confirms the Season is complete and hands the Dynasty off to
+ * Late Recruiting without restating the Tournament result above it.
  */
 export function SeasonCompleteHandoff({ onContinue }: SeasonCompleteHandoffProps) {
   return (
-    <section
-      className="season-complete-panel season-complete-panel--secondary"
-      aria-labelledby="season-complete-handoff-heading"
-    >
-      <p id="season-complete-handoff-heading" className="eyebrow-tag">
-        Season Complete
-      </p>
+    <div className="season-complete-panel season-complete-panel--secondary">
+      <p className="eyebrow-tag">Season Complete</p>
       <p className="season-complete-panel__body">
-        The national tournament is over. One final recruiting window remains
-        before the offseason.
+        One final Recruiting window remains before the Season turns over to
+        the Offseason.
       </p>
       <button
         type="button"
@@ -27,6 +23,6 @@ export function SeasonCompleteHandoff({ onContinue }: SeasonCompleteHandoffProps
       >
         Continue to Late Recruiting
       </button>
-    </section>
+    </div>
   )
 }
