@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from '@testing-library/react'
-import { describe, expect, it, vi } from 'vitest'
+import { render, screen } from '@testing-library/react'
+import { describe, expect, it } from 'vitest'
 import type { CommitmentActivityDescription } from '../app/recruitingBattleFormatters'
 import { RecruitingCommitmentAlerts } from './RecruitingCommitmentAlerts'
 
@@ -21,19 +21,19 @@ function activity(
 
 describe('RecruitingCommitmentAlerts', () => {
   it('renders nothing when there is no commitment activity', () => {
-    const { container } = render(
-      <RecruitingCommitmentAlerts activity={[]} onDismiss={vi.fn()} />,
-    )
+    const { container } = render(<RecruitingCommitmentAlerts activity={[]} />)
     expect(container).toBeEmptyDOMElement()
   })
 
+  it('has no Dismiss control', () => {
+    render(<RecruitingCommitmentAlerts activity={[activity()]} />)
+    expect(screen.queryByRole('button', { name: 'Dismiss' })).not.toBeInTheDocument()
+  })
+
   it('surfaces a commitment to the controlled Program prominently', () => {
-    render(
-      <RecruitingCommitmentAlerts activity={[activity()]} onDismiss={vi.fn()} />,
-    )
-    expect(screen.getByText('Committed To Us')).toBeInTheDocument()
+    render(<RecruitingCommitmentAlerts activity={[activity()]} />)
     expect(screen.getByText(/Jamal Carter/)).toBeInTheDocument()
-    expect(screen.getByText('Focus Target')).toBeInTheDocument()
+    expect(screen.getByText(/committed to us/)).toBeInTheDocument()
   })
 
   it('surfaces a tracked Board Recruit committing elsewhere with the destination Program', () => {
@@ -46,29 +46,24 @@ describe('RecruitingCommitmentAlerts', () => {
             wasFocused: false,
           }),
         ]}
-        onDismiss={vi.fn()}
       />,
     )
-    expect(screen.getByText('Committed Elsewhere')).toBeInTheDocument()
-    expect(screen.getByText(/to Northbridge/)).toBeInTheDocument()
-    expect(screen.queryByText('Focus Target')).not.toBeInTheDocument()
+    expect(screen.getByText(/Northbridge/)).toBeInTheDocument()
+  })
+
+  it('renders a compact heading with the decision count', () => {
+    render(
+      <RecruitingCommitmentAlerts
+        activity={[activity(), activity({ playerId: 'recruit-2', playerName: 'Other Player' })]}
+      />,
+    )
+    expect(screen.getByText('Recruiting Update · 2 Decisions')).toBeInTheDocument()
   })
 
   it('never fabricates standing-movement language', () => {
-    render(
-      <RecruitingCommitmentAlerts activity={[activity()]} onDismiss={vi.fn()} />,
-    )
+    render(<RecruitingCommitmentAlerts activity={[activity()]} />)
     expect(screen.queryByText(/moved into first/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/interest rose/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/gained ground/i)).not.toBeInTheDocument()
-  })
-
-  it('calls onDismiss when Dismiss is clicked', () => {
-    const onDismiss = vi.fn()
-    render(
-      <RecruitingCommitmentAlerts activity={[activity()]} onDismiss={onDismiss} />,
-    )
-    fireEvent.click(screen.getByRole('button', { name: 'Dismiss' }))
-    expect(onDismiss).toHaveBeenCalledTimes(1)
   })
 })

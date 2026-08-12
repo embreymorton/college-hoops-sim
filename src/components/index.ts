@@ -54,12 +54,9 @@ export { RecruitingSetupDialog } from './RecruitingSetupDialog'
 export { SeasonCompleteHandoff } from './SeasonCompleteHandoff'
 export { RecruitingFinalizationDialog } from './RecruitingFinalizationDialog'
 export { RecruitingClassSummary } from './RecruitingClassSummary'
-export {
-  RecruitingReadinessBadge,
-  RecruitingStandingBadge,
-} from './RecruitingBattleBadges'
-export { RecruitingCompetitorList } from './RecruitingCompetitorList'
-export { SeasonHubFocusTargets } from './SeasonHubFocusTargets'
+export { RecruitingReadinessBadge } from './RecruitingBattleBadges'
+export { RecruitingReadinessInfo } from './RecruitingReadinessInfo'
+export { RecruitingBattlesGrid } from './RecruitingBattlesGrid'
 export { RecruitingCommitmentAlerts } from './RecruitingCommitmentAlerts'
 export { DeparturesTable } from './DeparturesTable'
 export { DevelopmentTable } from './DevelopmentTable'

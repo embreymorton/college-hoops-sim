@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   DynastySectionNav,
   NationalRecruitTable,
+  RecruitingBattlesGrid,
   RecruitingBoardEmptyState,
   RecruitingBoardTable,
   RecruitingClassSummary,
@@ -22,6 +23,7 @@ import {
   deriveIncomingClass,
   derivePositionCounts,
 } from './offseasonFormatters'
+import { deriveBattleCardSummaries } from './recruitingBattleFormatters'
 import { deriveRecruitingHubTotals } from './recruitingFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -227,6 +229,12 @@ export function RecruitingScreen() {
               onRemove={removeRecruitingTarget}
             />
           )
+        ) : mode === 'battles' ? (
+          <RecruitingBattlesGrid
+            cards={deriveBattleCardSummaries(dynasty, board)}
+            controlledProgram={controlledProgram}
+            programsById={PROGRAMS_BY_ID}
+          />
         ) : (
           <NationalRecruitTable
             dynasty={dynasty}

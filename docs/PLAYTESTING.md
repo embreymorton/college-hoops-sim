@@ -201,6 +201,56 @@ still has no period-by-period standing snapshots; only provable commitment
 events cross a simulation boundary. See `UI_DESIGN.md` for the accepted
 presentation.
 
+### Recruiting Information Architecture + Visual Hierarchy — RESOLVED (Phase 6E.12C)
+
+Manual playtesting after 6E.12B confirmed the new battle/readiness/commitment
+information itself was useful, but reopened the presentation layer only: the
+same intelligence was shown in too many places at too much visual weight. The
+standalone `SeasonHubFocusTargets` Hub module felt detached from the
+existing Recruiting panel and showed more battle detail than a dashboard
+needs; the Board mixed management actions with full battle intelligence and
+had no natural place for competitor detail; too many labels/badges/accent
+colors competed for attention; and `RecruitingCommitmentAlerts` felt like an
+inbox notification requiring acknowledgement rather than a recap of the most
+recent simulation action.
+
+Phase 6E.12C (COMPLETE — ACCEPTED) is a presentation-only re-shape — it did
+not touch 6E.12A's domain contract or any Recruiting mechanic — that
+establishes the current canonical separation: Hub = status, Board =
+management, Battles = intelligence, National = discovery. Focus targets now
+compose inside the existing `RecruitingHubSummary` instead of a second Hub
+surface, condensed to identity, readiness, our standing, an actionable
+"Needs Offer" state, and a single outcome line once resolved, with no
+competitor detail and no `Manage Recruiting` CTA (primary Dynasty navigation
+already exposes Recruiting). `RecruitingBoardTable` returned to
+management-only columns with an accessible `RecruitingReadinessInfo`
+hover/keyboard-focus affordance replacing the removed Battle column and
+competitor lists. A new `Battles` mode
+(`RecruitingModeTabs`/`RecruitingBattlesGrid`/`RecruitingBattleCard`)
+presents a responsive 2-column/1-column card grid built from the unchanged
+`deriveRecruitingBattleView` selector via `deriveBattleCardSummaries`, with
+our Program identified first using the Tournament bracket's existing
+`.team-color-dot` square (replacing the previous bespoke circular
+competitor-dot styling) ahead of deterministically ordered, capped
+competitors, and committed cards collapsing to identity plus one outcome
+line. `RecruitingCommitmentAlerts` lost its Dismiss control and became a
+compact "Recruiting Update · N Decisions" recap; `recruitingActivityBaselinePeriod`
+now always replaces (never holds) its baseline on every Quick Sim / Super
+Sim / Tournament-round boundary, so a later quiet simulation automatically
+clears an earlier unseen commitment instead of requiring acknowledgement.
+See `UI_DESIGN.md` for the accepted presentation pattern.
+
+Follow-up manual playtesting of 6E.12C's Battles cards found the controlled
+Program still pinned to a fixed row ahead of the competitor list regardless
+of whether it was actually `leading`, `competitive`, or `trailing`, which
+made a card's real battle position ambiguous at a glance; the Readiness
+tooltip was also observed overflowing the viewport. Phase 6E.12D (COMPLETE —
+ACCEPTED) resolved both: the controlled Program now renders inside its
+actual standing group marked `YOU`, the redundant upper-right We Lead/Trail
+badge is gone since the grouping itself communicates standing, and the
+tooltip is centered/width-capped to the viewport (a bottom-sheet anchor
+below 560px). No domain/mechanic change; see `UI_DESIGN.md`.
+
 ## Recruiting Assistant — Fill Remaining Board — OBSERVED — REPEATED HIGH-VALUE QOL REQUEST
 
 Desired future behavior:

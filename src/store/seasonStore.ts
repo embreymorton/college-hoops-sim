@@ -240,12 +240,12 @@ export interface DynastySessionState {
   readonly pendingRecruitingSetupIntent: PendingRecruitingSetupIntent | null
   /**
    * The canonical `recruiting.lastResolvedPeriod` value from just before the
-   * most recent unviewed Quick Sim / Super Sim simulation boundary, or `null`
-   * when there is no pending commitment activity to surface. Transient
-   * session state only — never a persisted history log. Once set, it is held
-   * (not overwritten) across further simulation until explicitly dismissed or
-   * the player opens full Recruiting, so a quiet Quick Sim never erases an
-   * earlier unseen commitment.
+   * most recent Quick Sim / Super Sim simulation boundary, or `null` before
+   * any progression has happened this session. Transient session state
+   * only — never a persisted history log. Replaced (not held) on every
+   * relevant progression action, so the Recruiting Update recap always
+   * reflects only the most recent action: a later quiet simulation clears an
+   * earlier unseen commitment rather than preserving it indefinitely.
    */
   readonly recruitingActivityBaselinePeriod: number | null
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
@@ -357,8 +357,6 @@ export interface DynastySessionState {
   beginDynastyOffseason(): void
   /** Atomically rolls the prepared Dynasty into its next active Season. */
   beginNextSeason(): void
-  /** Clears pending commitment-activity feedback without changing Recruiting state. */
-  dismissRecruitingActivity(): void
 }
 
 export const selectActiveSeason = (
@@ -451,15 +449,12 @@ function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState 
 }
 
 /**
- * Holds the earliest unviewed simulation-boundary baseline rather than
- * resetting it on every call, so a Quick Sim that produces no commitments
- * never erases an earlier unseen one still awaiting dismissal.
+ * Always replaces the baseline with the pre-simulation
+ * `recruiting.lastResolvedPeriod`, so the Recruiting Update recap reflects
+ * only the most recent progression action: a later quiet simulation clears
+ * an earlier unseen commitment instead of preserving it indefinitely.
  */
-function nextRecruitingActivityBaseline(
-  dynasty: DynastyState,
-  currentBaseline: number | null,
-): number | null {
-  if (currentBaseline !== null) return currentBaseline
+function nextRecruitingActivityBaseline(dynasty: DynastyState): number | null {
   return dynasty.recruiting?.lastResolvedPeriod ?? null
 }
 
@@ -826,10 +821,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty: withActiveSeason(dynasty, outcome.season),
       lastPlayedGameId: outcome.playedGameId,
       view: 'hub',
-      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
-        dynasty,
-        get().recruitingActivityBaselinePeriod,
-      ),
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
     })
   },
 
@@ -858,10 +850,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     set({
       dynasty: withActiveSeason(dynasty, nextSeason),
-      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
-        dynasty,
-        get().recruitingActivityBaselinePeriod,
-      ),
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
     })
   },
 
@@ -945,10 +934,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
-    const recruitingActivityBaselinePeriod = nextRecruitingActivityBaseline(
-      dynasty,
-      get().recruitingActivityBaselinePeriod,
-    )
+    const recruitingActivityBaselinePeriod = nextRecruitingActivityBaseline(dynasty)
 
     if (pendingSuperSim.kind === 'seasonComplete') {
       const nextDynasty = simulateDynastyToSeasonComplete(dynasty)
@@ -1184,10 +1170,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty: withActivePostseason(dynasty, nextPostseason),
       lastPlayedTournamentGameId: game.id,
       view: 'postseasonHub',
-      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
-        dynasty,
-        get().recruitingActivityBaselinePeriod,
-      ),
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
     })
   },
 
@@ -1211,10 +1194,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     set({
       dynasty: withActivePostseason(dynasty, nextPostseason),
-      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(
-        dynasty,
-        get().recruitingActivityBaselinePeriod,
-      ),
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
     })
   },
 
@@ -1275,10 +1255,6 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       recruitingActionError: null,
       recruitingActivityBaselinePeriod: null,
     })
-  },
-
-  dismissRecruitingActivity() {
-    set({ recruitingActivityBaselinePeriod: null })
   },
 
   addRecruitingTarget(playerId) {

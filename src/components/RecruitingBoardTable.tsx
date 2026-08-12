@@ -6,19 +6,13 @@ import {
   type ProgramRecruitingBoard,
 } from '../dynasty'
 import {
-  countCompetitors,
-  deriveCompetitorSummaries,
-} from '../app/recruitingBattleFormatters'
-import {
   formatOfferCapacityMessage,
   formatRecruitStatusLabel,
 } from '../app/recruitingFormatters'
 import type { ProgramDefinition } from '../universe'
-import { RecruitingReadinessBadge, RecruitingStandingBadge } from './RecruitingBattleBadges'
-import { RecruitingCompetitorList } from './RecruitingCompetitorList'
+import { RecruitingReadinessBadge } from './RecruitingBattleBadges'
+import { RecruitingReadinessInfo } from './RecruitingReadinessInfo'
 import { RecruitStars } from './RecruitStars'
-
-const COMPETITOR_DISPLAY_LIMIT = 2
 
 interface RecruitingBoardTableProps {
   readonly dynasty: DynastyState
@@ -54,8 +48,10 @@ function FocusToggle({ isFocused, disabled, label, onChange }: FocusToggleProps)
 }
 
 /**
- * The controlled Program's board: focus, active-offer, and commitment
- * status per target. Callers must not render this with an empty board — use
+ * The controlled Program's board: player quality, readiness, focus,
+ * active-offer, and commitment status per target — management only. Battle
+ * intelligence (competing Programs, offer detail) lives on the Battles tab.
+ * Callers must not render this with an empty board — use
  * `RecruitingBoardEmptyState` instead, since the two empty variants need
  * different copy the table itself doesn't have enough context to choose.
  */
@@ -69,7 +65,6 @@ export function RecruitingBoardTable({
   onRemove,
 }: RecruitingBoardTableProps) {
   const recruiting = dynasty.recruiting!
-  const controlledProgramId = dynasty.controlledProgramId
   // Strictly by National Rank — a fixed identity order, so changing a
   // Recruit focus never moves their row.
   const rows = board.targets
@@ -87,8 +82,10 @@ export function RecruitingBoardTable({
             <th scope="col">Stars</th>
             <th scope="col">Ovr</th>
             <th scope="col">Pot</th>
-            <th scope="col">Readiness</th>
-            <th scope="col">Battle</th>
+            <th scope="col" className="recruiting-board-table__readiness-heading">
+              Readiness
+              <RecruitingReadinessInfo />
+            </th>
             <th scope="col">Focus</th>
             <th scope="col">Status</th>
             <th scope="col">Action</th>
@@ -107,16 +104,6 @@ export function RecruitingBoardTable({
             const availableOfferSlots = board.availableOfferSlotsByPosition[position]
             const canOffer = isActive && !target.hasActiveOffer && availableOfferSlots > 0
             const battle = deriveRecruitingBattleView(dynasty, target.playerId)
-            const competitors = deriveCompetitorSummaries(
-              battle,
-              controlledProgramId,
-              programsById,
-              COMPETITOR_DISPLAY_LIMIT,
-            )
-            const overflowCount = Math.max(
-              0,
-              countCompetitors(battle, controlledProgramId) - competitors.length,
-            )
 
             return (
               <tr key={target.playerId} data-status={target.status}>
@@ -132,13 +119,6 @@ export function RecruitingBoardTable({
                 <td>{recruit.player.potential}</td>
                 <td>
                   <RecruitingReadinessBadge readiness={battle.readiness} />
-                </td>
-                <td className="recruiting-board-table__battle-cell">
-                  <RecruitingStandingBadge position={battle.controlled.position} />
-                  <RecruitingCompetitorList
-                    competitors={competitors}
-                    overflowCount={overflowCount}
-                  />
                 </td>
                 <td>
                   <FocusToggle

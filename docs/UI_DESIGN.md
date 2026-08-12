@@ -111,36 +111,76 @@ Regular navigation is `SEASON / RECRUITING / LEAGUE`; Tournament navigation is `
 
 After the championship, the player explicitly enters the distinct Late Recruiting mode, may make final legal Board/Offer changes, and finalizes the Recruiting class. A focused Offseason turnover screen presents departures, automatic Player Development, incoming Recruits, and the next roster before the explicit Season N+1 handoff returns to the normal Hub. These screens preserve the established modern-collegiate-athletics, broadcast-graphics, management-simulation visual direction rather than introducing a separate product style.
 
-### Recruiting battle, readiness, and commitment visibility — implemented (6E.12B)
+### Recruiting information architecture — implemented (6E.12C, supersedes 6E.12B)
 
-Recruiting presents the domain's player-safe `deriveRecruitingBattleView` / `deriveRecruitingCommitmentActivity` projections (`src/dynasty/recruiting/battleView.ts`) instead of a static Board:
+6E.12B (accepted) first exposed the domain's player-safe `deriveRecruitingBattleView` / `deriveRecruitingCommitmentActivity` projections (`src/dynasty/recruiting/battleView.ts`), but manual playtesting found the result shown in too many places at too much visual weight: a standalone Hub Focus module, a Board table carrying full battle detail, and an Alerts banner requiring explicit dismissal. 6E.12C keeps the same accepted domain projection and re-shapes only where and how much of it appears, establishing the current canonical separation of concerns:
 
 ```text
-Season Hub Recruiting column
-├── SeasonHubFocusTargets (up to 3 Focused Recruits, always first)
-│   ├── identity (rank, name, position, stars)
-│   ├── readiness badge (Early Interest / Developing / Serious Battle /
-│   │   Decision Imminent / Committed)
-│   ├── standing badge (We Lead / Competitive Battle / We Trail /
-│   │   Committed To Us / Committed Elsewhere)
-│   ├── Offered tag when applicable
-│   └── compact competitor list (Program dot + name + standing + Offer)
-└── RecruitingHubSummary (existing Board/Offer/Signed facts, unchanged)
-
-Recruiting Hub board table
-└── Readiness + Battle columns (same badges/competitor list) replace the
-    old bare numeric Standing column
-
-RecruitingCommitmentAlerts (Season Hub and Postseason Hub, above the grid)
-└── dismissible banner of commitment-only activity since the last
-    unviewed Quick Sim / Super Sim boundary
+Hub      = status        (compact totals, Roster Needs, Focus targets — no competitors)
+Board    = management    (Rank/Player/Stars/Ovr/Pot/Readiness/Focus/Status/Action)
+Battles  = intelligence  (Recruit + our Program + competitors, in cards)
+National = discovery     (unchanged)
 ```
 
-Readiness and standing use restrained categorical badges (color via the existing amber-accent/ink-1/ink-2 tokens, never a percentage, progress bar, or raw score) driven by `data-readiness` / `data-position` attributes, matching the `data-status` pattern already used for Board rows. Competitor lists cap at 2–3 entries plus a "+N more" overflow rather than listing every pursuer, and always exclude the controlled Program (it is represented by the standing badge, not a self-referential competitor row).
+```text
+Season/Postseason Hub Recruiting column
+└── RecruitingHubSummary — one module, no separate Focus surface
+    ├── condensed overview: Class of Season N · period, a Signed/Board/Offers
+    │   fact row, one Needs line
+    └── Focus Targets (up to 3, composed inline, never a second Hub panel)
+        ├── identity (rank, name, position, stars)
+        ├── unresolved: readiness + our standing on one restrained line,
+        │   plus "Needs Offer" only when active and un-offered
+        └── resolved: one outcome line only (e.g. "Committed To Us"),
+            not readiness + standing + outcome stacked
+    (no competitor detail; no "Manage Recruiting" CTA — primary Dynasty
+    navigation already exposes Recruiting)
 
-Commitment activity is deliberately conservative: `useDynastyStore` tracks a transient `recruitingActivityBaselinePeriod` (the `recruiting.lastResolvedPeriod` value from just before an unviewed Quick Sim / Super Sim / Tournament-round simulation), not a persisted history log. It is held — not overwritten — across further quiet simulation until the player dismisses the banner or opens full Recruiting, so a no-op Quick Sim never erases an earlier unseen commitment. The banner shows only commitments the selector already proves (to the controlled Program, or to another Program for a tracked Board/Focus Recruit) and never claims standing movement, since canonical Recruiting stores no historical standing snapshots.
+Recruiting screen mode tabs — RecruitingModeTabs
+└── Board | Battles | National Class
 
-This is presentation-only: Board + Focus + Offer mechanics, AI Recruiting, and all existing Board/Focus/Offer/navigation actions are unchanged.
+RecruitingBoardTable (Board mode)
+└── management columns only: Rank/Player/Stars/Ovr/Pot/Readiness/Focus/
+    Status/Action. A `RecruitingReadinessInfo` accessible hover/keyboard-
+    focus affordance beside the Readiness heading explains the five
+    categories (Early Interest/Developing/Serious Battle/Decision
+    Imminent/Committed) without exposing thresholds. No Battle column, no
+    competitor list — that intelligence lives on Battles.
+
+RecruitingBattlesGrid (Battles mode)
+└── one RecruitingBattleCard per Board Recruit, responsive 2-column
+    desktop / 1-column ≤720px grid, sourced from `deriveBattleCardSummaries`
+    + `deriveBattleGroups` over the existing selector — no new Recruiting
+    facts
+    ├── identity: rank/name/position/stars prominent, OVR/POT secondary
+    ├── one Readiness line (no separate We Lead/Trail badge — the grouped
+    │   standing below already communicates our position)
+    ├── every pursuing Program — including the controlled Program — grouped
+    │   under only the Leading/Competitive/Trailing headings that actually
+    │   have a member, in the domain's existing deterministic order; the
+    │   controlled Program is never pinned to a fixed row and appears
+    │   wherever its own standing actually places it, marked `YOU` (plus
+    │   Focused/Offered when applicable) beside the shared Tournament
+    │   `.team-color-dot` square — not a separate circular competitor-dot
+    │   language, and standing is never repeated per-row since the group
+    │   heading already says it
+    ├── competitors are capped with a single "+N other programs" overflow;
+    │   the controlled Program is exempt from that cap and can never be
+    │   pushed into the overflow count
+    └── committed cards collapse to identity + one "Committed To {Program}"
+        line, suppressing the unresolved battle detail
+
+RecruitingCommitmentAlerts ("Recruiting Update", Season Hub and Postseason
+Hub, above the grid)
+└── compact "Recruiting Update · N Decisions" recap, no Dismiss control —
+    it represents only the most recent progression/simulation action
+```
+
+Readiness uses a restrained categorical label (color via the existing amber-accent/ink-1/ink-2 tokens, never a percentage, progress bar, or raw score) driven by `data-readiness` attributes, matching the `data-status` pattern already used for Board rows. Program identity throughout Recruiting reuses the exact `.team-color-dot` square styling the Tournament bracket already uses (`src/styles.css`), not a bespoke competitor-dot treatment; the color square is the only significant Program-specific color cue; rows, names, and standing labels stay uncolored. Amber/accent stays reserved for genuine urgency (Decision Imminent, the `YOU` marker, a commitment to the controlled Program) rather than decorating every badge/tag/label at once. The Board's `RecruitingReadinessInfo` tooltip (`src/components/RecruitingReadinessInfo.tsx`) centers under its trigger and caps its width to the viewport so it cannot be clipped or pushed off-screen; below 560px it anchors to the viewport as a bottom sheet instead of the trigger.
+
+The session store's `recruitingActivityBaselinePeriod` (`src/store/seasonStore.ts`) now always replaces — never holds — on every Quick Sim / Super Sim / Tournament-round simulation boundary, so a later quiet simulation clears an earlier unseen commitment automatically instead of requiring the removed Dismiss action; opening full Recruiting still clears it. This is session/UI behavior only.
+
+This remains presentation-only: Board + Focus + Offer mechanics, AI Recruiting, 6E.12A's domain contract, and all existing Board/Focus/Offer/navigation actions are unchanged. Phase 6E.12D (Recruiting Battles Clarity Polish) refined only the Battles card's controlled-Program placement/labeling and the Readiness tooltip's viewport containment on top of 6E.12C's information architecture; it did not reopen the Hub/Board/National Class layers.
 
 ## League and Player exploration — implemented
 

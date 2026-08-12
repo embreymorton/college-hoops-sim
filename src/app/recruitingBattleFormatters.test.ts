@@ -9,8 +9,7 @@ import {
 } from '../dynasty'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import {
-  countCompetitors,
-  deriveCompetitorSummaries,
+  deriveBattleGroups,
   deriveFocusTargetSummaries,
   deriveRecruitingActivityDescriptions,
   formatBattlePositionLabel,
@@ -143,44 +142,88 @@ describe('Recruiting battle presentation formatters', () => {
     expect(summary!.battle.controlled.hasActiveOffer).toBe(true)
   })
 
-  it('derives competitor summaries in canonical deterministic order, excluding the controlled Program', () => {
-    const { dynasty, playerId, programIds } = battleFixture('formatters-competitors')
+  it('groups the controlled Program inside its own actual standing, not a fixed row', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-leading-group')
     const configured = withDecisionState(dynasty, playerId, {
       [programIds[0]]: 100,
       [programIds[1]]: 90,
       [programIds[2]]: 70,
     })
     const battle = deriveRecruitingBattleView(configured, playerId)
-    const competitors = deriveCompetitorSummaries(
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const { groups, overflowCount } = deriveBattleGroups(
       battle,
-      configured.controlledProgramId,
+      controlledProgram,
       PROGRAMS_BY_ID,
-      2,
     )
 
-    expect(competitors.map((entry) => entry.programId)).toEqual([programIds[1], programIds[2]])
-    expect(
-      competitors.every((entry) => entry.programId !== configured.controlledProgramId),
-    ).toBe(true)
-    expect(countCompetitors(battle, configured.controlledProgramId)).toBeGreaterThanOrEqual(2)
+    expect(overflowCount).toBe(0)
+    const leadingGroup = groups.find((group) => group.position === 'leading')!
+    expect(leadingGroup.rows.map((row) => row.programId)).toEqual([programIds[0]])
+    expect(leadingGroup.rows[0]!.isControlled).toBe(true)
+    // No empty groups render.
+    expect(groups.every((group) => group.rows.length > 0)).toBe(true)
   })
 
-  it('never exposes raw attraction, relationship, or threshold fields through the view-model', () => {
+  it('places the controlled Program in the trailing group when it is trailing, not the leading group', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-trailing-group')
+    const configured = withDecisionState(dynasty, playerId, {
+      [programIds[0]]: 60,
+      [programIds[1]]: 100,
+      [programIds[2]]: 90,
+    })
+    const battle = deriveRecruitingBattleView(configured, playerId)
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const { groups } = deriveBattleGroups(battle, controlledProgram, PROGRAMS_BY_ID)
+
+    const controlledGroup = groups.find((group) =>
+      group.rows.some((row) => row.isControlled),
+    )!
+    expect(controlledGroup.position).toBe('trailing')
+    const leadingGroup = groups.find((group) => group.position === 'leading')!
+    expect(leadingGroup.rows.every((row) => !row.isControlled)).toBe(true)
+  })
+
+  it('never pushes the controlled Program into the overflow count, even when it would exceed the cap', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-overflow')
+    const configured = withDecisionState(dynasty, playerId, {
+      [programIds[0]]: 100,
+      [programIds[1]]: 90,
+      [programIds[2]]: 60,
+    })
+    const battle = deriveRecruitingBattleView(configured, playerId)
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    // A limit of 0 forces every competitor into overflow — the controlled
+    // Program (which is the leader here) must still appear in a group.
+    const { groups, overflowCount } = deriveBattleGroups(
+      battle,
+      controlledProgram,
+      PROGRAMS_BY_ID,
+      0,
+    )
+    const totalCompetitors = battle.pursuingPrograms.filter(
+      (entry) => entry.programId !== controlledProgram.id,
+    ).length
+
+    expect(overflowCount).toBe(totalCompetitors)
+    const allRows = groups.flatMap((group) => group.rows)
+    expect(allRows.some((row) => row.isControlled)).toBe(true)
+    expect(allRows.every((row) => row.isControlled)).toBe(true)
+  })
+
+  it('never exposes raw attraction, relationship, or threshold fields through the grouped view-model', () => {
     const { dynasty, playerId, programIds } = battleFixture('formatters-hidden')
     const configured = withDecisionState(dynasty, playerId, {
       [programIds[0]]: 100,
       [programIds[1]]: 90,
     })
     const battle = deriveRecruitingBattleView(configured, playerId)
-    const competitors = deriveCompetitorSummaries(
-      battle,
-      configured.controlledProgramId,
-      PROGRAMS_BY_ID,
-    )
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const { groups } = deriveBattleGroups(battle, controlledProgram, PROGRAMS_BY_ID)
 
-    for (const competitor of competitors) {
-      expect(Object.keys(competitor).sort()).toEqual(
-        ['accentColor', 'hasActiveOffer', 'position', 'programId', 'programName', 'pursuitRank'].sort(),
+    for (const row of groups.flatMap((group) => group.rows)) {
+      expect(Object.keys(row).sort()).toEqual(
+        ['accentColor', 'hasActiveOffer', 'isControlled', 'programId', 'programName'].sort(),
       )
     }
   })

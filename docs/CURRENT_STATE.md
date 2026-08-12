@@ -192,9 +192,25 @@ or probability; the Season Hub, Recruiting Hub, and a Quick-Sim/Super-Sim
 commitment-activity banner now present that projection (`UI_DESIGN.md`).
 Standing-movement events remain unavailable because canonical Recruiting
 stores no historical standing snapshots, so only provable commitment events
-are ever shown. Coaching/roster navigation, Followed Players, offseason
-progression visibility, Awards, and Save/Persistence retain future QOL
-evidence.
+are ever shown. Phase 6E.12C Recruiting Information Architecture + Visual
+Hierarchy Polish is complete/accepted: manual playtesting after 6E.12B found
+the same battle intelligence shown in too many places at too much visual
+weight, so this presentation-only pass established Hub = status, Board =
+management, Battles = intelligence, National = discovery. Focus targets now
+compose inside `RecruitingHubSummary` (no standalone Hub module, no
+competitor detail, no `Manage Recruiting` CTA); `RecruitingBoardTable` is
+management-only again (no Battle column/competitor lists), with an
+accessible `RecruitingReadinessInfo` hover/focus affordance explaining the
+five Readiness categories; a new `Battles` mode
+(`RecruitingModeTabs`/`RecruitingBattlesGrid`) presents a responsive card
+grid built from the unchanged `deriveRecruitingBattleView` selector, with
+Program identity reusing the Tournament bracket's `.team-color-dot` square;
+and the `RecruitingCommitmentAlerts` recap lost its Dismiss control, since
+`recruitingActivityBaselinePeriod` now always replaces (never holds) on
+every simulation boundary. 6E.12A's domain contract and all Recruiting
+mechanics are unchanged. Coaching/roster navigation, Followed Players,
+offseason progression visibility, Awards, and Save/Persistence retain
+future QOL evidence.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
@@ -224,10 +240,11 @@ remains closed.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
 Rotation V1, Tournament seeding, Player Details + Development History UX,
-Postseason Hub + Season-Complete Presentation Polish (6E.10), and Recruiting
-Battles + Commitment Visibility (6E.12) are accepted/frozen; Game Sim remains
-closed. A fresh planning session should select the next milestone from the
-current `PLAYTESTING.md` priorities.
+Postseason Hub + Season-Complete Presentation Polish (6E.10), Recruiting
+Battles + Commitment Visibility (6E.12), and Recruiting Information
+Architecture + Visual Hierarchy Polish (6E.12C) are accepted/frozen; Game Sim
+remains closed. A fresh planning session should select the next milestone
+from the current `PLAYTESTING.md` priorities.
 
 ## Documentation map
 

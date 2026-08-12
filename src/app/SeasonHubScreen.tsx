@@ -9,7 +9,6 @@ import {
   RecruitingHubSummary,
   ScheduleTable,
   SeasonHeader,
-  SeasonHubFocusTargets,
   SuperSimConfirmDialog,
   SuperSimMenu,
   SuperSimSummaryDialog,
@@ -101,9 +100,6 @@ export function SeasonHubScreen() {
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
   const recruitingActivityBaselinePeriod = useDynastyStore(
     (state) => state.recruitingActivityBaselinePeriod,
-  )
-  const dismissRecruitingActivity = useDynastyStore(
-    (state) => state.dismissRecruitingActivity,
   )
 
   if (!season || !controlledProgramId) {
@@ -239,10 +235,7 @@ export function SeasonHubScreen() {
         isComplete={seasonComplete}
       />
 
-      <RecruitingCommitmentAlerts
-        activity={recruitingActivity}
-        onDismiss={dismissRecruitingActivity}
-      />
+      <RecruitingCommitmentAlerts activity={recruitingActivity} />
 
       <div className="hub-primary-grid">
       <section className="section hub-primary-grid__game" aria-labelledby="next-game-heading">
@@ -417,19 +410,13 @@ export function SeasonHubScreen() {
           <h2 id="recruiting-summary-heading" className="visually-hidden">
             Recruiting
           </h2>
-          <SeasonHubFocusTargets
-            focusTargets={focusTargets}
-            controlledProgramId={controlledProgramId}
-            programsById={PROGRAMS_BY_ID}
-            onManageRecruiting={goToRecruiting}
-          />
           <RecruitingHubSummary
             targetSeasonNumber={recruiting.targetSeasonNumber}
             phase={recruiting.phase}
             lastResolvedPeriod={recruiting.lastResolvedPeriod}
             board={recruitingBoard}
+            focusTargets={focusTargets}
             recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
-            onManageRecruiting={goToRecruiting}
             onGenerateDraftBoard={generateControlledDraftBoard}
             onBuildManually={goToRecruiting}
           />

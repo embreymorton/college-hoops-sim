@@ -1,23 +1,20 @@
 import type { CommitmentActivityDescription } from '../app/recruitingBattleFormatters'
-import { formatRankLabel } from '../app/recruitingFormatters'
-import { RecruitStars } from './RecruitStars'
 
 interface RecruitingCommitmentAlertsProps {
   readonly activity: readonly CommitmentActivityDescription[]
-  readonly onDismiss: () => void
 }
 
 /**
- * Difficult-to-miss commitment feedback for whatever happened across the
- * most recent Quick Sim / Super Sim simulation boundary. Only ever shows
- * commitment events the canonical selector already proves — no interest,
- * standing-movement, or "moved into first" language, because no historical
- * standing snapshots exist.
+ * A compact recap of what happened during the most recent progression /
+ * simulation action — not an inbox notification. There is deliberately no
+ * Dismiss control: the caller replaces this activity on the next relevant
+ * simulation boundary (`recruitingActivityBaselinePeriod` in the session
+ * store), so a quiet later action naturally clears it without an explicit
+ * acknowledgement step. Only ever shows commitment events the canonical
+ * selector already proves — no interest, standing-movement, or "moved into
+ * first" language, because no historical standing snapshots exist.
  */
-export function RecruitingCommitmentAlerts({
-  activity,
-  onDismiss,
-}: RecruitingCommitmentAlertsProps) {
+export function RecruitingCommitmentAlerts({ activity }: RecruitingCommitmentAlertsProps) {
   if (activity.length === 0) {
     return null
   }
@@ -29,18 +26,9 @@ export function RecruitingCommitmentAlerts({
       aria-live="polite"
       aria-labelledby="recruiting-commitment-alerts-heading"
     >
-      <div className="recruiting-commitment-alerts__header">
-        <p id="recruiting-commitment-alerts-heading" className="eyebrow-tag">
-          Recruiting Update
-        </p>
-        <button
-          type="button"
-          className="text-link-button recruiting-commitment-alerts__dismiss"
-          onClick={onDismiss}
-        >
-          Dismiss
-        </button>
-      </div>
+      <p id="recruiting-commitment-alerts-heading" className="recruiting-commitment-alerts__heading">
+        Recruiting Update · {activity.length} {activity.length === 1 ? 'Decision' : 'Decisions'}
+      </p>
       <ul className="recruiting-commitment-alerts__list">
         {activity.map((entry) => (
           <li
@@ -48,24 +36,17 @@ export function RecruitingCommitmentAlerts({
             className="recruiting-commitment-alert"
             data-kind={entry.kind}
           >
-            <span className="recruiting-commitment-alert__tag">
-              {entry.kind === 'committed-to-controlled'
-                ? 'Committed To Us'
-                : 'Committed Elsewhere'}
-            </span>
-            {entry.wasFocused && (
-              <span className="recruiting-commitment-alert__focus">
-                Focus Target
-              </span>
-            )}
-            <span className="recruiting-commitment-alert__name">
-              {formatRankLabel(entry.nationalRank)} {entry.playerName} ·{' '}
-              {entry.position} · <RecruitStars stars={entry.stars} />
-            </span>
-            {entry.kind === 'tracked-committed-elsewhere' && (
-              <span className="recruiting-commitment-alert__detail">
-                to {entry.programName}
-              </span>
+            {entry.kind === 'committed-to-controlled' ? (
+              <>
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' '}
+                committed to us
+              </>
+            ) : (
+              <>
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>
+                {' → '}
+                {entry.programName}
+              </>
             )}
           </li>
         ))}

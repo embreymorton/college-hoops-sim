@@ -1,4 +1,4 @@
-import type { Position } from '../engine'
+import { calculateOverall, type Position } from '../engine'
 import {
   deriveRecruitingBattleView,
   deriveRecruitingCommitmentActivity,
@@ -11,6 +11,7 @@ import {
   type RecruitingCommitmentActivity,
   type RecruitingCommitmentActivityKind,
   type RecruitingReadiness,
+  type RecruitingTargetStatus,
   type RecruitStarRating,
 } from '../dynasty'
 import type { ProgramDefinition } from '../universe'
@@ -78,51 +79,72 @@ export function formatControlledPositionLabel(
   }
 }
 
-export interface RecruitingCompetitorSummary {
+export interface BattleGroupRow {
   readonly programId: string
   readonly programName: string
   readonly accentColor: string
-  readonly pursuitRank: number
   readonly hasActiveOffer: boolean
-  readonly position: RecruitingBattlePosition
+  readonly isControlled: boolean
 }
+
+export interface BattleGroup {
+  readonly position: RecruitingBattlePosition
+  readonly rows: readonly BattleGroupRow[]
+}
+
+const BATTLE_POSITION_ORDER: readonly RecruitingBattlePosition[] = [
+  'leading',
+  'competitive',
+  'trailing',
+]
 
 /**
- * The deterministic competitor list minus the controlled Program itself,
- * capped to `limit` so a crowded Board never overwhelms the card. Callers
- * that want an overflow count should compare against the un-capped total via
- * `countCompetitors`.
+ * Every pursuing Program — including the controlled Program itself —
+ * grouped by its actual categorical standing (`leading` / `competitive` /
+ * `trailing`), in the domain's existing deterministic order. The controlled
+ * Program is never pinned to a fixed row: it appears inside whichever group
+ * its own standing places it in, marked `isControlled`, and is exempt from
+ * the competitor cap so it can never be pushed into the overflow count.
+ * Groups with no rows are omitted entirely.
  */
-export function deriveCompetitorSummaries(
+export function deriveBattleGroups(
   battle: RecruitingBattleView,
-  controlledProgramId: string,
+  controlledProgram: ProgramDefinition,
   programsById: ReadonlyMap<string, ProgramDefinition>,
-  limit = 3,
-): RecruitingCompetitorSummary[] {
-  return battle.pursuingPrograms
-    .filter(({ programId }) => programId !== controlledProgramId)
-    .slice(0, limit)
-    .map((entry) => {
-      const program = programsById.get(entry.programId)
-      return {
-        programId: entry.programId,
-        programName: program?.name ?? entry.programId,
-        accentColor: program?.branding.primaryColor ?? '#6b7887',
-        pursuitRank: entry.pursuitRank,
-        hasActiveOffer: entry.hasActiveOffer,
-        position: entry.position,
-      }
-    })
-}
+  competitorLimit = 3,
+): { readonly groups: readonly BattleGroup[]; readonly overflowCount: number } {
+  const rowsByPosition = new Map<RecruitingBattlePosition, BattleGroupRow[]>()
+  let shownCompetitors = 0
+  let overflowCount = 0
 
-/** Total pursuing Programs other than the controlled Program, for overflow counts. */
-export function countCompetitors(
-  battle: RecruitingBattleView,
-  controlledProgramId: string,
-): number {
-  return battle.pursuingPrograms.filter(
-    ({ programId }) => programId !== controlledProgramId,
-  ).length
+  for (const entry of battle.pursuingPrograms) {
+    const isControlled = entry.programId === controlledProgram.id
+    if (!isControlled) {
+      if (shownCompetitors >= competitorLimit) {
+        overflowCount += 1
+        continue
+      }
+      shownCompetitors += 1
+    }
+
+    const program = isControlled ? controlledProgram : programsById.get(entry.programId)
+    const rows = rowsByPosition.get(entry.position) ?? []
+    rows.push({
+      programId: entry.programId,
+      programName: program?.name ?? entry.programId,
+      accentColor: program?.branding.primaryColor ?? '#6b7887',
+      hasActiveOffer: entry.hasActiveOffer,
+      isControlled,
+    })
+    rowsByPosition.set(entry.position, rows)
+  }
+
+  const groups = BATTLE_POSITION_ORDER.map((position) => ({
+    position,
+    rows: rowsByPosition.get(position) ?? [],
+  })).filter((group) => group.rows.length > 0)
+
+  return { groups, overflowCount }
 }
 
 export interface FocusTargetSummary {
@@ -157,6 +179,52 @@ export function deriveFocusTargetSummaries(
         position: recruit.player.position,
         stars: recruit.stars,
         nationalRank: recruit.nationalRank,
+        battle: deriveRecruitingBattleView(dynasty, target.playerId),
+      }
+    })
+    .sort((first, second) => first.nationalRank - second.nationalRank)
+}
+
+export interface BattleCardSummary {
+  readonly playerId: string
+  readonly playerName: string
+  readonly position: Position
+  readonly stars: RecruitStarRating
+  readonly nationalRank: number
+  readonly ovr: number
+  readonly pot: number
+  readonly isFocused: boolean
+  readonly hasActiveOffer: boolean
+  readonly status: RecruitingTargetStatus
+  readonly battle: RecruitingBattleView
+}
+
+/**
+ * One card per Board Recruit, identity-joined with the pure battle
+ * projection, in stable National Rank order — the Battles tab's only data
+ * source. Never recomputes readiness/standing itself.
+ */
+export function deriveBattleCardSummaries(
+  dynasty: DynastyState,
+  board: ProgramRecruitingBoard,
+): BattleCardSummary[] {
+  const recruiting = dynasty.recruiting
+  if (!recruiting) return []
+
+  return board.targets
+    .map((target) => {
+      const recruit = getRecruit(recruiting, target.playerId)!
+      return {
+        playerId: target.playerId,
+        playerName: `${recruit.player.firstName} ${recruit.player.lastName}`,
+        position: recruit.player.position,
+        stars: recruit.stars,
+        nationalRank: recruit.nationalRank,
+        ovr: calculateOverall(recruit.player),
+        pot: recruit.player.potential,
+        isFocused: target.isFocused,
+        hasActiveOffer: target.hasActiveOffer,
+        status: target.status,
         battle: deriveRecruitingBattleView(dynasty, target.playerId),
       }
     })

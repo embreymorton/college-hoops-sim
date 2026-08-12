@@ -373,6 +373,114 @@ describe('Recruiting Board', () => {
         ),
     ).toBe(false)
   })
+
+  it('is management-only: no Battle column and no competitor list, but Readiness remains', () => {
+    renderRecruitingScreen()
+
+    const table = document.querySelector('.recruiting-board-table') as HTMLElement
+    expect(within(table).queryByText('Battle')).not.toBeInTheDocument()
+    expect(table.querySelector('.recruiting-competitor-list')).toBeNull()
+    expect(
+      within(table).getByRole('columnheader', { name: /Readiness/ }),
+    ).toBeInTheDocument()
+    expect(table.querySelectorAll('.recruiting-readiness-badge').length).toBeGreaterThan(0)
+  })
+
+  it('explains every Readiness category through an accessible hover/focus affordance', () => {
+    renderRecruitingScreen()
+
+    const trigger = screen.getByRole('button', { name: 'About Readiness' })
+    const tooltip = document.getElementById(
+      trigger.getAttribute('aria-describedby')!,
+    ) as HTMLElement
+    expect(within(tooltip).getByText('Early Interest')).toBeInTheDocument()
+    expect(within(tooltip).getByText('Developing')).toBeInTheDocument()
+    expect(within(tooltip).getByText('Serious Battle')).toBeInTheDocument()
+    expect(within(tooltip).getByText('Decision Imminent')).toBeInTheDocument()
+    expect(within(tooltip).getByText('Committed')).toBeInTheDocument()
+  })
+})
+
+describe('Battles tab', () => {
+  it('adds a Battles mode between Board and National Class', () => {
+    renderRecruitingScreen()
+
+    expect(screen.getByRole('button', { name: 'Board' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Battles' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'National Class' })).toBeInTheDocument()
+  })
+
+  it('shows a battle card per Board Recruit with our Program grouped by its actual standing', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+
+    const grid = document.querySelector('.recruiting-battles-grid') as HTMLElement
+    expect(grid).not.toBeNull()
+    expect(within(grid).getByText('Active Fixture')).toBeInTheDocument()
+
+    const card = within(grid).getByText('Active Fixture').closest('.recruiting-battle-card') as HTMLElement
+    // The fixture's controlled Program is the sole pursuer, so it is the
+    // (sole) leading entry — grouped, not pinned to a separate fixed row.
+    expect(within(card).getByText('Leading')).toBeInTheDocument()
+    expect(within(card).getByText('Charlotte Tech')).toBeInTheDocument()
+    expect(within(card).getByText('YOU')).toBeInTheDocument()
+    expect(card.querySelector('.team-color-dot')).not.toBeNull()
+    // No redundant duplicate "We Lead" style standing badge alongside the group.
+    expect(within(card).queryByText(/We Lead/)).not.toBeInTheDocument()
+  })
+
+  it('marks the controlled Program row with YOU plus Focused/Offered metadata', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+
+    const card = screen
+      .getByText('Offered Fixture')
+      .closest('.recruiting-battle-card') as HTMLElement
+    expect(within(card).getByText('YOU · Focused · Offered')).toBeInTheDocument()
+  })
+
+  it('does not repeat the group standing label inside the group', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+
+    const card = screen
+      .getByText('Active Fixture')
+      .closest('.recruiting-battle-card') as HTMLElement
+    // "Leading" appears exactly once, as the group heading — not repeated
+    // per row inside the group.
+    expect(within(card).getAllByText('Leading')).toHaveLength(1)
+  })
+
+  it('simplifies a committed-elsewhere card to the outcome', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+
+    const card = screen
+      .getByText('Elsewhere Fixture')
+      .closest('.recruiting-battle-card') as HTMLElement
+    expect(within(card).getByText(/Committed To Northbridge/)).toBeInTheDocument()
+    expect(within(card).queryByText('Charlotte Tech')).not.toBeInTheDocument()
+  })
+
+  it('caps long competitor lists with an overflow summary', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+
+    const grid = document.querySelector('.recruiting-battles-grid') as HTMLElement
+    // The fixture's boards only carry the controlled Program's pursuit, so
+    // no card should render more than the cap — this asserts the overflow
+    // affordance never renders an unbounded list.
+    for (const overflow of grid.querySelectorAll('.recruiting-battle-card__overflow')) {
+      expect(overflow.textContent).toMatch(/^\+\d+ other programs$/)
+    }
+  })
+
+  it('never renders raw numeric internal Recruiting values', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+
+    expect(screen.queryByText(/%/)).not.toBeInTheDocument()
+  })
 })
 
 describe('National Class', () => {
@@ -439,25 +547,27 @@ describe('National Class', () => {
 })
 
 describe('Season Hub Recruiting module', () => {
-  it('summarizes period/phase, roster needs, signed count, board, and offers, and opens Recruiting', () => {
+  it('summarizes period/phase, roster needs, signed count, board, and offers, with no Manage Recruiting CTA', () => {
     const dynasty = buildFixtureDynasty()
     useDynastyStore.setState({ dynasty, view: 'hub', explorationViewHistory: [] })
     render(<App />)
 
     const summary = document.querySelector('.recruiting-hub-summary') as HTMLElement
-    expect(within(summary).getByText(`Class of Season ${dynasty.recruiting!.targetSeasonNumber}`)).toBeInTheDocument()
-    // Period 0 presents as Preseason, not a raw "0 / 24" fraction.
-    expect(within(summary).getByText('PRESEASON')).toBeInTheDocument()
-    expect(within(summary).getByText('SG 1 · PF 1')).toBeInTheDocument()
+    // Period 0 presents as Preseason, not a raw "0 / 24" fraction, and now
+    // composes onto one condensed title line with the Class label.
+    expect(
+      within(summary).getByText(
+        `Class of Season ${dynasty.recruiting!.targetSeasonNumber} · Preseason`,
+      ),
+    ).toBeInTheDocument()
+    expect(within(summary).getByText(/SG 1 · PF 1/)).toBeInTheDocument()
     expect(within(summary).getByText('2 / 4')).toBeInTheDocument()
     expect(within(summary).getByText('10 / 10')).toBeInTheDocument()
     expect(within(summary).getByText('1 / 2')).toBeInTheDocument()
 
-    fireEvent.click(within(summary).getByRole('button', { name: 'Manage Recruiting' }))
-    expect(screen.getByRole('button', { name: 'Recruiting' })).toHaveAttribute(
-      'aria-pressed',
-      'true',
-    )
+    // Primary Dynasty navigation already exposes Recruiting — the
+    // initialized Hub summary no longer needs its own CTA.
+    expect(within(summary).queryByText('Manage Recruiting')).not.toBeInTheDocument()
   })
 
   it('shows onboarding CTAs when preseason and the board is empty, and normal facts otherwise', () => {
@@ -494,9 +604,7 @@ describe('Season Hub Recruiting module', () => {
 
     const updatedSummary = document.querySelector('.recruiting-hub-summary') as HTMLElement
     expect(within(updatedSummary).queryByText('Your Board Is Empty')).not.toBeInTheDocument()
-    expect(
-      within(updatedSummary).getByRole('button', { name: 'Manage Recruiting' }),
-    ).toBeInTheDocument()
+    expect(within(updatedSummary).queryByText('Manage Recruiting')).not.toBeInTheDocument()
     expect(
       useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board
         .length,
