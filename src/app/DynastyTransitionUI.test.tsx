@@ -115,7 +115,7 @@ describe('Late Recruiting presentation', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
 
     expect(screen.getByText('Late Recruiting — Final Signing Window')).toBeInTheDocument()
-    expect(document.querySelector('.recruiting-needs__table')).toBeInTheDocument()
+    expect(document.querySelector('.recruiting-overview')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Finalize Recruiting Class' }),
     ).toBeInTheDocument()

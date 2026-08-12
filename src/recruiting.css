@@ -25,6 +25,17 @@
 }
 
 /* ==========================================================================
+   Recruiting screen — tightened page-level vertical rhythm (6E.16A). Local
+   to this screen only; `.app-main`'s default gap is unchanged elsewhere.
+   ========================================================================== */
+
+.recruiting-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ==========================================================================
    Recruiting header
    ========================================================================== */
 
@@ -38,37 +49,73 @@
 }
 
 /* ==========================================================================
-   Positional needs ledger
+   Recruiting overview — compact Board/Signed/Openings/Offers/Needs snapshot
+   (6E.16A), replacing the heavier Positional Needs ledger and the duplicate
+   Board count that used to sit beside Fill Remaining Board.
    ========================================================================== */
 
-.recruiting-needs {
+.recruiting-overview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3) var(--space-6);
+  padding: var(--space-3) var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.recruiting-overview__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: 0;
+}
+
+.recruiting-overview__stat {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: 0.15rem;
 }
 
-.recruiting-needs__table th,
-.recruiting-needs__table td {
-  text-align: right;
-}
-
-.recruiting-needs__table thead th:first-child {
-  background: var(--surface-2);
-}
-
-.recruiting-needs__table tbody th {
-  text-align: left;
+.recruiting-overview__stat dt {
   font-family: var(--font-display);
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--ink-1);
-  background: var(--surface-1);
+  color: var(--ink-2);
 }
 
-.recruiting-needs__summary {
-  padding-top: var(--space-1);
+.recruiting-overview__stat dd {
+  margin: 0;
+  font-family: var(--font-score);
+  font-size: 1.15rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-0);
+}
+
+.recruiting-overview__needs {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0 0 0 auto;
+  font-size: 0.8rem;
+  color: var(--ink-1);
+}
+
+.recruiting-overview__needs-label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.recruiting-overview__needs-empty {
+  color: var(--ink-2);
 }
 
 /* ==========================================================================
@@ -113,7 +160,7 @@
 .recruiting-board-management {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 1rem;
   margin-bottom: 0.75rem;
 }
@@ -544,12 +591,19 @@
   padding: var(--space-5) var(--space-6);
 }
 
-.late-recruiting-banner__stats {
-  margin: var(--space-4) 0 var(--space-5);
+.late-recruiting-banner__complete-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: var(--space-2) 0 0;
 }
 
 .late-recruiting-banner__action {
   align-self: flex-start;
+  margin-top: var(--space-4);
 }
 
 /* ==========================================================================
@@ -624,124 +678,65 @@
   color: var(--accent);
 }
 
-.recruiting-board-table__readiness-heading {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
 /* ==========================================================================
-   Info affordance — accessible hover/keyboard-focus explanation (6E.12C)
+   Recruiting Guide — canonical in-app explanation destination (6E.16A),
+   replacing the retired Readiness tooltip and scattered instructional copy.
    ========================================================================== */
 
-.info-affordance {
-  position: relative;
-  display: inline-flex;
-}
-
-.info-affordance__trigger {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--ink-2);
-  font-size: 0.7rem;
-  cursor: help;
-}
-
-.info-affordance__trigger:hover,
-.info-affordance__trigger:focus-visible {
-  color: var(--ink-0);
-}
-
-.info-affordance__tooltip {
-  position: absolute;
-  z-index: 20;
-  top: 130%;
-  left: 50%;
-  width: max-content;
-  /* Never wider than the viewport, regardless of where the trigger sits. */
-  max-width: min(18rem, calc(100vw - 2 * var(--space-4)));
-  padding: var(--space-3);
-  background: var(--surface-2);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateX(-50%) translateY(-2px);
-  transition:
-    opacity var(--duration-fast) var(--ease-standard),
-    transform var(--duration-fast) var(--ease-standard);
-  text-transform: none;
-  font-weight: 400;
-  letter-spacing: normal;
-  white-space: normal;
-  overflow-wrap: break-word;
-}
-
-.info-affordance:hover .info-affordance__tooltip,
-.info-affordance:focus-within .info-affordance__tooltip {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateX(-50%) translateY(0);
-}
-
-/* Below the Board table's own horizontal-scroll width, anchor the tooltip to
-   the viewport instead of the trigger so it can never be clipped or pushed
-   off-screen near either edge. */
-@media (max-width: 560px) {
-  .info-affordance__tooltip {
-    position: fixed;
-    left: var(--space-4);
-    right: var(--space-4);
-    top: auto;
-    bottom: var(--space-4);
-    width: auto;
-    max-width: none;
-    transform: translateY(4px);
-  }
-
-  .info-affordance:hover .info-affordance__tooltip,
-  .info-affordance:focus-within .info-affordance__tooltip {
-    transform: translateY(0);
-  }
-}
-
-.info-affordance__title {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--ink-1);
-  margin-bottom: 0.4rem;
-}
-
-.info-affordance__intro {
-  font-size: 0.72rem;
-  font-style: italic;
-  color: var(--ink-2);
-  line-height: 1.4;
-  margin: 0 0 0.55rem;
-}
-
-.info-affordance__list {
+.recruiting-guide {
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
-  font-size: 0.72rem;
-  color: var(--ink-1);
-  line-height: 1.4;
+  gap: var(--space-5);
+  max-width: 42rem;
 }
 
-.info-affordance__list strong {
+.recruiting-guide__section {
+  padding-bottom: var(--space-5);
+  border-bottom: 1px solid var(--line);
+}
+
+.recruiting-guide__section:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.recruiting-guide__heading {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--ink-0);
+  margin: 0 0 var(--space-2);
+}
+
+.recruiting-guide__body {
+  font-size: 0.84rem;
+  color: var(--ink-1);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.recruiting-guide__readiness-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: var(--space-3) 0 0;
+}
+
+.recruiting-guide__readiness-item dt {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink-0);
+}
+
+.recruiting-guide__readiness-item dd {
+  margin: 0.15rem 0 0;
+  font-size: 0.8rem;
+  color: var(--ink-1);
+  line-height: 1.4;
 }
 
 /* ==========================================================================
@@ -964,6 +959,20 @@
 @media (max-width: 560px) {
   .recruiting-header {
     align-items: flex-start;
+  }
+
+  .recruiting-overview {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .recruiting-overview__stats {
+    gap: var(--space-4);
+  }
+
+  .recruiting-overview__needs {
+    margin-left: 0;
   }
 
   .recruiting-board-table__actions {

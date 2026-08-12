@@ -199,9 +199,10 @@ weight, so this presentation-only pass established Hub = status, Board =
 management, Battles = intelligence, National = discovery. Focus targets now
 compose inside `RecruitingHubSummary` (no standalone Hub module, no
 competitor detail, no `Manage Recruiting` CTA); `RecruitingBoardTable` is
-management-only again (no Battle column/competitor lists), with an
-accessible `RecruitingReadinessInfo` hover/focus affordance explaining the
-five Readiness categories; a new `Battles` mode
+management-only again (no Battle column/competitor lists) — it originally
+paired this with an accessible `RecruitingReadinessInfo` hover/focus
+affordance explaining the Readiness categories, since retired in favor of
+the Recruiting Guide mode (see 6E.16A below); a new `Battles` mode
 (`RecruitingModeTabs`/`RecruitingBattlesGrid`) presents a responsive card
 grid built from the unchanged `deriveRecruitingBattleView` selector, with
 Program identity reusing the Tournament bracket's `.team-color-dot` square;
@@ -244,12 +245,20 @@ targets up to unused capacity, while preserving every existing Board entry in
 place with its exact Focus and Offer state. New targets are Board-only; the
 action never runs automatically and does not alter Generate Draft Board or AI
 Recruiting. Generated-plan coherence, readiness semantics, and the Battles
-information architecture are frozen. The immediate work is a deliberate
-presentation-only checkpoint: Phase 6E.16A Recruiting Page Density + Guidance
-Polish is NEXT, followed immediately by Phase 6E.16B Season Hub + League
-Information Hierarchy Polish. Both are Claude Code UI milestones using the
-`frontend-design` skill; no simulation or Recruiting mechanic is currently
-open. Coaching/roster navigation, Followed Players,
+information architecture are frozen. Phase 6E.16A Recruiting Page Density +
+Guidance Polish is RESOLVED: the Recruiting screen now uses a tightened
+local `.recruiting-screen` vertical rhythm, the five-row Positional Needs
+ledger is replaced by a compact `RecruitingOverview` (Board/Signed/Openings/
+Offers plus a one-line Needs summary), the Board count no longer duplicates
+beside Fill Remaining Board, a new `Guide` mode is the canonical explanation
+destination for Board/Focus/Offers/Readiness/Battles standing (replacing the
+retired Board Readiness tooltip and scattered helper copy), and Late
+Recruiting's zero-openings state reads as a quiet completed class instead of
+warning about automatic resolution. Board/Battles/National Class
+responsibilities and all Recruiting mechanics are unchanged. Phase 6E.16B
+Season Hub + League Information Hierarchy Polish is NEXT — a Claude Code UI
+milestone using the `frontend-design` skill; no simulation or Recruiting
+mechanic is currently open. Coaching/roster navigation, Followed Players,
 offseason progression visibility, Awards, and Save/Persistence retain
 future QOL evidence.
 

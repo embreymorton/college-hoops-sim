@@ -11,7 +11,6 @@ import {
 } from '../app/recruitingFormatters'
 import type { ProgramDefinition } from '../universe'
 import { RecruitingReadinessBadge } from './RecruitingBattleBadges'
-import { RecruitingReadinessInfo } from './RecruitingReadinessInfo'
 import { RecruitStars } from './RecruitStars'
 
 interface RecruitingBoardTableProps {
@@ -82,10 +81,7 @@ export function RecruitingBoardTable({
             <th scope="col">Stars</th>
             <th scope="col">Ovr</th>
             <th scope="col">Pot</th>
-            <th scope="col" className="recruiting-board-table__readiness-heading">
-              Readiness
-              <RecruitingReadinessInfo />
-            </th>
+            <th scope="col">Readiness</th>
             <th scope="col">Focus</th>
             <th scope="col">Status</th>
             <th scope="col">Action</th>

@@ -7,9 +7,10 @@ import {
   RecruitingBoardTable,
   RecruitingClassSummary,
   RecruitingFinalizationDialog,
+  RecruitingGuide,
   RecruitingHeader,
   RecruitingModeTabs,
-  RecruitingNeedsLedger,
+  RecruitingOverview,
   type RecruitingMode,
 } from '../components'
 import { deriveProgramRecruitingBoard, RECRUITING_BOARD_LIMIT, RECRUITING_FOCUS_LIMIT } from '../dynasty'
@@ -85,7 +86,7 @@ export function RecruitingScreen() {
     )
 
     return (
-      <>
+      <div className="recruiting-screen">
         <DynastySectionNav
           competitionLabel={postseason ? 'Tournament' : 'Season'}
           activeSection="recruiting"
@@ -101,7 +102,7 @@ export function RecruitingScreen() {
           positionCounts={positionCounts}
           onBeginOffseason={beginDynastyOffseason}
         />
-      </>
+      </div>
     )
   }
 
@@ -120,8 +121,10 @@ export function RecruitingScreen() {
     )
   }
 
+  const hasRemainingOpenings = totals.remainingTotal > 0
+
   return (
-    <>
+    <div className="recruiting-screen">
       <DynastySectionNav
         competitionLabel={postseason ? 'Tournament' : 'Season'}
         activeSection="recruiting"
@@ -141,38 +144,26 @@ export function RecruitingScreen() {
       />
 
       {isLate && (
-        <section className="section late-recruiting-banner" aria-labelledby="late-recruiting-heading">
+        <section
+          className="section late-recruiting-banner"
+          aria-labelledby="late-recruiting-heading"
+        >
           <p id="late-recruiting-heading" className="eyebrow-tag">
             Late Recruiting — Final Signing Window
           </p>
-          <p className="section-hint">
-            This is the last recruiting window before the offseason. Remaining
-            openings will be resolved automatically once you finalize the class.
-          </p>
-          <div className="stat-trio late-recruiting-banner__stats">
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">{totals.remainingTotal}</span>
-              <span className="stat-trio__label">Openings</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">
-                {totals.signedTotal}/{totals.projectedTotal}
-              </span>
-              <span className="stat-trio__label">Signed</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">
-                {board.targets.length}/{RECRUITING_BOARD_LIMIT}
-              </span>
-              <span className="stat-trio__label">Board</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">
-                {totals.offersTotal}/{totals.remainingTotal}
-              </span>
-              <span className="stat-trio__label">Active Offers</span>
-            </div>
-          </div>
+          {hasRemainingOpenings ? (
+            <p className="section-hint">
+              This is the last recruiting window before the offseason. Remaining
+              openings will be resolved automatically once you finalize the class.
+            </p>
+          ) : (
+            <>
+              <p className="late-recruiting-banner__complete-title">
+                Recruiting Class Complete
+              </p>
+              <p className="section-hint">All projected roster openings are filled.</p>
+            </>
+          )}
           <button
             type="button"
             className="button button--primary late-recruiting-banner__action"
@@ -183,22 +174,14 @@ export function RecruitingScreen() {
         </section>
       )}
 
-      <section className="section" aria-labelledby="recruiting-needs-heading">
-        <h2 id="recruiting-needs-heading" className="section-title">
-          Positional Needs
-        </h2>
-        <RecruitingNeedsLedger board={board} />
-        <p className="section-hint">
-          Board targets receive normal recruiting effort. Focus up to {RECRUITING_FOCUS_LIMIT}{' '}
-          recruits to give them extra attention. Only recruits with an active offer can commit.
+      <RecruitingOverview board={board} />
+
+      {showZeroOfferWarning && (
+        <p className="recruiting-warning" role="status">
+          <span className="recruiting-warning__tag">No Active Offers</span>
+          Recruits can only commit to programs that have offered them.
         </p>
-        {showZeroOfferWarning && (
-          <p className="recruiting-warning" role="status">
-            <span className="recruiting-warning__tag">No Active Offers</span>
-            Recruits can only commit to programs that have offered them.
-          </p>
-        )}
-      </section>
+      )}
 
       <section className="section" aria-labelledby="recruiting-mode-heading">
         <div className="section-heading">
@@ -234,7 +217,6 @@ export function RecruitingScreen() {
           ) : (
             <>
               <div className="recruiting-board-management">
-                <span>{board.targets.length} / {RECRUITING_BOARD_LIMIT} Board</span>
                 <button
                   type="button"
                   className="button button--ghost"
@@ -262,18 +244,21 @@ export function RecruitingScreen() {
             controlledProgram={controlledProgram}
             programsById={PROGRAMS_BY_ID}
           />
-        ) : (
+        ) : mode === 'national' ? (
           <NationalRecruitTable
             dynasty={dynasty}
             board={board}
             programsById={PROGRAMS_BY_ID}
             onAddToBoard={addRecruitingTarget}
           />
+        ) : (
+          <RecruitingGuide />
         )}
       </section>
 
       {isFinalizeDialogOpen && (
         <RecruitingFinalizationDialog
+          remainingOpenings={totals.remainingTotal}
           onCancel={() => setIsFinalizeDialogOpen(false)}
           onConfirm={() => {
             setIsFinalizeDialogOpen(false)
@@ -281,6 +266,6 @@ export function RecruitingScreen() {
           }}
         />
       )}
-    </>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-export type RecruitingMode = 'board' | 'battles' | 'national'
+export type RecruitingMode = 'board' | 'battles' | 'national' | 'guide'
 
 interface RecruitingModeTabsProps {
   readonly mode: RecruitingMode
@@ -32,6 +32,14 @@ export function RecruitingModeTabs({ mode, onSelectMode }: RecruitingModeTabsPro
         onClick={() => onSelectMode('national')}
       >
         National Class
+      </button>
+      <button
+        type="button"
+        className="tab"
+        aria-pressed={mode === 'guide'}
+        onClick={() => onSelectMode('guide')}
+      >
+        Guide
       </button>
     </div>
   )

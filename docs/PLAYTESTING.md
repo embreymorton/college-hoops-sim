@@ -793,7 +793,7 @@ save-slot, backend, or routing architecture here or promote this above 6E.10.
 
 Future history could include program single-game points, season scoring, and career points/assists. It should follow Player Detail/development-history work rather than precede it.
 
-## UI Polish Checkpoint — CONFIRMED
+## UI Polish Checkpoint — Recruiting portion RESOLVED (Phase 6E.16A)
 
 The current Recruiting page has too much vertical separation between navigation,
 identity, needs, and Board management. Board capacity is duplicated, the
@@ -805,10 +805,23 @@ Board, Focus, Offers, Readiness, and standing language. Preserve Board =
 management, Battles = intelligence, National Class = discovery; Battles is
 working well and National Class needs no redesign.
 
+Phase 6E.16A resolved all of the above: a Recruiting-screen-local wrapper
+tightens the vertical rhythm, `RecruitingOverview` replaces the Positional
+Needs table with one compact Board/Signed/Openings/Offers/Needs snapshot with
+the Board count shown exactly once, and a new `Guide` mode is the one
+permanent, discoverable explanation destination for Board, Focus, Offers,
+Readiness, and battle standing, replacing the retired Board tooltip and the
+scattered helper copy beneath the old Positional Needs section. Board,
+Battles, and National Class responsibilities are unchanged.
+
 Late Recruiting has one narrow copy issue: when projected openings are zero,
 automatic-resolution warning language is unnecessary. The required Finalize
 Class action remains, but the state should read as a completed class with all
-projected openings filled. This is presentation only.
+projected openings filled. This is presentation only. Phase 6E.16A resolved
+this too — the banner and the Finalize Class confirmation dialog both read as
+a quiet completed class ("Recruiting Class Complete — All projected roster
+openings are filled.") with no auto-resolution warning once openings reach
+zero, while the existing warning is preserved when openings remain.
 
 The Season Hub similarly has excess space before primary content. Its Quick Sim
 result card changes footprint materially and presents leaders awkwardly; pregame
@@ -871,9 +884,10 @@ Highest-value repeated signals:
 - Tournament/Season Complete composition and the Late Recruiting handoff
   (RESOLVED by Phase 6E.10 — see above).
 
-The current presentation priority is the confirmed Recruiting-page density and
-guidance friction, followed immediately by Hub/League information hierarchy and
-Quick Sim card stability. Last 5 remains lower-priority polish.
+Recruiting-page density and guidance friction is RESOLVED by accepted Phase
+6E.16A. The current presentation priority is Hub/League information hierarchy
+and Quick Sim card stability (Phase 6E.16B). Last 5 remains lower-priority
+polish.
 
 ## Testing for Fun
 
@@ -905,21 +919,22 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 6E.16A — Recruiting Page Density + Guidance Polish
-2. Phase 6E.16B — Season Hub + League Information Hierarchy Polish
-3. Coaching navigation / permanent Rotation home
-4. Followed Players / Favorites
-5. Recruit POT-gap diagnostic
-6. League News / Round Recap
-7. Offseason around-the-league context
-8. Program records / deeper statistical history
-9. Shot-selection diagnostic
-10. Minor Player Details / Last 5 polish
+1. Phase 6E.16B — Season Hub + League Information Hierarchy Polish
+2. Coaching navigation / permanent Rotation home
+3. Followed Players / Favorites
+4. Recruit POT-gap diagnostic
+5. League News / Round Recap
+6. Offseason around-the-league context
+7. Program records / deeper statistical history
+8. Shot-selection diagnostic
+9. Minor Player Details / Last 5 polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /
 commitment visibility presentation (6E.12) are RESOLVED — see above.
 Assistant Fill Remaining Board is also RESOLVED by accepted Phase 6E.15.
+Recruiting Page Density + Guidance Polish is RESOLVED by accepted Phase
+6E.16A.
 
 Premium Offer allocation remains WATCH only and is not part of either UI polish
 milestone. Existing future product ideas remain future rather than promoted by

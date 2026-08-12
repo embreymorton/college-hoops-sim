@@ -2,12 +2,14 @@ import { useId, useRef } from 'react'
 import { ModalOverlay } from './ModalOverlay'
 
 interface RecruitingFinalizationDialogProps {
+  readonly remainingOpenings: number
   readonly onCancel: () => void
   readonly onConfirm: () => void
 }
 
 /** Confirms the irreversible Late Recruiting finalization boundary. */
 export function RecruitingFinalizationDialog({
+  remainingOpenings,
   onCancel,
   onConfirm,
 }: RecruitingFinalizationDialogProps) {
@@ -28,8 +30,9 @@ export function RecruitingFinalizationDialog({
         Finalize Recruiting Class?
       </h2>
       <p id={descriptionId} className="modal__body">
-        Any remaining roster openings will be resolved by the Late Recruiting
-        finalization process.
+        {remainingOpenings > 0
+          ? 'Any remaining roster openings will be resolved by the Late Recruiting finalization process.'
+          : 'All projected roster openings are already filled.'}
       </p>
       <p className="modal__body modal__body--muted">
         Your completed class will then be archived.

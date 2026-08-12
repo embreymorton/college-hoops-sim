@@ -204,41 +204,37 @@ describe('Dynasty section navigation', () => {
   })
 })
 
-describe('Positional needs ledger', () => {
-  it('derives openings/signed/offers per position from canonical Recruiting state', () => {
+describe('Recruiting Overview', () => {
+  it('renders Board/Signed/Openings/Offers as one compact snapshot, with Board shown exactly once', () => {
     renderRecruitingScreen()
 
-    const ledger = document.querySelector('.recruiting-needs__table') as HTMLElement
-    const rows = within(ledger).getAllByRole('row')
-    // header + Openings + Signed + Offers
-    expect(rows).toHaveLength(4)
+    const overview = document.querySelector('.recruiting-overview') as HTMLElement
+    expect(overview).not.toBeNull()
+    expect(within(overview).getByText('10 / 10')).toBeInTheDocument() // Board
+    expect(within(overview).getByText('2 / 4')).toBeInTheDocument() // Signed
+    expect(within(overview).getByText('1 / 2')).toBeInTheDocument() // Offers (offersTotal/remainingTotal)
 
-    const openingsRow = rows[1]!
-    const signedRow = rows[2]!
-    const offersRow = rows[3]!
+    // The Board count appears exactly once on the whole page — no duplicate
+    // count beside Fill Remaining Board.
+    expect(screen.getAllByText('10 / 10')).toHaveLength(1)
+  })
 
-    // PG/SF have zero projected openings entirely.
-    expect(within(openingsRow).getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
-      '0',
-      '1',
-      '0',
-      '1',
-      '0',
-    ])
-    expect(within(signedRow).getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
-      '—',
-      '1/2',
-      '—',
-      '0/1',
-      '1/1',
-    ])
-    expect(within(offersRow).getAllByRole('cell').map((cell) => cell.textContent)).toEqual([
-      '—',
-      '0/1',
-      '—',
-      '1/1',
-      '—',
-    ])
+  it('summarizes positional needs concisely instead of a full positional matrix', () => {
+    renderRecruitingScreen()
+
+    const overview = document.querySelector('.recruiting-overview') as HTMLElement
+    expect(within(overview).getByText(/SG 1 · PF 1/)).toBeInTheDocument()
+    expect(document.querySelector('.recruiting-needs__table')).toBeNull()
+  })
+
+  it('does not repeat the Board count in the Board action area', () => {
+    renderRecruitingScreen()
+
+    const management = document.querySelector('.recruiting-board-management') as HTMLElement
+    expect(within(management).queryByText(/10 \/ 10/)).not.toBeInTheDocument()
+    expect(
+      within(management).getByRole('button', { name: 'Fill Remaining Board' }),
+    ).toBeInTheDocument()
   })
 })
 
@@ -422,33 +418,11 @@ describe('Recruiting Board', () => {
     expect(table.querySelectorAll('.recruiting-readiness-badge').length).toBeGreaterThan(0)
   })
 
-  it('explains every Readiness category through an accessible hover/focus affordance', () => {
+  it('no longer renders the old Readiness tooltip affordance — Guide is the canonical explanation destination', () => {
     renderRecruitingScreen()
 
-    const trigger = screen.getByRole('button', { name: 'About Readiness' })
-    const tooltip = document.getElementById(
-      trigger.getAttribute('aria-describedby')!,
-    ) as HTMLElement
-    expect(within(tooltip).getByText('Not Yet Deciding')).toBeInTheDocument()
-    expect(within(tooltip).getByText('Decision Soon')).toBeInTheDocument()
-    expect(within(tooltip).getByText('Developing')).toBeInTheDocument()
-    expect(within(tooltip).getByText('Serious Battle')).toBeInTheDocument()
-    expect(within(tooltip).getByText('Decision Imminent')).toBeInTheDocument()
-    expect(within(tooltip).getByText('Committed')).toBeInTheDocument()
-  })
-
-  it('never exposes periods, thresholds, or probabilities through the Readiness tooltip, and drops the old Early Interest label', () => {
-    renderRecruitingScreen()
-
-    const trigger = screen.getByRole('button', { name: 'About Readiness' })
-    const tooltip = document.getElementById(
-      trigger.getAttribute('aria-describedby')!,
-    ) as HTMLElement
-    expect(within(tooltip).queryByText('Early Interest')).not.toBeInTheDocument()
-    expect(tooltip.textContent).not.toMatch(/%/)
-    expect(tooltip.textContent).not.toMatch(/\bperiod \d/i)
-    expect(tooltip.textContent).toMatch(/not a probability/i)
-    expect(screen.queryByText('Early Interest')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'About Readiness' })).not.toBeInTheDocument()
+    expect(document.querySelector('.info-affordance')).toBeNull()
   })
 })
 
@@ -531,6 +505,77 @@ describe('Battles tab', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
 
     expect(screen.queryByText(/%/)).not.toBeInTheDocument()
+  })
+})
+
+describe('Guide', () => {
+  it('adds a Guide mode alongside Board/Battles/National Class', () => {
+    renderRecruitingScreen()
+
+    expect(screen.getByRole('button', { name: 'Guide' })).toBeInTheDocument()
+  })
+
+  it('explains Board, Focus, and Offers', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Guide' }))
+
+    const guide = document.querySelector('.recruiting-guide') as HTMLElement
+    expect(within(guide).getByText('Board')).toBeInTheDocument()
+    expect(within(guide).getByText(/Board targets receive normal recruiting effort/)).toBeInTheDocument()
+    expect(within(guide).getByText('Focus')).toBeInTheDocument()
+    expect(within(guide).getByText(/Focus and Offers are separate choices/)).toBeInTheDocument()
+    expect(within(guide).getByText('Offers')).toBeInTheDocument()
+    expect(
+      within(guide).getByText(/Only recruits with an active Offer can commit/),
+    ).toBeInTheDocument()
+  })
+
+  it('explains all six Readiness states', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Guide' }))
+
+    const guide = document.querySelector('.recruiting-guide') as HTMLElement
+    expect(within(guide).getByText('Not Yet Deciding')).toBeInTheDocument()
+    expect(within(guide).getByText('Decision Soon')).toBeInTheDocument()
+    expect(within(guide).getByText('Developing')).toBeInTheDocument()
+    expect(within(guide).getByText('Serious Battle')).toBeInTheDocument()
+    expect(within(guide).getByText('Decision Imminent')).toBeInTheDocument()
+    expect(within(guide).getByText('Committed')).toBeInTheDocument()
+    expect(within(guide).getByText(/not an exact commitment probability/i)).toBeInTheDocument()
+  })
+
+  it('explains Leading/Competitive/Trailing battle standing and points to the Battles tab', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Guide' }))
+
+    const guide = document.querySelector('.recruiting-guide') as HTMLElement
+    expect(within(guide).getByText(/Leading, Competitive, or Trailing/)).toBeInTheDocument()
+    expect(within(guide).getByText(/Battles tab/)).toBeInTheDocument()
+  })
+
+  it('never exposes hidden numeric Recruiting internals', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Guide' }))
+
+    const guide = document.querySelector('.recruiting-guide') as HTMLElement
+    expect(guide.textContent).not.toMatch(/%/)
+    expect(guide.textContent).not.toMatch(/\bperiod \d/i)
+  })
+
+  it('preserves Board/Battles/National mode switching alongside Guide', () => {
+    renderRecruitingScreen()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Guide' }))
+    expect(document.querySelector('.recruiting-guide')).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+    expect(document.querySelector('.recruiting-battles-grid')).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: 'National Class' }))
+    expect(document.querySelector('.national-recruit-table__table')).not.toBeNull()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Board' }))
+    expect(document.querySelector('.recruiting-board-table')).not.toBeNull()
   })
 })
 
@@ -905,5 +950,129 @@ describe('No side effects from Recruiting UI interaction', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Recruiting' }))
 
     expect(useDynastyStore.getState().dynasty!.recruiting).toEqual(dynasty.recruiting)
+  })
+})
+
+/**
+ * Layers a Late Recruiting phase onto the shared fixture. When
+ * `closeAllOpenings` is true, two extra controlled-Program commitments (one
+ * SG, one PF) consume the fixture's only remaining projected openings so
+ * `remainingTotal` reaches zero — commitments alone drive the domain's
+ * remaining-openings projection, independent of board membership.
+ */
+function buildLateFixtureDynasty(closeAllOpenings: boolean): DynastyState {
+  const base = buildFixtureDynasty()
+  const recruiting = base.recruiting!
+
+  if (!closeAllOpenings) {
+    return { ...base, recruiting: { ...recruiting, phase: 'late' } }
+  }
+
+  const extraRecruits: Recruit[] = [
+    fixtureRecruit('fx-late-sg', 'LateSG', 'SG', 20, 3),
+    fixtureRecruit('fx-late-pf', 'LatePF', 'PF', 21, 3),
+  ]
+  const extraCommitments: Record<string, RecruitingCommitment> = {
+    'fx-late-sg': {
+      playerId: 'fx-late-sg',
+      programId: CONTROLLED_PROGRAM_ID,
+      timing: { kind: 'period', period: 25 },
+      targetSeasonNumber: recruiting.targetSeasonNumber,
+    },
+    'fx-late-pf': {
+      playerId: 'fx-late-pf',
+      programId: CONTROLLED_PROGRAM_ID,
+      timing: { kind: 'period', period: 25 },
+      targetSeasonNumber: recruiting.targetSeasonNumber,
+    },
+  }
+
+  return {
+    ...base,
+    recruiting: {
+      ...recruiting,
+      phase: 'late',
+      recruits: [...recruiting.recruits, ...extraRecruits],
+      commitmentsByPlayerId: { ...recruiting.commitmentsByPlayerId, ...extraCommitments },
+    },
+  }
+}
+
+describe('Late Recruiting', () => {
+  it('shows the automatic-resolution warning while openings remain', () => {
+    useDynastyStore.setState({
+      dynasty: buildLateFixtureDynasty(false),
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    expect(
+      screen.getByText(/Remaining\s+openings will be resolved automatically/),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Recruiting Class Complete')).not.toBeInTheDocument()
+  })
+
+  it('shows a quiet completed state with no auto-resolution warning once openings reach zero', () => {
+    useDynastyStore.setState({
+      dynasty: buildLateFixtureDynasty(true),
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    expect(screen.getByText('Recruiting Class Complete')).toBeInTheDocument()
+    expect(screen.getByText('All projected roster openings are filled.')).toBeInTheDocument()
+    expect(
+      screen.queryByText(/will be resolved automatically/),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: 'Finalize Recruiting Class' }),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps the Finalize Class confirmation copy warning-free when openings are zero', () => {
+    useDynastyStore.setState({
+      dynasty: buildLateFixtureDynasty(true),
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
+
+    expect(
+      screen.getByText('All projected roster openings are already filled.'),
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText(/Any remaining roster openings will be resolved/),
+    ).not.toBeInTheDocument()
+  })
+
+  it('keeps the Finalize Class confirmation warning when openings remain', () => {
+    useDynastyStore.setState({
+      dynasty: buildLateFixtureDynasty(false),
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
+
+    expect(
+      screen.getByText(/Any remaining roster openings will be resolved/),
+    ).toBeInTheDocument()
+  })
+
+  it('keeps Finalize Class wired up to the same action regardless of the openings state', () => {
+    useDynastyStore.setState({
+      dynasty: buildLateFixtureDynasty(true),
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
+    expect(screen.getByRole('button', { name: 'Finalize Class' })).toBeInTheDocument()
   })
 })
