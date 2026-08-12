@@ -292,11 +292,29 @@ This is explicit Program intent, not hidden star-tier protection. A backup canno
 
 Board targets receive normal recruiting effort. A Program may Focus up to three active Board targets for extra attention; the Focus bonus is fixed and does not grow when the Board is smaller or Focus slots are unused. Inactive, committed, or position-filled targets receive no effort and cannot remain effective Focus targets. There is no points budget or normalized allocation mechanic.
 
+When the game generates the controlled Program's initial Draft Board, it first
+builds the Board and legal Offers, then selects up to three Focus targets from
+that generated strategy with Offered targets preferred. If fewer than three
+generated Offers are legal, the strongest remaining active Board targets fill
+the unused Focus slots. This one-time alignment does not couple the controls:
+after generation, the player may independently Focus, Offer, withdraw, and
+change the Board as before.
+
 When an offered Recruit becomes unavailable while a controlled Program still has positional need, autonomous progression may promote an eligible same-position backup already on that user's board. Selection is deterministic: Focus status, current standing descending, National Rank ascending, then Player ID. This preserves the user's Board and relationship history, adds no new target, and does not invent a new Focus strategy. Explicit user offer withdrawals are not treated as losses to replace, and AI management does not casually overwrite a controlled Program's otherwise valid offers.
 
 ### Competition, commitments, and calendar
 
 Lower-ranked prospects are generally less prestige-sensitive, more attainable, and earlier-deciding. Elite prospects are generally more prestige-sensitive, later-deciding, and more contested. Early identification plus Focus gives a lower-prestige Program a real chance at an attainable Player, while a higher-prestige Program entering before commitment may overtake it. Standing leaders may change before a decision.
+
+Player-facing readiness is categorical. Before eligibility, a Recruit is `not-deciding`
+unless the next Recruiting period opens the decision window and the current
+eligible leader already satisfies that next window's standing and separation
+gates; only then is the Recruit `decision-soon`. Eligible battles progress from
+`developing` (standing gate unmet), to `serious` (standing met but separation
+unmet), to `decision-imminent` (both production gates met), then `committed`
+only when a canonical commitment exists. These categories do not expose the
+exact decision period, relationship totals, thresholds, probability, or rolls,
+and they do not alter commitment behavior.
 
 A commitment is final. V0 has no decommitments, post-commitment flips, or reopened recruitment. A current-season commitment remains a future-roster fact only:
 

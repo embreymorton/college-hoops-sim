@@ -142,10 +142,12 @@ Recruiting screen mode tabs — RecruitingModeTabs
 RecruitingBoardTable (Board mode)
 └── management columns only: Rank/Player/Stars/Ovr/Pot/Readiness/Focus/
     Status/Action. A `RecruitingReadinessInfo` accessible hover/keyboard-
-    focus affordance beside the Readiness heading explains the five
-    categories (Early Interest/Developing/Serious Battle/Decision
-    Imminent/Committed) without exposing thresholds. No Battle column, no
-    competitor list — that intelligence lives on Battles.
+    focus affordance beside the Readiness heading explains the six accepted
+    categories (Not Yet Deciding/Decision Soon/Developing/Serious
+    Battle/Decision Imminent/Committed) and states readiness is a decision-
+    timeline read, not a probability, without exposing periods, thresholds,
+    or probabilities. No Battle column, no competitor list — that
+    intelligence lives on Battles.
 
 RecruitingBattlesGrid (Battles mode)
 └── one RecruitingBattleCard per Board Recruit, responsive 2-column
@@ -181,6 +183,23 @@ Readiness uses a restrained categorical label (color via the existing amber-acce
 The session store's `recruitingActivityBaselinePeriod` (`src/store/seasonStore.ts`) now always replaces — never holds — on every Quick Sim / Super Sim / Tournament-round simulation boundary, so a later quiet simulation clears an earlier unseen commitment automatically instead of requiring the removed Dismiss action; opening full Recruiting still clears it. This is session/UI behavior only.
 
 This remains presentation-only: Board + Focus + Offer mechanics, AI Recruiting, 6E.12A's domain contract, and all existing Board/Focus/Offer/navigation actions are unchanged. Phase 6E.12D (Recruiting Battles Clarity Polish) refined only the Battles card's controlled-Program placement/labeling and the Readiness tooltip's viewport containment on top of 6E.12C's information architecture; it did not reopen the Hub/Board/National Class layers.
+
+### Recruiting Readiness — accepted six-state presentation (6E.14B-B)
+
+Phase 6E.14B-A (domain) replaced the misleading `early` state with `not-deciding` and a narrow `decision-soon`; 6E.14B-B applies final player-facing copy and a restrained visual hierarchy across Hub, Board, and Battles without reopening any of the above architecture. The accepted labels are `Not Yet Deciding`, `Decision Soon`, `Developing`, `Serious Battle`, `Decision Imminent`, and `Committed` (`formatReadinessLabel` in `src/app/recruitingBattleFormatters.ts`), used identically on every surface. `Not Yet Deciding` deliberately reads as a decision-timeline fact ("not yet in his decision window") rather than a low-interest signal; `Decision Soon` names the real risk ("the current battle is already strong enough that a commitment next period is realistic") without predicting an outcome; `Decision Imminent` communicates urgency without naming a destination.
+
+Visual weight forms a quiet-to-urgent ramp using only existing tokens — never a new badge color per state:
+
+```text
+Not Yet Deciding   → ink-2 (muted)
+Developing         → ink-1 (unmarked default)
+Serious Battle     → ink-0, weight 600 (more prominent, still uncolored)
+Decision Soon      → accent, weight 600/700
+Decision Imminent  → accent-strong, weight 700, plus the badge's only marker glyph
+Committed          → accent (existing outcome treatment)
+```
+
+On the Board, this stays column-width-neutral (color/weight only, no chip). On the Season/Postseason Hub's Focus Targets, `Decision Soon` and `Decision Imminent` additionally get a thin left-edge accent bar on the row so they read as scan-stoppers next to ordinary rows — every other state stays flush. On a Battles card, `Decision Soon`/`Decision Imminent` also tint the card's border, and readiness stays positioned above the grouped Leading/Competitive/Trailing standing, never duplicating it. The Board's `RecruitingReadinessInfo` tooltip now opens with one line stating readiness describes decision-timeline/battle-state proximity, not a probability, then explains all six states in the same categorical terms as before (no periods, thresholds, or probabilities). `Early Interest` no longer appears anywhere in the current UI.
 
 ## League and Player exploration — implemented
 

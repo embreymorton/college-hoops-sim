@@ -2,7 +2,8 @@ import { formatReadinessLabel } from '../app/recruitingBattleFormatters'
 import type { RecruitingReadiness } from '../dynasty'
 
 const READINESS_ORDER: readonly RecruitingReadiness[] = [
-  'early',
+  'not-deciding',
+  'decision-soon',
   'developing',
   'serious',
   'decision-imminent',
@@ -11,11 +12,15 @@ const READINESS_ORDER: readonly RecruitingReadiness[] = [
 
 /** Categorical only — no thresholds, relationship values, or probabilities. */
 const READINESS_DESCRIPTIONS: Record<RecruitingReadiness, string> = {
-  early: "Not yet inside the Recruit's decision window.",
-  developing: 'Being actively recruited, with no clear leader yet.',
-  serious: 'A leading Program has emerged, but the outcome is still contested.',
-  'decision-imminent': 'A commitment is close.',
-  committed: 'The Recruit has signed.',
+  'not-deciding':
+    "Not yet in his decision window — this isn't a sign of weak Program interest.",
+  'decision-soon':
+    'One period from his decision window, and the current battle is already strong enough that a commitment next period is realistic.',
+  developing: "In his decision window, but no Program has pulled ahead enough to resolve it.",
+  serious: 'A leader has emerged, but the race is still too close to call.',
+  'decision-imminent':
+    'The current battle meets the real conditions to resolve — a commitment could land any period now.',
+  committed: 'He has signed with a Program.',
 }
 
 /**
@@ -40,6 +45,9 @@ export function RecruitingReadinessInfo() {
         className="info-affordance__tooltip"
       >
         <span className="info-affordance__title">Readiness</span>
+        <p className="info-affordance__intro">
+          How close a Recruit is to resolving his recruitment — not a probability.
+        </p>
         <ul className="info-affordance__list">
           {READINESS_ORDER.map((readiness) => (
             <li key={readiness}>

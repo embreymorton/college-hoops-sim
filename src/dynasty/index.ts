@@ -17,6 +17,7 @@ export {
 export { rolloverDynastyToNextSeason } from './rollover'
 export {
   addRecruitingBoardTarget,
+  alignGeneratedRecruitingFocus,
   buildDefaultRecruitingBoard,
   cleanupInvalidRecruitingOffers,
   manageProgramRecruitingOffers,

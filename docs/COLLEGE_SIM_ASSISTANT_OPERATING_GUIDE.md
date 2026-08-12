@@ -431,8 +431,19 @@ Claude normally owns React composition, visual hierarchy, CSS/layout,
 responsive behavior, accessibility, interaction polish, dense tables,
 sports/broadcast presentation, onboarding and empty states, lifecycle
 presentation, information architecture, visual feedback, component tests, and
-visual inspection. When applicable, Claude should read and follow
-`.claude/skills/frontend-design/SKILL.md`.
+visual inspection.
+
+**`frontend-design` skill rule:** when a prompt's primary responsibility is
+frontend implementation, UI composition, or visual polish, and the
+`frontend-design` skill is available, the prompt should explicitly instruct
+Claude Code to use it. The current repository and accepted project docs
+(`UI_DESIGN.md` above all) remain authoritative; `frontend-design` supplements
+`UI_DESIGN.md`'s existing patterns rather than replacing them. Use it to
+improve hierarchy, composition, responsiveness, and polish within the
+established design language — it is never permission to introduce a new
+design system or reopen accepted UI architecture (Hub/Board/Battles/National
+separation, navigation structure, and similar accepted decisions stay fixed
+unless the milestone itself is scoped to reopen them).
 
 Project examples include Recruiting Management UI and onboarding, Season Hub
 composition, Late Recruiting and Offseason UX, Player Details UX, Postseason

@@ -108,6 +108,9 @@ describe('Generate Draft Board', () => {
       ),
     ).toBe(true)
     const program = generated.recruiting!.programs[PROGRAM_ID]!
+    const focused = board.filter(({ isFocused }) => isFocused)
+    expect(focused).toHaveLength(RECRUITING_FOCUS_LIMIT)
+    expect(focused.every(({ hasActiveOffer }) => hasActiveOffer)).toBe(true)
     for (const position of POSITIONS) {
       const activeOffers = board.filter(({ playerId, hasActiveOffer }) => {
         const recruit = generated.recruiting!.recruits.find(
@@ -142,6 +145,45 @@ describe('Generate Draft Board', () => {
     useDynastyStore.getState().generateControlledDraftBoard()
 
     expect(controlledBoard()).toEqual(manualBoard)
+  })
+
+  it('aligns the generated Focus set after Offers, while later manual Focus and Offer choices remain independent', () => {
+    useDynastyStore.getState().generateControlledDraftBoard()
+    const generated = controlledBoard()
+    // This fixed seed reproduced 6E.13's old failure: the naive first three
+    // Board targets are not the same coherent set selected after Offers.
+    expect(generated.slice(0, 3).some(({ hasActiveOffer }) => !hasActiveOffer)).toBe(
+      true,
+    )
+    expect(
+      generated.filter(({ isFocused }) => isFocused).every(({ hasActiveOffer }) =>
+        hasActiveOffer,
+      ),
+    ).toBe(true)
+
+    const focusedOffered = generated.find(
+      ({ isFocused, hasActiveOffer }) => isFocused && hasActiveOffer,
+    )!
+    useDynastyStore
+      .getState()
+      .withdrawRecruitingOffer(focusedOffered.playerId)
+    expect(
+      controlledBoard().find(({ playerId }) => playerId === focusedOffered.playerId),
+    ).toMatchObject({ isFocused: true, hasActiveOffer: false })
+
+    const offered = controlledBoard().find(({ hasActiveOffer }) => hasActiveOffer)!
+    useDynastyStore.getState().setRecruitingFocus(offered.playerId, false)
+    expect(
+      controlledBoard().find(({ playerId }) => playerId === offered.playerId),
+    ).toMatchObject({ isFocused: false, hasActiveOffer: true })
+
+    const unoffered = controlledBoard().find(
+      ({ isFocused, hasActiveOffer }) => !isFocused && !hasActiveOffer,
+    )!
+    useDynastyStore.getState().setRecruitingFocus(unoffered.playerId, true)
+    expect(
+      controlledBoard().find(({ playerId }) => playerId === unoffered.playerId),
+    ).toMatchObject({ isFocused: true, hasActiveOffer: false })
   })
 })
 

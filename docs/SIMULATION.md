@@ -227,6 +227,13 @@ candidate utility = -2 × abs(position rank - ideal rank) + base attraction
 
 Candidate ties use National Rank then Player ID. AI Programs refresh boards and offers in stable Program-ID order; the controlled Program is excluded from AI management.
 
+The interactive controlled Program begins empty. `Generate Draft Board` uses
+the same deterministic default Board and Offer manager, then performs a
+one-time Focus alignment over that unchanged Board/Offer set: previously
+Focused+Offered targets first, then other Offered targets, then remaining
+active targets, with existing offer utility and Player ID tie-breaking. The
+normal Focus and Offer APIs remain independent after generation.
+
 AI offer evaluation uses the next planning period, capped at 28:
 
 ```text

@@ -232,6 +232,69 @@ other targets (`52.6%` of 5★, `13.4%` of 4★); broad Board-capacity saturatio
 was rare. Premium pursuit itself is healthy, but premium Offer allocation
 remains a watch and requires a separate narrow diagnostic before any change.
 
+### Generated User Plan Coherence — RESOLVED (Phase 6E.14A)
+
+Phase 6E.14A reused the accepted AI Focus-alignment concept only at controlled
+Draft Board generation: Board → Offers → one-time Focus alignment. The Board
+and Offer set remain exact; Offered targets are preferred for the three Focus
+slots, with the strongest active Board target retained only when fewer than
+three generated Offers are legal. Manual Focus without Offer, Offer without
+Focus, Focus changes, and Offer withdrawal remain independent afterward.
+
+Paired STANDARD `3 × 10` LIGHT evidence moved generated user Focus-with-Offer
+coherence from `32/90` (`35.6%`) to `81/90` (`90.0%`), alongside the unchanged
+AI reference of `2585/2790` (`92.7%`). Fully coherent 3/3 plans improved from
+`3.3%` to `70.0%`; the other `30.0%` were 2/3 because only two generated
+Offers were legal. No candidate plan remained 1/3 or 0/3. The 6E.13 generated
+plan watchpoint is closed; readiness communication and premium Offer allocation
+remain separate follow-ups.
+
+### Recruiting Readiness Clarity — DOMAIN ACCEPTED (Phase 6E.14B-A)
+
+The readiness read model now distinguishes `not-deciding` from the narrow
+`decision-soon` state. `Decision Soon` requires the Recruit to be exactly one
+period before decision eligibility and the current eligible leader to already
+meet the next window's production standing and separation gates. Once eligible,
+the existing `developing`, `serious`, and `decision-imminent` states retain their
+exact gate meanings; `committed` still requires canonical commitment state.
+
+STANDARD `3 × 10` LIGHT replay classified `1200/1933` prior-period observations
+as `decision-soon` and `28/1933` as `not-deciding`. Of cases formerly shown as
+`early`, `97.7%` became `decision-soon` and `2.3%` remained `not-deciding`; the
+conversion was `100%` for 5★ and `97.9%` for 4★. No `decision-soon` observation
+fell outside the exact next-period eligibility boundary, and
+`decision-imminent` remains identical to the current production standing plus
+separation gates. The common `Early` → commitment surprise is resolved without
+predicting a commitment or changing Recruiting behavior. Final labels, tooltip
+copy, and presentation remain open for Phase 6E.14B-B. Premium Offer allocation
+remains a separate watchpoint.
+
+### Recruiting Readiness Presentation — RESOLVED (Phase 6E.14B-B)
+
+Phase 6E.14B-B applied final player-facing copy and a restrained visual
+hierarchy for the accepted six-state contract across the Hub, Board, and
+Battles surfaces, with no Recruiting domain or mechanic changes. The accepted
+labels are `Not Yet Deciding`, `Decision Soon`, `Developing`, `Serious
+Battle`, `Decision Imminent`, and `Committed`; `Not Yet Deciding` reads as a
+decision-timeline fact rather than low Program interest, and `Decision Soon`
+names the real near-term risk without predicting a winner. Visual weight now
+forms a quiet-to-urgent ramp using only existing ink/accent tokens (muted →
+unmarked → brighter/bolder → accent → accent-strong with a marker), applied
+identically to the Board's compact badge, the Hub's Focus row (with a thin
+left-edge accent cue reserved for `Decision Soon`/`Decision Imminent` only),
+and the Battles card (readiness above the grouped standing, with a matching
+border tint for the same two states). The Readiness tooltip now opens with a
+line stating readiness describes decision-timeline/battle-state proximity,
+not a probability, and explains all six states without exposing periods,
+thresholds, or probabilities. The retired `Early Interest` label no longer
+appears anywhere in the current UI. Manual play across Not Yet Deciding,
+Decision Soon, Serious Battle, Decision Imminent, and Committed Recruits, a
+mixed-readiness Board, a mixed-readiness Battles grid, and the tooltip at
+desktop and narrow widths confirmed the hierarchy reads correctly and stays
+secondary to Recruit identity and Board actions. Phase 6E.14B (readiness
+communication) is now fully resolved; premium Offer allocation remains a
+separate watchpoint. See `UI_DESIGN.md` for the accepted presentation.
+
 ### Recruiting Information Architecture + Visual Hierarchy — RESOLVED (Phase 6E.12C)
 
 Manual playtesting after 6E.12B confirmed the new battle/readiness/commitment

@@ -21,7 +21,10 @@ export type SparseCompetitionReason =
   | 'unclassified-observable-constraint'
 
 export interface PlanCoherenceObservation {
-  readonly programKind: 'controlled-generated' | 'ai'
+  readonly programKind:
+    | 'controlled-baseline'
+    | 'controlled-candidate'
+    | 'ai'
   readonly focused: number
   readonly focusedOffered: number
   readonly missingOfferReasons: Readonly<Record<string, number>>
@@ -142,6 +145,8 @@ export function classifySparseCompetitionReason(
 export interface ReadinessTransitionObservation {
   readonly stars: Recruit['stars']
   readonly readiness: RecruitingReadiness
+  readonly legacyReadiness: 'early' | Exclude<RecruitingReadiness, 'not-deciding' | 'decision-soon'>
+  readonly decisionSoonBecomesEligibleNextPeriod: boolean
   readonly firstDecisionReadyPeriod: boolean
   readonly eventualWinnerWasLeading: boolean
   readonly eventualWinnerMetStandingGate: boolean
@@ -176,6 +181,16 @@ export function observeReadinessBeforeCommitment(
   return {
     stars: recruit.stars,
     readiness: view.readiness,
+    legacyReadiness:
+      recruiting.lastResolvedPeriod < recruit.decisionReadyPeriod
+        ? 'early'
+        : view.readiness as Exclude<
+            RecruitingReadiness,
+            'not-deciding' | 'decision-soon'
+          >,
+    decisionSoonBecomesEligibleNextPeriod:
+      view.readiness !== 'decision-soon' ||
+      recruiting.lastResolvedPeriod + 1 === recruit.decisionReadyPeriod,
     firstDecisionReadyPeriod: commitmentPeriod === recruit.decisionReadyPeriod,
     eventualWinnerWasLeading:
       view.pursuingPrograms[0]?.programId === winnerProgramId,

@@ -118,14 +118,52 @@ function withCommitment(
 }
 
 describe('player-facing Recruiting battle projection', () => {
-  it('derives early readiness directly from the canonical decision period', () => {
+  it('projects a Recruit well before eligibility as not deciding', () => {
     const { dynasty, playerId } = battleFixture('battle-early')
-    const view = deriveRecruitingBattleView(dynasty, playerId)
-    expect(dynasty.recruiting!.lastResolvedPeriod).toBeLessThan(
-      dynasty.recruiting!.recruits.find(({ player }) => player.id === playerId)!
-        .decisionReadyPeriod,
+    const configured = withDecisionState(
+      dynasty,
+      playerId,
+      { [dynasty.controlledProgramId]: 120 },
+      { period: 1, readyPeriod: 3, standingThreshold: 100 },
     )
-    expect(view.readiness).toBe('early')
+    expect(deriveRecruitingBattleView(configured, playerId).readiness).toBe(
+      'not-deciding',
+    )
+  })
+
+  it('uses Decision Soon only one period before eligibility when current battle facts satisfy the next-window gates', () => {
+    const { dynasty, playerId, programIds } = battleFixture('battle-soon')
+    const weak = withDecisionState(
+      dynasty,
+      playerId,
+      { [programIds[0]]: 99, [programIds[1]]: 90 },
+      { period: 1, readyPeriod: 2, standingThreshold: 100, separationThreshold: 5 },
+    )
+    expect(deriveRecruitingBattleView(weak, playerId).readiness).toBe(
+      'not-deciding',
+    )
+
+    const closeRace = withDecisionState(
+      dynasty,
+      playerId,
+      { [programIds[0]]: 100, [programIds[1]]: 96 },
+      { period: 1, readyPeriod: 2, standingThreshold: 100, separationThreshold: 5 },
+    )
+    expect(deriveRecruitingBattleView(closeRace, playerId).readiness).toBe(
+      'not-deciding',
+    )
+
+    const soon = withDecisionState(
+      dynasty,
+      playerId,
+      { [programIds[0]]: 100, [programIds[1]]: 95 },
+      { period: 1, readyPeriod: 2, standingThreshold: 100, separationThreshold: 5 },
+    )
+    const view = deriveRecruitingBattleView(soon, playerId)
+    expect(view.readiness).toBe('decision-soon')
+    expect(view).not.toHaveProperty('decisionReadyPeriod')
+    expect(view).not.toHaveProperty('commitmentStandingThreshold')
+    expect(view).not.toHaveProperty('commitmentSeparationThreshold')
   })
 
   it('uses the real standing and separation gates for readiness boundaries', () => {

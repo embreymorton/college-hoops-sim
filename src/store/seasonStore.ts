@@ -8,6 +8,7 @@ import {
 } from '../engine'
 import {
   addRecruitingBoardTarget,
+  alignGeneratedRecruitingFocus,
   autoFinalizeRecruiting,
   beginOffseason,
   buildDefaultRecruitingBoard,
@@ -435,6 +436,12 @@ function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState 
     recruitingWithBoard,
     dynasty.controlledProgramId,
   )
+  const alignedProgram = alignGeneratedRecruitingFocus(
+    context,
+    recruitingWithBoard,
+    dynasty.controlledProgramId,
+    managedProgram,
+  )
 
   return {
     ...context,
@@ -442,7 +449,7 @@ function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState 
       ...recruitingWithBoard,
       programs: {
         ...recruitingWithBoard.programs,
-        [program.programId]: managedProgram,
+        [program.programId]: alignedProgram,
       },
     },
   }

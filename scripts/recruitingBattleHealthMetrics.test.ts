@@ -27,7 +27,7 @@ describe('Recruiting battle health metrics', () => {
     const board = buildDefaultRecruitingBoard(context, context.recruiting!, id)
     const program = manageProgramRecruitingOffers(context, { ...context.recruiting!, programs: { ...context.recruiting!.programs, [id]: { ...empty, board } } }, id)
     const generated = { ...context, recruiting: { ...context.recruiting!, programs: { ...context.recruiting!.programs, [id]: program } } }
-    expect(observePlanCoherence(generated, id, 'controlled-generated').focused).toBe(3)
+    expect(observePlanCoherence(generated, id, 'controlled-baseline').focused).toBe(3)
     const aiId = Object.keys(recruiting.programs).sort().find((programId) => programId !== id)!
     expect(observePlanCoherence(initial, aiId, 'ai').programKind).toBe('ai')
   })

@@ -13,7 +13,8 @@ import {
 import { deriveCommitmentConfidenceThresholds } from './simulation'
 
 export type RecruitingReadiness =
-  | 'early'
+  | 'not-deciding'
+  | 'decision-soon'
   | 'developing'
   | 'serious'
   | 'decision-imminent'
@@ -115,10 +116,28 @@ function deriveReadiness(
 ): RecruitingReadiness {
   const recruiting = dynasty.recruiting!
   if (recruiting.commitmentsByPlayerId[recruit.player.id]) return 'committed'
-  if (recruiting.lastResolvedPeriod < recruit.decisionReadyPeriod) return 'early'
-
   const candidates = eligibleCommitmentPursuers(dynasty, recruit.player.id)
   const leader = candidates[0]
+  const runnerUp = candidates[1]
+
+  if (recruiting.lastResolvedPeriod < recruit.decisionReadyPeriod) {
+    if (
+      recruiting.lastResolvedPeriod + 1 !== recruit.decisionReadyPeriod ||
+      !leader
+    ) {
+      return 'not-deciding'
+    }
+    const nextPeriodThresholds = deriveCommitmentConfidenceThresholds(
+      recruit,
+      recruit.decisionReadyPeriod,
+    )
+    return leader.standing.standing >= nextPeriodThresholds.standing &&
+      leader.standing.standing - (runnerUp?.standing.standing ?? 0) >=
+        nextPeriodThresholds.separation
+      ? 'decision-soon'
+      : 'not-deciding'
+  }
+
   if (!leader) return 'developing'
   const thresholds = deriveCommitmentConfidenceThresholds(
     recruit,
@@ -126,7 +145,6 @@ function deriveReadiness(
   )
   if (leader.standing.standing < thresholds.standing) return 'developing'
 
-  const runnerUp = candidates[1]
   if (
     leader.standing.standing - (runnerUp?.standing.standing ?? 0) <
     thresholds.separation

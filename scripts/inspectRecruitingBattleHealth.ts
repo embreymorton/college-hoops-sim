@@ -1,5 +1,6 @@
 import {
   autoFinalizeRecruiting,
+  alignGeneratedRecruitingFocus,
   beginOffseason,
   buildDefaultRecruitingBoard,
   initializeDynastyState,
@@ -50,16 +51,34 @@ function createDynasty(seed: string): DynastyState {
   return initializeRecruiting(initializeDynastyState({ dynastyId: `battle-health:${seed}`, dynastySeed: seed, controlledProgramId: 'charlotte-tech', universe: UNIVERSE_V0, activeSeason }))
 }
 
-function generatedControlledPlan(dynasty: DynastyState): DynastyState {
+function generatedControlledPlans(dynasty: DynastyState): {
+  baseline: DynastyState
+  candidate: DynastyState
+} {
   const recruiting = dynasty.recruiting!
   const id = dynasty.controlledProgramId
   const empty = { ...recruiting.programs[id]!, board: [] }
-  let current = { ...dynasty, recruiting: { ...recruiting, programs: { ...recruiting.programs, [id]: empty } } }
+  const current = { ...dynasty, recruiting: { ...recruiting, programs: { ...recruiting.programs, [id]: empty } } }
   const board = buildDefaultRecruitingBoard(current, current.recruiting!, id)
   const withBoard = { ...empty, board }
   const program = manageProgramRecruitingOffers(current, { ...current.recruiting!, programs: { ...current.recruiting!.programs, [id]: withBoard } }, id)
-  current = { ...current, recruiting: { ...current.recruiting!, programs: { ...current.recruiting!.programs, [id]: program } } }
-  return current
+  const baseline = { ...current, recruiting: { ...current.recruiting!, programs: { ...current.recruiting!.programs, [id]: program } } }
+  const aligned = alignGeneratedRecruitingFocus(
+    baseline,
+    baseline.recruiting!,
+    id,
+    program,
+  )
+  return {
+    baseline,
+    candidate: {
+      ...baseline,
+      recruiting: {
+        ...baseline.recruiting!,
+        programs: { ...baseline.recruiting!.programs, [id]: aligned },
+      },
+    },
+  }
 }
 
 function observeCheckpoint(dynasty: DynastyState, checkpoint: number, result: Diagnostic): void {
@@ -80,8 +99,10 @@ function run(seed: string, seasons: number): Diagnostic {
   const result: Diagnostic = { plans: [], transitions: [], competition: [], sparse: [] }
   let dynasty = createDynasty(seed)
   for (let seasonIndex = 0; seasonIndex < seasons; seasonIndex += 1) {
-    dynasty = generatedControlledPlan(dynasty)
-    result.plans.push(observePlanCoherence(dynasty, dynasty.controlledProgramId, 'controlled-generated'))
+    const generated = generatedControlledPlans(dynasty)
+    result.plans.push(observePlanCoherence(generated.baseline, dynasty.controlledProgramId, 'controlled-baseline'))
+    dynasty = generated.candidate
+    result.plans.push(observePlanCoherence(dynasty, dynasty.controlledProgramId, 'controlled-candidate'))
     for (const id of Object.keys(dynasty.recruiting!.programs).sort().filter((id) => id !== dynasty.controlledProgramId)) {
       result.plans.push(observePlanCoherence(dynasty, id, 'ai'))
     }
@@ -118,7 +139,7 @@ function pct(n: number, d: number) { return `${(d ? n * 100 / d : 0).toFixed(1)}
 function summarize(results: Diagnostic[]): void {
   const plans = results.flatMap((r) => r.plans)
   console.log('GENERATED PLAN COHERENCE')
-  for (const kind of ['controlled-generated', 'ai'] as const) {
+  for (const kind of ['controlled-baseline', 'controlled-candidate', 'ai'] as const) {
     const rows = plans.filter((r) => r.programKind === kind)
     const focused = rows.reduce((s, r) => s + r.focused, 0)
     const offered = rows.reduce((s, r) => s + r.focusedOffered, 0)
@@ -126,16 +147,16 @@ function summarize(results: Diagnostic[]): void {
     console.log(`${kind}: ${offered}/${focused} Focus offered (${pct(offered, focused)}); ${distribution}`)
   }
   const reasons: Record<string, number> = {}
-  for (const row of plans.filter((r) => r.programKind === 'controlled-generated')) for (const [reason, count] of Object.entries(row.missingOfferReasons)) reasons[reason] = (reasons[reason] ?? 0) + count
-  console.log(`Controlled missing-Offer reasons: ${JSON.stringify(reasons)}\n`)
+  for (const row of plans.filter((r) => r.programKind === 'controlled-candidate')) for (const [reason, count] of Object.entries(row.missingOfferReasons)) reasons[reason] = (reasons[reason] ?? 0) + count
+  console.log(`Candidate missing-Offer reasons: ${JSON.stringify(reasons)}\n`)
 
   const transitions = results.flatMap((r) => r.transitions)
   console.log('READINESS BEFORE COMMITMENT')
   for (const stars of ['all', 5, 4] as const) {
     const rows = stars === 'all' ? transitions : transitions.filter((r) => r.stars === stars)
-    const counts = (['early', 'developing', 'serious', 'decision-imminent'] as RecruitingReadiness[]).map((state) => `${state} ${rows.filter((r) => r.readiness === state).length} (${pct(rows.filter((r) => r.readiness === state).length, rows.length)})`).join(' | ')
-    const early = rows.filter((r) => r.readiness === 'early')
-    console.log(`${stars}★: n=${rows.length}; ${counts}; Early first-ready ${pct(early.filter((r) => r.firstDecisionReadyPeriod).length, early.length)}; winner already leading ${pct(early.filter((r) => r.eventualWinnerWasLeading).length, early.length)}; standing gate met ${pct(early.filter((r) => r.eventualWinnerMetStandingGate).length, early.length)}; separation gate met ${pct(early.filter((r) => r.eventualWinnerMetSeparationGate).length, early.length)}`)
+    const counts = (['not-deciding', 'decision-soon', 'developing', 'serious', 'decision-imminent'] as RecruitingReadiness[]).map((state) => `${state} ${rows.filter((r) => r.readiness === state).length} (${pct(rows.filter((r) => r.readiness === state).length, rows.length)})`).join(' | ')
+    const oldEarly = rows.filter((r) => r.legacyReadiness === 'early')
+    console.log(`${stars}★: n=${rows.length}; ${counts}; old Early→Decision Soon ${pct(oldEarly.filter((r) => r.readiness === 'decision-soon').length, oldEarly.length)}; old Early→Not Deciding ${pct(oldEarly.filter((r) => r.readiness === 'not-deciding').length, oldEarly.length)}; invalid Decision Soon boundary ${rows.filter((r) => !r.decisionSoonBecomesEligibleNextPeriod).length}`)
   }
 
   console.log('\nCOMPETITION BY STAR TIER')

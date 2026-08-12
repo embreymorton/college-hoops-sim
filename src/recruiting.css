@@ -310,8 +310,9 @@
 }
 
 .recruiting-hub-focus__item {
-  padding: var(--space-2) 0;
+  padding: var(--space-2) 0 var(--space-2) var(--space-2);
   border-bottom: 1px solid var(--line);
+  border-left: 2px solid transparent;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -320,6 +321,16 @@
 .recruiting-hub-focus__item:last-child {
   border-bottom: none;
   padding-bottom: 0;
+}
+
+/* Only the two states worth interrupting a scan get a left-edge cue — every
+   other state stays flush and unaccented. */
+.recruiting-hub-focus__item[data-readiness='decision-soon'] {
+  border-left-color: var(--accent);
+}
+
+.recruiting-hub-focus__item[data-readiness='decision-imminent'] {
+  border-left-color: var(--accent-strong);
 }
 
 .recruiting-hub-focus__identity {
@@ -360,8 +371,22 @@
   color: var(--ink-1);
 }
 
-.recruiting-hub-focus__item[data-readiness='decision-imminent'] .recruiting-hub-focus__readiness {
+.recruiting-hub-focus__item[data-readiness='not-deciding'] .recruiting-hub-focus__readiness {
+  color: var(--ink-2);
+}
+
+.recruiting-hub-focus__item[data-readiness='serious'] .recruiting-hub-focus__readiness {
+  color: var(--ink-0);
+  font-weight: 600;
+}
+
+.recruiting-hub-focus__item[data-readiness='decision-soon'] .recruiting-hub-focus__readiness {
   color: var(--accent);
+  font-weight: 600;
+}
+
+.recruiting-hub-focus__item[data-readiness='decision-imminent'] .recruiting-hub-focus__readiness {
+  color: var(--accent-strong);
   font-weight: 600;
 }
 
@@ -547,7 +572,8 @@
 }
 
 /* ==========================================================================
-   Readiness badge (6E.12B; simplified to Readiness-only in 6E.12C)
+   Readiness badge (6E.12B; simplified to Readiness-only in 6E.12C; six-state
+   hierarchy in 6E.14B-B)
    ========================================================================== */
 
 .recruiting-readiness-badge {
@@ -561,7 +587,31 @@
   color: var(--ink-1);
 }
 
-.recruiting-readiness-badge[data-readiness='decision-imminent'],
+/* Six-state readiness hierarchy (6E.14B-B): a quiet-to-urgent ramp using only
+   the existing ink/accent tokens — never a new badge color per state. */
+.recruiting-readiness-badge[data-readiness='not-deciding'] {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.recruiting-readiness-badge[data-readiness='serious'] {
+  color: var(--ink-0);
+}
+
+.recruiting-readiness-badge[data-readiness='decision-soon'] {
+  color: var(--accent);
+}
+
+.recruiting-readiness-badge[data-readiness='decision-imminent'] {
+  color: var(--accent-strong);
+}
+
+.recruiting-readiness-badge[data-readiness='decision-imminent']::before {
+  content: '● ';
+  font-size: 0.55em;
+  vertical-align: 0.1em;
+}
+
 .recruiting-readiness-badge[data-readiness='committed'] {
   color: var(--accent);
 }
@@ -665,6 +715,14 @@
   margin-bottom: 0.4rem;
 }
 
+.info-affordance__intro {
+  font-size: 0.72rem;
+  font-style: italic;
+  color: var(--ink-2);
+  line-height: 1.4;
+  margin: 0 0 0.55rem;
+}
+
 .info-affordance__list {
   display: flex;
   flex-direction: column;
@@ -698,8 +756,13 @@
   gap: 0.5rem;
 }
 
-.recruiting-battle-card[data-readiness='decision-imminent'] {
+.recruiting-battle-card[data-readiness='decision-soon'] {
   border-color: var(--accent);
+}
+
+.recruiting-battle-card[data-readiness='decision-imminent'] {
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 1px var(--accent-strong);
 }
 
 .recruiting-battle-card__identity {
@@ -742,9 +805,23 @@
   color: var(--ink-1);
 }
 
-.recruiting-battle-card[data-readiness='decision-imminent'] .recruiting-battle-card__readiness {
+.recruiting-battle-card[data-readiness='not-deciding'] .recruiting-battle-card__readiness {
+  color: var(--ink-2);
+}
+
+.recruiting-battle-card[data-readiness='serious'] .recruiting-battle-card__readiness {
+  color: var(--ink-0);
+  font-weight: 600;
+}
+
+.recruiting-battle-card[data-readiness='decision-soon'] .recruiting-battle-card__readiness {
   color: var(--accent);
   font-weight: 600;
+}
+
+.recruiting-battle-card[data-readiness='decision-imminent'] .recruiting-battle-card__readiness {
+  color: var(--accent-strong);
+  font-weight: 700;
 }
 
 .recruiting-battle-card__not-pursuing {

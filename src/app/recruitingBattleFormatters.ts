@@ -26,8 +26,10 @@ import type { ProgramDefinition } from '../universe'
 /** Restrained categorical label — never a percentage or progress estimate. */
 export function formatReadinessLabel(readiness: RecruitingReadiness): string {
   switch (readiness) {
-    case 'early':
-      return 'Early Interest'
+    case 'not-deciding':
+      return 'Not Yet Deciding'
+    case 'decision-soon':
+      return 'Decision Soon'
     case 'developing':
       return 'Developing'
     case 'serious':

@@ -596,7 +596,7 @@ export function buildDefaultRecruitingBoard(
  * Existing offered pursuits lead, so Board / Focus / Offer express one plan;
  * viable backups still fill any unused Focus capacity deterministically.
  */
-export function alignAiRecruitingFocus(
+export function alignGeneratedRecruitingFocus(
   dynasty: DynastyState,
   recruiting: RecruitingState,
   programId: string,
@@ -621,6 +621,9 @@ export function alignAiRecruitingFocus(
     board: program.board.map((target) => ({ ...target, isFocused: focusIds.has(target.playerId) })),
   }
 }
+
+/** AI refreshes retain the accepted name while sharing the same alignment rule. */
+export const alignAiRecruitingFocus = alignGeneratedRecruitingFocus
 
 export function refreshAiRecruitingBoards(
   dynasty: DynastyState,

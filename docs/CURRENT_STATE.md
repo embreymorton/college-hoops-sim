@@ -217,7 +217,28 @@ communication/projection follow-up rather than timing changes; and unsigned
 5★/4★ Board pursuit became broadly contested while Offer scarcity primarily
 reflected positional Offer allocation and other-target selection. Premium
 Offer allocation remains WATCH pending a separate diagnostic. No Recruiting
-behavior changed. Coaching/roster navigation, Followed Players,
+behavior changed. Phase 6E.14A resolves the generated-plan coherence finding:
+`Generate Draft Board` now aligns its initial Focus targets after the unchanged
+Board/Offer plan is built, raising paired STANDARD Focus-with-Offer coherence
+from `35.6%` to `90.0%` versus the unchanged `92.7%` AI reference. This is a
+one-time generated-plan rule; manual Focus and Offer remain independent. The
+generated-plan watchpoint is closed.
+
+Phase 6E.14B-A resolves the readiness-communication finding at the read-model
+boundary. Pre-window Recruits now project as `not-deciding`, except exactly one
+period before eligibility when the current eligible leader already satisfies
+the next window's production standing and separation gates; that narrow state
+projects as `decision-soon`. Decision-ready states remain `developing`,
+`serious`, and `decision-imminent`, followed by `committed`. The projection
+continues to hide periods, totals, thresholds, probabilities, utility, and rolls;
+commitment mechanics and persisted state are unchanged. Phase 6E.14B-B
+completes the presentation side: the Hub, Board, and Battles all use the
+final labels (`Not Yet Deciding`/`Decision Soon`/`Developing`/`Serious
+Battle`/`Decision Imminent`/`Committed`) and a restrained quiet-to-urgent
+visual ramp built only from existing ink/accent tokens, the Readiness
+tooltip explains all six states without exposing hidden values, and the
+retired `Early Interest` label is gone from the current UI. Phase 6E.14B is
+fully resolved. Coaching/roster navigation, Followed Players,
 offseason progression visibility, Awards, and Save/Persistence retain
 future QOL evidence.
 

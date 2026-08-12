@@ -102,7 +102,7 @@ function withDecisionState(
 
 describe('Recruiting battle presentation formatters', () => {
   it('labels every readiness state without percentages or numeric estimates', () => {
-    const states = ['early', 'developing', 'serious', 'decision-imminent', 'committed'] as const
+    const states = ['not-deciding', 'decision-soon', 'developing', 'serious', 'decision-imminent', 'committed'] as const
     for (const readiness of states) {
       const label = formatReadinessLabel(readiness)
       expect(label).not.toMatch(/%/)

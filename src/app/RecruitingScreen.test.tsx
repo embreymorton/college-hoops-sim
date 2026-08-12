@@ -393,11 +393,26 @@ describe('Recruiting Board', () => {
     const tooltip = document.getElementById(
       trigger.getAttribute('aria-describedby')!,
     ) as HTMLElement
-    expect(within(tooltip).getByText('Early Interest')).toBeInTheDocument()
+    expect(within(tooltip).getByText('Not Yet Deciding')).toBeInTheDocument()
+    expect(within(tooltip).getByText('Decision Soon')).toBeInTheDocument()
     expect(within(tooltip).getByText('Developing')).toBeInTheDocument()
     expect(within(tooltip).getByText('Serious Battle')).toBeInTheDocument()
     expect(within(tooltip).getByText('Decision Imminent')).toBeInTheDocument()
     expect(within(tooltip).getByText('Committed')).toBeInTheDocument()
+  })
+
+  it('never exposes periods, thresholds, or probabilities through the Readiness tooltip, and drops the old Early Interest label', () => {
+    renderRecruitingScreen()
+
+    const trigger = screen.getByRole('button', { name: 'About Readiness' })
+    const tooltip = document.getElementById(
+      trigger.getAttribute('aria-describedby')!,
+    ) as HTMLElement
+    expect(within(tooltip).queryByText('Early Interest')).not.toBeInTheDocument()
+    expect(tooltip.textContent).not.toMatch(/%/)
+    expect(tooltip.textContent).not.toMatch(/\bperiod \d/i)
+    expect(tooltip.textContent).toMatch(/not a probability/i)
+    expect(screen.queryByText('Early Interest')).not.toBeInTheDocument()
   })
 })
 
