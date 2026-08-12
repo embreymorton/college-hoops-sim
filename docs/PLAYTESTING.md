@@ -201,6 +201,37 @@ still has no period-by-period standing snapshots; only provable commitment
 events cross a simulation boundary. See `UI_DESIGN.md` for the accepted
 presentation.
 
+### Recruiting Battle Health — DIAGNOSED (Phase 6E.13)
+
+A production-lifecycle QUICK run and STANDARD `3 × 10` LIGHT diagnostic tested
+the new UX signals without changing Recruiting. Generated controlled plans had
+only `32/90` Focus targets Offered (`35.6%`) versus `2585/2790` (`92.7%`) for AI
+plans. Just `3.3%` of generated user plans were 3/3 coherent; `56.7%` were 1/3
+and `20.0%` were 0/3. Every unsupported user Focus target was observable as the
+position's Offer capacity being assigned to a different generated target. This
+confirms a narrow generated-user-plan coherence issue, not a reason to couple
+manual Focus and Offers globally.
+
+Of `1944` commitments, `63.2%` had shown `early` one period earlier (`55.6%` of
+5★ and `52.1%` of 4★). Every such transition occurred at the first
+decision-ready period; `93.5%` already had the eventual winner leading, `97.7%`
+already met the next-window standing gate, and `100%` met separation before the
+window opened. The mechanics are internally coherent, but `Early Interest`
+does not communicate an already-settled battle whose decision window opens next
+period. Retain commitment timing and earn a narrow readiness communication or
+projection follow-up.
+
+Premium Board competition was sparse at preseason but expanded through real AI
+refreshes. Among unsigned Recruits at Period 20, `91.8%` of 5★ and `94.6%` of
+4★ had 3+ active Board pursuers. Offer competition was less broad: 5★ were
+`16.0%` zero / `12.3%` one / `71.7%` two-plus Offers, while 4★ were `53.3%`
+zero / `9.9%` one / `36.7%` two-plus. For premium low-Offer observations,
+strongest observable constraints were another target consuming positional
+Offer capacity (`43.7%` of 5★, `81.3%` of 4★) and Programs with need choosing
+other targets (`52.6%` of 5★, `13.4%` of 4★); broad Board-capacity saturation
+was rare. Premium pursuit itself is healthy, but premium Offer allocation
+remains a watch and requires a separate narrow diagnostic before any change.
+
 ### Recruiting Information Architecture + Visual Hierarchy — RESOLVED (Phase 6E.12C)
 
 Manual playtesting after 6E.12B confirmed the new battle/readiness/commitment

@@ -208,7 +208,16 @@ Program identity reusing the Tournament bracket's `.team-color-dot` square;
 and the `RecruitingCommitmentAlerts` recap lost its Dismiss control, since
 `recruitingActivityBaselinePeriod` now always replaces (never holds) on
 every simulation boundary. 6E.12A's domain contract and all Recruiting
-mechanics are unchanged. Coaching/roster navigation, Followed Players,
+mechanics are unchanged. Phase 6E.13 diagnosed the production behavior behind
+the new signals: generated controlled plans Offered only `35.6%` of their Focus
+targets versus `92.7%` for AI plans, earning a narrow generated-plan coherence
+candidate; `Early` preceded `63.2%` of commitments because already-strong
+battles reached their first decision window next period, earning a readiness
+communication/projection follow-up rather than timing changes; and unsigned
+5★/4★ Board pursuit became broadly contested while Offer scarcity primarily
+reflected positional Offer allocation and other-target selection. Premium
+Offer allocation remains WATCH pending a separate diagnostic. No Recruiting
+behavior changed. Coaching/roster navigation, Followed Players,
 offseason progression visibility, Awards, and Save/Persistence retain
 future QOL evidence.
 

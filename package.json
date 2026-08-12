@@ -32,6 +32,7 @@
     "sim:recruiting-upsets": "node --import tsx scripts/inspectRecruitingUpsets.ts",
     "sim:recruiting-focus-calibration": "node --import tsx scripts/inspectRecruitingFocusCalibration.ts",
     "sim:recruiting-ai-premium": "node --import tsx scripts/inspectAiPremiumCompetition.ts",
+    "sim:recruiting-battle-health": "node --import tsx scripts/inspectRecruitingBattleHealth.ts",
     "sim:talent-distribution": "node --import tsx scripts/inspectTalentDistribution.ts",
     "sim:roster-rollover": "node --import tsx scripts/inspectRosterRollover.ts",
     "sim:season-rollover": "node --import tsx scripts/inspectSeasonRollover.ts",
