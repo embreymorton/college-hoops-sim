@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   DynastySectionNav,
-  ExplorationBackButton,
   LeagueTeamsDirectory,
   NationalLeadersSection,
 } from '../components'
@@ -20,18 +19,18 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 
 type LeagueTab = 'leaders' | 'teams'
 
-/** The League destination: national statistical leaders and the full 32-Program directory. */
+/**
+ * The League destination: national statistical leaders and the full
+ * 32-Program directory. Primary Dynasty navigation already establishes
+ * location (`SEASON / RECRUITING / LEAGUE`), so this root view carries no
+ * separate Back action or duplicate title — only Team/Player Details, one
+ * level deeper, need their own exploration Back navigation.
+ */
 export function LeagueScreen() {
   const [tab, setTab] = useState<LeagueTab>('leaders')
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
-  const explorationViewHistory = useDynastyStore(
-    (state) => state.explorationViewHistory,
-  )
-  const goBackFromExploration = useDynastyStore(
-    (state) => state.goBackFromExploration,
-  )
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
@@ -43,7 +42,6 @@ export function LeagueScreen() {
     return null
   }
 
-  const backDestination = explorationViewHistory.at(-1) ?? 'hub'
   const leaderboards = deriveNationalPlayerLeaders(season)
 
   return (
@@ -55,18 +53,8 @@ export function LeagueScreen() {
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
-      <ExplorationBackButton
-        destination={backDestination}
-        onClick={goBackFromExploration}
-      />
 
-      <section className="section" aria-labelledby="league-heading">
-        <div className="section-heading">
-          <h1 id="league-heading" className="section-title">
-            League
-          </h1>
-        </div>
-
+      <section className="section" aria-label="League">
         <div role="group" aria-label="League section" className="tab-list">
           <button
             type="button"

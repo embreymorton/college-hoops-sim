@@ -1130,6 +1130,17 @@ p {
    Season Hub primary layout — This Week (game) + Build the Future (recruiting)
    ========================================================================== */
 
+/* ==========================================================================
+   Season/Postseason Hub — tightened local vertical rhythm (6E.16B). Scoped
+   to the Hub only; `.app-main`'s default gap is unchanged elsewhere.
+   ========================================================================== */
+
+.season-hub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 .hub-primary-grid {
   display: grid;
   grid-template-columns: minmax(0, 2.2fr) minmax(300px, 1fr);
@@ -1143,11 +1154,36 @@ p {
   }
 }
 
+/* Controlled-Conference Standings + Recent Results: both narrow enough to
+   compose side by side on desktop instead of stacking as two full-width
+   sections. */
+.hub-secondary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .hub-secondary-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .next-game-card {
   background: var(--surface-1);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   padding: var(--space-4) var(--space-5);
+}
+
+/* A shared minimum footprint keeps the pregame matchup and completed-result
+   states reading as two states of one card instead of visibly resizing the
+   Hub after Quick Sim — not a fixed height, just a stable floor. */
+@media (min-width: 641px) {
+  .next-game-card {
+    min-height: 19.5rem;
+  }
 }
 
 .next-game-card__eyebrow {
@@ -1299,11 +1335,11 @@ p {
 
 .game-leaders {
   margin: 0 auto var(--space-3);
-  width: min(100%, 52rem);
+  width: min(100%, 34rem);
 }
 
 .game-leaders__heading {
-  margin-bottom: var(--space-2);
+  margin-bottom: var(--space-1);
   font-family: var(--font-display);
   font-size: 0.68rem;
   font-weight: 600;
@@ -1313,71 +1349,69 @@ p {
   color: var(--ink-1);
 }
 
-.game-leaders__grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+/* A dense, sports-ticker leader strip — one row per stat instead of three
+   oversized bordered columns — so the completed-game card's footprint stays
+   close to the pregame card it replaces. */
+.game-leaders__list {
+  display: flex;
+  flex-direction: column;
   border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
 }
 
-.game-leaders__column {
+.game-leaders__row {
   display: grid;
-  grid-template-rows: auto auto minmax(2.3em, auto) auto;
-  align-items: start;
-  justify-items: center;
-  gap: var(--space-1);
-  min-width: 0;
-  padding: var(--space-2) var(--space-3);
-  text-align: center;
-}
-
-.game-leaders__column + .game-leaders__column {
-  border-left: 1px solid var(--line);
+  grid-template-columns: 2.4rem 2.2rem 1fr auto;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: 0.4rem 0.25rem;
+  border-bottom: 1px solid var(--line);
 }
 
 .game-leaders__label {
   font-family: var(--font-display);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-2);
+}
+
+.game-leaders__value {
+  font-family: var(--font-score);
+  font-size: 1.15rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-0);
+}
+
+.game-leaders__name {
+  min-width: 0;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .game-leaders__team {
   display: inline-flex;
   align-items: center;
   gap: var(--space-1);
-  margin-top: -0.3rem;
+  justify-self: end;
   font-family: var(--font-display);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-2);
-}
-
-.game-leaders__name {
-  min-width: 0;
-  font-family: var(--font-display);
-  font-size: 0.78rem;
-  font-weight: 600;
-  line-height: 1.15;
-  text-transform: uppercase;
-  color: var(--ink-0);
-}
-
-.game-leaders__value,
-.game-leaders__empty {
-  font-family: var(--font-score);
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--ink-0);
+  white-space: nowrap;
 }
 
 .game-leaders__empty {
-  grid-row: 2 / span 3;
-  align-self: center;
+  grid-column: 3 / -1;
   color: var(--ink-2);
 }
 
@@ -1653,10 +1687,6 @@ p {
 .season-complete-panel--secondary {
   border-color: var(--line-strong);
   padding: var(--space-5);
-}
-
-.standings-conference-tabs {
-  margin-bottom: var(--space-3);
 }
 
 .standings-table tbody tr[data-controlled='true'] {

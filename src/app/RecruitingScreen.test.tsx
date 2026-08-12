@@ -227,11 +227,36 @@ describe('Recruiting Overview', () => {
     expect(document.querySelector('.recruiting-needs__table')).toBeNull()
   })
 
-  it('does not repeat the Board count in the Board action area', () => {
+  it('hides the Fill Remaining Board action area entirely once the Board is full', () => {
     renderRecruitingScreen()
 
+    expect(document.querySelector('.recruiting-board-management')).toBeNull()
+    expect(
+      screen.queryByRole('button', { name: 'Fill Remaining Board' }),
+    ).not.toBeInTheDocument()
+  })
+
+  it('does not repeat the Board count beside Fill Remaining Board on a partial Board', () => {
+    const source = buildFixtureDynasty()
+    const partial = {
+      ...source,
+      recruiting: {
+        ...source.recruiting!,
+        programs: {
+          ...source.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...source.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: source.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board.slice(0, 3),
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({ dynasty: partial, view: 'recruiting', explorationViewHistory: [] })
+    render(<App />)
+
     const management = document.querySelector('.recruiting-board-management') as HTMLElement
-    expect(within(management).queryByText(/10 \/ 10/)).not.toBeInTheDocument()
+    expect(management).not.toBeNull()
+    expect(within(management).queryByText(/3 \/ 10/)).not.toBeInTheDocument()
     expect(
       within(management).getByRole('button', { name: 'Fill Remaining Board' }),
     ).toBeInTheDocument()
@@ -270,9 +295,11 @@ describe('Recruiting Board', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/Added \d+ recruits? to your Board/)
   })
 
-  it('disables Fill Remaining Board when the Board is full', () => {
+  it('hides Fill Remaining Board when the Board is full', () => {
     renderRecruitingScreen()
-    expect(screen.getByRole('button', { name: 'Fill Remaining Board' })).toBeDisabled()
+    expect(
+      screen.queryByRole('button', { name: 'Fill Remaining Board' }),
+    ).not.toBeInTheDocument()
   })
 
   it('renders every board target with rank, stars, ratings, and focus', () => {

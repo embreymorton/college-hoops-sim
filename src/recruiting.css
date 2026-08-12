@@ -317,27 +317,6 @@
   margin-right: var(--space-2);
 }
 
-.recruiting-hub-summary__commitment {
-  font-size: 0.78rem;
-  color: var(--ink-0);
-  background: var(--accent-soft);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: var(--space-2) var(--space-3);
-  margin: var(--space-4) 0 0;
-}
-
-.recruiting-hub-summary__commitment-tag {
-  display: inline-block;
-  font-family: var(--font-display);
-  font-size: 0.6rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-  margin-right: var(--space-2);
-}
-
 .recruiting-hub-summary__action {
   margin-top: auto;
   width: 100%;
@@ -365,9 +344,9 @@
 }
 
 .recruiting-hub-focus__item {
-  padding: var(--space-2) 0 var(--space-2) var(--space-2);
+  position: relative;
+  padding: var(--space-2) 0;
   border-bottom: 1px solid var(--line);
-  border-left: 2px solid transparent;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -378,14 +357,25 @@
   padding-bottom: 0;
 }
 
-/* Only the two states worth interrupting a scan get a left-edge cue — every
-   other state stays flush and unaccented. */
-.recruiting-hub-focus__item[data-readiness='decision-soon'] {
-  border-left-color: var(--accent);
+/* Only the two states worth interrupting a scan get a left-edge cue, drawn
+   as an overlay in the panel's own padding rather than a reserved gutter —
+   every row (accented or not) stays flush with the rest of the module. */
+.recruiting-hub-focus__item[data-readiness='decision-soon']::before,
+.recruiting-hub-focus__item[data-readiness='decision-imminent']::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(-1 * var(--space-3));
+  width: 2px;
 }
 
-.recruiting-hub-focus__item[data-readiness='decision-imminent'] {
-  border-left-color: var(--accent-strong);
+.recruiting-hub-focus__item[data-readiness='decision-soon']::before {
+  background: var(--accent);
+}
+
+.recruiting-hub-focus__item[data-readiness='decision-imminent']::before {
+  background: var(--accent-strong);
 }
 
 .recruiting-hub-focus__identity {
@@ -471,6 +461,57 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
+}
+
+/* ==========================================================================
+   Hub Commits — signed Board targets, distinct from unresolved Focus
+   Targets above (6E.16B)
+   ========================================================================== */
+
+.recruiting-hub-commits {
+  margin-top: var(--space-4);
+}
+
+.recruiting-hub-commits__label {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  margin: 0 0 var(--space-2);
+}
+
+.recruiting-hub-commits__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.recruiting-hub-commits__item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.recruiting-hub-commits__rank {
+  color: var(--ink-2);
+  font-family: var(--font-score);
+  font-size: 0.8rem;
+}
+
+.recruiting-hub-commits__name {
+  color: var(--ink-0);
+  font-weight: 600;
+}
+
+.recruiting-hub-commits__pos {
+  color: var(--ink-1);
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .recruiting-hub-summary__onboarding {
@@ -904,16 +945,18 @@
 }
 
 /* ==========================================================================
-   Recruiting Update recap — compact, automatic, no Dismiss (6E.12C)
+   Recruiting Update recap — compact, automatic, no Dismiss (6E.12C).
+   Composes inside the Hub Recruiting module (6E.16B) rather than as a
+   separate top-level Hub surface, so it stays a quiet inline block — no
+   background or full border box, just a left accent bar and a rule beneath
+   to close it off from the status content that follows.
    ========================================================================== */
 
 .recruiting-commitment-alerts {
-  margin-bottom: var(--space-4);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-1);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius-sm);
+  margin: 0 0 var(--space-4);
+  padding: 0 0 var(--space-3) var(--space-3);
+  border-left: 2px solid var(--accent);
+  border-bottom: 1px solid var(--line);
 }
 
 .recruiting-commitment-alerts__heading {

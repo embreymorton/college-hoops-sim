@@ -1,13 +1,10 @@
 import { POSITIONS, type Position } from '../engine'
 import {
   FINAL_RECRUITING_PERIOD,
-  getRecruit,
   REGULAR_SEASON_RECRUITING_PERIODS,
   type ProgramRecruitingBoard,
   type RecruitingPhase,
-  type RecruitingState,
   type RecruitingTargetStatus,
-  type RecruitStarRating,
 } from '../dynasty'
 
 /**
@@ -169,44 +166,3 @@ export function deriveRecruitingHubTotals(
   }
 }
 
-export interface RecentControlledCommitment {
-  readonly nationalRank: number
-  readonly playerName: string
-  readonly position: string
-  readonly stars: RecruitStarRating
-}
-
-/**
- * The controlled Program's own commitment resolved in the most recently
- * resolved Recruiting period, if any — cheaply derived from canonical
- * commitment timing, never a new persisted event log.
- */
-export function deriveRecentControlledCommitment(
-  recruiting: RecruitingState,
-  controlledProgramId: string,
-): RecentControlledCommitment | undefined {
-  const commitment = Object.values(recruiting.commitmentsByPlayerId).find(
-    (candidate) =>
-      candidate.programId === controlledProgramId &&
-      candidate.timing.kind === 'period' &&
-      candidate.timing.period === recruiting.lastResolvedPeriod &&
-      recruiting.lastResolvedPeriod > 0,
-  )
-
-  if (!commitment) {
-    return undefined
-  }
-
-  const recruit = getRecruit(recruiting, commitment.playerId)
-
-  if (!recruit) {
-    return undefined
-  }
-
-  return {
-    nationalRank: recruit.nationalRank,
-    playerName: `${recruit.player.firstName} ${recruit.player.lastName}`,
-    position: recruit.player.position,
-    stars: recruit.stars,
-  }
-}

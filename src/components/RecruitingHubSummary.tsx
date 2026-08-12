@@ -2,14 +2,16 @@ import { RECRUITING_BOARD_LIMIT, type ProgramRecruitingBoard, type RecruitingPha
 import {
   formatControlledPositionLabel,
   formatReadinessLabel,
+  type CommitmentActivityDescription,
   type FocusTargetSummary,
+  type RecruitingHubCommitSummary,
 } from '../app/recruitingBattleFormatters'
 import {
   deriveRecruitingHubTotals,
   formatRankLabel,
   formatRecruitingPeriodLabel,
-  type RecentControlledCommitment,
 } from '../app/recruitingFormatters'
+import { RecruitingCommitmentAlerts } from './RecruitingCommitmentAlerts'
 import { RecruitStars } from './RecruitStars'
 
 interface RecruitingHubSummaryProps {
@@ -18,7 +20,10 @@ interface RecruitingHubSummaryProps {
   readonly lastResolvedPeriod: number
   readonly board: ProgramRecruitingBoard
   readonly focusTargets: readonly FocusTargetSummary[]
-  readonly recentCommitment: RecentControlledCommitment | undefined
+  /** Signed Board targets — the Hub's stable status home for commitments, distinct from still-unresolved Focus Targets. */
+  readonly commits?: readonly RecruitingHubCommitSummary[]
+  /** Commitment activity since the last simulation/progression boundary — composes inside this module rather than as a separate top-level Hub surface. */
+  readonly activity?: readonly CommitmentActivityDescription[]
   readonly onGenerateDraftBoard: () => void
   readonly onBuildManually: () => void
   /** True once the Tournament has concluded — reframes this module as the Late Recruiting lead-in rather than mid-Season status. */
@@ -27,9 +32,9 @@ interface RecruitingHubSummaryProps {
 
 /**
  * A compact, status-only Season/Postseason Hub module: a condensed Board
- * overview plus every Focused Recruit worth the player's attention. No
- * competitor detail and no navigation CTA — primary Dynasty navigation
- * already exposes Recruiting.
+ * overview, the most recent Recruiting Update recap, every unresolved Focus
+ * Target, and every signed Commit. No competitor detail and no navigation
+ * CTA — primary Dynasty navigation already exposes Recruiting.
  */
 export function RecruitingHubSummary({
   targetSeasonNumber,
@@ -37,7 +42,8 @@ export function RecruitingHubSummary({
   lastResolvedPeriod,
   board,
   focusTargets,
-  recentCommitment,
+  commits = [],
+  activity = [],
   onGenerateDraftBoard,
   onBuildManually,
   isSeasonComplete = false,
@@ -59,6 +65,8 @@ export function RecruitingHubSummary({
           Late Recruiting is next — this board carries forward.
         </p>
       )}
+
+      <RecruitingCommitmentAlerts activity={activity} />
 
       {needsOnboarding ? (
         <div className="recruiting-hub-summary__onboarding">
@@ -127,13 +135,22 @@ export function RecruitingHubSummary({
             </div>
           )}
 
-          {recentCommitment && (
-            <p className="recruiting-hub-summary__commitment">
-              <span className="recruiting-hub-summary__commitment-tag">New Commitment</span>
-              {formatRankLabel(recentCommitment.nationalRank)}{' '}
-              {recentCommitment.playerName} · {recentCommitment.position} ·{' '}
-              <RecruitStars stars={recentCommitment.stars} />
-            </p>
+          {commits.length > 0 && (
+            <div className="recruiting-hub-commits">
+              <p className="recruiting-hub-commits__label">Commits</p>
+              <ul className="recruiting-hub-commits__list">
+                {commits.map((commit) => (
+                  <li key={commit.playerId} className="recruiting-hub-commits__item">
+                    <span className="recruiting-hub-commits__rank">
+                      {formatRankLabel(commit.nationalRank)}
+                    </span>
+                    <span className="recruiting-hub-commits__name">{commit.playerName}</span>
+                    <span className="recruiting-hub-commits__pos">{commit.position}</span>
+                    <RecruitStars stars={commit.stars} />
+                  </li>
+                ))}
+              </ul>
+            </div>
           )}
         </>
       )}

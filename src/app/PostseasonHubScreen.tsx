@@ -3,7 +3,6 @@ import { calculateTeamStrength } from '../engine'
 import {
   CompletedMatchupCard,
   DynastySectionNav,
-  RecruitingCommitmentAlerts,
   RecruitingHubSummary,
   SeasonCompleteHandoff,
   SuperSimConfirmDialog,
@@ -49,9 +48,9 @@ import { formatOvertimeTag } from './formatters'
 import { deriveGameLeaders } from './gameLeaders'
 import {
   deriveFocusTargetSummaries,
+  deriveHubCommitSummaries,
   deriveRecruitingActivityDescriptions,
 } from './recruitingBattleFormatters'
-import { deriveRecentControlledCommitment } from './recruitingFormatters'
 import { describeRoundProgress } from './seasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -203,6 +202,8 @@ export function PostseasonHubScreen() {
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
   const focusTargets =
     dynasty && recruitingBoard ? deriveFocusTargetSummaries(dynasty, recruitingBoard) : []
+  const recruitingCommits =
+    dynasty && recruitingBoard ? deriveHubCommitSummaries(dynasty, recruitingBoard) : []
   const recruitingActivity =
     dynasty && recruiting && recruitingActivityBaselinePeriod !== null
       ? deriveRecruitingActivityDescriptions(
@@ -510,7 +511,7 @@ export function PostseasonHubScreen() {
   }
 
   return (
-    <>
+    <div className="season-hub">
       <DynastySectionNav
         competitionLabel="Tournament"
         activeSection="competition"
@@ -529,8 +530,6 @@ export function PostseasonHubScreen() {
             : formatTournamentRoundName(currentRound)
         }
       />
-
-      <RecruitingCommitmentAlerts activity={recruitingActivity} />
 
       <div className="hub-primary-grid">
         <section
@@ -611,7 +610,8 @@ export function PostseasonHubScreen() {
               lastResolvedPeriod={recruiting.lastResolvedPeriod}
               board={recruitingBoard}
               focusTargets={focusTargets}
-              recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
+              commits={recruitingCommits}
+              activity={recruitingActivity}
               onGenerateDraftBoard={generateControlledDraftBoard}
               onBuildManually={goToRecruiting}
               isSeasonComplete={tournamentComplete}
@@ -656,6 +656,6 @@ export function PostseasonHubScreen() {
           onConfirm={confirmSuperSim}
         />
       )}
-    </>
+    </div>
   )
 }

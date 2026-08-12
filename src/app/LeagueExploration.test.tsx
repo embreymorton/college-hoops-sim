@@ -67,31 +67,41 @@ beforeEach(() => {
 })
 
 describe('League navigation', () => {
-  it('opens League from the Season Hub via the section tabs', () => {
+  it('opens League from the Season Hub via the section tabs, with no redundant root chrome', () => {
     selectControlledProgram()
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'League' }))
 
-    expect(screen.getByRole('heading', { name: 'League' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Leaders' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Teams' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'League' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    // Primary Dynasty navigation already establishes location — the root
+    // League view carries no separate Back action or duplicate heading.
     expect(
-      screen.getByRole('button', { name: /back to season/i }),
-    ).toBeInTheDocument()
+      screen.queryByRole('button', { name: /back to season/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'League' }),
+    ).not.toBeInTheDocument()
   })
 
-  it('returns to the Season Hub via the back button', () => {
+  it('returns to the Season Hub via the primary section nav', () => {
     selectControlledProgram()
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'League' }))
-    fireEvent.click(screen.getByRole('button', { name: /back to season/i }))
+    fireEvent.click(screen.getByRole('button', { name: 'Season' }))
 
     expect(
       screen.getByRole('heading', { name: 'Charlotte Tech' }),
     ).toBeInTheDocument()
   })
 
-  it('remains accessible from the Postseason Hub', () => {
+  it('remains accessible from the Postseason Hub, with no redundant root chrome', () => {
     selectControlledProgram()
     driveSeasonToCompletion()
     useDynastyStore.getState().enterPostseason()
@@ -99,10 +109,14 @@ describe('League navigation', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'League' }))
 
-    expect(screen.getByRole('heading', { name: 'League' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Leaders' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Teams' })).toBeInTheDocument()
     expect(
-      screen.getByRole('button', { name: /back to tournament/i }),
-    ).toBeInTheDocument()
+      screen.queryByRole('button', { name: /back to tournament/i }),
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('heading', { name: 'League' }),
+    ).not.toBeInTheDocument()
   })
 })
 
@@ -153,7 +167,8 @@ describe('National Leaders', () => {
       screen.getByRole('heading', { name: programName }),
     ).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: /back to league/i }))
-    expect(screen.getByRole('heading', { name: 'League' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Leaders' })).toBeInTheDocument()
+    expect(screen.getByText('Scoring')).toBeInTheDocument()
   })
 })
 

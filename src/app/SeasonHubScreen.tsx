@@ -5,7 +5,6 @@ import {
   DynastySectionNav,
   NextGameCard,
   RecentResultsSection,
-  RecruitingCommitmentAlerts,
   RecruitingHubSummary,
   ScheduleTable,
   SeasonHeader,
@@ -40,9 +39,9 @@ import { deriveGameLeaders } from './gameLeaders'
 import { formatTournamentQualification } from './postseasonFormatters'
 import {
   deriveFocusTargetSummaries,
+  deriveHubCommitSummaries,
   deriveRecruitingActivityDescriptions,
 } from './recruitingBattleFormatters'
-import { deriveRecentControlledCommitment } from './recruitingFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -50,7 +49,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 )
 
 /** Compact recent-form strip; 3–5 games keeps the Hub from feeling like a full log. */
-const RECENT_RESULTS_COUNT = 4
+const RECENT_RESULTS_COUNT = 5
 
 function buildTeamInfo(
   season: SeasonState,
@@ -120,6 +119,8 @@ export function SeasonHubScreen() {
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
   const focusTargets =
     dynasty && recruitingBoard ? deriveFocusTargetSummaries(dynasty, recruitingBoard) : []
+  const recruitingCommits =
+    dynasty && recruitingBoard ? deriveHubCommitSummaries(dynasty, recruitingBoard) : []
   const recruitingActivity =
     dynasty && recruiting && recruitingActivityBaselinePeriod !== null
       ? deriveRecruitingActivityDescriptions(
@@ -215,7 +216,7 @@ export function SeasonHubScreen() {
   )
 
   return (
-    <>
+    <div className="season-hub">
       <DynastySectionNav
         competitionLabel="Season"
         activeSection="competition"
@@ -234,8 +235,6 @@ export function SeasonHubScreen() {
         roundCount={season.schedule.roundCount}
         isComplete={seasonComplete}
       />
-
-      <RecruitingCommitmentAlerts activity={recruitingActivity} />
 
       <div className="hub-primary-grid">
       <section className="section hub-primary-grid__game" aria-labelledby="next-game-heading">
@@ -416,7 +415,8 @@ export function SeasonHubScreen() {
             lastResolvedPeriod={recruiting.lastResolvedPeriod}
             board={recruitingBoard}
             focusTargets={focusTargets}
-            recentCommitment={deriveRecentControlledCommitment(recruiting, controlledProgramId)}
+            commits={recruitingCommits}
+            activity={recruitingActivity}
             onGenerateDraftBoard={generateControlledDraftBoard}
             onBuildManually={goToRecruiting}
           />
@@ -424,32 +424,34 @@ export function SeasonHubScreen() {
       )}
       </div>
 
-      <section className="section" aria-labelledby="standings-heading">
-        <h2 id="standings-heading" className="section-title">
-          Conference Standings
-        </h2>
-        <ConferenceStandingsSection
-          universe={UNIVERSE_V0}
-          season={season}
-          controlledProgramId={controlledProgramId}
-          defaultConferenceId={controlledProgram.conferenceId}
-          onSelectProgram={openTeamDetails}
-        />
-      </section>
-
-      {recentGames.length > 0 && (
-        <section className="section" aria-labelledby="recent-results-heading">
-          <h2 id="recent-results-heading" className="section-title">
-            Recent Results
+      <div className="hub-secondary-grid">
+        <section className="section" aria-labelledby="standings-heading">
+          <h2 id="standings-heading" className="section-title">
+            Conference Standings
           </h2>
-          <RecentResultsSection
-            games={recentGames}
-            programId={controlledProgramId}
-            programsById={PROGRAMS_BY_ID}
-            onSelectGame={viewCompletedGame}
+          <ConferenceStandingsSection
+            universe={UNIVERSE_V0}
+            season={season}
+            controlledProgramId={controlledProgramId}
+            conferenceId={controlledProgram.conferenceId}
+            onSelectProgram={openTeamDetails}
           />
         </section>
-      )}
+
+        {recentGames.length > 0 && (
+          <section className="section" aria-labelledby="recent-results-heading">
+            <h2 id="recent-results-heading" className="section-title">
+              Recent Results
+            </h2>
+            <RecentResultsSection
+              games={recentGames}
+              programId={controlledProgramId}
+              programsById={PROGRAMS_BY_ID}
+              onSelectGame={viewCompletedGame}
+            />
+          </section>
+        )}
+      </div>
 
       <section className="section" aria-labelledby="schedule-heading">
         <h2 id="schedule-heading" className="section-title">
@@ -490,6 +492,6 @@ export function SeasonHubScreen() {
           onContinue={dismissSuperSimSummary}
         />
       )}
-    </>
+    </div>
   )
 }

@@ -216,16 +216,17 @@ export function RecruitingScreen() {
             />
           ) : (
             <>
-              <div className="recruiting-board-management">
-                <button
-                  type="button"
-                  className="button button--ghost"
-                  disabled={board.targets.length >= RECRUITING_BOARD_LIMIT}
-                  onClick={fillBoard}
-                >
-                  Fill Remaining Board
-                </button>
-              </div>
+              {board.targets.length < RECRUITING_BOARD_LIMIT && (
+                <div className="recruiting-board-management">
+                  <button
+                    type="button"
+                    className="button button--ghost"
+                    onClick={fillBoard}
+                  >
+                    Fill Remaining Board
+                  </button>
+                </div>
+              )}
               {boardFillMessage && <p className="section-hint" role="status">{boardFillMessage}</p>}
               <RecruitingBoardTable
                 dynasty={dynasty}

@@ -162,7 +162,10 @@ export interface FocusTargetSummary {
  * Up to the controlled Program's Focused Board targets, identity-joined with
  * the pure battle projection, in stable National Rank order. Never more than
  * `RECRUITING_FOCUS_LIMIT` targets exist canonically, so no separate cap is
- * applied here.
+ * applied here. Only `active` targets qualify — once a Recruit resolves
+ * (committed to us, committed elsewhere, or position-filled) he is no longer
+ * an unresolved Focus target; a controlled-Program commitment instead
+ * surfaces through `deriveHubCommitSummaries`.
  */
 export function deriveFocusTargetSummaries(
   dynasty: DynastyState,
@@ -172,7 +175,7 @@ export function deriveFocusTargetSummaries(
   if (!recruiting) return []
 
   return board.targets
-    .filter((target) => target.isFocused)
+    .filter((target) => target.isFocused && target.status === 'active')
     .map((target) => {
       const recruit = getRecruit(recruiting, target.playerId)!
       return {
@@ -182,6 +185,42 @@ export function deriveFocusTargetSummaries(
         stars: recruit.stars,
         nationalRank: recruit.nationalRank,
         battle: deriveRecruitingBattleView(dynasty, target.playerId),
+      }
+    })
+    .sort((first, second) => first.nationalRank - second.nationalRank)
+}
+
+export interface RecruitingHubCommitSummary {
+  readonly playerId: string
+  readonly playerName: string
+  readonly position: Position
+  readonly stars: RecruitStarRating
+  readonly nationalRank: number
+}
+
+/**
+ * Every Board target already committed to the controlled Program, identity-
+ * joined for display, in stable National Rank order. The Hub's stable
+ * status home for signed Recruits — distinct from the still-unresolved
+ * Focus Targets above.
+ */
+export function deriveHubCommitSummaries(
+  dynasty: DynastyState,
+  board: ProgramRecruitingBoard,
+): RecruitingHubCommitSummary[] {
+  const recruiting = dynasty.recruiting
+  if (!recruiting) return []
+
+  return board.targets
+    .filter((target) => target.status === 'committed')
+    .map((target) => {
+      const recruit = getRecruit(recruiting, target.playerId)!
+      return {
+        playerId: target.playerId,
+        playerName: `${recruit.player.firstName} ${recruit.player.lastName}`,
+        position: recruit.player.position,
+        stars: recruit.stars,
+        nationalRank: recruit.nationalRank,
       }
     })
     .sort((first, second) => first.nationalRank - second.nationalRank)

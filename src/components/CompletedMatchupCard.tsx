@@ -66,23 +66,23 @@ export function CompletedMatchupCard({
       </div>
       <div className="game-leaders" aria-label="Game leaders">
         <p className="game-leaders__heading">Game Leaders</p>
-        <div className="game-leaders__grid">
-          <GameLeaderColumn
+        <ul className="game-leaders__list">
+          <GameLeaderRow
             label="PTS"
             leader={leaders.points}
             teamColor={getLeaderTeamColor(leaders.points, home, away)}
           />
-          <GameLeaderColumn
+          <GameLeaderRow
             label="REB"
             leader={leaders.rebounds}
             teamColor={getLeaderTeamColor(leaders.rebounds, home, away)}
           />
-          <GameLeaderColumn
+          <GameLeaderRow
             label="AST"
             leader={leaders.assists}
             teamColor={getLeaderTeamColor(leaders.assists, home, away)}
           />
-        </div>
+        </ul>
       </div>
       <div className="next-game-card__actions">
         <button
@@ -97,7 +97,12 @@ export function CompletedMatchupCard({
   )
 }
 
-function GameLeaderColumn({
+/**
+ * One dense row per stat — "PTS 27 · Mason Webb" plus the scoring Program —
+ * rather than three oversized bordered columns, so the completed card's
+ * footprint stays close to the pregame card it replaces.
+ */
+function GameLeaderRow({
   label,
   leader,
   teamColor,
@@ -107,7 +112,7 @@ function GameLeaderColumn({
   readonly teamColor: string | undefined
 }) {
   return (
-    <div className="game-leaders__column" data-stat={label.toLowerCase()}>
+    <li className="game-leaders__row" data-stat={label.toLowerCase()}>
       <span className="game-leaders__label">{label}</span>
       {leader ? (
         <>
@@ -127,7 +132,7 @@ function GameLeaderColumn({
       ) : (
         <span className="game-leaders__empty">—</span>
       )}
-    </div>
+    </li>
   )
 }
 

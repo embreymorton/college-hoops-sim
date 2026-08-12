@@ -970,6 +970,132 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     expect(document.querySelector('.recruiting-hub-focus')).toBeNull()
   })
 
+  it('moves a Recruit from unresolved Focus Targets to Commits once he commits to us, and drops him from Focus (6E.16B)', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const dynasty = useDynastyStore.getState().dynasty!
+    const recruiting = dynasty.recruiting!
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const target = controlledBoard.find((candidate) => candidate.isFocused)!
+    const recruitName = getRecruit(recruiting, target.playerId)!.player.firstName
+
+    expect(document.querySelector('.recruiting-hub-commits')).toBeNull()
+    const focusItemsBefore = document.querySelectorAll('.recruiting-hub-focus__item').length
+
+    act(() => {
+      useDynastyStore.setState({
+        dynasty: {
+          ...dynasty,
+          recruiting: {
+            ...recruiting,
+            commitmentsByPlayerId: {
+              [target.playerId]: {
+                playerId: target.playerId,
+                programId: dynasty.controlledProgramId,
+                timing: { kind: 'period', period: 1 },
+                targetSeasonNumber: recruiting.targetSeasonNumber,
+              },
+            },
+          },
+        },
+      })
+    })
+
+    const summary = document.querySelector('.recruiting-hub-summary') as HTMLElement
+    const commits = summary.querySelector('.recruiting-hub-commits') as HTMLElement
+    expect(commits).not.toBeNull()
+    expect(within(commits).getByText(new RegExp(recruitName))).toBeInTheDocument()
+    expect(
+      document.querySelectorAll('.recruiting-hub-focus__item').length,
+    ).toBe(focusItemsBefore - 1)
+    const focusList = summary.querySelector('.recruiting-hub-focus')
+    if (focusList) {
+      expect(
+        within(focusList as HTMLElement).queryByText(new RegExp(recruitName)),
+      ).not.toBeInTheDocument()
+    }
+  })
+
+  it('composes the Recruiting Update recap inside the Hub Recruiting module, not as a separate top-level surface (6E.16B)', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const dynasty = useDynastyStore.getState().dynasty!
+    const recruiting = dynasty.recruiting!
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const target = controlledBoard.find((candidate) => !candidate.isFocused)!
+    const rivalProgramId = Object.keys(recruiting.programs).find(
+      (programId) => programId !== dynasty.controlledProgramId,
+    )!
+
+    act(() => {
+      useDynastyStore.setState({
+        dynasty: {
+          ...dynasty,
+          recruiting: {
+            ...recruiting,
+            lastResolvedPeriod: 4,
+            commitmentsByPlayerId: {
+              [target.playerId]: {
+                playerId: target.playerId,
+                programId: rivalProgramId,
+                timing: { kind: 'period', period: 4 },
+                targetSeasonNumber: recruiting.targetSeasonNumber,
+              },
+            },
+          },
+        },
+        recruitingActivityBaselinePeriod: 3,
+      })
+    })
+
+    const summary = document.querySelector('.recruiting-hub-summary') as HTMLElement
+    expect(summary.querySelector('.recruiting-commitment-alerts')).not.toBeNull()
+    // No separate top-level alert surface as a sibling of the Recruiting module.
+    const grid = document.querySelector('.hub-primary-grid') as HTMLElement
+    expect(grid.querySelector(':scope > .recruiting-commitment-alerts')).toBeNull()
+  })
+
+  it('shows only the controlled Conference standings on the Hub, with no Conference switcher', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+    })
+
+    const standingsSection = screen
+      .getByRole('heading', { name: 'Conference Standings' })
+      .closest('section') as HTMLElement
+    expect(
+      within(standingsSection).queryByRole('group', { name: 'Conference' }),
+    ).not.toBeInTheDocument()
+    expect(
+      within(standingsSection).getByRole('button', { name: /^Charlotte Tech/ }),
+    ).toBeInTheDocument()
+  })
+
+  it('composes Conference Standings and Recent Results together in the Hub secondary grid', () => {
+    render(<App />)
+    act(() => {
+      selectProgramViaUI('Charlotte Tech')
+      useDynastyStore.getState().simulateNextGame()
+      useDynastyStore.getState().simulateRestOfRound()
+    })
+
+    const secondaryGrid = document.querySelector('.hub-secondary-grid') as HTMLElement
+    expect(secondaryGrid).not.toBeNull()
+    expect(
+      within(secondaryGrid).getByRole('heading', { name: 'Conference Standings' }),
+    ).toBeInTheDocument()
+    expect(
+      within(secondaryGrid).getByRole('heading', { name: 'Recent Results' }),
+    ).toBeInTheDocument()
+  })
+
   it('surfaces commitment activity across a simulation boundary with no Dismiss control', () => {
     render(<App />)
     act(() => {
