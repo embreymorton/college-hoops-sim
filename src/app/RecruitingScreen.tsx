@@ -34,6 +34,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 export function RecruitingScreen() {
   const [mode, setMode] = useState<RecruitingMode>('board')
   const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false)
+  const [boardFillMessage, setBoardFillMessage] = useState<string | null>(null)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const postseason = useDynastyStore(selectActivePostseason)
   const actionError = useDynastyStore((state) => state.recruitingActionError)
@@ -51,6 +52,9 @@ export function RecruitingScreen() {
   const withdrawRecruitingOffer = useDynastyStore((state) => state.withdrawRecruitingOffer)
   const generateControlledDraftBoard = useDynastyStore(
     (state) => state.generateControlledDraftBoard,
+  )
+  const fillRemainingRecruitingBoard = useDynastyStore(
+    (state) => state.fillRemainingRecruitingBoard,
   )
   const finalizeRecruitingClass = useDynastyStore(
     (state) => state.finalizeRecruitingClass,
@@ -107,6 +111,14 @@ export function RecruitingScreen() {
   const showZeroOfferWarning =
     board.targets.length > 0 && totals.remainingTotal > 0 && totals.offersTotal === 0
   const isLate = dynasty.recruiting.phase === 'late'
+  const fillBoard = () => {
+    const added = fillRemainingRecruitingBoard()
+    setBoardFillMessage(
+      added > 0
+        ? `Added ${added} ${added === 1 ? 'recruit' : 'recruits'} to your Board.`
+        : 'No additional eligible recruits were available.',
+    )
+  }
 
   return (
     <>
@@ -216,18 +228,33 @@ export function RecruitingScreen() {
               needsByPosition={totals.needsByPosition}
               remainingTotal={totals.remainingTotal}
               onGenerateDraftBoard={generateControlledDraftBoard}
+              onFillRemainingBoard={fillBoard}
               onBrowseNationalClass={() => setMode('national')}
             />
           ) : (
-            <RecruitingBoardTable
-              dynasty={dynasty}
-              board={board}
-              programsById={PROGRAMS_BY_ID}
-              onSetFocus={setRecruitingFocus}
-              onOffer={offerRecruitingTarget}
-              onWithdraw={withdrawRecruitingOffer}
-              onRemove={removeRecruitingTarget}
-            />
+            <>
+              <div className="recruiting-board-management">
+                <span>{board.targets.length} / {RECRUITING_BOARD_LIMIT} Board</span>
+                <button
+                  type="button"
+                  className="button button--ghost"
+                  disabled={board.targets.length >= RECRUITING_BOARD_LIMIT}
+                  onClick={fillBoard}
+                >
+                  Fill Remaining Board
+                </button>
+              </div>
+              {boardFillMessage && <p className="section-hint" role="status">{boardFillMessage}</p>}
+              <RecruitingBoardTable
+                dynasty={dynasty}
+                board={board}
+                programsById={PROGRAMS_BY_ID}
+                onSetFocus={setRecruitingFocus}
+                onOffer={offerRecruitingTarget}
+                onWithdraw={withdrawRecruitingOffer}
+                onRemove={removeRecruitingTarget}
+              />
+            </>
           )
         ) : mode === 'battles' ? (
           <RecruitingBattlesGrid

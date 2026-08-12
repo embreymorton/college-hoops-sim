@@ -300,6 +300,13 @@ the unused Focus slots. This one-time alignment does not couple the controls:
 after generation, the player may independently Focus, Offer, withdraw, and
 change the Board as before.
 
+`Fill Remaining Board` is a separate explicit convenience action for a partial
+controlled-Program Board. It preserves existing membership, order, Focus, and
+Offers exactly, then appends deterministic legal recommendations up to Board
+capacity. Added targets receive normal Board membership only. Removing or
+losing a target, advancing a period, or simulating never triggers an automatic
+refill.
+
 When an offered Recruit becomes unavailable while a controlled Program still has positional need, autonomous progression may promote an eligible same-position backup already on that user's board. Selection is deterministic: Focus status, current standing descending, National Rank ascending, then Player ID. This preserves the user's Board and relationship history, adds no new target, and does not invent a new Focus strategy. Explicit user offer withdrawals are not treated as losses to replace, and AI management does not casually overwrite a controlled Program's otherwise valid offers.
 
 ### Competition, commitments, and calendar

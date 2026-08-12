@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { UNIVERSE_V0 } from '../../universe'
 import {
   addRecruitingBoardTarget,
+  fillRemainingRecruitingBoard,
   refreshAiRecruitingBoards,
   removeRecruitingBoardTarget,
   setRecruitingFocus,
 } from './boards'
 import { RECRUITING_BOARD_LIMIT } from './constants'
+import type { RecruitingBoardTarget } from './domain'
 import {
   deriveProgramCommitments,
   deriveProgramRecruitingBoard,
@@ -64,6 +66,100 @@ describe('Program recruiting boards', () => {
     dynasty = setRecruitingFocus({ dynasty, playerId: removed.playerId, isFocused: true })
     expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
       .find(({ playerId }) => playerId === removed.playerId)?.isFocused).toBe(true)
+  })
+
+  it('fills only remaining capacity while preserving the exact manual plan and order', () => {
+    const full = createRecruitingDynasty('assistant-partial-board')
+    const programId = full.controlledProgramId
+    const original = full.recruiting!.programs[programId]!.board.slice(0, 3).map(
+      (target, index) => ({
+        ...target,
+        isFocused: index === 0 || index === 2,
+        hasActiveOffer: index === 1 || index === 2,
+      }),
+    )
+    const dynasty = {
+      ...full,
+      recruiting: {
+        ...full.recruiting!,
+        programs: {
+          ...full.recruiting!.programs,
+          [programId]: { ...full.recruiting!.programs[programId]!, board: original },
+        },
+      },
+    }
+
+    const filled = fillRemainingRecruitingBoard(dynasty)
+    const board = filled.recruiting!.programs[programId]!.board
+    expect(board).toHaveLength(RECRUITING_BOARD_LIMIT)
+    expect(board.slice(0, original.length)).toEqual(original)
+    expect(board.slice(original.length).every(
+      ({ isFocused, hasActiveOffer }) => !isFocused && !hasActiveOffer,
+    )).toBe(true)
+    expect(new Set(board.map(({ playerId }) => playerId)).size).toBe(board.length)
+  })
+
+  it('fills empty and nearly-full Boards deterministically without changing AI plans', () => {
+    const source = createRecruitingDynasty('assistant-determinism')
+    const programId = source.controlledProgramId
+    const aiBefore = Object.fromEntries(Object.entries(source.recruiting!.programs).filter(
+      ([id]) => id !== programId,
+    ))
+    const withBoard = (board: readonly RecruitingBoardTarget[]) => ({
+      ...source,
+      recruiting: {
+        ...source.recruiting!,
+        programs: {
+          ...source.recruiting!.programs,
+          [programId]: { ...source.recruiting!.programs[programId]!, board },
+        },
+      },
+    })
+    const empty = withBoard([])
+    const first = fillRemainingRecruitingBoard(empty)
+    const replay = fillRemainingRecruitingBoard(empty)
+    expect(first.recruiting!.programs[programId]!.board).toEqual(
+      replay.recruiting!.programs[programId]!.board,
+    )
+    expect(first.recruiting!.programs[programId]!.board.every(
+      ({ isFocused, hasActiveOffer }) => !isFocused && !hasActiveOffer,
+    )).toBe(true)
+    expect(Object.fromEntries(Object.entries(first.recruiting!.programs).filter(
+      ([id]) => id !== programId,
+    ))).toEqual(aiBefore)
+
+    const manualTargets = source.recruiting!.recruits.slice(0, 10).map(({ player }, index) => ({
+      playerId: player.id,
+      isFocused: index === 0,
+      hasActiveOffer: index === 1,
+    }))
+    const nearlyFull = withBoard(manualTargets.slice(0, 9))
+    expect(fillRemainingRecruitingBoard(nearlyFull).recruiting!.programs[programId]!.board)
+      .toHaveLength(RECRUITING_BOARD_LIMIT)
+    const full = withBoard(manualTargets)
+    expect(fillRemainingRecruitingBoard(full)).toBe(full)
+  })
+
+  it('preserves unavailable existing entries and stops when no legal candidates remain', () => {
+    const source = createRecruitingDynasty('assistant-insufficient')
+    const programId = source.controlledProgramId
+    const existing = { ...source.recruiting!.programs[programId]!.board[0]!, isFocused: true, hasActiveOffer: true }
+    const dynasty = {
+      ...source,
+      recruiting: {
+        ...source.recruiting!,
+        programs: {
+          ...source.recruiting!.programs,
+          [programId]: {
+            ...source.recruiting!.programs[programId]!,
+            board: [existing],
+            projectedOpeningsByPosition: { PG: 0, SG: 0, SF: 0, PF: 0, C: 0 },
+          },
+        },
+      },
+    }
+    expect(fillRemainingRecruitingBoard(dynasty)).toBe(dynasty)
+    expect(dynasty.recruiting.programs[programId]!.board).toEqual([existing])
   })
 
   it('validates board bounds, duplicates, focus, commitments, and position eligibility', () => {

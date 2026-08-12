@@ -533,19 +533,16 @@ export function promoteControlledRecruitingBackups(
   }
 }
 
-/** Deterministic reach/target/fallback plan keyed to current prestige and positional need. */
-export function buildDefaultRecruitingBoard(
+function appendDefaultRecruitingTargets(
   dynasty: DynastyState,
   recruiting: RecruitingState,
   programId: string,
-  existingBoard: readonly RecruitingBoardTarget[] = [],
+  existingBoard: readonly RecruitingBoardTarget[],
 ): RecruitingBoardTarget[] {
   const program = recruiting.programs[programId]
   if (!program) throw new RangeError(`Unknown Recruiting Program "${programId}".`)
   const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
-  const board = existingBoard.filter(
-    ({ playerId }) => deriveTargetStatus(recruiting, programId, playerId) === 'active',
-  )
+  const board = [...existingBoard]
   const selected = new Set(board.map(({ playerId }) => playerId))
   const queues = Object.fromEntries(
     (Object.keys(remaining) as Position[]).map((position) => [
@@ -581,14 +578,56 @@ export function buildDefaultRecruitingBoard(
     }
     if (!added) break
   }
+  return board
+}
+
+/** Deterministic reach/target/fallback plan keyed to current prestige and positional need. */
+export function buildDefaultRecruitingBoard(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+  programId: string,
+  existingBoard: readonly RecruitingBoardTarget[] = [],
+): RecruitingBoardTarget[] {
+  const activeExistingBoard = existingBoard.filter(
+    ({ playerId }) => deriveTargetStatus(recruiting, programId, playerId) === 'active',
+  )
+  const board = appendDefaultRecruitingTargets(
+    dynasty,
+    recruiting,
+    programId,
+    activeExistingBoard,
+  )
   const focused = board.filter(({ isFocused }) => isFocused).slice(0, RECRUITING_FOCUS_LIMIT)
   const focusedIds = new Set(focused.map(({ playerId }) => playerId))
   return board.map((target, index) => ({
     ...target,
     // Existing user focus is retained; a generated plan focuses its first three
     // deterministic recommended targets and never normalizes unused slots.
-    isFocused: focusedIds.has(target.playerId) || (existingBoard.length === 0 && index < RECRUITING_FOCUS_LIMIT),
+    isFocused: focusedIds.has(target.playerId) || (activeExistingBoard.length === 0 && index < RECRUITING_FOCUS_LIMIT),
   }))
+}
+
+/**
+ * Fills only unused controlled-Program Board capacity. Existing entries retain
+ * their exact order, Focus, and Offer state; appended recommendations are Board
+ * membership only and reuse the canonical deterministic planner ranking.
+ */
+export function fillRemainingRecruitingBoard(dynasty: DynastyState): DynastyState {
+  const program = controlledProgram(dynasty)
+  if (program.board.length >= RECRUITING_BOARD_LIMIT) return dynasty
+  const recruiting = dynasty.recruiting!
+  const filled = appendDefaultRecruitingTargets(
+    dynasty,
+    recruiting,
+    program.programId,
+    program.board,
+  ).map((target, index) =>
+    index < program.board.length
+      ? target
+      : { ...target, isFocused: false, hasActiveOffer: false },
+  )
+  if (filled.length === program.board.length) return dynasty
+  return withProgramBoard(dynasty, program.programId, filled)
 }
 
 /**

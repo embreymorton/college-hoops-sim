@@ -238,7 +238,12 @@ Battle`/`Decision Imminent`/`Committed`) and a restrained quiet-to-urgent
 visual ramp built only from existing ink/accent tokens, the Readiness
 tooltip explains all six states without exposing hidden values, and the
 retired `Early Interest` label is gone from the current UI. Phase 6E.14B is
-fully resolved. Coaching/roster navigation, Followed Players,
+fully resolved. Phase 6E.15 adds the explicit `Fill Remaining Board` action:
+it reuses the accepted deterministic Board target planner to append only legal
+targets up to unused capacity, while preserving every existing Board entry in
+place with its exact Focus and Offer state. New targets are Board-only; the
+action never runs automatically and does not alter Generate Draft Board or AI
+Recruiting. Coaching/roster navigation, Followed Players,
 offseason progression visibility, Awards, and Save/Persistence retain
 future QOL evidence.
 

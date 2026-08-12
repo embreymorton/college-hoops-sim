@@ -20,6 +20,7 @@ export {
   alignGeneratedRecruitingFocus,
   buildDefaultRecruitingBoard,
   cleanupInvalidRecruitingOffers,
+  fillRemainingRecruitingBoard,
   manageProgramRecruitingOffers,
   offerRecruit,
   promoteControlledRecruitingBackups,

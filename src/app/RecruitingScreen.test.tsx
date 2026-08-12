@@ -243,6 +243,42 @@ describe('Positional needs ledger', () => {
 })
 
 describe('Recruiting Board', () => {
+  it('fills only unused capacity and preserves the existing manual plan', () => {
+    const source = buildFixtureDynasty()
+    const original = source.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board.slice(0, 3)
+    const partial = {
+      ...source,
+      recruiting: {
+        ...source.recruiting!,
+        programs: {
+          ...source.recruiting!.programs,
+          [CONTROLLED_PROGRAM_ID]: {
+            ...source.recruiting!.programs[CONTROLLED_PROGRAM_ID]!,
+            board: original,
+          },
+        },
+      },
+    }
+    useDynastyStore.setState({ dynasty: partial, view: 'recruiting', explorationViewHistory: [] })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Fill Remaining Board' }))
+
+    const board = useDynastyStore.getState().dynasty!.recruiting!
+      .programs[CONTROLLED_PROGRAM_ID]!.board
+    expect(board.slice(0, original.length)).toEqual(original)
+    expect(board.length).toBeGreaterThan(original.length)
+    expect(board.slice(original.length).every(
+      ({ isFocused, hasActiveOffer }) => !isFocused && !hasActiveOffer,
+    )).toBe(true)
+    expect(screen.getByRole('status')).toHaveTextContent(/Added \d+ recruits? to your Board/)
+  })
+
+  it('disables Fill Remaining Board when the Board is full', () => {
+    renderRecruitingScreen()
+    expect(screen.getByRole('button', { name: 'Fill Remaining Board' })).toBeDisabled()
+  })
+
   it('renders every board target with rank, stars, ratings, and focus', () => {
     renderRecruitingScreen()
 

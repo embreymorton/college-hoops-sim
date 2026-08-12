@@ -5,6 +5,7 @@ interface RecruitingBoardEmptyStateProps {
   readonly needsByPosition: readonly RecruitingPositionNeed[]
   readonly remainingTotal: number
   readonly onGenerateDraftBoard: () => void
+  readonly onFillRemainingBoard: () => void
   readonly onBrowseNationalClass: () => void
 }
 
@@ -23,6 +24,7 @@ export function RecruitingBoardEmptyState({
   needsByPosition,
   remainingTotal,
   onGenerateDraftBoard,
+  onFillRemainingBoard,
   onBrowseNationalClass,
 }: RecruitingBoardEmptyStateProps) {
   if (lastResolvedPeriod > 0) {
@@ -34,6 +36,13 @@ export function RecruitingBoardEmptyState({
           resume recruiting.
         </p>
         <div className="recruiting-board-empty__actions">
+          <button
+            type="button"
+            className="button button--ghost"
+            onClick={onFillRemainingBoard}
+          >
+            Fill Remaining Board
+          </button>
           <button
             type="button"
             className="button button--primary"
@@ -65,6 +74,13 @@ export function RecruitingBoardEmptyState({
           onClick={onGenerateDraftBoard}
         >
           Generate Draft Board
+        </button>
+        <button
+          type="button"
+          className="button button--ghost"
+          onClick={onFillRemainingBoard}
+        >
+          Fill Remaining Board
         </button>
         <button
           type="button"

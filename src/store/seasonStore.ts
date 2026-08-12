@@ -12,6 +12,7 @@ import {
   autoFinalizeRecruiting,
   beginOffseason,
   buildDefaultRecruitingBoard,
+  fillRemainingRecruitingBoard,
   initializeDynastyState,
   initializeRecruiting,
   manageProgramRecruitingOffers,
@@ -344,6 +345,8 @@ export interface DynastySessionState {
   dismissRecruitingActionError(): void
   /** Creates the accepted deterministic default board/offers only while the controlled board is empty. */
   generateControlledDraftBoard(): void
+  /** Fills unused Board capacity without changing any existing target, Focus, or Offer. */
+  fillRemainingRecruitingBoard(): number
   /** Generates the suggested plan and resumes the exact paused basketball action. */
   generateDraftBoardAndContinue(): void
   /** Discards the paused basketball action and opens existing Recruiting management. */
@@ -1367,6 +1370,16 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const nextDynasty = withGeneratedControlledDraftBoard(dynasty)
     if (nextDynasty === dynasty) return
     set({ dynasty: nextDynasty, recruitingActionError: null })
+  },
+
+  fillRemainingRecruitingBoard() {
+    const { dynasty } = get()
+    if (!dynasty?.recruiting) return 0
+    const before = dynasty.recruiting.programs[dynasty.controlledProgramId]!.board.length
+    const nextDynasty = fillRemainingRecruitingBoard(dynasty)
+    const after = nextDynasty.recruiting!.programs[nextDynasty.controlledProgramId]!.board.length
+    if (nextDynasty !== dynasty) set({ dynasty: nextDynasty, recruitingActionError: null })
+    return after - before
   },
 
   generateDraftBoardAndContinue() {

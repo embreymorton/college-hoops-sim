@@ -295,6 +295,22 @@ secondary to Recruit identity and Board actions. Phase 6E.14B (readiness
 communication) is now fully resolved; premium Offer allocation remains a
 separate watchpoint. See `UI_DESIGN.md` for the accepted presentation.
 
+### Assistant Fill Remaining Board — ACCEPTED (Phase 6E.15)
+
+The Recruiting Board now offers an explicit `Fill Remaining Board` convenience
+action. It passes the current controlled Board into the same deterministic,
+need-aware target-selection loop used by the accepted default planner, preserves
+all existing entries and their order, and appends only enough legal targets to
+use available capacity. Existing Focus and Offer combinations remain exact;
+new targets begin as Board-only entries with neither Focus nor an Offer.
+
+Focused empty, partial, nearly-full, full, unavailable-entry, and insufficient-
+candidate cases confirm the action never regenerates the player's plan, creates
+duplicates, changes AI plans, or runs without a click. Same-state replay returns
+the same added Recruit set and order. This closes the repeated Assistant Fill
+Remaining Board QOL friction without reopening generated-plan coherence or any
+Recruiting mechanic.
+
 ### Recruiting Information Architecture + Visual Hierarchy — RESOLVED (Phase 6E.12C)
 
 Manual playtesting after 6E.12B confirmed the new battle/readiness/commitment

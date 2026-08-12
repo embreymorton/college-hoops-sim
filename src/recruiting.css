@@ -110,6 +110,14 @@
   vertical-align: middle;
 }
 
+.recruiting-board-management {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
 .recruiting-status-cell {
   color: var(--ink-1);
   font-size: 0.76rem;

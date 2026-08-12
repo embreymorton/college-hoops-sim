@@ -234,6 +234,13 @@ Focused+Offered targets first, then other Offered targets, then remaining
 active targets, with existing offer utility and Player ID tie-breaking. The
 normal Focus and Offer APIs remain independent after generation.
 
+The player-triggered `Fill Remaining Board` path reuses only the default
+planner's deterministic candidate queues and need-aware selection loop against
+the current Board as exclusions. It retains all current entries in their
+existing order and appends recommendations with `isFocused = false` and
+`hasActiveOffer = false` until capacity or legal supply is exhausted. It does
+not invoke offer management, Focus alignment, AI refreshes, or randomness.
+
 AI offer evaluation uses the next planning period, capped at 28:
 
 ```text
