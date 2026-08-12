@@ -21,6 +21,7 @@ import {
   syncRecruitingThroughCompletedRounds,
   setRecruitingFocus,
   withdrawRecruitOffer,
+  FINAL_RECRUITING_PERIOD,
   rolloverDynastyToNextSeason,
   type DynastyState,
   type RecruitingState,
@@ -29,8 +30,11 @@ import {
   getCurrentTournamentRound,
   getTournamentGameForProgram,
   initializePostseason,
+  isTournamentComplete,
   simulatePendingGamesInCurrentTournamentRound,
+  simulatePendingGamesInTournamentRound,
   simulateTournamentGame,
+  TOURNAMENT_ROUNDS,
   updatePostseasonProgramRotation,
   type PostseasonState,
   type TournamentGame,
@@ -104,7 +108,12 @@ function postseasonSimulationSeed(
  */
 export const MIDSEASON_ROUND = 12
 
-export type SuperSimKind = 'midseason' | 'endOfRegularSeason'
+export type SuperSimKind =
+  | 'midseason'
+  | 'endOfRegularSeason'
+  | 'seasonComplete'
+
+type RegularSeasonSuperSimKind = Exclude<SuperSimKind, 'seasonComplete'>
 
 export interface PendingSuperSim {
   readonly kind: SuperSimKind
@@ -117,7 +126,7 @@ export interface PendingSuperSim {
  * before and after — never a new Season-domain statistic.
  */
 export interface SuperSimSummary {
-  readonly kind: SuperSimKind
+  readonly kind: RegularSeasonSuperSimKind
   readonly throughRound: number
   readonly segmentWins: number
   readonly segmentLosses: number
@@ -444,6 +453,47 @@ function withActivePostseason(
     ...dynasty,
     activePostseason,
   })
+}
+
+/**
+ * Advances through the existing Season and Postseason production operations,
+ * synchronizing Recruiting at the same boundaries as stepwise progression.
+ * Deliberately stops at the completed-Tournament checkpoint; Late Recruiting
+ * remains an explicit user action.
+ */
+export function simulateDynastyToSeasonComplete(
+  dynasty: DynastyState,
+): DynastyState {
+  const season = dynasty.activeSeason
+  if (!season) return dynasty
+
+  const completedSeason = simulatePendingGamesThroughRound({
+    season,
+    throughRound: season.schedule.roundCount,
+    simulationSeed: regularSeasonSimulationSeed(
+      dynasty.dynastySeed,
+      season.seasonNumber,
+    ),
+  })
+  let current = withActiveSeason(dynasty, completedSeason)
+  let postseason =
+    current.activePostseason ??
+    initializePostseason({ universe: UNIVERSE_V0, season: completedSeason })
+
+  current = { ...current, activePostseason: postseason }
+  for (const round of TOURNAMENT_ROUNDS) {
+    postseason = simulatePendingGamesInTournamentRound({
+      postseason,
+      round,
+      simulationSeed: postseasonSimulationSeed(
+        current.dynastySeed,
+        completedSeason.seasonNumber,
+      ),
+    })
+    current = withActivePostseason(current, postseason)
+  }
+
+  return current
 }
 
 /**
@@ -796,6 +846,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       return
     }
 
+    if (
+      kind === 'seasonComplete' &&
+      dynasty.activePostseason &&
+      isTournamentComplete(dynasty.activePostseason) &&
+      dynasty.recruiting?.lastResolvedPeriod === FINAL_RECRUITING_PERIOD
+    ) {
+      return
+    }
+
     const throughRound =
       kind === 'midseason' ? MIDSEASON_ROUND : season.schedule.roundCount
 
@@ -846,6 +905,25 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     })
     if (needsRecruitingSetupBeforeAdvance(dynasty, nextSeason)) {
       set({ pendingRecruitingSetupIntent: 'confirm-super-sim' })
+      return
+    }
+
+    if (pendingSuperSim.kind === 'seasonComplete') {
+      const nextDynasty = simulateDynastyToSeasonComplete(dynasty)
+      const controlledState =
+        nextDynasty.activePostseason?.programStates[controlledProgramId]
+
+      set({
+        dynasty: nextDynasty,
+        pendingSuperSim: null,
+        pendingRecruitingSetupIntent: null,
+        superSimSummary: null,
+        postseasonControlledDefaultRotation: controlledState?.rotation ?? null,
+        postseasonDraftRotation: controlledState?.rotation ?? null,
+        lastPlayedTournamentGameId: null,
+        viewedTournamentGameId: null,
+        view: 'postseasonHub',
+      })
       return
     }
     const after: ProgramRecord = deriveProgramRecord(

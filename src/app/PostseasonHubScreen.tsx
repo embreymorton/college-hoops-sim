@@ -5,6 +5,8 @@ import {
   DynastySectionNav,
   RecruitingHubSummary,
   SeasonCompleteHandoff,
+  SuperSimConfirmDialog,
+  SuperSimMenu,
   TournamentBracket,
   TournamentFieldTable,
   TournamentMatchupCard,
@@ -170,6 +172,13 @@ export function PostseasonHubScreen() {
   const enterLateRecruiting = useDynastyStore(
     (state) => state.enterLateRecruiting,
   )
+  const pendingSuperSim = useDynastyStore((state) => state.pendingSuperSim)
+  const pendingRecruitingSetupIntent = useDynastyStore(
+    (state) => state.pendingRecruitingSetupIntent,
+  )
+  const requestSuperSim = useDynastyStore((state) => state.requestSuperSim)
+  const cancelSuperSim = useDynastyStore((state) => state.cancelSuperSim)
+  const confirmSuperSim = useDynastyStore((state) => state.confirmSuperSim)
 
   if (!season || !postseason || !controlledProgramId) {
     return null
@@ -545,6 +554,24 @@ export function PostseasonHubScreen() {
             </div>
             )}
 
+          {!tournamentComplete && (
+            <div className="round-progress">
+              <p className="round-progress__text">
+                Fast-forward the remaining Tournament.
+              </p>
+              <div className="round-progress__actions">
+                <SuperSimMenu
+                  showMidseason={false}
+                  showEndOfRegularSeason={false}
+                  midseasonRound={season.schedule.roundCount}
+                  endOfSeasonRound={season.schedule.roundCount}
+                  onSelect={requestSuperSim}
+                  isDialogOpen={pendingSuperSim !== null}
+                />
+              </div>
+            </div>
+          )}
+
           {isLateRecruitingHandoffAvailable && (
             <SeasonCompleteHandoff onContinue={enterLateRecruiting} />
           )}
@@ -599,6 +626,16 @@ export function PostseasonHubScreen() {
           View Final Regular Season
         </button>
       </div>
+
+      {pendingSuperSim && !pendingRecruitingSetupIntent && (
+        <SuperSimConfirmDialog
+          kind={pendingSuperSim.kind}
+          throughRound={pendingSuperSim.throughRound}
+          controlledProgramName={controlledProgram.name}
+          onCancel={cancelSuperSim}
+          onConfirm={confirmSuperSim}
+        />
+      )}
     </>
   )
 }

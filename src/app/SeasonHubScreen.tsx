@@ -365,6 +365,21 @@ export function SeasonHubScreen() {
             </div>
           </div>
         )}
+        {currentRound === undefined && !postseason && (
+          <div className="round-progress">
+            <p className="round-progress__text">Postseason is ready.</p>
+            <div className="round-progress__actions">
+              <SuperSimMenu
+                showMidseason={false}
+                showEndOfRegularSeason={false}
+                midseasonRound={MIDSEASON_ROUND}
+                endOfSeasonRound={season.schedule.roundCount}
+                onSelect={requestSuperSim}
+                isDialogOpen={isSuperSimDialogOpen}
+              />
+            </div>
+          </div>
+        )}
       </section>
 
       {recruiting && recruitingBoard && (

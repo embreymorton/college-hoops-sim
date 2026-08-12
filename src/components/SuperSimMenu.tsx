@@ -4,6 +4,8 @@ import type { SuperSimKind } from '../store'
 interface SuperSimMenuProps {
   /** Hidden once Round `midseasonRound` has fully completed. */
   readonly showMidseason: boolean
+  readonly showEndOfRegularSeason?: boolean
+  readonly showSeasonComplete?: boolean
   readonly midseasonRound: number
   readonly endOfSeasonRound: number
   readonly onSelect: (kind: SuperSimKind) => void
@@ -18,6 +20,8 @@ interface SuperSimMenuProps {
  */
 export function SuperSimMenu({
   showMidseason,
+  showEndOfRegularSeason = true,
+  showSeasonComplete = true,
   midseasonRound,
   endOfSeasonRound,
   onSelect,
@@ -108,18 +112,34 @@ export function SuperSimMenu({
               </span>
             </button>
           )}
-          <button
-            type="button"
-            className="super-sim-menu__option"
-            onClick={() => select('endOfRegularSeason')}
-          >
-            <span className="super-sim-menu__option-label">
-              Sim to End of Regular Season
-            </span>
-            <span className="super-sim-menu__option-detail">
-              Through Round {endOfSeasonRound}
-            </span>
-          </button>
+          {showEndOfRegularSeason && (
+            <button
+              type="button"
+              className="super-sim-menu__option"
+              onClick={() => select('endOfRegularSeason')}
+            >
+              <span className="super-sim-menu__option-label">
+                Sim to End of Regular Season
+              </span>
+              <span className="super-sim-menu__option-detail">
+                Through Round {endOfSeasonRound}
+              </span>
+            </button>
+          )}
+          {showSeasonComplete && (
+            <button
+              type="button"
+              className="super-sim-menu__option"
+              onClick={() => select('seasonComplete')}
+            >
+              <span className="super-sim-menu__option-label">
+                Sim to Season Complete
+              </span>
+              <span className="super-sim-menu__option-detail">
+                Through the National Championship
+              </span>
+            </button>
+          )}
         </div>
       )}
     </div>

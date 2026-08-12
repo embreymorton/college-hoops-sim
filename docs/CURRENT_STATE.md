@@ -179,10 +179,19 @@ instead of the Season Complete handoff rendering as a separate full-width
 section beneath it, removing the previous dead space and duplicated-message
 composition across the controlled-champion, controlled-eliminated, and
 did-not-qualify completed states. The accepted bracket, seeding, and Recruiting
-mechanics are unchanged. Sim to Season Complete, Recruiting Focus/commitment
-visibility, Coaching/roster navigation, Followed Players, offseason progression
-visibility, Awards, and Save/Persistence have future QOL evidence and remain
-candidates for the next selected milestone.
+mechanics are unchanged. Phase 6E.11 Super Sim to Season Complete is accepted:
+it reuses canonical Season, Tournament, and Recruiting progression to finish
+competitive basketball and synchronize Period 28, then stops at the existing
+Season Complete checkpoint before Late Recruiting. Phase 6E.12's domain
+foundation is ready for presentation work: pure Recruiting battle projections
+now derive coarse commitment readiness, active Board pursuers and Offers,
+categorical controlled-Program standing, commitment outcomes, and canonical
+commitment activity without exposing raw attraction, thresholds, AI utility,
+or probability. Standing-movement events remain unavailable because canonical
+Recruiting stores no historical standing snapshots. Recruiting battle and
+commitment UI is the selected Claude presentation handoff. Coaching/roster
+navigation, Followed Players, offseason progression visibility, Awards, and
+Save/Persistence retain future QOL evidence.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 

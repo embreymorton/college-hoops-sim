@@ -22,6 +22,7 @@ export function SuperSimConfirmDialog({
   const descriptionId = useId()
   const cancelRef = useRef<HTMLButtonElement>(null)
   const isMidseason = kind === 'midseason'
+  const isSeasonComplete = kind === 'seasonComplete'
 
   return (
     <ModalOverlay
@@ -33,11 +34,17 @@ export function SuperSimConfirmDialog({
     >
       <p className="modal__eyebrow">Super Sim</p>
       <h2 id={titleId} className="modal__title">
-        {isMidseason ? 'Sim to Midseason?' : 'Sim to End of Regular Season?'}
+        {isMidseason
+          ? 'Sim to Midseason?'
+          : isSeasonComplete
+            ? 'Sim to Season Complete?'
+            : 'Sim to End of Regular Season?'}
       </h2>
       <p id={descriptionId} className="modal__body">
         {isMidseason
           ? `${controlledProgramName} will play all remaining scheduled games through Round ${throughRound} using its current rotation.`
+          : isSeasonComplete
+            ? 'All remaining regular-season and National Tournament games will be simulated. Recruiting will synchronize through Period 28, then stop before Late Recruiting.'
           : 'All remaining regular-season games will be simulated using the current Season rotations.'}{' '}
         All game results are final.
       </p>
@@ -55,7 +62,11 @@ export function SuperSimConfirmDialog({
           className="button button--primary"
           onClick={onConfirm}
         >
-          {isMidseason ? `Sim to Round ${throughRound}` : 'Sim Regular Season'}
+          {isMidseason
+            ? `Sim to Round ${throughRound}`
+            : isSeasonComplete
+              ? 'Sim to Season Complete'
+              : 'Sim Regular Season'}
         </button>
       </div>
     </ModalOverlay>

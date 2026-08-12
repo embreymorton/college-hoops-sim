@@ -368,10 +368,13 @@ This phase uses manual playthrough observations and targeted diagnostics rather 
 
 ### Current planning horizon
 
-- **6E.11 — Super Sim to Season Complete:** NEXT — CANDIDATE. The next-highest repeated-friction QOL priority in `PLAYTESTING.md` once Postseason presentation is resolved; a fresh planning session should confirm scope before implementation.
+- **6E.11 — Super Sim to Season Complete:** COMPLETE — ACCEPTED. The existing Super Sim target model now reaches the canonical Season Complete checkpoint from regular-season and active-Tournament states by reusing normal regular-season simulation, Postseason initialization, Tournament round simulation, and Recruiting synchronization through Period 28. It preserves completed results, completes the bracket even when the controlled Program is eliminated or did not qualify, and deliberately stops before Late Recruiting/offseason. Paired deterministic coverage matches stepwise production progression across Season results, field/bracket/results/champion, and Recruiting state.
+- **6E.12A — Recruiting Battles + Commitment Visibility, Codex/domain:** COMPLETE — HANDOFF READY. Pure selectors now project the existing contest into player-safe commitment readiness (`early`, `developing`, `serious`, `decision-imminent`, `committed`), active Board pursuers and Offer presence, categorical leading/competitive/trailing context, controlled Focus/Offer/commitment state, and commitment-only activity since a caller-provided period baseline. Raw attraction/progress totals, exact thresholds/probabilities, AI utility, and hidden rolls remain internal. No Recruiting state or behavior changed; historical battle movement cannot be derived because no standing snapshots are stored.
+- **6E.12B — Recruiting Battles + Commitment Visibility, Claude/presentation:** NEXT — HANDOFF READY. Present the accepted 6E.12A projections in the Recruiting and Season Hub experience without changing Recruiting mechanics or inventing movement history. Full Phase 6E.12 remains open until this presentation phase is implemented and accepted.
 
-Repeated near-term QOL priorities include Recruiting Focus/commitment
-visibility, Assistant Fill Remaining Board, Coaching/roster navigation, and
+The selected next milestone is the bounded 6E.12B Claude presentation handoff.
+After that acceptance, repeated near-term QOL priorities include Assistant Fill
+Remaining Board, Coaching/roster navigation, and
 Followed Players. League News, Season Hub hierarchy, offseason
 progression/League context, Awards, Save/Persistence, records, shot-selection
 investigation, and minor presentation polish remain observed/later rather than

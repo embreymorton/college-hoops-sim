@@ -71,6 +71,10 @@ export {
   syncRecruitingThroughCompletedRounds,
 } from './recruiting/simulation'
 export { initializeRecruiting } from './recruiting/state'
+export {
+  deriveRecruitingBattleView,
+  deriveRecruitingCommitmentActivity,
+} from './recruiting/battleView'
 export type {
   AssembleNextSeasonRostersOptions,
   CompletedSeasonArchive,
@@ -116,3 +120,13 @@ export type {
   UpdateRecruitingFocusOptions,
   UpdateRecruitingOfferOptions,
 } from './recruiting/domain'
+export type {
+  ControlledRecruitingBattleView,
+  ControlledRecruitingPosition,
+  RecruitingBattlePosition,
+  RecruitingBattleProgramView,
+  RecruitingBattleView,
+  RecruitingCommitmentActivity,
+  RecruitingCommitmentActivityKind,
+  RecruitingReadiness,
+} from './recruiting/battleView'

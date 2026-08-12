@@ -161,7 +161,7 @@ Pine Valley is now genuinely difficult: `2–22`-type seasons can occur, generat
 
 The concern is that a hard rebuild must not become a structurally trapped rebuild. Future playtesting should determine whether strong manual Recruiting, high-upside projects, Development, and time can create a contender without weakening Prestige. Do not reopen Recruiting difficulty yet.
 
-## Recruiting Feedback / Visibility — OBSERVED
+## Recruiting Feedback / Visibility — DOMAIN READY / UI OPEN
 
 Repeated playtesting asks for clearer Recruiting feedback:
 
@@ -181,6 +181,18 @@ The Great Lakes Dynasty repeated this friction while quick-simming: Focus
 targets, commitments, lost targets, and meaningful Recruiting changes were easy
 to miss. Treat this as a feedback/presentation priority; Board + Focus + Offer
 and AI Recruiting mechanics remain frozen.
+
+Phase 6E.12A established the player-safe domain contract without changing those
+mechanics. The future UI can derive coarse readiness from the real decision,
+standing, and separation gates; show active Board pursuers, Offer presence, and
+categorical leading/competitive/trailing context; distinguish commitments to
+the controlled Program from commitments elsewhere; and derive tracked
+commitment activity from stable IDs and stored timing. Raw attraction,
+relationship totals, exact thresholds/probabilities, AI utility, Focus choices
+of other Programs, and hidden rolls remain internal. Canonical state has no
+period-by-period standing snapshots, so historical battle movement cannot be
+claimed; the presentation phase should show commitment events only unless it
+compares two live projections at an explicit session boundary.
 
 ## Recruiting Assistant — Fill Remaining Board — OBSERVED — REPEATED HIGH-VALUE QOL REQUEST
 
@@ -549,7 +561,7 @@ in Round 1 to a #14, then an `88` OVR Northbridge lost to an approximately `78`
 OVR #15, before winning the title in Douglas's senior Season. These anecdotes
 do not supersede the accepted Tournament diagnostics or reopen seeding/Game Sim.
 
-## Super Sim — Season Complete Target — OBSERVED / HIGH-VALUE QOL
+## Super Sim — Season Complete Target — IMPLEMENTED / ACCEPTED
 
 Desired user-facing target:
 
@@ -567,9 +579,14 @@ That stopping point should expose final standings, bracket/champion, Player
 stats and leaders, Recruiting status, and remaining Late Recruiting decisions
 before any roster turnover.
 
-The Great Lakes playthrough repeated this request while moving quickly through
-Dynasty Seasons. It is established pacing friction and should remain ahead of
-lower-value polish, without changing the documented stopping point.
+Phase 6E.11 implemented this exact stop condition through the existing Super
+Sim target model and canonical Season/Postseason/Recruiting operations. Focused
+lifecycle coverage includes early Season, active Tournament, eliminated and
+did-not-qualify controlled Programs, and the already-complete no-op. A paired
+deterministic test produced identical regular-season results, Tournament
+field/bracket/results/champion, and Recruiting state through Period 28 for
+stepwise progression and Super Sim. Automated acceptance is green; no separate
+manual playtest was required for this lifecycle-only convenience.
 
 ## League News / Round Recap — OBSERVED
 
@@ -686,18 +703,17 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Super Sim — Season Complete target
-2. Recruiting Focus-target / commitment visibility
-3. Assistant Fill Remaining Recruiting Board
-4. Coaching navigation / permanent Rotation home
-5. Followed Players / Favorites
-6. Recruit POT-gap diagnostic
-7. League News / Round Recap
-8. Season Hub information hierarchy
-9. Offseason around-the-league context
-10. Program records / deeper statistical history
-11. Shot-selection diagnostic
-12. Minor Player Details / Quick Sim / Last 5 polish
+1. Recruiting Focus-target / commitment visibility presentation (6E.12B)
+2. Assistant Fill Remaining Recruiting Board
+3. Coaching navigation / permanent Rotation home
+4. Followed Players / Favorites
+5. Recruit POT-gap diagnostic
+6. League News / Round Recap
+7. Season Hub information hierarchy
+8. Offseason around-the-league context
+9. Program records / deeper statistical history
+10. Shot-selection diagnostic
+11. Minor Player Details / Quick Sim / Last 5 polish
 
 Player Details + Development History UX and Postseason Hub +
 Season-Complete Presentation Polish are RESOLVED — see above.

@@ -1,5 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { isTournamentComplete } from '../postseason'
+import {
+  deriveNationalChampion,
+  isTournamentComplete,
+} from '../postseason'
 import {
   getNextGameForProgram,
   simulateScheduledGame,
@@ -31,6 +34,14 @@ function finishRegularSeasonManually(): void {
 function finishRegularSeasonWithSuperSim(): void {
   useDynastyStore.getState().requestSuperSim('endOfRegularSeason')
   useDynastyStore.getState().confirmSuperSim()
+}
+
+function finishTournamentStepwise(): void {
+  useDynastyStore.getState().enterPostseason()
+  while (!isTournamentComplete(useDynastyStore.getState().dynasty!.activePostseason!)) {
+    useDynastyStore.getState().simulateNextPostseasonGame()
+    useDynastyStore.getState().simulateRestOfCurrentTournamentRound()
+  }
 }
 
 beforeEach(() => {
@@ -163,6 +174,108 @@ describe('Dynasty application state integration', () => {
     expect(useDynastyStore.getState().dynasty!.recruiting).toEqual(
       dynasty.recruiting,
     )
+  })
+
+  it('Super Sim reaches Season Complete from an early Season and stops before Late Recruiting', () => {
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+    useDynastyStore.getState().confirmSuperSim()
+
+    const state = useDynastyStore.getState()
+    const dynasty = state.dynasty!
+    expect(Object.keys(dynasty.activeSeason!.resultsByGameId)).toHaveLength(384)
+    expect(isTournamentComplete(dynasty.activePostseason!)).toBe(true)
+    expect(dynasty.recruiting!.lastResolvedPeriod).toBe(28)
+    expect(dynasty.recruiting!.phase).toBe('postseason')
+    expect(dynasty.offseason).toBeNull()
+    expect(dynasty.history).toEqual([])
+    expect(state.view).toBe('postseasonHub')
+  })
+
+  it('matches stepwise production progression through the canonical Season Complete checkpoint', () => {
+    finishRegularSeasonManually()
+    finishTournamentStepwise()
+    const manual = useDynastyStore.getState().dynasty!
+
+    resetAndSelectProgram()
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+    useDynastyStore.getState().confirmSuperSim()
+    const superSim = useDynastyStore.getState().dynasty!
+
+    expect(superSim.activeSeason!.resultsByGameId).toEqual(
+      manual.activeSeason!.resultsByGameId,
+    )
+    expect(superSim.activePostseason!.field).toEqual(manual.activePostseason!.field)
+    expect(superSim.activePostseason!.bracket).toEqual(
+      manual.activePostseason!.bracket,
+    )
+    expect(superSim.activePostseason!.resultsByGameId).toEqual(
+      manual.activePostseason!.resultsByGameId,
+    )
+    expect(deriveNationalChampion(superSim.activePostseason!)).toBe(
+      deriveNationalChampion(manual.activePostseason!),
+    )
+    expect(superSim.recruiting).toEqual(manual.recruiting)
+    expect(superSim.offseason).toBeNull()
+    expect(superSim.history).toEqual([])
+  }, 30000)
+
+  it('completes an active Tournament after the controlled Program is eliminated', () => {
+    finishRegularSeasonWithSuperSim()
+    useDynastyStore.getState().enterPostseason()
+    useDynastyStore.getState().simulateNextPostseasonGame()
+    useDynastyStore.getState().simulateRestOfCurrentTournamentRound()
+    const active = useDynastyStore.getState().dynasty!
+    const completedGame = Object.values(
+      active.activePostseason!.resultsByGameId,
+    ).find((result) => result !== undefined)!
+    const guaranteedEliminatedId =
+      completedGame.winnerId === completedGame.homeTeamId
+        ? completedGame.awayTeamId
+        : completedGame.homeTeamId
+    useDynastyStore.setState({
+      dynasty: { ...active, controlledProgramId: guaranteedEliminatedId },
+    })
+
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+    useDynastyStore.getState().confirmSuperSim()
+
+    const dynasty = useDynastyStore.getState().dynasty!
+    expect(isTournamentComplete(dynasty.activePostseason!)).toBe(true)
+    expect(dynasty.recruiting!.lastResolvedPeriod).toBe(28)
+  })
+
+  it('completes the Tournament when the controlled Program did not qualify', () => {
+    finishRegularSeasonWithSuperSim()
+    useDynastyStore.getState().enterPostseason()
+    const dynasty = useDynastyStore.getState().dynasty!
+    const nonQualifier = Object.keys(dynasty.activeSeason!.programStates).find(
+      (programId) =>
+        !dynasty.activePostseason!.field.some(
+          (entry) => entry.programId === programId,
+        ),
+    )!
+    useDynastyStore.setState({
+      dynasty: { ...dynasty, controlledProgramId: nonQualifier },
+    })
+
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+    useDynastyStore.getState().confirmSuperSim()
+
+    const completed = useDynastyStore.getState().dynasty!
+    expect(isTournamentComplete(completed.activePostseason!)).toBe(true)
+    expect(completed.recruiting!.lastResolvedPeriod).toBe(28)
+  })
+
+  it('treats an already-complete Season target as unavailable and never enters Late Recruiting', () => {
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+    useDynastyStore.getState().confirmSuperSim()
+    const before = useDynastyStore.getState().dynasty!
+
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+
+    expect(useDynastyStore.getState().pendingSuperSim).toBeNull()
+    expect(useDynastyStore.getState().dynasty).toBe(before)
+    expect(before.recruiting!.phase).toBe('postseason')
   })
 
   it('does not expose independent canonical Season/Postseason/Recruiting/Offseason values', () => {

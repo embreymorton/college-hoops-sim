@@ -557,7 +557,7 @@ describe('Season Presentation', () => {
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^super sim/i }),
-    ).not.toBeInTheDocument()
+    ).toBeInTheDocument()
 
     // Completed schedule and box scores remain reachable after the season ends.
     const resultButton = screen.getAllByRole('button', {
@@ -659,6 +659,9 @@ describe('Super Sim', () => {
     expect(screen.getByText(`Through Round ${MIDSEASON_ROUND}`)).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: /sim to end of regular season/i }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /sim to season complete/i }),
     ).toBeInTheDocument()
     expect(screen.getByText('Through Round 24')).toBeInTheDocument()
   })
@@ -800,7 +803,7 @@ describe('Super Sim', () => {
     ).not.toBeInTheDocument()
     expect(
       screen.queryByRole('button', { name: /^super sim/i }),
-    ).not.toBeInTheDocument()
+    ).toBeInTheDocument()
   })
 
   it('shows the canonical automatic, at-large, and non-qualified Tournament result in the end-of-season summary', () => {
