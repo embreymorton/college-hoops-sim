@@ -34,6 +34,7 @@ export {
   validateRotation,
   validateRotationInput,
   validateRotationV1,
+  compileSimpleRotationIntent,
 } from './domain'
 export type {
   ClassYear,
@@ -54,6 +55,9 @@ export type {
   RotationValidationResult,
   Team,
   TeamStrength,
+  SimpleRotationIntentIssue,
+  SimpleRotationIntentIssueCode,
+  SimpleRotationIntentResult,
 } from './domain'
 export {
   generateDefaultRotation,

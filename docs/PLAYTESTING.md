@@ -641,6 +641,25 @@ Recruiting period, standings, and every other Dynasty fact unchanged. This
 closes the repeated Coaching/Rotation-navigation friction; Game Prep and
 Tournament Game Prep are unchanged and remain additive alongside Coaching.
 
+### Simple Rotation intent — FOUNDATION COMPLETE (Phase 6E.18A)
+
+The permanent Coaching screen exposed a narrower follow-up friction: exact
+position-bucket editing is powerful but makes Players recur at multiple eligible
+positions and asks the user to solve 40-minute positional bookkeeping manually.
+Phase 6E.18A establishes only the domain foundation for a future simpler editor.
+Aggregate Player MPG intent now compiles deterministically into legal existing
+Rotation V1 when feasible, globally preferring natural minutes and using
+secondary minutes only where necessary. Invalid or incomplete intent produces
+structured issues and no canonical-ready Rotation.
+
+Generated production-style evidence round-tripped all 32 sampled legal default
+Rotations: collapsing each to Player totals and recompiling produced a legal V1
+Rotation with identical Player totals in every case. Positional splits may
+differ when several equally preferred solutions exist. Rotation V1, default
+generation, commits, and simulation remain unchanged. Starting Five has no
+separate simulation meaning, and Auto/rotation-size presets plus the visible
+Simple/Advanced editor remain future UX work.
+
 ## Round Complete Review — OBSERVED
 
 Current friction:

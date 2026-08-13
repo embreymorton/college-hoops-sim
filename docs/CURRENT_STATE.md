@@ -294,6 +294,18 @@ taller than its neighbors; the validation rule itself is unchanged. Followed
 Players, offseason progression visibility, Awards, and Save/Persistence retain
 later QOL evidence.
 
+Phase 6E.18A Simple Rotation Intent Adapter V1 is accepted as a pure UX
+foundation. `compileSimpleRotationIntent()` deterministically converts complete,
+feasible aggregate Player MPG intent into the unchanged canonical Rotation V1,
+globally preferring natural-position assignments over secondary assignments and
+revalidating every successful result through the existing V1 validator.
+Structured failures return no Rotation for invalid totals, unknown/out-of-range
+Players, or infeasible positional coverage. All 32 generated production-style
+legal defaults round-tripped through aggregate Player totals with identical MPG.
+No visible Simple editor, Starting Five mechanic, Auto/rotation-size preset,
+Zustand integration, commit-path change, default-generation change, or
+simulation change is included.
+
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
 True powerhouse states can occur: one Northbridge roster reached roughly `87` Team OVR with multiple `90+` and `85+` Players. Mature seasons can still be mostly 70s with the best Teams in the low/mid 80s. Powerhouse frequency and persistence remain a WATCH; current evidence does not justify reopening Recruit Talent V1 or Development V1.

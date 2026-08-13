@@ -114,6 +114,17 @@ boundaries. Fresh Universe, Exhibition, and rollover defaults use the accepted
 flexible V1 generator. Existing assignments are deep-cloned and preserved rather
 than regenerated.
 
+Simple Rotation intent is a pure adapter above that representation, not another
+canonical format. `compileSimpleRotationIntent(team, minutesByPlayerId)` accepts
+aggregate Player MPG only at an explicit compile boundary. Complete 200-minute
+intent is solved as deterministic exact min-cost flow: Player totals and five
+40-minute position capacities are hard constraints, existing eligibility
+supplies graph edges, and secondary-position edges cost more than natural ones.
+A successful result is revalidated by `validateRotationV1()`; invalid totals,
+Player requests, unknown IDs, or infeasible coverage return structured issues
+and no Rotation. The adapter is not stored in Season, Postseason, Dynasty, or
+Zustand, and existing commit/simulation paths remain unchanged.
+
 ```text
 Game Prep
 → Zustand draft
