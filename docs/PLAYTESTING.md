@@ -641,6 +641,27 @@ Recruiting period, standings, and every other Dynasty fact unchanged. This
 closes the repeated Coaching/Rotation-navigation friction; Game Prep and
 Tournament Game Prep are unchanged and remain additive alongside Coaching.
 
+### Simple Rotation UI — RESOLVED (Phase 6E.18C)
+
+Phase 6E.18C presents the 6E.18A/6E.18B foundation and closes this friction
+thread. Simple is now the default Coaching Rotation editor: one row per
+roster Player with a single total-MPG stepper, grouped into Rotation
+Players/Reserves purely by whether the current draft's minutes are positive
+or zero — no exact positional bookkeeping required for the common case. The
+existing exact positional editor remains available as Advanced, one click
+away, for users who want precise position-by-position control.
+
+Manual acceptance across default entry, editing across the Reserves boundary,
+an under-200 draft, an over-200 draft, reaching exactly 200 and applying, a
+translated infeasible-positional-coverage failure (draft preserved, canonical
+unchanged, no raw issue code shown), Discard restoring committed values, and
+the same flow during an active Postseason all read as intended: the user
+thinks in Player minutes, not position buckets, and the screen requires
+substantially less scrolling than the prior default. Starting Five and
+Auto/rotation-size presets remain deferred pending further playtesting
+evidence — this milestone deliberately tested whether one-total-MPG-per-Player
+is already enjoyable before considering either.
+
 ### Simple Rotation intent — FOUNDATION COMPLETE (Phase 6E.18A)
 
 The permanent Coaching screen exposed a narrower follow-up friction: exact
@@ -659,6 +680,16 @@ differ when several equally preferred solutions exist. Rotation V1, default
 generation, commits, and simulation remain unchanged. Starting Five has no
 separate simulation meaning, and Auto/rotation-size presets plus the visible
 Simple/Advanced editor remain future UX work.
+
+Phase 6E.18B completes the application-state integration without presenting the
+new editor. Coaching now keeps a roster-complete Player→MPG draft, including
+explicit zeroes from which the future UI can derive Reserves. Temporary totals
+such as 198 or 204 remain local until explicit Apply. Only a successful 6E.18A
+compile reaches the existing canonical Season/Postseason update boundary;
+failure preserves intent and exposes structured issues. Successful Simple and
+Advanced commits refresh one another, while invalid drafts remain isolated.
+Starting Five, Auto/size presets, and the visible Simple/Advanced experience are
+still deferred.
 
 ## Round Complete Review — OBSERVED
 

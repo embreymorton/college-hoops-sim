@@ -73,19 +73,20 @@ Coaching
 ├── Roster | Rotation (local CoachingModeTabs)
 │   ├── Roster   → reused TeamStatsTable (Pos/Player/Cl/Ovr/Pot/GP/MPG/PPG/RPG/APG
 │   │              + Shooting/Defense), Player click reuses openPlayerDetails
-│   └── Rotation → reused RotationEditorPanel against the Coaching draft
-│                  (postseasonDraftRotation while Postseason is active,
-│                  otherwise draftRotation), committed through the existing
-│                  6E.17A validated write boundary
+│   └── Rotation → Simple | Advanced (local RotationModeTabs, Simple default)
+│       ├── Simple   → SimpleRotationPanel against coachingSimpleMinutesByPlayerId
+│       └── Advanced → reused RotationEditorPanel against the Coaching draft
+│                       (postseasonDraftRotation while Postseason is active,
+│                       otherwise draftRotation)
 ```
 
-Coaching reuses `TeamDetailsHeader`, `TeamStatsTable`, and `RotationEditorPanel`
-unchanged — no new Rotation mechanic, Player-role concept, or canonical
-representation was added. The Roster view's current-season production comes
-from the existing `deriveProgramPlayerSeasonStats` projection; Player Details
-remains the deeper destination. `ExplorationBackButton`'s destination-label
-switch gained a `coaching` case so returning from Player Details reads "Back
-to Coaching" instead of falling back to the generic "Season" label.
+Coaching reuses `TeamDetailsHeader` and `TeamStatsTable` unchanged — no new
+Player-role concept or canonical representation was added. The Roster view's
+current-season production comes from the existing
+`deriveProgramPlayerSeasonStats` projection; Player Details remains the
+deeper destination. `ExplorationBackButton`'s destination-label switch gained
+a `coaching` case so returning from Player Details reads "Back to Coaching"
+instead of falling back to the generic "Season" label.
 
 Presentation-only fix: an invalid Rotation Player total (0–40) is now
 conveyed by recoloring the existing single-line Total cell
@@ -94,6 +95,44 @@ explanation) instead of a second block-level line under the minute stepper,
 so an invalid row no longer renders taller than its neighbors. The 0–40
 validation rule itself, `RotationEditorPanel`'s other markup, and Game Prep /
 Tournament Game Prep are unchanged.
+
+### Simple Rotation UI — implemented (6E.18C)
+
+Simple is now the default Coaching Rotation editor, presenting the
+`compileSimpleRotationIntent()` / Coaching Simple-draft contract (6E.18A/6E.18B)
+as one row per roster Player instead of the position-bucketed Advanced table.
+Advanced remains available for exact positional control and is unchanged.
+
+```text
+SimpleRotationPanel
+├── budget header — "N / 200 MINUTES" + a live under/over hint
+│   ("Assign N more minutes" / "Remove N minutes" / "Up to date.")
+├── Discard Changes / Apply Rotation
+│   (Apply enabled only at exactly 200; Discard enabled only when the
+│    draft differs from the committed Rotation)
+├── translated compiler issues (role="status"), e.g. infeasible positional
+│   coverage → "This minute distribution can't cover every position (…).
+│   Adjust the Players in your rotation or use Advanced for exact
+│   positional control." — never a raw issue code
+└── Rotation Players / Reserves — every roster Player exactly once, grouped
+    purely by whether its current draft MPG is positive or zero; each row is
+    Player · eligible position(s) · class · OVR · a MinuteStepper (reused,
+    giving "Decrease/Increase {Player} minutes" accessible names for free)
+```
+
+Grouping is derived, not stored: a Player crossing zero minutes moves groups
+automatically, with no reserve flag, role, or Starting Five concept. Row order
+within each group is stable roster order (not MPG-sorted) so rows never jump
+while a Player's own minutes are being edited. Apply/Discard call the existing
+6E.18B actions (`applyCoachingSimpleRotation`/`resetCoachingSimpleRotation`)
+directly — the component performs no Simple/Advanced synchronization itself,
+and a successful commit is confirmed only by the quiet "Up to date." status
+change, not a modal. Manual regular-season and active-Postseason acceptance
+confirmed: default-to-Simple entry, edits crossing the Reserves boundary in
+both directions, disabled Apply while off-200, a translated
+`INFEASIBLE_POSITION_COVERAGE` failure that preserves the draft and leaves
+canonical state untouched, Discard restoring committed values, and correct
+Simple ⇄ Advanced sync after a successful commit in both Season and Postseason.
 
 ## Postseason experience — implemented
 

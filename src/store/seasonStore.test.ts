@@ -397,6 +397,14 @@ describe('seasonStore Coaching foundation', () => {
     expect(
       validState.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation,
     ).toEqual(validState.draftRotation)
+    expect(validState.coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        controlled.team.roster.map(({ id }) => [
+          id,
+          derivePlayerMinutesV1(validState.draftRotation!)[id] ?? 0,
+        ]),
+      ),
+    )
 
     const committed = validState.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
     useDynastyStore.getState().setCoachingDraftPlayerPositionMinutes(
@@ -410,6 +418,171 @@ describe('seasonStore Coaching foundation', () => {
     expect(
       invalidState.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation,
     ).toEqual(committed)
+  })
+})
+
+describe('seasonStore Simple Rotation Coaching integration', () => {
+  it('initializes every roster Player from canonical aggregate MPG, including zero-minute Reserves', () => {
+    selectProgram()
+    const controlled = useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!
+    const expected = derivePlayerMinutesV1(controlled.rotation)
+
+    useDynastyStore.getState().goToCoaching()
+
+    const simple = useDynastyStore.getState().coachingSimpleMinutesByPlayerId!
+    expect(Object.keys(simple)).toHaveLength(controlled.team.roster.length)
+    for (const player of controlled.team.roster) {
+      expect(simple[player.id]).toBe(expected[player.id] ?? 0)
+    }
+    expect(Object.values(simple)).toContain(0)
+  })
+
+  it('preserves temporary 198/200 and 204/200 Simple drafts without touching canonical or Advanced state', () => {
+    selectProgram()
+    useDynastyStore.getState().goToCoaching()
+    const before = useDynastyStore.getState()
+    const canonical = before.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
+    const advanced = before.draftRotation
+    const active = Object.entries(before.coachingSimpleMinutesByPlayerId!)
+      .find(([, minutes]) => minutes >= 2 && minutes <= 36)!
+
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(active[0], active[1] - 2)
+    expect(
+      Object.values(useDynastyStore.getState().coachingSimpleMinutesByPlayerId!)
+        .reduce((sum, minutes) => sum + minutes, 0),
+    ).toBe(198)
+    expect(useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!.rotation).toBe(canonical)
+    expect(useDynastyStore.getState().draftRotation).toBe(advanced)
+
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(active[0], active[1] + 4)
+    expect(
+      Object.values(useDynastyStore.getState().coachingSimpleMinutesByPlayerId!)
+        .reduce((sum, minutes) => sum + minutes, 0),
+    ).toBe(204)
+    expect(useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!.rotation).toBe(canonical)
+    expect(useDynastyStore.getState().draftRotation).toBe(advanced)
+  })
+
+  it('applies feasible intent canonically and refreshes the Advanced positional draft', () => {
+    selectProgram()
+    useDynastyStore.getState().goToCoaching()
+    const controlled = useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!
+    const players = getPlayersByMinutesV1(controlled.team, controlled.rotation)
+    const pair = players.flatMap((first) =>
+      players
+        .filter((second) =>
+          second.player.id !== first.player.id &&
+          second.player.position === first.player.position &&
+          first.minutes >= 1 &&
+          second.minutes < 40,
+        )
+        .map((second) => [first, second] as const),
+    )[0]!
+
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(
+      pair[0].player.id,
+      pair[0].minutes - 1,
+    )
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(
+      pair[1].player.id,
+      pair[1].minutes + 1,
+    )
+    const intended = useDynastyStore.getState().coachingSimpleMinutesByPlayerId!
+    const result = useDynastyStore.getState().applyCoachingSimpleRotation()
+
+    expect(result?.valid).toBe(true)
+    const state = useDynastyStore.getState()
+    const committed = state.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
+    expect(validateRotationV1(controlled.team, committed).valid).toBe(true)
+    expect(derivePlayerMinutesV1(committed)).toEqual(
+      Object.fromEntries(Object.entries(intended).filter(([, minutes]) => minutes > 0)),
+    )
+    expect(state.draftRotation).toEqual(committed)
+    expect(state.coachingSimpleRotationIssues).toEqual([])
+  })
+
+  it('surfaces failed compilation, preserves intent, and leaves canonical state unchanged', () => {
+    selectProgram()
+    useDynastyStore.getState().goToCoaching()
+    const before = useDynastyStore.getState()
+    const canonical = before.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
+    const active = Object.entries(before.coachingSimpleMinutesByPlayerId!)
+      .find(([, minutes]) => minutes >= 2)!
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(active[0], active[1] - 2)
+    const draft = useDynastyStore.getState().coachingSimpleMinutesByPlayerId
+
+    const result = useDynastyStore.getState().applyCoachingSimpleRotation()
+
+    expect(result?.valid).toBe(false)
+    expect(result?.issues).toContainEqual(
+      expect.objectContaining({ code: 'INVALID_TOTAL_MINUTES', actual: 198 }),
+    )
+    const state = useDynastyStore.getState()
+    expect(state.coachingSimpleRotationIssues).toEqual(result?.issues)
+    expect(state.coachingSimpleMinutesByPlayerId).toBe(draft)
+    expect(state.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation).toBe(canonical)
+  })
+
+  it('rejects positionally infeasible 200-minute intent without changing canonical state', () => {
+    selectProgram()
+    useDynastyStore.getState().goToCoaching()
+    const state = useDynastyStore.getState()
+    const controlled = state.dynasty!.activeSeason!.programStates['charlotte-tech']!
+    const canonical = controlled.rotation
+    const perimeterPlayers = controlled.team.roster
+      .filter((player) => ['PG', 'SG', 'SF'].includes(player.position))
+      .slice(0, 5)
+    expect(perimeterPlayers).toHaveLength(5)
+
+    for (const player of controlled.team.roster) {
+      useDynastyStore.getState().setCoachingSimplePlayerMinutes(player.id, 0)
+    }
+    for (const player of perimeterPlayers) {
+      useDynastyStore.getState().setCoachingSimplePlayerMinutes(player.id, 40)
+    }
+    const draft = useDynastyStore.getState().coachingSimpleMinutesByPlayerId
+
+    const result = useDynastyStore.getState().applyCoachingSimpleRotation()
+
+    expect(result?.valid).toBe(false)
+    expect(result?.issues.some(({ code }) => code === 'INFEASIBLE_POSITION_COVERAGE')).toBe(true)
+    expect(useDynastyStore.getState().coachingSimpleMinutesByPlayerId).toBe(draft)
+    expect(useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!.rotation).toBe(canonical)
+  })
+
+  it('keeps invalid Advanced edits isolated and can discard Simple edits', () => {
+    selectProgram()
+    useDynastyStore.getState().goToCoaching()
+    const controlled = useDynastyStore.getState().dynasty!.activeSeason!
+      .programStates['charlotte-tech']!
+    const initialSimple = useDynastyStore.getState().coachingSimpleMinutesByPlayerId!
+    const first = getPlayersByMinutesV1(controlled.team, controlled.rotation)[0]!
+
+    useDynastyStore.getState().setCoachingDraftPlayerPositionMinutes(
+      first.player.id,
+      first.player.position,
+      (controlled.rotation.minutesByPosition[first.player.position][first.player.id] ?? 0) + 5,
+    )
+    expect(useDynastyStore.getState().coachingSimpleMinutesByPlayerId).toBe(initialSimple)
+
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(
+      first.player.id,
+      initialSimple[first.player.id]! - 1,
+    )
+    useDynastyStore.getState().resetCoachingSimpleRotation()
+    expect(useDynastyStore.getState().coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        controlled.team.roster.map(({ id }) => [
+          id,
+          derivePlayerMinutesV1(controlled.rotation)[id] ?? 0,
+        ]),
+      ),
+    )
   })
 })
 

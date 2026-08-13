@@ -4,9 +4,12 @@ import {
   CoachingModeTabs,
   DynastySectionNav,
   RotationEditorPanel,
+  RotationModeTabs,
+  SimpleRotationPanel,
   TeamDetailsHeader,
   TeamStatsTable,
   type CoachingMode,
+  type RotationMode,
 } from '../components'
 import {
   deriveConferenceRecord,
@@ -20,7 +23,7 @@ import {
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
-import { describeRotationBlockingReason } from './formatters'
+import { deriveSimplePlayerMinutes, describeRotationBlockingReason } from './formatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -35,6 +38,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  */
 export function CoachingScreen() {
   const [mode, setMode] = useState<CoachingMode>('roster')
+  const [rotationMode, setRotationMode] = useState<RotationMode>('simple')
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
@@ -54,6 +58,21 @@ export function CoachingScreen() {
   const resetCoachingDraftRotation = useDynastyStore(
     (state) => state.resetCoachingDraftRotation,
   )
+  const coachingSimpleMinutesByPlayerId = useDynastyStore(
+    (state) => state.coachingSimpleMinutesByPlayerId,
+  )
+  const coachingSimpleRotationIssues = useDynastyStore(
+    (state) => state.coachingSimpleRotationIssues,
+  )
+  const setCoachingSimplePlayerMinutes = useDynastyStore(
+    (state) => state.setCoachingSimplePlayerMinutes,
+  )
+  const applyCoachingSimpleRotation = useDynastyStore(
+    (state) => state.applyCoachingSimpleRotation,
+  )
+  const resetCoachingSimpleRotation = useDynastyStore(
+    (state) => state.resetCoachingSimpleRotation,
+  )
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const goToCoaching = useDynastyStore((state) => state.goToCoaching)
@@ -61,7 +80,13 @@ export function CoachingScreen() {
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
-  if (!season || !controlledProgramId || !draftRotation || !defaultRotation) {
+  if (
+    !season ||
+    !controlledProgramId ||
+    !draftRotation ||
+    !defaultRotation ||
+    !coachingSimpleMinutesByPlayerId
+  ) {
     return null
   }
 
@@ -137,19 +162,42 @@ export function CoachingScreen() {
           />
         ) : (
           <div className="coaching-rotation-panel">
-            <RotationEditorPanel
-              team={controlledTeam}
-              defaultRotation={defaultRotation}
-              currentRotation={draftRotation}
-              program={{ primaryColor: controlledProgram.branding.primaryColor }}
-              validation={validation}
-              defaultStrength={defaultStrength}
-              currentStrength={editStrength}
-              pendingStrengthReason={blockingReason}
-              onSetPlayerPositionMinutes={setCoachingDraftPlayerPositionMinutes}
-              onReset={resetCoachingDraftRotation}
-              headingId="coaching-team-heading"
-            />
+            <div className="rotation-mode-toolbar">
+              <RotationModeTabs mode={rotationMode} onSelectMode={setRotationMode} />
+            </div>
+            {rotationMode === 'simple' ? (
+              <SimpleRotationPanel
+                team={controlledTeam}
+                program={{ primaryColor: controlledProgram.branding.primaryColor }}
+                minutesByPlayerId={coachingSimpleMinutesByPlayerId}
+                committedMinutesByPlayerId={deriveSimplePlayerMinutes(
+                  controlledTeam,
+                  canonicalRotation,
+                )}
+                issues={coachingSimpleRotationIssues}
+                onSetPlayerMinutes={setCoachingSimplePlayerMinutes}
+                onApply={() => applyCoachingSimpleRotation()}
+                onDiscard={resetCoachingSimpleRotation}
+                onSelectPlayer={(playerId) =>
+                  openPlayerDetails(controlledProgramId, playerId)
+                }
+                headingId="coaching-team-heading"
+              />
+            ) : (
+              <RotationEditorPanel
+                team={controlledTeam}
+                defaultRotation={defaultRotation}
+                currentRotation={draftRotation}
+                program={{ primaryColor: controlledProgram.branding.primaryColor }}
+                validation={validation}
+                defaultStrength={defaultStrength}
+                currentStrength={editStrength}
+                pendingStrengthReason={blockingReason}
+                onSetPlayerPositionMinutes={setCoachingDraftPlayerPositionMinutes}
+                onReset={resetCoachingDraftRotation}
+                headingId="coaching-team-heading"
+              />
+            )}
           </div>
         )}
       </section>

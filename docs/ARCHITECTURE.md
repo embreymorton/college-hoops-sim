@@ -125,6 +125,19 @@ Player requests, unknown IDs, or infeasible coverage return structured issues
 and no Rotation. The adapter is not stored in Season, Postseason, Dynasty, or
 Zustand, and existing commit/simulation paths remain unchanged.
 
+Phase 6E.18B integrates that adapter only into Coaching session state.
+`coachingSimpleMinutesByPlayerId` is a roster-complete aggregate draft, with
+zero representing the presentation-only Reserves grouping; it is never a Player
+role or canonical basketball fact. Edits may temporarily total above or below
+200 without touching V1. Explicit Apply compiles the draft and commits only a
+successful result through the existing Season/Postseason Rotation replacement
+APIs; compiler issues remain available in session state after failure. A
+successful Simple commit refreshes the existing positional draft, and a
+successful Coaching positional commit re-aggregates Simple. Invalid edits in
+either draft remain isolated. Entering Coaching and Simple discard/reset both
+rebuild aggregate MPG from the active Postseason Rotation when present,
+otherwise from the active Season Rotation.
+
 ```text
 Game Prep
 → Zustand draft

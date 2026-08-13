@@ -306,6 +306,29 @@ No visible Simple editor, Starting Five mechanic, Auto/rotation-size preset,
 Zustand integration, commit-path change, default-generation change, or
 simulation change is included.
 
+Phase 6E.18B Simple Rotation Coaching State Integration is accepted. Zustand
+now holds one roster-complete, UI-only Player→MPG draft and the latest structured
+compiler issues. Coaching entry resolves Postseason before Season and aggregates
+canonical V1, including explicit zeroes for presentation-derived Reserves.
+Editing never commits; explicit Apply compiles through 6E.18A and uses the
+existing Season/Postseason replacement APIs only on success. Failed Apply keeps
+canonical state and both drafts unchanged while preserving the user's Simple
+intent and surfacing issues. Successful Simple/Advanced Coaching commits refresh
+the opposite editor, and discard rebuilds Simple from committed Rotation. The
+visible editor remains deferred to Claude; no reserve role, Starting Five,
+preset, Game Prep, Rotation V1, default-generation, or simulation change exists.
+
+Phase 6E.18C Simple Rotation UI V1 is accepted. Simple is now the default
+Coaching Rotation editor: one row per roster Player with a Player-total MPG
+`MinuteStepper`, grouped into Rotation Players/Reserves purely by whether the
+current draft's minutes are positive or zero. Advanced (the existing exact
+positional `RotationEditorPanel`) remains available via a local
+`RotationModeTabs` switch and is otherwise unchanged. Apply/Discard call the
+existing 6E.18B actions directly; structured compiler issues are translated
+into coaching-language messages (never raw issue codes), and a live
+under/over-200 hint keeps the minutes budget legible without requiring an
+Apply attempt. See `UI_DESIGN.md` for the accepted presentation contract.
+
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
 True powerhouse states can occur: one Northbridge roster reached roughly `87` Team OVR with multiple `90+` and `85+` Players. Mature seasons can still be mostly 70s with the best Teams in the low/mid 80s. Powerhouse frequency and persistence remain a WATCH; current evidence does not justify reopening Recruit Talent V1 or Development V1.

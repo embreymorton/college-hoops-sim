@@ -2,9 +2,10 @@ import type {
   Position,
   RotationV1,
   RotationV1ValidationResult,
+  SimpleRotationIntentIssue,
   Team,
 } from '../engine'
-import { areRotationsV1Equal } from '../engine'
+import { areRotationsV1Equal, derivePlayerMinutesV1 } from '../engine'
 
 /**
  * Presentation-only formatting helpers. These format existing engine output
@@ -133,4 +134,88 @@ export function describeRotationBlockingReason(
   }
 
   return 'Fix Rotation issues to simulate.'
+}
+
+/** Every current roster Player's aggregate MPG, including explicit zeroes for Reserves. */
+export function deriveSimplePlayerMinutes(
+  team: Team,
+  rotation: RotationV1,
+): Record<string, number> {
+  const assignedMinutes = derivePlayerMinutesV1(rotation)
+
+  return Object.fromEntries(
+    team.roster.map((player) => [player.id, assignedMinutes[player.id] ?? 0]),
+  )
+}
+
+/**
+ * "Assign N more minutes" / "Remove N minutes" for the Simple Rotation
+ * minutes budget, or null once the draft totals exactly `targetTotal`.
+ */
+export function describeMinutesBudgetHint(
+  actualTotal: number,
+  targetTotal: number,
+): string | null {
+  const remaining = targetTotal - actualTotal
+
+  if (remaining === 0) {
+    return null
+  }
+
+  const magnitude = Math.abs(remaining)
+  const unit = magnitude === 1 ? 'minute' : 'minutes'
+
+  return remaining > 0
+    ? `Assign ${magnitude} more ${unit}`
+    : `Remove ${magnitude} ${unit}`
+}
+
+/**
+ * Translates structured Simple Rotation compiler issues into concise,
+ * coaching-language messages — never the raw issue codes.
+ */
+export function describeSimpleRotationIssues(
+  issues: readonly SimpleRotationIntentIssue[],
+): string[] {
+  if (issues.length === 0) {
+    return []
+  }
+
+  const messages: string[] = []
+
+  const positionIssues = issues.filter(
+    (issue) => issue.code === 'INFEASIBLE_POSITION_COVERAGE',
+  )
+
+  if (positionIssues.length > 0) {
+    const positions = positionIssues
+      .map((issue) => issue.position)
+      .filter((position): position is Position => Boolean(position))
+      .join(', ')
+
+    messages.push(
+      `This minute distribution can't cover every position` +
+        `${positions ? ` (${positions})` : ''}. Adjust the Players in your ` +
+        `rotation or use Advanced for exact positional control.`,
+    )
+  }
+
+  if (issues.some((issue) => issue.code === 'INVALID_TOTAL_MINUTES')) {
+    messages.push('Assign exactly 200 total minutes before applying.')
+  }
+
+  const hasUnexpectedIssue = issues.some(
+    (issue) =>
+      issue.code === 'UNKNOWN_PLAYER' ||
+      issue.code === 'INVALID_PLAYER_MINUTES' ||
+      issue.code === 'INVALID_COMPILED_ROTATION',
+  )
+
+  if (hasUnexpectedIssue && messages.length === 0) {
+    messages.push(
+      "This rotation can't be applied yet. Try Advanced for exact control.",
+    )
+  }
+
+  return messages
 }

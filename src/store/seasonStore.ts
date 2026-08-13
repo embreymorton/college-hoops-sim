@@ -1,10 +1,16 @@
 import { create } from 'zustand'
 import {
   cloneRotationV1,
+  compileSimpleRotationIntent,
+  derivePlayerMinutesV1,
+  MAX_PLAYER_MINUTES,
   validateRotationV1,
   type Position,
   type RotationV1,
   type RngSeed,
+  type SimpleRotationIntentIssue,
+  type SimpleRotationIntentResult,
+  type Team,
 } from '../engine'
 import {
   addRecruitingBoardTarget,
@@ -170,6 +176,18 @@ function catchUpRoundsBefore(
   return current
 }
 
+/** Includes every current roster Player so zero-minute Reserves remain derivable. */
+function deriveSimpleRotationMinutes(
+  team: Team,
+  rotation: RotationV1,
+): Record<string, number> {
+  const assignedMinutes = derivePlayerMinutesV1(rotation)
+
+  return Object.fromEntries(
+    team.roster.map((player) => [player.id, assignedMinutes[player.id] ?? 0]),
+  )
+}
+
 export type SeasonSessionView =
   | 'programSelect'
   | 'hub'
@@ -213,6 +231,10 @@ export interface DynastySessionState {
   readonly postseasonControlledDefaultRotation: RotationV1 | null
   /** In-progress Postseason Rotation edit, scoped to Tournament Game Prep — same draft-boundary contract as `draftRotation`. */
   readonly postseasonDraftRotation: RotationV1 | null
+  /** UI-only aggregate MPG intent for Coaching Simple Rotation, including zero-minute roster Players. */
+  readonly coachingSimpleMinutesByPlayerId: Readonly<Record<string, number>> | null
+  /** Structured issues from the most recent failed Simple Rotation apply attempt. */
+  readonly coachingSimpleRotationIssues: readonly SimpleRotationIntentIssue[]
   /** The controlled Program's most recently completed Tournament game, for inline Hub feedback or postgame. */
   readonly lastPlayedTournamentGameId: string | null
   /** The completed Tournament game currently open for historical review, if any. */
@@ -275,6 +297,12 @@ export interface DynastySessionState {
   ): void
   /** Routes Coaching reset through the active competition's existing reset boundary. */
   resetCoachingDraftRotation(): void
+  /** Updates only UI intent; incomplete 198/200 and 204/200 drafts remain representable. */
+  setCoachingSimplePlayerMinutes(playerId: string, minutes: number): void
+  /** Compiles and commits only feasible Simple intent, returning the compiler result for callers. */
+  applyCoachingSimpleRotation(): SimpleRotationIntentResult | null
+  /** Discards Simple edits and rebuilds aggregate MPG from the current canonical Rotation. */
+  resetCoachingSimpleRotation(): void
   /** Also catches up any fully-past rounds so AI results never lag behind. */
   goToGamePrep(): void
   goToHub(): void
@@ -608,6 +636,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   superSimSummary: null,
   postseasonControlledDefaultRotation: null,
   postseasonDraftRotation: null,
+  coachingSimpleMinutesByPlayerId: null,
+  coachingSimpleRotationIssues: [],
   lastPlayedTournamentGameId: null,
   viewedTournamentGameId: null,
   explorationViewHistory: [],
@@ -662,6 +692,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       superSimSummary: null,
       postseasonControlledDefaultRotation: null,
       postseasonDraftRotation: null,
+      coachingSimpleMinutesByPlayerId: null,
+      coachingSimpleRotationIssues: [],
       lastPlayedTournamentGameId: null,
       viewedTournamentGameId: null,
       explorationViewHistory: [],
@@ -750,8 +782,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty.activePostseason?.programStates[controlledProgramId]?.rotation
 
     if (postseasonRotation) {
+      const postseasonTeam =
+        dynasty.activePostseason!.programStates[controlledProgramId]!.team
       set({
         postseasonDraftRotation: postseasonRotation,
+        coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+          postseasonTeam,
+          postseasonRotation,
+        ),
+        coachingSimpleRotationIssues: [],
         view: 'coaching',
         explorationViewHistory: [],
         recruitingActionError: null,
@@ -761,13 +800,20 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     const seasonRotation =
       dynasty.activeSeason?.programStates[controlledProgramId]?.rotation
+    const seasonTeam =
+      dynasty.activeSeason?.programStates[controlledProgramId]?.team
 
-    if (!seasonRotation) {
+    if (!seasonRotation || !seasonTeam) {
       return
     }
 
     set({
       draftRotation: seasonRotation,
+      coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+        seasonTeam,
+        seasonRotation,
+      ),
+      coachingSimpleRotationIssues: [],
       view: 'coaching',
       explorationViewHistory: [],
       recruitingActionError: null,
@@ -776,6 +822,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
   setCoachingDraftPlayerPositionMinutes(playerId, floorPosition, minutes) {
     const state = get()
+    const dynastyBefore = state.dynasty
 
     if (state.dynasty?.activePostseason) {
       state.setPostseasonDraftPlayerPositionMinutes(
@@ -783,10 +830,36 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         floorPosition,
         minutes,
       )
+      const nextState = get()
+      if (nextState.dynasty !== dynastyBefore) {
+        const controlledProgramId = nextState.dynasty!.controlledProgramId
+        const controlledState =
+          nextState.dynasty!.activePostseason!.programStates[controlledProgramId]!
+        set({
+          coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+            controlledState.team,
+            controlledState.rotation,
+          ),
+          coachingSimpleRotationIssues: [],
+        })
+      }
       return
     }
 
     state.setDraftPlayerPositionMinutes(playerId, floorPosition, minutes)
+    const nextState = get()
+    if (nextState.dynasty !== dynastyBefore) {
+      const controlledProgramId = nextState.dynasty!.controlledProgramId
+      const controlledState =
+        nextState.dynasty!.activeSeason!.programStates[controlledProgramId]!
+      set({
+        coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+          controlledState.team,
+          controlledState.rotation,
+        ),
+        coachingSimpleRotationIssues: [],
+      })
+    }
   },
 
   resetCoachingDraftRotation() {
@@ -794,10 +867,132 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     if (state.dynasty?.activePostseason) {
       state.resetPostseasonDraftRotation()
+    } else {
+      state.resetDraftRotation()
+    }
+
+    const nextState = get()
+    const controlledProgramId = nextState.dynasty?.controlledProgramId
+    const controlledState = nextState.dynasty?.activePostseason
+      ? nextState.dynasty.activePostseason.programStates[controlledProgramId!]
+      : nextState.dynasty?.activeSeason?.programStates[controlledProgramId!]
+
+    if (controlledState) {
+      set({
+        coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+          controlledState.team,
+          controlledState.rotation,
+        ),
+        coachingSimpleRotationIssues: [],
+      })
+    }
+  },
+
+  setCoachingSimplePlayerMinutes(playerId, minutes) {
+    const { dynasty, coachingSimpleMinutesByPlayerId } = get()
+    const controlledProgramId = dynasty?.controlledProgramId
+    const controlledTeam = dynasty?.activePostseason
+      ?.programStates[controlledProgramId!]?.team ??
+      dynasty?.activeSeason?.programStates[controlledProgramId!]?.team
+
+    if (
+      !controlledTeam ||
+      !coachingSimpleMinutesByPlayerId ||
+      !controlledTeam.roster.some((player) => player.id === playerId) ||
+      !Number.isFinite(minutes)
+    ) {
       return
     }
 
-    state.resetDraftRotation()
+    set({
+      coachingSimpleMinutesByPlayerId: {
+        ...coachingSimpleMinutesByPlayerId,
+        [playerId]: Math.min(
+          MAX_PLAYER_MINUTES,
+          Math.max(0, Math.round(minutes)),
+        ),
+      },
+      coachingSimpleRotationIssues: [],
+    })
+  },
+
+  applyCoachingSimpleRotation() {
+    const { dynasty, coachingSimpleMinutesByPlayerId } = get()
+    const controlledProgramId = dynasty?.controlledProgramId
+    const postseasonState = dynasty?.activePostseason
+      ?.programStates[controlledProgramId!]
+    const seasonState = dynasty?.activeSeason?.programStates[controlledProgramId!]
+    const controlledState = postseasonState ?? seasonState
+
+    if (!dynasty || !controlledProgramId || !controlledState || !coachingSimpleMinutesByPlayerId) {
+      return null
+    }
+
+    const result = compileSimpleRotationIntent(
+      controlledState.team,
+      coachingSimpleMinutesByPlayerId,
+    )
+
+    if (!result.valid) {
+      set({ coachingSimpleRotationIssues: result.issues })
+      return result
+    }
+
+    if (postseasonState && dynasty.activePostseason) {
+      set({
+        dynasty: {
+          ...dynasty,
+          activePostseason: updatePostseasonProgramRotation(
+            dynasty.activePostseason,
+            controlledProgramId,
+            result.rotation,
+          ),
+        },
+        postseasonDraftRotation: result.rotation,
+        coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+          controlledState.team,
+          result.rotation,
+        ),
+        coachingSimpleRotationIssues: [],
+      })
+    } else if (dynasty.activeSeason) {
+      set({
+        dynasty: {
+          ...dynasty,
+          activeSeason: updateProgramRotation(
+            dynasty.activeSeason,
+            controlledProgramId,
+            result.rotation,
+          ),
+        },
+        draftRotation: result.rotation,
+        coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+          controlledState.team,
+          result.rotation,
+        ),
+        coachingSimpleRotationIssues: [],
+      })
+    }
+
+    return result
+  },
+
+  resetCoachingSimpleRotation() {
+    const { dynasty } = get()
+    const controlledProgramId = dynasty?.controlledProgramId
+    const controlledState = dynasty?.activePostseason
+      ?.programStates[controlledProgramId!] ??
+      dynasty?.activeSeason?.programStates[controlledProgramId!]
+
+    if (!controlledState) return
+
+    set({
+      coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+        controlledState.team,
+        controlledState.rotation,
+      ),
+      coachingSimpleRotationIssues: [],
+    })
   },
 
   goToGamePrep() {
@@ -1591,6 +1786,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         superSimSummary: null,
         postseasonControlledDefaultRotation: null,
         postseasonDraftRotation: null,
+        coachingSimpleMinutesByPlayerId: null,
+        coachingSimpleRotationIssues: [],
         lastPlayedTournamentGameId: null,
         viewedTournamentGameId: null,
         explorationViewHistory: [],

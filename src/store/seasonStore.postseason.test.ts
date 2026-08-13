@@ -5,6 +5,7 @@ import {
 } from '../dynasty'
 import {
   cloneRotationV1,
+  derivePlayerMinutesV1,
   simulateGame,
   validateRotationV1,
   type GameResult,
@@ -263,6 +264,15 @@ describe('seasonStore postseason — qualified and alive', () => {
     const state = useDynastyStore.getState()
     expect(state.view).toBe('coaching')
     expect(state.postseasonDraftRotation).toEqual(canonical)
+    const aggregate = derivePlayerMinutesV1(canonical)
+    expect(state.coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        postseason.programStates[controlledProgramId]!.team.roster.map(({ id }) => [
+          id,
+          aggregate[id] ?? 0,
+        ]),
+      ),
+    )
     expect(state.dynasty!.activePostseason!.resultsByGameId).toBe(resultsBefore)
     expect(getCurrentTournamentRound(state.dynasty!.activePostseason!)).toBe(
       getCurrentTournamentRound(postseason),
@@ -295,6 +305,46 @@ describe('seasonStore postseason — qualified and alive', () => {
     expect(
       state.dynasty!.activeSeason!.programStates[controlledProgramId]!.rotation,
     ).toEqual(originalSeasonRotation)
+    expect(state.coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        postseason.programStates[controlledProgramId]!.team.roster.map(({ id }) => [
+          id,
+          derivePlayerMinutesV1(nudged)[id] ?? 0,
+        ]),
+      ),
+    )
+  })
+
+  it('applies Simple intent to Postseason canonical state and refreshes Advanced only', () => {
+    const { postseason, season } = primeStore('coaching-simple-apply')
+    const controlledProgramId = postseason.field[0]!.programId
+    assignControlledProgram(postseason, controlledProgramId)
+    const originalSeasonRotation = season.programStates[controlledProgramId]!.rotation
+    const intendedRotation = nudgeRotation(postseason, controlledProgramId)
+    const intendedTotals = derivePlayerMinutesV1(intendedRotation)
+
+    useDynastyStore.getState().goToCoaching()
+    for (const player of postseason.programStates[controlledProgramId]!.team.roster) {
+      useDynastyStore.getState().setCoachingSimplePlayerMinutes(
+        player.id,
+        intendedTotals[player.id] ?? 0,
+      )
+    }
+
+    const result = useDynastyStore.getState().applyCoachingSimpleRotation()
+
+    expect(result?.valid).toBe(true)
+    const state = useDynastyStore.getState()
+    const committed = state.dynasty!.activePostseason!
+      .programStates[controlledProgramId]!.rotation
+    expect(validateRotationV1(
+      postseason.programStates[controlledProgramId]!.team,
+      committed,
+    ).valid).toBe(true)
+    expect(derivePlayerMinutesV1(committed)).toEqual(intendedTotals)
+    expect(state.postseasonDraftRotation).toEqual(committed)
+    expect(state.dynasty!.activeSeason!.programStates[controlledProgramId]!.rotation)
+      .toEqual(originalSeasonRotation)
   })
 
   it('resolves the correct current-round matchup and Quick Sim records the real Tournament GameResult', () => {
