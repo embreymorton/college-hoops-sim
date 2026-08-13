@@ -691,6 +691,25 @@ Advanced commits refresh one another, while invalid drafts remain isolated.
 Starting Five, Auto/size presets, and the visible Simple/Advanced experience are
 still deferred.
 
+### Projected Starting Five — FOUNDATION COMPLETE (Phase 6E.18D)
+
+Simple Rotation removed positional bookkeeping, but presenting every positive-
+minute Player as a peer still obscures the recognizable basketball lineup.
+Phase 6E.18D adds a domain projection—not a starter mechanic—that derives one
+unique Player at PG/SG/SF/PF/C from the last committed Rotation V1. The exact
+assignment is grounded in actual positional minutes and deterministically
+resolves dual-position collisions; it is not based merely on OVR, natural label,
+or aggregate MPG. It remains stable during uncommitted Simple edits and changes
+only after canonical Apply or a valid Advanced commit.
+
+Characterization produced complete unique fives for all 64 generated legal
+defaults and all 64 Rotations reconstructed from their aggregate MPG through the
+Simple compiler. The position-keyed Player-ID result leaves a clean boundary if
+starter status later earns canonical gameplay meaning, but today it is derived,
+unpersisted, and simulation-neutral. Manual Starting Five selection and any
+starter effects remain future/WATCH; the visible Starting Five/Bench/Reserves
+hierarchy is deferred to the frontend phase.
+
 ## Round Complete Review — OBSERVED
 
 Current friction:

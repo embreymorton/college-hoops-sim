@@ -72,3 +72,10 @@ export type {
   SimpleRotationIntentIssueCode,
   SimpleRotationIntentResult,
 } from './simpleRotationIntent'
+export { deriveProjectedStartingFive } from './projectedStartingFive'
+export type {
+  ProjectedStartingFive,
+  ProjectedStartingFiveIssue,
+  ProjectedStartingFiveIssueCode,
+  ProjectedStartingFiveResult,
+} from './projectedStartingFive'

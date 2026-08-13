@@ -318,6 +318,18 @@ the opposite editor, and discard rebuilds Simple from committed Rotation. The
 visible editor remains deferred to Claude; no reserve role, Starting Five,
 preset, Game Prep, Rotation V1, default-generation, or simulation change exists.
 
+Phase 6E.18D Projected Starting Five Foundation is accepted. The public pure
+`deriveProjectedStartingFive()` helper derives a position-keyed PG/SG/SF/PF/C
+projection from committed canonical Rotation V1, using exact unique-player
+assignment and actual positional minutes. Deterministic ties prefer natural
+assignments, aggregate MPG, then stable Player ID. It returns structured failure
+rather than guessing from invalid or unexpectedly incomplete input. The result
+is not stored and has no independent gameplay effect; uncommitted Simple drafts
+cannot change it. All 64 generated defaults and 64 Simple-compiled equivalents
+produced complete unique projections. Manual starter choice, canonical starter
+state, simulation effects, and frontend Starting Five/Bench presentation remain
+future work.
+
 Phase 6E.18C Simple Rotation UI V1 is accepted. Simple is now the default
 Coaching Rotation editor: one row per roster Player with a Player-total MPG
 `MinuteStepper`, grouped into Rotation Players/Reserves purely by whether the

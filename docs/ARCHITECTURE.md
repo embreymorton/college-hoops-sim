@@ -138,6 +138,18 @@ either draft remain isolated. Entering Coaching and Simple discard/reset both
 rebuild aggregate MPG from the active Postseason Rotation when present,
 otherwise from the active Season Rotation.
 
+Projected Starting Five is another pure read boundary over committed Rotation
+V1. `deriveProjectedStartingFive(team, rotation)` returns Player IDs keyed by
+canonical `Position`; it stores no starter fact and has no simulation effect.
+An exact five-position assignment maximizes the sum of each selected Player's
+actual minutes at the projected position while enforcing five unique Players.
+Ties prefer natural-position assignments, then higher aggregate Player minutes,
+then lexicographically smaller stable Player IDs in canonical `POSITIONS` order.
+Invalid Rotations or an unexpected inability to form a unique five return a
+structured failure. Uncommitted Simple MPG intent is deliberately excluded:
+Starting Five changes only after Simple Apply or an Advanced edit successfully
+changes canonical Rotation V1.
+
 ```text
 Game Prep
 → Zustand draft
