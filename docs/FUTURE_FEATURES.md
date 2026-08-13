@@ -41,6 +41,62 @@ Recruit Talent Distribution V1 and the current talent economy are accepted and f
 
 ## Statistics and League immersion
 
+### Player Profile / Statistical Identity
+
+Most Players should remain recognizably shaped by their listed position, so PGs
+normally lead assist production and PFs/Centers normally lead rebounding. A
+future direction could add greater rare variability within those norms:
+unusually tall or strong-rebounding guards, playmaking bigs, point-forward
+wings, stretch Centers, undersized skilled bigs, and other cross-positional
+statistical anomalies. These should emerge from unusual combinations of
+attributes, physical profile, position, minutes, production, and any later
+earned involvement concepts—not from named-player templates. Rarity is a design
+requirement because an exception is valuable precisely when it is memorable.
+No frequency or formula is selected.
+
+Potential presentation labels include `Playmaking Big`, `Point Forward`,
+`Jumbo Creator`, `Rebounding Guard`, `Stretch Five`, and `Combo Guard`.
+Prefer deriving any label after the fact from a Player's actual profile and
+production rather than storing an archetype flag first and forcing generation
+to match it. Thresholds and formal archetype rules remain undesigned.
+
+This direction could strengthen several separate future features:
+
+- Followed Players/Favorites by creating rare careers users naturally track;
+- League News/Round Recap through unusual leaderboard positions, triple-double
+  profiles, and statistical milestones;
+- Awards, Career History, and Program Records by making accomplishments more
+  distinct than comparisons among similar positional prototypes;
+- Recruiting by making unusual Recruit profiles memorable targets without
+  changing current Recruiting mechanics; and
+- the shot-selection/statistical-identity investigation, so stretch bigs,
+  pass-first guards, scoring PGs, and playmaking Centers may eventually produce
+  differently for evidence-supported reasons.
+
+Diagnose before designing or tuning. Candidate multi-season characterization
+includes APG/RPG leaderboard position shares; highest C/PF APG and PG/SG RPG;
+within-position attribute/production correlations; frequency of high-
+Playmaking bigs and high-Rebounding guards; height/RPG relationship; unusual
+height-position combinations; and cross-position outlier frequency/magnitude.
+Current generation uses position-specific height and attribute profiles, while
+box-score assists/rebounds use position baselines plus attributes and minutes;
+height directly affects blocks but not rebounds. A diagnostic should determine
+whether any rigidity comes from profile supply, statistical translation, or
+both before either frozen system is reopened.
+
+Tentative conceptual sequencing is:
+
+```text
+Followed Players / Favorites
+→ Player Statistical Identity diagnostic (characterization only)
+→ locate profile-generation vs statistical-translation constraints
+→ evidence-supported variability/identity candidates, if earned
+→ derived archetype presentation and News/Awards/history amplification later
+```
+
+This sequence is not an active Roadmap commitment and does not displace current
+priorities.
+
 ### Postseason Player Stats
 
 Tournament `GameResult` values already retain full `PlayerGameStats`. Future pure projections could provide Postseason Player totals/averages, Program postseason Player tables, and Tournament leaders without changing regular-season `PlayerSeasonStats` semantics.

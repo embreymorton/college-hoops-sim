@@ -605,6 +605,49 @@ starter-minute realism only with genuinely new, repeated evidence.
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
 
+## Player Profile / Statistical Identity — OBSERVED / PRODUCT IDEA / WATCH
+
+Current leaderboard behavior feels appropriately position-driven: guards should
+usually dominate assists, while forwards and Centers should usually dominate
+rebounds. That baseline is valuable. A future storytelling direction is to
+preserve those strong norms while occasionally producing rare atypical Players
+whose attributes, height/physical profile, and statistical production break
+normal positional expectations—a jumbo creator, playmaking big, point forward,
+rebounding guard, stretch five, or similarly unusual profile. The exception is
+memorable because it is rare; this is not a named-player template system, and no
+rarity target is selected.
+
+Current production architecture plausibly reinforces positional consistency at
+multiple stages. Player generation uses position-specific height ranges and
+attribute modifiers, Development remains position-aware, and Player Box Scores
+combine minutes and Player attributes with position-specific per-40 baselines.
+Height directly modifies blocks today; it does not directly enter the rebound
+formula. These facts do not establish that meaningful cross-position outliers
+are impossible, only that a diagnostic should characterize how much individual
+profile can overcome the positional prior before any frozen generation or box-
+score system is reconsidered.
+
+Useful future questions include:
+
+- APG and RPG leaderboard position distributions across multiple Seasons;
+- highest C/PF APG and highest PG/SG RPG;
+- APG versus Playmaking and RPG versus Rebounding within each position;
+- frequency of very high-Playmaking bigs and very high-Rebounding guards;
+- height versus RPG, plus unusual height/position frequency and magnitude; and
+- whether any cross-position outliers are frequent and large enough to create
+  recognizable statistical identities.
+
+The evidence-first sequence is characterization only, then attribution to
+Player profile generation, statistical translation, or both. Only supported
+findings should earn a later Player Profile Variability or Statistical Identity
+candidate. Followed Players remains the already-earned player-facing priority;
+rare profiles would strengthen why Players are worth following. League News
+could help discover unusual leaderboard or milestone stories, while Awards,
+Career History, Program Records, Recruiting identity, and the separate shot-
+selection investigation could later amplify them. Do not bundle those features
+or change Recruiting, Player generation, Development, or Player Box Scores from
+this observation alone.
+
 ## Coaching / Rotation Navigation — RESOLVED (Phase 6E.17B)
 
 Playtesting suggests Rotation deserves a persistent home rather than existing only in Game Prep. A future navigation concept could be:
