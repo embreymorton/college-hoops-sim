@@ -5,6 +5,7 @@ import {
   type Player,
   type PlayerAttributes,
   type Position,
+  type ProjectedStartingFive,
   type SimpleRotationIntentIssue,
   type Team,
 } from '../engine'
@@ -54,6 +55,13 @@ function defaultMinutes(team: Team): Record<string, number> {
   return Object.fromEntries(team.roster.map((player) => [player.id, 0]))
 }
 
+/** `${position}-starter` at every position — matches `makeTeam()`'s fixture. */
+function naturalStartingFive(): ProjectedStartingFive {
+  return Object.fromEntries(
+    POSITIONS.map((position) => [position, `${position}-starter`]),
+  ) as ProjectedStartingFive
+}
+
 describe('SimpleRotationPanel', () => {
   it('groups Players with positive minutes as Rotation Players and zero-minute Players as Reserves', () => {
     const team = makeTeam()
@@ -65,6 +73,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -94,6 +103,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -125,6 +135,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={full}
         committedMinutesByPlayerId={zeroed}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -148,6 +159,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -171,6 +183,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={onSetPlayerMinutes}
         onApply={vi.fn()}
@@ -202,6 +215,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -234,6 +248,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={issues}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -265,6 +280,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={full}
         committedMinutesByPlayerId={full}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -289,6 +305,7 @@ describe('SimpleRotationPanel', () => {
         program={{ primaryColor: '#123456' }}
         minutesByPlayerId={minutes}
         committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
         issues={[]}
         onSetPlayerMinutes={vi.fn()}
         onApply={vi.fn()}
@@ -302,5 +319,203 @@ describe('SimpleRotationPanel', () => {
       row.hasAttribute('data-player-id'),
     )
     expect(rows).toHaveLength(team.roster.length)
+  })
+
+  it('presents Starting Five, Bench, and Reserves in PG → C order when a projection is available', () => {
+    const team = makeTeam()
+    const minutes = {
+      ...defaultMinutes(team),
+      'PG-starter': 30,
+      'SG-starter': 30,
+      'SF-starter': 30,
+      'PF-starter': 30,
+      'C-starter': 30,
+      'PG-backup': 10,
+    }
+
+    render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={minutes}
+        committedMinutesByPlayerId={minutes}
+        projectedStartingFive={naturalStartingFive()}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    expect(screen.getByText('Starting Five')).toBeInTheDocument()
+    expect(screen.getByText('Bench')).toBeInTheDocument()
+    expect(screen.getByText('Reserves')).toBeInTheDocument()
+    expect(screen.queryByText('Rotation Players')).not.toBeInTheDocument()
+
+    const startingFiveRow = screen.getByText('PG-starter Player').closest('tr')!
+    const benchRow = screen.getByText('PG-backup Player').closest('tr')!
+    const reservesRow = screen.getByText('SG-backup Player').closest('tr')!
+    expect(
+      startingFiveRow.compareDocumentPosition(benchRow) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(
+      benchRow.compareDocumentPosition(reservesRow) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+
+    for (const position of POSITIONS) {
+      const row = screen.getByText(`${position}-starter Player`).closest('tr')!
+      expect(within(row).getByText(position)).toBeInTheDocument()
+    }
+  })
+
+  it('keeps a projected starter in Starting Five when their draft is edited to 0 minutes before Apply', () => {
+    const team = makeTeam()
+    const minutes = {
+      ...defaultMinutes(team),
+      'PG-starter': 0,
+      'SG-starter': 30,
+      'SF-starter': 30,
+      'PF-starter': 30,
+      'C-starter': 30,
+    }
+
+    render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={minutes}
+        committedMinutesByPlayerId={minutes}
+        projectedStartingFive={naturalStartingFive()}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    const startingFiveGroup = screen
+      .getByText('Starting Five')
+      .closest('tbody')!
+    expect(
+      within(startingFiveGroup).getByText('PG-starter Player'),
+    ).toBeInTheDocument()
+    expect(screen.queryByText('Rotation Players')).not.toBeInTheDocument()
+  })
+
+  it('moves a Bench Player to Reserves at 0 minutes, and a Reserve to Bench with positive minutes', () => {
+    const team = makeTeam()
+    const projectedStartingFive = naturalStartingFive()
+    const onBench = { ...defaultMinutes(team), 'PG-backup': 10 }
+    const onReserves = { ...defaultMinutes(team), 'PG-backup': 0 }
+
+    const { rerender } = render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={onBench}
+        committedMinutesByPlayerId={onBench}
+        projectedStartingFive={projectedStartingFive}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    expect(
+      within(screen.getByText('Bench').closest('tbody')!).getByText(
+        'PG-backup Player',
+      ),
+    ).toBeInTheDocument()
+
+    rerender(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={onReserves}
+        committedMinutesByPlayerId={onBench}
+        projectedStartingFive={projectedStartingFive}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    expect(
+      within(screen.getByText('Reserves').closest('tbody')!).getByText(
+        'PG-backup Player',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('orders Bench by descending draft MPG, using roster order as a stable tie-break', () => {
+    const team = makeTeam()
+    const minutes = {
+      ...defaultMinutes(team),
+      'SG-backup': 6,
+      'PF-backup': 6,
+      'C-backup': 14,
+    }
+
+    render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={minutes}
+        committedMinutesByPlayerId={minutes}
+        projectedStartingFive={naturalStartingFive()}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    const benchGroup = screen.getByText('Bench').closest('tbody')!
+    const benchPlayerIds = within(benchGroup)
+      .getAllByRole('row')
+      .filter((row) => row.hasAttribute('data-player-id'))
+      .map((row) => row.getAttribute('data-player-id'))
+
+    expect(benchPlayerIds).toEqual(['C-backup', 'SG-backup', 'PF-backup'])
+  })
+
+  it('falls back to a flat Rotation Players / Reserves presentation without a Starting Five projection', () => {
+    const team = makeTeam()
+    const minutes = { ...defaultMinutes(team), 'PG-starter': 30 }
+
+    render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={minutes}
+        committedMinutesByPlayerId={minutes}
+        projectedStartingFive={null}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    expect(screen.queryByText('Starting Five')).not.toBeInTheDocument()
+    expect(screen.queryByText('Bench')).not.toBeInTheDocument()
+    expect(screen.getByText('Rotation Players')).toBeInTheDocument()
+    expect(screen.getByText('Reserves')).toBeInTheDocument()
   })
 })

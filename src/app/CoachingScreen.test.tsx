@@ -29,7 +29,8 @@ describe('Coaching Rotation — Simple / Advanced', () => {
       'aria-pressed',
       'true',
     )
-    expect(screen.getByText('Rotation Players')).toBeInTheDocument()
+    expect(screen.getByText('Starting Five')).toBeInTheDocument()
+    expect(screen.getByText('Bench')).toBeInTheDocument()
     expect(screen.getByText('Reserves')).toBeInTheDocument()
   })
 

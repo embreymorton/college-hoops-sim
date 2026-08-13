@@ -1239,6 +1239,31 @@ p {
   white-space: normal;
 }
 
+/* Starting Five (6E.18E) — the projected PG-C lineup from the last committed
+   Rotation. Visually stronger than Bench/Reserves rows without becoming a
+   separate dashboard: a team-accent top rule on the group header and a
+   slightly bolder name/position treatment on its five rows. */
+.rotation-group-row--starters th {
+  border-top: 2px solid var(--team-accent, var(--line-strong));
+}
+
+.rotation-group-row__note {
+  margin-left: auto;
+  font-size: 0.7rem;
+  font-style: italic;
+  color: var(--ink-2);
+}
+
+.simple-rotation-starter-row .player-name-cell {
+  color: var(--ink-0);
+  font-weight: 600;
+}
+
+.player-pos-cell--starter {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
 .next-game-card {
   background: var(--surface-1);
   border: 1px solid var(--line);
@@ -2174,6 +2199,12 @@ p {
 
   .scoreboard-actions .button {
     text-align: center;
+  }
+
+  /* The Starting Five note is a quiet aside, not essential content — drop it
+     first so the group header stays compact on narrow rotation tables. */
+  .rotation-group-row__note {
+    display: none;
   }
 
   .section-heading {

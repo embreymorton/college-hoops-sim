@@ -1,11 +1,13 @@
 import type {
+  Player,
   Position,
+  ProjectedStartingFive,
   RotationV1,
   RotationV1ValidationResult,
   SimpleRotationIntentIssue,
   Team,
 } from '../engine'
-import { areRotationsV1Equal, derivePlayerMinutesV1 } from '../engine'
+import { areRotationsV1Equal, derivePlayerMinutesV1, POSITIONS } from '../engine'
 
 /**
  * Presentation-only formatting helpers. These format existing engine output
@@ -218,4 +220,74 @@ export function describeSimpleRotationIssues(
   }
 
   return messages
+}
+
+/** One Starting Five row: a canonical position paired with its projected Player. */
+export interface SimpleRotationStarter {
+  readonly position: Position
+  readonly player: Player
+}
+
+/**
+ * Simple Rotation's Starting Five / Bench / Reserves view model. `starters`
+ * is empty and `bench` includes every positive-minute Player whenever no
+ * Starting Five projection is available — the defensive fallback reads as
+ * the prior flat Rotation Players / Reserves grouping.
+ */
+export interface SimpleRotationSections {
+  readonly starters: readonly SimpleRotationStarter[]
+  readonly bench: readonly Player[]
+  readonly reserves: readonly Player[]
+  readonly hasProjectedStartingFive: boolean
+}
+
+/**
+ * Groups the current roster for the Simple Rotation screen. Starting Five
+ * always reflects the last committed canonical Rotation (`startingFive`
+ * param); Bench/Reserves split on the current, possibly-uncommitted MPG
+ * draft, so a Player can move between them before Apply while Starting Five
+ * itself stays stable. Bench sorts by descending draft MPG, using roster
+ * order as a stable tie-break; Reserves keeps roster order.
+ */
+export function deriveSimpleRotationSections(
+  team: Team,
+  minutesByPlayerId: Readonly<Record<string, number>>,
+  startingFive: ProjectedStartingFive | null,
+): SimpleRotationSections {
+  const rosterById = new Map(
+    team.roster.map((player) => [player.id, player] as const),
+  )
+  const starterIds = new Set(startingFive ? Object.values(startingFive) : [])
+
+  const starters: SimpleRotationStarter[] = startingFive
+    ? POSITIONS.map((position) => ({
+        position,
+        player: rosterById.get(startingFive[position])!,
+      }))
+    : []
+
+  const nonStarters = team.roster
+    .map((player, index) => ({ player, index }))
+    .filter(({ player }) => !starterIds.has(player.id))
+
+  const bench = nonStarters
+    .filter(({ player }) => (minutesByPlayerId[player.id] ?? 0) > 0)
+    .sort((first, second) => {
+      const minutesDiff =
+        (minutesByPlayerId[second.player.id] ?? 0) -
+        (minutesByPlayerId[first.player.id] ?? 0)
+      return minutesDiff !== 0 ? minutesDiff : first.index - second.index
+    })
+    .map(({ player }) => player)
+
+  const reserves = nonStarters
+    .filter(({ player }) => (minutesByPlayerId[player.id] ?? 0) === 0)
+    .map(({ player }) => player)
+
+  return {
+    starters,
+    bench,
+    reserves,
+    hasProjectedStartingFive: startingFive !== null,
+  }
 }

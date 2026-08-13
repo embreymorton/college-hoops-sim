@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { calculateTeamStrength, validateRotationV1 } from '../engine'
+import {
+  calculateTeamStrength,
+  deriveProjectedStartingFive,
+  validateRotationV1,
+} from '../engine'
 import {
   CoachingModeTabs,
   DynastySectionNav,
@@ -115,6 +119,14 @@ export function CoachingScreen() {
     playerStats.map((stats) => [stats.playerId, stats] as const),
   )
 
+  const projectedStartingFiveResult = deriveProjectedStartingFive(
+    controlledTeam,
+    canonicalRotation,
+  )
+  const projectedStartingFive = projectedStartingFiveResult.valid
+    ? projectedStartingFiveResult.startingFive
+    : null
+
   const validation = validateRotationV1(controlledTeam, draftRotation)
   const isValid = validation.valid
   const editStrength = isValid
@@ -174,6 +186,7 @@ export function CoachingScreen() {
                   controlledTeam,
                   canonicalRotation,
                 )}
+                projectedStartingFive={projectedStartingFive}
                 issues={coachingSimpleRotationIssues}
                 onSetPlayerMinutes={setCoachingSimplePlayerMinutes}
                 onApply={() => applyCoachingSimpleRotation()}

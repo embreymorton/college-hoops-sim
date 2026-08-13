@@ -4,12 +4,16 @@ import {
   getEligibleRotationPositions,
   MAX_PLAYER_MINUTES,
   TOTAL_ROTATION_MINUTES,
+  type Player,
+  type ProjectedStartingFive,
   type SimpleRotationIntentIssue,
   type Team,
 } from '../engine'
 import {
+  deriveSimpleRotationSections,
   describeMinutesBudgetHint,
   describeSimpleRotationIssues,
+  type SimpleRotationStarter,
 } from '../app/formatters'
 import { MinuteStepper } from './MinuteStepper'
 import { TeamPanelHeader } from './TeamPanelHeader'
@@ -22,6 +26,13 @@ interface SimpleRotationPanelProps {
   readonly minutesByPlayerId: Readonly<Record<string, number>>
   /** Aggregate MPG from the currently committed canonical Rotation, for the Discard/unsaved state. */
   readonly committedMinutesByPlayerId: Readonly<Record<string, number>>
+  /**
+   * Projected PG/SG/SF/PF/C lineup from the last committed canonical
+   * Rotation, or null when no projection is available (invalid/incomplete
+   * committed Rotation). Deliberately independent of the current draft —
+   * see `deriveSimpleRotationSections`.
+   */
+  readonly projectedStartingFive: ProjectedStartingFive | null
   readonly issues: readonly SimpleRotationIntentIssue[]
   readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
   readonly onApply: () => void
@@ -42,6 +53,7 @@ export function SimpleRotationPanel({
   program,
   minutesByPlayerId,
   committedMinutesByPlayerId,
+  projectedStartingFive,
   issues,
   onSetPlayerMinutes,
   onApply,
@@ -66,14 +78,8 @@ export function SimpleRotationPanel({
   )
   const issueMessages = describeSimpleRotationIssues(issues)
 
-  // Stable roster order (talent-rank order, unaffected by minute edits) so
-  // rows never jump while the user is mid-edit.
-  const rotationPlayers = team.roster.filter(
-    (player) => (minutesByPlayerId[player.id] ?? 0) > 0,
-  )
-  const reservePlayers = team.roster.filter(
-    (player) => (minutesByPlayerId[player.id] ?? 0) === 0,
-  )
+  const { starters, bench, reserves, hasProjectedStartingFive } =
+    deriveSimpleRotationSections(team, minutesByPlayerId, projectedStartingFive)
 
   return (
     <div className="team-panel simple-rotation-panel" style={accentStyle}>
@@ -137,19 +143,33 @@ export function SimpleRotationPanel({
               <th scope="col">Minutes</th>
             </tr>
           </thead>
+          {hasProjectedStartingFive && (
+            <StartingFiveGroup
+              starters={starters}
+              minutesByPlayerId={minutesByPlayerId}
+              onSetPlayerMinutes={onSetPlayerMinutes}
+              onSelectPlayer={onSelectPlayer}
+            />
+          )}
           <SimpleRotationGroup
-            label="Rotation Players"
-            players={rotationPlayers}
+            label={hasProjectedStartingFive ? 'Bench' : 'Rotation Players'}
+            players={bench}
             minutesByPlayerId={minutesByPlayerId}
             onSetPlayerMinutes={onSetPlayerMinutes}
             onSelectPlayer={onSelectPlayer}
+            emptyMessage={
+              hasProjectedStartingFive
+                ? 'No Players are on the bench right now.'
+                : 'No Players currently have minutes assigned.'
+            }
           />
           <SimpleRotationGroup
             label="Reserves"
-            players={reservePlayers}
+            players={reserves}
             minutesByPlayerId={minutesByPlayerId}
             onSetPlayerMinutes={onSetPlayerMinutes}
             onSelectPlayer={onSelectPlayer}
+            emptyMessage="Every roster Player is currently in the rotation."
           />
         </table>
       </div>
@@ -159,10 +179,11 @@ export function SimpleRotationPanel({
 
 interface SimpleRotationGroupProps {
   readonly label: string
-  readonly players: readonly Team['roster'][number][]
+  readonly players: readonly Player[]
   readonly minutesByPlayerId: Readonly<Record<string, number>>
   readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
   readonly onSelectPlayer: (playerId: string) => void
+  readonly emptyMessage: string
 }
 
 function SimpleRotationGroup({
@@ -171,6 +192,7 @@ function SimpleRotationGroup({
   minutesByPlayerId,
   onSetPlayerMinutes,
   onSelectPlayer,
+  emptyMessage,
 }: SimpleRotationGroupProps) {
   return (
     <tbody>
@@ -185,9 +207,7 @@ function SimpleRotationGroup({
       {players.length === 0 && (
         <tr>
           <td colSpan={5} className="simple-rotation-empty">
-            {label === 'Reserves'
-              ? 'Every roster Player is currently in the rotation.'
-              : 'No Players currently have minutes assigned.'}
+            {emptyMessage}
           </td>
         </tr>
       )}
@@ -212,6 +232,82 @@ function SimpleRotationGroup({
               </button>
             </td>
             <td className="player-pos-cell">{eligibility}</td>
+            <td>{player.classYear}</td>
+            <td>{calculateOverall(player)}</td>
+            <td className="rotation-minutes-cell">
+              <MinuteStepper
+                id={`simple-minutes-${player.id}`}
+                value={minutes}
+                label={`${playerLabel} minutes`}
+                onChange={(nextMinutes) =>
+                  onSetPlayerMinutes(
+                    player.id,
+                    Math.min(MAX_PLAYER_MINUTES, nextMinutes),
+                  )
+                }
+              />
+            </td>
+          </tr>
+        )
+      })}
+    </tbody>
+  )
+}
+
+interface StartingFiveGroupProps {
+  readonly starters: readonly SimpleRotationStarter[]
+  readonly minutesByPlayerId: Readonly<Record<string, number>>
+  readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
+  readonly onSelectPlayer: (playerId: string) => void
+}
+
+/**
+ * PG → C, one row per projected starter. Minutes always reflect the current
+ * (possibly uncommitted) Simple draft; which five Players appear here does
+ * not change until a successful Apply — see `deriveSimpleRotationSections`.
+ */
+function StartingFiveGroup({
+  starters,
+  minutesByPlayerId,
+  onSetPlayerMinutes,
+  onSelectPlayer,
+}: StartingFiveGroupProps) {
+  return (
+    <tbody className="simple-rotation-starters">
+      <tr className="rotation-group-row rotation-group-row--starters">
+        <th scope="colgroup" colSpan={5}>
+          <div className="rotation-group-row__inner">
+            <span className="rotation-group-row__position">Starting Five</span>
+            <span className="rotation-group-row__total">{starters.length}</span>
+            <span className="rotation-group-row__note">
+              Updates when Rotation is applied
+            </span>
+          </div>
+        </th>
+      </tr>
+      {starters.map(({ position, player }) => {
+        const minutes = minutesByPlayerId[player.id] ?? 0
+        const playerLabel = `${player.firstName} ${player.lastName}`
+
+        return (
+          <tr
+            key={player.id}
+            data-player-id={player.id}
+            data-zero-minutes={minutes === 0}
+            className="simple-rotation-starter-row"
+          >
+            <td className="player-name-cell">
+              <button
+                type="button"
+                className="text-link-button"
+                onClick={() => onSelectPlayer(player.id)}
+              >
+                {playerLabel}
+              </button>
+            </td>
+            <td className="player-pos-cell player-pos-cell--starter">
+              {position}
+            </td>
             <td>{player.classYear}</td>
             <td>{calculateOverall(player)}</td>
             <td className="rotation-minutes-cell">

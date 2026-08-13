@@ -327,8 +327,18 @@ rather than guessing from invalid or unexpectedly incomplete input. The result
 is not stored and has no independent gameplay effect; uncommitted Simple drafts
 cannot change it. All 64 generated defaults and 64 Simple-compiled equivalents
 produced complete unique projections. Manual starter choice, canonical starter
-state, simulation effects, and frontend Starting Five/Bench presentation remain
-future work.
+state, and simulation effects remain future work.
+
+Phase 6E.18E Starting Five / Bench / Reserves Presentation is accepted.
+`SimpleRotationPanel` groups the roster into `Starting Five` (PG-C, from
+6E.18D against the committed canonical Rotation), `Bench` (non-starters with
+current draft MPG above zero, sorted by descending minutes), and `Reserves`
+(non-starters at zero draft MPG), through a pure `deriveSimpleRotationSections()`
+view-model helper (`src/app/formatters.ts`). Starting Five membership stays
+stable during uncommitted Simple edits and only changes after a successful
+Apply or valid Advanced commit; an invalid/incomplete committed Rotation falls
+back to the prior flat Rotation Players/Reserves presentation. No Rotation V1,
+compiler, store, or Advanced-editor behavior changed.
 
 Phase 6E.18C Simple Rotation UI V1 is accepted. Simple is now the default
 Coaching Rotation editor: one row per roster Player with a Player-total MPG

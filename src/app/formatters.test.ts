@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest'
-import type { RotationV1, SimpleRotationIntentIssue, Team } from '../engine'
 import {
+  POSITIONS,
+  type Player,
+  type Position,
+  type ProjectedStartingFive,
+  type RotationV1,
+  type SimpleRotationIntentIssue,
+  type Team,
+} from '../engine'
+import {
+  deriveSimpleRotationSections,
   describeMinutesBudgetHint,
   describeSimpleRotationIssues,
   deriveSimplePlayerMinutes,
@@ -98,5 +107,133 @@ describe('deriveSimplePlayerMinutes', () => {
     }
 
     expect(deriveSimplePlayerMinutes(team, rotation)).toEqual({ p1: 0 })
+  })
+})
+
+function makeSectionsPlayer(id: string, position: Position): Player {
+  return {
+    id,
+    firstName: id,
+    lastName: 'Player',
+    position,
+    classYear: 'JR',
+    height: 78,
+    attributes: {
+      finishing: 70,
+      shooting: 70,
+      playmaking: 70,
+      ballHandling: 70,
+      perimeterDefense: 70,
+      interiorDefense: 70,
+      rebounding: 70,
+      athleticism: 70,
+      stamina: 70,
+    },
+    potential: 90,
+  }
+}
+
+function makeSectionsTeam(): Team {
+  return {
+    id: 'sections-fixture',
+    name: 'Sections Fixture',
+    abbreviation: 'SEC',
+    prestige: 60,
+    roster: POSITIONS.flatMap((position) => [
+      makeSectionsPlayer(`${position}-starter`, position),
+      makeSectionsPlayer(`${position}-backup`, position),
+    ]),
+  }
+}
+
+function naturalSectionsStartingFive(): ProjectedStartingFive {
+  return Object.fromEntries(
+    POSITIONS.map((position) => [position, `${position}-starter`]),
+  ) as ProjectedStartingFive
+}
+
+describe('deriveSimpleRotationSections', () => {
+  it('places every projected starter, and only them, in starters, in PG → C order', () => {
+    const team = makeSectionsTeam()
+    const minutes = Object.fromEntries(team.roster.map((player) => [player.id, 20]))
+
+    const sections = deriveSimpleRotationSections(
+      team,
+      minutes,
+      naturalSectionsStartingFive(),
+    )
+
+    expect(sections.hasProjectedStartingFive).toBe(true)
+    expect(sections.starters.map((starter) => starter.position)).toEqual([...POSITIONS])
+    expect(sections.starters.map((starter) => starter.player.id)).toEqual(
+      POSITIONS.map((position) => `${position}-starter`),
+    )
+  })
+
+  it('keeps a projected starter out of Bench/Reserves even at 0 draft minutes', () => {
+    const team = makeSectionsTeam()
+    const minutes = Object.fromEntries(team.roster.map((player) => [player.id, 0]))
+
+    const sections = deriveSimpleRotationSections(
+      team,
+      minutes,
+      naturalSectionsStartingFive(),
+    )
+
+    expect(sections.bench).toHaveLength(0)
+    expect(sections.reserves.map((player) => player.id)).not.toContain('PG-starter')
+    expect(sections.starters.some((starter) => starter.player.id === 'PG-starter')).toBe(
+      true,
+    )
+  })
+
+  it('splits non-starters into Bench (MPG > 0) and Reserves (MPG === 0) from the current draft', () => {
+    const team = makeSectionsTeam()
+    const minutes = {
+      ...Object.fromEntries(team.roster.map((player) => [player.id, 0])),
+      'PG-backup': 12,
+    }
+
+    const sections = deriveSimpleRotationSections(
+      team,
+      minutes,
+      naturalSectionsStartingFive(),
+    )
+
+    expect(sections.bench.map((player) => player.id)).toEqual(['PG-backup'])
+    expect(sections.reserves.map((player) => player.id)).not.toContain('PG-backup')
+  })
+
+  it('orders Bench by descending draft MPG, breaking ties with roster order', () => {
+    const team = makeSectionsTeam()
+    const minutes = {
+      ...Object.fromEntries(team.roster.map((player) => [player.id, 0])),
+      'SG-backup': 6,
+      'PF-backup': 6,
+      'C-backup': 14,
+    }
+
+    const sections = deriveSimpleRotationSections(
+      team,
+      minutes,
+      naturalSectionsStartingFive(),
+    )
+
+    expect(sections.bench.map((player) => player.id)).toEqual([
+      'C-backup',
+      'SG-backup',
+      'PF-backup',
+    ])
+  })
+
+  it('falls back to an empty starters list when no projection is available', () => {
+    const team = makeSectionsTeam()
+    const minutes = { ...Object.fromEntries(team.roster.map((player) => [player.id, 0])), 'PG-starter': 20 }
+
+    const sections = deriveSimpleRotationSections(team, minutes, null)
+
+    expect(sections.hasProjectedStartingFive).toBe(false)
+    expect(sections.starters).toHaveLength(0)
+    expect(sections.bench.map((player) => player.id)).toEqual(['PG-starter'])
   })
 })

@@ -707,8 +707,23 @@ defaults and all 64 Rotations reconstructed from their aggregate MPG through the
 Simple compiler. The position-keyed Player-ID result leaves a clean boundary if
 starter status later earns canonical gameplay meaning, but today it is derived,
 unpersisted, and simulation-neutral. Manual Starting Five selection and any
-starter effects remain future/WATCH; the visible Starting Five/Bench/Reserves
-hierarchy is deferred to the frontend phase.
+starter effects remain future/WATCH.
+
+### Starting Five / Bench / Reserves Presentation — RESOLVED (Phase 6E.18E)
+
+Phase 6E.18C's flat Rotation Players list obscured the recognizable basketball
+lineup once every positive-minute Player read as a peer. Phase 6E.18E presents
+the 6E.18D projection: Simple Rotation now shows `Starting Five` (PG → C, from
+the committed canonical Rotation only), `Bench` (non-starters with current
+draft MPG > 0, ordered by descending minutes), and `Reserves` (non-starters at
+0 draft MPG). Starting Five membership is deliberately stable during
+uncommitted edits — a projected starter dropped to 0 draft minutes stays put
+and shows 0 until a successful Apply — communicated with a quiet caption
+rather than a warning. Manual review confirmed correct PG → C ordering,
+Bench/Reserves transitions on live edits, no layout jump while editing a
+starter to 0, and a stable narrow-width presentation. No Rotation V1,
+compiler, store, or Advanced-editor change was made; manual Starting Five
+selection remains future/WATCH.
 
 ## Round Complete Review — OBSERVED
 
