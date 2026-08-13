@@ -44,6 +44,7 @@ export function RecruitingScreen() {
   )
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
+  const goToCoaching = useDynastyStore((state) => state.goToCoaching)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const addRecruitingTarget = useDynastyStore((state) => state.addRecruitingTarget)
@@ -91,6 +92,7 @@ export function RecruitingScreen() {
           competitionLabel={postseason ? 'Tournament' : 'Season'}
           activeSection="recruiting"
           onSelectCompetition={postseason ? goToPostseasonHub : goToHub}
+          onSelectCoaching={goToCoaching}
           onSelectRecruiting={goToRecruiting}
           onSelectLeague={goToLeague}
         />
@@ -129,6 +131,7 @@ export function RecruitingScreen() {
         competitionLabel={postseason ? 'Tournament' : 'Season'}
         activeSection="recruiting"
         onSelectCompetition={postseason ? goToPostseasonHub : goToHub}
+        onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />

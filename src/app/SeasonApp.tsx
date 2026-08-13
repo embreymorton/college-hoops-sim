@@ -1,5 +1,6 @@
 import { selectControlledProgramId, useDynastyStore } from '../store'
 import { RecruitingSetupDialog } from '../components'
+import { CoachingScreen } from './CoachingScreen'
 import { GamePrepScreen } from './GamePrepScreen'
 import { LeagueScreen } from './LeagueScreen'
 import { OffseasonScreen } from './OffseasonScreen'
@@ -36,6 +37,9 @@ export function DynastyApp() {
 
   let screen
   switch (view) {
+    case 'coaching':
+      screen = <CoachingScreen />
+      break
     case 'gamePrep':
       screen = <GamePrepScreen />
       break

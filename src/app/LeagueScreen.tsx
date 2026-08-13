@@ -33,6 +33,7 @@ export function LeagueScreen() {
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
+  const goToCoaching = useDynastyStore((state) => state.goToCoaching)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
@@ -50,6 +51,7 @@ export function LeagueScreen() {
         competitionLabel={postseason ? 'Tournament' : 'Season'}
         activeSection="league"
         onSelectCompetition={postseason ? goToPostseasonHub : goToHub}
+        onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />

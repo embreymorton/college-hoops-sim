@@ -1005,16 +1005,13 @@ p {
   vertical-align: middle;
 }
 
-.rotation-player-note {
-  display: block;
-  margin-top: 0.2rem;
-  max-width: 100%;
-  white-space: normal;
-  text-align: right;
-  font-size: 0.66rem;
-  font-weight: 500;
-  line-height: 1.3;
+/* Presentation-only fix (6E.17B): an invalid player total is now conveyed by
+   recoloring the existing single-line Total cell (plus a title/visually-hidden
+   explanation) instead of a second block line, so the row no longer grows
+   taller than its neighbors when a Player total exceeds the 0–40 range. */
+.rotation-total-cell[data-invalid='true'] {
   color: var(--accent);
+  font-weight: 600;
 }
 
 .minute-stepper {
@@ -1168,6 +1165,24 @@ p {
   .hub-secondary-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* ==========================================================================
+   Coaching (6E.17B) — permanent Roster | Rotation home. Local rhythm only;
+   `.app-main`'s default spacing is unchanged elsewhere.
+   ========================================================================== */
+
+.coaching-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* The Rotation editor is naturally dense — cap its width on wide desktop
+   viewports instead of letting a single-column table stretch edge to edge,
+   matching the ~2-column measure it reads at inside Game Prep. */
+.coaching-rotation-panel {
+  max-width: 52rem;
 }
 
 .next-game-card {

@@ -58,6 +58,43 @@ Quick Sim.
 
 Postgame and historical views use the accepted final-score and full Player box-score presentation. Historical results are read-only. Exhibition retains home-Team editing and deterministic re-simulation for isolated development testing, but it does not define the permanent Season workflow.
 
+## Coaching experience — implemented (6E.17B)
+
+`DynastySectionNav` now permanently exposes `SEASON/TOURNAMENT | COACHING |
+RECRUITING | LEAGUE` — Coaching sits beside the existing three destinations
+using the identical tab-strip language, on the Season Hub, Postseason Hub,
+Recruiting, and League screens alike. Opening it calls the side-effect-free
+`goToCoaching()` from Phase 6E.17A only; it never catches up AI games,
+initializes Recruiting, simulates, or progresses a lifecycle.
+
+```text
+Coaching
+├── identity header (reused TeamDetailsHeader: record + live OFF/DEF/OVR)
+├── Roster | Rotation (local CoachingModeTabs)
+│   ├── Roster   → reused TeamStatsTable (Pos/Player/Cl/Ovr/Pot/GP/MPG/PPG/RPG/APG
+│   │              + Shooting/Defense), Player click reuses openPlayerDetails
+│   └── Rotation → reused RotationEditorPanel against the Coaching draft
+│                  (postseasonDraftRotation while Postseason is active,
+│                  otherwise draftRotation), committed through the existing
+│                  6E.17A validated write boundary
+```
+
+Coaching reuses `TeamDetailsHeader`, `TeamStatsTable`, and `RotationEditorPanel`
+unchanged — no new Rotation mechanic, Player-role concept, or canonical
+representation was added. The Roster view's current-season production comes
+from the existing `deriveProgramPlayerSeasonStats` projection; Player Details
+remains the deeper destination. `ExplorationBackButton`'s destination-label
+switch gained a `coaching` case so returning from Player Details reads "Back
+to Coaching" instead of falling back to the generic "Season" label.
+
+Presentation-only fix: an invalid Rotation Player total (0–40) is now
+conveyed by recoloring the existing single-line Total cell
+(`.rotation-total-cell[data-invalid]`, plus a `title` and visually-hidden
+explanation) instead of a second block-level line under the minute stepper,
+so an invalid row no longer renders taller than its neighbors. The 0–40
+validation rule itself, `RotationEditorPanel`'s other markup, and Game Prep /
+Tournament Game Prep are unchanged.
+
 ## Postseason experience — implemented
 
 ```text

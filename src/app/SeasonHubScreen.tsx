@@ -72,6 +72,7 @@ export function SeasonHubScreen() {
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const goToGamePrep = useDynastyStore((state) => state.goToGamePrep)
   const goToHub = useDynastyStore((state) => state.goToHub)
+  const goToCoaching = useDynastyStore((state) => state.goToCoaching)
   const simulateNextGame = useDynastyStore((state) => state.simulateNextGame)
   const simulateRestOfRound = useDynastyStore(
     (state) => state.simulateRestOfRound,
@@ -221,6 +222,7 @@ export function SeasonHubScreen() {
         competitionLabel="Season"
         activeSection="competition"
         onSelectCompetition={goToHub}
+        onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />

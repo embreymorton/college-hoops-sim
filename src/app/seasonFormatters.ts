@@ -66,6 +66,8 @@ export function formatBackDestinationLabel(view: SeasonSessionView): string {
   switch (view) {
     case 'postseasonHub':
       return 'Tournament'
+    case 'coaching':
+      return 'Coaching'
     case 'league':
       return 'League'
     case 'teamDetails':

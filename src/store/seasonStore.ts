@@ -173,6 +173,7 @@ function catchUpRoundsBefore(
 export type SeasonSessionView =
   | 'programSelect'
   | 'hub'
+  | 'coaching'
   | 'gamePrep'
   | 'postgame'
   | 'gameHistory'
@@ -259,6 +260,21 @@ export interface DynastySessionState {
     minutes: number,
   ): void
   resetDraftRotation(): void
+  /**
+   * Opens permanent Coaching without progressing basketball or Recruiting.
+   * The editable draft is refreshed from the controlled Program's canonical
+   * Rotation in the active competition state (Postseason when present,
+   * otherwise the regular Season).
+   */
+  goToCoaching(): void
+  /** Routes a Coaching edit through the active competition's existing validated draft boundary. */
+  setCoachingDraftPlayerPositionMinutes(
+    playerId: string,
+    floorPosition: Position,
+    minutes: number,
+  ): void
+  /** Routes Coaching reset through the active competition's existing reset boundary. */
+  resetCoachingDraftRotation(): void
   /** Also catches up any fully-past rounds so AI results never lag behind. */
   goToGamePrep(): void
   goToHub(): void
@@ -720,6 +736,68 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         ),
       },
     })
+  },
+
+  goToCoaching() {
+    const { dynasty } = get()
+    const controlledProgramId = dynasty?.controlledProgramId
+
+    if (!dynasty || !controlledProgramId) {
+      return
+    }
+
+    const postseasonRotation =
+      dynasty.activePostseason?.programStates[controlledProgramId]?.rotation
+
+    if (postseasonRotation) {
+      set({
+        postseasonDraftRotation: postseasonRotation,
+        view: 'coaching',
+        explorationViewHistory: [],
+        recruitingActionError: null,
+      })
+      return
+    }
+
+    const seasonRotation =
+      dynasty.activeSeason?.programStates[controlledProgramId]?.rotation
+
+    if (!seasonRotation) {
+      return
+    }
+
+    set({
+      draftRotation: seasonRotation,
+      view: 'coaching',
+      explorationViewHistory: [],
+      recruitingActionError: null,
+    })
+  },
+
+  setCoachingDraftPlayerPositionMinutes(playerId, floorPosition, minutes) {
+    const state = get()
+
+    if (state.dynasty?.activePostseason) {
+      state.setPostseasonDraftPlayerPositionMinutes(
+        playerId,
+        floorPosition,
+        minutes,
+      )
+      return
+    }
+
+    state.setDraftPlayerPositionMinutes(playerId, floorPosition, minutes)
+  },
+
+  resetCoachingDraftRotation() {
+    const state = get()
+
+    if (state.dynasty?.activePostseason) {
+      state.resetPostseasonDraftRotation()
+      return
+    }
+
+    state.resetDraftRotation()
   },
 
   goToGamePrep() {

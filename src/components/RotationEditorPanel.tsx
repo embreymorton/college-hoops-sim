@@ -192,13 +192,24 @@ export function RotationEditorPanel({
                             )
                           }
                         />
+                      </td>
+                      <td
+                        className="rotation-total-cell"
+                        data-invalid={Boolean(playerIssue)}
+                        title={
+                          playerIssue
+                            ? `Player total must remain within 0–${MAX_PLAYER_MINUTES}`
+                            : undefined
+                        }
+                      >
+                        {playerTotal} / {MAX_PLAYER_MINUTES}
                         {playerIssue && (
-                          <span className="rotation-player-note">
+                          <span className="visually-hidden">
+                            {' '}
                             Player total must remain within 0–{MAX_PLAYER_MINUTES}
                           </span>
                         )}
                       </td>
-                      <td>{playerTotal} / {MAX_PLAYER_MINUTES}</td>
                     </tr>
                   )
                 })}

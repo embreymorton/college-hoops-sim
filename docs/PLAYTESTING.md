@@ -605,7 +605,7 @@ starter-minute realism only with genuinely new, repeated evidence.
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
 
-## Coaching / Rotation Navigation — OBSERVED — REPEATED UX REQUEST
+## Coaching / Rotation Navigation — RESOLVED (Phase 6E.17B)
 
 Playtesting suggests Rotation deserves a persistent home rather than existing only in Game Prep. A future navigation concept could be:
 
@@ -618,7 +618,28 @@ useful information-architecture improvement; tactics and other coaching systems
 remain uncommitted, and Game Prep may still link to Rotation.
 
 The Great Lakes follow-up repeated the desire for both a persistent Coaching
-home and easier current-roster review. Keep this behind Phase 6E.10.
+home and easier current-roster review. Phase 6E.17A now establishes the
+application foundation: side-effect-free Coaching entry refreshes the existing
+editable draft from the current canonical regular-season or Postseason Rotation,
+and valid edits commit through that same canonical state. It adds no second
+Rotation, changes no Rotation V1 mechanic, and leaves Game Prep intact.
+
+Phase 6E.17B implements the permanent presentation: Coaching is now a fourth
+`DynastySectionNav` destination (`SEASON/TOURNAMENT | COACHING | RECRUITING |
+LEAGUE`) reachable from every existing Dynasty screen, opened only through the
+side-effect-free `goToCoaching()`. The screen's `Roster | Rotation` tabs reuse
+`TeamDetailsHeader`, `TeamStatsTable`, and `RotationEditorPanel` unchanged — no
+new Rotation mechanic, Player-role concept, or canonical representation. Manual
+review confirmed the hierarchy at desktop and mobile widths, correct Postseason
+precedence (the Rotation tab showed the controlled Program's actual committed
+Postseason Rotation, distinct from its regular-season values, once a Dynasty
+reached the completed-Tournament checkpoint), a valid Rotation edit committing
+normally, an invalid edit (a Player total pushed past 40) blocking simulation
+with a clear per-row indicator, Player-click reuse into Player Details with a
+correctly labeled "Back to Coaching" return, and that entering Coaching left
+Recruiting period, standings, and every other Dynasty fact unchanged. This
+closes the repeated Coaching/Rotation-navigation friction; Game Prep and
+Tournament Game Prep are unchanged and remain additive alongside Coaching.
 
 ## Round Complete Review — OBSERVED
 
@@ -930,7 +951,7 @@ Highest-value repeated signals:
 - Focus-target context is not visible enough on the Season Hub;
 - Assistant Fill Remaining Board without losing manual choices (RESOLVED by
   Phase 6E.15);
-- Rotation deserves a permanent Coaching home; and
+- Rotation deserves a permanent Coaching home (RESOLVED by Phase 6E.17B); and
 - Tournament/Season Complete composition and the Late Recruiting handoff
   (RESOLVED by Phase 6E.10 — see above).
 
@@ -971,21 +992,19 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Coaching navigation / permanent Rotation home (Game Prep's `Roster →
-   Rotation` organization is a specific observed candidate — see the UI
-   Polish Checkpoint section above)
-2. Followed Players / Favorites
-3. Recruit POT-gap diagnostic
-4. League News / Round Recap
-5. Offseason around-the-league context
-6. Program records / deeper statistical history
-7. Shot-selection diagnostic
-8. Minor Player Details polish
+1. Followed Players / Favorites
+2. Recruit POT-gap diagnostic
+3. League News / Round Recap
+4. Offseason around-the-league context
+5. Program records / deeper statistical history
+6. Shot-selection diagnostic
+7. Minor Player Details polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /
 commitment visibility presentation (6E.12) are RESOLVED — see above.
 Assistant Fill Remaining Board is also RESOLVED by accepted Phase 6E.15.
+Coaching / Rotation Navigation is RESOLVED by accepted Phase 6E.17B.
 Recruiting Page Density + Guidance Polish is RESOLVED by accepted Phase
 6E.16A. Season Hub + League Information Hierarchy Polish is RESOLVED by
 accepted Phase 6E.16B.

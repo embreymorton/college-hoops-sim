@@ -92,6 +92,19 @@ The Season store is not authoritative for Program records, Conference records, s
 
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
+Permanent Coaching navigation uses the same session drafts and validated write
+boundaries rather than owning another Rotation. `goToCoaching()` performs no
+catch-up, simulation, Recruiting setup, or lifecycle transition: it only selects
+the `coaching` session view and refreshes the relevant draft from canonical
+basketball state. While `activePostseason` exists, Coaching reads and writes the
+controlled Program's `PostseasonProgramState.rotation` through
+`updatePostseasonProgramRotation()`; otherwise it reads and writes the active
+Season Rotation through `updateProgramRotation()`. Invalid drafts remain in
+Zustand and never replace either canonical Rotation. Phase 6E.17B implemented
+the permanent Coaching screen and navigation against this exact boundary —
+`CoachingScreen`'s `Roster | Rotation` tabs reuse `TeamStatsTable` and
+`RotationEditorPanel` unchanged — and introduced no new state ownership.
+
 Canonical live rotation state is `RotationV1`, with isolated Player-minute maps
 for each floor position. Aggregate minutes and legal secondary eligibility are
 derived. Universe, Season, Postseason, Dynasty, Exhibition, Zustand drafts, and

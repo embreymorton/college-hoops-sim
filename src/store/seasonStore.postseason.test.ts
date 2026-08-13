@@ -251,6 +251,52 @@ describe('seasonStore postseason transition', () => {
 })
 
 describe('seasonStore postseason — qualified and alive', () => {
+  it('opens Coaching from canonical Postseason state without advancing the Tournament', () => {
+    const { postseason } = primeStore('coaching-navigation')
+    const controlledProgramId = postseason.field[0]!.programId
+    assignControlledProgram(postseason, controlledProgramId)
+    const canonical = postseason.programStates[controlledProgramId]!.rotation
+    const resultsBefore = postseason.resultsByGameId
+
+    useDynastyStore.getState().goToCoaching()
+
+    const state = useDynastyStore.getState()
+    expect(state.view).toBe('coaching')
+    expect(state.postseasonDraftRotation).toEqual(canonical)
+    expect(state.dynasty!.activePostseason!.resultsByGameId).toBe(resultsBefore)
+    expect(getCurrentTournamentRound(state.dynasty!.activePostseason!)).toBe(
+      getCurrentTournamentRound(postseason),
+    )
+  })
+
+  it('routes a valid Coaching edit to the canonical Postseason Rotation only', () => {
+    const { postseason, season } = primeStore('coaching-rotation')
+    const controlledProgramId = postseason.field[0]!.programId
+    assignControlledProgram(postseason, controlledProgramId)
+    const originalSeasonRotation = season.programStates[controlledProgramId]!.rotation
+    const nudged = nudgeRotation(postseason, controlledProgramId)
+
+    useDynastyStore.getState().goToCoaching()
+    for (const position of ['PG', 'SG', 'SF', 'PF', 'C'] as const) {
+      for (const [playerId, minutes] of Object.entries(nudged.minutesByPosition[position])) {
+        useDynastyStore.getState().setCoachingDraftPlayerPositionMinutes(
+          playerId,
+          position,
+          minutes,
+        )
+      }
+    }
+
+    const state = useDynastyStore.getState()
+    expect(state.postseasonDraftRotation).toEqual(nudged)
+    expect(
+      state.dynasty!.activePostseason!.programStates[controlledProgramId]!.rotation,
+    ).toEqual(nudged)
+    expect(
+      state.dynasty!.activeSeason!.programStates[controlledProgramId]!.rotation,
+    ).toEqual(originalSeasonRotation)
+  })
+
   it('resolves the correct current-round matchup and Quick Sim records the real Tournament GameResult', () => {
     const { postseason } = primeStore('alive-quicksim')
     const controlledProgramId = postseason.field[0]!.programId

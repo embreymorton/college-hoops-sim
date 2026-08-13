@@ -275,11 +275,24 @@ the root League screen dropped its redundant Back button and duplicate
 `RecruitingScreen`'s `Fill Remaining Board` control is hidden outright
 (not merely disabled) once the Board is full. This closes the deliberate
 6E.16A/6E.16B UI polish checkpoint; no simulation, Recruiting, League, or
-Postseason mechanic changed. Coaching/roster navigation (a possible future
-`Roster → Rotation` reorganization, observed during Game Prep manual play),
-Followed Players, offseason progression visibility, Awards, and
-Save/Persistence retain future QOL evidence. A fresh planning pass should
-select the next milestone from current `PLAYTESTING.md` priorities.
+Postseason mechanic changed. Phase 6E.17A Coaching Home Foundation is accepted:
+Zustand has a side-effect-free `coaching` session destination whose lifecycle-
+aware edit/reset actions reuse the existing regular-season or Postseason draft
+and validated canonical update boundary. Opening Coaching never catches up AI
+games, initializes Recruiting, simulates, or progresses a lifecycle; no second
+canonical Rotation exists, and Rotation V1 mechanics and Game Prep are
+unchanged. Phase 6E.17B Coaching Home Presentation is accepted: Coaching is now
+a permanent Dynasty destination (`SEASON/TOURNAMENT | COACHING | RECRUITING |
+LEAGUE`) alongside the existing three, opened only through `goToCoaching()`.
+`CoachingScreen` composes the reused `TeamDetailsHeader`, a local
+`CoachingModeTabs` (`Roster | Rotation`), the reused `TeamStatsTable` for
+Roster, and the reused `RotationEditorPanel` against the exact 6E.17A draft/
+commit boundary, with Postseason precedence unchanged. A presentation-only fix
+recolors the Rotation editor's existing Total cell for an invalid 0–40 Player
+total instead of adding a second block line, so that row no longer renders
+taller than its neighbors; the validation rule itself is unchanged. Followed
+Players, offseason progression visibility, Awards, and Save/Persistence retain
+later QOL evidence.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 

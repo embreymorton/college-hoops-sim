@@ -355,6 +355,64 @@ describe('seasonStore game simulation', () => {
   })
 })
 
+describe('seasonStore Coaching foundation', () => {
+  it('opens Coaching from canonical Season state without advancing basketball or Recruiting', () => {
+    selectProgram()
+    const before = useDynastyStore.getState().dynasty!
+    const beforeResults = before.activeSeason!.resultsByGameId
+    const beforeRecruitingPeriod = before.recruiting!.lastResolvedPeriod
+    const canonical = before.activeSeason!.programStates['charlotte-tech']!.rotation
+
+    useDynastyStore.getState().goToCoaching()
+
+    const state = useDynastyStore.getState()
+    expect(state.view).toBe('coaching')
+    expect(state.draftRotation).toEqual(canonical)
+    expect(state.dynasty!.activeSeason!.resultsByGameId).toBe(beforeResults)
+    expect(state.dynasty!.recruiting!.lastResolvedPeriod).toBe(beforeRecruitingPeriod)
+    expect(state.pendingRecruitingSetupIntent).toBeNull()
+  })
+
+  it('commits only a valid Coaching edit to the canonical Season Rotation', () => {
+    selectProgram()
+    const season = useDynastyStore.getState().dynasty!.activeSeason!
+    const controlled = season.programStates['charlotte-tech']!
+    const centers = getPlayersByMinutesV1(controlled.team, controlled.rotation)
+      .filter(({ player }) => player.position === 'C')
+
+    useDynastyStore.getState().goToCoaching()
+    useDynastyStore.getState().setCoachingDraftPlayerPositionMinutes(
+      centers[0]!.player.id,
+      'C',
+      centers[0]!.minutes - 1,
+    )
+    useDynastyStore.getState().setCoachingDraftPlayerPositionMinutes(
+      centers[1]!.player.id,
+      'C',
+      centers[1]!.minutes + 1,
+    )
+
+    const validState = useDynastyStore.getState()
+    expect(validateRotationV1(controlled.team, validState.draftRotation!).valid).toBe(true)
+    expect(
+      validState.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation,
+    ).toEqual(validState.draftRotation)
+
+    const committed = validState.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation
+    useDynastyStore.getState().setCoachingDraftPlayerPositionMinutes(
+      centers[0]!.player.id,
+      'C',
+      centers[0]!.minutes + 8,
+    )
+
+    const invalidState = useDynastyStore.getState()
+    expect(validateRotationV1(controlled.team, invalidState.draftRotation!).valid).toBe(false)
+    expect(
+      invalidState.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation,
+    ).toEqual(committed)
+  })
+})
+
 describe('seasonStore Dashboard Quick Sim', () => {
   it('uses the canonical current Season Rotation, matching a reproduction from the committed Team/Rotation', () => {
     selectProgram()

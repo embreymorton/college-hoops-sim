@@ -167,6 +167,7 @@ export function PostseasonHubScreen() {
   )
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
+  const goToCoaching = useDynastyStore((state) => state.goToCoaching)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const generateControlledDraftBoard = useDynastyStore(
@@ -516,6 +517,7 @@ export function PostseasonHubScreen() {
         competitionLabel="Tournament"
         activeSection="competition"
         onSelectCompetition={goToPostseasonHub}
+        onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
