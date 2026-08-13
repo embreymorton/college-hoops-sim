@@ -1179,10 +1179,12 @@ p {
 
 /* A shared minimum footprint keeps the pregame matchup and completed-result
    states reading as two states of one card instead of visibly resizing the
-   Hub after Quick Sim — not a fixed height, just a stable floor. */
+   Hub after Quick Sim, so the round-control row below never jumps between
+   them — not a fixed height, just a stable floor matched to the taller
+   (completed-result) state's own natural content height. */
 @media (min-width: 641px) {
   .next-game-card {
-    min-height: 19.5rem;
+    min-height: 21rem;
   }
 }
 
@@ -1290,21 +1292,56 @@ p {
   justify-content: center;
   flex-wrap: wrap;
   gap: var(--space-3);
+  margin-top: var(--space-4);
 }
 
-.next-game-card__final-scores {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin: var(--space-3) 0;
+/* Scoreboard (left) and Game Leaders (right) as two balanced regions of one
+   framed row, rather than one narrow stacked column leaving the right side
+   of the card empty. Stacks back to a single column on narrow widths. */
+.next-game-card__final-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  gap: var(--space-5);
+  align-items: stretch;
+  margin: var(--space-2) 0;
   padding: var(--space-3) 0;
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
 
+@media (max-width: 900px) {
+  .next-game-card__final-body {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+}
+
+/* A compact, content-hugged scoreboard — Team abbreviation and score sit
+   close together instead of floating across the full column — with a
+   vertical rule separating it from Game Leaders on desktop. */
+.next-game-card__final-scores {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-3);
+  padding-right: var(--space-5);
+  border-right: 1px solid var(--line);
+}
+
+@media (max-width: 900px) {
+  .next-game-card__final-scores {
+    padding-right: 0;
+    border-right: none;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--line);
+    width: 100%;
+  }
+}
+
 .next-game-card__final-team {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto auto auto;
   align-items: center;
   gap: var(--space-3);
   color: var(--ink-1);
@@ -1316,13 +1353,16 @@ p {
 
 .next-game-card__final-name {
   font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1rem;
+  font-weight: 700;
+  font-size: 1.4rem;
+  letter-spacing: 0.01em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .next-game-card__final-seed {
   margin-right: var(--space-2);
+  font-size: 0.85rem;
   color: var(--ink-1);
 }
 
@@ -1333,52 +1373,57 @@ p {
   font-variant-numeric: tabular-nums;
 }
 
+/* Fills the right column of `.next-game-card__final-body` on desktop, and
+   the full width once stacked on narrow screens. */
 .game-leaders {
-  margin: 0 auto var(--space-3);
-  width: min(100%, 34rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
 }
 
 .game-leaders__heading {
-  margin-bottom: var(--space-1);
+  margin-bottom: var(--space-2);
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
-  text-align: center;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink-1);
 }
 
-/* A dense, sports-ticker leader strip — one row per stat instead of three
-   oversized bordered columns — so the completed-game card's footprint stays
-   close to the pregame card it replaces. */
+/* A dense, sports-ticker leader strip — one compact row per stat instead of
+   three oversized bordered columns, and no per-row rule lines — spacing
+   alone carries the rhythm so the block reads as one open, readable list. */
 .game-leaders__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--line);
+  gap: var(--space-2);
+  padding-top: var(--space-2);
 }
 
 .game-leaders__row {
   display: grid;
-  grid-template-columns: 2.4rem 2.2rem 1fr auto;
+  grid-template-columns: 2.6rem 2.6rem 1fr auto;
   align-items: baseline;
   gap: var(--space-2);
-  padding: 0.4rem 0.25rem;
-  border-bottom: 1px solid var(--line);
 }
 
 .game-leaders__label {
   font-family: var(--font-display);
-  font-size: 0.66rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-2);
 }
 
 .game-leaders__value {
   font-family: var(--font-score);
-  font-size: 1.15rem;
+  font-size: 1.7rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--ink-0);
@@ -1387,7 +1432,7 @@ p {
 .game-leaders__name {
   min-width: 0;
   font-family: var(--font-display);
-  font-size: 0.8rem;
+  font-size: 1rem;
   font-weight: 600;
   text-transform: uppercase;
   color: var(--ink-0);
@@ -1402,9 +1447,9 @@ p {
   gap: var(--space-1);
   justify-self: end;
   font-family: var(--font-display);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--ink-2);
   white-space: nowrap;

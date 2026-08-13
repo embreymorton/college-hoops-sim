@@ -256,11 +256,30 @@ retired Board Readiness tooltip and scattered helper copy), and Late
 Recruiting's zero-openings state reads as a quiet completed class instead of
 warning about automatic resolution. Board/Battles/National Class
 responsibilities and all Recruiting mechanics are unchanged. Phase 6E.16B
-Season Hub + League Information Hierarchy Polish is NEXT — a Claude Code UI
-milestone using the `frontend-design` skill; no simulation or Recruiting
-mechanic is currently open. Coaching/roster navigation, Followed Players,
-offseason progression visibility, Awards, and Save/Persistence retain
-future QOL evidence.
+Season Hub + League Information Hierarchy Polish is RESOLVED: a local
+`.season-hub` wrapper tightens the Hub's top-of-page vertical rhythm; the
+pregame `NextGameCard` and completed `CompletedMatchupCard` now share a
+21rem desktop minimum-height shell so `Advance to Next Round`/`Super Sim`
+hold their exact vertical position across Quick Sim (verified pixel-stable
+at desktop width); the completed-game scoreboard and Game Leaders are
+constrained to a compact ~21rem measure with Game Leaders as a dense row
+strip that states a shared leader Program once instead of on every row;
+Hub Recruiting distinguishes unresolved `Focus Targets` (active pursuits
+only) from signed `Commits`, integrates the `Recruiting Update` recap
+inside the Recruiting module instead of as a separate top-level Hub card,
+and no longer reserves a left gutter on unaccented Focus rows; the Hub's
+Conference Standings heading names the controlled Program's actual
+Conference and composes side-by-side with Recent Results on desktop; and
+the root League screen dropped its redundant Back button and duplicate
+`League` heading (Team/Player Details retain their own Back navigation).
+`RecruitingScreen`'s `Fill Remaining Board` control is hidden outright
+(not merely disabled) once the Board is full. This closes the deliberate
+6E.16A/6E.16B UI polish checkpoint; no simulation, Recruiting, League, or
+Postseason mechanic changed. Coaching/roster navigation (a possible future
+`Roster → Rotation` reorganization, observed during Game Prep manual play),
+Followed Players, offseason progression visibility, Awards, and
+Save/Persistence retain future QOL evidence. A fresh planning pass should
+select the next milestone from current `PLAYTESTING.md` priorities.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 

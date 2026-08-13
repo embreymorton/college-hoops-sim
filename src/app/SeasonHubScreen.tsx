@@ -427,7 +427,7 @@ export function SeasonHubScreen() {
       <div className="hub-secondary-grid">
         <section className="section" aria-labelledby="standings-heading">
           <h2 id="standings-heading" className="section-title">
-            Conference Standings
+            {controlledConference.name} Standings
           </h2>
           <ConferenceStandingsSection
             universe={UNIVERSE_V0}

@@ -236,7 +236,7 @@ describe('Postseason — qualified and alive', () => {
       expect(column).not.toBeNull()
       if (leader) {
         expect(column).toHaveTextContent(leader.playerName)
-        expect(column).toHaveTextContent(leader.programName)
+        expect(column).toHaveTextContent(leader.programAbbreviation)
         expect(column).toHaveTextContent(String(leader.value))
       } else {
         expect(column).toHaveTextContent('—')

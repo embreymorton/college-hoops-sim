@@ -403,7 +403,7 @@ describe('Standings → Team cross-navigation', () => {
     render(<App />)
 
     const standingsSection = screen
-      .getByRole('heading', { name: 'Conference Standings' })
+      .getByRole('heading', { name: /Conference Standings$/ })
       .closest('section')!
     const conferenceMate = UNIVERSE_V0.programs.find(
       (program) => program.id === CONFERENCE_MATE_ID,

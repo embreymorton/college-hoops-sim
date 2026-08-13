@@ -9,6 +9,7 @@ interface CompletedMatchupTeamInfo {
 interface CompletedGameStatLeader {
   readonly playerName: string
   readonly programName: string
+  readonly programAbbreviation: string
   readonly value: number
 }
 
@@ -60,29 +61,12 @@ export function CompletedMatchupCard({
           {siteLabel} · Final{overtimeTag ? `/${overtimeTag}` : ''}
         </span>
       </div>
-      <div className="next-game-card__final-scores">
-        <CompletedTeamRow team={away} />
-        <CompletedTeamRow team={home} />
-      </div>
-      <div className="game-leaders" aria-label="Game leaders">
-        <p className="game-leaders__heading">Game Leaders</p>
-        <ul className="game-leaders__list">
-          <GameLeaderRow
-            label="PTS"
-            leader={leaders.points}
-            teamColor={getLeaderTeamColor(leaders.points, home, away)}
-          />
-          <GameLeaderRow
-            label="REB"
-            leader={leaders.rebounds}
-            teamColor={getLeaderTeamColor(leaders.rebounds, home, away)}
-          />
-          <GameLeaderRow
-            label="AST"
-            leader={leaders.assists}
-            teamColor={getLeaderTeamColor(leaders.assists, home, away)}
-          />
-        </ul>
+      <div className="next-game-card__final-body">
+        <div className="next-game-card__final-scores">
+          <CompletedTeamRow team={away} />
+          <CompletedTeamRow team={home} />
+        </div>
+        <GameLeadersList leaders={leaders} home={home} away={away} />
       </div>
       <div className="next-game-card__actions">
         <button
@@ -98,10 +82,44 @@ export function CompletedMatchupCard({
 }
 
 /**
- * One dense row per stat — "PTS 27 · Mason Webb" plus the scoring Program —
- * rather than three oversized bordered columns, so the completed card's
- * footprint stays close to the pregame card it replaces.
+ * A dense sports-ticker strip — "PTS 27 · Mason Webb" plus the scoring
+ * Program's abbreviation — rather than three oversized bordered columns, so
+ * the completed card's footprint stays close to the pregame card it
+ * replaces.
  */
+function GameLeadersList({
+  leaders,
+  home,
+  away,
+}: {
+  readonly leaders: CompletedGameTeamLeaders
+  readonly home: CompletedMatchupTeamInfo
+  readonly away: CompletedMatchupTeamInfo
+}) {
+  return (
+    <div className="game-leaders" aria-label="Game leaders">
+      <p className="game-leaders__heading">Game Leaders</p>
+      <ul className="game-leaders__list">
+        <GameLeaderRow
+          label="PTS"
+          leader={leaders.points}
+          teamColor={getLeaderTeamColor(leaders.points, home, away)}
+        />
+        <GameLeaderRow
+          label="REB"
+          leader={leaders.rebounds}
+          teamColor={getLeaderTeamColor(leaders.rebounds, home, away)}
+        />
+        <GameLeaderRow
+          label="AST"
+          leader={leaders.assists}
+          teamColor={getLeaderTeamColor(leaders.assists, home, away)}
+        />
+      </ul>
+    </div>
+  )
+}
+
 function GameLeaderRow({
   label,
   leader,
@@ -126,7 +144,7 @@ function GameLeaderRow({
                 aria-hidden="true"
               />
             )}
-            {leader.programName}
+            {leader.programAbbreviation}
           </span>
         </>
       ) : (

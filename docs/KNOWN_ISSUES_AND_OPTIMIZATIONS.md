@@ -9,33 +9,6 @@ measured scaling risk, or validated watchpoint. Follow
 
 ## Open items
 
-### P3 — Recruiting page density and fragmented guidance — POLISH
-
-The current page repeats Board capacity, gives Positional Needs disproportionate
-visual weight, and separates status and explanatory material across a tall
-layout. Consolidate the overview and establish one coherent help destination
-without redesigning the accepted Board/Battles/National architecture or changing
-Recruiting mechanics. When Late Recruiting has zero projected openings, present
-the class as filled while retaining the required Finalize action.
-
-### P3 — Season Hub and League information hierarchy — POLISH
-
-The Hub has excess vertical space, shows more Conference standings context than
-the controlled coach needs, and leaves Recruiting Update visually detached.
-Retain the controlled Conference snapshot, integrate it more tightly with Recent
-Results and Recruiting status, and distinguish unresolved Focus Targets from
-controlled-Program Commits. League → Teams already provides all Conferences in
-standings order; do not add a duplicative Conference Standings tab. Root League
-chrome may be reduced, but Team/Player detail Back navigation remains useful.
-
-### P3 — Quick Sim game-card footprint and result hierarchy — POLISH
-
-Pregame and completed Quick Sim cards have materially different footprints, and
-the result/leaders composition is visually awkward enough to make the transition
-distracting. Treat them as stable states of the same dense sports-result card;
-do not change stored results, statistics, simulation, or prescribe a fixed pixel
-height.
-
 ### P1 — Correct Super Sim completion-summary wording
 
 The current summary derives “games simulated” from the controlled Program's record delta. If its target-round game was already complete but Super Sim resolves only remaining AI games, the UI can misleadingly show `0 games simulated` and a `0-0` segment.
@@ -179,6 +152,44 @@ Phase 5A `CompletedSeasonArchive` now clones the complete valid `SeasonState` an
 ### P2 — Stable returning Player IDs — RESOLVED
 
 Phase 5A development creates new immutable Player values while preserving returning Player IDs, names, height, position, and Potential. Class and attributes may change without mutating archived Player versions. Canonical inspection found zero changed returning IDs and passed Program/Player-order-independence checks.
+
+### P3 — Recruiting page density and fragmented guidance — RESOLVED
+
+Phase 6E.16A consolidated the Recruiting page: a local `.recruiting-screen`
+wrapper tightened the top-of-page rhythm, `RecruitingOverview` replaced the
+Positional Needs table with one compact Board/Signed/Openings/Offers/Needs
+snapshot, the Board count no longer duplicates beside `Fill Remaining Board`,
+and a new `Guide` mode became the one coherent explanation destination for
+Board/Focus/Offers/Readiness/battle standing. Late Recruiting's zero-openings
+state now reads as a completed class while retaining the required Finalize
+action. Board/Battles/National architecture and all Recruiting mechanics are
+unchanged. See `UI_DESIGN.md`.
+
+### P3 — Season Hub and League information hierarchy — RESOLVED
+
+Phase 6E.16B tightened Hub vertical rhythm, distinguished unresolved Focus
+Targets from signed Commits, integrated the Recruiting Update recap inside the
+Hub Recruiting module, replaced the Hub's Conference-switcher with the
+controlled Program's own Conference standings (heading now names that
+Conference) composed side by side with Recent Results on desktop, and removed
+the root League screen's redundant Back button and duplicate `League` heading
+while preserving Team/Player detail Back navigation. League → Teams remains
+the only league-wide Conference destination; no duplicative Conference
+Standings tab was added. See `UI_DESIGN.md`.
+
+### P3 — Quick Sim game-card footprint and result hierarchy — RESOLVED
+
+Phase 6E.16B (two manual-play passes) treats the pregame `NextGameCard` and
+completed `CompletedMatchupCard` as stable states of one card: both share a
+21rem desktop minimum-height floor sized to the compacted completed-game
+content, and the completed-game scoreboard/Game Leaders are constrained to a
+narrow ~21rem measure with a dense row-strip leader layout (deduping repeated
+Program identity when every leader shares one Team). Verified by direct pixel
+measurement that `Advance to Next Round`/`Super Sim` hold an identical
+vertical position before and after Quick Sim at desktop width. No stored
+results, statistics, or simulation behavior changed; no fixed pixel height is
+imposed on narrow/mobile widths, which keep natural responsive growth. See
+`UI_DESIGN.md`.
 
 ### P3 — UI stylesheet boundary
 

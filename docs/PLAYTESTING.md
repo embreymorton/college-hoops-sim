@@ -793,7 +793,7 @@ save-slot, backend, or routing architecture here or promote this above 6E.10.
 
 Future history could include program single-game points, season scoring, and career points/assists. It should follow Player Detail/development-history work rather than precede it.
 
-## UI Polish Checkpoint — Recruiting portion RESOLVED (Phase 6E.16A)
+## UI Polish Checkpoint — RESOLVED (Phases 6E.16A + 6E.16B)
 
 The current Recruiting page has too much vertical separation between navigation,
 identity, needs, and Board management. Board capacity is duplicated, the
@@ -845,6 +845,56 @@ Postseason bracket, National Class, Recruiting Class Complete, and Offseason
 received positive/no-action feedback and stay outside this checkpoint, apart
 from the narrow zero-openings Late Recruiting copy above.
 
+Phase 6E.16B resolved the Season Hub/League friction above, in two manual-play
+passes. First pass: a local `.season-hub` wrapper tightened the Hub's
+top-of-page rhythm; `CompletedMatchupCard`'s Game Leaders became a dense
+row strip instead of three oversized bordered columns; `RecruitingHubSummary`
+gained a `commits` prop (`deriveHubCommitSummaries`) so signed Recruits move
+to a distinct Commits list once `deriveFocusTargetSummaries` stops counting
+them as unresolved Focus (the filter now requires `status === 'active'`);
+`RecruitingCommitmentAlerts` (the Recruiting Update recap) moved inside the
+Recruiting module; `ConferenceStandingsSection` dropped its Conference-switch
+tabs to show only the controlled Program's standings, composed side-by-side
+with Recent Results in a new `.hub-secondary-grid`; and root `LeagueScreen`
+dropped its redundant Back button and duplicate `League` heading.
+
+A second manual-play pass then found four remaining rough edges, all now
+resolved: (1) the completed Quick Sim card was still visibly taller than the
+pregame card, so `Advance to Next Round` jumped down after every simulated
+game — fixed by further compacting the completed-game scoreboard and Game
+Leaders (narrower ~21rem measure, tighter padding, smaller score/value type)
+and giving `.next-game-card` a shared 21rem desktop `min-height` floor sized
+to the compacted completed state, so pregame stretches up to meet it;
+verified pixel-identical (`round-progress` top offset unchanged) before and
+after Quick Sim at desktop width. (2) The completed-game score line had a lot
+of dead space between each Team name and its final score because
+`.next-game-card__final-scores` spanned the full card width — constrained to
+the same ~21rem measure as Game Leaders, so it now reads as one intentional
+scoreboard column. (3) Game Leaders also repeated the same Program name and
+color dot on all three rows whenever every leader belonged to one Team —
+`CompletedMatchupCard` now states that identity once beside the "Game
+Leaders" heading and only falls back to per-row Program tags when leaders
+actually span multiple Teams. (4) The Hub's Focus Targets `<ul>` still
+carried default browser list padding/indentation (`.recruiting-hub-focus__list`
+and `.recruiting-hub-commits__list` were missing `margin/padding/list-style`
+resets) — both lists now align flush with the rest of the Recruiting module.
+The Hub's Conference Standings heading also now names the actual Conference
+("Southern Crescent Conference Standings") instead of a generic label.
+
+Manual play confirmed Recruiting's Board/Battles/National Class/Guide, League
+Leaders/Teams, Team/Player Details Back navigation, the Postseason Hub's
+shared Recruiting/game-card presentation, and narrow-width stacking all
+remain healthy after both passes — nothing in this checkpoint reopened
+Recruiting mechanics, Conference calculations, League projections, or any
+simulation system.
+
+Manual play during this pass also surfaced a **future** signal, not acted on
+here: Game Prep feels busy, and a longer-term Coaching information
+architecture may make `Roster → Rotation` a more natural stable organization
+than `Set Rotation → Roster View` inside Game Prep. This is recorded as
+future Coaching-screen/navigation evidence only — Game Prep, Rotation,
+Roster, and Coaching navigation are unchanged in 6E.16B.
+
 ## Postseason Hub + Season-Complete Presentation Polish — RESOLVED (Phase 6E.10)
 
 Repeated feedback noted awkward Tournament Complete and Season Complete card
@@ -868,7 +918,7 @@ seeding, or Recruiting mechanic changed.
 
 Keep below the foundational investigations:
 
-- “Last 5” is preferred to “Last 4.”
+- “Last 5” is preferred to “Last 4.” — RESOLVED by Phase 6E.16B (`RECENT_RESULTS_COUNT` is now 5).
 - Seeing current seed would be fun, potential to choose seed when starting dynasty (compete with others on same field)
 
 ## Repeated Playtest Friction
@@ -885,9 +935,11 @@ Highest-value repeated signals:
   (RESOLVED by Phase 6E.10 — see above).
 
 Recruiting-page density and guidance friction is RESOLVED by accepted Phase
-6E.16A. The current presentation priority is Hub/League information hierarchy
-and Quick Sim card stability (Phase 6E.16B). Last 5 remains lower-priority
-polish.
+6E.16A. Hub/League information hierarchy and Quick Sim card stability is
+RESOLVED by accepted Phase 6E.16B — Recent Results now shows Last 5 as part
+of that pass, closing the separate "Last 5" polish request below. This
+deliberate two-milestone UI polish checkpoint is complete; the next
+milestone should come from a fresh planning pass over current priorities.
 
 ## Testing for Fun
 
@@ -919,22 +971,24 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 6E.16B — Season Hub + League Information Hierarchy Polish
-2. Coaching navigation / permanent Rotation home
-3. Followed Players / Favorites
-4. Recruit POT-gap diagnostic
-5. League News / Round Recap
-6. Offseason around-the-league context
-7. Program records / deeper statistical history
-8. Shot-selection diagnostic
-9. Minor Player Details / Last 5 polish
+1. Coaching navigation / permanent Rotation home (Game Prep's `Roster →
+   Rotation` organization is a specific observed candidate — see the UI
+   Polish Checkpoint section above)
+2. Followed Players / Favorites
+3. Recruit POT-gap diagnostic
+4. League News / Round Recap
+5. Offseason around-the-league context
+6. Program records / deeper statistical history
+7. Shot-selection diagnostic
+8. Minor Player Details polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /
 commitment visibility presentation (6E.12) are RESOLVED — see above.
 Assistant Fill Remaining Board is also RESOLVED by accepted Phase 6E.15.
 Recruiting Page Density + Guidance Polish is RESOLVED by accepted Phase
-6E.16A.
+6E.16A. Season Hub + League Information Hierarchy Polish is RESOLVED by
+accepted Phase 6E.16B.
 
 Premium Offer allocation remains WATCH only and is not part of either UI polish
 milestone. Existing future product ideas remain future rather than promoted by

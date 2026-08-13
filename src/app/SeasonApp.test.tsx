@@ -224,7 +224,7 @@ describe('Season Presentation', () => {
       expect(column).not.toBeNull()
       if (leader) {
         expect(column).toHaveTextContent(leader.playerName)
-        expect(column).toHaveTextContent(leader.programName)
+        expect(column).toHaveTextContent(leader.programAbbreviation)
         expect(column).toHaveTextContent(String(leader.value))
       } else {
         expect(column).toHaveTextContent('—')
@@ -980,7 +980,8 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     const recruiting = dynasty.recruiting!
     const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
     const target = controlledBoard.find((candidate) => candidate.isFocused)!
-    const recruitName = getRecruit(recruiting, target.playerId)!.player.firstName
+    const committedPlayer = getRecruit(recruiting, target.playerId)!.player
+    const recruitName = `${committedPlayer.firstName} ${committedPlayer.lastName}`
 
     expect(document.querySelector('.recruiting-hub-commits')).toBeNull()
     const focusItemsBefore = document.querySelectorAll('.recruiting-hub-focus__item').length
@@ -1061,14 +1062,14 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     expect(grid.querySelector(':scope > .recruiting-commitment-alerts')).toBeNull()
   })
 
-  it('shows only the controlled Conference standings on the Hub, with no Conference switcher', () => {
+  it('shows only the controlled Conference standings on the Hub, named for the actual Conference, with no Conference switcher', () => {
     render(<App />)
     act(() => {
       selectProgramViaUI('Charlotte Tech')
     })
 
     const standingsSection = screen
-      .getByRole('heading', { name: 'Conference Standings' })
+      .getByRole('heading', { name: 'Southern Crescent Conference Standings' })
       .closest('section') as HTMLElement
     expect(
       within(standingsSection).queryByRole('group', { name: 'Conference' }),
@@ -1089,7 +1090,9 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     const secondaryGrid = document.querySelector('.hub-secondary-grid') as HTMLElement
     expect(secondaryGrid).not.toBeNull()
     expect(
-      within(secondaryGrid).getByRole('heading', { name: 'Conference Standings' }),
+      within(secondaryGrid).getByRole('heading', {
+        name: 'Southern Crescent Conference Standings',
+      }),
     ).toBeInTheDocument()
     expect(
       within(secondaryGrid).getByRole('heading', { name: 'Recent Results' }),

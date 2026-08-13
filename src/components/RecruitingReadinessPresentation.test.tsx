@@ -129,7 +129,6 @@ describe('Readiness presentation across surfaces (6E.14B-B)', () => {
             targets: [],
           }}
           focusTargets={[focusTarget(readiness)]}
-          recentCommitment={undefined}
           onGenerateDraftBoard={() => {}}
           onBuildManually={() => {}}
         />,
