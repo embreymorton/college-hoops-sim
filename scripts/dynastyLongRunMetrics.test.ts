@@ -56,6 +56,17 @@ describe('Dynasty long-run calibration metrics', () => {
     ])).toBe(2)
   })
 
+  it('summarizes arrays larger than the JavaScript argument limit', () => {
+    const values = Array.from({ length: 200_000 }, (_, index) => index - 100_000)
+
+    expect(summarizeDistribution(values)).toMatchObject({
+      count: 200_000,
+      minimum: -100_000,
+      maximum: 99_999,
+      median: -0.5,
+    })
+  })
+
   it('derives actual OVR development deltas by previous class', () => {
     const dynasty = createRecruitingDynasty('calibration-development')
     const season = dynasty.activeSeason!

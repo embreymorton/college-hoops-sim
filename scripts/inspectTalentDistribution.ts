@@ -8,6 +8,7 @@ import { generateRegularSeasonSchedule } from '../src/schedule'
 import { initializeSeason } from '../src/season'
 import { initializeUniverse, UNIVERSE_V0 } from '../src/universe'
 import { correlation, summarizeDistribution } from './dynastyLongRunMetrics'
+import { summarizeRecruitPotGaps } from './talentPotGapMetrics'
 
 const CLASSES = Number(process.env.CLASSES ?? 50)
 
@@ -33,12 +34,41 @@ for (let index = 0; index < CLASSES; index += 1) {
     for (const player of team.roster) activePlayers.push({ overall: calculateOverall(player), potential: player.potential, classYear: player.classYear, prestige: team.prestige })
   }
 }
+const potGapSummaries = summarizeRecruitPotGaps(
+  recruits.map((recruit) => ({
+    stars: recruit.stars,
+    overall: calculateOverall(recruit.player),
+    potential: recruit.player.potential,
+  })),
+)
 const ovr = recruits.map(({ player }) => calculateOverall(player))
 const pot = recruits.map(({ player }) => player.potential)
 console.log(`RECRUIT TALENT DISTRIBUTION — ${CLASSES} deterministic classes (${recruits.length} Recruits)`)
 console.log(`OVR: ${format(ovr)}`)
 console.log(`POT: ${format(pot)}`)
 console.log(`POT-OVR: ${format(recruits.map(({ player }) => player.potential - calculateOverall(player)))}`)
+console.log(`Seed strategy: talent-distribution:{0..${CLASSES - 1}} with production universe, schedule, Dynasty, and Recruiting initialization`)
+console.log('\nELITE RECRUIT POT-GAP CHARACTERIZATION')
+console.log('Cohort    n      Gap 0          Gap 1–3        Gap 4–7        Gap 8–12       Gap 13+        Mean   Median  Min–Max  P25/P75')
+for (const summary of potGapSummaries) {
+  const bucket = (key: keyof typeof summary.buckets) => {
+    const value = summary.buckets[key]
+    return `${value.count} (${(value.rate * 100).toFixed(1)}%)`
+  }
+  console.log(
+    `${summary.label.padEnd(9)}` +
+    `${String(summary.count).padEnd(7)}` +
+    `${bucket('0').padEnd(15)}` +
+    `${bucket('1-3').padEnd(15)}` +
+    `${bucket('4-7').padEnd(15)}` +
+    `${bucket('8-12').padEnd(15)}` +
+    `${bucket('13+').padEnd(15)}` +
+    `${summary.mean.toFixed(1).padEnd(7)}` +
+    `${summary.median.toFixed(1).padEnd(8)}` +
+    `${`${summary.minimum.toFixed(0)}–${summary.maximum.toFixed(0)}`.padEnd(9)}` +
+    `${summary.p25.toFixed(1)}/${summary.p75.toFixed(1)}`,
+  )
+}
 console.log('\nSTARS  COUNT  OVR AVG/MED/RANGE  POT AVG/MED/RANGE')
 for (const stars of [5, 4, 3, 2] as const) {
   const tier = recruits.filter((recruit) => recruit.stars === stars)

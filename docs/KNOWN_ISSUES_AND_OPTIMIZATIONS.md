@@ -205,6 +205,35 @@ Keep this as a separate test-reliability WATCH; do not weaken the test, attribut
 it to Followed Players, or promote it into a product milestone without renewed
 reproduction and diagnosis.
 
+The Candidate B experiment produced one renewed mixed/full-suite occurrence in
+`moves a Recruit from unresolved Focus Targets to Commits once he commits to
+us, and drops him from Focus (6E.16B)`. The same `SeasonApp.test.tsx` file then
+passed `36/36` in isolation, and the immediate full-suite rerun exited green.
+Candidate B changes only diagnostic scripts/docs and does not enter application
+or Recruiting runtime code. This strengthens the order-dependent test WATCH but
+does not establish a Candidate B or product regression.
+
+### P2 — Elite Recruit POT-gap compression — ACCEPTED CANDIDATE / NOT ACTIVATED
+
+A production-path sample of 250 deterministic Recruiting classes (`40,202`
+Recruits) found zero POT gap for `70.1%` of 5★, `85.6%` of 80+ OVR, `90.9%`
+of 85+ OVR, and `97.3%` of 90+ OVR Recruits. Median gap was zero for 5★ and
+every 80+ cohort. This confirms that elite/high-OVR Recruit starting profiles
+are structurally compressed against visible Potential, reducing development
+runway. No negative gaps occurred. This is not evidence against Player
+Development V1. Recruit Talent V1 remains unchanged pending a separately scoped
+calibration-design milestone; do not tune generation directly from this note.
+
+The calibration-design pass traced the mechanism to independent readiness and
+raw ceiling: `82.5%` of raw ceilings are capped at 82, while readiness can
+generate much higher current OVR. Candidate B's independently seeded bounded
+runway passed all `22/22` precommitted gates across the paired 500-class sample
+(`80,453` Recruits). It reduced zero gap from `70.54% → 21.68%` for 5★,
+`86.07% → 30.94%` for 80+, and `91.75% → 32.75%` for 85+, while preserving
+exact attributes/OVR and limiting overall POT mean movement to `+0.255`.
+Candidate B is accepted for a separately scoped activation/freeze milestone,
+but the production fix is not yet implemented; Recruit Talent V1 remains live.
+
 ## Accepted non-issues
 
 - A high correlation between initial Team Strength and average wins across many seasons is expected because averaging removes game-level variance. Do not tune the simulator solely for that observation; revisit only if individual seasons become too deterministic.

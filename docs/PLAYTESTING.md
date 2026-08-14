@@ -375,13 +375,151 @@ It must never replace user-selected targets or overwrite Focus choices or Offers
 
 The assistant should fill only unused capacity; manual targets, Focus, and Offers remain authoritative.
 
-## Elite Recruit POT Gap — WATCH
+## Elite Recruit POT Gap — STRUCTURAL CONCERN (Diagnostic Outcome C)
 
 Manual classes included high-OVR recruits at their ceiling, such as `85/85`, `84/84`, and `87/87`. Recruit Talent V1 intentionally calculates `POT = max(OVR, ceiling)`, so this is permitted.
 
 Future diagnostics should measure `POT === OVR` for all Recruits, 5★, 4★,
 80+, 85+, and 90+, plus POT-gap buckets `0`, `1–3`, `4–7`, `8–12`, and
 `13+`. Do not change Recruit Talent V1 from this observation alone.
+
+The production-path diagnostic generated 250 deterministic Recruiting classes
+using seeds `talent-distribution:0` through `:249`, yielding `40,202` Recruits.
+Every cohort used canonical generated OVR and star rating. No negative POT gaps
+occurred.
+
+| Cohort | n | Gap 0 | Gap 1–3 | Gap 4–7 | Gap 8–12 | Gap 13+ | Mean | Median | Min–Max | P25/P75 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| All | 40,202 | 11,728 (29.2%) | 3,490 (8.7%) | 4,988 (12.4%) | 6,109 (15.2%) | 13,887 (34.5%) | 9.7 | 7.0 | 0–54 | 0.0/16.0 |
+| 5★ | 2,536 | 1,777 (70.1%) | 135 (5.3%) | 178 (7.0%) | 204 (8.0%) | 242 (9.5%) | 3.1 | 0.0 | 0–32 | 0.0/3.0 |
+| 4★ | 8,043 | 3,909 (48.6%) | 649 (8.1%) | 928 (11.5%) | 978 (12.2%) | 1,579 (19.6%) | 6.0 | 1.0 | 0–44 | 0.0/10.0 |
+| 80+ OVR | 3,340 | 2,858 (85.6%) | 211 (6.3%) | 166 (5.0%) | 80 (2.4%) | 25 (0.7%) | 0.7 | 0.0 | 0–19 | 0.0/0.0 |
+| 85+ OVR | 849 | 772 (90.9%) | 43 (5.1%) | 20 (2.4%) | 11 (1.3%) | 3 (0.4%) | 0.4 | 0.0 | 0–13 | 0.0/0.0 |
+| 90+ OVR | 73 | 71 (97.3%) | 1 (1.4%) | 0 (0.0%) | 1 (1.4%) | 0 (0.0%) | 0.2 | 0.0 | 0–9 | 0.0/0.0 |
+
+**Decision: Outcome C — structural concern.** The overall population retains
+wide runway, but elite/high-OVR cohorts are systematically compressed against
+visible POT: zero gap dominates every 80+ cohort and the 5★ median gap is zero.
+This confirms a Recruit starting-profile concern; it does not establish any
+Player Development defect. Recruit Talent V1 production remains unchanged and
+must not be tuned inside this diagnostic. Select a separate calibration-design
+milestone with paired validation before considering a production candidate.
+
+### Recruit Talent POT-Gap Calibration Design — COMPLETE
+
+The production cause is the relationship between independently generated
+readiness and ceiling, not `max()` alone. Readiness produces Player attributes
+and can yield OVR in the 80s or 90s. Raw ceiling is then drawn independently:
+`40%` from `60–74`, `42.5%` from `70–82`, `15%` from `80–90`, and only `2.5%`
+from `88–99`. Thus `82.5%` of raw ceilings are at most 82 regardless of
+readiness. Before integer-equality cases, the probability that raw ceiling is
+already below current OVR is approximately `72.7%` at OVR 80, `86.6%` at OVR
+83, `89.3%` at OVR 85, and `96.6%` at OVR 90. The final
+`max(currentOverall, rawCeiling)` safely preserves the POT ≥ OVR invariant but
+turns those undersized ceilings into zero-gap profiles. Rank and stars are
+assigned afterward from `56% OVR / 44% final POT`, so star labels reflect the
+compression rather than cause it.
+
+After replacing diagnostic-only spread-based min/max aggregation with a
+large-array-safe iteration, the previously failing 500-class harness completed.
+Its `80,453`-Recruit result confirmed the 250-class evidence: zero gap was
+`70.5%` for 5★ (`n=5,074`), `86.1%` for 80+ (`n=6,654`), `91.8%` for 85+
+(`n=1,722`), and `97.2%` for 90+ (`n=141`). This is sufficient causal evidence;
+production generation remains unchanged.
+
+Three bounded candidate families were evaluated:
+
+1. **Readiness-aware ceiling distribution.** Condition ceiling-band weights or
+   bounds on readiness before attributes are generated. This addresses the
+   independence mismatch at its source, but readiness is only an input to
+   attributes—not final OVR—so the relationship is indirect. It risks broad
+   POT inflation, makes the ceiling model more complex, and may over-reward
+   readiness outcomes that generated lower OVR than expected.
+2. **Probabilistic bounded runway finalization — RECOMMENDED.** Only when raw
+   ceiling does not exceed current OVR and current OVR is at least 78, preserve
+   a deliberate minority of legitimate zero-gap outcomes; otherwise apply a
+   small independently seeded runway whose upper bound shrinks near 99 (design
+   starting point: OVR 78–84 gets 2–6, 85–89 gets 2–5, and 90+ gets 1–3, all
+   capped at 99). The later experiment should calibrate the preserve-zero share,
+   beginning at 35%, rather than treating these values as accepted production
+   constants. This directly targets the failing boundary, leaves attributes and
+   freshman OVR exact, avoids star-label inputs, and limits impact to compressed
+   high-readiness profiles. Risks are excess 90+/95+ POT, rank/star-membership
+   movement because POT participates in quality score, and too few legitimate
+   low-upside elite freshmen.
+3. **Global ceiling-distribution uplift.** Raise current ceiling bands or their
+   high-band weights. This is simple but affects raw and mid-tier prospects that
+   already have healthy runway, inflates high POT broadly, and weakens the
+   accepted partially independent readiness/ceiling ecosystem. It is not the
+   preferred experiment.
+
+The next milestone should implement Candidate 2 only as a paired deterministic
+experiment against unchanged V1 baseline. Use identical 500-class seeds
+`talent-distribution:0..499`, sharing each Recruit's readiness, generated
+attributes/current OVR, raw ceiling, and candidate runway seed. Compare by
+stable Recruit ID. Required metrics are cohort gap buckets/mean/median; Recruit
+OVR mean/median/upper percentiles and 80+/85+/90+; POT mean/median/upper
+percentiles and 85+/90+/95+/99; canonical rank/star composition; and exact
+deterministic replay.
+
+Precommitted **ACCEPT** gates for that experiment:
+
+- zero gap at most `50%` for 5★, `55%` for 80+, and `60%` for 85+;
+- gap `0–3` at most `65%` for 5★, `70%` for 80+, and `75%` for 85+, with
+  median gaps at least `3`, `2`, and `2` respectively;
+- every Recruit's attributes and OVR remain byte-for-byte identical by ID;
+- star-tier counts remain identical, at least `85%` of baseline 5★ IDs remain
+  5★, and 5★/4★ OVR mean and median move by no more than `0.5`;
+- overall POT mean/median rise by at most `1.0`, POT P90 by at most `2.0`, and
+  absolute rates rise by at most `3` percentage points for 90+ POT, `1` point
+  for 95+ POT, and `0.25` point for POT 99;
+- overall POT-gap median moves by at most `1`, the gap-13+ share by at most
+  `3` points, and all invariant/determinism checks pass.
+
+Classify **WATCH / ITERATE** when elite zero-gap rates improve by at least 10
+points but miss an ACCEPT runway gate, or when POT/rank movement remains inside
+hard rejection limits but exceeds an ACCEPT guardrail. **REJECT** when any OVR
+changes, elite zero-gap improvement is under 10 points, a POT inflation guardrail
+is exceeded by more than `1` additional percentage point (or POT mean by more
+than `0.5` beyond its gate), deterministic replay fails, or profiles visibly
+collapse legitimate low-upside elite freshmen. These gates precede candidate
+implementation and must not be relaxed merely to accept a result.
+
+### Candidate B Paired Experiment — COMPLETE — ACCEPT
+
+The precommitted Candidate B configuration was run once without tuning: raw
+ceiling at or below OVR and OVR at least 78 was eligible; `35%` retained zero
+gap, while the rest received deterministic runway of `2–6` at OVR 78–84,
+`2–5` at 85–89, or `1–3` at 90+, capped at 99. Candidate randomness used the
+independent `recruit-pot-gap-candidate-b:v1` namespace and never entered the
+production generation stream.
+
+The paired sample used the same accepted 500 classes,
+`talent-distribution:0..499`, and aligned all `80,453` Recruits by stable ID.
+Attributes and derived OVR were exact for every pair. A second full run produced
+byte-identical output.
+
+| Cohort | Gap 0 baseline → candidate | Gap 0–3 candidate | Median baseline → candidate |
+| --- | ---: | ---: | ---: |
+| 5★ | `70.54% → 21.68%` | `47.38%` | `0 → 4` |
+| 80+ OVR | `86.07% → 30.94%` | `61.04%` | `0 → 3` |
+| 85+ OVR | `91.75% → 32.75%` | `69.86%` | `0 → 2` |
+
+Overall OVR was unchanged (`66.435` mean, `67` median, `79` P90). Overall POT
+moved from `76.144/76/86` mean/median/P90 to `76.399/76/87`. POT 90+ rose
+`0.76` points, POT 95+ `0.02`, and POT 99 did not move. Star counts were exact;
+5★ membership overlap was `88.02%`. 5★ OVR mean moved `82.93 → 83.18` with
+median 83 unchanged; 4★ mean moved `75.28 → 75.20` with median 76 unchanged.
+Mean/median/P90/max absolute rank movement was `0.38/0/1/17`.
+
+Intervention reached `8,178` Recruits (`10.16%`); `2,910` (`35.58%`) retained
+zero gap and `5,268` received runway. No outcome capped at 99 in this sample.
+The overall gap median remained 8 and the gap-13+ share remained `34.72%`.
+
+**Disposition: ACCEPT (`22/22` gates passed).** This accepts Candidate B as the
+production candidate for a separate activation/freeze milestone. It does not
+activate the rule: the V1 baseline remains the production default. No Player
+Development rule changed, and Phase 7B remains out of scope.
 
 ## Generated Draft Board Ambition — WATCH
 
@@ -1144,7 +1282,7 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Recruit POT-gap diagnostic
+1. Recruit Talent POT-gap calibration design, based on the completed diagnostic
 2. League News / Round Recap
 3. Offseason around-the-league context
 4. Program records / deeper statistical history

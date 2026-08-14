@@ -413,10 +413,16 @@ Rotation V1, Tournament seeding, Player Details + Development History UX,
 Postseason Hub + Season-Complete Presentation Polish (6E.10), Recruiting
 Battles + Commitment Visibility (6E.12), and Recruiting Information
 Architecture + Visual Hierarchy Polish (6E.12C) are accepted/frozen; Game Sim
-remains closed. Followed Players V1 is accepted/frozen. The next planning step
-is a narrow Elite Recruit POT-Gap Characterization diagnostic; it should
-measure the documented WATCH question without changing Recruit Talent V1.
-Phase 7B remains deliberately unassigned until that evidence is reviewed.
+remains closed. Followed Players V1 is accepted/frozen. The Elite Recruit
+POT-Gap Characterization and paired Candidate B experiment are complete. On
+identical 500-class production seeds (`80,453` Recruits), the experimental
+bounded-runway finalizer passed all `22/22` precommitted gates: 5★ zero gap
+moved `70.54% → 21.68%`, 80+ moved `86.07% → 30.94%`, and 85+ moved
+`91.75% → 32.75%`; attributes/OVR remained exact, 5★ membership overlap was
+`88.02%`, and overall POT mean rose only `0.255`. Deterministic replay was
+byte-identical. This is an **ACCEPTED EXPERIMENT**, not production activation:
+Recruit Talent V1 remains the runtime default. A separate activation/freeze
+milestone is the smallest next step. Phase 7B remains deliberately unassigned.
 
 ## Documentation map
 

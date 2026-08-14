@@ -113,6 +113,17 @@ export function summarizeDistribution(
 ): DistributionSummary {
   const mean = average(values)
   const variance = average(values.map((value) => (value - mean) ** 2))
+  let minimum = 0
+  let maximum = 0
+  if (values.length > 0) {
+    minimum = values[0]!
+    maximum = values[0]!
+    for (let index = 1; index < values.length; index += 1) {
+      const value = values[index]!
+      if (value < minimum) minimum = value
+      if (value > maximum) maximum = value
+    }
+  }
   return {
     count: values.length,
     average: mean,
@@ -122,8 +133,8 @@ export function summarizeDistribution(
     p25: percentile(values, 0.25),
     p75: percentile(values, 0.75),
     p90: percentile(values, 0.9),
-    minimum: values.length === 0 ? 0 : Math.min(...values),
-    maximum: values.length === 0 ? 0 : Math.max(...values),
+    minimum,
+    maximum,
   }
 }
 

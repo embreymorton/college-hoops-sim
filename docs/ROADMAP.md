@@ -444,14 +444,41 @@ basketball systems.
   Player Details → Follow → League → Following → Player Details loop. The V1
   retrieval friction is resolved.
 
-### Next planning step — Elite Recruit POT-Gap Characterization — NEXT
+### Elite Recruit POT-Gap Characterization — COMPLETE — OUTCOME C
 
-Codex diagnostic only. Extend the existing deterministic Recruit Talent
-inspection to measure `POT === OVR` and gap buckets overall, for 5★/4★, and for
-80+/85+/90+ OVR groups. This investigates the documented WATCH without tuning
-Recruit Talent V1. Phase 7B is intentionally not assigned until the evidence is
-reviewed; League News V1 and Offseason National Context V1 remain candidate
-player-facing directions rather than committed work.
+Codex extended the existing deterministic production Recruit Talent inspection.
+Across 250 classes (`40,202` Recruits), zero POT gap occurred for `70.1%` of
+5★, `85.6%` of 80+ OVR, `90.9%` of 85+ OVR, and `97.3%` of 90+ OVR cohorts.
+The large cohort sizes establish structural elite/high-OVR development-runway
+compression. No production behavior changed.
+
+### Recruit Talent POT-Gap Calibration Design — COMPLETE
+
+The independent raw ceiling distribution fails to scale with high readiness:
+`82.5%` of ceilings come from bands capped at 82, making a lower raw ceiling
+about `89.3%` likely at OVR 85 and `96.6%` likely at OVR 90 before final POT
+flooring. Three candidates were evaluated. The selected experiment is a small
+probabilistic bounded runway finalizer for compressed 78+ OVR profiles, with a
+preserved zero-gap minority and smaller runway near 99. No production behavior
+changed; detailed paired ACCEPT/WATCH/REJECT gates live in `PLAYTESTING.md`.
+
+### Recruit Talent POT-Gap Paired Candidate Experiment — COMPLETE — ACCEPT
+
+Candidate B was evaluated without changing production on identical 500-class
+seeds (`80,453` paired Recruits). It passed all `22/22` precommitted gates,
+including exact attributes/OVR, byte-identical replay, `88.02%` 5★ membership
+overlap, and bounded POT inflation. Elite zero-gap compression improved by
+`48.86–59.00` percentage points in the primary cohorts. Full evidence is in
+`PLAYTESTING.md`.
+
+### Recruit Talent Candidate B Activation / Freeze — NEXT
+
+Codex implementation milestone. Move the already accepted Candidate B rule
+from diagnostic-only code into production Recruit generation using the same
+independent deterministic namespace, then rerun focused generation tests and
+the accepted paired population checks. Keep this separate from Player
+Development and Phase 7B. Until that milestone is explicitly completed,
+Recruit Talent V1 remains the production default and Phase 7B stays unassigned.
 
 League News, offseason progression/League context, Awards, Save/Persistence,
 records, shot-selection investigation, and minor presentation polish remain

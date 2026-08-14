@@ -34,6 +34,7 @@
     "sim:recruiting-ai-premium": "node --import tsx scripts/inspectAiPremiumCompetition.ts",
     "sim:recruiting-battle-health": "node --import tsx scripts/inspectRecruitingBattleHealth.ts",
     "sim:talent-distribution": "node --import tsx scripts/inspectTalentDistribution.ts",
+    "sim:recruit-pot-gap-candidate-b": "node --import tsx scripts/inspectRecruitPotGapCandidateB.ts",
     "sim:roster-rollover": "node --import tsx scripts/inspectRosterRollover.ts",
     "sim:season-rollover": "node --import tsx scripts/inspectSeasonRollover.ts",
     "sim:dynasty-long-run": "node --import tsx scripts/runDynastyLongRun.ts",
