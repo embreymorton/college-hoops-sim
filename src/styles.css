@@ -1123,6 +1123,18 @@ p {
   gap: var(--space-6);
 }
 
+.follow-player-button {
+  margin-top: var(--space-3);
+  padding: 0.4rem 0.9rem;
+  font-size: 0.7rem;
+}
+
+.follow-player-button[aria-pressed='true'] {
+  background: var(--surface-3);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
 /* ==========================================================================
    Season Hub primary layout — This Week (game) + Build the Future (recruiting)
    ========================================================================== */

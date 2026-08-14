@@ -421,7 +421,7 @@ that current-season production may deserve greater hierarchy directly beneath
 Player identity, potentially as a denser horizontal summary rather than the
 current compact cards. This is polish, not a failure or reopening of 6E.8.
 
-## Followed Players / Favorites — FOUNDATION COMPLETE (Phase 7A.1)
+## Followed Players / Favorites — FOUNDATION COMPLETE (Phase 7A.1), PLAYER DETAILS CONTROL COMPLETE (Phase 7A.2)
 
 Following Silas Matthews after he joined another Program was enjoyable. The
 Great Lakes Dynasty repeated the behavior with Jalen Crawford at Pine Valley: a
@@ -443,6 +443,21 @@ resolve current Player/Program/Team facts from the active universe without
 copied snapshots or simulation effects. Departed IDs remain safely unresolved.
 The Player-facing Follow control and Following destination remain open, so this
 does not mark all of Phase 7A complete.
+
+Phase 7A.2 adds a compact Follow/Following control to Player Details, backed
+directly by the 7A.1 `isPlayerFollowed` / `followPlayer` / `unfollowPlayer`
+behavior, for any current-roster Player. This does not yet resolve the
+underlying friction above: there is still no dedicated Following destination,
+so following a Player from his Player Details page does not yet make him
+easier to find again later without navigating back to him manually. Treat
+7A.2 as the input side of Followed Players, not evidence that the original
+playtest friction is solved.
+
+**Manual playtest item (not yet played):** open Player Details for an
+interesting Player, activate Follow, navigate elsewhere, then return to Player
+Details and confirm the Following state is clearly and correctly shown. This
+has not been manually playtested yet and should not be marked accepted until
+it has been.
 
 ## Playtest Stories / Why This Is Fun
 

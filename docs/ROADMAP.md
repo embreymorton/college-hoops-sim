@@ -408,6 +408,19 @@ basketball systems.
   derives current Player, Program, Team, and resolved status without snapshots;
   departed IDs remain safely unresolved. Player-facing controls and a Following
   screen are not included, so Phase 7A remains active.
+- **7A.2 — Player Details Follow Control:** COMPLETE — ACCEPTED. Claude Code,
+  presentation-only against the 7A.1 contract. `PlayerDetailsHeader` gained a
+  compact `FollowPlayerButton` beside the Player identity/meta line, styled as
+  a ghost-button toggle consistent with existing `aria-pressed` controls (for
+  example `CoachingModeTabs`). It reads and writes only the canonical
+  `isPlayerFollowed` / `followPlayer` / `unfollowPlayer` behavior for the
+  currently viewed Player ID — no duplicate React/local follow state, no
+  Player mutation. The interaction is a single immediate click with no
+  confirmation step, works for any current-roster Player regardless of
+  Program, and leaves the accepted Development History presentation and the
+  rest of Player Details untouched. A Following destination, list, or any
+  other Followed Players surfacing remains out of scope, so Phase 7A remains
+  active.
 
 League News, offseason progression/League context, Awards, Save/Persistence,
 records, shot-selection investigation, and minor presentation polish remain

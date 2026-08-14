@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react'
 import { calculateOverall, type Player } from '../engine'
 import { formatHeight } from '../app/formatters'
+import { FollowPlayerButton } from './FollowPlayerButton'
 
 interface PlayerDetailsHeaderProps {
   readonly player: Player
@@ -41,6 +42,7 @@ export function PlayerDetailsHeader({
             {' · '}
             {player.position} · {player.classYear} · {formatHeight(player.height)}
           </p>
+          <FollowPlayerButton playerId={player.id} />
         </div>
       </div>
       <div className="stat-trio season-header__stats">
