@@ -430,8 +430,12 @@ moved `70.54% → 21.68%`, 80+ moved `86.07% → 30.94%`, and 85+ moved
 byte-identical. Production activation then reproduced the accepted Candidate B
 result exactly by Recruit ID for attributes, OVR, final POT, rank, and stars.
 Candidate B is now the production default and Recruit POT-gap calibration is
-**COMPLETE / ACCEPTED / FROZEN**. Phase 7B remains deliberately unstarted; the
-next step is a fresh Phase 7B selection/planning pass.
+**COMPLETE / ACCEPTED / FROZEN**. Phase 7B remains deliberately unstarted and
+unassigned. New manual-play evidence puts a targeted Codex reproduction of the
+blocking-but-unconfirmed Tournament completion progression escape path first,
+then a characterization-only Player Statistical Identity / Superstar
+Separation diagnostic. Phase 7B selection follows that evidence; League News is
+one candidate rather than the automatic next milestone.
 
 ## Documentation map
 

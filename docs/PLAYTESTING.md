@@ -787,17 +787,17 @@ starter-minute realism only with genuinely new, repeated evidence.
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
 
-## Player Profile / Statistical Identity — OBSERVED / PRODUCT IDEA / WATCH
+## Player Statistical Identity / Superstar Separation — INVESTIGATING / NEXT DIAGNOSTIC
 
-Current leaderboard behavior feels appropriately position-driven: guards should
-usually dominate assists, while forwards and Centers should usually dominate
-rebounds. That baseline is valuable. A future storytelling direction is to
-preserve those strong norms while occasionally producing rare atypical Players
-whose attributes, height/physical profile, and statistical production break
-normal positional expectations—a jumbo creator, playmaking big, point forward,
-rebounding guard, stretch five, or similarly unusual profile. The exception is
-memorable because it is rare; this is not a named-player template system, and no
-rarity target is selected.
+The latest multi-Season manual playthrough found production too homogeneous and
+produced few obvious national superstars. Representative leader levels were
+roughly `7.3 APG`, `1.7 SPG`, and high-`2s BPG`; rebounding felt plausible.
+Earlier accepted play also produced counterexamples such as a roughly `25 PPG`
+scorer, higher assist seasons, and Paul Martin's 51-point game. This is therefore
+not evidence of a hard statistical ceiling or a confirmed Game Sim defect. The
+open question is whether elite frequency, distribution tails, and separation
+from the rest of the leaderboard are strong enough to create memorable Player
+identities.
 
 Current production architecture plausibly reinforces positional consistency at
 multiple stages. Player generation uses position-specific height ranges and
@@ -809,26 +809,41 @@ are impossible, only that a diagnostic should characterize how much individual
 profile can overcome the positional prior before any frozen generation or box-
 score system is reconsidered.
 
-Useful future questions include:
+The next diagnostic should characterize multiple Seasons without changing
+production behavior, selecting targets, or tuning formulas. Measure:
 
-- APG and RPG leaderboard position distributions across multiple Seasons;
-- highest C/PF APG and highest PG/SG RPG;
-- APG versus Playmaking and RPG versus Rebounding within each position;
-- frequency of very high-Playmaking bigs and very high-Rebounding guards;
-- height versus RPG, plus unusual height/position frequency and magnitude; and
-- whether any cross-position outliers are frequent and large enough to create
-  recognizable statistical identities.
+- leader distributions for PPG, RPG, APG, SPG, and BPG;
+- Top-1 separation from Top-5 and Top-10, plus the frequency of dominant
+  scoring, passing, and defensive seasons;
+- single-game scoring explosions and high-end attribute separation;
+- cross-position identities, including high-Playmaking bigs and high-Rebounding
+  guards; and
+- defensive-leader SPG/BPG relationships with relevant attributes, height, and
+  athleticism.
 
 The evidence-first sequence is characterization only, then attribution to
 Player profile generation, statistical translation, or both. Only supported
 findings should earn a later Player Profile Variability or Statistical Identity
-candidate. Followed Players remains the already-earned player-facing priority;
-rare profiles would strengthen why Players are worth following. League News
-could help discover unusual leaderboard or milestone stories, while Awards,
-Career History, Program Records, Recruiting identity, and the separate shot-
-selection investigation could later amplify them. Do not bundle those features
-or change Recruiting, Player generation, Development, or Player Box Scores from
-this observation alone.
+candidate. Followed Players V1 remains accepted/frozen; rare profiles would
+strengthen why Players are worth following. League News could later help
+discover unusual leaderboard or milestone stories, but Statistical Identity
+characterization now precedes an automatic News selection. Do not bundle those
+features or change Recruiting, Player generation, Development, or Player Box
+Scores from this observation alone.
+
+## Recruit Identity / Pre-College Attachment — OBSERVED / PRODUCT SIGNAL
+
+The latest playthrough produced a clear desire to follow Recruits before they
+commit, then retain that attachment after enrollment. This does not reopen or
+extend accepted Followed Players V1. A future Recruit Details surface and
+Recruit watchlist could use existing canonical facts—name, height, position,
+stars, rank, OVR, POT, attributes, offers, Focus/readiness, and interested
+Programs—and preserve continuity into the enrolled Player.
+
+Keep that presentation opportunity separate from new simulation systems such
+as hometown/geography, preferences or personality, scouting uncertainty,
+hidden POT, and high-school statistics. Those require independent design and
+evidence before they can affect Recruiting.
 
 ## Coaching / Rotation Navigation — RESOLVED (Phase 6E.17B)
 
@@ -1085,6 +1100,15 @@ field/bracket/results/champion, and Recruiting state through Period 28 for
 stepwise progression and Super Sim. Automated acceptance is green; no separate
 manual playtest was required for this lifecycle-only convenience.
 
+## Tournament Completion Progression Escape Path — OBSERVED / BLOCKING / NEEDS REPRODUCTION
+
+In the latest manual playthrough, the completed Tournament initially exposed
+the offseason advance card. After navigating to League, that progression path
+disappeared and the Dynasty could not continue; restarting was required. This
+was blocking in the observed session, but the root cause and exact reproduction
+sequence are unknown. Codex should perform a narrow targeted reproduction and
+diagnostic before this is promoted to a confirmed issue or any fix is selected.
+
 ## League News / Round Recap — OBSERVED
 
 A future “Around the Country” recap could derive concise updates from canonical prior-round facts rather than storing permanent prose. Useful events include upsets, big performances, Recruit commitments or lost Focus targets, conference/milestone movement, and Cinderella runs.
@@ -1301,12 +1325,14 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Fresh Phase 7B selection/planning pass; League News / Round Recap is the
-   strongest current player-facing candidate
-2. Offseason around-the-league context
-3. Program records / deeper statistical history
-4. Shot-selection diagnostic
-5. Minor Player Details polish
+1. Immediate correctness: targeted reproduction/diagnostic for the Tournament
+   completion progression escape path
+2. Next diagnostic: multi-Season Player Statistical Identity / Superstar
+   Separation characterization
+3. Reassess Phase 7B only after that evidence, among statistical variability,
+   Recruit identity/details/following, League News, and offseason League context
+4. Program records / deeper statistical history
+5. Shot-selection diagnostic and minor Player Details polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /
@@ -1323,5 +1349,6 @@ this audit.
 
 Awards, offseason progression visibility, and Save/Persistence have stronger
 future evidence but are intentionally not promoted into the active horizon.
+Phase 7B remains unassigned.
 
 This ordering remains playthrough-driven and may change with new evidence.

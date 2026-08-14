@@ -480,21 +480,24 @@ final POT, national/position rank, and stars (`80,453/80,453`). All `22/22`
 paired gates remained green. No readiness, raw-ceiling, ranking/star, Player
 Development, AI, or UI behavior changed beyond POT-derived rank movement.
 
-### Phase 7B Selection / Planning Pass — NEXT
+### Pre-Phase 7B Evidence Sequence — NEXT
 
-Return to current playtest evidence and deliberately select the next small
-Dynasty World / Player Stories milestone. League News / Round Recap remains the
-strongest current player-facing candidate, but is not selected or implemented
-by the Recruit Talent activation milestone.
+1. **Immediate correctness:** Codex performs a narrow reproduction/diagnostic
+   for the observed blocking Tournament-completion progression escape path.
+   Root cause is unknown; no fix is selected and the issue is not yet confirmed.
+2. **Next diagnostic:** characterize multi-Season Player Statistical Identity /
+   Superstar Separation across leader distributions, elite separation,
+   single-game extremes, attributes, positions, and defensive production. This
+   is measurement only; no target, tuning, or production change is authorized.
+3. **Then reassess Phase 7B:** choose deliberately among evidence-supported
+   statistical variability, Recruit identity/details/following, League News /
+   Round Recap, and offseason League context.
 
-League News, offseason progression/League context, Awards, Save/Persistence,
-records, shot-selection investigation, and minor presentation polish remain
-observed/later rather than a fixed feature schedule.
-
-This order is evidence-driven: Tournament seeding and Game Sim remain closed;
-Player Details is complete and positively received; the narrow Rotation
-candidate is accepted/frozen; and Postseason Hub + Season-Complete Presentation
-Polish is now accepted/complete.
+Phase 7B remains unassigned. League News is no longer automatically the
+strongest next milestone. Awards, Save/Persistence, records, shot-selection
+investigation, and minor presentation polish remain observed/later rather than
+a fixed feature schedule. Tournament seeding and Game Sim remain closed, and
+all accepted/frozen milestones retain their status.
 
 ## Non-binding development-agent fit
 

@@ -39,6 +39,26 @@ winning or Tournament attraction bonus, and treats commitments as final.
 
 Recruit Talent Distribution V1 and the current talent economy are accepted and frozen. Transfer-portal behavior, NIL, facilities, staff modifiers, NBA/early-departure rules, or other future Recruiting inputs may require a new long-run calibration after their design is implemented; their possibility is not a reason to retune the present system.
 
+### Recruit identity and pre-college attachment
+
+A future Recruit Details surface and Follow Recruit/watchlist flow could make
+existing prospects memorable before commitment and preserve the relationship
+when a Recruit becomes an enrolled Player. Presentation can begin from existing
+canonical facts: name, height, position, stars, national/position rank, OVR,
+POT, attributes, offers, Focus/readiness, and interested Programs. This is a
+future extension, not a reopening of accepted Followed Players V1.
+
+Deeper motivations remain separate simulation work. Home-state/geographic
+preference, winning, playing-time opportunity, and similar interests would need
+explicit attraction and AI behavior plus geography, depth, and Prestige
+calibration. Personality, scouting uncertainty, and hidden POT likewise remain
+undesigned.
+
+High-school statistics are also model-undesigned because the game does not
+simulate a canonical high-school season. If revisited, decide whether they are
+scouting context, attribute-derived estimates, competition-adjusted production,
+or intentionally uncertain information before presenting them as facts.
+
 ## Statistics and League immersion
 
 ### Player Profile / Statistical Identity
@@ -94,8 +114,9 @@ Accepted Followed Players V1
 → derived archetype presentation and News/Awards/history amplification later
 ```
 
-This sequence is not an active Roadmap commitment and does not displace current
-priorities.
+The characterization step is now the next active diagnostic in `ROADMAP.md`.
+All later variability, archetype, tuning, and presentation steps remain future
+and unselected.
 
 ### Postseason Player Stats
 
