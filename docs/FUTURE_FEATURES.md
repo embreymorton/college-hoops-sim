@@ -62,7 +62,7 @@ to match it. Thresholds and formal archetype rules remain undesigned.
 
 This direction could strengthen several separate future features:
 
-- Followed Players/Favorites by creating rare careers users naturally track;
+- Followed Players presentation and story amplification, building on the accepted Phase 7A.1 foundation;
 - League News/Round Recap through unusual leaderboard positions, triple-double
   profiles, and statistical milestones;
 - Awards, Career History, and Program Records by making accomplishments more
@@ -87,7 +87,7 @@ both before either frozen system is reopened.
 Tentative conceptual sequencing is:
 
 ```text
-Followed Players / Favorites
+Followed Players V1 presentation
 → Player Statistical Identity diagnostic (characterization only)
 → locate profile-generation vs statistical-translation constraints
 → evidence-supported variability/identity candidates, if earned

@@ -13,6 +13,8 @@ import {
   syncRecruitingThroughCompletedRounds,
 } from '../dynasty'
 import { useDynastyStore } from './seasonStore'
+import { deriveFollowedPlayers } from './followedPlayers'
+import { UNIVERSE_V0 } from '../universe'
 
 function resetStore(): void {
   useDynastyStore.setState(useDynastyStore.getInitialState())
@@ -135,6 +137,36 @@ describe('Dynasty transition orchestration', () => {
       selectedPlayerId: null,
       pendingRecruitingSetupIntent: null,
     })
+  })
+
+  it('preserves follow intent across rollover and resolves current roster facts', () => {
+    useDynastyStore.setState({ dynasty: championshipBoundary() })
+    const beforeSeason = useDynastyStore.getState().dynasty!.activeSeason!
+    const returningPlayer = Object.values(beforeSeason.programStates)
+      .flatMap((programState) => programState.team.roster)
+      .find((player) => player.classYear === 'FR')!
+    const beforePlayer = returningPlayer
+
+    useDynastyStore.getState().followPlayer(returningPlayer.id)
+    useDynastyStore.getState().enterLateRecruiting()
+    useDynastyStore.getState().finalizeRecruitingClass()
+    useDynastyStore.getState().beginDynastyOffseason()
+    useDynastyStore.getState().beginNextSeason()
+
+    const state = useDynastyStore.getState()
+    const resolution = deriveFollowedPlayers(
+      state.followedPlayerIds,
+      state.dynasty!.activeSeason,
+      UNIVERSE_V0,
+    )[0]!
+
+    expect(state.followedPlayerIds).toEqual([returningPlayer.id])
+    expect(resolution.resolves).toBe(true)
+    expect(resolution.player).not.toBe(beforePlayer)
+    expect(resolution.player?.id).toBe(returningPlayer.id)
+    expect(resolution.player?.classYear).toBe('SO')
+    expect(resolution.team?.roster).toContain(resolution.player)
+    expect(resolution.program?.id).toBe(resolution.team?.id)
   })
 
   it('reuses the empty-board first-period safeguard in Season 2', () => {

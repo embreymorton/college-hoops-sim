@@ -90,6 +90,14 @@ Season and Postseason own one competitive year's basketball facts. Recruiting ow
 
 The Season store is not authoritative for Program records, Conference records, standings, current round, next opponent, Recent Results, or Player statistics. Those values are projections over the active `SeasonState`, its immutable Schedule, and its recorded `GameResult` values. Transient Super Sim confirmation and completion-summary state is presentation state, not Season truth.
 
+Followed Players is application intent rather than basketball truth. Zustand
+stores only a duplicate-free ordered list of stable Player IDs for the current
+Dynasty. A pure application read model resolves those IDs against current
+Season rosters and Universe Program definitions, returning an explicit
+unresolved result after a Player leaves the active universe. Intent survives
+Season rollover, clears when a new Dynasty is initialized, never stores Player
+or Team snapshots, and has no simulation effect.
+
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
 Permanent Coaching navigation uses the same session drafts and validated write

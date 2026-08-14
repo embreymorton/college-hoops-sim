@@ -421,7 +421,7 @@ that current-season production may deserve greater hierarchy directly beneath
 Player identity, potentially as a denser horizontal summary rather than the
 current compact cards. This is polish, not a failure or reopening of 6E.8.
 
-## Followed Players / Favorites — OBSERVED — REPEATED QOL SIGNAL
+## Followed Players / Favorites — FOUNDATION COMPLETE (Phase 7A.1)
 
 Following Silas Matthews after he joined another Program was enjoyable. The
 Great Lakes Dynasty repeated the behavior with Jalen Crawford at Pine Valley: a
@@ -430,13 +430,19 @@ roughly `57/82`, three-star, #97 Recruit progressed through approximately
 and `23 PPG`, eventually reaching roughly fifth in League scoring. The user
 repeatedly checked his career across Seasons.
 
-Following/Favorites is therefore evidence-supported future QOL rather than a
+Following/Favorites is therefore evidence-supported QOL rather than a
 speculative idea. Northbridge's young core and a Pine Valley `48/89` freshman
 project repeated the same behavior: an interesting Player on another Team
 naturally creates a desire to track his development across Seasons. This signal
 now spans Silas Matthews, Jalen Crawford, Northbridge, and Pine Valley. Do not
-commit to notifications or permanent history design yet or move it ahead of
-Phase 6E.10.
+commit to notifications or permanent history design.
+
+Phase 7A.1 establishes the behavior foundation only: stable followed IDs live
+as application intent, survive Season rollover, clear for a new Dynasty, and
+resolve current Player/Program/Team facts from the active universe without
+copied snapshots or simulation effects. Departed IDs remain safely unresolved.
+The Player-facing Follow control and Following destination remain open, so this
+does not mark all of Phase 7A complete.
 
 ## Playtest Stories / Why This Is Fun
 
@@ -1119,7 +1125,7 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Followed Players / Favorites
+1. Followed Players presentation, building on the accepted 7A.1 foundation
 2. Recruit POT-gap diagnostic
 3. League News / Round Recap
 4. Offseason around-the-league context
