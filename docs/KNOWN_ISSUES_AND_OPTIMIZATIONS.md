@@ -195,6 +195,16 @@ imposed on narrow/mobile widths, which keep natural responsive growth. See
 
 Postseason Presentation established the anticipated feature-level boundary with `src/styles.css` plus `src/postseason.css`. This addresses the original stylesheet-growth concern at the current scale; monitor for real cross-feature coupling, but do not perform another CSS refactor merely for organization.
 
+### P3 — Order-dependent `SeasonApp.test.tsx` flake — WATCH
+
+An intermittent failure appeared during a mixed/full Phase 7A.2 run, reproduced
+on unmodified `main`, and passed when rerun in isolation. It appeared unrelated
+to Followed Players and did not recur in either of the two final Phase 7A.3B
+full-suite runs (`880/880` green both times). The root cause is not established.
+Keep this as a separate test-reliability WATCH; do not weaken the test, attribute
+it to Followed Players, or promote it into a product milestone without renewed
+reproduction and diagnosis.
+
 ## Accepted non-issues
 
 - A high correlation between initial Team Strength and average wins across many seasons is expected because averaging removes game-level variance. Do not tune the simulator solely for that observation; revisit only if individual seasons become too deterministic.

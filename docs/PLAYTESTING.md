@@ -421,7 +421,7 @@ that current-season production may deserve greater hierarchy directly beneath
 Player identity, potentially as a denser horizontal summary rather than the
 current compact cards. This is polish, not a failure or reopening of 6E.8.
 
-## Followed Players / Favorites — FOUNDATION COMPLETE (7A.1), CONTROL COMPLETE (7A.2), VIEW PROJECTION COMPLETE (7A.3A), LEAGUE DESTINATION IMPLEMENTATION COMPLETE (7A.3B)
+## Followed Players / Favorites — RESOLVED / ACCEPTED (Phase 7A)
 
 Following Silas Matthews after he joined another Program was enjoyable. The
 Great Lakes Dynasty repeated the behavior with Jalen Crawford at Pine Valley: a
@@ -441,49 +441,27 @@ Phase 7A.1 establishes the behavior foundation only: stable followed IDs live
 as application intent, survive Season rollover, clear for a new Dynasty, and
 resolve current Player/Program/Team facts from the active universe without
 copied snapshots or simulation effects. Departed IDs remain safely unresolved.
-The Player-facing Follow control and Following destination remain open, so this
-does not mark all of Phase 7A complete.
+Those lifecycle semantics remain the accepted V1 foundation.
 
 Phase 7A.2 adds a compact Follow/Following control to Player Details, backed
 directly by the 7A.1 `isPlayerFollowed` / `followPlayer` / `unfollowPlayer`
-behavior, for any current-roster Player. This does not yet resolve the
-underlying friction above: there is still no dedicated Following destination,
-so following a Player from his Player Details page does not yet make him
-easier to find again later without navigating back to him manually. Treat
-7A.2 as the input side of Followed Players, not evidence that the original
-playtest friction is solved.
+behavior, for any current-roster Player.
 
 Phase 7A.3A supplies the pure current-season scan contract for the future
 Following destination. Active followed Players resolve to current Player,
 Program, Team, OVR, and canonical PPG/RPG/APG facts in first-followed order;
-unresolved IDs remain separate for safe empty-state handling. This is still
-data-only. Until the League → Following presentation exists, the repeated
-retrieval friction remains unresolved.
+unresolved IDs remain separate for safe empty-state handling.
 
 Phase 7A.3B adds a `Following` tab to the existing League destination,
 presenting `deriveFollowingView()` as a compact table (Player, Program, Pos,
 Cl, Ovr, PPG, RPG, APG) with existing-convention empty and unresolved states,
 and Player/Program links into the canonical Player Details / Team Details
-navigation. This closes the mechanical loop — Player Details → Follow →
-League → Following → Player Details — for the first time. Implementation and
-automated validation are complete, but the loop has not yet been manually
-playtested, so it is not yet evidence that the original retrieval friction is
-actually resolved in play. Do not mark Phase 7A accepted from automated
-validation alone.
-
-**Manual playtest item (not yet played):** open Player Details for an
-interesting Player, activate Follow, navigate elsewhere, then return to Player
-Details and confirm the Following state is clearly and correctly shown. This
-has not been manually playtested yet and should not be marked accepted until
-it has been.
-
-**Manual playtest item (not yet played):** follow one or more Players from
-Player Details (including at least one Player outside the controlled
-Program), navigate to League → Following, confirm the followed Players and
-their current stats appear correctly, then click through to Player Details
-from that list. This exercises the complete retrieval loop 7A.3B was built
-for and has not been manually playtested yet; do not treat the original
-Followed Players friction as resolved until it has been.
+navigation. Manual play accepted the complete Player Details → Follow → League
+→ Following → Player Details loop, including cross-Program Players and current
+statistics. The repeated retrieval friction is resolved for V1. Phase 7A is
+complete/accepted and should not be reopened without new evidence. Notifications,
+League News integration, Recruit following, alumni/history, custom folders or
+notes, and save-system redesign remain intentionally outside V1.
 
 ## Playtest Stories / Why This Is Fun
 
@@ -1166,16 +1144,12 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Manual playtest of the complete Followed Players loop (Player Details →
-   Follow → League → Following → Player Details), now that 7A.3B's League
-   Following destination is implementation-complete but not yet manually
-   accepted
-2. Recruit POT-gap diagnostic
-3. League News / Round Recap
-4. Offseason around-the-league context
-5. Program records / deeper statistical history
-6. Shot-selection diagnostic
-7. Minor Player Details polish
+1. Recruit POT-gap diagnostic
+2. League News / Round Recap
+3. Offseason around-the-league context
+4. Program records / deeper statistical history
+5. Shot-selection diagnostic
+6. Minor Player Details polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /

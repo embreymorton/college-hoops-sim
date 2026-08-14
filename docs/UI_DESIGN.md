@@ -96,6 +96,19 @@ so an invalid row no longer renders taller than its neighbors. The 0–40
 validation rule itself, `RotationEditorPanel`'s other markup, and Game Prep /
 Tournament Game Prep are unchanged.
 
+## Followed Players V1 — accepted (Phase 7A)
+
+Player Details exposes one compact `Follow` / `Following` toggle beside Player
+identity. League extends its existing local `Leaders | Teams` tabs with
+`Following`; it does not add another global destination. The Following view is
+a dense current-season table (Player, Program, Pos, Cl, Ovr, PPG, RPG, APG)
+derived from stable followed IDs and current canonical facts. Player and
+Program names reuse existing detail navigation. Distinct quiet states cover no
+follow intent, no currently active followed Players, and mixed active/unresolved
+intent. Manual play accepted the full cross-Program retrieval loop. No inline
+unfollow action, notifications, historical snapshot, custom sorting, or new
+Player-profile surface is part of V1.
+
 ### Simple Rotation UI — implemented (6E.18C)
 
 Simple is now the default Coaching Rotation editor, presenting the
