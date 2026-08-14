@@ -13,8 +13,13 @@ export {
   selectControlledProgramId,
   useDynastyStore,
 } from './seasonStore'
-export { deriveFollowedPlayers } from './followedPlayers'
-export type { FollowedPlayerResolution } from './followedPlayers'
+export { deriveFollowedPlayers, deriveFollowingView } from './followedPlayers'
+export type {
+  FollowedPlayerResolution,
+  FollowingPlayerSeasonSummary,
+  FollowingViewPlayer,
+  FollowingViewProjection,
+} from './followedPlayers'
 export type {
   PendingRecruitingSetupIntent,
   PendingSuperSim,

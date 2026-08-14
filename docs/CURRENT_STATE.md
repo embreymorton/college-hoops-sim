@@ -370,7 +370,12 @@ unresolved. Phase 7A.2 adds the first player-facing surface: a compact
 Follow/Following control in Player Details (`FollowPlayerButton`), backed
 directly by the 7A.1 canonical behavior, for any current-roster Player
 regardless of Program. No Following screen or followed-Player list exists
-yet, and follow state still has no simulation effect.
+yet, and follow state still has no simulation effect. Phase 7A.3A adds the pure
+data contract for that future destination: `deriveFollowingView()` composes the
+accepted resolver with current Player OVR and canonical current-season
+PPG/RPG/APG, returns active rows in first-followed order, and separately reports
+total followed intent and unresolved Player IDs. It stores no summaries and
+does not implement League presentation or navigation.
 
 Manual Development V1 play produced the intended divergent stories: Lucas Webb moved from `68` OVR through `+12`, `+3`, and `+1` to roughly `84`; Aaron Jackson progressed from `55/97` through `+12` and `+10` to roughly `84`; Silas Matthews rose from about `57/85` to about `82` as a senior, while other Players developed much less. Development V1 is producing meaningful bust/hit/breakout variation and should not be reopened by default.
 
@@ -404,8 +409,8 @@ Postseason Hub + Season-Complete Presentation Polish (6E.10), Recruiting
 Battles + Commitment Visibility (6E.12), and Recruiting Information
 Architecture + Visual Hierarchy Polish (6E.12C) are accepted/frozen; Game Sim
 remains closed. The next milestone should continue Phase 7A without treating
-7A.1 or 7A.2 as completion of all Followed Players V1 work — there is still no
-Following destination or followed-Player list.
+7A.1, 7A.2, or 7A.3A as completion of all Followed Players V1 work — there is
+still no Following destination or followed-Player list.
 
 ## Documentation map
 

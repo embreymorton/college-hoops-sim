@@ -98,6 +98,13 @@ unresolved result after a Player leaves the active universe. Intent survives
 Season rollover, clears when a new Dynasty is initialized, never stores Player
 or Team snapshots, and has no simulation effect.
 
+The Phase 7A.3A Following view projection composes that low-level resolution
+with `calculateOverall()` and the canonical `derivePlayerSeasonStats()` path.
+It returns active current-roster rows in first-followed order plus unresolved
+Player IDs and a total-followed count, allowing presentation to distinguish no
+follow intent from follow intent with no active Players. OVR and Season rates
+remain derived numeric facts rather than stored or preformatted UI state.
+
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
 Permanent Coaching navigation uses the same session drafts and validated write

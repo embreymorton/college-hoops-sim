@@ -421,7 +421,7 @@ that current-season production may deserve greater hierarchy directly beneath
 Player identity, potentially as a denser horizontal summary rather than the
 current compact cards. This is polish, not a failure or reopening of 6E.8.
 
-## Followed Players / Favorites — FOUNDATION COMPLETE (Phase 7A.1), PLAYER DETAILS CONTROL COMPLETE (Phase 7A.2)
+## Followed Players / Favorites — FOUNDATION COMPLETE (7A.1), CONTROL COMPLETE (7A.2), VIEW PROJECTION COMPLETE (7A.3A)
 
 Following Silas Matthews after he joined another Program was enjoyable. The
 Great Lakes Dynasty repeated the behavior with Jalen Crawford at Pine Valley: a
@@ -452,6 +452,13 @@ so following a Player from his Player Details page does not yet make him
 easier to find again later without navigating back to him manually. Treat
 7A.2 as the input side of Followed Players, not evidence that the original
 playtest friction is solved.
+
+Phase 7A.3A supplies the pure current-season scan contract for the future
+Following destination. Active followed Players resolve to current Player,
+Program, Team, OVR, and canonical PPG/RPG/APG facts in first-followed order;
+unresolved IDs remain separate for safe empty-state handling. This is still
+data-only. Until the League → Following presentation exists, the repeated
+retrieval friction remains unresolved.
 
 **Manual playtest item (not yet played):** open Player Details for an
 interesting Player, activate Follow, navigate elsewhere, then return to Player
@@ -1140,7 +1147,7 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Followed Players presentation, building on the accepted 7A.1 foundation
+1. Followed Players destination presentation, consuming the accepted 7A.3A projection
 2. Recruit POT-gap diagnostic
 3. League News / Round Recap
 4. Offseason around-the-league context

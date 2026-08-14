@@ -421,6 +421,14 @@ basketball systems.
   rest of Player Details untouched. A Following destination, list, or any
   other Followed Players surfacing remains out of scope, so Phase 7A remains
   active.
+- **7A.3A — Following View Projection:** COMPLETE — ACCEPTED. A pure
+  `deriveFollowingView()` contract composes the accepted stable-ID resolver with
+  current `calculateOverall()` and canonical `derivePlayerSeasonStats()` facts.
+  It exposes active Player/Program/Team rows with raw games played and
+  PPG/RPG/APG in first-followed order, plus total followed intent and unresolved
+  Player IDs for distinct empty states. It stores no copied summaries and adds
+  no League UI, navigation, formatting, alumni behavior, or simulation effect.
+  The player-facing Following destination remains open, so Phase 7A is active.
 
 League News, offseason progression/League context, Awards, Save/Persistence,
 records, shot-selection investigation, and minor presentation polish remain
