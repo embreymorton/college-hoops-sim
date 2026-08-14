@@ -235,6 +235,15 @@ reproduced. Do not paper over this with retries or longer per-test timeouts;
 profile or right-size suite concurrency in a separately scoped reliability
 milestone if default-run contention continues.
 
+The Tournament completion escape-path diagnostic produced another instance on
+the default full-suite command: `keeps manual and Super Sim basketball and
+Recruiting outcomes identical` in `src/store/dynastyStore.integration.test.ts`
+timed out after taking `6.414s` against the five-second limit. The exact test
+passed alone (`1.76s`), its full file passed `12/12`, and the subsequent default
+full suite passed. The lifecycle change added assertions only after the
+Super Sim work measured by this test and did not change production behavior;
+this recurrence remains consistent with the existing worker-contention WATCH.
+
 ### P2 — Elite Recruit POT-gap compression — RESOLVED / FROZEN
 
 A production-path sample of 250 deterministic Recruiting classes (`40,202`

@@ -480,16 +480,25 @@ final POT, national/position rank, and stars (`80,453/80,453`). All `22/22`
 paired gates remained green. No readiness, raw-ceiling, ranking/star, Player
 Development, AI, or UI behavior changed beyond POT-derived rank movement.
 
-### Pre-Phase 7B Evidence Sequence — NEXT
+### Tournament Completion Progression Escape-Path Diagnostic — COMPLETE / NOT REPRODUCED
 
-1. **Immediate correctness:** Codex performs a narrow reproduction/diagnostic
-   for the observed blocking Tournament-completion progression escape path.
-   Root cause is unknown; no fix is selected and the issue is not yet confirmed.
-2. **Next diagnostic:** characterize multi-Season Player Statistical Identity /
+A production-faithful deterministic UI diagnostic confirmed the completed
+Postseason checkpoint remains recoverable through League, Coaching, and
+Recruiting navigation. The canonical Dynasty/Postseason facts remain intact;
+returning to Tournament restores `Continue to Late Recruiting`, and a finalized
+class restores `Begin Offseason` from Recruiting after League navigation.
+Super Sim completion shares the same preserved lifecycle path. The reported
+playtest incident was not reproduced, no production defect was confirmed, and
+no production behavior changed. Focused regression coverage now protects the
+intended navigation contract.
+
+### Player Statistical Identity + Superstar Separation Characterization — NEXT
+
+1. **Next diagnostic:** characterize multi-Season Player Statistical Identity /
    Superstar Separation across leader distributions, elite separation,
    single-game extremes, attributes, positions, and defensive production. This
    is measurement only; no target, tuning, or production change is authorized.
-3. **Then reassess Phase 7B:** choose deliberately among evidence-supported
+2. **Then reassess Phase 7B:** choose deliberately among evidence-supported
    statistical variability, Recruit identity/details/following, League News /
    Round Recap, and offseason League context.
 

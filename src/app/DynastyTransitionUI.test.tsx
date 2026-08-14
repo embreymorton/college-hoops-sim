@@ -104,6 +104,42 @@ describe('Season-complete handoff', () => {
     expect(screen.queryByText('Season Complete')).not.toBeInTheDocument()
     expect(screen.queryByText(/late recruiting is next/i)).not.toBeInTheDocument()
   })
+
+  it('remains recoverable after navigating through League, Coaching, and Recruiting', () => {
+    const boundary = championshipBoundary()
+    const controlledRotation =
+      boundary.activePostseason!.programStates[CONTROLLED_PROGRAM_ID]!.rotation
+    useDynastyStore.setState({
+      dynasty: boundary,
+      postseasonControlledDefaultRotation: controlledRotation,
+      postseasonDraftRotation: controlledRotation,
+      view: 'postseasonHub',
+    })
+    render(<App />)
+
+    expect(
+      screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+    ).toBeInTheDocument()
+
+    for (const section of ['League', 'Coaching', 'Recruiting']) {
+      fireEvent.click(screen.getByRole('button', { name: section }))
+      expect(useDynastyStore.getState().dynasty).toBe(boundary)
+      expect(useDynastyStore.getState().dynasty!.activePostseason).toBe(
+        boundary.activePostseason,
+      )
+
+      fireEvent.click(screen.getByRole('button', { name: 'Tournament' }))
+      expect(
+        screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+      ).toBeInTheDocument()
+    }
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+    )
+    expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
+    expect(useDynastyStore.getState().view).toBe('recruiting')
+  })
 })
 
 describe('Late Recruiting presentation', () => {
@@ -153,6 +189,23 @@ describe('Recruiting finalization', () => {
     expect(useDynastyStore.getState().dynasty!.offseason).toBeNull()
     expect(screen.getByText('Recruiting Class Complete')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Begin Offseason' })).toBeInTheDocument()
+  })
+
+  it('keeps the canonical Begin Offseason action recoverable through League navigation', () => {
+    enterLateRecruiting()
+    fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
+    fireEvent.click(screen.getByRole('alertdialog').querySelector('.button--primary') as HTMLElement)
+
+    const finalizedDynasty = useDynastyStore.getState().dynasty
+    fireEvent.click(screen.getByRole('button', { name: 'League' }))
+    expect(useDynastyStore.getState().dynasty).toBe(finalizedDynasty)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Begin Offseason' }))
+
+    expect(useDynastyStore.getState().view).toBe('offseason')
+    expect(useDynastyStore.getState().dynasty!.offseason).not.toBeNull()
+    expect(useDynastyStore.getState().dynasty!.activePostseason).toBeNull()
   })
 })
 

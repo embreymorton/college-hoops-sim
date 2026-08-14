@@ -180,7 +180,7 @@ describe('Dynasty application state integration', () => {
     useDynastyStore.getState().requestSuperSim('seasonComplete')
     useDynastyStore.getState().confirmSuperSim()
 
-    const state = useDynastyStore.getState()
+    let state = useDynastyStore.getState()
     const dynasty = state.dynasty!
     expect(Object.keys(dynasty.activeSeason!.resultsByGameId)).toHaveLength(384)
     expect(isTournamentComplete(dynasty.activePostseason!)).toBe(true)
@@ -189,6 +189,16 @@ describe('Dynasty application state integration', () => {
     expect(dynasty.offseason).toBeNull()
     expect(dynasty.history).toEqual([])
     expect(state.view).toBe('postseasonHub')
+
+    useDynastyStore.getState().goToLeague()
+    expect(useDynastyStore.getState().dynasty).toBe(dynasty)
+    useDynastyStore.getState().goToPostseasonHub()
+
+    state = useDynastyStore.getState()
+    expect(state.view).toBe('postseasonHub')
+    expect(state.dynasty).toBe(dynasty)
+    expect(isTournamentComplete(state.dynasty!.activePostseason!)).toBe(true)
+    expect(state.dynasty!.recruiting!.phase).toBe('postseason')
   })
 
   it('matches stepwise production progression through the canonical Season Complete checkpoint', () => {

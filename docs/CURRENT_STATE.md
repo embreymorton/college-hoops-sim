@@ -431,11 +431,15 @@ byte-identical. Production activation then reproduced the accepted Candidate B
 result exactly by Recruit ID for attributes, OVR, final POT, rank, and stars.
 Candidate B is now the production default and Recruit POT-gap calibration is
 **COMPLETE / ACCEPTED / FROZEN**. Phase 7B remains deliberately unstarted and
-unassigned. New manual-play evidence puts a targeted Codex reproduction of the
-blocking-but-unconfirmed Tournament completion progression escape path first,
-then a characterization-only Player Statistical Identity / Superstar
-Separation diagnostic. Phase 7B selection follows that evidence; League News is
-one candidate rather than the automatic next milestone.
+unassigned. A targeted production-faithful diagnostic did not reproduce the
+reported Tournament completion progression escape-path failure: canonical
+Postseason eligibility survives League, Coaching, and Recruiting navigation,
+the correct lifecycle action remains recoverable, and focused regression
+coverage now protects both stepwise and Super Sim completion paths. No
+production change was required. The next task is the characterization-only
+Player Statistical Identity + Superstar Separation diagnostic. Phase 7B
+selection follows that evidence; League News remains one candidate rather than
+the automatic next milestone.
 
 ## Documentation map
 

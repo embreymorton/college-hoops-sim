@@ -1100,14 +1100,30 @@ field/bracket/results/champion, and Recruiting state through Period 28 for
 stepwise progression and Super Sim. Automated acceptance is green; no separate
 manual playtest was required for this lifecycle-only convenience.
 
-## Tournament Completion Progression Escape Path — OBSERVED / BLOCKING / NEEDS REPRODUCTION
+## Tournament Completion Progression Escape Path — NOT REPRODUCED / REGRESSION COVERED
 
 In the latest manual playthrough, the completed Tournament initially exposed
 the offseason advance card. After navigating to League, that progression path
 disappeared and the Dynasty could not continue; restarting was required. This
-was blocking in the observed session, but the root cause and exact reproduction
-sequence are unknown. Codex should perform a narrow targeted reproduction and
-diagnostic before this is promoted to a confirmed issue or any fix is selected.
+was blocking in the observed session, but a targeted deterministic diagnostic
+did not reproduce a current production defect.
+
+At the completed-Tournament boundary, Tournament completion, champion, active
+Postseason, and Recruiting Period 28 remain canonical Dynasty facts. The
+`Continue to Late Recruiting` checkpoint is derived from those facts whenever
+the Postseason Hub renders. Production-faithful UI coverage confirmed
+Postseason → League/Coaching/Recruiting → Tournament preserves the exact Dynasty
+and restores the handoff, then successfully enters Late Recruiting. Separate
+coverage confirmed that after Recruiting finalization, League → Recruiting
+restores the canonical `Begin Offseason` action and enters Offseason once.
+Super Sim completion also preserves the same facts across League navigation and
+return to the Postseason Hub.
+
+No production fix or UI redesign was warranted. The original session's exact
+cause remains unidentified and no manual acceptance is claimed. Treat the
+reported path as not reproduced unless new evidence supplies a distinct
+sequence; focused regression coverage now protects the intended navigation
+contract. This observation was not promoted to Known Issues.
 
 ## League News / Round Recap — OBSERVED
 
@@ -1325,14 +1341,12 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Immediate correctness: targeted reproduction/diagnostic for the Tournament
-   completion progression escape path
-2. Next diagnostic: multi-Season Player Statistical Identity / Superstar
+1. Next diagnostic: multi-Season Player Statistical Identity / Superstar
    Separation characterization
-3. Reassess Phase 7B only after that evidence, among statistical variability,
+2. Reassess Phase 7B only after that evidence, among statistical variability,
    Recruit identity/details/following, League News, and offseason League context
-4. Program records / deeper statistical history
-5. Shot-selection diagnostic and minor Player Details polish
+3. Program records / deeper statistical history
+4. Shot-selection diagnostic and minor Player Details polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /
