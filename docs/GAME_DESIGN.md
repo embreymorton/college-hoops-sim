@@ -374,8 +374,12 @@ Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from th
 
 Across 250 completed Seasons, the current Recruiting, graduation, Development, and rollover rules settled into a stable long-run talent level. Upperclassmen were stronger on average (`FR < SO < JR < SR`), prestige created a meaningful but non-absolute Program hierarchy, better Teams won more often, and 26 of 32 Programs won at least one simulated championship.
 
-The current talent economy is frozen around Recruit Talent Distribution V1 and
-Player Development V1. The earlier long-run V0 evidence remains historical,
+The current talent economy is frozen around Recruit Talent Distribution V1,
+its calibrated elite POT finalization, and Player Development V1. Eligible
+78+ OVR Recruits whose sampled ceiling does not exceed current ability retain
+zero POT gap for a deliberate minority of profiles and otherwise receive a
+small bounded runway; natural higher ceilings remain untouched. The earlier
+simple POT-floor behavior and long-run V0 evidence remain historical,
 but its talent-generation and Development behavior was superseded after manual
 playtesting. Do not casually retune Recruiting, Talent V1, Development V1, or
 rollover without new evidence or a future system that materially changes talent

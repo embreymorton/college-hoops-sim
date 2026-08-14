@@ -471,14 +471,21 @@ overlap, and bounded POT inflation. Elite zero-gap compression improved by
 `48.86–59.00` percentage points in the primary cohorts. Full evidence is in
 `PLAYTESTING.md`.
 
-### Recruit Talent Candidate B Activation / Freeze — NEXT
+### Recruit Talent Candidate B Activation / Freeze — COMPLETE — ACCEPTED / FROZEN
 
-Codex implementation milestone. Move the already accepted Candidate B rule
-from diagnostic-only code into production Recruit generation using the same
-independent deterministic namespace, then rerun focused generation tests and
-the accepted paired population checks. Keep this separate from Player
-Development and Phase 7B. Until that milestone is explicitly completed,
-Recruit Talent V1 remains the production default and Phase 7B stays unassigned.
+The canonical Recruit generator now uses the exact accepted Candidate B helper
+and independent deterministic namespace. The production 500-class audit
+reproduced the accepted experiment exactly by Recruit ID for attributes, OVR,
+final POT, national/position rank, and stars (`80,453/80,453`). All `22/22`
+paired gates remained green. No readiness, raw-ceiling, ranking/star, Player
+Development, AI, or UI behavior changed beyond POT-derived rank movement.
+
+### Phase 7B Selection / Planning Pass — NEXT
+
+Return to current playtest evidence and deliberately select the next small
+Dynasty World / Player Stories milestone. League News / Round Recap remains the
+strongest current player-facing candidate, but is not selected or implemented
+by the Recruit Talent activation milestone.
 
 League News, offseason progression/League context, Awards, Save/Persistence,
 records, shot-selection investigation, and minor presentation polish remain

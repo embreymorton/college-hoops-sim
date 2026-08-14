@@ -3,6 +3,7 @@ import { initializeDynastyState, initializeRecruiting, type Recruit } from '../s
 import { generateRegularSeasonSchedule } from '../src/schedule'
 import { initializeSeason } from '../src/season'
 import { initializeUniverse, UNIVERSE_V0 } from '../src/universe'
+import { generateLegacyRecruitingClass } from '../src/dynasty/recruiting/generation'
 import { summarizeDistribution } from './dynastyLongRunMetrics'
 import { applyCandidateBToRecruitingClass, type CandidateBRecruit } from './recruitPotGapCandidateB'
 import { summarizeRecruitPotGaps, type PotGapCohortKey } from './talentPotGapMetrics'
@@ -12,6 +13,7 @@ const TARGET_SEASON = 2
 const baseline: Recruit[] = []
 const candidate: CandidateBRecruit[] = []
 let exactIdentity = true
+let exactProductionEquivalence = true
 
 function withoutPotential(recruit: Recruit) {
   return Object.fromEntries(Object.entries(recruit.player).filter(([key]) => key !== 'potential'))
@@ -26,19 +28,27 @@ for (let index = 0; index < CLASSES; index += 1) {
     schedule: generateRegularSeasonSchedule({ universe: UNIVERSE_V0, seed: `${seed}:schedule` }),
     seasonNumber: 1,
   })
-  const recruits = initializeRecruiting(initializeDynastyState({
+  const liveRecruits = initializeRecruiting(initializeDynastyState({
     dynastyId: seed,
     dynastySeed: seed,
     controlledProgramId: 'charlotte-tech',
     universe: UNIVERSE_V0,
     activeSeason: season,
   })).recruiting!.recruits
+  const recruits = generateLegacyRecruitingClass({ dynastySeed: seed, targetSeasonNumber: TARGET_SEASON, season })
   const derived = applyCandidateBToRecruitingClass(recruits, seed, TARGET_SEASON)
   const byId = new Map(derived.map((row) => [row.player.id, row]))
   exactIdentity &&= recruits.every((row) => {
     const paired = byId.get(row.player.id)
     return paired !== undefined && calculateOverall(row.player) === calculateOverall(paired.player) &&
       JSON.stringify(withoutPotential(row)) === JSON.stringify(withoutPotential(paired))
+  })
+  const liveById = new Map(liveRecruits.map((row) => [row.player.id, row]))
+  exactProductionEquivalence &&= derived.every((row) => {
+    const live = liveById.get(row.player.id)
+    return live !== undefined && live.player.potential === row.player.potential &&
+      live.nationalRank === row.nationalRank && live.positionRank === row.positionRank && live.stars === row.stars &&
+      JSON.stringify(withoutPotential(live)) === JSON.stringify(withoutPotential(row))
   })
   baseline.push(...recruits)
   candidate.push(...derived)
@@ -74,7 +84,7 @@ const cohort = (key: PotGapCohortKey) => [baseByCohort.get(key)!, candidateByCoh
 
 console.log(`RECRUIT POT-GAP CANDIDATE B — PAIRED ${CLASSES} CLASSES (${baseline.length} recruits)`)
 console.log(`Seeds: talent-distribution:{0..${CLASSES - 1}} | experimental namespace: recruit-pot-gap-candidate-b:v1`)
-console.log('Production activation: NO')
+console.log(`Production activation: YES | live production exact by Recruit ID: ${exactProductionEquivalence ? 'PASS' : 'FAIL'}`)
 console.log('\nGAP COHORTS (baseline → candidate; percentage-point deltas)')
 console.log('Cohort  n       Gap 0                 Gap 1–3               Gap 4–7               Gap 8–12              Gap 13+              Median')
 for (const key of ['all', 'fiveStar', 'fourStar', 'ovr80', 'ovr85', 'ovr90'] as const) {
@@ -113,4 +123,5 @@ const gates: readonly [string, boolean][] = [
 ]
 console.log('\nPRECOMMITTED GATE SCORECARD')
 for (const [label, passed] of gates) console.log(`${pass(passed)}  ${label}`)
-console.log(`DISPOSITION: ${gates.every(([, passed]) => passed) ? 'ACCEPT' : 'REJECT'} (${gates.filter(([, passed]) => passed).length}/${gates.length} gates passed; baseline remains production default)`)
+console.log(`DISPOSITION: ${gates.every(([, passed]) => passed) ? 'ACCEPT' : 'REJECT'} (${gates.filter(([, passed]) => passed).length}/${gates.length} gates passed; Candidate B is production default)`)
+console.log(`ACTIVATION EQUIVALENCE: ${exactProductionEquivalence ? 'PASS' : 'FAIL'} (attributes, OVR, final POT, national/position rank, and stars exact by Recruit ID)`)

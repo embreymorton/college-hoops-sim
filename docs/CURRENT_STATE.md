@@ -91,9 +91,15 @@ Recruiting and roster construction continue using each Player's one natural
 position. Rotation eligibility affects floor minutes only; it does not satisfy
 another position's Recruiting opening or Offer capacity.
 
-### Recruit Talent Distribution V1
+### Recruit Talent Distribution V1 + Candidate B POT Finalization
 
-Recruit Talent V1 uses partially independent readiness and ceiling, with `POT >= OVR`. National Rank uses `56% OVR / 44% POT`. It intentionally creates fewer immediately elite freshmen, raw high-upside prospects, ready-now lower-ceiling prospects, and a wider OVR/POT relationship.
+Recruit Talent V1 uses partially independent readiness and raw ceiling. The
+accepted Candidate B finalizer is now production: when raw ceiling is at most
+OVR and OVR is at least 78, `35%` preserve zero gap and the remainder receive
+`+2..6` at OVR 78–84, `+2..5` at 85–89, or `+1..3` at 90+, capped at 99.
+Natural higher ceilings and sub-78 profiles retain their prior behavior.
+National Rank remains `56% OVR / 44% POT`; star percentiles are unchanged.
+Recruit POT finalization is accepted/frozen.
 
 ### Player Development V1
 
@@ -414,15 +420,18 @@ Postseason Hub + Season-Complete Presentation Polish (6E.10), Recruiting
 Battles + Commitment Visibility (6E.12), and Recruiting Information
 Architecture + Visual Hierarchy Polish (6E.12C) are accepted/frozen; Game Sim
 remains closed. Followed Players V1 is accepted/frozen. The Elite Recruit
-POT-Gap Characterization and paired Candidate B experiment are complete. On
+POT-Gap Characterization, paired Candidate B experiment, and production
+activation are complete. On
 identical 500-class production seeds (`80,453` Recruits), the experimental
 bounded-runway finalizer passed all `22/22` precommitted gates: 5★ zero gap
 moved `70.54% → 21.68%`, 80+ moved `86.07% → 30.94%`, and 85+ moved
 `91.75% → 32.75%`; attributes/OVR remained exact, 5★ membership overlap was
 `88.02%`, and overall POT mean rose only `0.255`. Deterministic replay was
-byte-identical. This is an **ACCEPTED EXPERIMENT**, not production activation:
-Recruit Talent V1 remains the runtime default. A separate activation/freeze
-milestone is the smallest next step. Phase 7B remains deliberately unassigned.
+byte-identical. Production activation then reproduced the accepted Candidate B
+result exactly by Recruit ID for attributes, OVR, final POT, rank, and stars.
+Candidate B is now the production default and Recruit POT-gap calibration is
+**COMPLETE / ACCEPTED / FROZEN**. Phase 7B remains deliberately unstarted; the
+next step is a fresh Phase 7B selection/planning pass.
 
 ## Documentation map
 

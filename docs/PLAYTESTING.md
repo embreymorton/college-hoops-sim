@@ -521,6 +521,25 @@ production candidate for a separate activation/freeze milestone. It does not
 activate the rule: the V1 baseline remains the production default. No Player
 Development rule changed, and Phase 7B remains out of scope.
 
+### Candidate B Production Activation — COMPLETE / ACCEPTED / FROZEN
+
+Production now consumes the same pure Candidate B finalizer and exact
+`recruit-pot-gap-candidate-b:v1` seed representation used by the accepted
+experiment. The historical V1 simple floor remains available only inside the
+paired diagnostic so the accepted baseline can still be reproduced.
+
+The activated production audit regenerated `talent-distribution:0..499` and
+matched the accepted candidate exactly for all `80,453` Recruit IDs:
+attributes, derived OVR, final POT, national rank, position rank, and stars.
+The live profile remained 5★/80+/85+ zero gap `21.68%/30.94%/32.75%`, overall
+POT mean `76.399`, and POT 90+ `4.39%`; all `22/22` gates remained green.
+
+**Decision: COMPLETE / ACCEPTED / FROZEN.** Candidate B is the production
+Recruit POT-finalization baseline. Readiness, raw ceiling generation, initial
+attributes/OVR, ranking weights, star rules, and Player Development remain
+unchanged. Future manual play may observe whether elite-freshman progression
+feels more varied across Dynasties, but it is not an activation blocker.
+
 ## Generated Draft Board Ambition — WATCH
 
 Pine Valley's generated Board sometimes immediately offers low-tier/2★ targets, while Charlotte Tech can appropriately pursue many 4★ recruits. This likely reflects Prestige scaling, not a bug. Future diagnostics should evaluate whether generated Boards have an appropriate reaches / realistic-targets / safe-backups mix for each Prestige level.
@@ -1272,7 +1291,7 @@ These are product questions, not automated invariants.
 - Board + Focus + Offer Recruiting
 - AI Recruiting plan coherence
 - Prestige / attraction
-- Recruit Talent Distribution V1 (except the explicit POT-gap and mature-supply watchpoints)
+- Recruit Talent Distribution V1 + calibrated Candidate B POT finalization
 - Player Development V1
 - Rotation V1
 - Tournament results-only résumé seeding
@@ -1282,12 +1301,12 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Recruit Talent POT-gap calibration design, based on the completed diagnostic
-2. League News / Round Recap
-3. Offseason around-the-league context
-4. Program records / deeper statistical history
-5. Shot-selection diagnostic
-6. Minor Player Details polish
+1. Fresh Phase 7B selection/planning pass; League News / Round Recap is the
+   strongest current player-facing candidate
+2. Offseason around-the-league context
+3. Program records / deeper statistical history
+4. Shot-selection diagnostic
+5. Minor Player Details polish
 
 Player Details + Development History UX, Postseason Hub +
 Season-Complete Presentation Polish, and Recruiting Focus-target /

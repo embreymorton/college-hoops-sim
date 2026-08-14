@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest'
-import { finalizeCandidateBPotential } from './recruitPotGapCandidateB'
+import { finalizeRecruitPotential } from '../src/dynasty/recruiting/potential'
 
 function outcomes(overall: number, count = 400) {
-  return Array.from({ length: count }, (_, index) => finalizeCandidateBPotential({
+  return Array.from({ length: count }, (_, index) => finalizeRecruitPotential({
     overall,
-    baselinePotential: overall,
+    rawCeiling: overall,
     dynastySeed: 'candidate-b-test',
     targetSeasonNumber: 2,
     playerId: `player-${index}`,
@@ -13,8 +13,8 @@ function outcomes(overall: number, count = 400) {
 
 describe('Recruit POT-gap Candidate B', () => {
   it('leaves ineligible recruits unchanged', () => {
-    expect(finalizeCandidateBPotential({ overall: 77, baselinePotential: 77, dynastySeed: 'x', targetSeasonNumber: 2, playerId: 'a' }).potential).toBe(77)
-    expect(finalizeCandidateBPotential({ overall: 82, baselinePotential: 90, dynastySeed: 'x', targetSeasonNumber: 2, playerId: 'b' }).potential).toBe(90)
+    expect(finalizeRecruitPotential({ overall: 77, rawCeiling: 70, dynastySeed: 'x', targetSeasonNumber: 2, playerId: 'a' }).potential).toBe(77)
+    expect(finalizeRecruitPotential({ overall: 82, rawCeiling: 90, dynastySeed: 'x', targetSeasonNumber: 2, playerId: 'b' }).potential).toBe(90)
   })
 
   it.each([[78, 2, 6], [84, 2, 6], [85, 2, 5], [89, 2, 5], [90, 1, 3], [97, 1, 2]])(
@@ -44,7 +44,7 @@ describe('Recruit POT-gap Candidate B', () => {
     expect(outcomes(99).some((row) => row.cappedAt99)).toBe(true)
   })
 
-  it('rejects an invalid baseline invariant', () => {
-    expect(() => finalizeCandidateBPotential({ overall: 80, baselinePotential: 79, dynastySeed: 'x', targetSeasonNumber: 2, playerId: 'x' })).toThrow(RangeError)
+  it('accepts raw ceilings below OVR as eligible inputs', () => {
+    expect(finalizeRecruitPotential({ overall: 80, rawCeiling: 60, dynastySeed: 'x', targetSeasonNumber: 2, playerId: 'x' }).potential).toBeGreaterThanOrEqual(80)
   })
 })

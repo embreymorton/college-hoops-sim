@@ -20,6 +20,7 @@ import type {
   Recruit,
   RecruitStarRating,
 } from './domain'
+import { finalizeRecruitPotential } from './potential'
 
 function seedNamespace(
   dynastySeed: RngSeed,
@@ -138,6 +139,31 @@ export function generateRecruitingClass({
   targetSeasonNumber,
   season,
 }: GenerateRecruitingClassOptions): Recruit[] {
+  return generateRecruitingClassWithPotentialFinalizer({
+    dynastySeed,
+    targetSeasonNumber,
+    season,
+  }, ({ overall, rawCeiling, playerId }) => finalizeRecruitPotential({
+    overall,
+    rawCeiling,
+    dynastySeed,
+    targetSeasonNumber,
+    playerId,
+  }).potential)
+}
+
+interface RecruitPotentialFinalizerInput {
+  readonly overall: number
+  readonly rawCeiling: number
+  readonly playerId: string
+}
+
+type RecruitPotentialFinalizer = (input: RecruitPotentialFinalizerInput) => number
+
+function generateRecruitingClassWithPotentialFinalizer(
+  { dynastySeed, targetSeasonNumber, season }: GenerateRecruitingClassOptions,
+  finalizePotential: RecruitPotentialFinalizer,
+): Recruit[] {
   if (!Number.isSafeInteger(targetSeasonNumber) || targetSeasonNumber < 2) {
     throw new RangeError('Recruiting target season must be at least 2.')
   }
@@ -159,10 +185,11 @@ export function generateRecruitingClass({
         rng: createRng(seedNamespace(dynastySeed, targetSeasonNumber, `${stream}:player`)),
       })
       const currentOverall = calculateOverall(generated)
+      const playerId = `recruit-${targetSeasonNumber}-${position.toLowerCase()}-${String(index + 1).padStart(3, '0')}-${generated.id.slice(-8)}`
       const player = {
         ...generated,
-        id: `recruit-${targetSeasonNumber}-${position.toLowerCase()}-${String(index + 1).padStart(3, '0')}-${generated.id.slice(-8)}`,
-        potential: Math.max(currentOverall, profile.ceiling),
+        id: playerId,
+        potential: finalizePotential({ overall: currentOverall, rawCeiling: profile.ceiling, playerId }),
       }
       const overall = calculateOverall(player)
 
@@ -206,4 +233,14 @@ export function generateRecruitingClass({
       ),
     }
   })
+}
+
+/** Historical V1 floor retained only for paired calibration/equivalence diagnostics. */
+export function generateLegacyRecruitingClass(
+  options: GenerateRecruitingClassOptions,
+): Recruit[] {
+  return generateRecruitingClassWithPotentialFinalizer(
+    options,
+    ({ overall, rawCeiling }) => Math.max(overall, rawCeiling),
+  )
 }

@@ -211,9 +211,19 @@ us, and drops him from Focus (6E.16B)`. The same `SeasonApp.test.tsx` file then
 passed `36/36` in isolation, and the immediate full-suite rerun exited green.
 Candidate B changes only diagnostic scripts/docs and does not enter application
 or Recruiting runtime code. This strengthens the order-dependent test WATCH but
-does not establish a Candidate B or product regression.
+does not establish a Candidate B or product regression. During production
+activation, the first full-suite run reproduced that exact Focus-to-Commits
+failure (the runner emitted only the test name). The isolated
+`SeasonApp.test.tsx` run passed that test but exposed a different brittle query
+in `renders Player box-score rows from the recorded Season GameResult`:
+`getByText("14")` found both the Player's minutes and points cells. That exact
+box-score test passed alone, and the subsequent full suite exited green.
+Candidate B uses an independent Recruit-only RNG namespace and does not change
+Season 1 rosters, Rotations, Game Sim, box-score rendering, or the affected
+Recruiting presentation logic. Both recurrences remain test-reliability WATCH;
+neither is plausibly an activation regression, and neither was fixed here.
 
-### P2 — Elite Recruit POT-gap compression — ACCEPTED CANDIDATE / NOT ACTIVATED
+### P2 — Elite Recruit POT-gap compression — RESOLVED / FROZEN
 
 A production-path sample of 250 deterministic Recruiting classes (`40,202`
 Recruits) found zero POT gap for `70.1%` of 5★, `85.6%` of 80+ OVR, `90.9%`
@@ -231,8 +241,11 @@ runway passed all `22/22` precommitted gates across the paired 500-class sample
 (`80,453` Recruits). It reduced zero gap from `70.54% → 21.68%` for 5★,
 `86.07% → 30.94%` for 80+, and `91.75% → 32.75%` for 85+, while preserving
 exact attributes/OVR and limiting overall POT mean movement to `+0.255`.
-Candidate B is accepted for a separately scoped activation/freeze milestone,
-but the production fix is not yet implemented; Recruit Talent V1 remains live.
+Production now invokes that exact canonical helper. A 500-class activation
+audit matched the accepted experimental output exactly by Recruit ID for
+attributes, OVR, final POT, national/position rank, and stars. Candidate B is
+the production default; this issue is resolved and the calibrated behavior is
+frozen unless new evidence appears.
 
 ## Accepted non-issues
 

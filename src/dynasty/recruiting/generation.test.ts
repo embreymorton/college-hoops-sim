@@ -8,6 +8,7 @@ import {
 import {
   deriveNationalPositionDemand,
   deriveRecruitSupplyByPosition,
+  generateLegacyRecruitingClass,
   generateRecruitingClass,
 } from './generation'
 import { createRecruitingDynasty } from './testSupport'
@@ -151,5 +152,30 @@ describe('national recruiting class generation', () => {
     expect(Math.abs(correlation(ranks, overalls))).toBeLessThan(0.95)
     expect(Math.abs(correlation(ranks, potentials))).toBeLessThan(0.9)
     expect(Math.abs(correlation(overalls, potentials))).toBeLessThan(0.75)
+  })
+
+  it('changes only POT-derived output relative to the historical V1 generation stream', () => {
+    const dynasty = createRecruitingDynasty('candidate-b-integration')
+    const options = {
+      dynastySeed: dynasty.dynastySeed,
+      targetSeasonNumber: 2,
+      season: dynasty.activeSeason!,
+    }
+    const production = generateRecruitingClass(options)
+    const legacy = generateLegacyRecruitingClass(options)
+    const legacyById = new Map(legacy.map((recruit) => [recruit.player.id, recruit]))
+
+    expect(production).toEqual(generateRecruitingClass(options))
+    expect(production.some((recruit) => recruit.player.potential !== legacyById.get(recruit.player.id)!.player.potential)).toBe(true)
+    for (const recruit of production) {
+      const old = legacyById.get(recruit.player.id)!
+      const { potential: productionPotential, ...productionPlayer } = recruit.player
+      const { potential: legacyPotential, ...legacyPlayer } = old.player
+      expect(productionPlayer).toEqual(legacyPlayer)
+      expect(calculateOverall(recruit.player)).toBe(calculateOverall(old.player))
+      expect(productionPotential).toBeGreaterThanOrEqual(calculateOverall(recruit.player))
+      expect(productionPotential).toBeLessThanOrEqual(MAX_PLAYER_RATING)
+      expect(legacyPotential).toBeGreaterThanOrEqual(calculateOverall(old.player))
+    }
   })
 })
