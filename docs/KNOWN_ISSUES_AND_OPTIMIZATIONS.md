@@ -195,33 +195,45 @@ imposed on narrow/mobile widths, which keep natural responsive growth. See
 
 Postseason Presentation established the anticipated feature-level boundary with `src/styles.css` plus `src/postseason.css`. This addresses the original stylesheet-growth concern at the current scale; monitor for real cross-feature coupling, but do not perform another CSS refactor merely for organization.
 
-### P3 — Order-dependent `SeasonApp.test.tsx` flake — WATCH
+### P3 — `SeasonApp.test.tsx` intermittent assertions — RESOLVED
 
-An intermittent failure appeared during a mixed/full Phase 7A.2 run, reproduced
-on unmodified `main`, and passed when rerun in isolation. It appeared unrelated
-to Followed Players and did not recur in either of the two final Phase 7A.3B
-full-suite runs (`880/880` green both times). The root cause is not established.
-Keep this as a separate test-reliability WATCH; do not weaken the test, attribute
-it to Followed Players, or promote it into a product milestone without renewed
-reproduction and diagnosis.
+The two recurring cases shared an uncontrolled-fixture cause rather than store
+leakage or product behavior. `SeasonApp.test.tsx` exercised normal interactive
+selection, which intentionally creates a unique UUID-backed Dynasty seed each
+time. Under some valid generated boards, signing one focused Recruit filled the
+position and correctly made another same-position target no longer active, so
+the test's assumption that the Focus-row count must decrease by exactly one was
+false. Under some valid game results, a top scorer's points equaled another stat
+in his row (observed `14` and `35` matching minutes), so `getByText(points)` was
+ambiguous.
 
-The Candidate B experiment produced one renewed mixed/full-suite occurrence in
-`moves a Recruit from unresolved Focus Targets to Commits once he commits to
-us, and drops him from Focus (6E.16B)`. The same `SeasonApp.test.tsx` file then
-passed `36/36` in isolation, and the immediate full-suite rerun exited green.
-Candidate B changes only diagnostic scripts/docs and does not enter application
-or Recruiting runtime code. This strengthens the order-dependent test WATCH but
-does not establish a Candidate B or product regression. During production
-activation, the first full-suite run reproduced that exact Focus-to-Commits
-failure (the runner emitted only the test name). The isolated
-`SeasonApp.test.tsx` run passed that test but exposed a different brittle query
-in `renders Player box-score rows from the recorded Season GameResult`:
-`getByText("14")` found both the Player's minutes and points cells. That exact
-box-score test passed alone, and the subsequent full suite exited green.
-Candidate B uses an independent Recruit-only RNG namespace and does not change
-Season 1 rosters, Rotations, Game Sim, box-score rendering, or the affected
-Recruiting presentation logic. Both recurrences remain test-reliability WATCH;
-neither is plausibly an activation regression, and neither was fixed here.
+The file now fixes its application-boundary UUID per test and restores the mock
+afterward; the dedicated interactive-seed tests continue to cover unique real
+Dynasty creation. The Focus test asserts the committed Recruit appears in
+Commits and that exact identity is absent from unresolved Focus, without making
+an invalid claim about other targets whose position can become filled. The box-
+score test resolves the intended Player row and the semantic `Player`/`Pts`
+columns before asserting exact values. Store reset already covered every
+session field, RTL cleanup already unmounted after every test, and no timer or
+async leak was found.
+
+Before the fix, bounded isolated repetition reproduced Focus on run 9 and the
+box-score ambiguity on run 4. Afterward both passed `10/10`; the complete
+`SeasonApp.test.tsx` file passed `10/10`. No retries, sleeps, skips, timeout
+changes, or production changes were introduced. This specific reliability
+issue is resolved.
+
+### P3 — Full-suite lifecycle-test timeout under worker contention — WATCH
+
+Repeated default full-suite validation exposed a separate resource-contention
+watchpoint: three lifecycle-heavy tests timed out near the default five-second
+limit in one run, and `keeps manual and Super Sim basketball and Recruiting
+outcomes identical` timed out again in a later run. Each passed alone
+(`0.88–3.36s`) and the three affected files passed together (`31/31`); three
+full runs with `--maxWorkers=4` also passed. No result mismatch or product bug
+reproduced. Do not paper over this with retries or longer per-test timeouts;
+profile or right-size suite concurrency in a separately scoped reliability
+milestone if default-run contention continues.
 
 ### P2 — Elite Recruit POT-gap compression — RESOLVED / FROZEN
 

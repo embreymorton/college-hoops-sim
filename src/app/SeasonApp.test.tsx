@@ -1,5 +1,5 @@
 import { act, fireEvent, render, screen, within } from '@testing-library/react'
-import { beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { getRecruit } from '../dynasty'
 import { selectNationalTournamentField } from '../postseason'
 import {
@@ -67,8 +67,25 @@ function finishRegularSeasonWithSuperSim(): void {
 }
 
 beforeEach(() => {
+  vi.spyOn(globalThis.crypto, 'randomUUID').mockReturnValue(
+    '00000000-0000-4000-8000-000000000007',
+  )
   resetStore()
 })
+
+afterEach(() => {
+  vi.restoreAllMocks()
+})
+
+function getCellByColumn(row: HTMLTableRowElement, columnName: string) {
+  const table = row.closest('table')
+  if (!table) throw new Error('Expected the Player row to belong to a table.')
+  const columnIndex = [...table.querySelectorAll('thead th')].findIndex(
+    (header) => header.textContent?.trim() === columnName,
+  )
+  if (columnIndex < 0) throw new Error(`Expected a ${columnName} column.`)
+  return row.cells[columnIndex]!
+}
 
 describe('Season Presentation', () => {
   it('presents permanent Universe V0 program selection initially', () => {
@@ -323,13 +340,18 @@ describe('Season Presentation', () => {
       (first, second) => second.points - first.points,
     )[0]!
 
-    const row = document.querySelector(
+    const row = document.querySelector<HTMLTableRowElement>(
       `tr[data-player-id="${topScorer.playerId}"]`,
     )
     expect(row).not.toBeNull()
-    expect(
-      within(row as HTMLElement).getByText(String(topScorer.points)),
-    ).toBeInTheDocument()
+    expect(getCellByColumn(row!, 'Player')).toHaveTextContent(
+      season!.programStates[result.homeTeamId]!.team.roster.find(
+        (player) => player.id === topScorer.playerId,
+      )!.lastName,
+    )
+    expect(getCellByColumn(row!, 'Pts')).toHaveTextContent(
+      new RegExp(`^${topScorer.points}$`),
+    )
   })
 
   it('completes remaining Round 1 games via Simulate Rest of Round & Continue in a single action, back at the Hub', () => {
@@ -984,8 +1006,6 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     const recruitName = `${committedPlayer.firstName} ${committedPlayer.lastName}`
 
     expect(document.querySelector('.recruiting-hub-commits')).toBeNull()
-    const focusItemsBefore = document.querySelectorAll('.recruiting-hub-focus__item').length
-
     act(() => {
       useDynastyStore.setState({
         dynasty: {
@@ -1009,9 +1029,6 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     const commits = summary.querySelector('.recruiting-hub-commits') as HTMLElement
     expect(commits).not.toBeNull()
     expect(within(commits).getByText(new RegExp(recruitName))).toBeInTheDocument()
-    expect(
-      document.querySelectorAll('.recruiting-hub-focus__item').length,
-    ).toBe(focusItemsBefore - 1)
     const focusList = summary.querySelector('.recruiting-hub-focus')
     if (focusList) {
       expect(
