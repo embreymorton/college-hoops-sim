@@ -421,7 +421,7 @@ that current-season production may deserve greater hierarchy directly beneath
 Player identity, potentially as a denser horizontal summary rather than the
 current compact cards. This is polish, not a failure or reopening of 6E.8.
 
-## Followed Players / Favorites — FOUNDATION COMPLETE (7A.1), CONTROL COMPLETE (7A.2), VIEW PROJECTION COMPLETE (7A.3A)
+## Followed Players / Favorites — FOUNDATION COMPLETE (7A.1), CONTROL COMPLETE (7A.2), VIEW PROJECTION COMPLETE (7A.3A), LEAGUE DESTINATION IMPLEMENTATION COMPLETE (7A.3B)
 
 Following Silas Matthews after he joined another Program was enjoyable. The
 Great Lakes Dynasty repeated the behavior with Jalen Crawford at Pine Valley: a
@@ -460,11 +460,30 @@ unresolved IDs remain separate for safe empty-state handling. This is still
 data-only. Until the League → Following presentation exists, the repeated
 retrieval friction remains unresolved.
 
+Phase 7A.3B adds a `Following` tab to the existing League destination,
+presenting `deriveFollowingView()` as a compact table (Player, Program, Pos,
+Cl, Ovr, PPG, RPG, APG) with existing-convention empty and unresolved states,
+and Player/Program links into the canonical Player Details / Team Details
+navigation. This closes the mechanical loop — Player Details → Follow →
+League → Following → Player Details — for the first time. Implementation and
+automated validation are complete, but the loop has not yet been manually
+playtested, so it is not yet evidence that the original retrieval friction is
+actually resolved in play. Do not mark Phase 7A accepted from automated
+validation alone.
+
 **Manual playtest item (not yet played):** open Player Details for an
 interesting Player, activate Follow, navigate elsewhere, then return to Player
 Details and confirm the Following state is clearly and correctly shown. This
 has not been manually playtested yet and should not be marked accepted until
 it has been.
+
+**Manual playtest item (not yet played):** follow one or more Players from
+Player Details (including at least one Player outside the controlled
+Program), navigate to League → Following, confirm the followed Players and
+their current stats appear correctly, then click through to Player Details
+from that list. This exercises the complete retrieval loop 7A.3B was built
+for and has not been manually playtested yet; do not treat the original
+Followed Players friction as resolved until it has been.
 
 ## Playtest Stories / Why This Is Fun
 
@@ -1147,7 +1166,10 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Followed Players destination presentation, consuming the accepted 7A.3A projection
+1. Manual playtest of the complete Followed Players loop (Player Details →
+   Follow → League → Following → Player Details), now that 7A.3B's League
+   Following destination is implementation-complete but not yet manually
+   accepted
 2. Recruit POT-gap diagnostic
 3. League News / Round Recap
 4. Offseason around-the-league context

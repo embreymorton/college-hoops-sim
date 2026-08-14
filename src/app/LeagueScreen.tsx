@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import {
   DynastySectionNav,
+  FollowingSection,
   LeagueTeamsDirectory,
   NationalLeadersSection,
 } from '../components'
 import { deriveNationalPlayerLeaders } from '../season'
 import {
+  deriveFollowingView,
   selectActivePostseason,
   selectActiveSeason,
   selectControlledProgramId,
@@ -17,7 +19,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
 
-type LeagueTab = 'leaders' | 'teams'
+type LeagueTab = 'leaders' | 'teams' | 'following'
 
 /**
  * The League destination: national statistical leaders and the full
@@ -31,6 +33,7 @@ export function LeagueScreen() {
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const followedPlayerIds = useDynastyStore((state) => state.followedPlayerIds)
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const goToCoaching = useDynastyStore((state) => state.goToCoaching)
@@ -44,6 +47,7 @@ export function LeagueScreen() {
   }
 
   const leaderboards = deriveNationalPlayerLeaders(season)
+  const followingView = deriveFollowingView(followedPlayerIds, season, UNIVERSE_V0)
 
   return (
     <>
@@ -74,6 +78,14 @@ export function LeagueScreen() {
           >
             Teams
           </button>
+          <button
+            type="button"
+            className="tab"
+            aria-pressed={tab === 'following'}
+            onClick={() => setTab('following')}
+          >
+            Following
+          </button>
         </div>
 
         {tab === 'leaders' ? (
@@ -84,11 +96,17 @@ export function LeagueScreen() {
             onSelectPlayer={openPlayerDetails}
             onSelectProgram={openTeamDetails}
           />
-        ) : (
+        ) : tab === 'teams' ? (
           <LeagueTeamsDirectory
             universe={UNIVERSE_V0}
             season={season}
             controlledProgramId={controlledProgramId}
+            onSelectProgram={openTeamDetails}
+          />
+        ) : (
+          <FollowingSection
+            projection={followingView}
+            onSelectPlayer={openPlayerDetails}
             onSelectProgram={openTeamDetails}
           />
         )}

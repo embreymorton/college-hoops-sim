@@ -429,6 +429,26 @@ basketball systems.
   Player IDs for distinct empty states. It stores no copied summaries and adds
   no League UI, navigation, formatting, alumni behavior, or simulation effect.
   The player-facing Following destination remains open, so Phase 7A is active.
+- **7A.3B — League Following Destination:** IMPLEMENTATION COMPLETE. Claude
+  Code, presentation-only against the 7A.3A contract. `LeagueScreen` gained a
+  third `Following` tab beside the existing `Leaders`/`Teams` tab-list — the
+  smallest natural extension of League's established subnavigation, with no
+  new top-level app destination. The new `FollowingSection` consumes
+  `deriveFollowingView(followedPlayerIds, season, UNIVERSE_V0)` directly and
+  renders it with the same `data-table` / `table-scroll` convention as
+  `LeaderBoard` and `TeamStatsTable` (Player, Program, Pos, Cl, Ovr, PPG, RPG,
+  APG), preserving projection order with no re-sorting, filters, or inline
+  Follow/Unfollow controls. `totalFollowed === 0` shows a concise empty state;
+  `totalFollowed > 0` with zero active rows shows a graceful
+  no-longer-active message instead of an empty table; a mixed result renders
+  active rows normally with one small unresolved-count note. Player and
+  Program names reuse the existing `text-link-button` into the canonical
+  `openPlayerDetails` / `openTeamDetails` navigation — no new Player Profile
+  surface. Automated validation (focused tests, full suite, typecheck, lint,
+  build) is green; manual visual playtest of the full Follow → League →
+  Following → Player Details loop has not yet been performed, so this is
+  recorded as implementation complete rather than accepted, and Phase 7A
+  remains active pending that playtest.
 
 League News, offseason progression/League context, Awards, Save/Persistence,
 records, shot-selection investigation, and minor presentation polish remain
