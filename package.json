@@ -28,6 +28,8 @@
     "sim:player-profile-specialization": "node --import tsx scripts/inspectPlayerProfileSpecialization.ts",
     "sim:player-profile-candidate-a": "node --import tsx scripts/inspectPlayerProfileRedistributionCandidateA.ts",
     "sim:player-profile-candidate-a-season": "node --import tsx scripts/inspectPlayerProfileCandidateASeason.ts",
+    "sim:overall-candidate-b": "node --import tsx scripts/inspectOverallCandidateB.ts",
+    "sim:overall-candidate-b-season": "node --import tsx scripts/inspectOverallCandidateBSeason.ts",
     "sim:postseason": "node --import tsx scripts/inspectPostseason.ts",
     "sim:tournament-balance": "node --import tsx scripts/inspectTournamentBalance.ts",
     "sim:dynasty-foundation": "node --import tsx scripts/inspectDynastyFoundation.ts",

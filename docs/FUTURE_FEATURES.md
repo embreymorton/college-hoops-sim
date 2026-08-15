@@ -149,6 +149,20 @@ quickly, how top-two-minus-bottom-two spread changes, and how outcomes differ
 for low versus high POT runway (for example 90/91, 83/94, and 75/92 OVR/POT).
 This records a compatibility question, not a diagnosed Development defect.
 
+Any future OVR candidate must audit Development headroom by comparing `POT −
+canonical OVR` with `POT − candidate OVR` for all Players, elite cohorts,
+Candidate A selections, Recruits, and high-POT developmental Players. Candidate
+adjustment may legitimately consume some runway for recognized specialists,
+but it must not broadly compress career growth opportunity. This does not alter
+or diagnose Development V1.
+
+Player Identity does not depend on a full OVR redesign. Profile generation,
+identity retention through Development, and targeted statistical translation
+can still make Players more recognizable and worth following while canonical
+OVR remains active. A safe imperfect rating is preferable to destabilizing
+mature downstream systems solely to perfect every unusual Player's displayed
+value.
+
 ### Postseason Player Stats
 
 Tournament `GameResult` values already retain full `PlayerGameStats`. Future pure projections could provide Postseason Player totals/averages, Program postseason Player tables, and Tournament leaders without changing regular-season `PlayerSeasonStats` semantics.

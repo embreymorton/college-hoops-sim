@@ -1,0 +1,17 @@
+import { calculateOverall, convertRotationV0ToV1 } from '../src/engine'
+import { generateRegularSeasonSchedule } from '../src/schedule'
+import { deriveNationalPlayerLeaders, deriveSeasonPlayerStats, deriveSeasonTeamStats, initializeSeason, simulatePendingGamesThroughRound, type NationalLeaderCategory } from '../src/season'
+import { initializeUniverse, UNIVERSE_V0, type InitializedUniverse } from '../src/universe'
+import { applyPlayerProfileRedistributionCandidateAV2 } from './playerProfileRedistributionCandidateAV2'
+import { calculateOverallCandidateB } from './overallCandidateB'
+import { generateOverallCandidateBRotation } from './overallCandidateBRotation'
+import { deriveLeaderSeparation, summarize } from './playerStatisticalIdentityMetrics'
+
+const SEASONS=Number(process.env.SEASONS??60)
+const CATEGORIES:readonly NationalLeaderCategory[]=['points','rebounds','assists','steals','blocks']
+const observations:Record<string,number[]>={}
+for(const scope of ['current','candidate']){for(const category of CATEGORIES){observations[`${scope}:leader:${category}`]=[];observations[`${scope}:separation:${category}`]=[]}observations[`${scope}:teamPoints`]=[];observations[`${scope}:mpg`]=[]}
+function experimentalUniverse(base:InitializedUniverse, candidate:boolean):InitializedUniverse{return{...base,programs:base.programs.map((state)=>{const team={...state.team,roster:state.team.roster.map((player)=>applyPlayerProfileRedistributionCandidateAV2(player).player)};const natural=generateOverallCandidateBRotation(team,candidate?calculateOverallCandidateB:calculateOverall);return{...state,team,rotation:convertRotationV0ToV1(team,natural)}})}}
+for(let index=0;index<SEASONS;index+=1){const prefix=`overall-candidate-b:season:${String(index+1).padStart(3,'0')}`;const base=initializeUniverse(UNIVERSE_V0,`${prefix}:universe`);const schedule=generateRegularSeasonSchedule({universe:UNIVERSE_V0,seed:`${prefix}:schedule`});for(const scope of ['current','candidate'] as const){const season=simulatePendingGamesThroughRound({season:initializeSeason({universe:UNIVERSE_V0,initializedUniverse:experimentalUniverse(base,scope==='candidate'),schedule,seasonNumber:1}),throughRound:schedule.roundCount,simulationSeed:`${prefix}:simulation`});const leaders=deriveNationalPlayerLeaders(season);for(const category of CATEGORIES){const values=leaders[category].map((row)=>row.value);observations[`${scope}:leader:${category}`]!.push(values[0]!);observations[`${scope}:separation:${category}`]!.push(deriveLeaderSeparation(values).leaderMinusTopTenAverage)}observations[`${scope}:teamPoints`]!.push(...deriveSeasonTeamStats(season).map((row)=>row.pointsPerGame));observations[`${scope}:mpg`]!.push(...deriveSeasonPlayerStats(season).filter((row)=>row.gamesPlayed>=12).map((row)=>row.minutesPerGame))}}
+function compare(key:string){const baseline=summarize(observations[`current:${key}`]!);const candidate=summarize(observations[`candidate:${key}`]!);return{baseline,candidate,percentMovement:baseline.mean===0?0:(candidate.mean-baseline.mean)/baseline.mean}}
+console.log(JSON.stringify({seasons:SEASONS,rotationModel:'Candidate A V2 attributes; exact natural-position Rotation V0 allocator with injected OVR, converted to valid V1 without the contribution-based secondary-position pass.',leaders:Object.fromEntries(CATEGORIES.map((category)=>[category,compare(`leader:${category}`)])),separation:Object.fromEntries(CATEGORIES.map((category)=>[category,compare(`separation:${category}`)])),teamPoints:compare('teamPoints'),mpg:compare('mpg')},null,2))

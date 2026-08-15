@@ -1577,10 +1577,10 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B.2B OVR Candidate B paired experiment using accepted experimental
-   Candidate A V2 input; no production activation
-2. Preserve elite scarcity and compare bounded identity candidates without
-   bundling Recruit Details or League News
+1. Phase 7B.2B.1 bounded OVR scale/premium design; Candidate A V2 parameters
+   remain fixed as accepted experimental input
+2. Decide whether one deterministic scale-safe v2 experiment is convincing
+   enough to run; preserve the explicit structural-reject exit
 3. Program records / deeper statistical history
 4. Shot-selection diagnostic and minor Player Details polish
 
@@ -1599,7 +1599,8 @@ this audit.
 
 Awards, offseason progression visibility, and Save/Persistence have stronger
 future evidence but are intentionally not promoted into the active horizon.
-Phase 7B remains unassigned.
+Phase 7B remains active; League News and Recruit Details are not promoted ahead
+of its bounded Player Identity checkpoint.
 
 This ordering remains playthrough-driven and may change with new evidence.
 
@@ -1726,3 +1727,144 @@ Before any final activation, Phase 7B.2D must characterize whether unchanged
 Player Development V1 preserves strengths, weaknesses, spread, attribute rank
 order, and identity across different POT-runway careers. No Development problem
 is asserted and no Development behavior changed here.
+
+## Phase 7B.2B — OVR Candidate B — REJECT (2026-08-14)
+
+The preregistered formula began with unrounded current OVR. Its best three
+non-Stamina attributes required a third rating of 88; it added
+`0.45 × max(0, top-three mean − current raw − 2)`, capped at +5. Position-core
+support pools received +0.5 completeness at all-80 or +0.25 at all-75. Each
+support point below 65 cost 0.10, capped at -2. No post-result normalization
+or parameter adjustment was performed.
+
+Controlled behavior was promising: offense-first SG `86→89`, two-way SG
+`91→92`, playmaking SG `85→89`, defensive SG `83→83`, traditional C `90→93`,
+rim-running C `89→93`, stretch C `85→87`, playmaking C `86→88`, offense-first
+PG `89→91`, point-forward SF/PF `85→88` / `86→88`, defense/rebound SF `84→87`,
+and complete superstar `94→95`. One- and two-skill extremes stayed 66–76.
+
+On 250 Universes / 96,000 Players, four-population 90+/95+/97+ counts were:
+
+| Population | 90+ | 95+ | 97+ per Universe |
+| --- | ---: | ---: | ---: |
+| Baseline + current | 2.880 | 0.280 | 0.040 |
+| Baseline + Candidate B | 6.084 | 0.724 | 0.156 |
+| Candidate A V2 + current | 2.852 | 0.280 | 0.040 |
+| Candidate A V2 + Candidate B | 6.360 | 0.760 | 0.156 |
+
+Combined mean/median remained `69.98/70` versus `70.44/70`, masking severe
+upper-tail inflation. Candidate B created 877 new 90+ and 120 new 95+ Players,
+with no elite demotions. New 90+ classification was 691 complete, 142
+conventional specialists, 9 unusual-secondary, and 35 ordinary. Complete 90+
+Players moved median +2 with zero large demotions. Candidate A selected Players
+moved mean +0.46, so the failure was broad valuation inflation rather than only
+Candidate A synergy. Every position exceeded the 0.10-per-Universe elite gate.
+
+The 500-class / 80,311-Recruit audit moved combined 90+ recruits `142→476`.
+OVR Candidate B caused 113 upward and 45 downward crossings of the frozen POT
+eligibility boundary; eligibility moved 10.25%→10.32%. POT mean moved only
+`76.427→76.480`, invariants passed, and 5★/4★ overlap was 95.70%/95.89%, but
+all-player gap-13+ share moved 34.73%→38.02%, exceeding its +3pp gate. Mean
+absolute rank movement was 1.89 (P90 5, max 28).
+
+On 8,000 teams, the exact natural-position allocator with Candidate B scoring
+had 97.46% starter and 98.89% rotation-member overlap. Team Strength moved
++0.076 with rank correlation .99989. A 60-Season proxy kept leader means within
+2.3%, Team scoring +0.02%, and MPG +0.91%, but Steals Top-1/Top-10 separation
+moved +7.61%, failing the 5% gate. This proxy deliberately omitted Rotation
+V1's unchanged contribution-based secondary-position pass.
+
+Disposition: **REJECT**. Candidate B had useful controlled semantics but an
+uncalibrated elite scale. Production OVR remains unchanged, Candidate A V2
+remains experimental, and 7B.2C does not begin. Next is a narrow transparent
+scale-calibration design diagnostic. Player Development remains unchanged; it
+uses production OVR for headroom/targets/POT caps, so hypothetical Candidate B
+activation would require explicit compatibility work before 7B.2D.
+
+## Phase 7B checkpoint reset after Candidate B v1 — ACTIVE (2026-08-14)
+
+### Causal diagnosis
+
+Candidate B v1 did not isolate specialization. Comparing its best-three mean
+with a position-weighted OVR allowed complete Players' strongest skills to sit
+well above their weighted average, while the separate completeness bonus then
+rewarded that same group again. Of 877 new 90+ Players, 691 (78.8%) were
+complete and there were no elite demotions. The combined mean moved only
+`69.98→70.44`, so lower ordinary-profile penalties masked one-way upper-tail
+inflation. Candidate A V2 was not causal: baseline profiles alone moved from
+`2.880→6.084` 90+ Players per Universe.
+
+The causal finding is broader than “too much inflation”: the premium targeted
+naturally strong complete near-elites instead of selectively correcting
+specialized profiles undervalued by the linear formula. Candidate B v1 still
+showed that several controlled multi-strength specialists can be recognized,
+one-/two-skill exploits rejected, complete stars protected, and Rotation/Team
+Strength overlap largely preserved. Those lessons remain valid even though the
+formula is rejected and must not be activated or retuned in place.
+
+### Confirmed versus unresolved
+
+Confirmed evidence now spans three layers:
+
+- shared talent generation contributes to flatter elite profiles;
+- canonical linear weighted OVR contributes to specialization suppression;
+- strong positional translation baselines contribute to cross-position
+  rigidity, with Steals showing the clearest high-end compression; and
+- Candidate A V2 safely creates more distinct profiles, while Candidate B v1's
+  premium targeting and upper-tail scale fail structurally.
+
+Still unresolved:
+
+- whether a deterministic, scale-safe specialization correction exists;
+- whether unchanged Development V1 preserves specialized identities;
+- whether targeted Passing/Steals changes remain necessary after final profile
+  design; and
+- whether the final Player Identity V1 feels meaningfully more recognizable,
+  varied, and worth following in manual play.
+
+Candidate B v1's failure does not invalidate Player Identity or Candidate A V2.
+Production generation and canonical `calculateOverall()` remain authoritative;
+Candidate A V2 is **accepted as experimental input**, with parameters fixed
+while OVR is evaluated.
+
+### Bounded continuation and OVR exit rule
+
+The next milestone is **7B.2B.1 — OVR Scale & Premium Calibration Design**.
+Its preferred direction is a baseline-anchored, small, position-sensitive
+specialization correction layered on current canonical OVR. That is a question
+to investigate, not an accepted formula. Ordinary and already-correct complete
+Players should receive near-zero movement; legitimate multi-strength
+specialists may receive bounded positive value; one-skill extremes must not.
+
+Population results may calibrate a fixed formula, but dynamic per-Universe
+normalization is rejected. Identical attributes and position must always yield
+identical OVR; generation must not rescale Players afterward to hit target
+counts.
+
+Only if 7B.2B.1 produces a convincing design may one **7B.2B.2 Candidate B v2
+paired experiment** run. It must classify positive movement among complete,
+conventional-specialist, unusual-secondary, and ordinary Players; report
+85–89→90+, 90–94→95+, and 95–96→97+ transitions; protect complete superstars
+without broadly promoting complete near-elites; recognize locked legitimate
+specialists; retain one-skill rejection; and compare `POT − candidate OVR`
+against canonical Development headroom.
+
+Decision rule:
+
+- **ACCEPT:** proceed to the Candidate A V2 + OVR v2 combined ecosystem audit.
+- **WATCH with one narrow isolated issue:** permit at most one tightly scoped
+  follow-up without reopening Candidate A.
+- **STRUCTURAL REJECT:** end OVR redesign for Phase 7B V1, retain canonical OVR,
+  and do not automatically schedule Candidate B v3/v4.
+
+The structural-reject fallback is Candidate A V2 profile generation with
+current OVR, followed by Development Identity Retention characterization,
+evidence-supported Passing and Steals experiments, and manual Player Identity
+playtesting. Rebounding remains deferred until enough real profiles exist;
+Blocks remains WATCH; scoring and current role-aware MPG remain protected.
+
+Phase 7B remains active. Its success criterion is recognizable, varied Players
+worth following—not perfect displayed value for every specialist. A safe,
+imperfect canonical OVR is preferable to indefinite redesign across Recruiting,
+Recruit POT, rankings/stars, Rotation, Team Strength, Development, and stats.
+No production behavior changed at this checkpoint.

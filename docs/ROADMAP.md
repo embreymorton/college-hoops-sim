@@ -611,32 +611,29 @@ population before changing any generator or ranking behavior.
   passing, conventional PF/C rebounding, role-aware minutes, Team scoring, and
   all non-targeted box-score rates.
 
-#### Minimal V1 shape and experiment sequence
+#### Minimal V1 shape and bounded experiment sequence
 
-Do not ship all identity layers together without attribution. Use five bounded
-steps, each on identical seeds:
+Do not ship all identity layers together without attribution. Profile
+Generation Candidate A V2 is now accepted experimental input. OVR receives one
+bounded redesign path: 7B.2B.1 design, then 7B.2B.2 only if that design is
+convincing. An accepted v2 advances with Candidate A V2 to 7B.2C; a structural
+reject defers OVR redesign and keeps canonical `calculateOverall()`.
 
-1. **7B.2A — Profile Generation Candidate A Paired Experiment — NEXT.** Compare
-   baseline and budget-neutral redistribution on the `250` fresh-Universe
-   sample. Production remains unchanged.
-2. **7B.2B — OVR Candidate B Paired Experiment.** Evaluate current versus
-   core/support/weakness valuation on both fixed baseline and 7B.2A candidate
-   Players. No ranking or production activation.
-3. **7B.2C — Combined Profile + OVR Ecosystem Audit.** Only if both isolated
-   candidates pass, measure Recruiting rank/stars, Candidate B POT-gap
-   compatibility, Rotation/Team Strength, and elite scarcity together.
-4. **7B.2D — Development Identity Retention Characterization.** Run accepted
-   specialized profiles through unchanged Player Development V1 over multiple
-   Seasons; measure strength/weakness rank, spread, and POT-runway interaction.
-5. **7B.3 — Targeted Translation Paired Experiment.** Test Passing escape and
-   Steals separation as independently switchable candidates on accepted profile
-   populations. Defer Rebounding and Blocks unless new evidence earns them.
+Both branches then require **7B.2D — Development Identity Retention
+Characterization**, running the accepted specialized profiles through unchanged
+Development V1 and measuring strength/weakness rank, profile spread, attribute
+ordering, and POT-runway interaction. **7B.3 — Targeted Translation Paired
+Experiment** may then test Passing escape and Steals separation independently.
+Rebounding remains deferred until real profile supply supports it; Blocks
+remains WATCH. Translation stays separate because it has a distinct Game Sim
+and statistical-ecosystem risk.
 
-The smallest coherent eventual V1 is accepted Generation A + accepted OVR B +
-only the independently accepted Passing and/or Steals candidate. Profile and
-OVR work must be combined before activation because current OVR undervalues the
-new shapes; translation should not be bundled into that activation because it
-has a distinct Game Sim/statistical ecosystem risk.
+The smallest coherent Player Identity V1 may therefore be Candidate A V2 with
+current production OVR plus only independently accepted translation work. Some
+specialists may remain slightly undervalued; that is preferable to destabilizing
+Recruiting, POT, rankings/stars, Rotation, Team Strength, Development, and
+statistics. Phase 7B succeeds when Players are more recognizable, varied, and
+worth following—not when every specialist receives a theoretically perfect OVR.
 
 #### Precommitted experiment guardrails
 
@@ -688,7 +685,7 @@ results are inspected.
 - Re-run Recruit OVR/POT/rank/star distributions and every accepted Recruit POT
   Candidate B gate without changing its finalizer. Require no negative POT gaps,
   overall POT mean movement within `0.30`, and at least `85%` 5-star membership
-  overlap with paired baseline unless a stricter existing Candidate B gate
+  overlap with paired baseline unless a stricter existing Recruit POT Candidate B gate
   governs.
 - Report AI target/commit composition by OVR band. Do not activate if ranking or
   star changes create unmeasured Recruiting balance movement.
@@ -717,7 +714,7 @@ results are inspected.
 - **WATCH / EXPAND:** all safety gates pass but rare-profile counts or targeted
   translation evidence are too sparse; expand deterministic samples without
   changing the candidate.
-- **REJECT:** any determinism, elite-scarcity, positional-identity, Candidate B,
+- **REJECT:** any determinism, elite-scarcity, positional-identity, Recruit POT Candidate B,
   POT, Recruiting, Team Strength, score/winner, or broad-stat-inflation guardrail
   fails. Do not retune gates around the observed result.
 
@@ -725,7 +722,7 @@ Likely future production surfaces are `playerGenerator.ts` after raw attribute
 generation, a pure identity-variation helper under `engine/generation`,
 `overall.ts`, and the counting-stat rate construction in `boxScore.ts`.
 Diagnostic consumers include the two accepted Player identity scripts plus
-Recruit Talent, Rotation, Team Strength, long-run Dynasty, and Recruiting
+Recruit Talent, Rotation, Team Strength, long-run Dynasty, and Recruit POT
 Candidate B audits. No production file changed in this design review.
 
 ### Phase 7B.2A — Profile Generation Candidate A Paired Experiment — COMPLETE / WATCH
@@ -762,6 +759,63 @@ Retention Characterization** must test accepted specialized profiles through
 unchanged Player Development V1 before production activation. It will measure
 strength/weakness rank retention, spread retention, and POT-runway interaction;
 it does not presume Development is currently defective.
+
+### Phase 7B.2B — OVR Candidate B Paired Experiment — COMPLETE / REJECT
+
+The single preregistered core/support/weakness formula recognized the locked
+specialists, protected complete stars, and rejected one-skill exploits, but
+failed population calibration. On Candidate A V2 profiles it raised 90+ supply
+from 2.852 to 6.360, 95+ from 0.280 to 0.760, and 97+ from 0.040 to 0.156 per
+Universe. All five positions exceeded the positional elite-movement gate.
+Recruit POT gap-13+ share also increased more than its accepted limit, and an
+OVR-driven Rotation proxy pushed Steals separation +7.61%. The formula is
+rejected and remains diagnostic-only; production `calculateOverall()` is unchanged.
+
+Candidate B v1 is **REJECTED / DO NOT ACTIVATE**. Its useful conceptual lesson
+is retained: multi-strength specialists can be recognized, one-/two-skill
+exploits can be rejected, and complete stars can be protected. Do not keep
+tuning v1 constants; the next design must fix premium targeting and scale.
+
+### Phase 7B.2B.1 — OVR Scale & Premium Calibration Design — NEXT / BOUNDED
+
+Investigate a baseline-anchored specialization correction rather than replacing
+the calibrated scale:
+
+```text
+Candidate OVR = current canonical OVR + small bounded profile-sensitive adjustment
+```
+
+This is a preferred design direction, not an accepted formula. The adjustment
+should be fixed, deterministic, position-sensitive, near zero for ordinary and
+already-correct complete Players, positive mainly for legitimate multi-strength
+specialists, and unable to promote one-skill extremes. Population evidence may
+calibrate a fixed formula, but dynamic per-Universe normalization is prohibited:
+the same position and attributes must always produce the same OVR, with no
+post-generation rescaling to target elite counts.
+
+Any 7B.2B.2 experiment must classify positive movement as complete,
+conventional specialist, unusual-secondary, or ordinary; report 85–89→90+,
+90–94→95+, and 95–96→97+ transitions rather than relying on global averages;
+verify complete near-elite neutrality, complete-superstar protection,
+multi-strength specialist recognition, and one-skill rejection; and compare
+Development headroom (`POT − candidate OVR`) with canonical headroom without
+changing Development V1.
+
+Exactly one bounded v2 path is authorized. If the design is convincing,
+**7B.2B.2 — OVR Candidate B v2 Paired Experiment** may run with Candidate A V2
+parameters frozen. Its decision branches are:
+
+- **ACCEPT:** proceed to 7B.2C combined Generation + OVR ecosystem audit.
+- **WATCH with one narrow isolated issue:** allow at most one tightly scoped
+  follow-up; do not reopen Candidate A simultaneously.
+- **STRUCTURAL REJECT:** stop OVR work for Phase 7B V1, preserve canonical OVR,
+  and do not automatically schedule Candidate B v3/v4.
+
+The structural-reject fallback is Candidate A V2 + current production OVR →
+7B.2D Development Identity Retention → evidence-supported Passing/Steals work →
+manual Player Identity playtesting. Phase 7B remains active on either branch.
+OVR accuracy matters, but a safe imperfect canonical rating must not block the
+broader goal of recognizable, varied Players worth following.
 
 League News, Recruit Details, Awards, Save/Persistence, records, shot-selection
 investigation, and minor presentation polish remain separate observed/later

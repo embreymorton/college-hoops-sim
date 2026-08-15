@@ -91,10 +91,15 @@ Recruiting and roster construction continue using each Player's one natural
 position. Rotation eligibility affects floor minutes only; it does not satisfy
 another position's Recruiting opening or Offer capacity.
 
-### Recruit Talent Distribution V1 + Candidate B POT Finalization
+### Recruit Talent Distribution V1 + Recruit POT Candidate B Finalization
+
+> **Candidate B terminology:** **Recruit POT Candidate B** is the accepted,
+> frozen production Recruit POT finalizer described here. **OVR Candidate B
+> v1** is the rejected Phase 7B experimental Overall-rating formula. They are
+> separate candidate tracks and must not be conflated.
 
 Recruit Talent V1 uses partially independent readiness and raw ceiling. The
-accepted Candidate B finalizer is now production: when raw ceiling is at most
+accepted Recruit POT Candidate B finalizer is now production: when raw ceiling is at most
 OVR and OVR is at least 78, `35%` preserve zero gap and the remainder receive
 `+2..6` at OVR 78–84, `+2..5` at 85–89, or `+1..3` at 90+, capped at 99.
 Natural higher ceilings and sub-78 profiles retain their prior behavior.
@@ -416,58 +421,61 @@ remains closed.
 10. Feed meaningful manual-play evidence back into `PLAYTESTING.md`.
 
 Rotation V1, Tournament seeding, Player Details + Development History UX,
-Postseason Hub + Season-Complete Presentation Polish (6E.10), Recruiting
-Battles + Commitment Visibility (6E.12), and Recruiting Information
-Architecture + Visual Hierarchy Polish (6E.12C) are accepted/frozen; Game Sim
-remains closed. Followed Players V1 is accepted/frozen. The Elite Recruit
-POT-Gap Characterization, paired Candidate B experiment, and production
-activation are complete. On
-identical 500-class production seeds (`80,453` Recruits), the experimental
-bounded-runway finalizer passed all `22/22` precommitted gates: 5★ zero gap
-moved `70.54% → 21.68%`, 80+ moved `86.07% → 30.94%`, and 85+ moved
-`91.75% → 32.75%`; attributes/OVR remained exact, 5★ membership overlap was
-`88.02%`, and overall POT mean rose only `0.255`. Deterministic replay was
-byte-identical. Production activation then reproduced the accepted Candidate B
-result exactly by Recruit ID for attributes, OVR, final POT, rank, and stars.
-Candidate B is now the production default and Recruit POT-gap calibration is
-**COMPLETE / ACCEPTED / FROZEN**. Phase 7B remains deliberately unstarted and
-unassigned. A targeted production-faithful diagnostic did not reproduce the
-reported Tournament completion progression escape-path failure: canonical
-Postseason eligibility survives League, Coaching, and Recruiting navigation,
-the correct lifecycle action remains recoverable, and focused regression
-coverage now protects both stepwise and Super Sim completion paths. No
-production change was required. Player Statistical Identity + Superstar
-Separation characterization is also complete: fresh Season 1 Universes contain
-elite conventional stars, current role-aware minutes partly compress raw
-headline values, and cross-position identities are limited by both profile
-supply and strong position baselines. No Player, Rotation, or stat behavior was
-changed. Player Statistical Identity / Variability V1 is the selected design
-direction, with Recruit Identity and League News still separate alternatives.
-The final Elite Player Profile / OVR Specialization diagnostic is complete:
-shared talent generation flattens elite profiles, and position-weighted OVR
-adds meaningful specialization limits even though it discounts many
-position-irrelevant attributes. Elite scarcity remains `2.88` 90+, `0.28` 95+,
-and `0.04` 97+ Players per fresh Universe. No production behavior changed.
-Phase 7B.1B design review is complete and selects a
-layered experiment path: rare OVR-budget-neutral profile redistribution first,
-then a separate core/support/weakness OVR experiment, then a combined
-Recruit/POT/Rotation/Team Strength audit, and only afterward independently
-tested Passing and Steals translation candidates. Rebounding and Blocks remain
-deferred; scoring, role-aware minutes, conventional positional identity, and
-Recruit POT Candidate B remain protected. Phase 7B.2A tested one preregistered
-Profile Generation Candidate A and ended WATCH. Determinism, ±1 OVR, scarcity,
-position aggregates, Recruit Candidate B, and Team Strength stayed healthy,
-but the 95+ tail barely changed, tradeoffs were repetitive/severe, and Steals
-leader separation exceeded its guardrail. Production generation is unchanged.
-Next is a narrow Candidate A weakness-distribution iteration; 7B.2B has not begun.
-That iteration (7B.2A.1) is now complete and **ACCEPTED for experimental use**.
-V2 restricts weakness funding to a semantic two-channel pair and shrinks rather
-than exhausting the budget through unrelated skills. It materially eliminated
-multi-floor profiles and brought Steals separation within 5%, while all safety
-gates remained healthy. Candidate A is still not production-active. The exact
-next milestone is 7B.2B, using V2 as experimental input. A later 7B.2D must
-characterize whether unchanged Player Development V1 retains specialized
-identity before any combined system is activated.
+Postseason presentation, Recruiting information architecture, Followed Players
+V1, and Recruit POT Candidate B are accepted/frozen; Game Sim remains closed.
+The Tournament completion escape-path diagnostic did not confirm a production
+defect, and focused regression coverage protects stepwise and Super Sim
+completion. Detailed evidence and chronology live in `PLAYTESTING.md` and
+`ROADMAP.md`.
+
+## Active Phase 7B checkpoint
+
+Phase 7B — Player Statistical Identity / Variability — is **ACTIVE**.
+Characterization established that shared Player generation flattens elite
+profiles, canonical linear OVR suppresses some legitimate specialization, and
+strong positional translation baselines limit rare statistical identities.
+Scoring is broadly healthy, current role-aware minutes remain accepted, Passing
+and Steals have evidence for later targeted work, Rebounding is deferred, and
+Blocks remains WATCH.
+
+Profile Generation Candidate A V2 is **ACCEPTED AS EXPERIMENTAL INPUT** with
+parameters fixed for current OVR evaluation. It improved profile variety while
+preserving ±1 OVR neutrality, elite scarcity, positional means, Recruiting,
+Recruit POT Candidate B, Team Strength, and broad statistical stability. It is
+not production-active; canonical Player generation remains unchanged and must
+not be reopened without new evidence.
+
+OVR Candidate B v1 is **REJECTED / DO NOT ACTIVATE / DO NOT RETUNE IN PLACE**.
+It recognized several multi-strength specialists, rejected one-/two-skill
+exploits, and protected complete stars, but its premium broadly promoted
+naturally strong complete near-elites instead of selectively correcting
+undervalued specialists. It raised baseline 90+ supply from `2.880→6.084` per
+Universe and Candidate A V2 supply to `6.360`; 691 of 877 new 90+ promotions
+were complete Players. Candidate A was therefore not the cause. Stable global
+mean/median masked failed 90+/95+/97+ tails, so future experiments must report
+85–89→90+, 90–94→95+, 95–96→97+, and reverse transitions.
+
+Production `calculateOverall()` remains unchanged and authoritative. OVR has a
+large downstream blast radius through Recruit rank/stars, Recruit POT Candidate
+B eligibility, Rotation, Team Strength, Development headroom/progression, and
+statistics through role/minute decisions. The exact and only current next
+milestone is **7B.2B.1 — OVR Scale & Premium Calibration Design**. Its design
+direction—not an accepted formula—is canonical OVR plus a small bounded,
+deterministic, position-sensitive specialization correction that is near zero
+for ordinary and already-correct complete Players and cannot elevate one-skill
+extremes. Dynamic per-Universe normalization is prohibited: identical position
+and attributes must always produce identical OVR.
+
+If 7B.2B.1 is convincing, one 7B.2B.2 OVR Candidate B v2 paired experiment may
+follow. ACCEPT advances to 7B.2C; a narrow WATCH may earn at most one isolated
+follow-up; structural REJECT ends OVR redesign for Phase 7B V1 with no automatic
+v3/v4. The fallback is Candidate A V2 + canonical OVR → 7B.2D Development
+Identity Retention → targeted Passing/Steals work → manual Player Identity
+playtesting. Development V1 remains unchanged/frozen; future OVR work must
+compare `POT − canonical OVR` with `POT − candidate OVR`, and 7B.2D must test
+strength/weakness retention, attribute ordering, spread, and POT-runway effects
+without presuming Development is defective. Phase 7B succeeds through
+recognizable Players worth following, not theoretically perfect OVR.
 
 ## Documentation map
 
