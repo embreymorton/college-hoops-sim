@@ -436,10 +436,14 @@ reported Tournament completion progression escape-path failure: canonical
 Postseason eligibility survives League, Coaching, and Recruiting navigation,
 the correct lifecycle action remains recoverable, and focused regression
 coverage now protects both stepwise and Super Sim completion paths. No
-production change was required. The next task is the characterization-only
-Player Statistical Identity + Superstar Separation diagnostic. Phase 7B
-selection follows that evidence; League News remains one candidate rather than
-the automatic next milestone.
+production change was required. Player Statistical Identity + Superstar
+Separation characterization is also complete: fresh Season 1 Universes contain
+elite conventional stars, current role-aware minutes partly compress raw
+headline values, and cross-position identities are limited by both profile
+supply and strong position baselines. No Player, Rotation, or stat behavior was
+changed. Phase 7B remains unassigned pending a design review; Player
+Statistical Identity / Variability V1 is now the strongest evidence-supported
+candidate, with Recruit Identity and League News still separate alternatives.
 
 ## Documentation map
 

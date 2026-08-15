@@ -492,15 +492,27 @@ playtest incident was not reproduced, no production defect was confirmed, and
 no production behavior changed. Focused regression coverage now protects the
 intended navigation contract.
 
-### Player Statistical Identity + Superstar Separation Characterization — NEXT
+### Player Statistical Identity + Superstar Separation Characterization — COMPLETE / MIXED
 
-1. **Next diagnostic:** characterize multi-Season Player Statistical Identity /
-   Superstar Separation across leader distributions, elite separation,
-   single-game extremes, attributes, positions, and defensive production. This
-   is measurement only; no target, tuning, or production change is authorized.
-2. **Then reassess Phase 7B:** choose deliberately among evidence-supported
-   statistical variability, Recruit identity/details/following, League News /
-   Round Recap, and offseason League context.
+The canonical production-path diagnostic sampled `96,000` Players across `250`
+fresh Season 1 Universes and `60` complete Seasons (`23,040` games). Fresh
+Universes regularly generate elite conventional stars, but rare cross-position
+profile supply is limited. Current approximately-36-MPG leaders soften raw
+extremes; attributes translate meaningfully within position; and strong
+position baselines make national assist, rebound, and block identities nearly
+position-exclusive. Scoring and conventional rebounding were broadly healthy,
+steal identity showed the clearest translation compression, and cross-position
+identity was both generation- and translation-limited. No production behavior
+changed.
+
+### Phase 7B Selection / Design Review — NEXT / UNASSIGNED
+
+Review the evidence-supported **Player Statistical Identity / Variability V1**
+direction against Recruit Identity / Recruit Details V1, League News / Round
+Recap, and additional diagnostic work. The Statistical Identity direction now
+has the strongest simulation evidence, but it is a recommendation—not an
+assigned milestone—and requires explicit design/calibration scope before any
+generation or translation change.
 
 Phase 7B remains unassigned. League News is no longer automatically the
 strongest next milestone. Awards, Save/Persistence, records, shot-selection

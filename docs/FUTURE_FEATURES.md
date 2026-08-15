@@ -93,30 +93,26 @@ This direction could strengthen several separate future features:
   pass-first guards, scoring PGs, and playmaking Centers may eventually produce
   differently for evidence-supported reasons.
 
-Diagnose before designing or tuning. Candidate multi-season characterization
-includes APG/RPG leaderboard position shares; highest C/PF APG and PG/SG RPG;
-within-position attribute/production correlations; frequency of high-
-Playmaking bigs and high-Rebounding guards; height/RPG relationship; unusual
-height-position combinations; and cross-position outlier frequency/magnitude.
-Current generation uses position-specific height and attribute profiles, while
-box-score assists/rebounds use position baselines plus attributes and minutes;
-height directly affects blocks but not rebounds. A diagnostic should determine
-whether any rigidity comes from profile supply, statistical translation, or
-both before either frozen system is reopened.
+The completed deterministic characterization found a mixed result. Fresh
+Season 1 Universes regularly contain elite multi-category Players, and extreme
+attributes translate inside conventional positions. Cross-position profile
+supply is sparse, however, and strong position-specific per-40 baselines keep
+all sampled Top-10 assists at PG, all Top-10 rebounds at PF/C, and nearly all
+Top-10 blocks at C. Current approximately-36-MPG leaders also reduce raw
+extremes relative to historical 40-MPG stories. See `PLAYTESTING.md` for the
+full method and evidence.
 
 Tentative conceptual sequencing is:
 
 ```text
 Accepted Followed Players V1
-→ Player Statistical Identity diagnostic (characterization only)
-→ locate profile-generation vs statistical-translation constraints
-→ evidence-supported variability/identity candidates, if earned
+→ Player Statistical Identity diagnostic (COMPLETE — MIXED)
+→ deliberate Statistical Identity / Variability V1 design review, if selected
 → derived archetype presentation and News/Awards/history amplification later
 ```
 
-The characterization step is now the next active diagnostic in `ROADMAP.md`.
-All later variability, archetype, tuning, and presentation steps remain future
-and unselected.
+No tuning target or implementation is selected. All variability, archetype,
+tuning, and presentation steps remain future pending Phase 7B review.
 
 ### Postseason Player Stats
 

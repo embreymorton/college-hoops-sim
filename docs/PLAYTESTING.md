@@ -787,17 +787,19 @@ starter-minute realism only with genuinely new, repeated evidence.
 
 One Center attempted roughly ten three-pointers and shot poorly in a game. One game is not evidence of a bug. A future diagnostic should determine whether 3PA sufficiently reflects Shooting and position, whether low-Shooting bigs attempt too many threes, or whether this was a plausible poor game from a capable shooter. Do not tune Game Simulation yet.
 
-## Player Statistical Identity / Superstar Separation — INVESTIGATING / NEXT DIAGNOSTIC
+## Player Statistical Identity / Superstar Separation — CHARACTERIZED / MIXED
 
 The latest multi-Season manual playthrough found production too homogeneous and
 produced few obvious national superstars. Representative leader levels were
 roughly `7.3 APG`, `1.7 SPG`, and high-`2s BPG`; rebounding felt plausible.
 Earlier accepted play also produced counterexamples such as a roughly `25 PPG`
-scorer, higher assist seasons, and Paul Martin's 51-point game. This is therefore
-not evidence of a hard statistical ceiling or a confirmed Game Sim defect. The
-open question is whether elite frequency, distribution tails, and separation
-from the rest of the leaderboard are strong enough to create memorable Player
-identities.
+scorer, roughly `9 APG`, and Paul Martin's 51-point game. Those stories occurred
+under the earlier minutes environment, when top Players commonly received about
+40 MPG. They prove the earlier stat model could create extreme raw outcomes,
+but they are not direct evidence that the current accepted role-aware Rotation
+environment produces them at an appropriate frequency. Preserve the stories,
+but do not compare their raw per-game figures directly with current production
+without this minutes qualification.
 
 Current production architecture plausibly reinforces positional consistency at
 multiple stages. Player generation uses position-specific height ranges and
@@ -809,27 +811,103 @@ are impossible, only that a diagnostic should characterize how much individual
 profile can overcome the positional prior before any frozen generation or box-
 score system is reconsidered.
 
-The next diagnostic should characterize multiple Seasons without changing
-production behavior, selecting targets, or tuning formulas. Measure:
+The deterministic characterization used the canonical production path and no
+synthetic Player population: `250` fresh Season 1 Universes (`96,000` Players)
+from `player-statistical-identity-v1:generation:001..250`, plus `60` complete
+Season 1 simulations (`23,040` games; `20,222` qualifying Player-seasons) from
+the matching `season:001..060:{universe,schedule,simulation}` namespaces. A
+repeat produced the identical SHA-256 output
+`6214655d4904dd30a4dee026c1cce967bdb802da98b382a83c014252dd3b0fa0`.
+Diagnostic-only profile thresholds came from the sampled population's own P90
+and P95 attribute distributions; no label or threshold entered production.
 
-- leader distributions for PPG, RPG, APG, SPG, and BPG;
-- Top-1 separation from Top-5 and Top-10, plus the frequency of dominant
-  scoring, passing, and defensive seasons;
-- single-game scoring explosions and high-end attribute separation;
-- cross-position identities, including high-Playmaking bigs and high-Rebounding
-  guards; and
-- defensive-leader SPG/BPG relationships with relevant attributes, height, and
-  athleticism.
+### Fresh Season 1 profile supply
 
-The evidence-first sequence is characterization only, then attribution to
-Player profile generation, statistical translation, or both. Only supported
-findings should earn a later Player Profile Variability or Statistical Identity
-candidate. Followed Players V1 remains accepted/frozen; rare profiles would
-strengthen why Players are worth following. League News could later help
-discover unusual leaderboard or milestone stories, but Statistical Identity
-characterization now precedes an automatic News selection. Do not bundle those
-features or change Recruiting, Player generation, Development, or Player Box
-Scores from this observation alone.
+- Fresh Universes do contain elite talent: `2.88` 90+ OVR Players per Universe,
+  `0.28` 95+ Players, and a diagnostic multi-category 90+ profile in `95.2%`
+  of Universes. The 90+ group spans every position and has mean `96.44` POT.
+- Global-P95 profiles are plentiful in conventional roles: `21.10` elite
+  passers, `22.36` elite rebounders, `20.50` elite perimeter defenders, and
+  `23.11` elite interior defenders per Universe.
+- Their position mix is strongly structured. Of `5,275` P95 passers, `3,454`
+  were PGs but only `44` PFs and `4` Centers. Of `5,591` P95 rebounders, only
+  one was a PG and `25` were SGs. A diagnostic skilled-big profile occurred
+  only `0.75` times per Universe and appeared in `53.2%` of Universes.
+- Height ranges have hard position-specific tails: sampled maxima were `77`
+  inches at PG, `79` SG, `81` SF, `83` PF, and `86` C. Tall-within-position
+  guards exist, but truly cross-position physical forms are constrained by
+  generation design.
+
+**Season 1 answer:** yes, fresh Universes already generate memorable elite and
+multi-category Players, especially conventional positional stars. Rare
+cross-position identities are generation-limited: playmaking Centers and
+elite-rebounding guards are nearly absent, while skilled PF/C profiles appear
+in only about half of fresh Universes.
+
+### Current minutes and raw-versus-rate context
+
+League-high MPG averaged `36.10` (range `36.04–36.21`); Top-5 and Top-10 MPG
+averaged `36.07` and `36.05`. Among qualifying Player-seasons, `5.9%` reached
+36+ MPG and none reached 38 or 40. The 90+ OVR group averaged `33.30 MPG`
+(median `36.00`), with only modest OVR/MPG correlation (`r=0.236`). Current
+minutes therefore reduce raw counting-stat ceilings relative to the historical
+40-MPG environment, but do not explain every identity constraint.
+
+### National leaders and superstar separation
+
+Across 60 Seasons, leader means (median; range) were:
+
+- PPG `23.41` (`23.04`; `19.71–27.83`), with mean leader-minus-Top-10 `3.53`
+  and leader/Top-10 `1.177`;
+- RPG `11.68` (`11.67`; `10.04–13.83`), gap `1.47`, ratio `1.144`;
+- APG `7.91` (`7.96`; `6.63–8.96`), gap `1.37`, ratio `1.210`;
+- SPG `1.64` (`1.63`; `1.42–2.04`), gap `0.27`, ratio `1.195`; and
+- BPG `2.48` (`2.46`; `2.04–3.08`), gap `0.45`, ratio `1.220`.
+
+Mean #1-minus-#2 gaps were `1.56 PPG`, `0.49 RPG`, `0.56 APG`, `0.14 SPG`,
+and `0.17 BPG`. Scoring leaders reached 25+ in `13/60` Seasons, never 28+;
+the sample still produced `107` 40-point and `6` 50-point games. Maximum
+per-40 leader means were `26.76` points, `14.27` rebounds, `9.63` assists,
+`2.70` steals, and `3.51` blocks. Opportunity explains meaningful raw
+compression—especially assists and defensive stats—but per-40 identity is not
+uniformly absent.
+
+### Attribute translation and position influence
+
+Extreme attributes translate within conventional positions. P95 Passing PGs
+averaged `4.92 APG / 7.81 AST40` versus `2.77 / 6.27`; P95 Rebounding bigs
+averaged `7.51 RPG / 11.46 REB40` versus `4.19 / 9.22`; and P95 Interior
+Defense bigs averaged `1.28 BPG / 2.01 BLK40` versus `0.72 / 1.57`.
+Population correlations were strong for Playmaking/AST40 (`0.715`),
+Rebounding/REB40 (`0.829`), Interior Defense/BLK40 (`0.694`), and height/BLK40
+(`0.775`), but weaker for Perimeter Defense/STL40 (`0.468`), Athleticism/STL40
+(`0.220`), and Athleticism/BLK40 (`0.063`).
+
+Position priors dominate cross-position outcomes. Every one of `600` sampled
+Top-10 assist slots belonged to a PG; all `600` rebound slots belonged to PF/C;
+`582/600` block slots belonged to Centers. P95 big passers did improve to
+`1.60 APG / 1.89 AST40` versus `0.52 / 1.06`, but could not approach guard-like
+production. Production explains why: base per-40 assists are `6.0` for PG and
+`1.3` for C before the bounded attribute multiplier; rebounds are `4.0` PG
+versus `9.5` C; steals `1.25` PG versus `0.55` C; blocks `0.15` PG versus
+`1.55` C, with height adding another bounded block multiplier. Attributes can
+differentiate Players inside a position but rarely overcome these baselines.
+
+### Diagnostic disposition
+
+**Outcome E — MIXED.** Scoring and conventional rebounding are broadly healthy,
+with visible separation and rare game explosions; their raw peaks are partly
+minutes-limited. Traditional PG passing and C rim protection translate, but
+current minutes soften their raw headline values. Steal identity is the clearest
+translation-compression signal. Cross-position passing/rebounding/block identity
+is both generation-limited and translation-limited. No formula, generation,
+height, Rotation, or Game Sim change is authorized by characterization alone.
+
+The evidence supports a future, deliberately scoped **Player Statistical
+Identity / Variability V1 design pass** before League News, centered on rare
+profile supply and position-prior escape without undoing role-aware minutes.
+Phase 7B remains unassigned pending review; Recruit Identity / Recruit Details
+remains an alternative product milestone rather than bundled work.
 
 ## Recruit Identity / Pre-College Attachment — OBSERVED / PRODUCT SIGNAL
 
@@ -1131,7 +1209,10 @@ A future “Around the Country” recap could derive concise updates from canoni
 
 Paul Martin's 51-point Season opener was experienced as a missed storytelling
 opportunity, not evidence of a Game Sim problem. This strengthens the case for
-derived League News/Round Recap, but does not make News the next milestone.
+derived League News/Round Recap, but does not make News the next milestone. The
+game occurred in the earlier approximately-40-MPG star environment, so it is a
+valid historical story but not direct evidence about current extreme-game
+frequency.
 
 ## Offseason — Around the League — OBSERVED
 
@@ -1341,10 +1422,11 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Next diagnostic: multi-Season Player Statistical Identity / Superstar
-   Separation characterization
-2. Reassess Phase 7B only after that evidence, among statistical variability,
-   Recruit identity/details/following, League News, and offseason League context
+1. Phase 7B selection/design review, with Player Statistical Identity /
+   Variability V1 now the strongest evidence-supported candidate but still
+   unassigned
+2. Compare that direction against Recruit identity/details/following, League
+   News, and additional diagnostic work without bundling them
 3. Program records / deeper statistical history
 4. Shot-selection diagnostic and minor Player Details polish
 
