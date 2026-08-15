@@ -1577,8 +1577,8 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B.2A Profile Generation Candidate A paired experiment; diagnostic
-   only, no activation or OVR/translation change
+1. Narrow Candidate A weakness-distribution iteration after the 7B.2A WATCH;
+   diagnostic only, no activation or OVR/translation change
 2. Preserve elite scarcity and compare bounded identity candidates without
    bundling Recruit Details or League News
 3. Program records / deeper statistical history
@@ -1602,3 +1602,53 @@ future evidence but are intentionally not promoted into the active horizon.
 Phase 7B remains unassigned.
 
 This ordering remains playthrough-driven and may change with new evidence.
+
+## Phase 7B.2A — Profile Generation Candidate A — WATCH (2026-08-14)
+
+The preregistered configuration used OVR 70+ eligibility and selection
+`min(15%, 2% + 0.5% × (OVR-70))`; 92% conventional / 8% unusual-secondary;
+4.0/3.0 weighted-value budgets (shrunk at bounds); +12/-18 limits; floor 45,
+cap 99; namespace `player-profile-redistribution-candidate-a-v1`; and ±1 OVR.
+
+The paired sample was 250 S1 Universes / 96,000 Players. It selected 2,673
+(2.784%, 10.692/Universe): PG 561, SG 499, SF 557, PF 518, C 538; OVR bands
+70-79 1,550, 80-84 694, 85-89 316, 90-94 102, 95+ 11. There were 2,111
+applied profiles (1,920 conventional / 191 unusual) and 1,292 met the defined
+genuine-specialization threshold. Non-selected records were exact. Selected
+OVR movement was -1: 134, 0: 2,539, +1: 0, other: 0.
+
+Elite supply per Universe moved 90+ `2.880→2.864`, 95+ `0.280→0.280`, 97+
+`0.040→0.040`. For 90+, mean spread moved `25.68→26.20`, shape gap
+`22.42→23.06`, any sub-60 `4.31%→6.98%`, and two sub-60 `0.28%→1.96%`.
+For 95+, spread was `19.57→19.59`, gap `16.76→16.76`, and any sub-60 stayed
+0%. Four positions improved the 90+ gap by at least 0.5 (PG improved 0.49).
+Within-position mean correlations fell PG `.652→.645`, SG `.660→.645`, SF
+`.664→.646`, PF `.665→.645`, C `.631→.620`. Maximum attribute mean/median
+movement was 0.30/1.0, and conventional positional ordering stayed intact.
+
+Rare counts moved: skilled big `211→223`, elite big passer `48→54`, rebounding
+guard `26→30`, point-forward `733→737`, offensive specialist `457→573`, and
+defensive specialist `2,101→2,327`. A useful actual example was an 80 OVR PG
+whose PER/ATH/STA became 97/81/91. An awkward 79→78 rim-protecting C reached
+SHT/PLY/HND 45/45/45. Repeated near-maximum weakness reductions made profile
+plausibility mixed.
+
+The 500-class Recruit sample had 80,536 recruits. Mean/median OVR was
+`66.437/67→66.436/67`; 80+/85+/90+ counts `6560/1708/114→6554/1705/113`.
+Mean/median POT was `76.449/76→76.448/76`; POT 90+/95+/99 counts
+`3581/900/184→3572/900/184`. Candidate B gap cohorts remained stable (all gap
+mean `10.0123→10.0117`, median 8; zero-gap `22.140%→22.107%`). Star counts
+were identical (5★ 5,075; 4★ 16,119), overlap was 99.84%/99.94%, and mean
+absolute rank movement was 0.0083 (max 17). Non-selected Recruit Players were exact.
+
+Across 8,000 teams, Team Strength mean/median moved `73.066/73.187` to
+`73.103/73.226`. Across 60 paired Seasons, leader means moved PPG +0.21%, RPG
++0.51%, APG -0.84%, SPG +2.03%, BPG +0.06%; Top-1 minus Top-10 moved +1.30%,
++2.18%, -2.15%, **+9.64%**, +0.54%. Team scoring moved -0.06% and MPG +0.01%.
+
+Disposition: **WATCH / ITERATE**. Safety gates pass, but the elite-top-tail
+effect is too small, profile plausibility is mixed, and Steals separation fails
+the 5% non-targeted gate. Production remains baseline. Next, keep selection,
+unusual share, weighted neutrality, and ±1 OVR fixed while testing weakness
+removal distributed across fewer, position-plausible sacrifices. Recheck 95+
+shape and Steals separation; do not begin OVR Candidate B yet.

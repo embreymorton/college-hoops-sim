@@ -454,9 +454,12 @@ then a separate core/support/weakness OVR experiment, then a combined
 Recruit/POT/Rotation/Team Strength audit, and only afterward independently
 tested Passing and Steals translation candidates. Rebounding and Blocks remain
 deferred; scoring, role-aware minutes, conventional positional identity, and
-Recruit POT Candidate B remain protected. The exact next milestone is 7B.2A
-Profile Generation Candidate A Paired Experiment, diagnostic-only and not yet
-started.
+Recruit POT Candidate B remain protected. Phase 7B.2A tested one preregistered
+Profile Generation Candidate A and ended WATCH. Determinism, ±1 OVR, scarcity,
+position aggregates, Recruit Candidate B, and Team Strength stayed healthy,
+but the 95+ tail barely changed, tradeoffs were repetitive/severe, and Steals
+leader separation exceeded its guardrail. Production generation is unchanged.
+Next is a narrow Candidate A weakness-distribution iteration; 7B.2B has not begun.
 
 ## Documentation map
 

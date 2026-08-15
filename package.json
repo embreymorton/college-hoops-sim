@@ -26,6 +26,8 @@
     "sim:player-stats": "node --import tsx scripts/inspectPlayerStats.ts",
     "sim:player-statistical-identity": "node --import tsx scripts/inspectPlayerStatisticalIdentity.ts",
     "sim:player-profile-specialization": "node --import tsx scripts/inspectPlayerProfileSpecialization.ts",
+    "sim:player-profile-candidate-a": "node --import tsx scripts/inspectPlayerProfileRedistributionCandidateA.ts",
+    "sim:player-profile-candidate-a-season": "node --import tsx scripts/inspectPlayerProfileCandidateASeason.ts",
     "sim:postseason": "node --import tsx scripts/inspectPostseason.ts",
     "sim:tournament-balance": "node --import tsx scripts/inspectTournamentBalance.ts",
     "sim:dynasty-foundation": "node --import tsx scripts/inspectDynastyFoundation.ts",

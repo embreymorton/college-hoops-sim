@@ -725,12 +725,16 @@ Diagnostic consumers include the two accepted Player identity scripts plus
 Recruit Talent, Rotation, Team Strength, long-run Dynasty, and Recruiting
 Candidate B audits. No production file changed in this design review.
 
-### Phase 7B.2A — Profile Generation Candidate A Paired Experiment — NEXT / NOT STARTED
+### Phase 7B.2A — Profile Generation Candidate A Paired Experiment — COMPLETE / WATCH
 
-Implement Candidate A only behind diagnostic tooling, compare it with current
-production on identical fresh-Universe seeds, and stop at an evidence-based
-ACCEPT / WATCH / REJECT decision. Do not activate it, change OVR, or begin
-translation in the same milestone.
+The single preregistered candidate was tested behind diagnostic tooling on 250
+paired fresh Universes, 500 Recruit classes, and 60 paired Seasons. Safety,
+OVR neutrality, scarcity, position aggregate, Recruiting, Candidate B, and
+Team Strength gates were healthy. It created clearer profiles, but 95+ shape
+was effectively unchanged, tradeoffs were repetitive/occasionally severe, and
+Steals leader separation moved 9.64%. Disposition is WATCH; production remains
+baseline. Next is a narrow Candidate A weakness-distribution iteration. Phase
+7B.2B does not begin unless a Generation candidate is accepted.
 
 League News, Recruit Details, Awards, Save/Persistence, records, shot-selection
 investigation, and minor presentation polish remain separate observed/later
