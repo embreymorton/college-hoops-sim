@@ -1024,9 +1024,45 @@ production law: OVR should measure total position-relative basketball value
 rather than completeness, and positions should describe common profiles rather
 than make them mandatory.
 
-The exact next task is **Phase 7B.1B — Statistical Identity / Variability Design
-Review**, covering profile generation, OVR valuation, and statistical
-translation together. It remains design-only and unimplemented.
+At that checkpoint, the exact next task became **Phase 7B.1B — Statistical
+Identity / Variability Design Review**, covering profile generation, OVR
+valuation, and statistical translation together without implementation.
+
+### Phase 7B.1B design decision — COMPLETE / NO PRODUCTION CHANGE
+
+The evidence supports the identity philosophy proposed by 7B.1A: total
+position-relative value rather than completeness; multiple exceptional
+strengths may compensate for real weakness, but one skill cannot establish a
+superstar; position remains a strong prior with rare exceptions; and profile
+identity must be capable of reaching statistical production.
+
+The preferred generation design is a rare deterministic, clamp-aware transfer
+of position-weighted talent budget from weakness attributes into multiple
+strength attributes after canonical baseline generation. It persists no
+archetype and initially holds current OVR nearly exact, isolating attribute
+shape from talent supply. Explicit specialization axes risk template repetition;
+tail widening alone does not solve shared-talent flattening.
+
+The preferred OVR design experiment is a core-value + supporting-value −
+bounded-weakness model requiring multiple relevant strengths. A convex high-end
+bonus is simpler but inflation-prone; explicit role paths are expressive but
+too taxonomic for V1. OVR cannot be activated with generation casually because
+Recruit rank/stars, AI decisions, Rotation, Team Strength, Development/POT, and
+accepted Recruit POT Candidate B all consume or depend on the current value
+ecosystem.
+
+Translation evidence earns only Passing and Steals experiments. Exceptional
+joint Playmaking/Handling should gain bounded escape from position assist
+baselines, and exceptional Perimeter Defense/Athleticism should separate more
+without adding league-wide steals. Scoring, role-aware minutes, conventional PG
+passing, and PF/C rebounding remain protected. Rebounding escape and Blocks
+flexibility are deferred until accepted generated profiles supply enough cases.
+
+The design therefore selects layered paired experiments rather than a bundled
+implementation: Generation A; OVR B on fixed populations; a combined ecosystem
+audit; then independently switchable Passing/Steals translation candidates.
+The exact next milestone is **7B.2A Profile Generation Candidate A Paired
+Experiment**. Phase 7B production behavior remains unimplemented.
 
 ## Recruit Identity / Pre-College Attachment — OBSERVED / PRODUCT SIGNAL
 
@@ -1541,8 +1577,8 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B.1B Statistical Identity / Variability Design Review across profile
-   generation, OVR valuation, and statistical translation; design only
+1. Phase 7B.2A Profile Generation Candidate A paired experiment; diagnostic
+   only, no activation or OVR/translation change
 2. Preserve elite scarcity and compare bounded identity candidates without
    bundling Recruit Details or League News
 3. Program records / deeper statistical history

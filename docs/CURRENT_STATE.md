@@ -441,16 +441,22 @@ Separation characterization is also complete: fresh Season 1 Universes contain
 elite conventional stars, current role-aware minutes partly compress raw
 headline values, and cross-position identities are limited by both profile
 supply and strong position baselines. No Player, Rotation, or stat behavior was
-changed. Phase 7B remains unassigned pending a design review; Player
-Statistical Identity / Variability V1 is now the strongest evidence-supported
-candidate, with Recruit Identity and League News still separate alternatives.
+changed. Player Statistical Identity / Variability V1 is the selected design
+direction, with Recruit Identity and League News still separate alternatives.
 The final Elite Player Profile / OVR Specialization diagnostic is complete:
 shared talent generation flattens elite profiles, and position-weighted OVR
 adds meaningful specialization limits even though it discounts many
 position-irrelevant attributes. Elite scarcity remains `2.88` 90+, `0.28` 95+,
-and `0.04` 97+ Players per fresh Universe. No production behavior changed. The
-exact next task is Phase 7B.1B Statistical Identity / Variability Design Review,
-covering generation, OVR valuation, and translation without implementation.
+and `0.04` 97+ Players per fresh Universe. No production behavior changed.
+Phase 7B.1B design review is complete and selects a
+layered experiment path: rare OVR-budget-neutral profile redistribution first,
+then a separate core/support/weakness OVR experiment, then a combined
+Recruit/POT/Rotation/Team Strength audit, and only afterward independently
+tested Passing and Steals translation candidates. Rebounding and Blocks remain
+deferred; scoring, role-aware minutes, conventional positional identity, and
+Recruit POT Candidate B remain protected. The exact next milestone is 7B.2A
+Profile Generation Candidate A Paired Experiment, diagnostic-only and not yet
+started.
 
 ## Documentation map
 

@@ -131,6 +131,15 @@ attribute completeness; and positions describe common profiles without making
 those profiles mandatory. Do not add archetype flags or tune constants from
 these principles alone.
 
+Phase 7B.1B accepted those principles for candidate evaluation and selected a
+layered experiment path, not production behavior. The preferred generation
+candidate is rare deterministic OVR-budget-neutral attribute redistribution;
+the preferred valuation candidate is multiple-skill core value plus supporting
+value and bounded weakness penalties. Passing and Steals have enough evidence
+for later targeted translation experiments; Rebounding escape and Blocks
+flexibility remain deferred. Full candidate mechanics, dependencies, and
+precommitted guardrails live in the active Phase 7 horizon of `ROADMAP.md`.
+
 ### Postseason Player Stats
 
 Tournament `GameResult` values already retain full `PlayerGameStats`. Future pure projections could provide Postseason Player totals/averages, Program postseason Player tables, and Tournament leaders without changing regular-season `PlayerSeasonStats` semantics.

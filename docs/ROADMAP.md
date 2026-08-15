@@ -517,20 +517,225 @@ OVR-limited specialization**, reconciled with the prior translation limits.
 Elite scarcity remains unchanged at `2.88` 90+, `0.28` 95+, and `0.04` 97+
 Players per fresh Universe. No production behavior changed.
 
-### Phase 7B.1B — Statistical Identity / Variability Design Review — NEXT / DESIGN ONLY
+### Phase 7B.1B — Statistical Identity / Variability Design Review — COMPLETE / DESIGN SELECTED
 
-Use evidence across all three layers—profile generation, OVR valuation, and
-statistical translation—to define candidate scope and precommitted acceptance
-guardrails. Evaluate position-relative total value versus completeness,
-controlled rare profile families, cross-position escape, and preservation of
-elite-player scarcity. Do not bundle League News, Recruit Details, production
-archetype labels, or implementation/tuning into the design review.
+The review accepts these design principles for candidate evaluation, not yet as
+production behavior:
 
-Phase 7B.1B is the exact recommended next planning task but remains
-unimplemented. League News, Recruit Details, Awards, Save/Persistence, records,
-shot-selection investigation, and minor presentation polish remain separate
-observed/later work. Tournament seeding and Game Sim remain closed, and all
-accepted/frozen milestones retain their status.
+- OVR represents total position-relative basketball value, not attribute
+  completeness.
+- Multiple exceptional strengths may compensate for meaningful weaknesses;
+  one elite attribute alone cannot establish superstar value.
+- Position is the strong prior, not a hard identity rule. Conventional Players
+  remain the majority and rare exceptions remain memorable tails.
+- Statistical identity should follow profile identity: extreme relevant skills
+  must be capable of overcoming—but not erasing—position baselines.
+- Profile shape should change without automatically increasing elite supply.
+
+#### Generation candidates
+
+**Candidate A — OVR-budget-neutral redistribution — PREFERRED.** Generate the
+current canonical Player first, then use an independently namespaced,
+deterministic rare-variation stage to transfer bounded position-weighted value
+from one or more weakness attributes into two or more strength attributes.
+Strength and weakness pools remain position-informed but include narrowly
+eligible secondary-skill exceptions. Clamp-aware transfers shrink rather than
+creating free value; non-selected Players remain byte-identical; no archetype
+label is persisted. The initial paired experiment holds each selected Player's
+current `calculateOverall()` within one point so it isolates profile shape and
+protects elite scarcity. Risk: budget accounting can still create implausible
+combinations or over-regularized tradeoffs if the eligible pools are too broad.
+
+**Candidate B — rare specialization axis.** A small deterministic minority
+receives a bounded offense, defense, creation, rebounding, interior, perimeter,
+or unusual-secondary-skill modifier with explicit offsetting weaknesses. This
+is easy to reason about and frequency-control, but risks hidden templates,
+repetitive shapes, and future pressure to expose archetype state.
+
+**Candidate C — selected tail widening.** Preserve the shared talent model but
+add rare heavy-tailed variance for specific cross-position attributes such as
+big Playmaking or guard Rebounding, with offsetting variance elsewhere. This is
+the smallest code surface, but does not solve elite all-around correlation and
+can create free talent or noisy implausible Players. It is a fallback probe, not
+the preferred candidate.
+
+Candidate A best isolates the confirmed cause while preserving current talent
+quantity. It must operate as a pure deterministic transformation with a new
+seed namespace and no stored production archetype.
+
+#### OVR candidates
+
+**Candidate A — nonlinear elite-strength value.** Apply increasing marginal
+value only at the extreme end of high-weight skills, then normalize. It can
+reward true excellence with a small implementation surface, but risks rating
+inflation, single-skill exploits, opaque thresholds, and Recruit-rank churn.
+
+**Candidate B — core value + supporting value − bounded weakness penalties —
+PREFERRED.** For each position, multiple strongest relevant weighted skills
+establish core value; the remaining relevant and supporting skills add value;
+meaningful relevant weaknesses impose bounded penalties. Require several core
+strengths, so one 99 cannot create a superstar; complete stars remain at least
+as valuable as otherwise-equivalent specialists. This directly models total
+value rather than completeness without requiring a persisted role. Risks are
+discontinuities near core selection, double-counting, and broader Recruiting /
+Rotation effects.
+
+**Candidate C — best role-sensitive value path.** Evaluate several legitimate
+position value paths—scoring, creation, two-way, interior, and similar—and use
+the best supported result plus common support. It offers the clearest basketball
+semantics but introduces the most taxonomy, tuning surface, and archetype-like
+behavior. Keep it as a comparison only if Candidate B cannot order the locked
+controlled profiles sensibly.
+
+Candidate B is preferred for a diagnostic experiment, not production. Compare
+it against current OVR on the exact baseline population and Candidate A
+population before changing any generator or ranking behavior.
+
+#### Translation candidates and protected areas
+
+- **Passing — experiment:** keep ordinary position baselines exact; above a
+  jointly extreme Playmaking/Handling region, smoothly increase attribute
+  leverage and allow a bounded blend toward a position-neutral creator rate.
+  Ordinary bigs remain low-assist; rare extreme bigs may approach, not routinely
+  equal, guard production.
+- **Steals — experiment:** strengthen only the high-end joint influence of
+  Perimeter Defense and Athleticism, with calibration/recentering that preserves
+  league-wide steal volume. This addresses the clearest measured compression.
+- **Rebounding — defer from minimal V1:** generation must first prove rare guard
+  rebound profiles. A later candidate may use extreme Rebounding plus height and
+  Athleticism to escape the guard baseline without changing ordinary big rates.
+- **Blocks — WATCH / defer:** conventional rim protection is healthy. Consider
+  only a later bounded high-end Interior Defense/height/Athleticism escape for
+  nontraditional protectors; do not raise global BPG.
+- **Protect unchanged:** scoring allocation and composition, conventional PG
+  passing, conventional PF/C rebounding, role-aware minutes, Team scoring, and
+  all non-targeted box-score rates.
+
+#### Minimal V1 shape and experiment sequence
+
+Do not ship all three layers together without attribution. Use four bounded
+steps, each on identical seeds:
+
+1. **7B.2A — Profile Generation Candidate A Paired Experiment — NEXT.** Compare
+   baseline and budget-neutral redistribution on the `250` fresh-Universe
+   sample. Production remains unchanged.
+2. **7B.2B — OVR Candidate B Paired Experiment.** Evaluate current versus
+   core/support/weakness valuation on both fixed baseline and 7B.2A candidate
+   Players. No ranking or production activation.
+3. **7B.2C — Combined Profile + OVR Ecosystem Audit.** Only if both isolated
+   candidates pass, measure Recruiting rank/stars, Candidate B POT-gap
+   compatibility, Rotation/Team Strength, and elite scarcity together.
+4. **7B.3 — Targeted Translation Paired Experiment.** Test Passing escape and
+   Steals separation as independently switchable candidates on accepted profile
+   populations. Defer Rebounding and Blocks unless new evidence earns them.
+
+The smallest coherent eventual V1 is accepted Generation A + accepted OVR B +
+only the independently accepted Passing and/or Steals candidate. Profile and
+OVR work must be combined before activation because current OVR undervalues the
+new shapes; translation should not be bundled into that activation because it
+has a distinct Game Sim/statistical ecosystem risk.
+
+#### Precommitted experiment guardrails
+
+All gates use paired identical seeds and must be declared before candidate
+results are inspected.
+
+**Elite scarcity and determinism**
+
+- Byte-identical replay and stable Player IDs; baseline Players not selected
+  for redistribution remain byte-identical.
+- Across the canonical `250`-Universe sample, absolute candidate deltas remain
+  within `0.20` 90+, `0.05` 95+, and `0.02` 97+ Players per Universe from the
+  `2.88 / 0.28 / 0.04` baseline. Candidate A's shape-only experiment should be
+  tighter: selected Player OVR within one and no material cohort-count change.
+
+**Specialization and positional identity**
+
+- Report 90+/95+ rates with any attribute below 70 and 60, weakest-attribute
+  distributions, all/relevant top-two-minus-bottom-two spread, and
+  within-position cross-attribute correlation.
+- Candidate must improve meaningful weakness/spread in at least three
+  positions without making more than `10%` of 90+ Players carry two or more
+  sub-60 attributes; no more than `10%` of 95+ Players may carry any sub-60
+  attribute.
+- Position attribute means and medians remain within one point of baseline;
+  ordinary positional ordering remains intact: PG leads Playmaking/Handling,
+  SG/wing shooting remains above big shooting, PF/C lead Rebounding/Interior
+  Defense, and Centers retain the weakest average perimeter skill.
+- Measure anomaly frequency by profile and Universe. Explore a typical
+  `0–2` genuinely unusual Players per fresh Universe rather than adopt a final
+  percentage; reject any candidate that shifts anomaly traits into position
+  medians or routinely creates many copies of one profile.
+
+**Controlled valuation suite**
+
+- Lock the 7B.1A inputs for offense-first, two-way, playmaking, and defensive
+  SG; traditional, rim-running defensive, stretch, and playmaking C;
+  offense-first PG; point-forward SF/PF; and defense/rebounding SF/PF.
+- Offense-first/two-way SG, traditional/rim-running C, and offense-first PG must
+  be capable of the existing 90+ elite band when multiple strengths support
+  them. Two-way completeness remains at least as valuable as otherwise-equivalent
+  specialization; one-skill defensive or shooting specialists remain below
+  elite without support. Point-forward and playmaking-big value must improve
+  without automatically outranking complete superstars. Compare relative
+  ordering first; do not tune arbitrary exact OVR targets to a candidate result.
+
+**Recruiting, POT, Rotation, and Team Strength**
+
+- Re-run Recruit OVR/POT/rank/star distributions and every accepted Recruit POT
+  Candidate B gate without changing its finalizer. Require no negative POT gaps,
+  overall POT mean movement within `0.30`, and at least `85%` 5-star membership
+  overlap with paired baseline unless a stricter existing Candidate B gate
+  governs.
+- Report AI target/commit composition by OVR band. Do not activate if ranking or
+  star changes create unmeasured Recruiting balance movement.
+- Report default Rotation changes, Team Strength mean/tails, and Team ordering;
+  mean Team Strength must stay within `0.5` and any material contender-order
+  movement requires separate review. Player Development and POT semantics must
+  remain valid and deterministic.
+
+**Statistical ecosystem**
+
+- Preserve MPG exactly and report PPG/RPG/APG/SPG/BPG leader distributions,
+  Top-1/Top-10 separation, position shares, per-40 rates, and 40+/50+ games.
+- Non-targeted leader means and Top-10 separation remain within `5%` of paired
+  baseline; scoring-event frequencies receive explicit rare-event intervals
+  rather than permissive point gates.
+- Passing/Steals candidates must change high-end separation and extreme-profile
+  translation without moving league-wide event volume more than `2%`. PGs
+  remain the dominant assist position. PF/C remain dominant rebound positions;
+  Centers remain dominant block position. No targeted improvement may inflate
+  Team scores or alter game winners.
+
+**Decision structure**
+
+- **ACCEPT CANDIDATE:** every hard guardrail passes and intended identity metrics
+  improve on both baseline and relevant profile cohorts.
+- **WATCH / EXPAND:** all safety gates pass but rare-profile counts or targeted
+  translation evidence are too sparse; expand deterministic samples without
+  changing the candidate.
+- **REJECT:** any determinism, elite-scarcity, positional-identity, Candidate B,
+  POT, Recruiting, Team Strength, score/winner, or broad-stat-inflation guardrail
+  fails. Do not retune gates around the observed result.
+
+Likely future production surfaces are `playerGenerator.ts` after raw attribute
+generation, a pure identity-variation helper under `engine/generation`,
+`overall.ts`, and the counting-stat rate construction in `boxScore.ts`.
+Diagnostic consumers include the two accepted Player identity scripts plus
+Recruit Talent, Rotation, Team Strength, long-run Dynasty, and Recruiting
+Candidate B audits. No production file changed in this design review.
+
+### Phase 7B.2A — Profile Generation Candidate A Paired Experiment — NEXT / NOT STARTED
+
+Implement Candidate A only behind diagnostic tooling, compare it with current
+production on identical fresh-Universe seeds, and stop at an evidence-based
+ACCEPT / WATCH / REJECT decision. Do not activate it, change OVR, or begin
+translation in the same milestone.
+
+League News, Recruit Details, Awards, Save/Persistence, records, shot-selection
+investigation, and minor presentation polish remain separate observed/later
+work. Tournament seeding and Game Sim remain closed, and all accepted/frozen
+milestones retain their status.
 
 ## Non-binding development-agent fit
 
