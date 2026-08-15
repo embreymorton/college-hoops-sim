@@ -444,6 +444,13 @@ supply and strong position baselines. No Player, Rotation, or stat behavior was
 changed. Phase 7B remains unassigned pending a design review; Player
 Statistical Identity / Variability V1 is now the strongest evidence-supported
 candidate, with Recruit Identity and League News still separate alternatives.
+The final Elite Player Profile / OVR Specialization diagnostic is complete:
+shared talent generation flattens elite profiles, and position-weighted OVR
+adds meaningful specialization limits even though it discounts many
+position-irrelevant attributes. Elite scarcity remains `2.88` 90+, `0.28` 95+,
+and `0.04` 97+ Players per fresh Universe. No production behavior changed. The
+exact next task is Phase 7B.1B Statistical Identity / Variability Design Review,
+covering generation, OVR valuation, and translation without implementation.
 
 ## Documentation map
 

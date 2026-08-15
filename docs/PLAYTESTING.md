@@ -909,6 +909,125 @@ profile supply and position-prior escape without undoing role-aware minutes.
 Phase 7B remains unassigned pending review; Recruit Identity / Recruit Details
 remains an alternative product milestone rather than bundled work.
 
+## Phase 7B.1A — Elite Player Profile / OVR Specialization — CHARACTERIZED / BOTH
+
+This final major pre-design diagnostic reused the canonical `250`-Universe
+Season 1 sample and exact seed family from the Statistical Identity pass:
+`player-statistical-identity-v1:generation:001..250`, totaling `96,000`
+Players. The reusable `sim:player-profile-specialization` command preserves the
+complete position/attribute tables, OVR cohorts, controlled probes, constrained
+maxima, correlations, and production examples. Two runs produced identical
+SHA-256 output:
+`fae5b572f92a6d456c753bf2d947545ef9e0ccf614c22ea93f68a4fd1534a826`.
+No production code or behavior changed.
+
+### Position shape and distribution overlap
+
+The generator gives every attribute a shared Player talent level, then applies
+position modifiers and independent `-12..+12` two-draw variance. This creates
+clear average position identities while retaining moderate tail overlap:
+
+- PG mean strengths are Handling `76.59`, Playmaking `74.57`, and Shooting
+  `70.54`; mean weaknesses are Interior Defense `50.13` and Rebounding `53.25`.
+- SG emphasizes Shooting `75.60` and Finishing `72.57`, with Interior Defense
+  `55.07` and Rebounding `59.73` lowest.
+- SF is deliberately balanced: attribute means span only `69.58–72.58`.
+- PF emphasizes Rebounding `75.57`, Interior Defense `74.56`, and Finishing
+  `74.53`; Playmaking/Handling average roughly `56.9` and Shooting `60.71`.
+- C emphasizes Rebounding `77.44`, Interior Defense `76.48`, and Finishing
+  `72.51`; Handling `48.70`, Shooting `50.10`, and Playmaking `50.16` are low.
+
+Rare tails overlap, but some cross-position profiles require extreme draws.
+PG Playmaking P10–P90 is `62–87` versus `42–61` for C; PG Rebounding is
+`43–65` versus `65–90` for C. SG Shooting is `63–88` versus `42–61` for C.
+SF's balanced ranges overlap most positions. The prior finding that playmaking
+bigs and rebounding guards are scarce begins in these generation distributions,
+not only in statistical translation.
+
+### Elite weakness prevalence and flatness
+
+As OVR rises, profiles become much flatter. Among 90–94 Players, the share with
+at least one attribute below 70 was PG `64.1%`, SG `23.9%`, SF `0%`, PF
+`21.3%`, and C `87.9%`; below-60 rates were only PG `5.2%` and C `18.5%`, with
+none elsewhere. Among 95+ Players, no position had an attribute below 60; only
+PG (`29.4%`) and C (`50.0%`) retained anything below 70. SF, SG, and PF 95+
+Players had no sub-70 attribute.
+
+Position-relevant top-two/bottom-two gaps shrink sharply from 90–94 to 95+:
+PG `7.38→2.41`, SG `7.14→2.81`, SF `12.06→8.22`, PF `6.00→2.08`, and C
+`7.05→2.33`. The mean weakest attribute among 95+ Players was `72.76` PG,
+`79.31` SG, `89.00` SF, `80.28` PF, and `70.50` C. Real production examples
+confirm the shape: the most all-around 95+ example was a 96 OVR SF with every
+attribute `93–99`, while the largest-spread 90+ example was a 90 OVR C with
+`52 HND` but `99 INT/REB`.
+
+Within-position attribute correlations average `0.631–0.665` across all pairs.
+Representative relationships such as Shooting/Playmaking, offense/defense,
+Playmaking/Rebounding, and Athleticism/Defense are all strongly positive. This
+is the shared talent/readiness structure: high talent shifts essentially every
+attribute upward while position modifiers preserve relative strengths and
+weaknesses. Independent variance creates local texture but rarely overcomes the
+shared upward shift at elite OVR.
+
+### Canonical OVR valuation
+
+`calculateOverall()` is a rounded linear weighted average. Highest weights are
+PG Playmaking/Handling `22%` each; SG Shooting `24%`, Finishing `18%`, and
+Perimeter Defense `17%`; SF is broadly distributed (`10–14%` across eight
+basketball attributes); PF Finishing `20%`, Rebounding `19%`, Interior Defense
+`17%`, Athleticism `14%`; and C Interior Defense/Rebounding `23%` each,
+Finishing `19%`, Athleticism `14%`. A +10 attribute change therefore moves
+unrounded OVR by its weight times ten—for example `+2.4` from SG Shooting,
+`+2.3` from C Rebounding, but only `+0.3` from C Shooting.
+
+The formula correctly discounts many position-irrelevant weaknesses, but a
+weighted average near 95 leaves little compensation room below the 99 cap.
+Controlled plausible profiles scored: offense-first SG `86`, two-way SG `91`,
+playmaking SG `85`, defensive SG `83`; traditional dominant C `90`, rim-running
+defensive C `89`, stretch C `85`, playmaking C `86`; offense-first PG `89`,
+point-forward SF `85`, point-forward PF `86`, and defensive PF `85`.
+
+Observed production maxima under selected weaknesses were much lower than
+mathematical maxima: SG with `REB≤50` reached `76`, `PER≤60` reached `73`, and
+both reached `71`; C with `SHT≤50` or `PLY≤50` reached `86`, both reached `84`,
+and a traditional perimeter-poor C reached `79`; poor-defense PG reached `76`;
+SF with `INT/REB≤60` and PF with `SHT/PLY≤50` reached `71`. Even combining each
+position's independently observed P99 attribute bounds only raised those cases
+to `85–91`, never 95. Mathematical 99-everywhere bounds are higher (`89–98`)
+but are not production-plausible evidence.
+
+### Generation → OVR → production diagnosis
+
+**Outcome D — BOTH generation and OVR restrict specialization**, with severity
+varying by position. Shared talent generation is the primary reason natural
+elite Players become all-around. OVR then adds meaningful completeness gates:
+high-weight defense prevents offense-only PG/SG profiles from reaching 95, SF's
+broad weights strongly reward completeness, and traded-off traditional skills
+prevent point-forward PF/C profiles from recovering value through low-weight
+Playmaking. C OVR appropriately tolerates weak Shooting/Passing more than guard
+OVR tolerates weak perimeter defense, but natural traditional Centers still
+rarely reach 95 without broadly elevated ratings.
+
+This completes the prior chain. Playmaking bigs face sparse Passing generation,
+low OVR leverage for Passing, high OVR leverage for traditional big skills, and
+the already-measured low assist baseline. Rebounding guards face sparse
+Rebounding generation, little OVR reward for Rebounding, and the low guard
+rebound baseline. Defensive ratings occur and contribute to OVR, but steals
+remain translation-compressed; big defense translates more visibly through
+height- and position-driven blocks.
+
+Elite scarcity is unchanged and becomes a future acceptance guardrail: `2.88`
+90+, `0.28` 95+, and `0.04` 97+ Players per fresh Universe. Future identity
+work should reshape profiles rather than increase those counts automatically.
+The evidence supports carrying two principles into design review—not yet final
+production law: OVR should measure total position-relative basketball value
+rather than completeness, and positions should describe common profiles rather
+than make them mandatory.
+
+The exact next task is **Phase 7B.1B — Statistical Identity / Variability Design
+Review**, covering profile generation, OVR valuation, and statistical
+translation together. It remains design-only and unimplemented.
+
 ## Recruit Identity / Pre-College Attachment — OBSERVED / PRODUCT SIGNAL
 
 The latest playthrough produced a clear desire to follow Recruits before they
@@ -1422,11 +1541,10 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B selection/design review, with Player Statistical Identity /
-   Variability V1 now the strongest evidence-supported candidate but still
-   unassigned
-2. Compare that direction against Recruit identity/details/following, League
-   News, and additional diagnostic work without bundling them
+1. Phase 7B.1B Statistical Identity / Variability Design Review across profile
+   generation, OVR valuation, and statistical translation; design only
+2. Preserve elite scarcity and compare bounded identity candidates without
+   bundling Recruit Details or League News
 3. Program records / deeper statistical history
 4. Shot-selection diagnostic and minor Player Details polish
 

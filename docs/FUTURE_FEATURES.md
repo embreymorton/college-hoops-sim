@@ -114,6 +114,23 @@ Accepted Followed Players V1
 No tuning target or implementation is selected. All variability, archetype,
 tuning, and presentation steps remain future pending Phase 7B review.
 
+The follow-up Elite Player Profile / OVR Specialization characterization found
+that shared talent generation makes elite Players increasingly all-around and
+that the rounded weighted-average OVR formula adds position-dependent
+completeness gates. This is strongest for broadly weighted SFs and for
+offense-only PG/SG profiles; Centers can retain low perimeter skills more
+readily, though specialized traditional or playmaking Centers still rarely
+reach 95 naturally. A future design review should evaluate profile shape, OVR
+valuation, and stat translation as separate but interacting layers while
+protecting the current `2.88` 90+, `0.28` 95+, and `0.04` 97+ Players per fresh
+Universe.
+
+Two evidence-supported principles should be evaluated, not assumed as final
+rules: OVR measures total basketball value within a position rather than
+attribute completeness; and positions describe common profiles without making
+those profiles mandatory. Do not add archetype flags or tune constants from
+these principles alone.
+
 ### Postseason Player Stats
 
 Tournament `GameResult` values already retain full `PlayerGameStats`. Future pure projections could provide Postseason Player totals/averages, Program postseason Player tables, and Tournament leaders without changing regular-season `PlayerSeasonStats` semantics.

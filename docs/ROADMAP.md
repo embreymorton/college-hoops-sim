@@ -505,20 +505,32 @@ steal identity showed the clearest translation compression, and cross-position
 identity was both generation- and translation-limited. No production behavior
 changed.
 
-### Phase 7B Selection / Design Review — NEXT / UNASSIGNED
+### Phase 7B.1A — Elite Player Profile / OVR Specialization Characterization — COMPLETE / BOTH
 
-Review the evidence-supported **Player Statistical Identity / Variability V1**
-direction against Recruit Identity / Recruit Details V1, League News / Round
-Recap, and additional diagnostic work. The Statistical Identity direction now
-has the strongest simulation evidence, but it is a recommendation—not an
-assigned milestone—and requires explicit design/calibration scope before any
-generation or translation change.
+The canonical `250`-Universe / `96,000`-Player Season 1 sample confirms shared
+talent generation produces strong cross-attribute correlation and increasingly
+flat elite profiles. The position-weighted OVR formula correctly discounts
+some irrelevant skills but also prevents plausible specialized probes from
+reaching 95, especially offense-first PG/SG, broadly weighted SF, and
+playmaking/trade-off big profiles. The result is **BOTH generation- and
+OVR-limited specialization**, reconciled with the prior translation limits.
+Elite scarcity remains unchanged at `2.88` 90+, `0.28` 95+, and `0.04` 97+
+Players per fresh Universe. No production behavior changed.
 
-Phase 7B remains unassigned. League News is no longer automatically the
-strongest next milestone. Awards, Save/Persistence, records, shot-selection
-investigation, and minor presentation polish remain observed/later rather than
-a fixed feature schedule. Tournament seeding and Game Sim remain closed, and
-all accepted/frozen milestones retain their status.
+### Phase 7B.1B — Statistical Identity / Variability Design Review — NEXT / DESIGN ONLY
+
+Use evidence across all three layers—profile generation, OVR valuation, and
+statistical translation—to define candidate scope and precommitted acceptance
+guardrails. Evaluate position-relative total value versus completeness,
+controlled rare profile families, cross-position escape, and preservation of
+elite-player scarcity. Do not bundle League News, Recruit Details, production
+archetype labels, or implementation/tuning into the design review.
+
+Phase 7B.1B is the exact recommended next planning task but remains
+unimplemented. League News, Recruit Details, Awards, Save/Persistence, records,
+shot-selection investigation, and minor presentation polish remain separate
+observed/later work. Tournament seeding and Game Sim remain closed, and all
+accepted/frozen milestones retain their status.
 
 ## Non-binding development-agent fit
 
