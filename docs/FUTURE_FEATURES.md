@@ -41,7 +41,9 @@ Recruit Talent Distribution V1 and the current talent economy are accepted and f
 
 ### Recruit identity and pre-college attachment
 
-A future Recruit Details surface and Follow Recruit/watchlist flow could make
+Recruit Details, Follow Recruits, and Recruit → Player continuity are now
+deliberately selected under Phase 7D in `ROADMAP.md`; that roadmap owns their
+sequence. They could make
 existing prospects memorable before commitment and preserve the relationship
 when a Recruit becomes an enrolled Player. Presentation can begin from existing
 canonical facts: name, height, position, stars, national/position rank, OVR,
@@ -60,6 +62,10 @@ scouting context, attribute-derived estimates, competition-adjusted production,
 or intentionally uncertain information before presenting them as facts.
 
 ## Statistics and League immersion
+
+Around the Country, Player Legacy / Alumni, and Preseason / Season Context are
+now selected for Phase 7B in `ROADMAP.md`; the roadmap owns their scope and
+sequence. Related unscheduled extensions remain parked below.
 
 ### Player Profile / Statistical Identity
 
@@ -102,17 +108,9 @@ Top-10 blocks at C. Current approximately-36-MPG leaders also reduce raw
 extremes relative to historical 40-MPG stories. See `PLAYTESTING.md` for the
 full method and evidence.
 
-Tentative conceptual sequencing is:
-
-```text
-Accepted Followed Players V1
-→ Player Statistical Identity diagnostic (COMPLETE — MIXED)
-→ deliberate Statistical Identity / Variability V1 design review, if selected
-→ derived archetype presentation and News/Awards/history amplification later
-```
-
-No tuning target or implementation is selected. All variability, archetype,
-tuning, and presentation steps remain future pending Phase 7B review.
+Additional profile calibration is parked under Phase 7E in `ROADMAP.md`, not
+scheduled as immediate work. No tuning target or implementation is selected;
+manual gameplay must provide a concrete reason to reopen it.
 
 The follow-up Elite Player Profile / OVR Specialization characterization found
 that shared talent generation makes elite Players increasingly all-around and
@@ -131,23 +129,14 @@ attribute completeness; and positions describe common profiles without making
 those profiles mandatory. Do not add archetype flags or tune constants from
 these principles alone.
 
-Phase 7B.1B accepted those principles for candidate evaluation and selected a
-layered experiment path, not production behavior. The preferred generation
-candidate is rare deterministic OVR-budget-neutral attribute redistribution;
-the preferred valuation candidate is multiple-skill core value plus supporting
-value and bounded weakness penalties. Passing and Steals have enough evidence
-for later targeted translation experiments; Rebounding escape and Blocks
-flexibility remain deferred. Full candidate mechanics, dependencies, and
-precommitted guardrails live in the active Phase 7 horizon of `ROADMAP.md`.
+The completed investigation accepted Candidate A V2 as experimental input only
+and rejected OVR Candidate B v1. Passing and Steals remain possible later
+translation investigations; Rebounding escape and Blocks flexibility remain
+deferred. Full evidence lives in `PLAYTESTING.md`.
 
 Candidate A V2 is accepted as experimental input, not production behavior.
-Before final identity-system activation, Phase 7B.2D must characterize
-Development identity retention using unchanged Player Development V1. For
-accepted specialized Players, measure whether original top 2–3 attributes and
-rank ordering persist after each offseason, whether weaknesses converge too
-quickly, how top-two-minus-bottom-two spread changes, and how outcomes differ
-for low versus high POT runway (for example 90/91, 83/94, and 75/92 OVR/POT).
-This records a compatibility question, not a diagnosed Development defect.
+Development Identity Retention remains a parked compatibility question, not a
+diagnosed Development defect or a prerequisite for feature work.
 
 Any future OVR candidate must audit Development headroom by comparing `POT −
 canonical OVR` with `POT − candidate OVR` for all Players, elite cohorts,
@@ -183,6 +172,10 @@ Derive Tournament Team totals and rates from Postseason results, analogous to cu
 - Shooting-percentage leaders with deliberately designed minimum-attempt qualifications
 
 ## Awards and recognition
+
+Awards & Honors is selected as the last milestone of Phase 7C in `ROADMAP.md`.
+The exact choices below remain undesigned possibilities rather than a second
+active plan:
 
 - Player of the Year
 - All-Conference and Conference awards
@@ -256,11 +249,13 @@ These are optional product directions, not current UI defects.
 
 ## History and immersion
 
-- Career Player statistics
-- Season-archive and previous-champion presentation
-- Record books and historical League leaderboards
-- Program history pages
-- Retired-Player and historical Player pages
+Player Legacy / Alumni is selected for Phase 7B, while Season Archive / Yearbook
+and Records & Milestones are selected for Phase 7C. `ROADMAP.md` owns their
+sequence. Related unscheduled extensions remain parked here:
+
+- Program history pages beyond the selected archive/records scope
+- Deeper historical League leaderboards
+- Additional career-stat presentation
 
 The accepted Dynasty archive and stable returning Player identity preserve the source facts needed to keep these ideas possible; their projections and presentation remain unimplemented.
 

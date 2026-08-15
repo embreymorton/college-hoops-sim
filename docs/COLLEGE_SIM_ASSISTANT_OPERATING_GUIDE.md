@@ -19,6 +19,12 @@ Primary product principles:
 
 Do not blindly add features. Help decide what is worth building, what should be investigated first, and what should remain deferred.
 
+Roadmap numbering tracks meaningful player-facing outcomes, architectural
+capabilities, or major diagnostic decisions—not every helper, wiring step, UI
+slice, test pass, or polish task. Keep those implementation steps inside one
+milestone. A phase should usually contain 2–4 milestones around one product
+question; start a new phase letter when the theme changes.
+
 ---
 
 # Source-of-Truth Discipline
@@ -111,7 +117,13 @@ When changing RNG-sensitive code, explicitly test determinism.
 
 Never tune from a single anecdote.
 
-Manual playtesting creates hypotheses. Diagnostics establish whether a real problem exists.
+Manual playtesting creates hypotheses. Use the smallest diagnostic needed to
+establish whether the observed problem is real, with validation depth
+proportional to the proposed change's risk and blast radius. Diagnostics are
+guardrails and investigation tools, not mandatory large-scale gates for every
+low-risk iteration. Do not keep tuning merely because a metric can improve;
+stop when additional calibration no longer serves playable fun or emergent
+stories.
 
 Preferred workflow:
 

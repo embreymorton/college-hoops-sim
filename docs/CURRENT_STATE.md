@@ -428,54 +428,37 @@ defect, and focused regression coverage protects stepwise and Super Sim
 completion. Detailed evidence and chronology live in `PLAYTESTING.md` and
 `ROADMAP.md`.
 
-## Active Phase 7B checkpoint
+## Active Phase 7 checkpoint
 
-Phase 7B — Player Statistical Identity / Variability — is **ACTIVE**.
-Characterization established that shared Player generation flattens elite
-profiles, canonical linear OVR suppresses some legitimate specialization, and
-strong positional translation baselines limit rare statistical identities.
-Scoring is broadly healthy, current role-aware minutes remain accepted, Passing
-and Steals have evidence for later targeted work, Rebounding is deferred, and
-Blocks remains WATCH.
+**Phase 7B — Player & League Stories V1** is active. Its goal is to make
+meaningful events and Players visible so the simulation creates recognizable
+stories without changing basketball logic. The exact next milestone is
+**7B.1 — Around the Country V1**: derive and surface a small deterministic set
+of meaningful stories from recently completed simulation activity. Do not turn
+it into a giant news engine.
 
-Profile Generation Candidate A V2 is **ACCEPTED AS EXPERIMENTAL INPUT** with
-parameters fixed for current OVR evaluation. It improved profile variety while
-preserving ±1 OVR neutrality, elite scarcity, positional means, Recruiting,
-Recruit POT Candidate B, Team Strength, and broad statistical stability. It is
-not production-active; canonical Player generation remains unchanged and must
-not be reopened without new evidence.
+The current Player population is good enough to build features on. Production
+Player generation and production `calculateOverall()` remain canonical, active,
+and unchanged. Player Development V1, Recruiting, Recruit POT Candidate B,
+Rotation, Team Strength, Game Simulation, Tournament, all Phase 6E systems, and
+Followed Players V1 remain accepted/frozen. No Phase 7 Player Identity
+experiment is production-active.
 
-OVR Candidate B v1 is **REJECTED / DO NOT ACTIVATE / DO NOT RETUNE IN PLACE**.
-It recognized several multi-strength specialists, rejected one-/two-skill
-exploits, and protected complete stars, but its premium broadly promoted
-naturally strong complete near-elites instead of selectively correcting
-undervalued specialists. It raised baseline 90+ supply from `2.880→6.084` per
-Universe and Candidate A V2 supply to `6.360`; 691 of 877 new 90+ promotions
-were complete Players. Candidate A was therefore not the cause. Stable global
-mean/median masked failed 90+/95+/97+ tails, so future experiments must report
-85–89→90+, 90–94→95+, 95–96→97+, and reverse transitions.
+The completed Player Identity investigation separated generation/profile shape,
+OVR valuation, and statistical translation, but additional calibration is now
+parked. Profile Generation Candidate A V2 is **ACCEPTED AS EXPERIMENTAL INPUT
+ONLY**: it showed that a small deterministic subset could exchange bounded
+existing value for more distinctive strengths and coherent weaknesses without
+materially changing canonical OVR or elite supply. It is not production-active.
+OVR Candidate B v1 is **REJECTED / DO NOT ACTIVATE / DO NOT RETUNE IN PLACE**:
+it raised controlled specialists but structurally over-rewarded complete
+near-elites and expanded elite supply. Canonical OVR remains production truth.
+Detailed evidence stays in `PLAYTESTING.md`.
 
-Production `calculateOverall()` remains unchanged and authoritative. OVR has a
-large downstream blast radius through Recruit rank/stars, Recruit POT Candidate
-B eligibility, Rotation, Team Strength, Development headroom/progression, and
-statistics through role/minute decisions. The exact and only current next
-milestone is **7B.2B.1 — OVR Scale & Premium Calibration Design**. Its design
-direction—not an accepted formula—is canonical OVR plus a small bounded,
-deterministic, position-sensitive specialization correction that is near zero
-for ordinary and already-correct complete Players and cannot elevate one-skill
-extremes. Dynamic per-Universe normalization is prohibited: identical position
-and attributes must always produce identical OVR.
-
-If 7B.2B.1 is convincing, one 7B.2B.2 OVR Candidate B v2 paired experiment may
-follow. ACCEPT advances to 7B.2C; a narrow WATCH may earn at most one isolated
-follow-up; structural REJECT ends OVR redesign for Phase 7B V1 with no automatic
-v3/v4. The fallback is Candidate A V2 + canonical OVR → 7B.2D Development
-Identity Retention → targeted Passing/Steals work → manual Player Identity
-playtesting. Development V1 remains unchanged/frozen; future OVR work must
-compare `POT − canonical OVR` with `POT − candidate OVR`, and 7B.2D must test
-strength/weakness retention, attribute ordering, spread, and POT-runway effects
-without presuming Development is defective. Phase 7B succeeds through
-recognizable Players worth following, not theoretically perfect OVR.
+Later selected themes are Phase 7C — History & Recognition V1 and Phase 7D —
+Recruit Attachment V1. Phase 7E — Player Identity Revisit is parked and is not
+a mandatory successor; reopen it only when manual gameplay provides a concrete
+reason.
 
 ## Documentation map
 

@@ -10,6 +10,18 @@ Empirical priority changes originate in `PLAYTESTING.md`; only deliberately
 selected work moves here. Documentation updates follow
 `DOCUMENTATION_POLICY.md`.
 
+### Roadmap numbering policy
+
+A roadmap number represents a meaningful player-facing feature, architectural
+capability, or major diagnostic decision—not every implementation step. Prefer
+`7B`, `7B.1`, `7B.2`, and `7B.3`; avoid deeper nesting unless there is an
+exceptional reason. Domain helpers, state wiring, UI rendering, tests, polish,
+and acceptance normally remain tasks inside one numbered milestone.
+
+A phase should normally contain about 2–4 meaningful milestones and answer one
+clear product question. When new work no longer fits that theme, close the phase
+and assign a new phase letter instead of extending the old phase indefinitely.
+
 ## Phase 0 — Foundation — COMPLETE
 
 - React, TypeScript, Vite, Zustand, Vitest, and Testing Library foundation
@@ -505,7 +517,7 @@ steal identity showed the clearest translation compression, and cross-position
 identity was both generation- and translation-limited. No production behavior
 changed.
 
-### Phase 7B.1A — Elite Player Profile / OVR Specialization Characterization — COMPLETE / BOTH
+### Historical diagnostic — Elite Player Profile / OVR Specialization — COMPLETE / BOTH
 
 The canonical `250`-Universe / `96,000`-Player Season 1 sample confirms shared
 talent generation produces strong cross-attribute correlation and increasingly
@@ -517,7 +529,7 @@ OVR-limited specialization**, reconciled with the prior translation limits.
 Elite scarcity remains unchanged at `2.88` 90+, `0.28` 95+, and `0.04` 97+
 Players per fresh Universe. No production behavior changed.
 
-### Phase 7B.1B — Statistical Identity / Variability Design Review — COMPLETE / DESIGN SELECTED
+### Historical diagnostic — Statistical Identity / Variability Design Review — COMPLETE
 
 The review accepts these design principles for candidate evaluation, not yet as
 production behavior:
@@ -611,31 +623,29 @@ population before changing any generator or ranking behavior.
   passing, conventional PF/C rebounding, role-aware minutes, Team scoring, and
   all non-targeted box-score rates.
 
-#### Minimal V1 shape and bounded experiment sequence
+#### Historical experiment conclusions
 
 Do not ship all identity layers together without attribution. Profile
-Generation Candidate A V2 is now accepted experimental input. OVR receives one
-bounded redesign path: 7B.2B.1 design, then 7B.2B.2 only if that design is
-convincing. An accepted v2 advances with Candidate A V2 to 7B.2C; a structural
-reject defers OVR redesign and keeps canonical `calculateOverall()`.
+Generation Candidate A V2 is accepted experimental input. The completed OVR
+Candidate B v1 experiment was rejected, and further OVR redesign is now
+deferred unless new manual evidence shows that canonical displayed OVR is
+materially harming gameplay or Player stories.
 
-Both branches then require **7B.2D — Development Identity Retention
-Characterization**, running the accepted specialized profiles through unchanged
-Development V1 and measuring strength/weakness rank, profile spread, attribute
-ordering, and POT-runway interaction. **7B.3 — Targeted Translation Paired
-Experiment** may then test Passing escape and Steals separation independently.
-Rebounding remains deferred until real profile supply supports it; Blocks
-remains WATCH. Translation stays separate because it has a distinct Game Sim
-and statistical-ecosystem risk.
+Development Identity Retention remains an important possible investigation,
+but it is not an automatic prerequisite for fun-oriented playtesting. Manual
+play may instead identify statistical translation, generation, presentation,
+or no material blocker. Passing and Steals remain plausible independent
+translation branches; Rebounding remains deferred until real profile supply
+supports it; Blocks remains WATCH.
 
 The smallest coherent Player Identity V1 may therefore be Candidate A V2 with
 current production OVR plus only independently accepted translation work. Some
 specialists may remain slightly undervalued; that is preferable to destabilizing
 Recruiting, POT, rankings/stars, Rotation, Team Strength, Development, and
-statistics. Phase 7B succeeds when Players are more recognizable, varied, and
+statistics. Player Identity work succeeds when Players are more recognizable, varied, and
 worth following—not when every specialist receives a theoretically perfect OVR.
 
-#### Precommitted experiment guardrails
+#### Historical precommitted experiment guardrails
 
 All gates use paired identical seeds and must be declared before candidate
 results are inspected.
@@ -669,7 +679,7 @@ results are inspected.
 
 **Controlled valuation suite**
 
-- Lock the 7B.1A inputs for offense-first, two-way, playmaking, and defensive
+- Lock the characterization inputs for offense-first, two-way, playmaking, and defensive
   SG; traditional, rim-running defensive, stretch, and playmaking C;
   offense-first PG; point-forward SF/PF; and defense/rebounding SF/PF.
 - Offense-first/two-way SG, traditional/rim-running C, and offense-first PG must
@@ -725,7 +735,7 @@ Diagnostic consumers include the two accepted Player identity scripts plus
 Recruit Talent, Rotation, Team Strength, long-run Dynasty, and Recruit POT
 Candidate B audits. No production file changed in this design review.
 
-### Phase 7B.2A — Profile Generation Candidate A Paired Experiment — COMPLETE / WATCH
+### Historical experiment — Profile Generation Candidate A — COMPLETE / WATCH
 
 The single preregistered candidate was tested behind diagnostic tooling on 250
 paired fresh Universes, 500 Recruit classes, and 60 paired Seasons. Safety,
@@ -733,10 +743,10 @@ OVR neutrality, scarcity, position aggregate, Recruiting, Candidate B, and
 Team Strength gates were healthy. It created clearer profiles, but 95+ shape
 was effectively unchanged, tradeoffs were repetitive/occasionally severe, and
 Steals leader separation moved 9.64%. Disposition is WATCH; production remains
-baseline. Next is a narrow Candidate A weakness-distribution iteration. Phase
-7B.2B does not begin unless a Generation candidate is accepted.
+baseline. At that checkpoint, a narrow Candidate A weakness-distribution
+iteration followed before any OVR experiment.
 
-### Phase 7B.2A.1 — Candidate A Weakness-Distribution Iteration — COMPLETE / ACCEPT
+### Historical experiment — Candidate A V2 Weakness Distribution — COMPLETE / ACCEPT
 
 V2 retained V1 selection, profile paths, budgets, caps, and ±1 OVR, but funded
 each profile from one deterministic semantic pair of weakness channels with
@@ -747,20 +757,17 @@ five positions, preserved all safety/Recruiting/Team gates, and reduced Steals
 Top-1-versus-Top-10 movement from +9.64% to +4.98%. Candidate A V2 is accepted
 as experimental input only; production generation remains baseline.
 
-The Phase 7B identity chain is now explicitly:
+The historical identity experiment chain was:
 
 ```text
 Profile generation → OVR valuation → Development identity retention → Statistical translation
 ```
 
-The next milestone is **7B.2B — OVR Candidate B Paired Experiment**. If the
-isolated valuation and combined audits pass, **7B.2D — Development Identity
-Retention Characterization** must test accepted specialized profiles through
-unchanged Player Development V1 before production activation. It will measure
-strength/weakness rank retention, spread retention, and POT-runway interaction;
-it does not presume Development is currently defective.
+At that checkpoint, an OVR Candidate B paired experiment followed. Development
+Identity Retention was identified as a possible compatibility investigation,
+not as evidence that Development V1 was defective.
 
-### Phase 7B.2B — OVR Candidate B Paired Experiment — COMPLETE / REJECT
+### Historical experiment — OVR Candidate B v1 — COMPLETE / REJECT
 
 The single preregistered core/support/weakness formula recognized the locked
 specialists, protected complete stars, and rejected one-skill exploits, but
@@ -774,52 +781,66 @@ rejected and remains diagnostic-only; production `calculateOverall()` is unchang
 Candidate B v1 is **REJECTED / DO NOT ACTIVATE**. Its useful conceptual lesson
 is retained: multi-strength specialists can be recognized, one-/two-skill
 exploits can be rejected, and complete stars can be protected. Do not keep
-tuning v1 constants; the next design must fix premium targeting and scale.
+tuning v1 constants; any future OVR design would need new playtest evidence and
+would have to fix premium targeting and scale.
 
-### Phase 7B.2B.1 — OVR Scale & Premium Calibration Design — NEXT / BOUNDED
+### Historical Player Identity calibration — CLOSED / PARKED
 
-Investigate a baseline-anchored specialization correction rather than replacing
-the calibrated scale:
+The completed diagnostics separated generation/profile shape, OVR valuation,
+and statistical translation. Candidate A V2 remains accepted experimental input
+only and is not production-active. OVR Candidate B v1 remains rejected because
+its specialist premium structurally expanded elite supply by promoting too many
+complete near-elites. Production generation and canonical `calculateOverall()`
+remain unchanged. Further identity calibration is parked until new manual play
+provides a concrete reason; detailed evidence remains in `PLAYTESTING.md`.
 
-```text
-Candidate OVR = current canonical OVR + small bounded profile-sensitive adjustment
-```
+### Phase 7B — Player & League Stories V1 — ACTIVE
 
-This is a preferred design direction, not an accepted formula. The adjustment
-should be fixed, deterministic, position-sensitive, near zero for ordinary and
-already-correct complete Players, positive mainly for legitimate multi-strength
-specialists, and unable to promote one-skill extremes. Population evidence may
-calibrate a fixed formula, but dynamic per-Universe normalization is prohibited:
-the same position and attributes must always produce the same OVR, with no
-post-generation rescaling to target elite counts.
+> How do we surface current Player and League stories?
 
-Any 7B.2B.2 experiment must classify positive movement as complete,
-conventional specialist, unusual-secondary, or ordinary; report 85–89→90+,
-90–94→95+, and 95–96→97+ transitions rather than relying on global averages;
-verify complete near-elite neutrality, complete-superstar protection,
-multi-strength specialist recognition, and one-skill rejection; and compare
-Development headroom (`POT − candidate OVR`) with canonical headroom without
-changing Development V1.
+- **7B.1 — Around the Country V1 — NEXT.** Derive and surface a small number of
+  meaningful stories from recently completed simulation activity, potentially
+  including standout performances, notable upsets, Followed Player results, and
+  Recruiting commitments. Keep V1 deterministic and derived from existing
+  state; do not design a giant news engine.
+- **7B.2 — Player Legacy / Alumni V1 — PLANNED.** Resolve departed Players from
+  archived Season data, support historical read-only Player Details, and keep
+  Followed alumni accessible by building on existing archives and career
+  history rather than creating a second history model.
+- **7B.3 — Preseason / Season Context V1 — PLANNED.** Introduce each Season's
+  cast through a lightweight view of returning Players, incoming freshmen,
+  offseason development jumps, Followed Player updates, and Players to Watch.
 
-Exactly one bounded v2 path is authorized. If the design is convincing,
-**7B.2B.2 — OVR Candidate B v2 Paired Experiment** may run with Candidate A V2
-parameters frozen. Its decision branches are:
+Close Phase 7B after these three milestones; unrelated work receives another
+phase rather than extending 7B.
 
-- **ACCEPT:** proceed to 7B.2C combined Generation + OVR ecosystem audit.
-- **WATCH with one narrow isolated issue:** allow at most one tightly scoped
-  follow-up; do not reopen Candidate A simultaneously.
-- **STRUCTURAL REJECT:** stop OVR work for Phase 7B V1, preserve canonical OVR,
-  and do not automatically schedule Candidate B v3/v4.
+### Phase 7C — History & Recognition V1 — PLANNED
 
-The structural-reject fallback is Candidate A V2 + current production OVR →
-7B.2D Development Identity Retention → evidence-supported Passing/Steals work →
-manual Player Identity playtesting. Phase 7B remains active on either branch.
-OVR accuracy matters, but a safe imperfect canonical rating must not block the
-broader goal of recognizable, varied Players worth following.
+> How do we preserve and recognize what mattered in previous Seasons?
 
-League News, Recruit Details, Awards, Save/Persistence, records, shot-selection
-investigation, and minor presentation polish remain separate observed/later
-work. Tournament seeding and Game Sim remain closed, and all accepted/frozen
+- **7C.1 — Season Archive / Yearbook**
+- **7C.2 — Records & Milestones**
+- **7C.3 — Awards & Honors** — later than the first two because subjective
+  award formulas may introduce unnecessary tuning.
+
+### Phase 7D — Recruit Attachment V1 — PLANNED
+
+> How do we create attachment during Recruiting and preserve it into careers?
+
+- **7D.1 — Recruit Details**
+- **7D.2 — Follow Recruits**
+- **7D.3 — Recruit → Player continuity**, preserving existing identity
+  continuity where it already exists.
+
+### Phase 7E — Player Identity Revisit — PARKED / NOT SCHEDULED
+
+Possible future topics include Candidate A V2 production evaluation,
+Development Identity Retention, Passing or Steals translation, rare
+cross-position identities, and other profile calibration. Reopen only when
+manual gameplay supplies a concrete reason. Phase 7E is not a mandatory step
+after Phase 7D.
+
+Tournament seeding and Game Sim remain closed, and all accepted/frozen
 milestones retain their status.
 
 ## Non-binding development-agent fit

@@ -1577,10 +1577,8 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B.2B.1 bounded OVR scale/premium design; Candidate A V2 parameters
-   remain fixed as accepted experimental input
-2. Decide whether one deterministic scale-safe v2 experiment is convincing
-   enough to run; preserve the explicit structural-reject exit
+1. Phase 7B.1 — Around the Country V1
+2. Player-facing story and retrieval acceptance during normal Dynasty play
 3. Program records / deeper statistical history
 4. Shot-selection diagnostic and minor Player Details polish
 
@@ -1597,10 +1595,12 @@ Premium Offer allocation remains WATCH only and is not part of either UI polish
 milestone. Existing future product ideas remain future rather than promoted by
 this audit.
 
-Awards, offseason progression visibility, and Save/Persistence have stronger
-future evidence but are intentionally not promoted into the active horizon.
-Phase 7B remains active; League News and Recruit Details are not promoted ahead
-of its bounded Player Identity checkpoint.
+Awards is deliberately placed later in Phase 7C; offseason progression
+visibility and Save/Persistence retain stronger future evidence without being
+promoted into the active horizon.
+Phase 7B is now the Player & League Stories feature phase. Around the Country
+V1 is promoted as its immediate milestone; Recruit Details remains planned for
+the later Recruit Attachment phase.
 
 This ordering remains playthrough-driven and may change with new evidence.
 
@@ -1776,12 +1776,12 @@ V1's unchanged contribution-based secondary-position pass.
 
 Disposition: **REJECT**. Candidate B had useful controlled semantics but an
 uncalibrated elite scale. Production OVR remains unchanged, Candidate A V2
-remains experimental, and 7B.2C does not begin. Next is a narrow transparent
-scale-calibration design diagnostic. Player Development remains unchanged; it
+remains experimental, and 7B.2C does not begin. At that checkpoint, next was a
+narrow transparent scale-calibration design diagnostic. Player Development remains unchanged; it
 uses production OVR for headroom/targets/POT caps, so hypothetical Candidate B
 activation would require explicit compatibility work before 7B.2D.
 
-## Phase 7B checkpoint reset after Candidate B v1 — ACTIVE (2026-08-14)
+## Phase 7B checkpoint reset after Candidate B v1 — SUPERSEDED (2026-08-14)
 
 ### Causal diagnosis
 
@@ -1824,12 +1824,12 @@ Still unresolved:
 
 Candidate B v1's failure does not invalidate Player Identity or Candidate A V2.
 Production generation and canonical `calculateOverall()` remain authoritative;
-Candidate A V2 is **accepted as experimental input**, with parameters fixed
-while OVR is evaluated.
+Candidate A V2 is **accepted as experimental input**, with parameters fixed.
 
 ### Bounded continuation and OVR exit rule
 
-The next milestone is **7B.2B.1 — OVR Scale & Premium Calibration Design**.
+At this checkpoint, the next milestone was **7B.2B.1 — OVR Scale & Premium
+Calibration Design**.
 Its preferred direction is a baseline-anchored, small, position-sensitive
 specialization correction layered on current canonical OVR. That is a question
 to investigate, not an accepted formula. Ordinary and already-correct complete
@@ -1868,3 +1868,73 @@ worth following—not perfect displayed value for every specialist. A safe,
 imperfect canonical OVR is preferable to indefinite redesign across Recruiting,
 Recruit POT, rankings/stars, Rotation, Team Strength, Development, and stats.
 No production behavior changed at this checkpoint.
+
+## Phase 7B fun-first methodology pivot — SUPERSEDED (2026-08-15)
+
+The quantitative Phase 7B investigation was useful. It separated Player
+generation, OVR valuation, and statistical translation as distinct system
+layers; established Candidate A V2 as a safe, deterministic way to create more
+varied profiles; rejected an unsafe OVR Candidate B v1; and produced diagnostic
+scripts that remain valuable for regression, debugging, and historical
+comparison. Candidate A V2 remains **ACCEPTED AS EXPERIMENTAL INPUT** with
+parameters frozen, while Candidate B v1 remains **REJECTED / DO NOT ACTIVATE /
+DO NOT RETUNE IN PLACE**. Production generation and production
+`calculateOverall()` remain canonical and unchanged. Candidate B scripts are
+historical diagnostics, not active design direction; no existing Phase 7B
+script is removed or made mandatory by this decision.
+
+Further calibration was beginning to exceed the gameplay value of the original
+Player Identity goal. Phase 7B therefore returns to a player-facing question:
+do simulated Players feel meaningfully different, and do some become memorable
+enough that the user wants to inspect or follow them? Regular seasons should
+produce recognizable scoring guards, defensive specialists, point forwards,
+stretch bigs, rim runners, and playmaking bigs, with occasional believable
+cross-position identities such as rebounding guards, oversized creators, or
+assist-producing centers. These are playtest examples, not persisted archetype
+requirements or hard quotas.
+
+Manual season/career playtesting is now the primary discovery mechanism. Start
+with an interesting profile, observe whether its identity appears in basketball
+behavior, identify the single largest blocker, use the smallest diagnostic that
+answers that question, make one bounded change only if justified, and playtest
+again. Diagnostics remain guardrails and investigation tools, not mandatory
+large-scale gates for every identity iteration. Validation remains
+deterministic and proportional to risk: a core OVR formula change warrants broad
+paired ecosystem validation; a narrow Passing experiment may use a focused
+diagnostic plus manual play while iterating; presentation work uses normal tests
+and manual UX acceptance. Structural testing is not weakened for broad-blast-
+radius changes, and expensive population studies should be rerun when warranted.
+
+OVR redesign is **DEFERRED / REOPEN ONLY WITH NEW PLAYTEST EVIDENCE**. Canonical
+OVR is acceptable unless new manual evidence shows displayed OVR materially
+harms gameplay or Player stories; it is not declared permanently solved.
+Development Identity Retention remains a possible next investigation, not an
+automatic prerequisite. Play may instead show that Development washes profiles
+out, Passing or Steals translation is the larger blocker, generation still
+needs work, presentation is hiding existing identity, or current behavior is
+already fun enough. Rebounding escape remains deferred until meaningful
+profile supply exists; Blocks remains WATCH; scoring and accepted role-aware
+MPG remain protected. No production behavior changed in this decision.
+
+## Player Identity calibration closure — DEFERRED (2026-08-15)
+
+The Player Identity diagnostics produced useful evidence by separating Player
+generation/profile shape, OVR valuation, and statistical translation. The
+Recruit POT compression problem was resolved separately by the accepted,
+production Recruit POT Candidate B finalizer; it is unrelated to the rejected
+OVR experiment.
+
+Profile Generation Candidate A V2 remains **ACCEPTED AS EXPERIMENTAL INPUT
+ONLY** and is not production-active. OVR Candidate B v1 remains **REJECTED / DO
+NOT ACTIVATE / DO NOT RETUNE IN PLACE** because it raised several controlled
+specialists but structurally over-rewarded complete near-elites and expanded
+elite supply. Canonical generation and canonical `calculateOverall()` remain
+production truth, and the current Player population is good enough to build
+features on.
+
+Additional Player calibration is deferred. The project now returns to
+player-facing feature development under Phase 7B — Player & League Stories V1,
+beginning with 7B.1 — Around the Country V1. Future tuning must start from new
+manual gameplay evidence rather than automatically continuing the old
+calibration branches. Existing diagnostic scripts and quantitative results
+remain useful historical, investigation, and regression evidence.
