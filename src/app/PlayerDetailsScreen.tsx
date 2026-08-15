@@ -66,60 +66,62 @@ export function PlayerDetailsScreen() {
     return (
       <>
         <ExplorationBackButton destination={backDestination} onClick={goBackFromExploration} />
-        <div className="season-header" style={accentStyle}>
-          <div className="season-header__identity">
-            <span className="season-header__dot" style={{ background: program.branding.primaryColor }} aria-hidden="true" />
-            <div>
-              <h1 className="season-header__name">{player.firstName} {player.lastName}</h1>
-              <p className="eyebrow-tag">Former Player</p>
-              <p className="season-header__meta">
-                <button type="button" className="text-link-button" onClick={() => openTeamDetails(resolution.programId)}>{program.name}</button>
-                {' · '}{player.position} · {formatHeight(player.height)} · {careerRange}
-              </p>
-              <FollowPlayerButton playerId={player.id} />
+        <div className="player-legacy">
+          <div className="season-header" style={accentStyle}>
+            <div className="season-header__identity">
+              <div>
+                <h1 className="season-header__name">{player.firstName} {player.lastName}</h1>
+                <p className="eyebrow-tag">Former Player</p>
+                <p className="season-header__meta">
+                  <span className="team-color-dot" style={{ background: program.branding.primaryColor }} aria-hidden="true" />
+                  <button type="button" className="text-link-button" onClick={() => openTeamDetails(resolution.programId)}>{program.name}</button>
+                  {' · '}{player.position} · {formatHeight(player.height)} · {careerRange}
+                </p>
+                <FollowPlayerButton playerId={player.id} />
+              </div>
+            </div>
+            <div className="stat-trio season-header__stats season-header__stats--legacy">
+              <div className="stat-trio__item"><span className="stat-trio__value">{summary.finalOverall}</span><span className="stat-trio__label">Final Ovr</span></div>
+              <div className="stat-trio__item"><span className="stat-trio__value">{summary.peakOverall}</span><span className="stat-trio__label">Peak Ovr</span></div>
             </div>
           </div>
-          <div className="stat-trio season-header__stats">
-            <div className="stat-trio__item"><span className="stat-trio__value">{summary.finalOverall}</span><span className="stat-trio__label">Final Ovr</span></div>
-            <div className="stat-trio__item"><span className="stat-trio__value">{summary.peakOverall}</span><span className="stat-trio__label">Peak Ovr</span></div>
-          </div>
-        </div>
 
-        <section className="section" aria-labelledby="player-career-summary-heading">
-          <h2 id="player-career-summary-heading" className="section-title">College Career · Regular Season</h2>
-          <div className="player-stat-block">
-            <div className="stat-trio player-stat-block__row">
-              <div className="stat-trio__item"><span className="stat-trio__value">{summary.gamesPlayed}</span><span className="stat-trio__label">GP</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.pointsPerGame)}</span><span className="stat-trio__label">PPG</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.reboundsPerGame)}</span><span className="stat-trio__label">RPG</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.assistsPerGame)}</span><span className="stat-trio__label">APG</span></div>
+          <section className="section" aria-labelledby="player-career-summary-heading">
+            <h2 id="player-career-summary-heading" className="section-title">College Career · Regular Season</h2>
+            <div className="player-stat-block player-stat-block--legacy">
+              <div className="stat-trio player-stat-block__row">
+                <div className="stat-trio__item"><span className="stat-trio__value">{summary.gamesPlayed}</span><span className="stat-trio__label">GP</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.pointsPerGame)}</span><span className="stat-trio__label">PPG</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.reboundsPerGame)}</span><span className="stat-trio__label">RPG</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.assistsPerGame)}</span><span className="stat-trio__label">APG</span></div>
+              </div>
+              <div className="stat-trio player-stat-block__row player-stat-block__row--secondary">
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.stealsPerGame)}</span><span className="stat-trio__label">SPG</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.blocksPerGame)}</span><span className="stat-trio__label">BPG</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.fieldGoalPercentage)}</span><span className="stat-trio__label">FG%</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.threePointPercentage)}</span><span className="stat-trio__label">3P%</span></div>
+                <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.freeThrowPercentage)}</span><span className="stat-trio__label">FT%</span></div>
+              </div>
             </div>
-            <div className="stat-trio player-stat-block__row player-stat-block__row--secondary">
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.stealsPerGame)}</span><span className="stat-trio__label">SPG</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.blocksPerGame)}</span><span className="stat-trio__label">BPG</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.fieldGoalPercentage)}</span><span className="stat-trio__label">FG%</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.threePointPercentage)}</span><span className="stat-trio__label">3P%</span></div>
-              <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.freeThrowPercentage)}</span><span className="stat-trio__label">FT%</span></div>
-            </div>
-          </div>
-        </section>
-
-        <section className="section" aria-labelledby="player-final-ratings-heading">
-          <h2 id="player-final-ratings-heading" className="section-title">Final Ratings</h2>
-          <PlayerRatingsGrid player={player} />
-        </section>
-
-        <section className="section" aria-labelledby="player-career-heading">
-          <h2 id="player-career-heading" className="section-title">Career Progression</h2>
-          <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
-        </section>
-
-        {careerHistory.recruitingOrigin ? (
-          <section className="section" aria-labelledby="player-recruiting-origin-heading">
-            <h2 id="player-recruiting-origin-heading" className="section-title">Recruiting Origin</h2>
-            <PlayerRecruitingOrigin origin={careerHistory.recruitingOrigin} committedProgram={committedProgram} />
           </section>
-        ) : null}
+
+          <section className="section" aria-labelledby="player-final-ratings-heading">
+            <h2 id="player-final-ratings-heading" className="section-title">Final Ratings</h2>
+            <PlayerRatingsGrid player={player} />
+          </section>
+
+          <section className="section" aria-labelledby="player-career-heading">
+            <h2 id="player-career-heading" className="section-title">Career Progression</h2>
+            <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
+          </section>
+
+          {careerHistory.recruitingOrigin ? (
+            <section className="section" aria-labelledby="player-recruiting-origin-heading">
+              <h2 id="player-recruiting-origin-heading" className="section-title">Recruiting Origin</h2>
+              <PlayerRecruitingOrigin origin={careerHistory.recruitingOrigin} committedProgram={committedProgram} />
+            </section>
+          ) : null}
+        </div>
       </>
     )
   }

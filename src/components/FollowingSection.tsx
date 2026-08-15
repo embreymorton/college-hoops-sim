@@ -36,7 +36,7 @@ export function FollowingSection({
   }
 
   return (
-    <div>
+    <div className="following-groups">
       {activePlayers.length > 0 ? (
         <section aria-labelledby="following-active-heading">
           <h2 id="following-active-heading" className="section-title">
@@ -76,7 +76,7 @@ export function FollowingSection({
             Former Players
           </h2>
           <div className="table-scroll">
-            <table className="data-table">
+            <table className="data-table data-table--former">
               <caption className="visually-hidden">Followed former Players</caption>
               <thead><tr><th scope="col">Player</th><th scope="col">Program</th><th scope="col">Pos</th><th scope="col">Career</th><th scope="col">Final Ovr</th><th scope="col">Career PPG</th></tr></thead>
               <tbody>
@@ -85,7 +85,7 @@ export function FollowingSection({
                     <td className="player-name-cell"><button type="button" className="text-link-button" onClick={() => onSelectPlayer(row.program.id, row.playerId)}>{row.player.firstName} {row.player.lastName}</button></td>
                     <td><button type="button" className="text-link-button" onClick={() => onSelectProgram(row.program.id)}>{row.program.name}</button></td>
                     <td className="player-pos-cell">{row.player.position}</td>
-                    <td>{row.firstSeasonNumber === row.lastSeasonNumber ? `Season ${row.firstSeasonNumber}` : `Seasons ${row.firstSeasonNumber}–${row.lastSeasonNumber}`}</td>
+                    <td className="following-career-cell">{row.firstSeasonNumber === row.lastSeasonNumber ? `Season ${row.firstSeasonNumber}` : `Seasons ${row.firstSeasonNumber}–${row.lastSeasonNumber}`}</td>
                     <td>{row.finalOverall}</td>
                     <td>{formatRating(row.careerPointsPerGame)}</td>
                   </tr>

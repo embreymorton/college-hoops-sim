@@ -191,6 +191,26 @@
   color: var(--ink-2);
 }
 
+.following-groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* Former Players: Player/Program stay primary; career range reads as
+   secondary context rather than competing with identity. */
+
+.data-table--former .following-career-cell {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+}
+
+.data-table--former td:nth-child(5),
+.data-table--former td:nth-child(6) {
+  font-weight: 600;
+  color: var(--ink-0);
+}
+
 /* ==========================================================================
    Team Details
    ========================================================================== */
@@ -294,6 +314,62 @@
 
 .player-stat-block__row--secondary .stat-trio__value {
   font-size: 1.9rem;
+}
+
+/* Former Player Details: tightened local vertical rhythm so the completed
+   career reads as one cohesive summary instead of loosely spaced blocks.
+   Scoped to the historical page only — active Player Details keeps
+   `.app-main`'s default rhythm. */
+
+.player-legacy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+/* Groups Final/Peak Ovr into one career-rating unit rather than two stats
+   floating in unused header space. */
+
+.season-header__stats--legacy {
+  gap: 0;
+  padding: var(--space-2) var(--space-5);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.season-header__stats--legacy .stat-trio__item {
+  padding: 0 var(--space-4);
+}
+
+.season-header__stats--legacy .stat-trio__item + .stat-trio__item {
+  border-left: 1px solid var(--line);
+}
+
+/* Connects the Program identity marker directly to the Program name it
+   labels, reusing the existing `.team-color-dot` identity language. */
+
+.season-header__meta .team-color-dot {
+  margin-right: 0.4rem;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+/* College Career summary reads as one intentional container rather than
+   statistics floating on the background. */
+
+.player-stat-block--legacy {
+  gap: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+}
+
+.player-stat-block--legacy .player-stat-block__row--secondary {
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
 }
 
 .game-log-table tbody tr[data-status='win'] td:nth-child(3) {
