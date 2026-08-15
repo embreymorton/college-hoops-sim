@@ -460,6 +460,14 @@ position aggregates, Recruit Candidate B, and Team Strength stayed healthy,
 but the 95+ tail barely changed, tradeoffs were repetitive/severe, and Steals
 leader separation exceeded its guardrail. Production generation is unchanged.
 Next is a narrow Candidate A weakness-distribution iteration; 7B.2B has not begun.
+That iteration (7B.2A.1) is now complete and **ACCEPTED for experimental use**.
+V2 restricts weakness funding to a semantic two-channel pair and shrinks rather
+than exhausting the budget through unrelated skills. It materially eliminated
+multi-floor profiles and brought Steals separation within 5%, while all safety
+gates remained healthy. Candidate A is still not production-active. The exact
+next milestone is 7B.2B, using V2 as experimental input. A later 7B.2D must
+characterize whether unchanged Player Development V1 retains specialized
+identity before any combined system is activated.
 
 ## Documentation map
 

@@ -1577,8 +1577,8 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Narrow Candidate A weakness-distribution iteration after the 7B.2A WATCH;
-   diagnostic only, no activation or OVR/translation change
+1. Phase 7B.2B OVR Candidate B paired experiment using accepted experimental
+   Candidate A V2 input; no production activation
 2. Preserve elite scarcity and compare bounded identity candidates without
    bundling Recruit Details or League News
 3. Program records / deeper statistical history
@@ -1652,3 +1652,77 @@ the 5% non-targeted gate. Production remains baseline. Next, keep selection,
 unusual share, weighted neutrality, and ±1 OVR fixed while testing weakness
 removal distributed across fewer, position-plausible sacrifices. Recheck 95+
 shape and Steals separation; do not begin OVR Candidate B yet.
+
+## Phase 7B.2A.1 — Candidate A V2 Weakness Distribution — ACCEPT (2026-08-14)
+
+V1's broad weakness loops over-eagerly exhausted the weighted budget, often
+driving three or four low-priority attributes to their floor. V2 retained the
+exact V1 eligibility, selection, 92/8 mix, profile path, 4.0/3.0 budget ceiling,
++12 global strength limit, -18 global weakness limit, floor/cap 45/99, and ±1
+OVR. Under namespace `player-profile-redistribution-candidate-a-v2`, it chooses
+one path-semantic weakness pair, limits primary/secondary removal to 14/10 raw
+points, and shrinks or skips if that pair cannot fund the nominal budget.
+
+The sample again used 250 S1 Universes / 96,000 Players, 500 Recruit classes /
+80,536 recruits, 8,000 teams, and 60 paired Seasons. The same 2,673 Players
+(2.784%, 10.692/Universe) were selected. V2 applied 2,652 and skipped 21; 2,461
+were conventional and 191 unusual. It produced 986 genuinely specialized
+profiles. Position and OVR-band selection counts remained exactly V1's.
+Non-selected records and selected identity fields were exact. V2 OVR movement
+was -1: 165, 0: 2,508, +1: 0, other: 0.
+
+Floor saturation on the common applied cohort materially improved:
+
+| Floor hits | Baseline | V1 | V2 |
+| --- | ---: | ---: | ---: |
+| 0 | 97.55% | 82.01% | 93.48% |
+| 1 | 2.41% | 9.20% | 6.22% |
+| 2 | 0.00% | 5.09% | 0.30% |
+| 3+ | 0.04% | 3.70% | 0.00% |
+
+Selected top-two/bottom-two gap was `23.86 baseline / 32.31 V1 / 29.95 V2`;
+spread was `28.09 / 36.64 / 34.73`. V2 therefore retained substantial profile
+shape while removing V1's mechanical extremes. Every position's selected gap
+improved from baseline. V2 within-position correlations remained lower than
+baseline: PG `.652→.643`, SG `.660→.651`, SF `.664→.651`, PF `.665→.654`, C
+`.631→.620`. Sacrifices and strengths appeared across multiple attributes in
+every position; no profile expanded beyond two weakness channels.
+
+Elite supply per Universe was 90+ `2.880→2.852`, 95+ `0.280→0.280`, 97+
+`0.040→0.040`. Among 90+, two-sub-60 frequency was `0.28%→0.28%`; among 95+,
+any-sub-60 stayed 0%. The 95+ gap moved `16.76→16.62`, confirming that current
+OVR valuation—not more aggressive Generation funding—must be examined next.
+Maximum position/attribute mean and median movement was 0.20 and 1.0;
+positional ordering remained intact. Rare counts baseline/V1/V2 were skilled
+big `211/223/228`, elite big passer `48/54/56`, rebounding guard `26/30/30`,
+point forward `733/737/748`, offensive specialist `457/573/561`, and defensive
+specialist `2101/2327/2176`.
+
+The V1 ugly 79→78 rim-protecting C had SHT/PLY/HND `45/45/45`. The same ID in
+V2 stayed 79 OVR with SHT/PLY/HND `61/52/57`, sacrificed FIN `85→71` and PER
+`72→62`, and improved INT/REB/ATH to `85/92/78`; floor hits fell 3→0. An 84
+OVR scoring SG changed from V1's four broad sacrifices to V2 PER `74→60` and
+REB `71→61`, while FIN/SHT/HND became `95/98/94`. A point-forward PF traded
+REB/PER for PLY/HND/SHT rather than retaining every traditional forward skill.
+
+Recruit mean/median OVR was `66.437/67→66.436/67`; 80+/85+/90+ counts were
+`6560/1708/114→6556/1704/113`. POT mean/median was `76.449/76→76.448/76`;
+90+/95+/99 counts were `3581/900/184→3576/900/184`. All-player Candidate B
+gap mean/median was `10.0123/8→10.0120/8`; zero-gap was `22.140%→22.092%` and
+0–3 gap `33.662%→33.686%`. Star counts stayed 5★ 5,075 and 4★ 16,119; overlap
+was 99.76% / 99.92%. Candidate B gates remained healthy.
+
+Team Strength mean moved `73.066→73.080` (+0.015), median `73.187→73.203`.
+Across 60 Seasons, leader means moved PPG +0.24%, RPG +1.05%, APG -0.67%, SPG
++1.19%, BPG -0.34%. Top-1 minus Top-10 separation moved +1.89%, +4.27%,
+-1.69%, **+4.98%**, -0.70%. Team scoring moved -0.002% and MPG +0.012%.
+Steals is inside the 5% gate, though close enough to recheck in combined audits.
+Twelve of 60 V2 steals leaders were transformed, as in V1; the defensive paths
+were varied rather than one dominant template.
+
+Disposition: **ACCEPT as experimental input**. Production remains baseline.
+Next is Phase 7B.2B OVR Candidate B paired testing on baseline and V2 Players.
+Before any final activation, Phase 7B.2D must characterize whether unchanged
+Player Development V1 preserves strengths, weaknesses, spread, attribute rank
+order, and identity across different POT-runway careers. No Development problem
+is asserted and no Development behavior changed here.

@@ -140,6 +140,15 @@ for later targeted translation experiments; Rebounding escape and Blocks
 flexibility remain deferred. Full candidate mechanics, dependencies, and
 precommitted guardrails live in the active Phase 7 horizon of `ROADMAP.md`.
 
+Candidate A V2 is accepted as experimental input, not production behavior.
+Before final identity-system activation, Phase 7B.2D must characterize
+Development identity retention using unchanged Player Development V1. For
+accepted specialized Players, measure whether original top 2–3 attributes and
+rank ordering persist after each offseason, whether weaknesses converge too
+quickly, how top-two-minus-bottom-two spread changes, and how outcomes differ
+for low versus high POT runway (for example 90/91, 83/94, and 75/92 OVR/POT).
+This records a compatibility question, not a diagnosed Development defect.
+
 ### Postseason Player Stats
 
 Tournament `GameResult` values already retain full `PlayerGameStats`. Future pure projections could provide Postseason Player totals/averages, Program postseason Player tables, and Tournament leaders without changing regular-season `PlayerSeasonStats` semantics.

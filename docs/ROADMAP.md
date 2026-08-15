@@ -613,7 +613,7 @@ population before changing any generator or ranking behavior.
 
 #### Minimal V1 shape and experiment sequence
 
-Do not ship all three layers together without attribution. Use four bounded
+Do not ship all identity layers together without attribution. Use five bounded
 steps, each on identical seeds:
 
 1. **7B.2A — Profile Generation Candidate A Paired Experiment — NEXT.** Compare
@@ -625,7 +625,10 @@ steps, each on identical seeds:
 3. **7B.2C — Combined Profile + OVR Ecosystem Audit.** Only if both isolated
    candidates pass, measure Recruiting rank/stars, Candidate B POT-gap
    compatibility, Rotation/Team Strength, and elite scarcity together.
-4. **7B.3 — Targeted Translation Paired Experiment.** Test Passing escape and
+4. **7B.2D — Development Identity Retention Characterization.** Run accepted
+   specialized profiles through unchanged Player Development V1 over multiple
+   Seasons; measure strength/weakness rank, spread, and POT-runway interaction.
+5. **7B.3 — Targeted Translation Paired Experiment.** Test Passing escape and
    Steals separation as independently switchable candidates on accepted profile
    populations. Defer Rebounding and Blocks unless new evidence earns them.
 
@@ -735,6 +738,30 @@ was effectively unchanged, tradeoffs were repetitive/occasionally severe, and
 Steals leader separation moved 9.64%. Disposition is WATCH; production remains
 baseline. Next is a narrow Candidate A weakness-distribution iteration. Phase
 7B.2B does not begin unless a Generation candidate is accepted.
+
+### Phase 7B.2A.1 — Candidate A Weakness-Distribution Iteration — COMPLETE / ACCEPT
+
+V2 retained V1 selection, profile paths, budgets, caps, and ±1 OVR, but funded
+each profile from one deterministic semantic pair of weakness channels with
+14/10-point operational limits. It shrank instead of expanding into unrelated
+attributes. On the same 250-Universe, 500-Recruit-class, and 60-Season samples,
+V2 removed V1's multi-floor pattern, retained meaningful specialization in all
+five positions, preserved all safety/Recruiting/Team gates, and reduced Steals
+Top-1-versus-Top-10 movement from +9.64% to +4.98%. Candidate A V2 is accepted
+as experimental input only; production generation remains baseline.
+
+The Phase 7B identity chain is now explicitly:
+
+```text
+Profile generation → OVR valuation → Development identity retention → Statistical translation
+```
+
+The next milestone is **7B.2B — OVR Candidate B Paired Experiment**. If the
+isolated valuation and combined audits pass, **7B.2D — Development Identity
+Retention Characterization** must test accepted specialized profiles through
+unchanged Player Development V1 before production activation. It will measure
+strength/weakness rank retention, spread retention, and POT-runway interaction;
+it does not presume Development is currently defective.
 
 League News, Recruit Details, Awards, Save/Persistence, records, shot-selection
 investigation, and minor presentation polish remain separate observed/later
