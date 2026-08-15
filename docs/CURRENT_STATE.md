@@ -432,8 +432,9 @@ completion. Detailed evidence and chronology live in `PLAYTESTING.md` and
 
 **Phase 7B — Player & League Stories V1** is active. Its goal is to make
 meaningful events and Players visible so the simulation creates recognizable
-stories without changing basketball logic. **7B.1 — Around the Country V1** is
-COMPLETE — ACCEPTED. League now opens on a derived current-season News feed
+stories without changing basketball logic. **7B.1 — Around the Country V1** and
+**7B.2 — Player Legacy / Alumni V1** are COMPLETE — ACCEPTED. League opens on a
+derived current-season News feed
 grouped by fully completed regular-season or Tournament rounds. V1 recognizes
 threshold Player performances, five-star commitments, Tournament upsets,
 first losses after an 8-0-or-better start, and exactly ten consecutive wins. It stores no
@@ -441,7 +442,14 @@ news state and changes no simulation behavior. Accepted post-launch polish adds
 outcome-aware and restrained multi-achievement Player copy, unambiguous Recruit
 rank wording, top-seed major-upset context, and a quiet latest-empty-checkpoint
 status without changing eligibility. The exact next milestone is
-**7B.2 — Player Legacy / Alumni V1**.
+**7B.2** adds a pure stable-ID Dynasty resolver with `active | former | unknown`
+semantics over active and archived regular-season rosters. Following now keeps
+departed Players under Former Players, and the existing Player Details route
+renders their regular-season college career summary, Final/Peak OVR, Final
+Ratings, Career Progression, optional canonical Recruiting Origin, Follow
+control, and existing Program/Back navigation. No Alumni registry, copied
+snapshot, historical game log, Tournament résumé, or simulation behavior was
+added. The exact next milestone is **7B.3 — Preseason / Season Context V1**.
 
 The current Player population is good enough to build features on. Production
 Player generation and production `calculateOverall()` remain canonical, active,

@@ -109,6 +109,23 @@ intent. Manual play accepted the full cross-Program retrieval loop. No inline
 unfollow action, notifications, historical snapshot, custom sorting, or new
 Player-profile surface is part of V1.
 
+### Player Legacy / Alumni V1 — accepted (Phase 7B.2)
+
+Following now derives two ordered sections from the same stable Follow-ID
+intent: Active Players retain the accepted current-season table, while Former
+Players show Player, final Program, position, observed Dynasty Season range,
+Final OVR, and regular-season career PPG. IDs absent from active and archived
+rosters remain a quiet unavailable state and are never mislabeled as Former.
+
+The existing Player Details destination is status-aware rather than duplicated
+as an Alumni route. Former Player Details shows Former Player identity and
+Follow control; an explicitly labeled `College Career · Regular Season`
+summary; Final/Peak OVR without POT; Final Ratings from the latest archived
+regular-season snapshot; the accepted compact Career Progression table; and
+Recruiting Origin only when canonical history exists. Current statistics,
+current-class treatment, and game logs remain exclusive to active Players.
+Program links and exploration Back navigation reuse the accepted routes.
+
 ### Simple Rotation UI — implemented (6E.18C)
 
 Simple is now the default Coaching Rotation editor, presenting the

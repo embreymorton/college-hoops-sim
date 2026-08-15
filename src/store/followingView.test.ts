@@ -26,19 +26,25 @@ function activeSeason(): SeasonState {
   return useDynastyStore.getState().dynasty!.activeSeason!
 }
 
+function dynastyWithSeason(season: SeasonState) {
+  return { ...useDynastyStore.getState().dynasty!, activeSeason: season }
+}
+
 describe('Following view projection', () => {
   it('returns safe, distinguishable empty results', () => {
-    expect(deriveFollowingView([], activeSeason(), UNIVERSE_V0)).toEqual({
+    expect(deriveFollowingView([], useDynastyStore.getState().dynasty!)).toEqual({
       totalFollowed: 0,
       activePlayers: [],
+      formerPlayers: [],
       unresolvedPlayerIds: [],
     })
 
     expect(
-      deriveFollowingView(['departed-player'], activeSeason(), UNIVERSE_V0),
+      deriveFollowingView(['departed-player'], useDynastyStore.getState().dynasty!),
     ).toEqual({
       totalFollowed: 1,
       activePlayers: [],
+      formerPlayers: [],
       unresolvedPlayerIds: ['departed-player'],
     })
   })
@@ -55,8 +61,7 @@ describe('Following view projection', () => {
 
     const projection = deriveFollowingView(
       followedPlayerIds,
-      season,
-      UNIVERSE_V0,
+      dynastyWithSeason(season),
     )
 
     expect(projection.totalFollowed).toBe(2)
@@ -101,7 +106,7 @@ describe('Following view projection', () => {
       player.id,
     )
 
-    const row = deriveFollowingView([player.id], season, UNIVERSE_V0)
+    const row = deriveFollowingView([player.id], dynastyWithSeason(season))
       .activePlayers[0]!
 
     expect(row.seasonStats).toEqual({
@@ -117,7 +122,7 @@ describe('Following view projection', () => {
     const sourceProgramId = CONTROLLED_PROGRAM_ID
     const destinationProgramId = 'northbridge'
     const player = initial.programStates[sourceProgramId]!.team.roster[0]!
-    const initialRow = deriveFollowingView([player.id], initial, UNIVERSE_V0)
+    const initialRow = deriveFollowingView([player.id], dynastyWithSeason(initial))
       .activePlayers[0]!
     const changedPlayer = {
       ...player,
@@ -153,8 +158,7 @@ describe('Following view projection', () => {
 
     const currentRow = deriveFollowingView(
       [player.id],
-      nextSeason,
-      UNIVERSE_V0,
+      dynastyWithSeason(nextSeason),
     ).activePlayers[0]!
 
     expect(currentRow.program.id).toBe(destinationProgramId)

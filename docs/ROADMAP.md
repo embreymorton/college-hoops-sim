@@ -806,11 +806,15 @@ provides a concrete reason; detailed evidence remains in `PLAYTESTING.md`.
   start, and a Team's tenth win. The initial view includes whole newest groups
   through at least 12 stories with an explicit Show All expansion. No news
   records, RNG, event bus, simulation rule, or archive behavior was added.
-- **7B.2 — Player Legacy / Alumni V1 — NEXT.** Resolve departed Players from
-  archived Season data, support historical read-only Player Details, and keep
-  Followed alumni accessible by building on existing archives and career
-  history rather than creating a second history model.
-- **7B.3 — Preseason / Season Context V1 — PLANNED.** Introduce each Season's
+- **7B.2 — Player Legacy / Alumni V1 — COMPLETE — ACCEPTED.** A pure Dynasty
+  resolver classifies stable Player IDs as active, former, or unknown from
+  active and archived regular-season rosters. Following separates Active and
+  Former Players while preserving first-follow order, and the existing Player
+  Details route presents a former Player's explicitly regular-season career
+  summary, Final/Peak OVR, Final Ratings, progression, Recruiting Origin when
+  canonical, Follow control, and existing navigation. No persisted Alumni
+  model or simulation change was added.
+- **7B.3 — Preseason / Season Context V1 — NEXT.** Introduce each Season's
   cast through a lightweight view of returning Players, incoming freshmen,
   offseason development jumps, Followed Player updates, and Players to Watch.
 

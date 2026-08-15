@@ -431,6 +431,24 @@ RNG draw, or event record is persisted. Zustand
 stores only transient `leagueTab` navigation context so detail Back restores the
 originating tab and fresh League entry resets to News.
 
+Phase 7B.2 adds a pure stable-identity read boundary:
+
+```text
+stable Player ID
+   ↓
+active regular-season rosters, then completed regular-season archives
+   ↓
+active | former | unknown
+```
+
+Active identity takes priority; historical identity and final Program come
+from the greatest matching canonical Season number, independent of archive
+array order. `derivePlayerCareerHistory()` remains the Season-row source, and a
+separate pure summary aggregates its regular-season counting totals before
+deriving career rates and shooting percentages. Following and Player Details
+consume these projections. No Alumni registry, copied Player snapshot,
+historical index, cache, RNG, or new canonical state exists.
+
 ## Team Season Stats and exploration projections
 
 The current regular-season presentation follows one facts-to-projections pipeline:

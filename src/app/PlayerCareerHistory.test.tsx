@@ -209,3 +209,59 @@ describe('Player Details — existing navigation preserved', () => {
     ).toBeInTheDocument()
   })
 })
+
+describe('Player Legacy — Former Player Details', () => {
+  it('keeps a followed graduate retrievable with a completed read-only career and navigation', () => {
+    let dynasty = createRecruitingDynasty('player-legacy-former-details')
+    const senior = Object.values(dynasty.activeSeason!.programStates)
+      .flatMap(({ team }) => team.roster)
+      .find(({ classYear }) => classYear === 'SR')!
+    const programId = Object.entries(dynasty.activeSeason!.programStates).find(
+      ([, { team }]) => team.roster.some(({ id }) => id === senior.id),
+    )![0]
+    const program = dynasty.universe.programs.find(({ id }) => id === programId)!
+
+    dynasty = completeSeasonAndBeginOffseason(dynasty)
+    dynasty = rolloverDynastyToNextSeason(dynasty)
+    useDynastyStore.setState({
+      dynasty,
+      followedPlayerIds: [senior.id],
+      view: 'league',
+      leagueTab: 'following',
+    })
+    render(<App />)
+
+    expect(screen.getByRole('heading', { name: 'Former Players' })).toBeInTheDocument()
+    const formerRow = screen.getByRole('button', {
+      name: `${senior.firstName} ${senior.lastName}`,
+    }).closest('tr') as HTMLElement
+    expect(within(formerRow).getByText('Season 1')).toBeInTheDocument()
+    expect(within(formerRow).getByText(String(calculateOverall(senior)))).toBeInTheDocument()
+
+    fireEvent.click(within(formerRow).getByRole('button', {
+      name: `${senior.firstName} ${senior.lastName}`,
+    }))
+
+    expect(screen.getByText('Former Player')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'College Career · Regular Season' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Final Ratings' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Career Progression' })).toBeInTheDocument()
+    expect(screen.queryByText('Pot')).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Game Log' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Recruiting Origin' })).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: program.name }))
+    expect(screen.getByRole('heading', { name: new RegExp(`^${program.name}`) })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /Back to Player$/i }))
+    expect(screen.getByText('Former Player')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Following' }))
+    expect(useDynastyStore.getState().isPlayerFollowed(senior.id)).toBe(false)
+    fireEvent.click(screen.getByRole('button', { name: 'Follow' }))
+    expect(useDynastyStore.getState().isPlayerFollowed(senior.id)).toBe(true)
+
+    fireEvent.click(screen.getByRole('button', { name: /Back to League/i }))
+    expect(screen.getByRole('button', { name: 'Following' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('heading', { name: 'Former Players' })).toBeInTheDocument()
+  }, 20000)
+})

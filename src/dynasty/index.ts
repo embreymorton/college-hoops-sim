@@ -1,5 +1,9 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
 export { derivePlayerCareerHistory } from './careerHistory'
+export {
+  derivePlayerCareerSummary,
+  resolveDynastyPlayer,
+} from './playerLegacy'
 export { deriveNewsFeed } from './news'
 export {
   deriveAttributeDevelopmentGains,
@@ -101,6 +105,11 @@ export type {
   PlayerCareerSeasonRow,
   PlayerRecruitingOrigin,
 } from './careerHistory'
+export type {
+  DynastyPlayerResolution,
+  KnownDynastyPlayerResolution,
+  PlayerCareerSummary,
+} from './playerLegacy'
 export type {
   NewsCheckpoint,
   NewsFeed,

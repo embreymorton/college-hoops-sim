@@ -17,6 +17,7 @@ export { deriveFollowedPlayers, deriveFollowingView } from './followedPlayers'
 export type {
   FollowedPlayerResolution,
   FollowingPlayerSeasonSummary,
+  FollowingFormerPlayer,
   FollowingViewPlayer,
   FollowingViewProjection,
 } from './followedPlayers'

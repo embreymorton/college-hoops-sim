@@ -48,7 +48,7 @@ export function LeagueScreen() {
   }
 
   const leaderboards = deriveNationalPlayerLeaders(season)
-  const followingView = deriveFollowingView(followedPlayerIds, season, UNIVERSE_V0)
+  const followingView = deriveFollowingView(followedPlayerIds, dynasty)
   const newsFeed = deriveNewsFeed(dynasty, followedPlayerIds)
 
   return (

@@ -193,7 +193,7 @@ describe('League — Following', () => {
     goToLeagueFollowing()
 
     expect(
-      screen.getByText(/no longer active in the current universe/i),
+      screen.getByText(/unavailable in this Dynasty/i),
     ).toBeInTheDocument()
   })
 
@@ -212,7 +212,7 @@ describe('League — Following', () => {
     expect(
       screen.getByText(`${player.firstName} ${player.lastName}`),
     ).toBeInTheDocument()
-    expect(screen.getByText(/1 followed Player no longer active/i)).toBeInTheDocument()
+    expect(screen.getByText(/1 followed Player is unavailable/i)).toBeInTheDocument()
   })
 
   it('leaves existing League Leaders/Teams behavior intact', () => {

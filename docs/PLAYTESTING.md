@@ -1643,6 +1643,25 @@ Tournament upsets all added useful world context. This evidence supports
 continuing Player & League Stories feature work rather than reopening Player
 Identity or OVR calibration.
 
+## Phase 7B.2 — Player Legacy / Alumni V1 — ACCEPTED (2026-08-15)
+
+The Avery-style lifecycle loop is complete: a Followed active senior remains in
+the stable Follow-ID list after the completed Season and Tournament are
+archived, moves from Active Players to Former Players after rollover, and opens
+the historical variation of the existing Player Details destination. Manual
+acceptance verified final Program, position/height, observed Season range,
+regular-season career aggregation, Final/Peak OVR, Final Ratings, chronological
+Career Progression, Follow/unfollow/refollow, Program → Back → Player, and
+Player → Back → Following. An original-Universe graduate correctly omitted
+Recruiting Origin, while a nonexistent stale ID remained unavailable rather
+than being labeled Former.
+
+Active Player Details, current Following rows, News, Team navigation, Season
+progression, and Offseason navigation remained unchanged. The feature derives
+from existing immutable archives and adds no persisted Alumni state,
+Tournament career totals, historical game log, awards, records, or simulation
+behavior. Phase 7B.3 — Preseason / Season Context V1 is next.
+
 Refinement observations remain **WATCH**, not accepted behavior changes:
 
 - **Empty checkpoint clarity:** some completed rounds legitimately produced no

@@ -1,4 +1,9 @@
 import { calculateOverall, type Player, type Team } from '../engine'
+import {
+  derivePlayerCareerSummary,
+  resolveDynastyPlayer,
+  type DynastyState,
+} from '../dynasty'
 import { derivePlayerSeasonStats, type SeasonState } from '../season'
 import type { ProgramDefinition, UniverseDefinition } from '../universe'
 
@@ -28,6 +33,16 @@ export interface FollowingViewPlayer {
   readonly seasonStats: FollowingPlayerSeasonSummary
 }
 
+export interface FollowingFormerPlayer {
+  readonly playerId: string
+  readonly player: Player
+  readonly program: ProgramDefinition
+  readonly firstSeasonNumber: number
+  readonly lastSeasonNumber: number
+  readonly finalOverall: number
+  readonly careerPointsPerGame: number
+}
+
 /**
  * Keeps active rows separate from unresolved intent so presentation can
  * distinguish "nothing followed" from "nothing currently active."
@@ -35,6 +50,7 @@ export interface FollowingViewPlayer {
 export interface FollowingViewProjection {
   readonly totalFollowed: number
   readonly activePlayers: readonly FollowingViewPlayer[]
+  readonly formerPlayers: readonly FollowingFormerPlayer[]
   readonly unresolvedPlayerIds: readonly string[]
 }
 
@@ -89,36 +105,55 @@ export function deriveFollowedPlayers(
  */
 export function deriveFollowingView(
   followedPlayerIds: readonly string[],
-  season: SeasonState | null,
-  universe: UniverseDefinition,
+  dynasty: DynastyState,
 ): FollowingViewProjection {
   const uniquePlayerIds = [...new Set(followedPlayerIds)]
-  const resolutions = deriveFollowedPlayers(uniquePlayerIds, season, universe)
+  const programsById = new Map(
+    dynasty.universe.programs.map((program) => [program.id, program] as const),
+  )
   const activePlayers: FollowingViewPlayer[] = []
+  const formerPlayers: FollowingFormerPlayer[] = []
   const unresolvedPlayerIds: string[] = []
 
-  for (const resolution of resolutions) {
-    if (
-      !season ||
-      !resolution.resolves ||
-      !resolution.player ||
-      !resolution.program ||
-      !resolution.team
-    ) {
+  for (const playerId of uniquePlayerIds) {
+    const resolution = resolveDynastyPlayer(dynasty, playerId)
+    if (resolution.status === 'unknown') {
       unresolvedPlayerIds.push(resolution.playerId)
       continue
     }
 
-    const stats = derivePlayerSeasonStats(
-      season,
-      resolution.program.id,
-      resolution.playerId,
-    )
+    const program = programsById.get(resolution.programId)
+    if (!program) {
+      unresolvedPlayerIds.push(resolution.playerId)
+      continue
+    }
+
+    if (resolution.status === 'former') {
+      const summary = derivePlayerCareerSummary(resolution.careerHistory)
+      formerPlayers.push({
+        playerId: resolution.playerId,
+        player: resolution.player,
+        program,
+        firstSeasonNumber: summary.firstSeasonNumber,
+        lastSeasonNumber: summary.lastSeasonNumber,
+        finalOverall: summary.finalOverall,
+        careerPointsPerGame: summary.pointsPerGame,
+      })
+      continue
+    }
+
+    const season = dynasty.activeSeason!
+    const team = season.programStates[resolution.programId]?.team
+    if (!team) {
+      unresolvedPlayerIds.push(resolution.playerId)
+      continue
+    }
+    const stats = derivePlayerSeasonStats(season, resolution.programId, playerId)
     activePlayers.push({
-      playerId: resolution.playerId,
+      playerId,
       player: resolution.player,
-      program: resolution.program,
-      team: resolution.team,
+      program,
+      team,
       overall: calculateOverall(resolution.player),
       seasonStats: {
         gamesPlayed: stats.gamesPlayed,
@@ -132,6 +167,7 @@ export function deriveFollowingView(
   return {
     totalFollowed: uniquePlayerIds.length,
     activePlayers,
+    formerPlayers,
     unresolvedPlayerIds,
   }
 }
