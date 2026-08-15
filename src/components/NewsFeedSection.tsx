@@ -36,15 +36,17 @@ export function NewsFeedSection({ feed, dynasty, onSelectPlayer, onSelectProgram
   const [showAll, setShowAll] = useState(false)
   const initialGroups = selectInitiallyVisibleNewsGroups(feed.groups)
   const visibleGroups = showAll ? feed.groups : initialGroups
+  const showLatestCheckpointEmpty = feed.latestCompletedCompetitionCheckpoint !== null && !feed.latestCompletedCompetitionCheckpointHasNews
 
   return (
     <div className="league-news">
       <div className="league-news__heading">
         <h1 className="section-title">Around the Country</h1>
         <p className="section-hint">Notable performances, commitments, streaks, and Tournament results from across the college basketball world.</p>
+        {showLatestCheckpointEmpty ? <p className="league-news__checkpoint-status">{formatNewsCheckpoint(feed.latestCompletedCompetitionCheckpoint!)} complete · No notable news</p> : null}
       </div>
       {feed.storyCount === 0 ? (
-        <p className="league-empty-state">No News yet. Complete a full round to see notable stories from around the country.</p>
+        showLatestCheckpointEmpty ? null : <p className="league-empty-state">No News yet. Complete a full round to see notable stories from around the country.</p>
       ) : (
         <div className="news-feed">
           {visibleGroups.map((group) => (

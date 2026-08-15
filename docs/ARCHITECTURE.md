@@ -423,7 +423,11 @@ canonical regular-season results, Postseason results/seeds, Recruiting
 commitments, and caller-provided Followed Player IDs; only fully completed
 round checkpoints publish. Stable IDs, family/source ordering, exact detector
 thresholds, and presentation templates make repeated derivation deterministic.
-No news item, checkpoint, cache, RNG draw, or event record is persisted. Zustand
+Player-performance projections carry the canonical game outcome needed for
+win/loss copy, and the feed exposes its latest fully completed competition
+checkpoint separately from story groups so the UI can identify a storyless
+latest round without creating a fake event. No news item, checkpoint, cache,
+RNG draw, or event record is persisted. Zustand
 stores only transient `leagueTab` navigation context so detail Back restores the
 originating tab and fresh League entry resets to News.
 

@@ -45,6 +45,50 @@ function playerSupport(story: Extract<NewsStory, { kind: 'player-performance' }>
   return values.join(' · ')
 }
 
+type PlayerPerformanceStory = Extract<NewsStory, { kind: 'player-performance' }>
+
+function secondaryPerformancePhrase(story: PlayerPerformanceStory): string {
+  if (story.achievements.includes('triple-double')) {
+    if (story.primaryVariant === 'fifty-point') return ' and records a triple-double'
+    return ''
+  }
+  const primaryCategory = story.primaryVariant === 'fifty-point' || story.primaryVariant === 'forty-point' || story.primaryVariant === 'scoring'
+    ? 'points'
+    : story.primaryVariant
+  const candidates = [
+    { achievement: 'points-40', category: 'points', phrase: ` and scores ${story.stats.points} points` },
+    { achievement: 'rebounds-20', category: 'rebounding', phrase: ` and pulls down ${story.stats.rebounds} rebounds` },
+    { achievement: 'assists-15', category: 'assists', phrase: ` and hands out ${story.stats.assists} assists` },
+    { achievement: 'blocks-7', category: 'blocks', phrase: ` and blocks ${story.stats.blocks} shots` },
+    { achievement: 'steals-6', category: 'steals', phrase: ` and records ${story.stats.steals} steals` },
+  ] as const
+  return candidates.find(({ achievement, category }) => category !== primaryCategory && story.achievements.includes(achievement))?.phrase ?? ''
+}
+
+function playerPerformanceHeadline(story: PlayerPerformanceStory, dynasty: DynastyState): readonly NewsPresentationPart[] {
+  const player = playerPart(dynasty, story.programId, story.playerId)
+  const program = programPart(dynasty, story.programId)
+  const opponent = programPart(dynasty, story.opponentProgramId)
+  const tripleDouble = story.achievements.includes('triple-double')
+  const action = story.primaryVariant === 'fifty-point' ? ` erupts for ${story.stats.points} points`
+    : story.primaryVariant === 'triple-double' ? (story.stats.points >= 40 ? ` records a triple-double in a ${story.stats.points}-point performance` : ' records a triple-double')
+      : story.primaryVariant === 'forty-point' ? ` pours in ${story.stats.points} points`
+        : story.primaryVariant === 'rebounding' ? ` pulls down ${story.stats.rebounds} rebounds`
+          : story.primaryVariant === 'assists' ? ` hands out ${story.stats.assists} assists`
+            : story.primaryVariant === 'blocks' ? ` blocks ${story.stats.blocks} shots`
+              : story.primaryVariant === 'steals' ? ` records ${story.stats.steals} steals`
+                : ` scores ${story.stats.points}`
+  const achievementContext = tripleDouble && story.primaryVariant === 'triple-double' ? '' : secondaryPerformancePhrase(story)
+  if (story.checkpoint.kind === 'tournament-round' && story.checkpoint.round === 'championship') {
+    return story.won
+      ? [player, text(`${action}${achievementContext} as `), program, text(' wins the national championship.')]
+      : [player, text(`${action}${achievementContext}, but `), program, text(' falls in the national championship.')]
+  }
+  return story.won
+    ? [player, text(`${action}${achievementContext} as `), program, text(' defeats '), opponent, text('.')]
+    : [player, text(`${action}${achievementContext}, but `), program, text(' falls to '), opponent, text('.')]
+}
+
 export function formatNewsCheckpoint(checkpoint: NewsCheckpoint): string {
   if (checkpoint.kind === 'regular-season-round') return `Round ${checkpoint.round}`
   if (checkpoint.kind === 'tournament-round') return formatTournamentRoundName(checkpoint.round)
@@ -54,21 +98,8 @@ export function formatNewsCheckpoint(checkpoint: NewsCheckpoint): string {
 /** Deterministic factual copy assembled from projected facts and current identities. */
 export function presentNewsStory(story: NewsStory, dynasty: DynastyState): NewsStoryPresentation {
   if (story.kind === 'player-performance') {
-    const player = playerPart(dynasty, story.programId, story.playerId)
-    const program = programPart(dynasty, story.programId)
-    const tripleDouble = story.achievements.includes('triple-double')
-    const variants = {
-      'fifty-point': ['50-POINT PERFORMANCE', [player, text(` erupts for ${story.stats.points} points for `), program, text('.')]],
-      'triple-double': ['TRIPLE-DOUBLE', [player, text(tripleDouble && story.stats.points >= 40 ? ' records a triple-double in a huge night for ' : ' records a triple-double for '), program, text('.')]],
-      'forty-point': ['MONSTER NIGHT', [player, text(` pours in ${story.stats.points} points for `), program, text('.')]],
-      'rebounding': ['GLASS WORK', [player, text(` pulls down ${story.stats.rebounds} rebounds for `), program, text('.')]],
-      'assists': ['PLAYMAKER', [player, text(` hands out ${story.stats.assists} assists for `), program, text('.')]],
-      'blocks': ['RIM PROTECTOR', [player, text(` blocks ${story.stats.blocks} shots for `), program, text('.')]],
-      'steals': ['DEFENSIVE DISRUPTION', [player, text(` records ${story.stats.steals} steals for `), program, text('.')]],
-      'scoring': ['BIG NIGHT', [player, text(` scores ${story.stats.points} for `), program, text('.')]],
-    } as const
-    const [label, headline] = variants[story.primaryVariant]
-    return { label, headline, support: playerSupport(story) }
+    const labels = { 'fifty-point': '50-POINT PERFORMANCE', 'triple-double': 'TRIPLE-DOUBLE', 'forty-point': 'MONSTER NIGHT', rebounding: 'GLASS WORK', assists: 'PLAYMAKER', blocks: 'RIM PROTECTOR', steals: 'DEFENSIVE DISRUPTION', scoring: 'BIG NIGHT' } as const
+    return { label: labels[story.primaryVariant], headline: playerPerformanceHeadline(story, dynasty), support: playerSupport(story) }
   }
 
   if (story.kind === 'recruit-commitment') {
@@ -77,7 +108,7 @@ export function presentNewsStory(story: NewsStory, dynasty: DynastyState): NewsS
     const destination = programPart(dynasty, story.destinationProgramId)
     return story.nationalRank === 1
       ? { label: 'NO. 1 RECRUIT COMMITS', headline: [{ kind: 'recruit', text: recruitName }, text(`, the nation's No. 1 recruit and a five-star ${story.position}, commits to `), destination, text('.')], support: `Class of Season ${story.targetSeasonNumber}` }
-      : { label: '5★ COMMITMENT', headline: [{ kind: 'recruit', text: recruitName }, text(`, the No. ${story.nationalRank} ${story.position} nationally, commits to `), destination, text('.')], support: `Class of Season ${story.targetSeasonNumber}` }
+      : { label: '5★ COMMITMENT', headline: [{ kind: 'recruit', text: recruitName }, text(`, the No. ${story.nationalRank} overall recruit and a five-star ${story.position}, commits to `), destination, text('.')], support: `Class of Season ${story.targetSeasonNumber}` }
   }
 
   if (story.kind === 'tournament-upset') {

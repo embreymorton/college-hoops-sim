@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import type { PlayerGameStats } from '../engine'
 import { initializePostseason, simulatePendingGamesInTournamentRound } from '../postseason'
 import { deriveNewsFeed, type PlayerPerformanceNewsStory } from './news'
 import { completeRounds, createRecruitingDynasty } from './recruiting/testSupport'
@@ -27,6 +28,22 @@ function performanceFixture(stat: 'points' | 'rebounds' | 'assists' | 'blocks' |
 
 function playerStories(dynasty: ReturnType<typeof createRecruitingDynasty>): PlayerPerformanceNewsStory[] {
   return deriveNewsFeed(dynasty, []).groups.flatMap(({ stories }) => stories).filter((story): story is PlayerPerformanceNewsStory => story.kind === 'player-performance')
+}
+
+function quietStats(rows: readonly PlayerGameStats[]): PlayerGameStats[] {
+  return rows.map((row) => ({ ...row, points: 0, rebounds: 0, assists: 0, blocks: 0, steals: 0 }))
+}
+
+function quietCompletedRounds(seed: string, rounds: number) {
+  const dynasty = withCompletedRounds(seed, rounds)
+  const season = dynasty.activeSeason!
+  return {
+    ...dynasty,
+    activeSeason: {
+      ...season,
+      resultsByGameId: Object.fromEntries(Object.entries(season.resultsByGameId).map(([id, result]) => [id, { ...result, homePlayerStats: quietStats(result.homePlayerStats), awayPlayerStats: quietStats(result.awayPlayerStats) }])),
+    },
+  }
 }
 
 describe('Around the Country V1 projection', () => {
@@ -62,6 +79,7 @@ describe('Around the Country V1 projection', () => {
     expect(story.primaryVariant).toBe('fifty-point')
     expect(story.importance).toBe('major')
     expect(story.isFollowed).toBe(true)
+    expect(story.won).toBe(result.winnerId === story.programId)
   })
 
   it('accepts exactly five-star commitments and upgrades No. 1 in the completed checkpoint', () => {
@@ -76,7 +94,7 @@ describe('Around the Country V1 projection', () => {
     expect(commitments[0]).toMatchObject({ id: `news:v1:recruit-commitment:${recruiting.targetSeasonNumber}:${first.player.id}`, importance: 'major', nationalRank: 1 })
   })
 
-  it('requires a completed Tournament round and applies gap 4 / gap 8 importance', () => {
+  it('preserves Tournament qualification and makes gap 8 or a qualifying top-two elimination major', () => {
     const dynasty = withCompletedRounds('news-tournament', 24)
     let postseason = initializePostseason({ universe: dynasty.universe, season: dynasty.activeSeason! })
     postseason = simulatePendingGamesInTournamentRound({ postseason, round: 'round-of-16', simulationSeed: 'news-tournament-games' })
@@ -85,14 +103,65 @@ describe('Around the Country V1 projection', () => {
     const entries = [postseason.field.find(({ programId }) => programId === result.homeTeamId)!, postseason.field.find(({ programId }) => programId === result.awayTeamId)!].sort((a, b) => b.seed - a.seed)
     const [underdog, favorite] = entries
     const forced = { ...result, winnerId: underdog!.programId, homeScore: result.homeTeamId === underdog!.programId ? 80 : 70, awayScore: result.awayTeamId === underdog!.programId ? 80 : 70 }
-    const complete = { ...dynasty, activePostseason: { ...postseason, resultsByGameId: { ...postseason.resultsByGameId, [game.id]: forced }, field: postseason.field.map((entry) => entry.programId === underdog!.programId ? { ...entry, seed: 12 } : entry.programId === favorite!.programId ? { ...entry, seed: 8 } : entry) } }
-    const notable = deriveNewsFeed(complete, []).groups.flatMap(({ stories }) => stories).find((story) => story.kind === 'tournament-upset' && story.gameId === game.id)
-    expect(notable).toMatchObject({ importance: 'notable', seedGap: 4, id: `news:v1:tournament-upset:${game.id}` })
-    const majorState = { ...complete, activePostseason: { ...complete.activePostseason!, field: complete.activePostseason!.field.map((entry) => entry.programId === favorite!.programId ? { ...entry, seed: 2 } : entry) } }
-    expect(deriveNewsFeed(majorState, []).groups.flatMap(({ stories }) => stories).find((story) => story.kind === 'tournament-upset' && story.gameId === game.id)).toMatchObject({ importance: 'major', seedGap: 10 })
+    const complete = { ...dynasty, activePostseason: { ...postseason, resultsByGameId: { ...postseason.resultsByGameId, [game.id]: forced } } }
+    const storyForSeeds = (winnerSeed: number, loserSeed: number) => {
+      const state = { ...complete, activePostseason: { ...complete.activePostseason!, field: complete.activePostseason!.field.map((entry) => entry.programId === underdog!.programId ? { ...entry, seed: winnerSeed } : entry.programId === favorite!.programId ? { ...entry, seed: loserSeed } : entry) } }
+      return deriveNewsFeed(state, []).groups.flatMap(({ stories }) => stories).find((story) => story.kind === 'tournament-upset' && story.gameId === game.id)
+    }
+    expect(storyForSeeds(6, 3)).toBeUndefined()
+    expect(storyForSeeds(10, 5)).toMatchObject({ importance: 'notable', seedGap: 5 })
+    expect(storyForSeeds(11, 3)).toMatchObject({ importance: 'major', seedGap: 8 })
+    expect(storyForSeeds(8, 1)).toMatchObject({ importance: 'major', seedGap: 7 })
+    expect(storyForSeeds(6, 2)).toMatchObject({ importance: 'major', seedGap: 4 })
+    expect(storyForSeeds(3, 2)).toBeUndefined()
     const omittedGameId = postseason.bracket.games.filter(({ round }) => round === 'round-of-16').at(-1)!.id
     const partial = Object.fromEntries(Object.entries(complete.activePostseason!.resultsByGameId).filter(([id]) => id !== omittedGameId))
     expect(deriveNewsFeed({ ...complete, activePostseason: { ...complete.activePostseason!, resultsByGameId: partial } }, []).groups.some(({ checkpoint }) => checkpoint.kind === 'tournament-round')).toBe(false)
+  })
+
+  it('tracks the latest fully completed regular checkpoint without manufacturing empty groups', () => {
+    expect(deriveNewsFeed(createRecruitingDynasty('news-no-checkpoint'), [])).toMatchObject({
+      latestCompletedCompetitionCheckpoint: null,
+      latestCompletedCompetitionCheckpointHasNews: false,
+    })
+
+    const roundOneEmpty = quietCompletedRounds('news-empty-checkpoint', 1)
+    const emptyFeed = deriveNewsFeed(roundOneEmpty, [])
+    expect(emptyFeed.groups).toEqual([])
+    expect(emptyFeed.latestCompletedCompetitionCheckpoint).toMatchObject({ kind: 'regular-season-round', round: 1 })
+    expect(emptyFeed.latestCompletedCompetitionCheckpointHasNews).toBe(false)
+
+    const roundTwoEmpty = quietCompletedRounds('news-empty-checkpoint', 2)
+    const season = roundTwoEmpty.activeSeason!
+    const lastRoundTwoGame = season.schedule.games.filter(({ round }) => round === 2).at(-1)!
+    const partialRoundTwo = { ...roundTwoEmpty, activeSeason: { ...season, resultsByGameId: Object.fromEntries(Object.entries(season.resultsByGameId).filter(([id]) => id !== lastRoundTwoGame.id)) } }
+    expect(deriveNewsFeed(partialRoundTwo, []).latestCompletedCompetitionCheckpoint).toMatchObject({ kind: 'regular-season-round', round: 1 })
+
+    const storyGame = season.schedule.games.find(({ round }) => round === 2)!
+    const storyResult = season.resultsByGameId[storyGame.id]!
+    const homePlayerStats = storyResult.homePlayerStats.map((row, index) => index === 0 ? { ...row, points: 35 } : row)
+    const withNewStory = { ...roundTwoEmpty, activeSeason: { ...season, resultsByGameId: { ...season.resultsByGameId, [storyGame.id]: { ...storyResult, homePlayerStats } } } }
+    const storyFeed = deriveNewsFeed(withNewStory, [])
+    expect(storyFeed.latestCompletedCompetitionCheckpoint).toMatchObject({ kind: 'regular-season-round', round: 2 })
+    expect(storyFeed.latestCompletedCompetitionCheckpointHasNews).toBe(true)
+    expect(storyFeed.groups).toHaveLength(1)
+    expect(storyFeed.groups[0]!.checkpoint).toMatchObject({ kind: 'regular-season-round', round: 2 })
+  })
+
+  it('tracks an empty completed Tournament checkpoint separately from regular-season News', () => {
+    const canonicalDynasty = withCompletedRounds('news-empty-tournament-checkpoint', 24)
+    const dynasty = quietCompletedRounds('news-empty-tournament-checkpoint', 24)
+    let postseason = initializePostseason({ universe: canonicalDynasty.universe, season: canonicalDynasty.activeSeason! })
+    postseason = simulatePendingGamesInTournamentRound({ postseason, round: 'round-of-16', simulationSeed: 'news-empty-tournament-games' })
+    const seeds = new Map(postseason.field.map((entry) => [entry.programId, entry.seed]))
+    const resultsByGameId = Object.fromEntries(Object.entries(postseason.resultsByGameId).map(([id, result]) => {
+      const favoriteId = seeds.get(result.homeTeamId)! < seeds.get(result.awayTeamId)! ? result.homeTeamId : result.awayTeamId
+      return [id, { ...result, winnerId: favoriteId, homeScore: result.homeTeamId === favoriteId ? 80 : 70, awayScore: result.awayTeamId === favoriteId ? 80 : 70, homePlayerStats: quietStats(result.homePlayerStats), awayPlayerStats: quietStats(result.awayPlayerStats) }]
+    }))
+    const feed = deriveNewsFeed({ ...dynasty, activePostseason: { ...postseason, resultsByGameId } }, [])
+    expect(feed.latestCompletedCompetitionCheckpoint).toMatchObject({ kind: 'tournament-round', round: 'round-of-16' })
+    expect(feed.latestCompletedCompetitionCheckpointHasNews).toBe(false)
+    expect(feed.groups.some(({ checkpoint }) => checkpoint.kind === 'tournament-round')).toBe(false)
   })
 
   it('emits the 10th straight once and an undefeated first loss only after 8–0', () => {

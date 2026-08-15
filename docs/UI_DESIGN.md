@@ -349,7 +349,16 @@ supporting stat line; Followed Players receive a quiet marker without changing
 story eligibility or order. The collapsed feed includes whole groups until it
 reaches at least 12 stories, then offers Show All. Detail navigation preserves
 the exact originating League tab, while a fresh League entry always resets to
-News. Empty and partial-round states explain that a complete round is required.
+News. Player-performance headlines include win/loss context and use explicit
+national-championship wording for the title game. They may acknowledge at most
+one strong secondary statistical category while preserving the existing primary
+variant; triple-doubles are always acknowledged, including with a 50-point
+primary. Qualifying upsets over a #1/#2 seed receive the existing `MAJOR UPSET`
+treatment even when their seed gap is four through seven. If the latest fully
+completed competition checkpoint produced no stories, a quiet status says that
+checkpoint is complete with no notable news while older empty checkpoints remain
+absent. Before any checkpoint completes, the original New Dynasty empty state
+still explains that a complete round is required.
 
 ### Player Details + Development History — implemented (6E.8)
 

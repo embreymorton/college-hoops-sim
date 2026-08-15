@@ -1667,6 +1667,29 @@ Refinement observations remain **WATCH**, not accepted behavior changes:
   the already-selected Phase 7D Recruit Details / Follow Recruits / Recruit →
   Player continuity work; it creates no duplicate Roadmap scope.
 
+## Phase 7B.1 — Post-Acceptance Context Polish — RESOLVED (2026-08-15)
+
+The accepted multi-season evidence led to a narrow copy/context pass without
+changing News eligibility, persistence, ordering, or current-season scope.
+Player-performance headlines now state whether the Program won or lost and give
+Championship winners/losers explicit title-game context. One strong secondary
+category may join the unchanged primary achievement, so `23 REB / 7 BLK` reads
+as the exceptional two-dimensional game it was; triple-doubles are always
+acknowledged, including behind a 50-point primary. Five-star commitment copy now
+separates overall national rank from position. Qualifying Tournament upsets are
+major when the gap is at least eight or the eliminated favorite is a #1/#2 seed;
+the gap-four qualification boundary is unchanged. A quiet status identifies the
+latest fully completed storyless checkpoint without manufacturing a group.
+
+Focused tests covered regular-season, Tournament, and Championship win/loss
+copy; entity links; restrained multi-achievement selection; Recruit wording;
+top-seed importance boundaries; and latest-checkpoint publication semantics.
+Manual play showed both win and loss headlines, retained older stories beneath
+`Round 3 complete · No notable news`, and preserved a no-overflow 390px feed.
+The 6-block frequency observation remains **WATCH** only; thresholds and Game
+Simulation were not reopened. Avery Martin's multi-season story continues to
+support the already-selected Player Legacy / Alumni V1 milestone.
+
 ## Phase 7B.2A — Profile Generation Candidate A — WATCH (2026-08-14)
 
 The preregistered configuration used OVR 70+ eligibility and selection

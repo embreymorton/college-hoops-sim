@@ -436,8 +436,11 @@ stories without changing basketball logic. **7B.1 — Around the Country V1** is
 COMPLETE — ACCEPTED. League now opens on a derived current-season News feed
 grouped by fully completed regular-season or Tournament rounds. V1 recognizes
 threshold Player performances, five-star commitments, Tournament upsets,
-first losses after an 8-0-or-better start, and exactly ten wins. It stores no
-news state and changes no simulation behavior. The exact next milestone is
+first losses after an 8-0-or-better start, and exactly ten consecutive wins. It stores no
+news state and changes no simulation behavior. Accepted post-launch polish adds
+outcome-aware and restrained multi-achievement Player copy, unambiguous Recruit
+rank wording, top-seed major-upset context, and a quiet latest-empty-checkpoint
+status without changing eligibility. The exact next milestone is
 **7B.2 — Player Legacy / Alumni V1**.
 
 The current Player population is good enough to build features on. Production

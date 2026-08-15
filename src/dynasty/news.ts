@@ -17,7 +17,7 @@ export type PlayerPerformanceVariant = 'fifty-point' | 'triple-double' | 'forty-
 export interface PlayerPerformanceNewsStory extends NewsStoryBase {
   readonly kind: 'player-performance'; readonly gameId: string; readonly programId: string; readonly opponentProgramId: string
   readonly playerId: string; readonly stats: Pick<PlayerGameStats, 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks'>
-  readonly achievements: readonly PlayerPerformanceAchievement[]; readonly primaryVariant: PlayerPerformanceVariant; readonly isFollowed: boolean
+  readonly achievements: readonly PlayerPerformanceAchievement[]; readonly primaryVariant: PlayerPerformanceVariant; readonly isFollowed: boolean; readonly won: boolean
 }
 export interface RecruitCommitmentNewsStory extends NewsStoryBase {
   readonly kind: 'recruit-commitment'; readonly recruitId: string; readonly destinationProgramId: string
@@ -37,7 +37,13 @@ export interface WinningStreakNewsStory extends NewsStoryBase {
 }
 export type NewsStory = PlayerPerformanceNewsStory | RecruitCommitmentNewsStory | TournamentUpsetNewsStory | UndefeatedRunEndedNewsStory | WinningStreakNewsStory
 export interface NewsFeedGroup { readonly id: string; readonly checkpoint: NewsCheckpoint; readonly stories: readonly NewsStory[] }
-export interface NewsFeed { readonly seasonId: string; readonly groups: readonly NewsFeedGroup[]; readonly storyCount: number }
+export interface NewsFeed {
+  readonly seasonId: string
+  readonly groups: readonly NewsFeedGroup[]
+  readonly storyCount: number
+  readonly latestCompletedCompetitionCheckpoint: NewsCheckpoint | null
+  readonly latestCompletedCompetitionCheckpointHasNews: boolean
+}
 
 const IMPORTANCE_ORDER: Readonly<Record<NewsImportance, number>> = { major: 0, notable: 1, standard: 2 }
 const FAMILY_ORDER: Readonly<Record<NewsStory['kind'], number>> = { 'tournament-upset': 0, 'player-performance': 1, 'undefeated-run-ended': 2, 'winning-streak': 3, 'recruit-commitment': 4 }
@@ -71,12 +77,12 @@ function performanceFacts(stats: PlayerGameStats): Pick<PlayerPerformanceNewsSto
 
 function derivePerformanceStories(options: {
   gameId: string; sourceOrder: number; checkpoint: NewsCheckpoint; homeProgramId: string; awayProgramId: string
-  homeStats: readonly PlayerGameStats[]; awayStats: readonly PlayerGameStats[]; followed: ReadonlySet<string>
+  homeStats: readonly PlayerGameStats[]; awayStats: readonly PlayerGameStats[]; followed: ReadonlySet<string>; winnerProgramId: string
 }): PlayerPerformanceNewsStory[] {
-  const { gameId, sourceOrder, checkpoint, homeProgramId, awayProgramId, homeStats, awayStats, followed } = options
+  const { gameId, sourceOrder, checkpoint, homeProgramId, awayProgramId, homeStats, awayStats, followed, winnerProgramId } = options
   return [...homeStats.map((stats) => ({ stats, programId: homeProgramId, opponentProgramId: awayProgramId })), ...awayStats.map((stats) => ({ stats, programId: awayProgramId, opponentProgramId: homeProgramId }))].flatMap(({ stats, programId, opponentProgramId }) => {
     const facts = performanceFacts(stats)
-    return facts ? [{ kind: 'player-performance' as const, id: `news:v1:player-performance:${gameId}:${stats.playerId}`, checkpoint, sourceOrder, gameId, programId, opponentProgramId, playerId: stats.playerId, stats: { points: stats.points, rebounds: stats.rebounds, assists: stats.assists, steals: stats.steals, blocks: stats.blocks }, ...facts, isFollowed: followed.has(stats.playerId) }] : []
+    return facts ? [{ kind: 'player-performance' as const, id: `news:v1:player-performance:${gameId}:${stats.playerId}`, checkpoint, sourceOrder, gameId, programId, opponentProgramId, playerId: stats.playerId, stats: { points: stats.points, rebounds: stats.rebounds, assists: stats.assists, steals: stats.steals, blocks: stats.blocks }, ...facts, isFollowed: followed.has(stats.playerId), won: winnerProgramId === programId }] : []
   })
 }
 
@@ -96,19 +102,21 @@ function groupSort(a: NewsFeedGroup, b: NewsFeedGroup): number {
 /** Pure current-season News projection over completed canonical checkpoints. */
 export function deriveNewsFeed(dynasty: DynastyState, followedPlayerIds: readonly string[]): NewsFeed {
   const season = dynasty.activeSeason
-  if (!season) return { seasonId: '', groups: [], storyCount: 0 }
+  if (!season) return { seasonId: '', groups: [], storyCount: 0, latestCompletedCompetitionCheckpoint: null, latestCompletedCompetitionCheckpointHasNews: false }
   const followed = new Set(followedPlayerIds)
   const grouped = new Map<string, { checkpoint: NewsCheckpoint; stories: NewsStory[] }>()
   const add = (story: NewsStory) => { const id = groupId(story.checkpoint); const value = grouped.get(id) ?? { checkpoint: story.checkpoint, stories: [] }; value.stories.push(story); grouped.set(id, value) }
   const records = new Map(Object.keys(season.programStates).map((id) => [id, { wins: 0, losses: 0, streak: 0 }]))
   const regularGames = [...season.schedule.games].sort((a, b) => a.round - b.round || a.index - b.index)
+  let latestCompletedCompetitionCheckpoint: NewsCheckpoint | null = null
   for (let round = 1; round <= season.schedule.roundCount; round += 1) {
     const games = regularGames.filter((game) => game.round === round)
     if (!games.every((game) => season.resultsByGameId[game.id] !== undefined)) break
     const checkpoint: NewsCheckpoint = { kind: 'regular-season-round', seasonId: season.id, round }
+    latestCompletedCompetitionCheckpoint = checkpoint
     for (const game of games) {
       const result = season.resultsByGameId[game.id]!
-      derivePerformanceStories({ gameId: game.id, sourceOrder: game.index, checkpoint, homeProgramId: game.homeProgramId, awayProgramId: game.awayProgramId, homeStats: result.homePlayerStats, awayStats: result.awayPlayerStats, followed }).forEach(add)
+      derivePerformanceStories({ gameId: game.id, sourceOrder: game.index, checkpoint, homeProgramId: game.homeProgramId, awayProgramId: game.awayProgramId, homeStats: result.homePlayerStats, awayStats: result.awayPlayerStats, followed, winnerProgramId: result.winnerId }).forEach(add)
       const winnerId = result.winnerId
       const loserId = winnerId === game.homeProgramId ? game.awayProgramId : game.homeProgramId
       const winner = records.get(winnerId)!
@@ -127,14 +135,15 @@ export function deriveNewsFeed(dynasty: DynastyState, followedPlayerIds: readonl
       const games = postseason.bracket.games.filter((game) => game.round === round).sort((a, b) => a.index - b.index)
       if (!games.every((game) => postseason.resultsByGameId[game.id] !== undefined)) break
       const checkpoint: NewsCheckpoint = { kind: 'tournament-round', seasonId: season.id, round }
+      latestCompletedCompetitionCheckpoint = checkpoint
       for (const game of games) {
         const result = postseason.resultsByGameId[game.id]!
-        derivePerformanceStories({ gameId: game.id, sourceOrder: game.index, checkpoint, homeProgramId: result.homeTeamId, awayProgramId: result.awayTeamId, homeStats: result.homePlayerStats, awayStats: result.awayPlayerStats, followed }).forEach(add)
+        derivePerformanceStories({ gameId: game.id, sourceOrder: game.index, checkpoint, homeProgramId: result.homeTeamId, awayProgramId: result.awayTeamId, homeStats: result.homePlayerStats, awayStats: result.awayPlayerStats, followed, winnerProgramId: result.winnerId }).forEach(add)
         const loserId = result.winnerId === result.homeTeamId ? result.awayTeamId : result.homeTeamId
         const winnerSeed = seeds.get(result.winnerId)!
         const loserSeed = seeds.get(loserId)!
         const seedGap = winnerSeed - loserSeed
-        if (seedGap >= 4) add({ kind: 'tournament-upset', id: `news:v1:tournament-upset:${game.id}`, checkpoint, sourceOrder: game.index, importance: seedGap >= 8 ? 'major' : 'notable', gameId: game.id, winnerProgramId: result.winnerId, loserProgramId: loserId, winnerSeed, loserSeed, seedGap, ...winnerAndLoserScore(result) })
+        if (seedGap >= 4) add({ kind: 'tournament-upset', id: `news:v1:tournament-upset:${game.id}`, checkpoint, sourceOrder: game.index, importance: seedGap >= 8 || loserSeed <= 2 ? 'major' : 'notable', gameId: game.id, winnerProgramId: result.winnerId, loserProgramId: loserId, winnerSeed, loserSeed, seedGap, ...winnerAndLoserScore(result) })
       }
     }
   }
@@ -159,5 +168,11 @@ export function deriveNewsFeed(dynasty: DynastyState, followedPlayerIds: readonl
     }
   }
   const groups = [...grouped.entries()].map(([id, value]) => ({ id, checkpoint: value.checkpoint, stories: value.stories.sort(storySort) })).sort(groupSort)
-  return { seasonId: season.id, groups, storyCount: groups.reduce((sum, group) => sum + group.stories.length, 0) }
+  return {
+    seasonId: season.id,
+    groups,
+    storyCount: groups.reduce((sum, group) => sum + group.stories.length, 0),
+    latestCompletedCompetitionCheckpoint,
+    latestCompletedCompetitionCheckpointHasNews: latestCompletedCompetitionCheckpoint !== null && grouped.has(groupId(latestCompletedCompetitionCheckpoint)),
+  }
 }

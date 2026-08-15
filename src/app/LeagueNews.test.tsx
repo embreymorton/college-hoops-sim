@@ -24,6 +24,20 @@ function publishScoringStory() {
   return { playerId, programId: game.homeProgramId }
 }
 
+function completeQuietRound() {
+  useDynastyStore.getState().generateControlledDraftBoard()
+  useDynastyStore.getState().simulateNextGame()
+  useDynastyStore.getState().simulateRestOfRound()
+  const dynasty = useDynastyStore.getState().dynasty!
+  const season = dynasty.activeSeason!
+  const resultsByGameId = Object.fromEntries(Object.entries(season.resultsByGameId).map(([id, result]) => [id, {
+    ...result,
+    homePlayerStats: result.homePlayerStats.map((row) => ({ ...row, points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0 })),
+    awayPlayerStats: result.awayPlayerStats.map((row) => ({ ...row, points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0 })),
+  }]))
+  useDynastyStore.setState({ dynasty: { ...dynasty, activeSeason: { ...season, resultsByGameId } } })
+}
+
 beforeEach(resetStore)
 
 describe('League — News / Around the Country', () => {
@@ -43,6 +57,7 @@ describe('League — News / Around the Country', () => {
     const player = dynasty.activeSeason!.programStates[programId]!.team.roster.find(({ id }) => id === playerId)!
     enterLeague()
     expect(screen.getByRole('heading', { name: 'Round 1' })).toBeInTheDocument()
+    expect(screen.queryByText(/No notable news/i)).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: `${player.firstName} ${player.lastName}` }))
     expect(screen.getByRole('button', { name: '← Back to League' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
@@ -68,5 +83,15 @@ describe('League — News / Around the Country', () => {
     useDynastyStore.getState().goToHub()
     useDynastyStore.getState().goToLeague()
     expect(useDynastyStore.getState().leagueTab).toBe('news')
+  })
+
+  it('quietly identifies the latest completed empty checkpoint without creating a story group', () => {
+    selectProgram()
+    completeQuietRound()
+    enterLeague()
+    expect(screen.getByText('Round 1 complete · No notable news')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Round 1' })).not.toBeInTheDocument()
+    expect(screen.queryByText(/complete a full round/i)).not.toBeInTheDocument()
+    expect(document.querySelectorAll('.news-story')).toHaveLength(0)
   })
 })
