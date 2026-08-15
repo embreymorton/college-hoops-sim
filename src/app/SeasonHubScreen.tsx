@@ -8,11 +8,12 @@ import {
   RecruitingHubSummary,
   ScheduleTable,
   SeasonHeader,
+  SeasonPreviewPromotion,
   SuperSimConfirmDialog,
   SuperSimMenu,
   SuperSimSummaryDialog,
 } from '../components'
-import { deriveProgramRecruitingBoard } from '../dynasty'
+import { deriveProgramRecruitingBoard, shouldPromoteSeasonPreview } from '../dynasty'
 import {
   MIDSEASON_ROUND,
   selectActivePostseason,
@@ -68,6 +69,7 @@ function buildTeamInfo(
 
 export function SeasonHubScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
+  const openSeasonPreview = useDynastyStore((state) => state.openSeasonPreview)
   const season = useDynastyStore(selectActiveSeason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const goToGamePrep = useDynastyStore((state) => state.goToGamePrep)
@@ -237,6 +239,8 @@ export function SeasonHubScreen() {
         roundCount={season.schedule.roundCount}
         isComplete={seasonComplete}
       />
+
+      {shouldPromoteSeasonPreview(season) ? <SeasonPreviewPromotion seasonNumber={season.seasonNumber} onOpen={openSeasonPreview} /> : null}
 
       <div className="hub-primary-grid">
       <section className="section hub-primary-grid__game" aria-labelledby="next-game-heading">

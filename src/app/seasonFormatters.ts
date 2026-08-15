@@ -70,6 +70,8 @@ export function formatBackDestinationLabel(view: SeasonSessionView): string {
       return 'Coaching'
     case 'league':
       return 'League'
+    case 'seasonPreview':
+      return 'Season Preview'
     case 'teamDetails':
       return 'Team'
     case 'playerDetails':

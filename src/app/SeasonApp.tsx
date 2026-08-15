@@ -10,6 +10,7 @@ import { ProgramSelectScreen } from './ProgramSelectScreen'
 import { RecruitingScreen } from './RecruitingScreen'
 import { SeasonHubScreen } from './SeasonHubScreen'
 import { SeasonPostgameScreen } from './SeasonPostgameScreen'
+import { SeasonPreviewScreen } from './SeasonPreviewScreen'
 import { TeamDetailsScreen } from './TeamDetailsScreen'
 import { TournamentGamePrepScreen } from './TournamentGamePrepScreen'
 import { TournamentPostgameScreen } from './TournamentPostgameScreen'
@@ -59,6 +60,9 @@ export function DynastyApp() {
       break
     case 'league':
       screen = <LeagueScreen />
+      break
+    case 'seasonPreview':
+      screen = <SeasonPreviewScreen />
       break
     case 'teamDetails':
       screen = <TeamDetailsScreen />

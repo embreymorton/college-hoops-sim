@@ -6,6 +6,10 @@ export {
 } from './playerLegacy'
 export { deriveNewsFeed } from './news'
 export {
+  deriveSeasonPreview,
+  shouldPromoteSeasonPreview,
+} from './seasonPreview'
+export {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
   deriveDevelopmentTendency,
@@ -124,6 +128,16 @@ export type {
   UndefeatedRunEndedNewsStory,
   WinningStreakNewsStory,
 } from './news'
+export type {
+  BiggestLeapPreview,
+  FollowedSeasonPreview,
+  FreshFacePreview,
+  InitialSeasonPreview,
+  ReturningStarPreview,
+  RolloverSeasonPreview,
+  SeasonPreview,
+  SeasonPreviewPlayerBase,
+} from './seasonPreview'
 export type {
   AddRecruitingBoardTargetOptions,
   CommitmentTiming,

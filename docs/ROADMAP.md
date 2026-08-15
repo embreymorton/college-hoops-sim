@@ -794,7 +794,7 @@ complete near-elites. Production generation and canonical `calculateOverall()`
 remain unchanged. Further identity calibration is parked until new manual play
 provides a concrete reason; detailed evidence remains in `PLAYTESTING.md`.
 
-### Phase 7B — Player & League Stories V1 — ACTIVE
+### Phase 7B — Player & League Stories V1 — COMPLETE — ACCEPTED
 
 > How do we surface current Player and League stories?
 
@@ -814,18 +814,22 @@ provides a concrete reason; detailed evidence remains in `PLAYTESTING.md`.
   summary, Final/Peak OVR, Final Ratings, progression, Recruiting Origin when
   canonical, Follow control, and existing navigation. No persisted Alumni
   model or simulation change was added.
-- **7B.3 — Preseason / Season Context V1 — NEXT.** Introduce each Season's
-  cast through a lightweight view of returning Players, incoming freshmen,
-  offseason development jumps, Followed Player updates, and Players to Watch.
+- **7B.3 — Season Preview — COMPLETE — ACCEPTED.** A pure on-demand projection
+  introduces Season 1's established Players/freshmen and rollover Seasons'
+  returning stars, positive non-star development leaps, canonical incoming
+  freshmen, and active Followed Players. The Hub doorway appears in Rounds 1–2;
+  League News retains an action throughout active Season and Tournament play.
+  Existing Player/Team routes and exploration Back history are reused. No
+  Preview persistence or simulation/progression change was added.
 
 Close Phase 7B after these three milestones; unrelated work receives another
 phase rather than extending 7B.
 
-### Phase 7C — History & Recognition V1 — PLANNED
+### Phase 7C — History & Recognition V1 — NEXT
 
 > How do we preserve and recognize what mattered in previous Seasons?
 
-- **7C.1 — Season Archive / Yearbook**
+- **7C.1 — Season Archive / Yearbook — NEXT**
 - **7C.2 — Records & Milestones**
 - **7C.3 — Awards & Honors** — later than the first two because subjective
   award formulas may introduce unnecessary tuning.

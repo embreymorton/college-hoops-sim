@@ -449,6 +449,17 @@ deriving career rates and shooting percentages. Following and Player Details
 consume these projections. No Alumni registry, copied Player snapshot,
 historical index, cache, RNG, or new canonical state exists.
 
+Phase 7B.3 adds `deriveSeasonPreview()` as a pure active-Season read-model. For
+Season 1 it ranks established Players and freshmen from active rosters. For
+Season N > 1 it requires the exact N-1 completed regular-season archive and the
+exact completed Recruiting class targeting N, compares returners by stable ID,
+derives prior PPG from archived GameResults, and takes freshman stars/rank and
+destination from canonical Recruit/commitment records. Followed rows preserve
+Follow order. Missing, duplicate, or mismatched lifecycle inputs fail as
+structural invariants. No Preview snapshot, viewed/dismissed state, cache, RNG,
+or canonical mutation exists; Zustand stores only the transient
+`seasonPreview` route in the existing exploration history.
+
 ## Team Season Stats and exploration projections
 
 The current regular-season presentation follows one facts-to-projections pipeline:

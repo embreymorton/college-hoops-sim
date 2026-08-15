@@ -42,6 +42,7 @@ export function LeagueScreen() {
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
+  const openSeasonPreview = useDynastyStore((state) => state.openSeasonPreview)
 
   if (!season || !dynasty) {
     return null
@@ -104,6 +105,7 @@ export function LeagueScreen() {
             dynasty={dynasty}
             onSelectPlayer={openPlayerDetails}
             onSelectProgram={openTeamDetails}
+            onOpenSeasonPreview={openSeasonPreview}
           />
         ) : tab === 'leaders' ? (
           <NationalLeadersSection

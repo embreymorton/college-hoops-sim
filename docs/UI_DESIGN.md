@@ -126,6 +126,18 @@ Recruiting Origin only when canonical history exists. Current statistics,
 current-class treatment, and game logs remain exclusive to active Players.
 Program links and exploration Back navigation reuse the accepted routes.
 
+### Season Preview — accepted (Phase 7B.3)
+
+Season Preview is one focused exploration destination, not a fifth League tab.
+A full-width promotional card sits directly below the Season Header only in
+Rounds 1–2; League News keeps a compact `Season Preview` action while an active
+regular Season is retained, including Tournament play. The view uses compact,
+horizontally scrollable tables for Established Players/Freshmen to Know in
+Season 1 and Returning Stars/Biggest Leaps/Fresh Faces after rollover, plus an
+optional Following section. Player and Program names reuse existing detail
+buttons, and the exploration stack labels the return path `Season Preview`.
+The 390px layout keeps page width fixed while tables scroll locally.
+
 ### Simple Rotation UI — implemented (6E.18C)
 
 Simple is now the default Coaching Rotation editor, presenting the

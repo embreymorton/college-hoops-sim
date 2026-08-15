@@ -430,10 +430,10 @@ completion. Detailed evidence and chronology live in `PLAYTESTING.md` and
 
 ## Active Phase 7 checkpoint
 
-**Phase 7B — Player & League Stories V1** is active. Its goal is to make
+**Phase 7B — Player & League Stories V1** is COMPLETE — ACCEPTED. Its goal is to make
 meaningful events and Players visible so the simulation creates recognizable
 stories without changing basketball logic. **7B.1 — Around the Country V1** and
-**7B.2 — Player Legacy / Alumni V1** are COMPLETE — ACCEPTED. League opens on a
+**7B.2 — Player Legacy / Alumni V1**, and **7B.3 — Season Preview** are COMPLETE — ACCEPTED. League opens on a
 derived current-season News feed
 grouped by fully completed regular-season or Tournament rounds. V1 recognizes
 threshold Player performances, five-star commitments, Tournament upsets,
@@ -441,7 +441,7 @@ first losses after an 8-0-or-better start, and exactly ten consecutive wins. It 
 news state and changes no simulation behavior. Accepted post-launch polish adds
 outcome-aware and restrained multi-achievement Player copy, unambiguous Recruit
 rank wording, top-seed major-upset context, and a quiet latest-empty-checkpoint
-status without changing eligibility. The exact next milestone is
+status without changing eligibility.
 **7B.2** adds a pure stable-ID Dynasty resolver with `active | former | unknown`
 semantics over active and archived regular-season rosters. Following now keeps
 departed Players under Former Players, and the existing Player Details route
@@ -449,7 +449,14 @@ renders their regular-season college career summary, Final/Peak OVR, Final
 Ratings, Career Progression, optional canonical Recruiting Origin, Follow
 control, and existing Program/Back navigation. No Alumni registry, copied
 snapshot, historical game log, Tournament résumé, or simulation behavior was
-added. The exact next milestone is **7B.3 — Preseason / Season Context V1**.
+added. **7B.3** adds one derived Season Preview destination: Season 1
+introduces established Players and freshmen; rollover Seasons introduce
+returning stars, positive offseason leaps, canonical incoming freshmen, and
+active Followed Players. It is promoted on the Hub only in Rounds 1–2 and
+remains available from League News throughout regular-season and Tournament
+play. Player/Program links reuse the exploration stack. No Preview state, RNG,
+progression, Recruiting, or simulation behavior was added. The exact next
+milestone is **7C.1 — Season Archive / Yearbook**.
 
 The current Player population is good enough to build features on. Production
 Player generation and production `calculateOverall()` remain canonical, active,

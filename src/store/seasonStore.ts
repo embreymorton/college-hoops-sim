@@ -200,6 +200,7 @@ export type SeasonSessionView =
   | 'postseasonPostgame'
   | 'postseasonGameHistory'
   | 'league'
+  | 'seasonPreview'
   | 'teamDetails'
   | 'playerDetails'
   | 'recruiting'
@@ -372,6 +373,8 @@ export interface DynastySessionState {
   viewCompletedTournamentGame(tournamentGameId: string): void
   /** Opens the League destination (National Leaders / Teams) from the current Hub. */
   goToLeague(): void
+  /** Opens the active Season Preview as an exploration destination. */
+  openSeasonPreview(): void
   setLeagueTab(tab: LeagueTab): void
   /** Opens Team Details for any Program in the Universe, not only the controlled one. */
   openTeamDetails(programId: string): void
@@ -1531,6 +1534,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       view: 'league',
       leagueTab: 'news',
+      explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  openSeasonPreview() {
+    const { view, explorationViewHistory } = get()
+
+    set({
+      view: 'seasonPreview',
       explorationViewHistory: [...explorationViewHistory, view],
     })
   },

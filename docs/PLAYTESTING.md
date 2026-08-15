@@ -1577,7 +1577,7 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B.2 — Player Legacy / Alumni V1
+1. Phase 7C.1 — Season Archive / Yearbook
 2. Continued Player-facing story and retrieval observation during normal Dynasty play
 3. Program records / deeper statistical history
 4. Shot-selection diagnostic and minor Player Details polish
@@ -1598,8 +1598,9 @@ this audit.
 Awards is deliberately placed later in Phase 7C; offseason progression
 visibility and Save/Persistence retain stronger future evidence without being
 promoted into the active horizon.
-Phase 7B is now the Player & League Stories feature phase. Around the Country
-V1 is accepted; Player Legacy / Alumni V1 is its immediate milestone. Recruit
+Phase 7B Player & League Stories is complete and accepted. Around the Country,
+Player Legacy / Alumni, and Season Preview form the accepted discovery-to-
+recognition loop. Recruit
 Details remains planned for the later Recruit Attachment phase.
 
 This ordering remains playthrough-driven and may change with new evidence.
@@ -1661,6 +1662,23 @@ progression, and Offseason navigation remained unchanged. The feature derives
 from existing immutable archives and adds no persisted Alumni state,
 Tournament career totals, historical game log, awards, records, or simulation
 behavior. Phase 7B.3 — Preseason / Season Context V1 is next.
+
+## Phase 7B.3 — Season Preview — ACCEPTED (2026-08-15)
+
+Season Preview introduces the national cast before current results create
+News. Manual acceptance verified the full-width Round 1 Hub doorway, the
+persistent League News action, Season 1 Established Players and Freshmen to
+Know, Player/Program links, and Preview → Player Details → Back to Season
+Preview. At a 390px viewport the page has no horizontal overflow and each
+compact table scrolls inside its own container.
+
+Automated coverage verifies deterministic Season 1 lists, Follow order,
+Round-1/2 promotion timing, real lifecycle rollover projection, positive
+non-star development leaps, Recruit-rank ordering, and exact prior archive /
+Recruiting-class invariant failures. The full repository-source suite passes
+(`145` files, `1,694` tests). No Preview object, snapshot, dismissal, RNG,
+progression, Recruiting, or simulation behavior is persisted or changed. Phase
+7B is closed; Phase 7C.1 is next.
 
 Refinement observations remain **WATCH**, not accepted behavior changes:
 
