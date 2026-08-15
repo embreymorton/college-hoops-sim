@@ -1,5 +1,6 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
 export { derivePlayerCareerHistory } from './careerHistory'
+export { deriveNewsFeed } from './news'
 export {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
@@ -100,6 +101,20 @@ export type {
   PlayerCareerSeasonRow,
   PlayerRecruitingOrigin,
 } from './careerHistory'
+export type {
+  NewsCheckpoint,
+  NewsFeed,
+  NewsFeedGroup,
+  NewsImportance,
+  NewsStory,
+  PlayerPerformanceAchievement,
+  PlayerPerformanceNewsStory,
+  PlayerPerformanceVariant,
+  RecruitCommitmentNewsStory,
+  TournamentUpsetNewsStory,
+  UndefeatedRunEndedNewsStory,
+  WinningStreakNewsStory,
+} from './news'
 export type {
   AddRecruitingBoardTargetOptions,
   CommitmentTiming,

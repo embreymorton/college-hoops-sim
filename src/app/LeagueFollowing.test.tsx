@@ -221,6 +221,7 @@ describe('League — Following', () => {
     render(<App />)
 
     expect(screen.getByRole('button', { name: 'Leaders' })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Leaders' }))
     expect(
       screen.getByText(/no completed games yet/i),
     ).toBeInTheDocument()

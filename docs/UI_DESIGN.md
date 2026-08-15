@@ -322,6 +322,7 @@ Postseason Hub inherits every shared-component change above (`CompletedMatchupCa
 
 ```text
 League
+├── News / Around the Country (default)
 ├── National Leaders (PPG / RPG / APG / SPG / BPG)
 ├── Teams directory
 ├── Team Details
@@ -341,6 +342,14 @@ League
 ```
 
 Conference standings, Tournament field rows, Team rosters, national leader rows, Player game-log opponents, and Program links support cross-League Team/Player exploration with context-aware return navigation. These views consume derived regular-season projections and stable Universe identities rather than duplicating statistical state in Zustand.
+
+Around the Country is a compact vertical feed grouped by newest fully completed
+round. Each story has a restrained type label, linked entity headline, and one
+supporting stat line; Followed Players receive a quiet marker without changing
+story eligibility or order. The collapsed feed includes whole groups until it
+reaches at least 12 stories, then offers Show All. Detail navigation preserves
+the exact originating League tab, while a fresh League entry always resets to
+News. Empty and partial-round states explain that a complete round is required.
 
 ### Player Details + Development History — implemented (6E.8)
 

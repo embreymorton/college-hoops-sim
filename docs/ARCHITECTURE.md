@@ -418,6 +418,15 @@ Game logs include every completed Team game for the Player's Program. A stored z
 
 The current League, Team Details, and Player Details UI consumes these public Season projections. National Player leaderboards, Team leaders, Player summaries, and game logs are derived rather than stored in Zustand. Awards, completed-season history, and career systems must likewise reuse canonical `GameResult` history and stable Player IDs rather than inventing parallel statistical truth.
 
+Phase 7B.1 adds `deriveNewsFeed()` as another pure Dynasty read-model. It scans
+canonical regular-season results, Postseason results/seeds, Recruiting
+commitments, and caller-provided Followed Player IDs; only fully completed
+round checkpoints publish. Stable IDs, family/source ordering, exact detector
+thresholds, and presentation templates make repeated derivation deterministic.
+No news item, checkpoint, cache, RNG draw, or event record is persisted. Zustand
+stores only transient `leagueTab` navigation context so detail Back restores the
+originating tab and fresh League entry resets to News.
+
 ## Team Season Stats and exploration projections
 
 The current regular-season presentation follows one facts-to-projections pipeline:

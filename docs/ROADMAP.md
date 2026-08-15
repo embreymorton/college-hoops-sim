@@ -798,12 +798,15 @@ provides a concrete reason; detailed evidence remains in `PLAYTESTING.md`.
 
 > How do we surface current Player and League stories?
 
-- **7B.1 — Around the Country V1 — NEXT.** Derive and surface a small number of
-  meaningful stories from recently completed simulation activity, potentially
-  including standout performances, notable upsets, Followed Player results, and
-  Recruiting commitments. Keep V1 deterministic and derived from existing
-  state; do not design a giant news engine.
-- **7B.2 — Player Legacy / Alumni V1 — PLANNED.** Resolve departed Players from
+- **7B.1 — Around the Country V1 — COMPLETE — ACCEPTED.** League defaults to a
+  deterministic, current-season News feed derived from existing GameResults,
+  Tournament seeds/results, Recruiting commitments, and Followed Player IDs.
+  Stories publish only in complete round groups and cover exact V1 Player
+  thresholds, five-star commitments, seed-gap upsets, first loss after an 8-0
+  start, and a Team's tenth win. The initial view includes whole newest groups
+  through at least 12 stories with an explicit Show All expansion. No news
+  records, RNG, event bus, simulation rule, or archive behavior was added.
+- **7B.2 — Player Legacy / Alumni V1 — NEXT.** Resolve departed Players from
   archived Season data, support historical read-only Player Details, and keep
   Followed alumni accessible by building on existing archives and career
   history rather than creating a second history model.

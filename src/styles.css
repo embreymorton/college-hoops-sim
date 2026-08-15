@@ -867,6 +867,125 @@ p {
   color: var(--ink-0);
 }
 
+/* League News (7B.1) — dense current-season world-story feed. */
+.league-screen > .tab-list {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.league-news {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.league-news__heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.league-news__heading .section-title,
+.league-news__heading .section-hint {
+  margin: 0;
+}
+
+.news-feed,
+.news-group,
+.news-group__stories {
+  display: flex;
+  flex-direction: column;
+}
+
+.news-feed { gap: var(--space-6); }
+.news-group { gap: var(--space-3); }
+.news-group__stories { gap: 1px; }
+
+.news-group__heading {
+  margin: 0;
+  color: var(--ink-1);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.news-story {
+  border-left: 2px solid var(--line-strong);
+  background: var(--surface-1);
+  padding: var(--space-3) var(--space-4);
+}
+
+.news-story[data-importance='notable'] { border-left-color: var(--accent); }
+.news-story[data-importance='major'] {
+  border-left-width: 3px;
+  border-left-color: var(--accent-strong);
+  padding-block: var(--space-4);
+}
+
+.news-story__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.news-story__meta .eyebrow-tag,
+.news-story__headline,
+.news-story__support { margin: 0; }
+
+.news-story__headline {
+  margin-top: var(--space-1);
+  color: var(--ink-0);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.news-story[data-importance='major'] .news-story__headline {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.news-story__support,
+.news-story__following {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+}
+
+.news-story__support {
+  margin-top: var(--space-1);
+  font-family: var(--font-score);
+  letter-spacing: 0.03em;
+}
+
+.news-story__following {
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.news-feed__show-all { align-self: flex-start; }
+
+@media (max-width: 560px) {
+  .dynasty-section-nav {
+    display: flex;
+    width: 100%;
+  }
+
+  .dynasty-section-nav__tab {
+    flex: 1 1 0;
+    min-width: 0;
+    justify-content: center;
+    padding-inline: 0.45rem;
+    font-size: 0.7rem;
+  }
+
+  .league-screen > .tab-list .tab { padding-inline: 0.85rem; }
+  .news-story { padding-inline: var(--space-3); }
+  .news-story__meta { align-items: flex-start; }
+}
+
 .box-score-panel {
   margin-top: var(--space-4);
 }

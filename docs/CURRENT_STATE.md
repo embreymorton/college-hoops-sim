@@ -432,10 +432,13 @@ completion. Detailed evidence and chronology live in `PLAYTESTING.md` and
 
 **Phase 7B — Player & League Stories V1** is active. Its goal is to make
 meaningful events and Players visible so the simulation creates recognizable
-stories without changing basketball logic. The exact next milestone is
-**7B.1 — Around the Country V1**: derive and surface a small deterministic set
-of meaningful stories from recently completed simulation activity. Do not turn
-it into a giant news engine.
+stories without changing basketball logic. **7B.1 — Around the Country V1** is
+COMPLETE — ACCEPTED. League now opens on a derived current-season News feed
+grouped by fully completed regular-season or Tournament rounds. V1 recognizes
+threshold Player performances, five-star commitments, Tournament upsets,
+first losses after an 8-0-or-better start, and exactly ten wins. It stores no
+news state and changes no simulation behavior. The exact next milestone is
+**7B.2 — Player Legacy / Alumni V1**.
 
 The current Player population is good enough to build features on. Production
 Player generation and production `calculateOverall()` remain canonical, active,

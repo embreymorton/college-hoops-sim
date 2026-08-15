@@ -104,6 +104,19 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
+### P3 — Recruit commitment News rank wording
+
+The accepted five-star commitment template uses a Recruit's overall national
+rank in wording such as `the No. 7 PG nationally`. Because the position follows
+the number directly, this can read as though `No. 7` were the Recruit's PG
+position rank rather than his overall national rank.
+
+Future copy should distinguish overall rank from position—for example,
+conceptually identifying the Player as the No. 7 recruit nationally and a
+five-star PG, or as the No. 7 overall recruit. No exact replacement sentence is
+accepted here. This is a low-priority semantic UI/content issue; Recruiting
+rank calculations and the stored News fact are correct.
+
 ## Resolved / monitor-only
 
 ### P2 — Exact-40-minute flexible defaults — RESOLVED / MANUALLY CONFIRMED

@@ -24,6 +24,7 @@ export type {
   PendingRecruitingSetupIntent,
   PendingSuperSim,
   DynastySessionState,
+  LeagueTab,
   SeasonSessionView,
   SuperSimKind,
   SuperSimSummary,

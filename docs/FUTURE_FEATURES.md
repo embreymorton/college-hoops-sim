@@ -247,6 +247,16 @@ These are unscheduled enhancements, not prerequisites for the accepted Season Ro
 
 These are optional product directions, not current UI defects.
 
+### Spectator / League Observer Mode
+
+An unscheduled future mode could run a simulation without controlling a
+Program: advance rounds and Seasons while observing News, League developments,
+Player and Program details, Recruiting context, and Tournament results as a
+world-simulation experience. No design or priority is selected, and this is not
+part of Phase 7. Current Season Hub, Coaching, Recruiting, Quick Sim, and
+Postseason flows likely assume a controlled Program, so the concept requires a
+dedicated future design and architecture pass before it could be scheduled.
+
 ## History and immersion
 
 Player Legacy / Alumni is selected for Phase 7B, while Season Archive / Yearbook

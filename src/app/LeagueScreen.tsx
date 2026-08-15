@@ -1,10 +1,11 @@
-import { useState } from 'react'
 import {
   DynastySectionNav,
   FollowingSection,
   LeagueTeamsDirectory,
   NationalLeadersSection,
+  NewsFeedSection,
 } from '../components'
+import { deriveNewsFeed } from '../dynasty'
 import { deriveNationalPlayerLeaders } from '../season'
 import {
   deriveFollowingView,
@@ -19,8 +20,6 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
 
-type LeagueTab = 'leaders' | 'teams' | 'following'
-
 /**
  * The League destination: national statistical leaders and the full
  * 32-Program directory. Primary Dynasty navigation already establishes
@@ -29,7 +28,9 @@ type LeagueTab = 'leaders' | 'teams' | 'following'
  * level deeper, need their own exploration Back navigation.
  */
 export function LeagueScreen() {
-  const [tab, setTab] = useState<LeagueTab>('leaders')
+  const tab = useDynastyStore((state) => state.leagueTab)
+  const setTab = useDynastyStore((state) => state.setLeagueTab)
+  const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
@@ -42,12 +43,13 @@ export function LeagueScreen() {
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
-  if (!season) {
+  if (!season || !dynasty) {
     return null
   }
 
   const leaderboards = deriveNationalPlayerLeaders(season)
   const followingView = deriveFollowingView(followedPlayerIds, season, UNIVERSE_V0)
+  const newsFeed = deriveNewsFeed(dynasty, followedPlayerIds)
 
   return (
     <>
@@ -60,8 +62,16 @@ export function LeagueScreen() {
         onSelectLeague={goToLeague}
       />
 
-      <section className="section" aria-label="League">
+      <section className="section league-screen" aria-label="League">
         <div role="group" aria-label="League section" className="tab-list">
+          <button
+            type="button"
+            className="tab"
+            aria-pressed={tab === 'news'}
+            onClick={() => setTab('news')}
+          >
+            News
+          </button>
           <button
             type="button"
             className="tab"
@@ -88,7 +98,14 @@ export function LeagueScreen() {
           </button>
         </div>
 
-        {tab === 'leaders' ? (
+        {tab === 'news' ? (
+          <NewsFeedSection
+            feed={newsFeed}
+            dynasty={dynasty}
+            onSelectPlayer={openPlayerDetails}
+            onSelectProgram={openTeamDetails}
+          />
+        ) : tab === 'leaders' ? (
           <NationalLeadersSection
             leaderboards={leaderboards}
             season={season}

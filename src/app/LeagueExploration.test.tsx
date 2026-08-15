@@ -126,6 +126,7 @@ describe('National Leaders', () => {
     useDynastyStore.getState().goToLeague()
     render(<App />)
 
+    fireEvent.click(screen.getByRole('button', { name: 'Leaders' }))
     expect(screen.getByText(/no completed games yet/i)).toBeInTheDocument()
   })
 
@@ -135,6 +136,7 @@ describe('National Leaders', () => {
     useDynastyStore.getState().goToLeague()
     render(<App />)
 
+    fireEvent.click(screen.getByRole('button', { name: 'Leaders' }))
     const scoringBoard = screen.getByText('Scoring').closest('.leader-board')!
     const firstPlayerButton = within(scoringBoard as HTMLElement).getAllByRole(
       'button',
@@ -155,6 +157,7 @@ describe('National Leaders', () => {
     useDynastyStore.getState().goToLeague()
     render(<App />)
 
+    fireEvent.click(screen.getByRole('button', { name: 'Leaders' }))
     const scoringBoard = screen.getByText('Scoring').closest('.leader-board')!
     const firstRow = scoringBoard.querySelector('tbody tr') as HTMLElement
     const [playerButton, programButton] = within(firstRow).getAllByRole('button')

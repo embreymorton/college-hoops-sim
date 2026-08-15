@@ -1577,8 +1577,8 @@ Do not reopen these systems casually.
 
 ## Current Playtesting Priorities
 
-1. Phase 7B.1 — Around the Country V1
-2. Player-facing story and retrieval acceptance during normal Dynasty play
+1. Phase 7B.2 — Player Legacy / Alumni V1
+2. Continued Player-facing story and retrieval observation during normal Dynasty play
 3. Program records / deeper statistical history
 4. Shot-selection diagnostic and minor Player Details polish
 
@@ -1599,10 +1599,73 @@ Awards is deliberately placed later in Phase 7C; offseason progression
 visibility and Save/Persistence retain stronger future evidence without being
 promoted into the active horizon.
 Phase 7B is now the Player & League Stories feature phase. Around the Country
-V1 is promoted as its immediate milestone; Recruit Details remains planned for
-the later Recruit Attachment phase.
+V1 is accepted; Player Legacy / Alumni V1 is its immediate milestone. Recruit
+Details remains planned for the later Recruit Attachment phase.
 
 This ordering remains playthrough-driven and may change with new evidence.
+
+## Phase 7B.1 — Around the Country V1 — RESOLVED (2026-08-15)
+
+League now opens on `News | Leaders | Teams | Following`. Manual play confirmed
+that a partially completed 1-of-16 Round 1 publishes nothing, completing the
+remaining games publishes a single `Round 1` group, Player and Program links
+open their existing detail screens, Back restores the originating League tab,
+and leaving then freshly re-entering League returns to News. At a 390px mobile
+viewport all four League tabs and story cards remain readable without page
+overflow; the top Dynasty navigation was tightened at that breakpoint as part
+of the acceptance fix.
+
+Automated coverage locks the exact Player thresholds, triple-double behavior,
+five-star-only commitments, complete-round publication boundary, Tournament
+seed-gap rule, first-loss and tenth-win stories, Followed Player annotation,
+and deterministic output. The feed is reconstructed from canonical current-
+season facts on demand; it adds no persisted news history, randomness, event
+bus, awards, alumni resolution, or offseason recap.
+
+## Phase 7B.1 — Post-Acceptance Multi-Season Playthrough — ACCEPTED / REFINEMENT WATCH (2026-08-15)
+
+The multi-season playthrough confirmed the intended attachment loop: **News →
+notice a Player or Program → inspect → Follow → recognize again later**. Avery
+Martin was first discovered through a 43-point Round 3 story, immediately
+Followed, and then recognized through repeated 40-point stories and League-
+leading scoring across roughly three Seasons. His approximately `88/93` profile
+with `99 Shooting` and `95 Finishing` made that production feel identity-driven,
+not arbitrary. As a senior he led #2-seeded Mesa Vista into the Tournament, then
+scored 16 in an early upset loss to #15 Golden Bay; the ending was memorable
+enough that the user explicitly wanted Player Legacy / Alumni to preserve his
+career. This is direct empirical support for the already-selected Phase 7B.2.
+
+News also created discovery beyond elite scorers: Terrence Spencer posted `23
+REB / 7 BLK`; `77/77` freshman Kai Barrett drew a Follow after an 18-assist
+game; Keith Hall's 8-block performance stood out; and five-star/No. 1 Recruit
+commitments, ten-game winning streaks, undefeated-run endings, and major
+Tournament upsets all added useful world context. This evidence supports
+continuing Player & League Stories feature work rather than reopening Player
+Identity or OVR calibration.
+
+Refinement observations remain **WATCH**, not accepted behavior changes:
+
+- **Empty checkpoint clarity:** some completed rounds legitimately produced no
+  stories (the first appeared in Round 3). A quiet latest-round “No notable
+  news” signal may improve freshness clarity, but there is not yet evidence to
+  fill the historical feed with artificial empty groups.
+- **Player-game outcome context:** a 40-point Tournament performance in a loss
+  and a 39-point Championship performance by the winner both lost important
+  meaning without win/loss or title context. Exact presentation is undesigned.
+- **Multi-achievement context:** Spencer's `23 REB / 7 BLK` qualified strongly
+  twice while the headline emphasized only rebounding. Support data retained
+  both facts, but exceptional dual-category games may merit clearer combined
+  acknowledgement; no composite system is selected.
+- **Tournament importance semantics:** seed-gap-only importance made #11 over
+  #3 major while #8 over #1 was not. Eliminating a #1 or #2 seed may deserve
+  stronger weight independent of gap, but no replacement rule is accepted.
+- **Blocks threshold salience:** 6-block stories felt somewhat frequent in this
+  run while 7–8 blocks remained exciting. This one playthrough does not justify
+  reopening simulation or the accepted News threshold.
+- **Recruit attachment:** the user wanted to Follow a highly ranked Recruit who
+  signed elsewhere and forgot his identity by the next Season. This strengthens
+  the already-selected Phase 7D Recruit Details / Follow Recruits / Recruit →
+  Player continuity work; it creates no duplicate Roadmap scope.
 
 ## Phase 7B.2A — Profile Generation Candidate A — WATCH (2026-08-14)
 

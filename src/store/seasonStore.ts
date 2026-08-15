@@ -205,6 +205,8 @@ export type SeasonSessionView =
   | 'recruiting'
   | 'offseason'
 
+export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following'
+
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
   readonly dynasty: DynastyState | null
@@ -249,6 +251,8 @@ export interface DynastySessionState {
    * a time without a generalized router.
    */
   readonly explorationViewHistory: readonly SeasonSessionView[]
+  /** Transient League return context; fresh root entry always resets this to News. */
+  readonly leagueTab: LeagueTab
   /** The Program currently open in Team Details, for any Program in the Universe. */
   readonly selectedTeamProgramId: string | null
   /** The Program owning the Player currently open in Player Details. */
@@ -368,6 +372,7 @@ export interface DynastySessionState {
   viewCompletedTournamentGame(tournamentGameId: string): void
   /** Opens the League destination (National Leaders / Teams) from the current Hub. */
   goToLeague(): void
+  setLeagueTab(tab: LeagueTab): void
   /** Opens Team Details for any Program in the Universe, not only the controlled one. */
   openTeamDetails(programId: string): void
   /** Opens Player Details for any current-roster Player in the Universe. */
@@ -647,6 +652,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   lastPlayedTournamentGameId: null,
   viewedTournamentGameId: null,
   explorationViewHistory: [],
+  leagueTab: 'news',
   selectedTeamProgramId: null,
   selectedPlayerProgramId: null,
   selectedPlayerId: null,
@@ -704,6 +710,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       lastPlayedTournamentGameId: null,
       viewedTournamentGameId: null,
       explorationViewHistory: [],
+      leagueTab: 'news',
       selectedTeamProgramId: null,
       selectedPlayerProgramId: null,
       selectedPlayerId: null,
@@ -1523,8 +1530,13 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     set({
       view: 'league',
+      leagueTab: 'news',
       explorationViewHistory: [...explorationViewHistory, view],
     })
+  },
+
+  setLeagueTab(leagueTab) {
+    set({ leagueTab })
   },
 
   openTeamDetails(programId) {
@@ -1818,6 +1830,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         lastPlayedTournamentGameId: null,
         viewedTournamentGameId: null,
         explorationViewHistory: [],
+        leagueTab: 'news',
         selectedTeamProgramId: null,
         selectedPlayerProgramId: null,
         selectedPlayerId: null,
