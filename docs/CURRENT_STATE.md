@@ -65,6 +65,12 @@ Period 28, the explicit Late Recruiting handoff remains available from both the
 Tournament Hub and the final regular-season review reached through normal
 navigation. Navigation does not own or clear that lifecycle eligibility.
 
+During an active Tournament, Coaching uses postseason team/rotation state only
+when the controlled Program qualified and has canonical Tournament state. A
+non-qualifier instead retains valid completed-Season Roster/Rotation Coaching;
+opening Coaching never fabricates Tournament participation or mutates either
+competition state.
+
 ## Accepted and frozen boundaries
 
 Frozen means “reopen only with new evidence,” not “never change.” Do not tune or
@@ -139,22 +145,38 @@ committed status; and returns to its preserved parent Recruiting mode. The
 tournament-complete progression recovery that unblocked acceptance was also
 manually verified.
 
-**NEXT — 7D.2 Follow Recruits.** This milestone is selected, not implemented.
-Its purpose is to preserve attachment to individual prospects during the
-Recruiting process without changing Recruiting mechanics or prematurely
-defining Recruit → Player continuity.
+**Phase 7D.2 — Follow Recruits is COMPLETE / ACCEPTED / FROZEN.** Recruit
+Details owns Follow/Unfollow, while Recruiting Following preserves
+first-followed order and presents live current-class readiness, controlled-
+Program status, or resolved commitment destinations. Following remains
+independent from Board, Focus, and Offer management and uses the accepted League
+Following interaction language. The user manually confirmed it works as
+expected.
 
-The functional 7D.2 candidate now adds Follow/Following control to Recruit
-Details and a Recruiting Following destination over the 7D.2A stable-ID
-foundation. The current-class table preserves first-followed order, shows safe
-readiness/controlled-status or resolved commitment truth, supports direct
-Unfollow, and round-trips Following → Recruit Details → Following. Stale IDs
-remain explicit without fabricated rows. The milestone still awaits manual
-acceptance, and Recruit follows do not become existing Followed Player intent.
+**Phase 7D.3 — Recruit → Player Continuity is COMPLETE / ACCEPTED / FROZEN.**
+At successful season rollover, followed Recruit intent transfers only when the
+completed class and canonical active roster verify the same stable Player ID.
+Existing Player-follow order is preserved, newly enrolled follows append in
+Recruit-follow order, converted Recruit ownership is retired, and existing
+Player Following becomes canonical. Unresolved Recruit IDs remain safely stored
+without fabricated continuity. The accepted behavior works for the controlled
+Program's signees and Recruits who sign elsewhere.
 
-`7C.2 Records & Milestones`, `7C.3 Awards & Honors`, and `7D.3 Recruit → Player
-continuity` remain **PLANNED**, not selected. Player Identity work remains
-parked unless new evidence deliberately reopens it.
+The Tournament non-qualifier Coaching recovery is **FIXED / MANUALLY VERIFIED**.
+Qualified Programs use canonical postseason Coaching context; non-qualifiers
+retain completed-Season roster/rotation Coaching without fabricated Tournament
+participation or navigation mutation.
+
+Exact Recruit OVR, POT, and individual ratings remain current production
+visibility. Scouting grades, ranges, estimates, hidden information, and other
+uncertainty remain future-only.
+
+**No NEXT selected — Open Planning Checkpoint.** Fresh planning must review
+current evidence before the user explicitly selects another milestone.
+
+`7C.2 Records & Milestones` and `7C.3 Awards & Honors` remain **PLANNED**, not
+selected or NEXT. Player Identity work remains parked unless new evidence
+deliberately reopens it.
 
 ## Fresh-session rules
 

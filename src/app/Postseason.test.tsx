@@ -397,6 +397,37 @@ describe('Postseason — eliminated', () => {
 })
 
 describe('Postseason — did not qualify', () => {
+  it('opens valid completed-season Coaching and returns to the Tournament without inventing participation', () => {
+    selectProgram('pine-valley')
+    completeRegularSeasonAndEnterPostseason()
+    const before = useDynastyStore.getState().dynasty!
+    expect(before.activePostseason!.programStates[before.controlledProgramId]).toBeUndefined()
+    const seasonTeam = before.activeSeason!.programStates[before.controlledProgramId]!.team
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Coaching' }))
+
+    expect(useDynastyStore.getState().view).toBe('coaching')
+    expect(screen.getByRole('heading', { name: /pine valley/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Roster' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByText(`${seasonTeam.roster[0]!.firstName} ${seasonTeam.roster[0]!.lastName}`)).toBeInTheDocument()
+    expect(useDynastyStore.getState().dynasty).toBe(before)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Rotation' }))
+    expect(screen.getByRole('button', { name: 'Simple' })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+    expect(screen.getByText('Starting Five')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Tournament' }))
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+    expect(screen.getByText(/did not qualify for the national tournament/i)).toBeInTheDocument()
+  })
+
   it('shows No Bid with no fake matchup, and the Tournament remains simulatable to a Champion', () => {
     selectProgram('pine-valley')
     completeRegularSeasonAndEnterPostseason()

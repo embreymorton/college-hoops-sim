@@ -15,22 +15,17 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — 7D.2 Follow Recruits
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Allow the user to preserve interest in individual prospects during the
-Recruiting process without changing Recruiting mechanics or prematurely
-defining Recruit → Player continuity.
+Phase 7D is accepted and frozen. Review fresh production/playtesting evidence
+before selecting another milestone; PLANNED work below is not automatically
+NEXT.
 
 ### PLANNED — remainder of Phase 7C
 
 1. **7C.2 — Records & Milestones**
 2. **7C.3 — Awards & Honors** — sequenced after archive/records because
    subjective award formulas may require separate design and tuning.
-
-### PLANNED — Phase 7D Recruit Attachment V1
-
-1. **7D.3 — Recruit → Player continuity**, preserving existing identity
-   continuity where already canonical.
 
 ### After Current Phase 7 Work — Fresh Planning Checkpoint
 
@@ -138,15 +133,21 @@ persistence, RNG, or simulation changes.
 projections and transient/local UI state. It added no copied historical
 summaries, canonical mutation, RNG, or simulation behavior.
 
-### Phase 7D — Recruit Attachment V1 — IN PROGRESS
+### Phase 7D — Recruit Attachment V1 — COMPLETE / ACCEPTED / FROZEN
 
 - **7D.1 Recruit Details — COMPLETE / ACCEPTED / FROZEN:** added stable-ID
   Recruit inspection from Board, Battles, and National Class with canonical
   profile and exact ratings, safe derived Recruiting context, contextual
   existing management actions, committed-state resolution, and parent-mode
   return behavior.
-- Later attachment and continuity work remains governed by the Current Selected
-  Horizon above.
+- **7D.2 Follow Recruits — COMPLETE / ACCEPTED / FROZEN:** added independent
+  stable-ID Recruit follow intent, Follow/Unfollow from Recruit Details, and a
+  first-followed Recruiting Following view with live safe status and resolved
+  commitments.
+- **7D.3 Recruit → Player Continuity — COMPLETE / ACCEPTED / FROZEN:** carries
+  followed-person intent into existing Player Following only when canonical
+  stable identity proves enrollment at rollover, then retires converted Recruit
+  follow ownership.
 
 ## Historical Player Identity Research — COMPLETE / PARKED
 
@@ -156,7 +157,7 @@ remain unchanged. Profile Generation Experiment A V2 is experimental input
 only; OVR Experiment B v1 was rejected. No Player Identity tuning phase is
 selected. See `PLAYER_IDENTITY_RESEARCH.md` for evidence and reopening criteria.
 
-## Deferred beyond the selected horizon
+## Deferred / unscheduled
 
 Persistence/save-load, transfers, injuries, staff, rankings, deeper offseason
 decisions, broader Alumni search, postseason/combined career aggregation, and

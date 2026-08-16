@@ -28,18 +28,15 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-1. For selected Phase 7D.2: Can following a Recruit preserve attachment during
-   the Recruiting process without cluttering the existing Followed Players
-   experience or changing Recruiting mechanics? Manually validate `National →
-   Recruit Details → Follow → Recruiting Following → Recruit Details → Back →
-   Following`, plus `Follow Recruit → commits elsewhere → still visible with
-   the updated destination`.
-2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
+**OPEN PLANNING CHECKPOINT — no NEXT selected.** Current evidence should inform
+fresh planning; it does not select a successor by itself.
+
+1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.
-3. Observe which Season facts players naturally want preserved before defining
+2. Observe which Season facts players naturally want preserved before defining
    Records or Awards.
-4. Monitor genuinely live WATCH items below without promoting them into work
+3. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.
@@ -101,6 +98,30 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Phase 7D.3 — Recruit → Player Continuity — ACCEPTED / FROZEN
+
+Followed Recruit continuity into existing Player Following worked as expected
+and was manually accepted. Stable identity carries attachment through commitment,
+Offseason, and rollover for both the user's signees and Recruits signing
+elsewhere. The verified active-roster ID becomes canonical `followedPlayerIds`
+intent, converted Recruit ownership is retired, existing Player-follow order and
+semantics remain intact, and unresolved Recruit IDs do not fabricate continuity.
+
+The Tournament non-qualifier → Coaching blocker encountered during this pass is
+**FIXED / MANUALLY VERIFIED**. A non-qualifier uses retained completed-Season
+Roster/Rotation Coaching, both modes remain usable, Tournament navigation
+recovers, and no fake participation or canonical competition mutation occurs.
+
+### Phase 7D.2 — Follow Recruits — ACCEPTED / FROZEN
+
+The user reported that Follow Recruits “works as expected” and accepted the
+milestone. The frozen V1 supports Follow/Unfollow from Recruit Details,
+first-followed Recruiting Following order, live safe current-class status,
+resolved commitments that remain visible, direct Unfollow, and Recruit Details
+round-trip navigation. Follow remains independent from Board, Focus, and Offer.
+The surface mirrors accepted League Following interaction language; Recruit →
+Player continuity was not part of 7D.2 acceptance.
 
 ### Phase 7D.1 — Recruit Details — ACCEPTED / FROZEN
 

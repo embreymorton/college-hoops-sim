@@ -100,7 +100,7 @@ regular-season career projections. Unknown IDs remain explicit without being
 mislabeled Former. Intent survives rollover, clears for a new Dynasty, stores
 no Player/Team snapshots, and has no simulation effect.
 
-Followed Recruits is separate application intent until Phase 7D.3. Zustand
+Followed Recruits begins as separate application intent. Zustand
 stores a duplicate-free, first-followed ordered list of stable Recruit/future-
 Player IDs for the current Dynasty. The foundation resolves those IDs only
 against the active canonical `RecruitingState`:
@@ -114,10 +114,23 @@ stable followed Recruit IDs + canonical RecruitingState
 
 The projection composes the existing safe Recruit Details/battle read models,
 stores no Recruit snapshot, and exposes no hidden Recruiting inputs. Recruiting
-updates and commitments do not clear intent; a new Dynasty does. Season rollover
-does not convert Recruit follows into the separate frozen Followed Players list,
-and IDs absent from the new active class remain unresolved rather than producing
-fabricated rows. Recruit → active Player follow transfer remains Phase 7D.3.
+updates and commitments do not clear intent; a new Dynasty does.
+
+At successful season rollover, after canonical next-season rosters exist, the
+session boundary performs stable-ID continuity:
+
+```text
+followedRecruitIds + canonical Recruit → Player stable identity + rollover
+→ verify the same ID on an active Player roster
+→ append to followedPlayerIds if absent
+→ retire that ID from followedRecruitIds
+```
+
+Existing Player-follow order remains unchanged; newly verified IDs append in
+first-followed Recruit order. Already-followed Player IDs are not duplicated.
+IDs absent from all new active rosters remain unresolved Recruit intent rather
+than being deleted or fabricated. No name matching, migration flag, copied
+follow object, navigation side effect, or Recruiting-mechanics change exists.
 Recruit Details is the only V1 surface that adds Recruit-follow intent before
 the Following table's direct Unfollow action; Board, Battles, and National Class
 remain discovery/management entry surfaces rather than parallel Follow controls.
@@ -128,10 +141,10 @@ Permanent Coaching navigation uses the same session drafts and validated write
 boundaries rather than owning another Rotation. `goToCoaching()` performs no
 catch-up, simulation, Recruiting setup, or lifecycle transition: it only selects
 the `coaching` session view and refreshes the relevant draft from canonical
-basketball state. While `activePostseason` exists, Coaching reads and writes the
-controlled Program's `PostseasonProgramState.rotation` through
-`updatePostseasonProgramRotation()`; otherwise it reads and writes the active
-Season Rotation through `updateProgramRotation()`. Invalid drafts remain in
+basketball state. When the controlled Program has `PostseasonProgramState`,
+Coaching reads and writes its postseason Rotation through
+`updatePostseasonProgramRotation()`; otherwise it reads and writes the retained
+active/completed Season Rotation through `updateProgramRotation()`. Invalid drafts remain in
 Zustand and never replace either canonical Rotation. Phase 6E.17B implemented
 the permanent Coaching screen and navigation against this exact boundary —
 `CoachingScreen`'s `Roster | Rotation` tabs reuse `TeamStatsTable` and
@@ -288,6 +301,14 @@ Tournament résumés, and Tournament records are not. Future projections should
 derive them from retained results rather than introduce competing truth.
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
+
+Permanent Coaching context depends on controlled-Program participation, not
+merely on the existence of `activePostseason`. A qualified Program reads and
+writes its copied canonical Postseason team/rotation. A non-qualified Program
+has no `PostseasonProgramState`, so Coaching reads and writes the retained
+completed-Season team/rotation instead. Neither path requires a Tournament game
+or opponent, and navigation does not create participation or mutate Tournament
+facts.
 
 Tournament-complete handoff eligibility is derived from canonical active
 Postseason completion plus synchronized Recruiting phase/Period 28 facts. Both

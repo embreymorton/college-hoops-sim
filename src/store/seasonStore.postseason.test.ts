@@ -528,6 +528,39 @@ describe('seasonStore postseason — eliminated', () => {
 })
 
 describe('seasonStore postseason — did not qualify', () => {
+  it('opens Coaching from completed Season team/rotation state without mutating Tournament facts', () => {
+    const { postseason, season } = primeStore('dnq-coaching')
+    const outsider = UNIVERSE_V0.programs.find(
+      (program) =>
+        !postseason.field.some((entry) => entry.programId === program.id),
+    )!
+    const seasonState = season.programStates[outsider.id]!
+    updateDynasty({ controlledProgramId: outsider.id })
+    useDynastyStore.setState({
+      controlledProgramDefaultRotation: seasonState.rotation,
+      postseasonControlledDefaultRotation: null,
+      postseasonDraftRotation: null,
+    })
+    const dynastyBefore = useDynastyStore.getState().dynasty
+
+    useDynastyStore.getState().goToCoaching()
+
+    const state = useDynastyStore.getState()
+    expect(state.view).toBe('coaching')
+    expect(state.draftRotation).toEqual(seasonState.rotation)
+    expect(state.postseasonDraftRotation).toBeNull()
+    const aggregate = derivePlayerMinutesV1(seasonState.rotation)
+    expect(state.coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        seasonState.team.roster.map(({ id }) => [id, aggregate[id] ?? 0]),
+      ),
+    )
+    expect(state.dynasty).toBe(dynastyBefore)
+    expect(state.dynasty!.activePostseason).toBe(postseason)
+    expect(state.dynasty!.activeSeason).toBe(season)
+    expect(state.dynasty!.activePostseason!.programStates[outsider.id]).toBeUndefined()
+  })
+
   it('has no playable game and every user action no-ops for a non-field controlled Program', () => {
     const { postseason } = primeStore('dnq')
     const outsider = UNIVERSE_V0.programs.find(

@@ -664,6 +664,50 @@ function resolveControlledTournamentGame(
   return game
 }
 
+function transferEnrolledRecruitFollows(
+  dynasty: DynastyState,
+  followedPlayerIds: readonly string[],
+  followedRecruitIds: readonly string[],
+): {
+  readonly followedPlayerIds: readonly string[]
+  readonly followedRecruitIds: readonly string[]
+} {
+  const activeSeasonNumber = dynasty.activeSeason?.seasonNumber
+  const completedClass = dynasty.completedRecruitingHistory.find(
+    ({ targetSeasonNumber }) => targetSeasonNumber === activeSeasonNumber,
+  )
+  const enrolledRecruitIds = new Set(
+    Object.keys(completedClass?.recruitingState.commitmentsByPlayerId ?? {}),
+  )
+  const enrolledPlayerIds = new Set(
+    Object.values(dynasty.activeSeason?.programStates ?? {}).flatMap(
+      ({ team }) => team.roster.map(({ id }) => id),
+    ),
+  )
+  const nextPlayerIds = [...followedPlayerIds]
+  const knownPlayerIds = new Set(nextPlayerIds)
+  const unresolvedRecruitIds: string[] = []
+
+  for (const playerId of followedRecruitIds) {
+    if (
+      !enrolledRecruitIds.has(playerId) ||
+      !enrolledPlayerIds.has(playerId)
+    ) {
+      unresolvedRecruitIds.push(playerId)
+      continue
+    }
+    if (!knownPlayerIds.has(playerId)) {
+      nextPlayerIds.push(playerId)
+      knownPlayerIds.add(playerId)
+    }
+  }
+
+  return {
+    followedPlayerIds: nextPlayerIds,
+    followedRecruitIds: unresolvedRecruitIds,
+  }
+}
+
 export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   dynasty: null,
   followedPlayerIds: [],
@@ -915,7 +959,13 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const state = get()
     const dynastyBefore = state.dynasty
 
-    if (state.dynasty?.activePostseason) {
+    const controlledProgramId = state.dynasty?.controlledProgramId
+    const hasPostseasonTeam = Boolean(
+      controlledProgramId &&
+      state.dynasty?.activePostseason?.programStates[controlledProgramId],
+    )
+
+    if (hasPostseasonTeam) {
       state.setPostseasonDraftPlayerPositionMinutes(
         playerId,
         floorPosition,
@@ -956,17 +1006,23 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   resetCoachingDraftRotation() {
     const state = get()
 
-    if (state.dynasty?.activePostseason) {
+    const controlledProgramId = state.dynasty?.controlledProgramId
+    const hasPostseasonTeam = Boolean(
+      controlledProgramId &&
+      state.dynasty?.activePostseason?.programStates[controlledProgramId],
+    )
+
+    if (hasPostseasonTeam) {
       state.resetPostseasonDraftRotation()
     } else {
       state.resetDraftRotation()
     }
 
     const nextState = get()
-    const controlledProgramId = nextState.dynasty?.controlledProgramId
+    const nextControlledProgramId = nextState.dynasty?.controlledProgramId
     const controlledState = nextState.dynasty?.activePostseason
-      ? nextState.dynasty.activePostseason.programStates[controlledProgramId!]
-      : nextState.dynasty?.activeSeason?.programStates[controlledProgramId!]
+      ?.programStates[nextControlledProgramId!] ??
+      nextState.dynasty?.activeSeason?.programStates[nextControlledProgramId!]
 
     if (controlledState) {
       set({
@@ -1928,7 +1984,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   beginNextSeason() {
-    const { dynasty } = get()
+    const { dynasty, followedPlayerIds, followedRecruitIds } = get()
     if (!dynasty) return
 
     try {
@@ -1937,9 +1993,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       )
       const controlledRotation = nextDynasty.activeSeason!
         .programStates[nextDynasty.controlledProgramId]!.rotation
+      const transferredFollows = transferEnrolledRecruitFollows(
+        nextDynasty,
+        followedPlayerIds,
+        followedRecruitIds,
+      )
 
       set({
         dynasty: nextDynasty,
+        ...transferredFollows,
         controlledProgramDefaultRotation: controlledRotation,
         draftRotation: controlledRotation,
         view: 'hub',

@@ -46,16 +46,22 @@ export function CoachingScreen() {
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
-  const draftRotation = useDynastyStore((state) =>
-    state.dynasty?.activePostseason
-      ? state.postseasonDraftRotation
-      : state.draftRotation,
-  )
-  const defaultRotation = useDynastyStore((state) =>
-    state.dynasty?.activePostseason
+  const draftRotation = useDynastyStore((state) => {
+    const programId = state.dynasty?.controlledProgramId
+    const hasPostseasonTeam = Boolean(
+      programId && state.dynasty?.activePostseason?.programStates[programId],
+    )
+    return hasPostseasonTeam ? state.postseasonDraftRotation : state.draftRotation
+  })
+  const defaultRotation = useDynastyStore((state) => {
+    const programId = state.dynasty?.controlledProgramId
+    const hasPostseasonTeam = Boolean(
+      programId && state.dynasty?.activePostseason?.programStates[programId],
+    )
+    return hasPostseasonTeam
       ? state.postseasonControlledDefaultRotation
-      : state.controlledProgramDefaultRotation,
-  )
+      : state.controlledProgramDefaultRotation
+  })
   const setCoachingDraftPlayerPositionMinutes = useDynastyStore(
     (state) => state.setCoachingDraftPlayerPositionMinutes,
   )
@@ -103,13 +109,12 @@ export function CoachingScreen() {
     return null
   }
 
-  const isPostseasonActive = Boolean(postseason)
-  const controlledTeam = isPostseasonActive
-    ? postseason!.programStates[controlledProgramId]!.team
-    : season.programStates[controlledProgramId]!.team
-  const canonicalRotation = isPostseasonActive
-    ? postseason!.programStates[controlledProgramId]!.rotation
-    : season.programStates[controlledProgramId]!.rotation
+  const postseasonControlledState = postseason?.programStates[controlledProgramId]
+  const controlledSeasonState = season.programStates[controlledProgramId]
+  if (!controlledSeasonState) return null
+  const controlledTeam = postseasonControlledState?.team ?? controlledSeasonState.team
+  const canonicalRotation =
+    postseasonControlledState?.rotation ?? controlledSeasonState.rotation
 
   const overallRecord = deriveProgramRecord(season, controlledProgramId)
   const conferenceRecord = deriveConferenceRecord(season, controlledProgramId)

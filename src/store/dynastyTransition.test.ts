@@ -77,7 +77,9 @@ describe('Dynasty transition orchestration', () => {
     useDynastyStore.getState().finalizeRecruitingClass()
     useDynastyStore.getState().beginDynastyOffseason()
     const prepared = useDynastyStore.getState().dynasty!
-    const followedRecruitId = prepared.recruiting!.recruits[0]!.player.id
+    const followedRecruitId = prepared.recruiting!.recruits.find(
+      ({ player }) => !prepared.recruiting!.commitmentsByPlayerId[player.id],
+    )!.player.id
     useDynastyStore.getState().followRecruit(followedRecruitId)
 
     useDynastyStore.setState({
@@ -171,6 +173,82 @@ describe('Dynasty transition orchestration', () => {
     expect(resolution.player?.classYear).toBe('SO')
     expect(resolution.team?.roster).toContain(resolution.player)
     expect(resolution.program?.id).toBe(resolution.team?.id)
+  })
+
+  it('transfers followed Recruits enrolled by our Program and another Program only at rollover', () => {
+    useDynastyStore.setState({ dynasty: championshipBoundary() })
+    useDynastyStore.getState().enterLateRecruiting()
+    useDynastyStore.getState().finalizeRecruitingClass()
+    const finalized = useDynastyStore.getState().dynasty!
+    const commitments = Object.values(finalized.recruiting!.commitmentsByPlayerId)
+    const ours = commitments.find(
+      ({ programId }) => programId === finalized.controlledProgramId,
+    )!
+    const theirs = commitments.find(
+      ({ programId }) => programId !== finalized.controlledProgramId,
+    )!
+
+    useDynastyStore.getState().followRecruit(ours.playerId)
+    useDynastyStore.getState().followRecruit(theirs.playerId)
+    expect(useDynastyStore.getState().followedPlayerIds).toEqual([])
+
+    useDynastyStore.getState().beginDynastyOffseason()
+    expect(useDynastyStore.getState().followedPlayerIds).toEqual([])
+    expect(useDynastyStore.getState().followedRecruitIds).toEqual([
+      ours.playerId,
+      theirs.playerId,
+    ])
+
+    useDynastyStore.getState().beginNextSeason()
+    const state = useDynastyStore.getState()
+    const activePlayers = Object.values(state.dynasty!.activeSeason!.programStates)
+      .flatMap(({ team }) => team.roster)
+
+    expect(activePlayers.some(({ id }) => id === ours.playerId)).toBe(true)
+    expect(activePlayers.some(({ id }) => id === theirs.playerId)).toBe(true)
+    expect(state.followedPlayerIds).toEqual([ours.playerId, theirs.playerId])
+    expect(state.followedRecruitIds).toEqual([])
+  })
+
+  it('preserves Player-follow order, avoids duplicates, and retains unresolved Recruit intent', () => {
+    useDynastyStore.setState({ dynasty: championshipBoundary() })
+    const existingPlayerId = Object.values(
+      useDynastyStore.getState().dynasty!.activeSeason!.programStates,
+    )[0]!.team.roster.find(({ classYear }) => classYear === 'FR')!.id
+    useDynastyStore.getState().followPlayer(existingPlayerId)
+    useDynastyStore.getState().enterLateRecruiting()
+    useDynastyStore.getState().finalizeRecruitingClass()
+    const finalized = useDynastyStore.getState().dynasty!
+    const converted = Object.values(finalized.recruiting!.commitmentsByPlayerId)
+      .slice(0, 2)
+      .map(({ playerId }) => playerId)
+    const unresolved = finalized.recruiting!.recruits.find(
+      ({ player }) => !finalized.recruiting!.commitmentsByPlayerId[player.id],
+    )!.player.id
+    const unfollowedCommitmentId = Object.keys(
+      finalized.recruiting!.commitmentsByPlayerId,
+    ).find((playerId) => !converted.includes(playerId))!
+
+    useDynastyStore.getState().followRecruit(converted[0]!)
+    useDynastyStore.getState().followRecruit(converted[1]!)
+    useDynastyStore.getState().followRecruit(unresolved)
+    useDynastyStore.getState().followRecruit(existingPlayerId)
+    // An already-present Player follow remains one entry when that same stable
+    // Recruit ID becomes canonical at rollover.
+    useDynastyStore.getState().followPlayer(converted[0]!)
+
+    useDynastyStore.getState().beginDynastyOffseason()
+    useDynastyStore.getState().beginNextSeason()
+    const state = useDynastyStore.getState()
+
+    expect(state.followedPlayerIds).toEqual([
+      existingPlayerId,
+      converted[0],
+      converted[1],
+    ])
+    expect(new Set(state.followedPlayerIds).size).toBe(state.followedPlayerIds.length)
+    expect(state.followedPlayerIds).not.toContain(unfollowedCommitmentId)
+    expect(state.followedRecruitIds).toEqual([unresolved, existingPlayerId])
   })
 
   it('reuses the empty-board first-period safeguard in Season 2', () => {
