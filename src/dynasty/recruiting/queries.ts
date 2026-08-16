@@ -12,12 +12,28 @@ import type {
   RecruitingTargetStatus,
 } from './domain'
 import { createRng } from '../../engine'
+import { isTournamentComplete } from '../../postseason'
+import { FINAL_RECRUITING_PERIOD } from './constants'
 
 export function getRecruit(
   recruiting: RecruitingState,
   playerId: string,
 ): Recruit | undefined {
   return recruiting.recruits.find(({ player }) => player.id === playerId)
+}
+
+/** Canonical lifecycle eligibility for the explicit Tournament → Late Recruiting handoff. */
+export function canEnterLateRecruiting(dynasty: DynastyState): boolean {
+  const recruiting = dynasty.recruiting
+  const postseason = dynasty.activePostseason
+  return Boolean(
+    postseason &&
+      isTournamentComplete(postseason) &&
+      recruiting &&
+      recruiting.phase !== 'late' &&
+      recruiting.phase !== 'finalized' &&
+      recruiting.lastResolvedPeriod === FINAL_RECRUITING_PERIOD,
+  )
 }
 
 export function deriveRecruitNationalRank(recruit: Recruit): number {

@@ -90,8 +90,11 @@ retuning. Tournament upset variance remains an accepted non-issue absent new
 evidence.
 
 A reported navigation/progression escape path after Tournament completion was
-not reproduced. Focused regression coverage established that League navigation
-does not bypass Late Recruiting, finalization, or Offseason checkpoints.
+not reproduced at the time; focused coverage established that League navigation
+did not bypass Late Recruiting, finalization, or Offseason checkpoints. Later
+normal play reproduced a distinct presentation-scoping failure through the
+final regular-season review; current status and manual confirmation needs live
+in active `PLAYTESTING.md`.
 
 ## Recruiting visibility and information architecture
 

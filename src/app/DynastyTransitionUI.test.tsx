@@ -140,6 +140,29 @@ describe('Season-complete handoff', () => {
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
     expect(useDynastyStore.getState().view).toBe('recruiting')
   })
+
+  it('keeps the Late Recruiting progression control available after viewing the final regular season', () => {
+    const boundary = championshipBoundary()
+    useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'View Final Regular Season' }))
+
+    const state = useDynastyStore.getState()
+    expect(state.view).toBe('hub')
+    expect(state.dynasty).toBe(boundary)
+    expect(state.dynasty!.activePostseason).toBe(boundary.activePostseason)
+    expect(state.dynasty!.recruiting!.phase).toBe('postseason')
+    expect(
+      screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+    ).toBeInTheDocument()
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+    )
+    expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
+    expect(useDynastyStore.getState().view).toBe('recruiting')
+  })
 })
 
 describe('Late Recruiting presentation', () => {

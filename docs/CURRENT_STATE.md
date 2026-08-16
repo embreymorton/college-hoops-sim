@@ -59,6 +59,11 @@ and simulation use explicit seeded RNG streams; production does not use
 [SIMULATION.md](SIMULATION.md), and player-facing rules in
 [GAME_DESIGN.md](GAME_DESIGN.md).
 
+At a canonically completed Tournament with Recruiting synchronized through
+Period 28, the explicit Late Recruiting handoff remains available from both the
+Tournament Hub and the final regular-season review reached through normal
+navigation. Navigation does not own or clear that lifecycle eligibility.
+
 ## Accepted and frozen boundaries
 
 Frozen means “reopen only with new evidence,” not “never change.” Do not tune or

@@ -267,6 +267,12 @@ derive them from retained results rather than introduce competing truth.
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
 
+Tournament-complete handoff eligibility is derived from canonical active
+Postseason completion plus synchronized Recruiting phase/Period 28 facts. Both
+the Tournament Hub and the final regular-season review expose that same derived
+handoff, so changing session views cannot strand the lifecycle or require a
+duplicated presentation boolean.
+
 ## Accepted Dynasty and Recruiting ownership
 
 `src/dynasty` is the serializable cross-season lifecycle owner. Its accepted state shape is:

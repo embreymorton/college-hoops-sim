@@ -16,7 +16,7 @@ import {
   type BracketSlotParticipant,
   type TournamentFieldRow,
 } from '../components'
-import { deriveProgramRecruitingBoard, FINAL_RECRUITING_PERIOD } from '../dynasty'
+import { canEnterLateRecruiting, deriveProgramRecruitingBoard } from '../dynasty'
 import {
   deriveNationalChampion,
   getCurrentTournamentRound,
@@ -225,13 +225,9 @@ export function PostseasonHubScreen() {
   const championProgram = championProgramId
     ? PROGRAMS_BY_ID.get(championProgramId)
     : undefined
-  const isLateRecruitingHandoffAvailable = Boolean(
-    tournamentComplete &&
-      recruiting &&
-      recruiting.phase !== 'late' &&
-      recruiting.phase !== 'finalized' &&
-      recruiting.lastResolvedPeriod === FINAL_RECRUITING_PERIOD,
-  )
+  const isLateRecruitingHandoffAvailable = dynasty
+    ? canEnterLateRecruiting(dynasty)
+    : false
 
   const controlledGame =
     currentRound !== undefined && controlledEntry

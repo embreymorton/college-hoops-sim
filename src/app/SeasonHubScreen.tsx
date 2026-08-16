@@ -8,12 +8,17 @@ import {
   RecruitingHubSummary,
   ScheduleTable,
   SeasonHeader,
+  SeasonCompleteHandoff,
   SeasonPreviewPromotion,
   SuperSimConfirmDialog,
   SuperSimMenu,
   SuperSimSummaryDialog,
 } from '../components'
-import { deriveProgramRecruitingBoard, shouldPromoteSeasonPreview } from '../dynasty'
+import {
+  canEnterLateRecruiting,
+  deriveProgramRecruitingBoard,
+  shouldPromoteSeasonPreview,
+} from '../dynasty'
 import {
   MIDSEASON_ROUND,
   selectActivePostseason,
@@ -94,6 +99,7 @@ export function SeasonHubScreen() {
   )
   const postseason = useDynastyStore(selectActivePostseason)
   const enterPostseason = useDynastyStore((state) => state.enterPostseason)
+  const enterLateRecruiting = useDynastyStore((state) => state.enterLateRecruiting)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const generateControlledDraftBoard = useDynastyStore(
@@ -118,6 +124,9 @@ export function SeasonHubScreen() {
   }
 
   const recruiting = dynasty?.recruiting
+  const isLateRecruitingHandoffAvailable = dynasty
+    ? canEnterLateRecruiting(dynasty)
+    : false
   const recruitingBoard =
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
   const focusTargets =
@@ -248,31 +257,36 @@ export function SeasonHubScreen() {
           Next game
         </h2>
         {seasonComplete ? (
-          <div className="season-complete-panel">
-            <p className="eyebrow-tag">Regular Season Complete</p>
-            <p className="season-complete-panel__body">
-              Final record {formatRecord(overallRecord.wins, overallRecord.losses)}{' '}
-              ({formatRecord(conferenceRecord.wins, conferenceRecord.losses)}{' '}
-              conference).
-            </p>
-            <div className="season-complete-panel__tournament">
-              <p className="season-complete-panel__tournament-label">
-                National Tournament
+          <>
+            <div className="season-complete-panel">
+              <p className="eyebrow-tag">Regular Season Complete</p>
+              <p className="season-complete-panel__body">
+                Final record {formatRecord(overallRecord.wins, overallRecord.losses)}{' '}
+                ({formatRecord(conferenceRecord.wins, conferenceRecord.losses)}{' '}
+                conference).
               </p>
-              <p className="season-complete-panel__tournament-status">
-                {formatTournamentQualification(controlledTournamentEntry)}
-              </p>
+              <div className="season-complete-panel__tournament">
+                <p className="season-complete-panel__tournament-label">
+                  National Tournament
+                </p>
+                <p className="season-complete-panel__tournament-status">
+                  {formatTournamentQualification(controlledTournamentEntry)}
+                </p>
+              </div>
+              <button
+                type="button"
+                className="button button--primary season-complete-panel__action"
+                onClick={enterPostseason}
+              >
+                {controlledTournamentEntry
+                  ? 'Enter National Tournament'
+                  : 'View National Tournament'}
+              </button>
             </div>
-            <button
-              type="button"
-              className="button button--primary season-complete-panel__action"
-              onClick={enterPostseason}
-            >
-              {controlledTournamentEntry
-                ? 'Enter National Tournament'
-                : 'View National Tournament'}
-            </button>
-          </div>
+            {isLateRecruitingHandoffAvailable && (
+              <SeasonCompleteHandoff onContinue={enterLateRecruiting} />
+            )}
+          </>
         ) : completedHubGame ? (
           <CompletedMatchupCard
             roundLabel={`Round ${completedHubGame.game.round}`}

@@ -64,6 +64,7 @@ export {
   generateRecruitingClass,
 } from './recruiting/generation'
 export {
+  canEnterLateRecruiting,
   deriveBaseRecruitAttraction,
   deriveActiveOfferCountsByPosition,
   deriveAvailableOfferSlotsByPosition,
