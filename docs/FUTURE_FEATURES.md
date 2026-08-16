@@ -12,10 +12,8 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 - **History & Recognition:** Season Archive / Yearbook, Records & Milestones,
   and Awards & Honors are selected under Phase 7C in `ROADMAP.md`.
-- **Recruit Attachment:** Recruit Details, Follow Recruits, and Recruit → Player
-  continuity are selected under Phase 7D in `ROADMAP.md`.
 
-The Roadmap owns their order and scope. They are not specified again here.
+The Roadmap owns its order and scope. It is not specified again here.
 
 ## Recruiting depth
 
@@ -74,12 +72,11 @@ current regular-season semantics.
 ## History and immersion beyond selected work
 
 - broad Program Alumni browser and global historical Player search;
-- richer Program history, rivalries, banners, and prestige history;
+- richer Program history, rivalries, and banners;
 - signature games and player-facing Tournament career summaries;
 - polls/rankings and richer résumé context;
 - broadcast-style story packages and Season retrospectives;
-- Conference history and Tournament records; and
-- coach career records and legacy.
+- Conference history and Tournament records.
 
 Records, Awards, and the initial Season Archive are already selected in Phase
 7C; the ideas above are extensions, not expanded 7C scope by default.
@@ -106,6 +103,88 @@ Records, Awards, and the initial Season Archive are already selected in Phase
 These systems would materially change simulation or lifecycle behavior and need
 their own selected phases and validation.
 
+## Coach Career & Dynasty Identity
+
+### Create a Coach
+
+An identity-focused Dynasty setup could establish a persistent Coach rather
+than representing the user only as the controller of one Program. A first
+version could retain Coach name, current Program, seasons coached, career
+record, Tournament appearances, championships, and school-by-school history.
+Coach attributes, skill trees, perks, RPG-style ratings, and balance effects
+remain separate design questions rather than requirements for identity V1.
+
+### Coach Career / Job Market
+
+A larger career system could build on—but need not ship with—Create a Coach:
+job offers and a job market, accepting or rejecting opportunities, movement
+between Programs, career progression from lower- to higher-prestige jobs,
+school-by-school coaching history, and Coach legacy. Hot-seat and firing systems
+would be later extensions.
+
+This is substantially larger than Create a Coach because the user-controlled
+Program would need to become mutable across a Dynasty career. Hiring AI,
+offer probabilities, firing rules, Coach attributes, and progression mechanics
+all require separate design before implementation.
+
+## Custom Universe & Replayability
+
+### Dynasty seed input and display
+
+The simulation is already deterministic. A relatively low-risk setup extension
+could allow a user-entered Dynasty seed, generate one when the field is blank,
+display the active seed somewhere discoverable, and support copying/sharing it
+to replay the same generated universe with another Program. Replayability is
+expected only within a compatible simulation/game version; later generation or
+simulation changes may produce different results from an older seed. This does
+not imply a save/version-migration system or prescribe the exact seed UI.
+
+### Create / customize a school
+
+A bounded first version should customize or replace an existing Program slot
+inside the current fixed universe structure. Editable canonical metadata could
+include Program name, abbreviation, city/state, primary and secondary colors,
+structurally valid Conference assignment, starting prestige, and other metadata
+already supported by the Program model.
+
+This does not require arbitrary Program/Conference counts, rewritten schedule
+generation, different Conference sizes, or custom Tournament sizing. Those are
+larger custom-universe extensions.
+
+### Spreadsheet / CSV Program import
+
+A first import workflow should favor CSV Program metadata so files remain easy
+to author in Excel or Google Sheets while parsing and validation stay simple.
+Potential fields include Program name, abbreviation, city/state, Conference,
+colors, starting prestige, and other canonical Program metadata. Existing game
+systems should continue generating Players, Recruits, schedules, and results;
+V1 should not imply imported rosters, ratings, Recruiting classes, schedules,
+or history. Native `.xlsx` support could follow only if useful.
+
+Longer-term extensions may include importable/exportable league templates,
+shared custom universes, expanded Conference customization, additional or
+generated Programs/Conferences, configurable schedules, and variable league
+structures. These must preserve stable identity, validation, deterministic
+generation, and generic engine boundaries.
+
+## Dynamic Program World
+
+### Evolving Program prestige
+
+Program prestige could evolve visibly across a long Dynasty: sustained winning
+may raise it and sustained failure may lower it, with gradual changes that keep
+one Cinderella run from instantly creating an elite Program and one poor Season
+from erasing an established power. Future design may consider wins/losses,
+Conference performance, Tournament qualification and advancement,
+championships, multi-Season recent performance, and existing/historical
+prestige, but no formula or threshold is selected.
+
+The key design decision is whether dynamic prestige begins as descriptive only
+or also feeds systems such as Recruiting. Long-term success reasonably could
+change Program attractiveness, but Recruiting effects and calibration remain
+future decisions. Prestige could also influence job attractiveness and Coach-
+career opportunities if that major system is later selected.
+
 ## Presentation and broader modes
 
 - save/load and Dynasty management;
@@ -115,12 +194,14 @@ their own selected phases and validation.
 - optional presentation themes; and
 - export/share tools for Seasons, brackets, and careers.
 
-## Universe expansion
+## Rough scope character — non-authoritative
 
-- additional Programs or Conferences;
-- configurable league sizes and schedules;
-- generated Universes; and
-- custom Program/conference editing.
+- **Lower-risk / incremental:** visible and user-enterable Dynasty seed; Create
+  a Coach identity-only V1.
+- **Medium-scope:** Create/Customize School within the fixed structure; CSV
+  Program metadata import; visible/dynamic Program prestige.
+- **Major future systems:** Coach Career/job market, changing controlled
+  Programs, hot-seat/firing behavior, and variable-size custom universes.
 
-Universe expansion must preserve stable identity, validation, deterministic
-generation, and generic engine boundaries.
+These labels describe likely implementation risk only. They do not assign
+priority, phase numbers, deadlines, or Roadmap sequence.
