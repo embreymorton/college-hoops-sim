@@ -43,6 +43,7 @@ export function LeagueScreen() {
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
   const openSeasonPreview = useDynastyStore((state) => state.openSeasonPreview)
+  const openHistory = useDynastyStore((state) => state.openHistory)
 
   if (!season || !dynasty) {
     return null
@@ -64,6 +65,7 @@ export function LeagueScreen() {
       />
 
       <section className="section league-screen" aria-label="League">
+        <div className="league-screen__navigation">
         <div role="group" aria-label="League section" className="tab-list">
           <button
             type="button"
@@ -97,6 +99,14 @@ export function LeagueScreen() {
           >
             Following
           </button>
+        </div>
+        <button
+          type="button"
+          className="button button--ghost league-history-action"
+          onClick={openHistory}
+        >
+          History
+        </button>
         </div>
 
         {tab === 'news' ? (

@@ -72,6 +72,10 @@ export function formatBackDestinationLabel(view: SeasonSessionView): string {
       return 'League'
     case 'seasonPreview':
       return 'Season Preview'
+    case 'history':
+      return 'History'
+    case 'seasonYearbook':
+      return 'Yearbook'
     case 'teamDetails':
       return 'Team'
     case 'playerDetails':

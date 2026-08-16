@@ -201,6 +201,8 @@ export type SeasonSessionView =
   | 'postseasonGameHistory'
   | 'league'
   | 'seasonPreview'
+  | 'history'
+  | 'seasonYearbook'
   | 'teamDetails'
   | 'playerDetails'
   | 'recruiting'
@@ -254,6 +256,8 @@ export interface DynastySessionState {
   readonly explorationViewHistory: readonly SeasonSessionView[]
   /** Transient League return context; fresh root entry always resets this to News. */
   readonly leagueTab: LeagueTab
+  /** Transient History selection; canonical archive facts remain in DynastyState.history. */
+  readonly selectedArchivedSeasonNumber: number | null
   /** The Program currently open in Team Details, for any Program in the Universe. */
   readonly selectedTeamProgramId: string | null
   /** The Program owning the Player currently open in Player Details. */
@@ -375,6 +379,12 @@ export interface DynastySessionState {
   goToLeague(): void
   /** Opens the active Season Preview as an exploration destination. */
   openSeasonPreview(): void
+  /** Opens the completed-Season History index and clears any stale selection. */
+  openHistory(): void
+  /** Opens one canonical completed Season from the History index. */
+  openArchivedSeason(seasonNumber: number): void
+  /** Recovers an invalid/stale Yearbook selection to the History index. */
+  recoverHistoryIndex(): void
   setLeagueTab(tab: LeagueTab): void
   /** Opens Team Details for any Program in the Universe, not only the controlled one. */
   openTeamDetails(programId: string): void
@@ -656,6 +666,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   viewedTournamentGameId: null,
   explorationViewHistory: [],
   leagueTab: 'news',
+  selectedArchivedSeasonNumber: null,
   selectedTeamProgramId: null,
   selectedPlayerProgramId: null,
   selectedPlayerId: null,
@@ -714,6 +725,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       viewedTournamentGameId: null,
       explorationViewHistory: [],
       leagueTab: 'news',
+      selectedArchivedSeasonNumber: null,
       selectedTeamProgramId: null,
       selectedPlayerProgramId: null,
       selectedPlayerId: null,
@@ -1072,6 +1084,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       view: 'hub',
       viewedGameId: null,
       explorationViewHistory: [],
+      selectedArchivedSeasonNumber: null,
       recruitingActionError: null,
     })
   },
@@ -1335,6 +1348,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       view: 'postseasonHub',
       viewedTournamentGameId: null,
       explorationViewHistory: [],
+      selectedArchivedSeasonNumber: null,
       recruitingActionError: null,
     })
   },
@@ -1534,6 +1548,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       view: 'league',
       leagueTab: 'news',
+      selectedArchivedSeasonNumber: null,
       explorationViewHistory: [...explorationViewHistory, view],
     })
   },
@@ -1544,6 +1559,46 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       view: 'seasonPreview',
       explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  openHistory() {
+    const { view, explorationViewHistory } = get()
+
+    set({
+      view: 'history',
+      selectedArchivedSeasonNumber: null,
+      explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  openArchivedSeason(seasonNumber) {
+    const { dynasty, view, explorationViewHistory } = get()
+    const matches = dynasty?.history.filter(
+      (archive) => archive.seasonNumber === seasonNumber,
+    ) ?? []
+
+    if (matches.length !== 1) {
+      set({ view: 'history', selectedArchivedSeasonNumber: null })
+      return
+    }
+
+    set({
+      view: 'seasonYearbook',
+      selectedArchivedSeasonNumber: seasonNumber,
+      explorationViewHistory: [...explorationViewHistory, view],
+    })
+  },
+
+  recoverHistoryIndex() {
+    const { explorationViewHistory } = get()
+    const historyIndex = explorationViewHistory.at(-1) === 'history'
+      ? explorationViewHistory.slice(0, -1)
+      : explorationViewHistory
+    set({
+      view: 'history',
+      selectedArchivedSeasonNumber: null,
+      explorationViewHistory: historyIndex,
     })
   },
 
@@ -1586,6 +1641,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       view: 'recruiting',
       explorationViewHistory: [],
+      selectedArchivedSeasonNumber: null,
       recruitingActionError: null,
       recruitingActivityBaselinePeriod: null,
     })
@@ -1843,6 +1899,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         viewedTournamentGameId: null,
         explorationViewHistory: [],
         leagueTab: 'news',
+        selectedArchivedSeasonNumber: null,
         selectedTeamProgramId: null,
         selectedPlayerProgramId: null,
         selectedPlayerId: null,

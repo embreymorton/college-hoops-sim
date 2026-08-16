@@ -868,9 +868,64 @@ p {
 }
 
 /* League News (7B.1) — dense current-season world-story feed. */
-.league-screen > .tab-list {
+.league-screen__navigation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.league-screen__navigation > .tab-list {
   max-width: 100%;
   overflow-x: auto;
+}
+
+.league-history-action {
+  flex: 0 0 auto;
+  padding: 0.5rem 0.8rem;
+}
+
+.history-screen,
+.season-yearbook-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.history-season-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.history-season-card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(7rem, 0.7fr) minmax(12rem, 1.3fr) minmax(9rem, 1fr);
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-4);
+  text-align: left;
+  color: var(--ink-0);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+
+.history-season-card:hover {
+  border-color: var(--line-strong);
+  background: var(--surface-2);
+}
+
+.history-season-card__season {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.history-season-card__detail {
+  color: var(--ink-1);
 }
 
 .league-news {
@@ -990,7 +1045,9 @@ p {
     font-size: 0.7rem;
   }
 
-  .league-screen > .tab-list .tab { padding-inline: 0.85rem; }
+  .league-screen__navigation { align-items: stretch; }
+  .league-screen__navigation > .tab-list .tab { padding-inline: 0.85rem; }
+  .history-season-card { grid-template-columns: 1fr; gap: var(--space-2); }
   .news-story { padding-inline: var(--space-3); }
   .news-story__meta { align-items: flex-start; }
 }

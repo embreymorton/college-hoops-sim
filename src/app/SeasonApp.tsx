@@ -2,6 +2,7 @@ import { selectControlledProgramId, useDynastyStore } from '../store'
 import { RecruitingSetupDialog } from '../components'
 import { CoachingScreen } from './CoachingScreen'
 import { GamePrepScreen } from './GamePrepScreen'
+import { HistoryScreen } from './HistoryScreen'
 import { LeagueScreen } from './LeagueScreen'
 import { OffseasonScreen } from './OffseasonScreen'
 import { PlayerDetailsScreen } from './PlayerDetailsScreen'
@@ -11,6 +12,7 @@ import { RecruitingScreen } from './RecruitingScreen'
 import { SeasonHubScreen } from './SeasonHubScreen'
 import { SeasonPostgameScreen } from './SeasonPostgameScreen'
 import { SeasonPreviewScreen } from './SeasonPreviewScreen'
+import { SeasonYearbookScreen } from './SeasonYearbookScreen'
 import { TeamDetailsScreen } from './TeamDetailsScreen'
 import { TournamentGamePrepScreen } from './TournamentGamePrepScreen'
 import { TournamentPostgameScreen } from './TournamentPostgameScreen'
@@ -63,6 +65,12 @@ export function DynastyApp() {
       break
     case 'seasonPreview':
       screen = <SeasonPreviewScreen />
+      break
+    case 'history':
+      screen = <HistoryScreen />
+      break
+    case 'seasonYearbook':
+      screen = <SeasonYearbookScreen />
       break
     case 'teamDetails':
       screen = <TeamDetailsScreen />

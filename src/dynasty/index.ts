@@ -10,6 +10,11 @@ export {
   shouldPromoteSeasonPreview,
 } from './seasonPreview'
 export {
+  deriveCompletedSeasonIndex,
+  deriveCompletedSeasonYearbook,
+  YEARBOOK_STATISTICAL_SCOPE,
+} from './seasonYearbook'
+export {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
   deriveDevelopmentTendency,
@@ -114,6 +119,19 @@ export type {
   KnownDynastyPlayerResolution,
   PlayerCareerSummary,
 } from './playerLegacy'
+export type {
+  CompletedSeasonIndexSummary,
+  CompletedSeasonYearbook,
+  ControlledTournamentGame,
+  HistoricalConferenceStandings,
+  HistoricalLeaderboards,
+  HistoricalLeaderRow,
+  HistoricalPlayerIdentity,
+  HistoricalProgramIdentity,
+  HistoricalStandingRow,
+  HistoricalTournamentGame,
+  HistoricalTournamentOutcome,
+} from './seasonYearbook'
 export type {
   NewsCheckpoint,
   NewsFeed,
