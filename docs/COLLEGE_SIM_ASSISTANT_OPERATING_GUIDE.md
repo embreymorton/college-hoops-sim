@@ -50,6 +50,64 @@ sections; relevant owner docs; and relevant production code.
 Do not read conditional archives unless this task explicitly reopens them.
 ```
 
+## Fresh Chat Handoff Prompt
+
+Copy and paste this prompt into a new conversation. It intentionally contains
+no current feature, phase number, or changing project state.
+
+```text
+I've attached the latest College Basketball Simulation repository.
+
+Treat the current repository as authoritative. Assume prior-chat context is
+unavailable; do not rely on remembered sequencing or decisions. Follow the
+repository's documented Fresh Session workflow.
+
+Minimum read set:
+- docs/CURRENT_STATE.md in full;
+- docs/ROADMAP.md — Current Selected Horizon / active planning section;
+- docs/PLAYTESTING.md — Current Playtesting Priorities, Live WATCH Items, and
+  only sections directly relevant to the current decision or milestone;
+- relevant Fresh Session/workflow sections of the Operating Guide; and
+- relevant owner documentation and production code as needed.
+
+Do not automatically read Playtesting Archive, Player Identity Research,
+unrelated completed Roadmap history, or unrelated historical research. Open a
+conditional archive only for a specific historical question. Preserve accepted
+and frozen systems; historical experiments alone do not justify reopening
+tuning or calibration.
+
+First confirm current production truth, relevant accepted/frozen systems, live
+Playtesting/WATCH signals, and whether Roadmap has an authoritative NEXT.
+
+Path A — NEXT is selected:
+- state the exact milestone and current checkpoint;
+- inspect the relevant production architecture and focus on that milestone;
+- use discovery/broad planning first if meaningful product, scope, or
+  information-architecture ambiguity remains; and
+- do not change code unless I request implementation.
+
+Path B — no NEXT is selected:
+- do not invent or infer one; treat this as an Open Planning Checkpoint;
+- summarize completed/frozen truth, what normal play says is working, live
+  WATCH items and friction, PLANNED work, and relevant Future Features;
+- propose a small set of realistic directions and compare player value,
+  evidence, scope, readiness, dependencies, frozen-system risk, and whether
+  each is feature, UX, or dedicated tuning work;
+- rank them, recommend one, and identify any evidence needed for a responsible
+  decision; and
+- do not update Roadmap merely because you recommend something.
+
+A new NEXT becomes authoritative only after I explicitly select the direction
+and authorize the Roadmap update. Roadmap alone owns NEXT/PLANNED; Playtesting
+provides evidence; Future Features is unscheduled; historical research is not
+an active queue. Do not calibrate without current evidence. Planning should
+narrow progressively and stop once meaningful uncertainties are resolved.
+
+In your initial response, tell me what the repository says is true, whether we
+are in Path A or Path B, what you recommend doing in this chat, and what areas
+you need to inspect. Do not change code or documentation until requested.
+```
+
 ---
 
 # Source-of-Truth Discipline
@@ -365,6 +423,12 @@ Final implementation responses must include `## Documentation` and identify the
 docs updated, the docs intentionally not updated, or that no accepted
 source-of-truth fact changed.
 
+Completing a milestone does not automatically promote another item to NEXT.
+The final response and documentation may preserve a successor already selected
+in Roadmap, or one the user explicitly selects during the interaction. Otherwise
+they must leave NEXT unset and establish an Open Planning Checkpoint. Assistant
+recommendation, Roadmap order, and phase numbering are not selection.
+
 ---
 
 # Prompt-Writing Style
@@ -500,9 +564,11 @@ every feature needs a separate polish pass or expand scope during polish.
 
 ## 8. Accept, document, and freeze
 
-After acceptance, update changed facts in owner docs only, advance Roadmap,
-clear/rescope current WATCH evidence, freeze the milestone, and start future
-work from repository truth.
+After acceptance, update changed facts in owner docs only, clear/rescope current
+WATCH evidence, freeze the milestone, and inspect authoritative sequencing. If
+Roadmap already selected a successor, preserve it. Otherwise leave NEXT unset
+and establish an Open Planning Checkpoint; never promote PLANNED work merely
+from order or numbering.
 
 ## Calibration discipline
 

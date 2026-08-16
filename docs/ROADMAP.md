@@ -1,14 +1,17 @@
 # Roadmap
 
-`ROADMAP.md` is the single authority for milestone sequencing. It owns the one
-current **NEXT** marker and later **PLANNED** work. Completed milestones are
+`ROADMAP.md` is the single authority for milestone sequencing. It owns the
+current **NEXT** marker, when one has been explicitly selected, and later
+**PLANNED** work. A deliberate Open Planning Checkpoint may have no **NEXT**.
+Completed milestones are
 summarized here; implementation detail belongs in its owning production doc,
 empirical evidence in `PLAYTESTING.md`, and parked research in conditional-read
 archives.
 
 Status meanings: **COMPLETE** = implemented, validated, and accepted;
-**FROZEN** = reopen only with new evidence; **NEXT** = the immediate selected
-milestone; **PLANNED** = deliberately sequenced later work.
+**FROZEN** = reopen only with new evidence; **NEXT** = the immediate explicitly
+selected milestone; **PLANNED** = valid future work that is not automatically
+next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 

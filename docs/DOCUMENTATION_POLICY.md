@@ -23,8 +23,8 @@ work follows this policy's targeted acceptance updates.
 | Document | Owns | Update when | Do not use for |
 | --- | --- | --- | --- |
 | `README.md` | Concise project overview and major playable capability | Player-facing capability or overall project status materially changes; entry path changes | Milestone internals, diagnostic history, exact constants, backlogs |
-| `docs/CURRENT_STATE.md` | Current production truth, frozen boundaries, live WATCH summary, and exactly one concise mirror of Roadmap NEXT | Accepted truth/freeze changes or Roadmap NEXT changes | History, acceptance chronology, experiment details |
-| `docs/ROADMAP.md` | The one authoritative NEXT, later PLANNED sequence, and compact completion status | Milestone accepted, reordered, selected, cancelled, or deferred | Implementation detail, research notebooks, acceptance logs |
+| `docs/CURRENT_STATE.md` | Current production truth, frozen boundaries, live WATCH summary, and a concise mirror of the Roadmap planning checkpoint | Accepted truth/freeze changes or Roadmap NEXT/open-checkpoint status changes | History, acceptance chronology, experiment details |
+| `docs/ROADMAP.md` | The authoritative NEXT when one is selected, later PLANNED work, open-checkpoint status, and compact completion status | Milestone accepted, reordered, selected, cancelled, or deferred | Implementation detail, research notebooks, acceptance logs |
 | `docs/PLAYTESTING.md` | Current priorities, live WATCH items, active empirical evidence, and concise recent acceptance evidence | Current observation, priority evidence, watchpoint, or narrative acceptance changes | Product sequencing, closed-history bulk, experiment mechanics |
 | `docs/PLAYTESTING_ARCHIVE.md` | Conditional-read closed playtesting evidence and causal history | Closed evidence no longer affects current planning but remains useful | Current priorities, NEXT, normal session reading |
 | `docs/CALIBRATION.md` | How tuning and validation are performed | Methodology, presets, audits, comparison, parallelism, or acceptance process changes | Current balance constants |
@@ -45,14 +45,31 @@ is an active front door; detailed closed causal history moves to
 
 Only `ROADMAP.md` owns **NEXT** and **PLANNED** sequencing.
 
-- `CURRENT_STATE.md` mirrors exactly one concise Roadmap NEXT pointer.
+- **NEXT** means the immediate milestone explicitly selected by the user. There
+  may be at most one, and there is no requirement that one always exist.
+- **PLANNED** means valid future work, not an automatic commitment to immediate
+  priority.
+- **OPEN PLANNING CHECKPOINT** means accepted work has closed and no successor
+  is explicitly selected. Roadmap intentionally has no NEXT; Current State
+  mirrors that condition instead of creating a separate priority list.
+- `CURRENT_STATE.md` mirrors the concise Roadmap checkpoint: its exact NEXT when
+  present, or `No NEXT selected — Open Planning Checkpoint` when absent.
 - `PLAYTESTING.md` supplies evidence and priorities but never selects NEXT.
 - `FUTURE_FEATURES.md` contains unscheduled ideas and never uses NEXT.
 - research/archive documents never select product sequencing.
 
 Planning can change Roadmap sequence only when the user explicitly chooses a
-sequencing decision. Informal interest and historical experimental momentum do
-not select work.
+sequencing decision. An assistant recommendation is not a selection. Informal
+interest, document order, phase number, the nearest PLANNED item, Playtesting
+priority, Future Features, and historical experimental momentum do not select
+work. If the user's intent is ambiguous, leave NEXT unchanged or unset.
+
+The supported selection flow is:
+
+```text
+Open Planning Checkpoint → fresh planning → assistant recommendation
+→ user discussion → explicit user selection → Roadmap update → authoritative NEXT
+```
 
 ## Anti-bloat and conditional-read rules
 
@@ -357,10 +374,21 @@ priorities, and missing links. Do not rewrite documentation merely for style.
 
 At phase close, perform one small targeted check:
 
-- compress the closed Roadmap phase and advance its sole NEXT marker;
+- mark the accepted work complete/frozen and compress its Roadmap entry;
+- inspect the Roadmap for an already explicitly selected successor;
+- if a successor was already selected, preserve it and mirror it in Current
+  State;
+- if none was selected, do not infer one: leave NEXT unset and establish an
+  Open Planning Checkpoint in Roadmap and Current State;
 - replace the Current State checkpoint rather than appending chronology;
 - remove/reword Future Features entries that shipped or became selected; and
 - clear resolved WATCH language and archive closed Playtesting evidence when it
   no longer affects current planning.
+
+Completing a milestone does not automatically promote the next listed Roadmap
+item to NEXT. A documentation agent must not infer NEXT from file order, phase
+number, the nearest PLANNED item, Playtesting, Future Features, or its own
+recommendation. Preserve only an already authoritative Roadmap successor, or a
+direction the user explicitly selects during the interaction.
 
 Do not turn this checklist into a repository-wide rewrite after every phase.
