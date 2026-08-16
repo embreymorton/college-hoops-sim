@@ -204,6 +204,24 @@ describe('Dynasty section navigation', () => {
   })
 })
 
+describe('Recruiting mode session context', () => {
+  it.each([
+    ['Battles', 'battles'],
+    ['National Class', 'national'],
+    ['Guide', 'guide'],
+  ] as const)('stores the %s selection outside local React state', (label, mode) => {
+    renderRecruitingScreen()
+
+    fireEvent.click(screen.getByRole('button', { name: label }))
+
+    expect(useDynastyStore.getState().recruitingMode).toBe(mode)
+    expect(screen.getByRole('button', { name: label })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  })
+})
+
 describe('Recruiting Overview', () => {
   it('renders Board/Signed/Openings/Offers as one compact snapshot, with Board shown exactly once', () => {
     renderRecruitingScreen()

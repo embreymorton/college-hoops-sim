@@ -15,11 +15,11 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### NEXT — 7D.1 Recruit Details
 
-**7C.1 Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.** No
-successor has been explicitly selected. Roadmap order does not promote the
-remaining planned work.
+Add an inspection layer beneath the existing Recruiting information
+architecture so prospects become more memorable through their canonical Player
+profile, class context, and player-safe Recruiting battle information.
 
 ### PLANNED — remainder of Phase 7C
 
@@ -29,9 +29,8 @@ remaining planned work.
 
 ### PLANNED — Phase 7D Recruit Attachment V1
 
-1. **7D.1 — Recruit Details**
-2. **7D.2 — Follow Recruits**
-3. **7D.3 — Recruit → Player continuity**, preserving existing identity
+1. **7D.2 — Follow Recruits**
+2. **7D.3 — Recruit → Player continuity**, preserving existing identity
    continuity where already canonical.
 
 ### After Current Phase 7 Work — Fresh Planning Checkpoint

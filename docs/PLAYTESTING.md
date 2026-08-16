@@ -28,9 +28,9 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-1. Use the Open Planning Checkpoint to decide the next milestone from current
-   gameplay evidence; do not promote planned Records, Awards, or Recruit work
-   automatically.
+1. Playtest the selected 7D.1 Recruit Details horizon against its acceptance
+   question: Does deeper Recruit inspection make prospects more memorable and
+   increase attachment during normal Recruiting?
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.

@@ -209,6 +209,7 @@ export type SeasonSessionView =
   | 'offseason'
 
 export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following'
+export type RecruitingMode = 'board' | 'battles' | 'national' | 'guide'
 
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
@@ -256,6 +257,8 @@ export interface DynastySessionState {
   readonly explorationViewHistory: readonly SeasonSessionView[]
   /** Transient League return context; fresh root entry always resets this to News. */
   readonly leagueTab: LeagueTab
+  /** Transient Recruiting return context; fresh root entry always resets this to Board. */
+  readonly recruitingMode: RecruitingMode
   /** Transient History selection; canonical archive facts remain in DynastyState.history. */
   readonly selectedArchivedSeasonNumber: number | null
   /** The Program currently open in Team Details, for any Program in the Universe. */
@@ -386,6 +389,7 @@ export interface DynastySessionState {
   /** Recovers an invalid/stale Yearbook selection to the History index. */
   recoverHistoryIndex(): void
   setLeagueTab(tab: LeagueTab): void
+  setRecruitingMode(mode: RecruitingMode): void
   /** Opens Team Details for any Program in the Universe, not only the controlled one. */
   openTeamDetails(programId: string): void
   /** Opens Player Details for any current-roster Player in the Universe. */
@@ -666,6 +670,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   viewedTournamentGameId: null,
   explorationViewHistory: [],
   leagueTab: 'news',
+  recruitingMode: 'board',
   selectedArchivedSeasonNumber: null,
   selectedTeamProgramId: null,
   selectedPlayerProgramId: null,
@@ -725,6 +730,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       viewedTournamentGameId: null,
       explorationViewHistory: [],
       leagueTab: 'news',
+      recruitingMode: 'board',
       selectedArchivedSeasonNumber: null,
       selectedTeamProgramId: null,
       selectedPlayerProgramId: null,
@@ -1606,6 +1612,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({ leagueTab })
   },
 
+  setRecruitingMode(recruitingMode) {
+    set({ recruitingMode })
+  },
+
   openTeamDetails(programId) {
     const { view, explorationViewHistory } = get()
 
@@ -1640,6 +1650,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   goToRecruiting() {
     set({
       view: 'recruiting',
+      recruitingMode: 'board',
       explorationViewHistory: [],
       selectedArchivedSeasonNumber: null,
       recruitingActionError: null,
@@ -1899,6 +1910,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         viewedTournamentGameId: null,
         explorationViewHistory: [],
         leagueTab: 'news',
+        recruitingMode: 'board',
         selectedArchivedSeasonNumber: null,
         selectedTeamProgramId: null,
         selectedPlayerProgramId: null,

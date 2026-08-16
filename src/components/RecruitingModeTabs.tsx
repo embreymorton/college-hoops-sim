@@ -1,4 +1,6 @@
-export type RecruitingMode = 'board' | 'battles' | 'national' | 'guide'
+import type { RecruitingMode } from '../store'
+
+export type { RecruitingMode } from '../store'
 
 interface RecruitingModeTabsProps {
   readonly mode: RecruitingMode

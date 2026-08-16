@@ -125,12 +125,14 @@ Experiment B v1 is rejected and must not be activated or retuned in place.
 Read [PLAYER_IDENTITY_RESEARCH.md](PLAYER_IDENTITY_RESEARCH.md) only when new
 manual gameplay evidence justifies deliberately reopening Player tuning.
 
-**No NEXT is selected — OPEN PLANNING CHECKPOINT.**
+**NEXT — 7D.1 Recruit Details.** Recruit Details is the active feature horizon:
+additive inspection beneath the accepted Recruiting information architecture,
+using canonical Recruit/Player facts and existing player-safe battle
+projections. It is not yet implemented or accepted.
 
-`7C.2 Records & Milestones`, `7C.3 Awards & Honors`, and Phase 7D remain
-**PLANNED**, not selected. The next milestone requires an explicit planning
-decision; Roadmap order and numbering do not promote one automatically. Player
-Identity work also remains parked unless new evidence deliberately reopens it.
+`7C.2 Records & Milestones`, `7C.3 Awards & Honors`, `7D.2 Follow Recruits`, and
+`7D.3 Recruit → Player continuity` remain **PLANNED**, not selected. Player
+Identity work remains parked unless new evidence deliberately reopens it.
 
 ## Fresh-session rules
 

@@ -91,6 +91,7 @@ export {
   deriveRecruitingBattleView,
   deriveRecruitingCommitmentActivity,
 } from './recruiting/battleView'
+export { deriveRecruitDetailsView } from './recruiting/detailsView'
 export type {
   AssembleNextSeasonRostersOptions,
   CompletedSeasonArchive,
@@ -119,6 +120,7 @@ export type {
   KnownDynastyPlayerResolution,
   PlayerCareerSummary,
 } from './playerLegacy'
+export type { RecruitDetailsView } from './recruiting/detailsView'
 export type {
   CompletedSeasonIndexSummary,
   CompletedSeasonYearbook,

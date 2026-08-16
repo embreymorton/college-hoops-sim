@@ -24,7 +24,12 @@ The Roadmap owns their order and scope. They are not specified again here.
 - facilities, NIL, staff/recruiting bonuses, and program resources;
 - playing-time promises and depth-chart opportunity;
 - personality and deeper Recruit preferences;
-- scouting uncertainty and hidden ratings/Potential;
+- a future, unscheduled scouting/uncertainty system that could replace exact
+  numeric Recruit attributes, OVR/current ability, and/or Potential/upside with
+  player-facing grades, bands, ranges, or similar estimates. Before any design
+  or implementation, explicitly define what is known versus estimated or
+  hidden; exact grade thresholds and scouting mechanics remain undecided, and
+  current exact-value visibility remains unchanged;
 - decommitments and transfer-portal interactions;
 - recruiting class rankings and retrospective class evaluation; and
 - dynamic interest from winning or Tournament success.

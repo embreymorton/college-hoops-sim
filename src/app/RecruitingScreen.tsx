@@ -11,7 +11,6 @@ import {
   RecruitingHeader,
   RecruitingModeTabs,
   RecruitingOverview,
-  type RecruitingMode,
 } from '../components'
 import { deriveProgramRecruitingBoard, RECRUITING_BOARD_LIMIT, RECRUITING_FOCUS_LIMIT } from '../dynasty'
 import {
@@ -33,12 +32,13 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 
 /** Recruiting: board management and the National Class, reachable through both lifecycle stages. */
 export function RecruitingScreen() {
-  const [mode, setMode] = useState<RecruitingMode>('board')
   const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false)
   const [boardFillMessage, setBoardFillMessage] = useState<string | null>(null)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const postseason = useDynastyStore(selectActivePostseason)
   const actionError = useDynastyStore((state) => state.recruitingActionError)
+  const mode = useDynastyStore((state) => state.recruitingMode)
+  const setMode = useDynastyStore((state) => state.setRecruitingMode)
   const dismissRecruitingActionError = useDynastyStore(
     (state) => state.dismissRecruitingActionError,
   )

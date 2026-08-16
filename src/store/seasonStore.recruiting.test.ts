@@ -24,6 +24,31 @@ beforeEach(() => {
 })
 
 describe('Dynasty section navigation', () => {
+  it('starts each fresh session in Board mode', () => {
+    expect(useDynastyStore.getState().recruitingMode).toBe('board')
+    useDynastyStore.getState().setRecruitingMode('guide')
+    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+    expect(useDynastyStore.getState().recruitingMode).toBe('board')
+  })
+
+  it.each(['battles', 'national', 'guide'] as const)(
+    'persists the %s Recruiting mode in transient session state',
+    (mode) => {
+      seedRecruitingSession()
+      useDynastyStore.getState().setRecruitingMode(mode)
+      expect(useDynastyStore.getState().recruitingMode).toBe(mode)
+    },
+  )
+
+  it('resets Recruiting mode on fresh root navigation', () => {
+    seedRecruitingSession()
+    useDynastyStore.getState().setRecruitingMode('national')
+
+    useDynastyStore.getState().goToRecruiting()
+
+    expect(useDynastyStore.getState().recruitingMode).toBe('board')
+  })
+
   it('shows Season / Recruiting / League during the regular season', () => {
     useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
     expect(useDynastyStore.getState().view).toBe('hub')
