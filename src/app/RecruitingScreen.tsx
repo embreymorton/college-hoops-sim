@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import {
   DynastySectionNav,
+  FollowingRecruitsSection,
   NationalRecruitTable,
   RecruitingBattlesGrid,
   RecruitingBoardEmptyState,
@@ -12,7 +13,12 @@ import {
   RecruitingModeTabs,
   RecruitingOverview,
 } from '../components'
-import { deriveProgramRecruitingBoard, RECRUITING_BOARD_LIMIT, RECRUITING_FOCUS_LIMIT } from '../dynasty'
+import {
+  deriveFollowingRecruitsView,
+  deriveProgramRecruitingBoard,
+  RECRUITING_BOARD_LIMIT,
+  RECRUITING_FOCUS_LIMIT,
+} from '../dynasty'
 import {
   selectActivePostseason,
   useDynastyStore,
@@ -38,6 +44,7 @@ export function RecruitingScreen() {
   const postseason = useDynastyStore(selectActivePostseason)
   const actionError = useDynastyStore((state) => state.recruitingActionError)
   const mode = useDynastyStore((state) => state.recruitingMode)
+  const followedRecruitIds = useDynastyStore((state) => state.followedRecruitIds)
   const setMode = useDynastyStore((state) => state.setRecruitingMode)
   const dismissRecruitingActionError = useDynastyStore(
     (state) => state.dismissRecruitingActionError,
@@ -258,6 +265,13 @@ export function RecruitingScreen() {
             programsById={PROGRAMS_BY_ID}
             onAddToBoard={addRecruitingTarget}
             onOpenRecruitDetails={openRecruitDetails}
+          />
+        ) : mode === 'following' ? (
+          <FollowingRecruitsSection
+            projection={deriveFollowingRecruitsView(dynasty, followedRecruitIds)}
+            programsById={PROGRAMS_BY_ID}
+            controlledProgramId={dynasty.controlledProgramId}
+            onSelectRecruit={openRecruitDetails}
           />
         ) : (
           <RecruitingGuide />

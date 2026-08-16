@@ -252,6 +252,16 @@ not a new action model. Committed Recruits read as resolved instead of
 actionable, and the ordering remains legible at narrow widths. This hierarchy
 and interaction model are accepted and frozen for Phase 7D.1.
 
+Recruiting Following is the prospect-context sibling of League Following. Its
+functional 7D.2 candidate reuses the accepted compact Follow/Following button,
+table shell and row density, linked identity treatment, concise empty/unresolved
+states, and local horizontal-scroll behavior. Recruit-specific columns replace
+Player season statistics with National Rank, Position, exact OVR/POT, safe
+Readiness, controlled-Program status or resolved commitment destination, and a
+compact direct Unfollow action. Rows preserve first-followed order rather than
+acting as another leaderboard. This candidate remains pending manual 7D.2
+acceptance and polish; it is not yet a frozen visual contract.
+
 ```text
 Season/Postseason Hub Recruiting column
 └── RecruitingHubSummary — one module, no separate Focus surface

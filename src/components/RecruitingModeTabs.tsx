@@ -7,10 +7,14 @@ interface RecruitingModeTabsProps {
   readonly onSelectMode: (mode: RecruitingMode) => void
 }
 
-/** Board ↔ Battles ↔ National Class — the Recruiting view's own internal mode switch. */
+/** Recruiting's compact sibling-mode switch; root navigation still defaults to Board. */
 export function RecruitingModeTabs({ mode, onSelectMode }: RecruitingModeTabsProps) {
   return (
-    <div role="group" aria-label="Recruiting mode" className="tab-list">
+    <div
+      role="group"
+      aria-label="Recruiting mode"
+      className="tab-list recruiting-mode-tabs"
+    >
       <button
         type="button"
         className="tab"
@@ -34,6 +38,14 @@ export function RecruitingModeTabs({ mode, onSelectMode }: RecruitingModeTabsPro
         onClick={() => onSelectMode('national')}
       >
         National Class
+      </button>
+      <button
+        type="button"
+        className="tab"
+        aria-pressed={mode === 'following'}
+        onClick={() => onSelectMode('following')}
+      >
+        Following
       </button>
       <button
         type="button"

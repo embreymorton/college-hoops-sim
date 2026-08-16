@@ -1187,3 +1187,7 @@
     text-align: center;
   }
 }
+.recruiting-mode-tabs {
+  max-width: 100%;
+  overflow-x: auto;
+}

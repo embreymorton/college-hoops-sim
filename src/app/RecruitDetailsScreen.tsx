@@ -1,5 +1,10 @@
 import { useEffect, type CSSProperties, type ReactNode } from 'react'
-import { PlayerRatingsGrid, RecruitingReadinessBadge, RecruitStars } from '../components'
+import {
+  FollowRecruitButton,
+  PlayerRatingsGrid,
+  RecruitingReadinessBadge,
+  RecruitStars,
+} from '../components'
 import {
   deriveProgramRecruitingBoard,
   deriveRecruitDetailsView,
@@ -200,6 +205,7 @@ export function RecruitDetailsScreen() {
             <p className="section-hint">
               {details.position} · {formatHeight(details.height)} · Recruiting Class — Season {details.targetSeasonNumber}
             </p>
+            <FollowRecruitButton playerId={details.playerId} />
           </div>
         </div>
         <div className="stat-trio season-header__stats" aria-label="Recruit ability">

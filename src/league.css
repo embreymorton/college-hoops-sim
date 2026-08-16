@@ -211,6 +211,21 @@
   color: var(--ink-0);
 }
 
+.data-table--recruit-following {
+  min-width: 48rem;
+}
+
+.recruit-following-identity .recruit-stars {
+  display: block;
+  margin-top: 0.15rem;
+}
+
+.recruit-following-status {
+  max-width: 14rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ==========================================================================
    Team Details
    ========================================================================== */

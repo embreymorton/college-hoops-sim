@@ -108,7 +108,8 @@ against the active canonical `RecruitingState`:
 ```text
 stable followed Recruit IDs + canonical RecruitingState
 → pure Following Recruits projection
-→ resolved current-class Recruit Details + explicit unresolved IDs
+→ Recruiting Following UI with resolved current-class Recruit Details
+  + explicit unresolved IDs
 ```
 
 The projection composes the existing safe Recruit Details/battle read models,
@@ -117,6 +118,9 @@ updates and commitments do not clear intent; a new Dynasty does. Season rollover
 does not convert Recruit follows into the separate frozen Followed Players list,
 and IDs absent from the new active class remain unresolved rather than producing
 fabricated rows. Recruit → active Player follow transfer remains Phase 7D.3.
+Recruit Details is the only V1 surface that adds Recruit-follow intent before
+the Following table's direct Unfollow action; Board, Battles, and National Class
+remain discovery/management entry surfaces rather than parallel Follow controls.
 
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 

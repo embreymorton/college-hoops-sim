@@ -30,7 +30,10 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 1. For selected Phase 7D.2: Can following a Recruit preserve attachment during
    the Recruiting process without cluttering the existing Followed Players
-   experience or changing Recruiting mechanics?
+   experience or changing Recruiting mechanics? Manually validate `National →
+   Recruit Details → Follow → Recruiting Following → Recruit Details → Back →
+   Following`, plus `Follow Recruit → commits elsewhere → still visible with
+   the updated destination`.
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.

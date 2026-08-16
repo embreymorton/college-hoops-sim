@@ -210,7 +210,7 @@ export type SeasonSessionView =
   | 'offseason'
 
 export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following'
-export type RecruitingMode = 'board' | 'battles' | 'national' | 'guide'
+export type RecruitingMode = 'board' | 'battles' | 'national' | 'following' | 'guide'
 
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */

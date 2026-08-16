@@ -144,12 +144,13 @@ Its purpose is to preserve attachment to individual prospects during the
 Recruiting process without changing Recruiting mechanics or prematurely
 defining Recruit → Player continuity.
 
-The 7D.2A foundation now stores duplicate-free, first-followed Recruit IDs as
-separate session intent and provides a pure current-class Following Recruits
-projection. It safely reports stale IDs and preserves follow intent through
-Recruiting updates and commitments. No player-facing Follow Recruit control or
-Recruiting Following destination exists yet, and Recruit follows do not become
-existing Followed Player intent.
+The functional 7D.2 candidate now adds Follow/Following control to Recruit
+Details and a Recruiting Following destination over the 7D.2A stable-ID
+foundation. The current-class table preserves first-followed order, shows safe
+readiness/controlled-status or resolved commitment truth, supports direct
+Unfollow, and round-trips Following → Recruit Details → Following. Stale IDs
+remain explicit without fabricated rows. The milestone still awaits manual
+acceptance, and Recruit follows do not become existing Followed Player intent.
 
 `7C.2 Records & Milestones`, `7C.3 Awards & Honors`, and `7D.3 Recruit → Player
 continuity` remain **PLANNED**, not selected. Player Identity work remains
