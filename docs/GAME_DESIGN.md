@@ -401,6 +401,18 @@ Current outputs are limited to the traditional facts already produced by Player 
 
 Acceptance inspection produced a plausible scoring hierarchy and believable game-to-game variance. Those observations are not calibration targets and require no simulation tuning.
 
+Stable Player identity now extends this regular-season truth across completed
+Dynasty Seasons. A Followed Player resolves as active, former, or unknown.
+Former Player Details aggregates archived regular-season career production and
+shows Final/Peak OVR, Final Ratings, Career Progression, and Recruiting Origin
+when canonical. Postseason/combined career totals, Tournament résumés, records,
+Awards, signature games, broad Alumni browsing, and global historical search
+remain outside the accepted system.
+
+Season Preview introduces the active Season's cast from existing facts before
+current results create News. It does not change progression, Player ratings,
+Recruiting, or simulation and stores no Preview history.
+
 ## Accepted Postseason V0
 
 A completed 32-Program regular season feeds a 16-Team single-elimination national tournament. No Conference tournaments exist in V0.

@@ -155,7 +155,12 @@ Phase 5C.2 now performs an atomic pure rollover into a fresh Season, generates l
 
 ### P2 — Completed-season Player history preservation — RESOLVED
 
-Phase 5A `CompletedSeasonArchive` now clones the complete valid `SeasonState` and `PostseasonState`, including canonical `GameResult` and `PlayerGameStats` facts, before active competition is cleared. Archived Player snapshots remain unchanged during offseason development. Historical UI, career projections, and save/load remain separate future work.
+Phase 5A `CompletedSeasonArchive` now clones the complete valid `SeasonState` and
+`PostseasonState`, including canonical `GameResult` and `PlayerGameStats` facts,
+before active competition is cleared. Archived Player snapshots remain unchanged
+during offseason development. Targeted historical UI and regular-season Former
+Player career projections are now implemented. Broad archive/Alumni browsing,
+postseason/combined career totals, records, and save/load remain future work.
 
 ### P2 — Stable returning Player IDs — RESOLVED
 

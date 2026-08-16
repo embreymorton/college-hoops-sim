@@ -1,862 +1,141 @@
 # Roadmap
 
-Milestones remain small enough to test independently. A later phase or unlisted system may not be implemented early without explicit scope discussion. Status labels are deliberate: **COMPLETE** is implemented, validated, and accepted; **ACTIVE** is implemented or being validated in the current milestone; **NEXT** is the immediate future milestone; **PLANNED** expresses later intent without implementation; and **DEFERRED** is outside the core MVP.
+`ROADMAP.md` is the single authority for milestone sequencing. It owns the one
+current **NEXT** marker and later **PLANNED** work. Completed milestones are
+summarized here; implementation detail belongs in its owning production doc,
+empirical evidence in `PLAYTESTING.md`, and parked research in conditional-read
+archives.
 
-Exact formulas and constants become source-of-truth documentation after implementation and validation, not before. Validation sample outputs inform acceptance but are not roadmap requirements.
+Status meanings: **COMPLETE** = implemented, validated, and accepted;
+**FROZEN** = reopen only with new evidence; **NEXT** = the immediate selected
+milestone; **PLANNED** = deliberately sequenced later work.
 
-This file contains work intentionally placed in the development sequence. It is not a wishlist: unscheduled product ideas live in `FUTURE_FEATURES.md`, while engineering bugs, debt, and scaling watchpoints live in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
+## Current Selected Horizon
 
-Empirical priority changes originate in `PLAYTESTING.md`; only deliberately
-selected work moves here. Documentation updates follow
-`DOCUMENTATION_POLICY.md`.
+### NEXT — 7C.1 Season Archive / Yearbook
 
-### Roadmap numbering policy
+Begin **Phase 7C — History & Recognition V1** by giving completed Seasons a
+player-facing historical destination. Scope must be planned from current
+archives and accepted history boundaries before implementation.
 
-A roadmap number represents a meaningful player-facing feature, architectural
-capability, or major diagnostic decision—not every implementation step. Prefer
-`7B`, `7B.1`, `7B.2`, and `7B.3`; avoid deeper nesting unless there is an
-exceptional reason. Domain helpers, state wiring, UI rendering, tests, polish,
-and acceptance normally remain tasks inside one numbered milestone.
+### PLANNED — remainder of Phase 7C
 
-A phase should normally contain about 2–4 meaningful milestones and answer one
-clear product question. When new work no longer fits that theme, close the phase
-and assign a new phase letter instead of extending the old phase indefinitely.
+1. **7C.2 — Records & Milestones**
+2. **7C.3 — Awards & Honors** — sequenced after archive/records because
+   subjective award formulas may require separate design and tuning.
 
-## Phase 0 — Foundation — COMPLETE
+### PLANNED — Phase 7D Recruit Attachment V1
 
-- React, TypeScript, Vite, Zustand, Vitest, and Testing Library foundation
-- Lint, type-check, test, and production-build workflows
-- Framework-independent `src/engine` boundary with enforced dependency rules
-- Seeded deterministic randomness and serializable domain conventions
-- Source-of-truth product, architecture, simulation, and UI documentation
-
-## Phase 1 — Basketball Engine V0 — COMPLETE
-
-### Players and deterministic generation
-
-- Serializable Player model, positions, class years, height, attributes, and potential
-- Position-aware derived overall rather than mutable stored ratings
-- Deterministic fictional identity, height, attribute, and class-aware potential generation
-- Player-generation calibration and invariant coverage
-
-### Teams, prestige, and rosters
-
-- Serializable Team model and program prestige
-- Deterministic 12-Player roster generation
-- Prestige-driven quality, star-to-depth structure, class balance, and positional coverage
-
-### Rotations
-
-- Serializable Rotation model and structured validation
-- Deterministic default Rotation generation
-- Accepted v0.1 constraint of 40 minutes at each natural position and 200 Team minutes
-
-### Player OFF/DEF and Team Strength
-
-- Position-aware derived Player offense and defense
-- Rotation-weighted Team offense and defense
-- Derived Team overall
-
-### Game Simulation V0
-
-- Deterministic Team-level outcomes, final scores, winner, and reproduction seed
-- Home-court advantage, seeded game variance, and terminating overtime
-
-### Player Box Scores V0
-
-- Full-roster traditional Player statistics and shooting lines
-- Exact Player-points-to-Team-score reconciliation
-- Regulation/overtime minute reconciliation, shooting arithmetic, determinism, serialization, and non-mutation invariants
-
-## Phase 2 — First Playable Coaching Loop — COMPLETE
-
-### 2.1 Game Presentation V0 — COMPLETE
-
-- Six deterministic demo-program fixtures with presentation metadata
-- Distinct home/away matchup selection
-- Engine-generated rosters, an editable home Rotation, and a displayed default away Rotation
-- Displayed Team OFF, DEF, and OVR
-- Real `simulateGame()` integration through Zustand application orchestration
-- Final score, winner, overtime, and both Teams' Player box scores
-- Deterministic re-simulation using a stable matchup-and-sequence seed scheme
-- Change Matchup workflow
-
-The demo catalog is not a league. HOME is the coached side only for the current exhibition workflow; this is not yet a permanent dynasty user-Team model.
-
-### 2.2 Rotation Management V0 — COMPLETE
-
-> The coach can change who plays and how many minutes they receive, see the consequences of those choices, and simulate the game using the edited legal rotation.
-
-- Exact numeric home-Team Player-minute editing within the v0.1 natural-position restriction
-- Temporary invalid editing states with visible position and 200-minute Team budgets
-- Engine-authoritative Rotation validation and blocked simulation while invalid
-- Default/current OFF, DEF, and OVR comparison for legal edits
-- Reset to generated default Rotation
-- Simulation using the actual edited legal home Rotation and default away Rotation
-- Custom Rotation preservation through postgame return and Simulate Again
-- Default Rotation restoration when the coached home program changes
-- Deterministic matchup-and-sequence simulation seeds
-
-## Near-term planning horizon
-
-These identifiers are planning aids, not immutable contracts. Later implementation discoveries may reshape them.
-
-| Task | Intended slice | Status |
-| --- | --- | --- |
-| 010 | Rotation Management application/state support | COMPLETE |
-| 011 | Rotation Editor UI | COMPLETE |
-| 012 | Rotation validation and UX polish | COMPLETE |
-| 013 | Stable 32-program fictional program catalog | COMPLETE |
-| 014 | Four-conference model and universe assembly | COMPLETE |
-| 015 | Schedule generation | COMPLETE |
-| 016 | Season State and progression | COMPLETE |
-| 017 | AI Round Simulation and Standings V0 | COMPLETE |
-| 019 | Season Presentation V0 | COMPLETE |
-| 020 | Season UX Polish V0 | COMPLETE |
-| 021 | Super Sim V0 | COMPLETE |
-| 022 | Player Season Stats V0 | COMPLETE |
-| 023 | Postseason Domain / Simulation V0 | COMPLETE |
-| 024 | Postseason Presentation V0 | COMPLETE |
-| 025 | League & Player Exploration V0 | COMPLETE |
-| 026 | Team Stats / Exploration V0.1 | COMPLETE |
-| 027 | Season + Postseason Game Flow QOL | COMPLETE |
-| 028 | Quick Sim Result / Game Leaders polish | COMPLETE |
-
-## Phase 3 — League and Season Framework — COMPLETE
-
-The single-game coaching loop, regular-season structure, canonical Season State, autonomous AI round execution, derived standings, permanent Season presentation, regular-season UX polish, Super Sim, and derived Player Season Stats/game logs are complete. The current regular-season simulation and backend feature set is functionally complete for MVP scope.
-
-### 3.1 Stable Fictional Basketball Universe V0 — COMPLETE
-
-- A versioned `UniverseDefinition` with 32 permanent fictional Programs across four permanent V0 Conferences of eight
-- Stable program identities and deterministic IDs
-- Structured locations, presentation branding, fixed V0 Conference membership, and immutable base prestige
-- Deterministic initial Team and default-Rotation generation through isolated per-Program RNG streams
-- Stable same-seed reproduction and Program-order-independent roster generation
-- Public `src/universe` API, definition validation, stable Team IDs, and valid initialized Rotations
-
-Universe V0 now contains the validated 32-program/four-conference catalog, stable metadata, and deterministic order-independent initialization of Teams and default Rotations. Initialized Team IDs match their Program IDs, and initial Team prestige matches immutable Program base prestige. Its configured counts do not constrain the generic engine. The six-program exhibition catalog remains a presentation subset plus one development-only fixture.
-
-### 3.2 Schedule Generation V0 — COMPLETE
-
-> Given the stable Universe V0 Conference/Program structure, generate a deterministic regular-season schedule in which every Program receives a legal set of opponents and home/away assignments suitable for later Season State.
-
-The accepted implementation uses 24 complete abstract rounds with all 32 Programs playing once among 16 games per round. Each Program receives 14 double-round-robin Conference games, 10 distinct cross-Conference games, and an exact 12-home/12-away split. It creates 384 canonical unplayed games with deterministic IDs and stable Program references, but no dates, results, records, or progression.
-
-Validation confirms reciprocal Conference hosting, zero duplicate non-Conference matchups, cross-Conference-only non-Conference play, same-seed reproduction, Program/Conference input-order independence, and different-seed schedule variation. The inspection sample produced valid schedules for 100 of 100 deterministic seeds.
-
-### 3.3 Season State and Progression V0 — COMPLETE
-
-> Combine an initialized Universe with a generated Schedule into serializable Season state that can progress round by round, record completed `GameResult` values, and expose enough derived information for records, Conference records, upcoming games, and later standings.
-
-The accepted implementation stores immutable Schedule structure, current Team/Rotation state by Program ID, and complete GameResults once by ScheduledGame ID. It supports legal Rotation updates, out-of-order and partial-round result recording, Program schedule/result queries, derived current-round and completion queries, and derived Program and Conference records without duplicate counters. Operations are pure, Season validation is structured and serializable, and state survives JSON round-tripping.
-
-The accepted inspection begins with 32 Programs, 24 rounds, 384 ScheduledGames, zero completed games, current Round 1, and valid Season state. Five recorded Round 1 games leave the current round at 1; all 16 advance it to 2. A legal custom Rotation preserves the Team and Season validity, while duplicate results, mismatched Teams, unknown ScheduledGames, and invalid Rotations are rejected.
-
-### 3.4 AI Round Simulation and Standings V0 — COMPLETE
-
-> Given the current Season State, deterministically simulate pending scheduled games using each Program's current Team and Rotation, record the resulting GameResults, advance naturally through rounds, and derive Conference standings from completed results.
-
-- Give each ScheduledGame an independent deterministic simulation identity so execution order cannot change outcomes.
-- Use each Program's current Season Team and Rotation.
-- Record results through the existing `recordGameResult()` behavior and never re-simulate already-completed games.
-- Preserve partial-round progression.
-- Derive standings rather than storing them, using the accepted V0 ordering below.
-
-The accepted implementation provides independent per-game seeds, current-Rotation scheduled-game simulation, partial-round execution with generic Program exclusions, and derived Conference standings. Its V0 tiebreak order is Conference win percentage, decisive head-to-head only for an exact two-Team tie group, overall win percentage, then stable Program ID. Standings and records remain derived rather than stored.
-
-Validation confirmed that excluded pending games survive AI round execution, all 384 ScheduledGames can complete through production APIs, Season completion and validation pass, same-seed full seasons reproduce, game execution order does not affect individual outcomes, and different simulation seeds change Season outcomes. The 50-season strength diagnostic is observational rather than normative.
-
-### 3.5 Season Presentation V0 — COMPLETE
-
-> The user selects and controls a Program, sees the current Season context, manages its Rotation, plays or simulates its scheduled game, simulates remaining AI games in the round, and views updated schedule/results and Conference standings through the existing React application.
-
-- Program selection across the 32 permanent Universe V0 Programs, grouped by Conference
-- A Season Hub: program-identity header, next-game preview, round-progress and regular-season-complete states, Conference standings, and schedule/results
-- Game prep and postgame reusing the accepted Rotation Editor, scoreboard, and box-score presentation
-- `controlledProgramId` and a deterministic session seed live in application state, never in `SeasonState`
-
-Season Presentation consumes the existing Universe, Schedule, Season, simulation, and standings APIs rather than reimplementing basketball state or rules. The six-program exhibition workflow remains as a secondary sandbox behind a mode toggle.
-
-### 3.6 Season UX Polish V0 — COMPLETE
-
-- Hub Quick Sim directly plays the controlled Program's next ScheduledGame and presents the result inline.
-- Game Prep remains the optional hands-on path; legal changes persist as the Program's current Season Rotation.
-- Quick Sim uses that committed legal Rotation and is unaffected by a stale invalid Game Prep draft.
-- Completed Schedule and Recent Results entries reopen the stored read-only result with its full historical box score.
-- Recent Results and its Last-N record are derived from completed Season results.
-- The permanent Season flow is primary; Exhibition remains useful secondary development tooling.
-
-### 3.7 Super Sim V0 — COMPLETE
-
-- **Sim to Midseason** resolves every pending regular-season game through Round 12.
-- **Sim to End of Regular Season** resolves every pending game through Round 24.
-- Confirmation and one-time completion feedback remain Zustand presentation state.
-- Bulk progression preserves completed games and uses every Program's current Team and Rotation.
-- Normal progression and Super Sim produce identical `GameResult` values for identical Season state, simulation seed, Teams, and Rotations.
-- Every path retains full `PlayerGameStats`; Super Sim is a pacing convenience, not a separate simulation model.
-- Super Sim stops at regular-season completion and does not create or enter postseason play.
-
-### 3.8 Player Season Stats V0 — COMPLETE
-
-> Derive useful Player season totals, averages, percentages, and game logs from the full `PlayerGameStats` already retained in completed Season `GameResult` values.
-
-The derived surface preserves and aggregates minutes, PTS, REB, AST, STL, BLK, TO, FGM/FGA, 3PM/3PA, and FTM/FTA. The accepted data flow is:
-
-```text
-recorded GameResults
-→ PlayerGameStats rows
-→ derived PlayerSeasonStats / game logs
-```
-
-The accepted pure projections support individual, Program-wide, and Season-wide Player stat rows for partial or complete Seasons plus chronological Player game logs with opponent, location, result, and DNP context. `gamesPlayed` counts only completed games with positive Player minutes. Totals reconcile to canonical `PlayerGameStats`, percentages use aggregate makes and attempts, zero denominators produce numeric zero, and result insertion order cannot change the output.
-
-No Player totals, averages, percentages, or game logs are stored as mutable `SeasonState` counters. Inspection completed all 384 regular-season games, derived 384 current-roster Player lines, and passed raw-total reconciliation, games-played, finite-number, chronological-order, and JSON-serialization checks.
-
-### 3.9 League & Player Exploration V0 — COMPLETE
-
-- National regular-season PPG, RPG, APG, SPG, and BPG leaderboards
-- Complete 32-Program Teams directory
-- Team Details with record, OFF/DEF/OVR, recent results, roster, and Player statistics
-- Player Details with identity, ratings, regular-season statistics, and chronological game log
-- Cross-Program navigation from standings, leaderboards, rosters, schedules, and Player links
-
-All statistical and navigation summaries are derived from stable Universe identity plus canonical Season facts. Zustand stores navigation context, not leaderboard or Player-stat truth.
-
-### 3.10 Team Stats / Exploration V0.1 — COMPLETE
-
-- Pure regular-season `TeamSeasonStats` totals and rates over completed `GameResult` values
-- Team averages for scoring, opponent scoring, margin, counting stats, and shooting percentages
-- Team PTS/REB/AST leaders derived from existing Player Season Stats
-- Team Details presentation of these projections without mutable Team-stat state
-
-## Phase 4 — Postseason V0 — COMPLETE
-
-> Feed a completed regular season into the accepted fixed 16-Team national tournament through deterministic selection, seeding, neutral-site simulation, and result-derived advancement.
-
-Postseason Domain / Simulation V0 is implemented, validated, reviewed, and accepted. A valid completed regular season supplies one automatic qualifier per Conference through the existing Conference standings leader and 12 at-large selections. Phase 6E.7B superseded protected automatic-qualifier seeds: after selection, all 16 Programs are seeded together using overall winning percentage, decisive head-to-head only for an exact two-Team tie, Conference winning percentage, and stable Program ID; three-or-more-Team ties skip direct head-to-head.
-
-The complete fixed bracket contains eight Round-of-16 games, four quarterfinals, two semifinals, and one Championship. It permits same-Conference matchups, never reseeds, and simulates every game at a neutral site. Qualified Programs carry forward exact Team and current legal Rotation state, can make legal Rotation changes between games, and retain full `GameResult` / `PlayerGameStats` facts. Future participants, current round, remaining Programs, completion, and National Champion are derived rather than stored.
-
-Accepted validation completed 384 of 384 regular-season games, selected 16 Programs with four automatic and 12 at-large bids, completed and validated all 15 tournament games, reproduced same-seed tournaments, preserved ready-game execution-order independence, changed outcomes under a different simulation seed, derived the National Champion, retained complete Player box scores, and confirmed neutral-site simulation removes the normal home-court modifier.
-
-The core single-season basketball experience is now complete from Program initialization through National Champion.
-
-### Postseason Presentation V0 — COMPLETE
-
-The completed regular season now transitions into a React Tournament Hub backed by an active `PostseasonState`. The browser presents the 16-Team field, bid types and seeds, canonical fixed bracket, controlled Program matchup and neutral-site Quick Sim, Tournament Rotation Management, AI rest-of-round progression, eliminated and did-not-qualify states, historical Tournament box scores, and the derived National Champion endpoint. The wider Tournament remains playable when the controlled Program loses or does not qualify.
-
-Zustand retains the completed `SeasonState` alongside the active `PostseasonState` and coordinates navigation, drafts, and user actions. It delegates selection, participant resolution, progression, results, and champion derivation to the public Postseason API, so presentation does not duplicate Tournament rules or mutate completed regular-season facts.
-
-### Season + Postseason Game Flow QOL — COMPLETE
-
-Both competition Hubs now expose the same intentional pacing contract:
-
-```text
-SIMULATE GAME → remain on Hub → inline canonical result → optional Box Score
-GAME PREP → Rotation/detail flow → simulate → Box Score
-```
-
-Quick Sim resolves only the controlled game. Round progression remains explicit and uses the accepted pending-game APIs; completed results are preserved. Regular-season Super Sim remains in the separate Round Progression card, and Postseason adds no Super Sim-to-Championship path.
-
-### Quick Sim Result / Game Leaders polish — COMPLETE
-
-Completed Quick Sim cards preserve site and overtime context, show outcome/margin, and derive whole-game PTS/REB/AST leaders from both teams' canonical stored `PlayerGameStats`. Each leader retains Player and Program identity; deterministic ties use minutes and stable Player ID. The Hub remains a compact summary rather than a replacement Box Score.
-
-The complete single-season game loop is implemented and exposed through the UI, from Program selection through National Champion.
-
-## Phase 5 — Dynasty Loop Backend — COMPLETE
-
-> The backend and application now support the complete repeatable cross-season lifecycle.
-
-The intended high-level lifecycle is:
-
-```text
-Season N begins
-→ Recruiting Class for Season N+1 exists
-
-REGULAR SEASON
-├── basketball rounds
-└── recruiting advances alongside completed rounds
-→ Postseason (recruiting may continue or finalize)
-→ Late Recruiting finalizes every projected opening
-→ archive completed Season + Postseason
-→ seniors graduate
-→ returning Players develop and classes advance
-→ committed recruits enroll as freshmen
-→ every Program finalizes a 12-Player roster
-→ fresh default Rotations + new deterministic Schedule
-→ Season N+1 + Recruiting targeting N+2
-→ repeat
-```
-
-### Phase 5A — Dynasty Foundation + Progression V0 — COMPLETE
-
-- Serializable `DynastyState` lifecycle owner above Season, Postseason, Universe, and Engine
-- Full `CompletedSeasonArchive` snapshots retaining canonical regular-season and Tournament `GameResult` / `PlayerGameStats` facts
-- Strict completed-year transition requiring a complete regular season, complete Tournament, and derived National Champion
-- Stable returning Player identity with immutable historical Player snapshots
-- In-season `deriveProjectedRosterOutlook()` for deterministic senior departures, returners, and next-season openings
-- Senior graduation; `FR → SO`, `SO → JR`, and `JR → SR` class advancement
-- Deterministic, position-aware, Potential-constrained Player Development V1
-- Temporary incomplete `OffseasonState` rosters with preserved current Program prestige and derived open spots
-
-The accepted canonical inspection archived all 384 regular-season and 15 Postseason games, graduated 92 of 384 Players, and created 292 returning Player values across all 32 Programs without changing IDs or historical snapshots. All Dynasty/archive/offseason values passed JSON serialization; same-seed reproduction and Program/Player-order independence passed. The observed development curve was approximately +3.6 OVR for FR→SO, +2.6 for SO→JR, and +1.3 for JR→SR, with 10.3% stagnation. These are calibration observations for one deterministic population, not guaranteed outcomes.
-
-Phase 5A intentionally stops at partial offseason rosters. Phase 5C consumes those values with finalized incoming classes; Phase 6 exposes the lifecycle through the player-facing application.
-
-### Phase 5B — In-Season Recruiting V0 — COMPLETE / ACCEPTED
-
-- One deterministic national Recruiting Class targeting Season N+1, with national/position rankings and 2–5-star classifications
-- Strict projected positional needs, boards of up to 10 targets, and capacity-limited Active Offers; the original Priority 1–5 mechanic was later superseded by Phase 6E.2A's accepted Board + Focus + Offer model
-- Fixed Board baseline effort plus capped Focus bonuses, quality-dependent decision timing, final commitments, and autonomous AI Recruiting
-- Recruiting periods 1–24 synchronized to regular-season completion and periods 25–28 synchronized to Postseason completion
-- Canonical period-by-period Super Sim equivalence, including offer invalidation and controlled-Program backup promotion from the existing board
-- Distinct Late Recruiting and deterministic finalization using the original class, producing a complete `CompletedRecruitingClass`
-- Stable Recruit Player identity through generation, commitment, and the finalized incoming class
-
-Commitments remain future-roster facts and do not mutate the current Team, Rotation, or `SeasonState`. Recruiting is owned by the Dynasty layer and stores its finalized history separately from completed basketball-season archives. Exact accepted mechanics and formulas live in `GAME_DESIGN.md`, `ARCHITECTURE.md`, and `SIMULATION.md`.
-
-### Phase 5C — Season Rollover V0 — COMPLETE / ACCEPTED
-
-- **5C.1 — Next-Season Roster Assembly V0:** combines accepted returners and finalized commitments into exact 12-Player rosters, enrolls Recruits as freshmen without changing identity or attributes, rejects malformed lifecycle inputs, and preserves every source snapshot.
-- **5C.2 — Dynasty Season Rollover V0:** atomically creates fresh Team snapshots, default Rotations, a season-specific Schedule and Game IDs, a clean `SeasonState`, and Recruiting targeting N+2 while preserving histories and the controlled Program.
-- Same-state determinism, Program-order independence, JSON serialization, cross-cycle identity safety, and five consecutive completed Dynasty seasons are accepted.
-
-The backend lifecycle is now repeatable:
-
-```text
-Season N → Recruiting N+1 → Postseason → Offseason
-→ exact next roster → Season N+1 → Recruiting N+2 → repeat
-```
-
-## Dynasty Long-Run Calibration V0 — COMPLETE / ACCEPTED
-
-Five deterministic Dynasty seeds completed 50 Seasons each for 250 Season observations with deterministic replay. Average Team OVR rose during the initial generated-roster transition, then stabilized: Seasons 1–5 averaged `77.55` with a `+2.041` slope/Season; Seasons 6–15 averaged `81.13` with a `−0.085` slope; and Seasons 16–50 averaged `81.25` with a `+0.003` slope. The late slopes across individual seeds ranged from `−0.016` to `+0.012`.
-
-Recruiting, Player Development, graduation, and rollover produced a stable endogenous V0 talent economy. All 250 lifecycle iterations retained valid rosters, Rotations, Schedules, Recruiting completion, identity/history integrity, and serialization. No gameplay calibration changed. Exact observations live in `SIMULATION.md`.
-
-This historical V0 equilibrium established lifecycle stability, but its Recruit
-talent distribution and Development behavior were intentionally superseded by
-Phase 6E.2B and Phase 6E.4 after manual playtesting. Current frozen production
-truth is Recruit Talent Distribution V1 plus Player Development V1.
-
-## Phase 6 — Dynasty Application Loop — COMPLETE
-
-- **6A — Dynasty Application State Integration:** Zustand adopts one canonical `DynastyState` for Season, Postseason, Recruiting, and session navigation.
-- **6B — Recruiting Management UI:** Board/National Class, positional needs, Focus, and Active Offers are playable.
-- **6B.1 — Recruiting Setup Workflow:** the controlled Program can begin with an empty board while AI plans remain autonomous; first-period progression is guarded until the user chooses a plan.
-- **6B.2 — Recruiting Onboarding + Hub Polish:** clear preseason onboarding and Season/Tournament Recruiting entry points.
-- **Unique interactive Dynasty seed:** each normal new Dynasty receives a unique stored seed while explicit-seed development, tests, and calibration remain deterministic.
-- **6C — Dynasty Transition Orchestration:** explicit championship, Late Recruiting, finalization, Offseason, and rollover boundaries use canonical domain transitions and reset stale session presentation state.
-- **6D — Late Recruiting + Offseason UX:** Late Recruiting, finalized-class feedback, departures, development, incoming class, next-roster preview, and the Season N+1 handoff are player-facing.
-
-## Phase 6E — Playthrough-Driven Calibration & Polish — COMPLETE
-
-This phase uses manual playthrough observations and targeted diagnostics rather than a predetermined feature schedule. `PLAYTESTING.md` is the detailed source of truth for current observations, hypotheses, and next investigations; `CALIBRATION.md` defines the validation methodology.
-
-### Historical completed implementation sequence
-
-- **6E.1 — Recruiting + Talent Balance Investigation:** COMPLETE.
-- **6E.2A — Recruiting Focus Model:** COMPLETE.
-- **6E.2A.2 — AI Recruiting Plan Coherence:** COMPLETE.
-- **6E.2B — Recruit Talent Distribution V1:** COMPLETE.
-- **6E.3 — Development + League Talent Progression Diagnostic:** COMPLETE. Direct careers and 3×10/5×10 production-Dynasty runs found capped annual growth, weak high-headroom differentiation, and a thin mature powerhouse tier; see `PLAYTESTING.md`.
-- **6E.4 — Player Development V1:** COMPLETE. Class baseline, headroom-sensitive opportunity, stable hidden tendency, annual variance, rare breakouts, and the Potential cap now create deterministic career diversity without a Prestige multiplier; see `SIMULATION.md` and `PLAYTESTING.md`.
-- **6E.5 — Position / Rotation Flexibility diagnostic:** COMPLETE. At this checkpoint the strict natural-position limitation was confirmed and narrow secondary flexibility remained diagnostic-only; its recommendation was subsequently implemented and accepted through Rotation V1 in 6E.6.
-- **6E.6A — Rotation V1 Engine Foundation:** COMPLETE. A parallel floor-position-aware domain representation, natural-position-derived eligibility, structured validation, aggregate-minute projections, and a lossless V0-to-natural-only-V1 adapter now exist. Production state, simulation, default Rotation generation, and UI remain on Rotation V0.
-- **6E.6B — Engine Read Boundary + V0/V1 Equivalence:** COMPLETE. Team Strength, game simulation, and box-score allocation accept V0 or V1 through one aggregate Player-minute read path. Paired normal, strength-gap, overtime, mixed-representation, and true-secondary tests preserve exact deterministic results and natural-position ratings/tendencies.
-- **6E.6C — Opt-In Rotation V1 Default Generator:** COMPLETE. The isolated deterministic generator begins with the unchanged V0 default and applies conservative legal secondary substitutions only for clear five-point balanced-contribution upgrades, with incumbent, secondary-minute, and total-minute safeguards. Production generation and persisted/application state remain V0.
-- **6E.6D — Rotation Persistence / Compatibility Foundation:** COMPLETE. One structurally discriminated normalization boundary losslessly migrates valid legacy V0 allocations to canonical natural-only V1, preserves valid V1 secondary assignments, and explicitly rejects malformed state. No live persistence mechanism or production V1 state exists yet; the application migration inventory is recorded in `CURRENT_STATE.md`.
-- **6E.6E — Rotation V1 Production Representation Migration:** COMPLETE. Universe, Exhibition, Season, Postseason, Dynasty, Zustand, and React now store/edit canonical V1; existing assignments deep-clone across transitions, while all new production defaults preserve V0 behavior through lossless V0-to-V1 conversion. Manual legal secondary assignments are supported. The flexible V1 generator remains opt-in and inactive.
-- **6E.6F — Rotation V1 Generator Behavioral Validation:** COMPLETE — WATCH / ACCEPT. Paired direct, QUICK 1×3, and STANDARD 3×10 comparisons found real congestion relief, zero Team Strength regressions, stable rotation depth, and negligible ecosystem movement. Monitor the frequency of 36→40-minute stars and the interior-heavy secondary-position mix after activation; no generator tuning was warranted.
-- **6E.6G — Rotation V1 Production Activation + Freeze:** COMPLETE. Fresh Universe, Exhibition, and Dynasty rollover defaults now use the accepted deterministic flexible generator. Existing V1 rotations remain exact across cloning, Season/Postseason transitions, archives, drafts, and simulation. Its original 40-minute watchpoint was subsequently resolved by 6E.9B; interior-path and rare-displacement watches remain. V0 remains only at intentional compatibility/equivalence boundaries.
-- **6E.7 — Tournament Balance / Seeding Diagnostic:** COMPLETE — OUTCOME A. Production-lifecycle STANDARD `3 × 10` evidence plus a bounded `5 × 10` expansion separated seed upsets from strength upsets. Seed quality tracked win percentage strongly but Team OVR only moderately, with weaker alignment in Season 5+; the stronger-Team win curve rose from competitive tiny gaps to an `82.8%` win rate at `8+` OVR. The evidence identifies a likely seeding/ranking issue while leaving Game Sim closed. No production behavior changed.
-- **6E.7B — Tournament Seeding Candidate:** COMPLETE — ACCEPTED / FROZEN. The exact same four automatic qualifiers and 12 at-larges are now seeded together through the existing deterministic results-only résumé comparator. Paired STANDARD and FULL `5 × 10` evidence improved mature seed/OVR alignment and extreme 3/14 matchup truthfulness while strengthening résumé correlation, preserving Tournament variance, and leaving Game Sim and Team Strength unchanged.
-- **6E.8 — Player Details + Development History UX:** COMPLETE. Player Details now shows a compact nine-attribute ratings grid, a prominent Career Progression table (Season/Class/OVR/Dev/PPG/RPG/APG) derived purely from archived Dynasty Season snapshots plus the active Season, and a compact Recruiting Origin section for Players resolved from finalized Recruiting history. No new persisted history state was added; `derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts` connects existing canonical facts by stable Player ID. Existing current-season stats, shooting splits, game log, and Team/Player navigation are unchanged. See `UI_DESIGN.md` and `PLAYTESTING.md`.
-- **6E.9 — Rotation Minutes Realism Diagnostic:** COMPLETE — OUTCOME A + C. Production-lifecycle STANDARD `3 × 10` evidence found exact-40 defaults uncommon across active Rotation Players (`2.9%`) but common among top-10 scorers (`51.0%`) and 90+ OVR Players (`51.5%`). All `301` cases were natural `36 → 40` through four flexible secondary minutes; none originated at natural 40. Season 5+ incidence was slightly lower than Season 1, and assigned-40 Players averaged `40.035 MPG`. Rotation V1 remains accepted/frozen overall; no production behavior changed.
-- **6E.9B — Starter Minutes Realism Candidate:** COMPLETE — ACCEPTED / FROZEN. Team top-three OVR role now gates the 36-minute natural ceiling; other Players with a backup use 32, natural-36 Players are excluded from automatic secondary promotion, and useful legal secondary Players may absorb positive weak-backup shares up to eight minutes. STANDARD improved natural-36 quality and removed all `301` baseline exact-40 defaults while preserving secondary access and Team Strength; FULL `5 × 10` observed zero exact-40 defaults across `16,717` active Rotation Players with deterministic structural health.
-- **6E.10 — Postseason Hub + Season-Complete Presentation Polish:** COMPLETE — ACCEPTED. The completed-Tournament outcome banner, the `SeasonCompleteHandoff` checkpoint, and the Recruiting summary now compose inside the same `hub-primary-grid` two-column layout instead of `SeasonCompleteHandoff` rendering as a separate full-width section: the Tournament outcome banner and Season Complete checkpoint stack together in the left/game column, and `RecruitingHubSummary` gains an `isSeasonComplete` hint ("Late Recruiting is next — this board carries forward.") in the right column. This removes the large dead space and duplicated-message full-width panel previously seen after Tournament completion, for the controlled-champion, controlled-eliminated, and did-not-qualify completed states alike, without changing the accepted bracket, seeding, or any Tournament/Recruiting mechanics. Manual play confirmed the composition across all three outcome states and both desktop and narrow layouts.
-
-### Current planning horizon
-
-- **6E.11 — Super Sim to Season Complete:** COMPLETE — ACCEPTED. The existing Super Sim target model now reaches the canonical Season Complete checkpoint from regular-season and active-Tournament states by reusing normal regular-season simulation, Postseason initialization, Tournament round simulation, and Recruiting synchronization through Period 28. It preserves completed results, completes the bracket even when the controlled Program is eliminated or did not qualify, and deliberately stops before Late Recruiting/offseason. Paired deterministic coverage matches stepwise production progression across Season results, field/bracket/results/champion, and Recruiting state.
-- **6E.12A — Recruiting Battles + Commitment Visibility, Codex/domain:** COMPLETE. Pure selectors now project the existing contest into player-safe commitment readiness (`early`, `developing`, `serious`, `decision-imminent`, `committed`), active Board pursuers and Offer presence, categorical leading/competitive/trailing context, controlled Focus/Offer/commitment state, and commitment-only activity since a caller-provided period baseline. Raw attraction/progress totals, exact thresholds/probabilities, AI utility, and hidden rolls remain internal. No Recruiting state or behavior changed; historical battle movement cannot be derived because no standing snapshots are stored.
-- **6E.12B — Recruiting Battles + Commitment Visibility, Claude/presentation:** COMPLETE — ACCEPTED, superseded by 6E.12C's information-architecture pass below. The Season Hub led its Recruiting column with a compact `SeasonHubFocusTargets` module (readiness, controlled standing, Offer status, top competitors for every Focused Recruit) ahead of the existing Board/Offer summary; the Recruiting Hub board table gained Readiness and Battle columns using the same selectors and deterministic competitor ordering; and a dismissible `RecruitingCommitmentAlerts` banner surfaced commitment-only activity across a Quick Sim / Super Sim simulation boundary via a transient `recruitingActivityBaselinePeriod` session field. Recruiting mechanics, Board/Focus/Offer actions, and navigation were unchanged. Phase 6E.12 was fully complete at this point.
-- **6E.12C — Recruiting Information Architecture + Visual Hierarchy Polish:** COMPLETE — ACCEPTED. Manual playtesting after 6E.12B found the same battle intelligence shown in too many places at too much visual weight, so this milestone re-shapes presentation only: Hub = status, Board = management, Battles = intelligence, National = discovery. The standalone `SeasonHubFocusTargets` Hub module is gone; Focus targets now compose inside a condensed `RecruitingHubSummary` (one compact Signed/Board/Offers row, one Needs line, then identity + readiness + our standing + a "Needs Offer" action state or a single committed-outcome line per Focus target — no competitor detail, no `Manage Recruiting` CTA). `RecruitingBoardTable` drops its Battle column and competitor lists back to pure management (Rank/Player/Stars/Ovr/Pot/Readiness/Focus/Status/Action); a new accessible `RecruitingReadinessInfo` hover/keyboard-focus affordance beside the Readiness heading explains the five categories without exposing thresholds. `RecruitingModeTabs` gained a `battles` mode (`Board | Battles | National Class`) rendering a new responsive `RecruitingBattlesGrid` of `RecruitingBattleCard`s (2 columns desktop, 1 column ≤720px) sourced from `deriveBattleCardSummaries` over the existing accepted `deriveRecruitingBattleView` selector: Recruit identity first, then a restrained readiness/standing status row, then the controlled Program (reusing the Tournament bracket's `.team-color-dot` square, not a new circular competitor-dot language) ahead of deterministically ordered competitors capped with a "+N other programs" overflow; committed cards collapse to identity plus one "Committed To {Program}" line. `RecruitingCommitmentAlerts` lost its Dismiss control and became a compact "Recruiting Update · N Decisions" recap; the session store's `recruitingActivityBaselinePeriod` now always replaces (never holds) on every Quick Sim / Super Sim / Tournament-round boundary, so a later quiet simulation clears an earlier unseen commitment automatically instead of requiring acknowledgement. 6E.12A's domain contract and all Recruiting mechanics are unchanged.
-- **6E.12D — Recruiting Battles Clarity Polish:** COMPLETE — ACCEPTED. Manual playtesting after 6E.12C found the controlled Program still pinned to a fixed row on every Battle card regardless of `leading`/`competitive`/`trailing`, which made a card's real standing visually ambiguous, plus a Readiness tooltip that could overflow the viewport. `deriveBattleGroups` (`src/app/recruitingBattleFormatters.ts`) now groups every pursuing Program from the existing `pursuingPrograms` projection — including the controlled Program — under only the standing headings that actually have a member, in the domain's existing deterministic order, replacing the removed `deriveCompetitorSummaries`/`countCompetitors`; the controlled Program is exempt from the competitor cap so it can never fall into the overflow count. `RecruitingBattleCard` renders the controlled Program inline inside its actual group marked `YOU` (plus Focused/Offered), removes the redundant upper-right We Lead/Trail badge in favor of the grouped layout communicating standing, and no longer repeats the standing label per competitor row. `RecruitingReadinessInfo`'s tooltip is now centered under its trigger with a viewport-capped max width, and anchors to the viewport as a bottom sheet below 560px, so it can no longer be clipped or pushed off-screen. No Recruiting mechanics, domain semantics, or Hub/Board/National Class architecture changed.
-- **6E.13 — Recruiting Battle Health Diagnostic:** COMPLETE — FINDINGS A + B + E. Production-lifecycle QUICK and STANDARD (`3 × 10`, LIGHT) found generated controlled plans materially less coherent than AI plans: only `35.6%` of generated user Focus targets had Offers versus `92.7%` for AI, with all 58 unsupported Focus targets losing the position's Offer slot to another generated target. `63.2%` of commitments followed an `early` projection one period earlier (`55.6%` for 5★, `52.1%` for 4★); every case was the Recruit's first decision-ready period, `93.5%` already had the eventual winner leading, and `97.7%`/`100%` already met the next-window standing/separation gates before that window opened. This earns a readiness communication/projection follow-up, not commitment tuning. Premium Board pursuit became broad among unsigned Recruits by Period 20 (3+ pursuers: `91.8%` of 5★, `94.6%` of 4★), while Offers remained sparser, especially for 4★; low-Offer cases were most often observable Offer-capacity allocation (`81.3%` for 4★) or other-target selection (`52.6%` for 5★). No production behavior changed. A narrow generated-user-plan coherence candidate is earned; any premium Offer-allocation change requires its own diagnostic and must not be combined with that candidate.
-- **6E.14A — Generated User Plan Coherence:** COMPLETE — ACCEPTED / FROZEN. `Generate Draft Board` now reuses the accepted Focus-alignment rule after its unchanged Board and Offer plan are built, preferring Offered targets for the three generated Focus slots and retaining the strongest active target only when fewer than three legal Offers exist. Paired STANDARD `3 × 10` improved generated user Focus-with-Offer coherence from `35.6%` to `90.0%` versus an unchanged `92.7%` AI reference; 3/3 plans rose `3.3% → 70.0%`, the remainder were legitimately 2/3, and 1/3 or 0/3 disappeared. Board membership, Offers, needs, capacity, AI behavior, deterministic output, and manual Focus/Offer independence were preserved. The 6E.13 generated-plan watchpoint is closed.
-- **6E.14B-A — Recruiting Readiness Clarity, Codex/domain:** COMPLETE — ACCEPTED / HANDOFF READY. The categorical projection replaces misleading `early` with `not-deciding` and a narrow `decision-soon`: exactly one period before eligibility, with the current eligible leader already satisfying the next window's production standing and separation gates. STANDARD `3 × 10` moved `97.7%` of old Early observations to Decision Soon (`100%` for 5★, `97.9%` for 4★), left `2.3%` truthfully Not Yet Deciding, and produced zero invalid next-period boundaries. Eligible `developing`/`serious`/`decision-imminent` semantics and the information boundary remain intact. Commitment timing, gates, progression, probability, AI, persistence, and all other Recruiting mechanics are unchanged.
-- **6E.14B-B — Recruiting Readiness Clarity, Claude/presentation:** COMPLETE — ACCEPTED. Final repository-consistent labels (`Not Yet Deciding`/`Decision Soon`/`Developing`/`Serious Battle`/`Decision Imminent`/`Committed`), a restrained quiet-to-urgent visual ramp using only existing ink/accent tokens, and updated tooltip copy now present the accepted six-state domain contract across the Hub, Board, and Battles without exposing hidden values or reopening Recruiting architecture. The retired `Early Interest` label is gone from the current UI. Phase 6E.14B is fully resolved.
-- **6E.15 — Assistant Fill Remaining Board:** COMPLETE — ACCEPTED. An explicit Board-management action reuses the accepted deterministic, need-aware target-selection loop to fill only unused controlled-Program Board capacity. Existing entries retain exact membership, order, Focus, and Offer state; appended targets are Board-only, duplicates and illegal targets are excluded, full Boards no-op, and insufficient supply leaves capacity empty. The action never runs automatically. Generate Draft Board, generated-plan coherence, AI Recruiting, Board/Focus/Offer mechanics, and all commitment/readiness behavior remain unchanged.
-- **6E.16A — Recruiting Page Density + Guidance Polish:** COMPLETE — ACCEPTED. Claude Code (`frontend-design`), presentation-only. A local `.recruiting-screen` wrapper tightens the page's top-of-page vertical rhythm without touching `.app-main`'s default spacing elsewhere; the five-row Positional Needs ledger is replaced by a compact `RecruitingOverview` (Board/Signed/Openings/Offers plus a one-line Needs summary); the Board count no longer duplicates beside Fill Remaining Board; a new `Guide` mode (`RecruitingModeTabs`/`RecruitingGuide`) is the canonical explanation destination for Board, Focus, Offers, all six Readiness states, and Leading/Competitive/Trailing battle standing, replacing the retired Board Readiness tooltip and scattered helper copy; and Late Recruiting's zero-openings state reads as a quiet completed class instead of warning about automatic resolution, in both the banner and the Finalize Class confirmation dialog. Board/Battles/National Class responsibilities and every Recruiting mechanic are unchanged.
-- **6E.16B — Season Hub + League Information Hierarchy Polish:** COMPLETE — ACCEPTED. Claude Code (`frontend-design`), presentation-only, in two passes. A local `.season-hub` wrapper tightens Hub rhythm without touching `.app-main` elsewhere. `NextGameCard`/`CompletedMatchupCard` share a 21rem desktop minimum-height shell — verified pixel-stable so `Advance to Next Round`/`Super Sim` never move after Quick Sim; the completed-game scoreboard and a redesigned dense Game Leaders row strip are both constrained to a compact ~21rem measure (no more dead horizontal space), and Game Leaders states a shared leader Program once instead of repeating it on every row when all leaders belong to the same Team. `RecruitingHubSummary` now distinguishes unresolved `Focus Targets` (`deriveFocusTargetSummaries` filters to `status === 'active'`) from signed `Commits` (`deriveHubCommitSummaries`), composes the `Recruiting Update` recap (`RecruitingCommitmentAlerts`) inside the Recruiting module instead of as a separate top-level Hub card, and drops the Focus row's reserved left gutter in favor of an overlay accent bar. The Hub's Conference Standings heading names the controlled Program's actual Conference and composes side-by-side with Recent Results on desktop (`ConferenceStandingsSection` drops its Conference-switcher). Root `LeagueScreen` drops its redundant Back button and duplicate `League` heading; Team/Player Details keep their own Back navigation. `RecruitingScreen`'s `Fill Remaining Board` control is hidden (not merely disabled) once the Board is full. Postseason Hub inherits all shared-component changes unchanged. No simulation, Recruiting, League, or Postseason mechanic changed. This closes the deliberate 6E.16A/6E.16B UI polish checkpoint; the next milestone should come from a fresh planning pass, not an automatic continuation.
-- **6E.17A — Coaching Home Foundation:** COMPLETE — ACCEPTED. Codex/application-state only. Zustand now exposes a side-effect-free `coaching` destination plus lifecycle-aware Coaching edit/reset actions. Entry refreshes the existing regular-season or Postseason draft from that competition's canonical controlled-Program Rotation; valid edits reuse the existing validated Season/Postseason update path, while invalid drafts remain non-canonical. Navigation does not catch up AI games, initialize Recruiting, simulate, or progress a lifecycle. Rotation V1 mechanics and simulation consumers are unchanged, and no second canonical Coaching Rotation exists.
-- **6E.17B — Coaching Home Presentation:** COMPLETE — ACCEPTED. Claude Code (`frontend-design`), presentation-only against 6E.17A's application contract. `DynastySectionNav` gained a permanent `Coaching` destination (`SEASON/TOURNAMENT | COACHING | RECRUITING | LEAGUE`) wired to the existing side-effect-free `goToCoaching()` on all four Dynasty screens that render the nav. The new `CoachingScreen` composes the reused `TeamDetailsHeader` identity/record/strength header, a local `CoachingModeTabs` (`Roster | Rotation`), the reused `TeamStatsTable` for Roster (Player click reuses `openPlayerDetails`), and the reused `RotationEditorPanel` for Rotation against the exact 6E.17A Coaching draft/commit boundary — Postseason precedence, invalid-draft handling, and canonical Rotation ownership are unchanged. `ExplorationBackButton`'s destination-label switch gained a `coaching` case so Player Details correctly reads "Back to Coaching" instead of the generic "Season" fallback. One small presentation-only fix: an invalid Rotation Player total (0–40) now recolors the existing single-line Total cell instead of adding a second block line under the minute stepper, which was distorting that row's height relative to its neighbors — the validation rule itself, Game Prep, and Tournament Game Prep are unchanged. Manual review confirmed the Roster/Rotation hierarchy, Player navigation, an invalid-then-valid Rotation edit, and no-side-effect entry at desktop and mobile widths, in both regular-season and active-Tournament Coaching.
-
-- **6E.18A — Simple Rotation Intent Adapter V1:** COMPLETE — ACCEPTED. A pure engine helper compiles aggregate Player MPG intent into existing canonical Rotation V1 through deterministic exact min-cost flow. Requested Player totals, five exact 40-minute floor buckets, existing eligibility, and the 40-minute Player maximum remain hard constraints; natural-position assignments have lower cost than secondary assignments. Incomplete, overfull, unknown-Player, out-of-range, and positionally infeasible intent returns structured failure with no Rotation. Successful output passes existing V1 validation. No UI, Zustand state, commit path, default generator, simulation behavior, Starting Five mechanic, or preset behavior changed; those presentation/application slices remain future work.
-- **6E.18B — Simple Rotation Coaching State Integration:** COMPLETE — ACCEPTED. Zustand now owns one roster-complete, UI-only Player→MPG draft plus structured compiler issues. Coaching entry aggregates from the canonical Postseason Rotation when active, otherwise Season; zero-minute Players remain explicit for derived Reserves. Simple edits are bounded but may temporarily total 198/204 without canonical mutation. Explicit Apply uses 6E.18A and commits only successful V1 output through existing Season/Postseason update APIs. Successful Simple and Advanced Coaching commits refresh the opposite draft; invalid edits remain isolated. Discard rebuilds Simple from committed Rotation. No visible UI, reserve role, Starting Five, preset, Game Prep, default-generation, or simulation change is included.
-- **6E.18C — Simple Rotation UI V1:** COMPLETE — ACCEPTED. Claude Code (`frontend-design`), presentation-only against the frozen 6E.18A/6E.18B contract. Simple is now the default Coaching Rotation editor: a new `SimpleRotationPanel` shows one row per roster Player (identity, eligible position(s), class, OVR, and a reused `MinuteStepper` for total MPG), derives Rotation Players/Reserves purely from whether the current draft's minutes are positive or zero, and keeps roster-stable (not MPG-sorted) row order so editing never reorders rows. A budget header states the live total against 200 with an "Assign/Remove N minutes" hint or "Up to date."/"Ready to apply.", Apply is enabled only at exactly 200, Discard is enabled only when the draft differs from the committed Rotation, and structured compiler issues (e.g. `INFEASIBLE_POSITION_COVERAGE`) are translated into coaching-language messages instead of raw codes. A new local `RotationModeTabs` (`Simple | Advanced`) keeps the existing exact positional `RotationEditorPanel` available unchanged as Advanced. The component performs no Simple/Advanced synchronization itself — Apply/Discard call the existing 6E.18B store actions directly. Manual acceptance covered default-to-Simple entry, editing across the Reserves boundary in both directions, disabled Apply while off-200, a translated infeasible-coverage failure that preserved the draft and left canonical state untouched, Discard restoring committed values, correct Simple⇄Advanced sync after a successful commit, and the same Apply/Discard flow during an active Postseason. No Rotation V1, compiler, store-action, or simulation change is included; Starting Five and Auto/rotation-size presets remain deferred.
-- **6E.18D — Projected Starting Five Foundation:** COMPLETE — ACCEPTED. A pure engine derivation returns one unique Player ID per canonical position from committed Rotation V1. Exact backtracking maximizes represented positional minutes, then prefers natural assignments, higher aggregate Player minutes, and stable Player IDs. It returns structured failure for invalid input or an unexpected incomplete unique lineup. The projection is not persisted, has no gameplay effect, ignores uncommitted Simple intent, and requires no Zustand synchronization. Generated characterization derived complete unique fives for 64/64 production-style defaults and 64/64 corresponding Simple-compiler reconstructions. Manual selection, canonical starter state, simulation effects, and presentation remain future work.
-- **6E.18E — Starting Five / Bench / Reserves Presentation:** COMPLETE — ACCEPTED. Claude Code (`frontend-design`), presentation-only against the frozen 6E.18D projection. `SimpleRotationPanel` now groups the roster into `Starting Five` (PG → C, from `deriveProjectedStartingFive()` against the committed canonical Rotation only), `Bench` (non-starters with current draft MPG > 0, sorted by descending draft MPG with a roster-order tie-break), and `Reserves` (non-starters at draft MPG === 0, roster order) via a new pure view-model helper, `deriveSimpleRotationSections()` (`src/app/formatters.ts`). Starting Five membership is deliberately independent of the uncommitted Simple draft — a projected starter edited to 0 minutes stays in Starting Five, showing 0, until a successful Apply changes the committed Rotation; a quiet "Updates when Rotation is applied" caption (hidden below 560px) communicates this without a banner. Starter rows show the canonical assigned position instead of eligibility and a slightly stronger name/position treatment plus a team-accent header rule; Bench/Reserves keep the prior eligibility, styling, and empty-state copy. When `deriveProjectedStartingFive()` returns a structured failure (invalid or incomplete committed Rotation), the panel falls back to the prior flat `Rotation Players`/`Reserves` presentation instead of guessing a lineup. `CoachingScreen` computes the projection from the same `canonicalRotation` already used for the committed-MPG prop and passes it straight through — no new Zustand state, store synchronization, commit-path, compiler, or Rotation V1 change. Advanced, Apply/Discard, the budget header, and compiler-issue translation are unchanged. Manual review confirmed PG→C Starting Five ordering, Bench sorted by descending minutes, a projected starter staying put at 0 draft minutes with no layout jump, live Bench↔Reserves transitions on minute edits, and a stable, scrollable presentation at mobile width with the note hidden.
-
-Phase 6E is closed. Accepted systems, including Coaching / Simple Rotation
-through Starting Five → Bench → Reserves, remain frozen unless new evidence
-justifies reopening them.
-
-## Phase 7 — Dynasty World & Player Stories — SELECTED HORIZON
-
-Purpose: strengthen long-term attachment to Players, Programs, Seasons, and
-stories generated by the simulation without destabilizing accepted core
-basketball systems.
-
-### Phase 7A — Followed Players V1 — COMPLETE — ACCEPTED
-
-- **7A.1 — Followed Players Foundation:** COMPLETE — ACCEPTED. Zustand owns
-  duplicate-free stable followed Player IDs and follow, unfollow, and membership
-  operations. Intent persists across navigation and Season rollover, clears on
-  new-Dynasty initialization, and has zero basketball effect. A pure resolver
-  derives current Player, Program, Team, and resolved status without snapshots;
-  departed IDs remain safely unresolved.
-- **7A.2 — Player Details Follow Control:** COMPLETE — ACCEPTED. Claude Code,
-  presentation-only against the 7A.1 contract. `PlayerDetailsHeader` gained a
-  compact `FollowPlayerButton` beside the Player identity/meta line, styled as
-  a ghost-button toggle consistent with existing `aria-pressed` controls (for
-  example `CoachingModeTabs`). It reads and writes only the canonical
-  `isPlayerFollowed` / `followPlayer` / `unfollowPlayer` behavior for the
-  currently viewed Player ID — no duplicate React/local follow state, no
-  Player mutation. The interaction is a single immediate click with no
-  confirmation step, works for any current-roster Player regardless of
-  Program, and leaves the accepted Development History presentation and the
-  rest of Player Details untouched.
-- **7A.3A — Following View Projection:** COMPLETE — ACCEPTED. A pure
-  `deriveFollowingView()` contract composes the accepted stable-ID resolver with
-  current `calculateOverall()` and canonical `derivePlayerSeasonStats()` facts.
-  It exposes active Player/Program/Team rows with raw games played and
-  PPG/RPG/APG in first-followed order, plus total followed intent and unresolved
-  Player IDs for distinct empty states. It stores no copied summaries and adds
-  no League UI, navigation, formatting, alumni behavior, or simulation effect.
-- **7A.3B — League Following Destination:** COMPLETE — ACCEPTED. Claude
-  Code, presentation-only against the 7A.3A contract. `LeagueScreen` gained a
-  third `Following` tab beside the existing `Leaders`/`Teams` tab-list — the
-  smallest natural extension of League's established subnavigation, with no
-  new top-level app destination. The new `FollowingSection` consumes
-  `deriveFollowingView(followedPlayerIds, season, UNIVERSE_V0)` directly and
-  renders it with the same `data-table` / `table-scroll` convention as
-  `LeaderBoard` and `TeamStatsTable` (Player, Program, Pos, Cl, Ovr, PPG, RPG,
-  APG), preserving projection order with no re-sorting, filters, or inline
-  Follow/Unfollow controls. `totalFollowed === 0` shows a concise empty state;
-  `totalFollowed > 0` with zero active rows shows a graceful
-  no-longer-active message instead of an empty table; a mixed result renders
-  active rows normally with one small unresolved-count note. Player and
-  Program names reuse the existing `text-link-button` into the canonical
-  `openPlayerDetails` / `openTeamDetails` navigation — no new Player Profile
-  surface. Automated validation is green, and manual play accepted the full
-  Player Details → Follow → League → Following → Player Details loop. The V1
-  retrieval friction is resolved.
-
-### Elite Recruit POT-Gap Characterization — COMPLETE — OUTCOME C
-
-Codex extended the existing deterministic production Recruit Talent inspection.
-Across 250 classes (`40,202` Recruits), zero POT gap occurred for `70.1%` of
-5★, `85.6%` of 80+ OVR, `90.9%` of 85+ OVR, and `97.3%` of 90+ OVR cohorts.
-The large cohort sizes establish structural elite/high-OVR development-runway
-compression. No production behavior changed.
-
-### Recruit Talent POT-Gap Calibration Design — COMPLETE
-
-The independent raw ceiling distribution fails to scale with high readiness:
-`82.5%` of ceilings come from bands capped at 82, making a lower raw ceiling
-about `89.3%` likely at OVR 85 and `96.6%` likely at OVR 90 before final POT
-flooring. Three candidates were evaluated. The selected experiment is a small
-probabilistic bounded runway finalizer for compressed 78+ OVR profiles, with a
-preserved zero-gap minority and smaller runway near 99. No production behavior
-changed; detailed paired ACCEPT/WATCH/REJECT gates live in `PLAYTESTING.md`.
-
-### Recruit Talent POT-Gap Paired Candidate Experiment — COMPLETE — ACCEPT
-
-Candidate B was evaluated without changing production on identical 500-class
-seeds (`80,453` paired Recruits). It passed all `22/22` precommitted gates,
-including exact attributes/OVR, byte-identical replay, `88.02%` 5★ membership
-overlap, and bounded POT inflation. Elite zero-gap compression improved by
-`48.86–59.00` percentage points in the primary cohorts. Full evidence is in
-`PLAYTESTING.md`.
-
-### Recruit Talent Candidate B Activation / Freeze — COMPLETE — ACCEPTED / FROZEN
-
-The canonical Recruit generator now uses the exact accepted Candidate B helper
-and independent deterministic namespace. The production 500-class audit
-reproduced the accepted experiment exactly by Recruit ID for attributes, OVR,
-final POT, national/position rank, and stars (`80,453/80,453`). All `22/22`
-paired gates remained green. No readiness, raw-ceiling, ranking/star, Player
-Development, AI, or UI behavior changed beyond POT-derived rank movement.
-
-### Tournament Completion Progression Escape-Path Diagnostic — COMPLETE / NOT REPRODUCED
-
-A production-faithful deterministic UI diagnostic confirmed the completed
-Postseason checkpoint remains recoverable through League, Coaching, and
-Recruiting navigation. The canonical Dynasty/Postseason facts remain intact;
-returning to Tournament restores `Continue to Late Recruiting`, and a finalized
-class restores `Begin Offseason` from Recruiting after League navigation.
-Super Sim completion shares the same preserved lifecycle path. The reported
-playtest incident was not reproduced, no production defect was confirmed, and
-no production behavior changed. Focused regression coverage now protects the
-intended navigation contract.
-
-### Player Statistical Identity + Superstar Separation Characterization — COMPLETE / MIXED
-
-The canonical production-path diagnostic sampled `96,000` Players across `250`
-fresh Season 1 Universes and `60` complete Seasons (`23,040` games). Fresh
-Universes regularly generate elite conventional stars, but rare cross-position
-profile supply is limited. Current approximately-36-MPG leaders soften raw
-extremes; attributes translate meaningfully within position; and strong
-position baselines make national assist, rebound, and block identities nearly
-position-exclusive. Scoring and conventional rebounding were broadly healthy,
-steal identity showed the clearest translation compression, and cross-position
-identity was both generation- and translation-limited. No production behavior
-changed.
-
-### Historical diagnostic — Elite Player Profile / OVR Specialization — COMPLETE / BOTH
-
-The canonical `250`-Universe / `96,000`-Player Season 1 sample confirms shared
-talent generation produces strong cross-attribute correlation and increasingly
-flat elite profiles. The position-weighted OVR formula correctly discounts
-some irrelevant skills but also prevents plausible specialized probes from
-reaching 95, especially offense-first PG/SG, broadly weighted SF, and
-playmaking/trade-off big profiles. The result is **BOTH generation- and
-OVR-limited specialization**, reconciled with the prior translation limits.
-Elite scarcity remains unchanged at `2.88` 90+, `0.28` 95+, and `0.04` 97+
-Players per fresh Universe. No production behavior changed.
-
-### Historical diagnostic — Statistical Identity / Variability Design Review — COMPLETE
-
-The review accepts these design principles for candidate evaluation, not yet as
-production behavior:
-
-- OVR represents total position-relative basketball value, not attribute
-  completeness.
-- Multiple exceptional strengths may compensate for meaningful weaknesses;
-  one elite attribute alone cannot establish superstar value.
-- Position is the strong prior, not a hard identity rule. Conventional Players
-  remain the majority and rare exceptions remain memorable tails.
-- Statistical identity should follow profile identity: extreme relevant skills
-  must be capable of overcoming—but not erasing—position baselines.
-- Profile shape should change without automatically increasing elite supply.
-
-#### Generation candidates
-
-**Candidate A — OVR-budget-neutral redistribution — PREFERRED.** Generate the
-current canonical Player first, then use an independently namespaced,
-deterministic rare-variation stage to transfer bounded position-weighted value
-from one or more weakness attributes into two or more strength attributes.
-Strength and weakness pools remain position-informed but include narrowly
-eligible secondary-skill exceptions. Clamp-aware transfers shrink rather than
-creating free value; non-selected Players remain byte-identical; no archetype
-label is persisted. The initial paired experiment holds each selected Player's
-current `calculateOverall()` within one point so it isolates profile shape and
-protects elite scarcity. Risk: budget accounting can still create implausible
-combinations or over-regularized tradeoffs if the eligible pools are too broad.
-
-**Candidate B — rare specialization axis.** A small deterministic minority
-receives a bounded offense, defense, creation, rebounding, interior, perimeter,
-or unusual-secondary-skill modifier with explicit offsetting weaknesses. This
-is easy to reason about and frequency-control, but risks hidden templates,
-repetitive shapes, and future pressure to expose archetype state.
-
-**Candidate C — selected tail widening.** Preserve the shared talent model but
-add rare heavy-tailed variance for specific cross-position attributes such as
-big Playmaking or guard Rebounding, with offsetting variance elsewhere. This is
-the smallest code surface, but does not solve elite all-around correlation and
-can create free talent or noisy implausible Players. It is a fallback probe, not
-the preferred candidate.
-
-Candidate A best isolates the confirmed cause while preserving current talent
-quantity. It must operate as a pure deterministic transformation with a new
-seed namespace and no stored production archetype.
-
-#### OVR candidates
-
-**Candidate A — nonlinear elite-strength value.** Apply increasing marginal
-value only at the extreme end of high-weight skills, then normalize. It can
-reward true excellence with a small implementation surface, but risks rating
-inflation, single-skill exploits, opaque thresholds, and Recruit-rank churn.
-
-**Candidate B — core value + supporting value − bounded weakness penalties —
-PREFERRED.** For each position, multiple strongest relevant weighted skills
-establish core value; the remaining relevant and supporting skills add value;
-meaningful relevant weaknesses impose bounded penalties. Require several core
-strengths, so one 99 cannot create a superstar; complete stars remain at least
-as valuable as otherwise-equivalent specialists. This directly models total
-value rather than completeness without requiring a persisted role. Risks are
-discontinuities near core selection, double-counting, and broader Recruiting /
-Rotation effects.
-
-**Candidate C — best role-sensitive value path.** Evaluate several legitimate
-position value paths—scoring, creation, two-way, interior, and similar—and use
-the best supported result plus common support. It offers the clearest basketball
-semantics but introduces the most taxonomy, tuning surface, and archetype-like
-behavior. Keep it as a comparison only if Candidate B cannot order the locked
-controlled profiles sensibly.
-
-Candidate B is preferred for a diagnostic experiment, not production. Compare
-it against current OVR on the exact baseline population and Candidate A
-population before changing any generator or ranking behavior.
-
-#### Translation candidates and protected areas
-
-- **Passing — experiment:** keep ordinary position baselines exact; above a
-  jointly extreme Playmaking/Handling region, smoothly increase attribute
-  leverage and allow a bounded blend toward a position-neutral creator rate.
-  Ordinary bigs remain low-assist; rare extreme bigs may approach, not routinely
-  equal, guard production.
-- **Steals — experiment:** strengthen only the high-end joint influence of
-  Perimeter Defense and Athleticism, with calibration/recentering that preserves
-  league-wide steal volume. This addresses the clearest measured compression.
-- **Rebounding — defer from minimal V1:** generation must first prove rare guard
-  rebound profiles. A later candidate may use extreme Rebounding plus height and
-  Athleticism to escape the guard baseline without changing ordinary big rates.
-- **Blocks — WATCH / defer:** conventional rim protection is healthy. Consider
-  only a later bounded high-end Interior Defense/height/Athleticism escape for
-  nontraditional protectors; do not raise global BPG.
-- **Protect unchanged:** scoring allocation and composition, conventional PG
-  passing, conventional PF/C rebounding, role-aware minutes, Team scoring, and
-  all non-targeted box-score rates.
-
-#### Historical experiment conclusions
-
-Do not ship all identity layers together without attribution. Profile
-Generation Candidate A V2 is accepted experimental input. The completed OVR
-Candidate B v1 experiment was rejected, and further OVR redesign is now
-deferred unless new manual evidence shows that canonical displayed OVR is
-materially harming gameplay or Player stories.
-
-Development Identity Retention remains an important possible investigation,
-but it is not an automatic prerequisite for fun-oriented playtesting. Manual
-play may instead identify statistical translation, generation, presentation,
-or no material blocker. Passing and Steals remain plausible independent
-translation branches; Rebounding remains deferred until real profile supply
-supports it; Blocks remains WATCH.
-
-The smallest coherent Player Identity V1 may therefore be Candidate A V2 with
-current production OVR plus only independently accepted translation work. Some
-specialists may remain slightly undervalued; that is preferable to destabilizing
-Recruiting, POT, rankings/stars, Rotation, Team Strength, Development, and
-statistics. Player Identity work succeeds when Players are more recognizable, varied, and
-worth following—not when every specialist receives a theoretically perfect OVR.
-
-#### Historical precommitted experiment guardrails
-
-All gates use paired identical seeds and must be declared before candidate
-results are inspected.
-
-**Elite scarcity and determinism**
-
-- Byte-identical replay and stable Player IDs; baseline Players not selected
-  for redistribution remain byte-identical.
-- Across the canonical `250`-Universe sample, absolute candidate deltas remain
-  within `0.20` 90+, `0.05` 95+, and `0.02` 97+ Players per Universe from the
-  `2.88 / 0.28 / 0.04` baseline. Candidate A's shape-only experiment should be
-  tighter: selected Player OVR within one and no material cohort-count change.
-
-**Specialization and positional identity**
-
-- Report 90+/95+ rates with any attribute below 70 and 60, weakest-attribute
-  distributions, all/relevant top-two-minus-bottom-two spread, and
-  within-position cross-attribute correlation.
-- Candidate must improve meaningful weakness/spread in at least three
-  positions without making more than `10%` of 90+ Players carry two or more
-  sub-60 attributes; no more than `10%` of 95+ Players may carry any sub-60
-  attribute.
-- Position attribute means and medians remain within one point of baseline;
-  ordinary positional ordering remains intact: PG leads Playmaking/Handling,
-  SG/wing shooting remains above big shooting, PF/C lead Rebounding/Interior
-  Defense, and Centers retain the weakest average perimeter skill.
-- Measure anomaly frequency by profile and Universe. Explore a typical
-  `0–2` genuinely unusual Players per fresh Universe rather than adopt a final
-  percentage; reject any candidate that shifts anomaly traits into position
-  medians or routinely creates many copies of one profile.
-
-**Controlled valuation suite**
-
-- Lock the characterization inputs for offense-first, two-way, playmaking, and defensive
-  SG; traditional, rim-running defensive, stretch, and playmaking C;
-  offense-first PG; point-forward SF/PF; and defense/rebounding SF/PF.
-- Offense-first/two-way SG, traditional/rim-running C, and offense-first PG must
-  be capable of the existing 90+ elite band when multiple strengths support
-  them. Two-way completeness remains at least as valuable as otherwise-equivalent
-  specialization; one-skill defensive or shooting specialists remain below
-  elite without support. Point-forward and playmaking-big value must improve
-  without automatically outranking complete superstars. Compare relative
-  ordering first; do not tune arbitrary exact OVR targets to a candidate result.
-
-**Recruiting, POT, Rotation, and Team Strength**
-
-- Re-run Recruit OVR/POT/rank/star distributions and every accepted Recruit POT
-  Candidate B gate without changing its finalizer. Require no negative POT gaps,
-  overall POT mean movement within `0.30`, and at least `85%` 5-star membership
-  overlap with paired baseline unless a stricter existing Recruit POT Candidate B gate
-  governs.
-- Report AI target/commit composition by OVR band. Do not activate if ranking or
-  star changes create unmeasured Recruiting balance movement.
-- Report default Rotation changes, Team Strength mean/tails, and Team ordering;
-  mean Team Strength must stay within `0.5` and any material contender-order
-  movement requires separate review. Player Development and POT semantics must
-  remain valid and deterministic.
-
-**Statistical ecosystem**
-
-- Preserve MPG exactly and report PPG/RPG/APG/SPG/BPG leader distributions,
-  Top-1/Top-10 separation, position shares, per-40 rates, and 40+/50+ games.
-- Non-targeted leader means and Top-10 separation remain within `5%` of paired
-  baseline; scoring-event frequencies receive explicit rare-event intervals
-  rather than permissive point gates.
-- Passing/Steals candidates must change high-end separation and extreme-profile
-  translation without moving league-wide event volume more than `2%`. PGs
-  remain the dominant assist position. PF/C remain dominant rebound positions;
-  Centers remain dominant block position. No targeted improvement may inflate
-  Team scores or alter game winners.
-
-**Decision structure**
-
-- **ACCEPT CANDIDATE:** every hard guardrail passes and intended identity metrics
-  improve on both baseline and relevant profile cohorts.
-- **WATCH / EXPAND:** all safety gates pass but rare-profile counts or targeted
-  translation evidence are too sparse; expand deterministic samples without
-  changing the candidate.
-- **REJECT:** any determinism, elite-scarcity, positional-identity, Recruit POT Candidate B,
-  POT, Recruiting, Team Strength, score/winner, or broad-stat-inflation guardrail
-  fails. Do not retune gates around the observed result.
-
-Likely future production surfaces are `playerGenerator.ts` after raw attribute
-generation, a pure identity-variation helper under `engine/generation`,
-`overall.ts`, and the counting-stat rate construction in `boxScore.ts`.
-Diagnostic consumers include the two accepted Player identity scripts plus
-Recruit Talent, Rotation, Team Strength, long-run Dynasty, and Recruit POT
-Candidate B audits. No production file changed in this design review.
-
-### Historical experiment — Profile Generation Candidate A — COMPLETE / WATCH
-
-The single preregistered candidate was tested behind diagnostic tooling on 250
-paired fresh Universes, 500 Recruit classes, and 60 paired Seasons. Safety,
-OVR neutrality, scarcity, position aggregate, Recruiting, Candidate B, and
-Team Strength gates were healthy. It created clearer profiles, but 95+ shape
-was effectively unchanged, tradeoffs were repetitive/occasionally severe, and
-Steals leader separation moved 9.64%. Disposition is WATCH; production remains
-baseline. At that checkpoint, a narrow Candidate A weakness-distribution
-iteration followed before any OVR experiment.
-
-### Historical experiment — Candidate A V2 Weakness Distribution — COMPLETE / ACCEPT
-
-V2 retained V1 selection, profile paths, budgets, caps, and ±1 OVR, but funded
-each profile from one deterministic semantic pair of weakness channels with
-14/10-point operational limits. It shrank instead of expanding into unrelated
-attributes. On the same 250-Universe, 500-Recruit-class, and 60-Season samples,
-V2 removed V1's multi-floor pattern, retained meaningful specialization in all
-five positions, preserved all safety/Recruiting/Team gates, and reduced Steals
-Top-1-versus-Top-10 movement from +9.64% to +4.98%. Candidate A V2 is accepted
-as experimental input only; production generation remains baseline.
-
-The historical identity experiment chain was:
-
-```text
-Profile generation → OVR valuation → Development identity retention → Statistical translation
-```
-
-At that checkpoint, an OVR Candidate B paired experiment followed. Development
-Identity Retention was identified as a possible compatibility investigation,
-not as evidence that Development V1 was defective.
-
-### Historical experiment — OVR Candidate B v1 — COMPLETE / REJECT
-
-The single preregistered core/support/weakness formula recognized the locked
-specialists, protected complete stars, and rejected one-skill exploits, but
-failed population calibration. On Candidate A V2 profiles it raised 90+ supply
-from 2.852 to 6.360, 95+ from 0.280 to 0.760, and 97+ from 0.040 to 0.156 per
-Universe. All five positions exceeded the positional elite-movement gate.
-Recruit POT gap-13+ share also increased more than its accepted limit, and an
-OVR-driven Rotation proxy pushed Steals separation +7.61%. The formula is
-rejected and remains diagnostic-only; production `calculateOverall()` is unchanged.
-
-Candidate B v1 is **REJECTED / DO NOT ACTIVATE**. Its useful conceptual lesson
-is retained: multi-strength specialists can be recognized, one-/two-skill
-exploits can be rejected, and complete stars can be protected. Do not keep
-tuning v1 constants; any future OVR design would need new playtest evidence and
-would have to fix premium targeting and scale.
-
-### Historical Player Identity calibration — CLOSED / PARKED
-
-The completed diagnostics separated generation/profile shape, OVR valuation,
-and statistical translation. Candidate A V2 remains accepted experimental input
-only and is not production-active. OVR Candidate B v1 remains rejected because
-its specialist premium structurally expanded elite supply by promoting too many
-complete near-elites. Production generation and canonical `calculateOverall()`
-remain unchanged. Further identity calibration is parked until new manual play
-provides a concrete reason; the canonical research archive is
-`PLAYER_IDENTITY_RESEARCH.md`.
-
-### Phase 7B — Player & League Stories V1 — COMPLETE — ACCEPTED — FROZEN
-
-> How do we surface current Player and League stories?
-
-- **7B.1 — Around the Country V1 — COMPLETE — ACCEPTED.** League defaults to a
-  deterministic, current-season News feed derived from existing GameResults,
-  Tournament seeds/results, Recruiting commitments, and Followed Player IDs.
-  Stories publish only in complete round groups and cover exact V1 Player
-  thresholds, five-star commitments, seed-gap upsets, first loss after an 8-0
-  start, and a Team's tenth win. The initial view includes whole newest groups
-  through at least 12 stories with an explicit Show All expansion. No news
-  records, RNG, event bus, simulation rule, or archive behavior was added.
-- **7B.2 — Player Legacy / Alumni V1 — COMPLETE — ACCEPTED.** A pure Dynasty
-  resolver classifies stable Player IDs as active, former, or unknown from
-  active and archived regular-season rosters. Following separates Active and
-  Former Players while preserving first-follow order, and the existing Player
-  Details route presents a former Player's explicitly regular-season career
-  summary, Final/Peak OVR, Final Ratings, progression, Recruiting Origin when
-  canonical, Follow control, and existing navigation. No persisted Alumni
-  model or simulation change was added.
-- **7B.3 — Season Preview — COMPLETE — ACCEPTED.** A pure on-demand projection
-  introduces Season 1's established Players/freshmen and rollover Seasons'
-  returning stars, positive non-star development leaps, canonical incoming
-  freshmen, and active Followed Players. The Hub doorway appears in Rounds 1–2;
-  League News retains an action throughout active Season and Tournament play.
-  Existing Player/Team routes and exploration Back history are reused. No
-  Preview persistence or simulation/progression change was added.
-
-Close Phase 7B after these three milestones; unrelated work receives another
-phase rather than extending 7B.
-
-### Phase 7C — History & Recognition V1 — NEXT
-
-> How do we preserve and recognize what mattered in previous Seasons?
-
-- **7C.1 — Season Archive / Yearbook — NEXT**
-- **7C.2 — Records & Milestones**
-- **7C.3 — Awards & Honors** — later than the first two because subjective
-  award formulas may introduce unnecessary tuning.
-
-### Phase 7D — Recruit Attachment V1 — PLANNED
-
-> How do we create attachment during Recruiting and preserve it into careers?
-
-- **7D.1 — Recruit Details**
-- **7D.2 — Follow Recruits**
-- **7D.3 — Recruit → Player continuity**, preserving existing identity
-  continuity where it already exists.
+1. **7D.1 — Recruit Details**
+2. **7D.2 — Follow Recruits**
+3. **7D.3 — Recruit → Player continuity**, preserving existing identity
+   continuity where already canonical.
 
 ### After Current Phase 7 Work — Fresh Planning Checkpoint
 
-No Phase 7E is currently selected. After the selected Phase 7C and Phase 7D
-work is accepted, review fresh manual-play evidence and decide what the game
-most needs next. Select a new feature phase or a dedicated tuning/calibration
-phase from that evidence; do not automatically reopen Player Identity work.
-Historical Player Identity research remains available in
-`PLAYER_IDENTITY_RESEARCH.md` and may be reopened only when new gameplay
-evidence justifies it.
+No later phase or Phase 7E is selected. After Phase 7C and Phase 7D are
+accepted, review fresh manual-play evidence and choose what the game most needs
+next. Do not automatically reopen Player Identity work or reserve a phase
+number for it. Historical research remains available in
+`PLAYER_IDENTITY_RESEARCH.md` and requires new gameplay evidence to reopen.
 
-Tournament seeding and Game Sim remain closed, and all accepted/frozen
-milestones retain their status.
+## Numbering and sequencing policy
 
-## Non-binding development-agent fit
+- A number represents a meaningful player-facing feature, architectural
+  capability, or major selected diagnostic—not every helper, UI pass, or test.
+- Prefer 2–4 meaningful milestones per phase. Close a phase when new work no
+  longer answers its product question.
+- Unscheduled ideas belong in `FUTURE_FEATURES.md`; confirmed engineering debt
+  belongs in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
+- Research uses descriptive labels rather than product-phase numbering unless
+  the work is explicitly selected here.
+- Formulas, helper names, sample tables, test counts, and acceptance chronology
+  do not belong in completed Roadmap entries.
 
-Codex is well suited to engine/domain systems, validation, simulation, and league/schedule/season state. Claude Code is well suited to presentation and interaction implementation against existing engine/application contracts. This is a planning convenience, not an architectural requirement; either agent must obey the same boundaries and source-of-truth documentation.
+## Completed Phase Summary
+
+### Phase 0 — Foundation — COMPLETE
+
+- Established React, TypeScript, Vite, Zustand, Vitest, deterministic RNG, and
+  framework-independent engine boundaries.
+- Established serializable domain conventions and source-of-truth docs.
+
+### Phase 1 — Basketball Engine V0 — COMPLETE / FROZEN
+
+- Added deterministic Players, Teams, 12-Player rosters, derived ratings and
+  Team Strength, Rotation validation/defaults, game simulation, overtime, and
+  reconciled Player box scores.
+- Exact current formulas and invariants live in `SIMULATION.md`.
+
+### Phase 2 — First Playable Coaching Loop — COMPLETE
+
+- Delivered Exhibition matchup selection, editable legal Rotations, displayed
+  Team strength, deterministic simulation, and full postgame presentation.
+- Established engine-authoritative validation and stable re-simulation.
+
+### Phase 3 — League and Season Framework — COMPLETE
+
+- Delivered the stable 32-Program/four-Conference Universe, deterministic
+  24-round Schedule, canonical Season progression, AI round simulation,
+  standings, Quick Sim, Super Sim, and regular-season presentation.
+- Added regular-season Player/Team statistics, leaders, schedules/results,
+  Team Details, Player Details, and cross-Program exploration.
+
+### Phase 4 — Postseason V0 — COMPLETE / FROZEN
+
+- Delivered automatic/at-large selection, accepted unified results-only résumé
+  seeding, fixed bracket progression, neutral-site simulation, Tournament Hub,
+  Quick Sim, Game Prep, completed box scores, and champion derivation.
+
+### Phase 5 — Dynasty Loop Backend — COMPLETE / FROZEN
+
+- Added canonical multi-season `DynastyState`, stable Player identity,
+  Recruiting, commitments, Late Recruiting, immutable completed history,
+  offseason turnover, Development, exact roster assembly, and atomic rollover.
+- Validated repeatable multi-Season lifecycle and long-run economy boundaries.
+
+### Phase 6 — Dynasty Application Loop — COMPLETE / FROZEN
+
+- Made the complete Season → Tournament → Late Recruiting → Offseason → next
+  Season loop playable in React/Zustand without duplicating canonical facts.
+- Accepted Recruiting IA/readiness/battles, Season/Postseason presentation,
+  Super Sim completion, Coaching home, Rotation V1 migration, Simple Rotation,
+  and Starting Five/Bench/Reserves presentation.
+- Detailed accepted UI patterns live in `UI_DESIGN.md`; causal evidence is
+  indexed from `PLAYTESTING_ARCHIVE.md`.
+
+### Phase 7A — Followed Players V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added stable followed Player IDs, Follow/Unfollow behavior, safe lifecycle
+  handling, and a League Following destination with no basketball effect.
+- Historical retrieval of departed Players was not part of the original 7A
+  milestone; Phase 7B.2 extended this stable-ID foundation.
+
+### Phase 7B — Player & League Stories V1 — COMPLETE / ACCEPTED / FROZEN
+
+- **7B.1 Around the Country / News:** deterministic current-Season stories,
+  complete-checkpoint publication, Follow context, and accepted context polish.
+- **7B.2 Player Legacy / Alumni:** stable-ID former-Player resolution,
+  the Dynasty-aware `active | former | unknown` model, regular-season career
+  aggregation, Historical Player Details, and retained Following intent.
+- **7B.3 Season Preview:** Season 1 and rollover cast projections, Rounds 1–2
+  Hub promotion, persistent active-Season League News access, and reusable
+  Player/Program exploration.
+
+Phase 7B added visibility/read models only: no parallel history, Preview/News
+persistence, RNG, or simulation changes.
+
+## Historical Player Identity Research — COMPLETE / PARKED
+
+Characterization separated profile generation, OVR valuation, and statistical
+translation. Production Player generation and canonical `calculateOverall()`
+remain unchanged. Profile Generation Experiment A V2 is experimental input
+only; OVR Experiment B v1 was rejected. No Player Identity tuning phase is
+selected. See `PLAYER_IDENTITY_RESEARCH.md` for evidence and reopening criteria.
+
+## Deferred beyond the selected horizon
+
+Persistence/save-load, transfers, injuries, staff, rankings, deeper offseason
+decisions, broader Alumni search, postseason/combined career aggregation, and
+other unscheduled ideas remain outside this Roadmap until deliberately selected.
+See `FUTURE_FEATURES.md`; inclusion there does not imply priority.

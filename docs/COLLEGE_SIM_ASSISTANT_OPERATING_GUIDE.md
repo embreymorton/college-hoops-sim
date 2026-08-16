@@ -25,14 +25,38 @@ slice, test pass, or polish task. Keep those implementation steps inside one
 milestone. A phase should usually contain 2–4 milestones around one product
 question; start a new phase letter when the theme changes.
 
+# Fresh Session Quick Start
+
+Normal feature-planning sessions read only:
+
+1. `CURRENT_STATE.md` in full;
+2. `ROADMAP.md` → **Current Selected Horizon**;
+3. `PLAYTESTING.md` → **Current Playtesting Priorities**, **Live WATCH Items**,
+   and sections directly relevant to the milestone;
+4. owner documentation for the system being changed; and
+5. relevant production code.
+
+Do not automatically read `PLAYTESTING_ARCHIVE.md`,
+`PLAYER_IDENTITY_RESEARCH.md`, unrelated completed Roadmap sections, or
+unrelated historical research. Read them only when the active problem requires
+their evidence. The repository remains authoritative over chat memory.
+
+Future prompts should prefer:
+
+```text
+Read CURRENT_STATE.md in full; the Current Selected Horizon in ROADMAP.md;
+Current Playtesting Priorities, Live WATCH, and directly relevant Playtesting
+sections; relevant owner docs; and relevant production code.
+Do not read conditional archives unless this task explicitly reopens them.
+```
+
 ---
 
 # Source-of-Truth Discipline
 
-Before making architectural or implementation recommendations, read
-`docs/CURRENT_STATE.md` completely and inspect the current repository state.
-Then use `PLAYTESTING.md` as the empirical priority source and `ROADMAP.md` as
-the deliberately selected sequence.
+Before making architectural or implementation recommendations, follow the Fresh
+Session Quick Start and inspect the current repository state. `PLAYTESTING.md`
+supplies empirical evidence; only `ROADMAP.md` selects sequencing.
 
 Prefer current code + current docs over assumptions from old chats.
 
@@ -330,6 +354,13 @@ Do not document speculative formulas as if implemented.
 
 Do not mark a full feature complete after only an internal migration checkpoint.
 
+Raw playtest notes must be synthesized before documentation. Active Playtesting
+gets current conclusions and live WATCH evidence; selected richer closed
+narratives may move to the Playtesting Archive. Names are retained only when
+they materially strengthen causal understanding, and anecdotes do not by
+themselves authorize tuning, defects, or Roadmap changes. See the Documentation
+Policy for the authoritative rules and reusable prompt guidance.
+
 Final implementation responses must include `## Documentation` and identify the
 docs updated, the docs intentionally not updated, or that no accepted
 source-of-truth fact changed.
@@ -385,8 +416,16 @@ targeted tests
 
 # Documentation
 Follow docs/DOCUMENTATION_POLICY.md.
-Only after acceptance gates pass, update only the docs whose owned facts changed.
-Do not document speculative or failed behavior.
+Do not edit accepted source-of-truth docs during implementation.
+Only after implementation, automated validation, and required manual acceptance:
+1. list durable accepted facts that changed;
+2. map each fact to its owner under Documentation Policy;
+3. update only those owners;
+4. keep Roadmap to status/sequencing and Current State to current truth/freeze/NEXT;
+5. put empirical acceptance in Playtesting;
+6. update Architecture, Simulation, Game Design, or UI Design only when their
+   owned facts changed; and
+7. do not perform a broad documentation sync.
 
 # Do NOT change
 - ...
@@ -405,6 +444,73 @@ Stop after Phase X.
 Prompts should be detailed enough that the implementation agent does not need to redesign the feature, but not so broad that a single turn becomes repository-wide project management.
 
 When an agent repeatedly times out or stops mid-migration, reduce scope rather than adding more instructions.
+
+# Feature Development Workflow
+
+## 1. Establish truth
+
+Read the minimal fresh-session set, relevant owner docs, and relevant code.
+Confirm production truth, frozen systems, and the exact Roadmap checkpoint.
+
+## 2. Broad planning — only when needed
+
+If product placement or information architecture is genuinely ambiguous,
+inspect realistic options without coding. When placement is open, avoid putting
+the preferred answer into the initial planning prompt; compare destinations
+from their current production responsibilities.
+
+## 3. User/product decision
+
+Discuss tradeoffs and lock the player-facing direction.
+
+## 4. Narrow contract pass — only when needed
+
+Resolve remaining data/projection contract, lifecycle, ordering, navigation,
+edge cases, and validation. Planning should get narrower, not repeat itself.
+Every additional planning pass must remove a distinct unresolved uncertainty.
+
+Once product direction, architecture, lifecycle, navigation, and validation are
+sufficiently resolved, stop planning and implement.
+
+## 5. Codex implementation
+
+Prefer one behavior owner for domain/read model, navigation, functional UI,
+tests, and validation. Do not prematurely split overlapping implementation
+across agents.
+
+## 6. Manual play and screenshots
+
+Evaluate the feature in normal gameplay, not only technical checks. Ask whether
+it created understanding, useful decisions, and memorable Players/Programs/
+Seasons—for example, “Did this help me remember Avery?”
+
+When the user provides detailed playtest notes, analyze them before documenting.
+Extract current patterns, behavior changes, and evidence status rather than
+copying the notes wholesale. Preserve named examples selectively, treat one
+anecdote as observation rather than an automatic system change, and remember
+that not every playtest requires docs. Follow `DOCUMENTATION_POLICY.md` →
+**Playtest Note Synthesis** for destination and archive rules.
+
+## 7. Optional visual polish
+
+If behavior is accepted but presentation needs work, freeze functional behavior
+and use a focused presentation pass. Claude/frontend-design is appropriate for
+visual hierarchy, layout, responsive behavior, and accessibility. Do not assume
+every feature needs a separate polish pass or expand scope during polish.
+
+## 8. Accept, document, and freeze
+
+After acceptance, update changed facts in owner docs only, advance Roadmap,
+clear/rescope current WATCH evidence, freeze the milestone, and start future
+work from repository truth.
+
+## Calibration discipline
+
+Do not tune because scripts or unfinished experiments exist. Tuning begins with
+a current gameplay problem and evidence that simulation behavior needs changing.
+Historical experimental momentum is not evidence. Normal feature work should
+not run calibration unless it changes simulation/balance or current evidence
+specifically requires a diagnostic.
 
 ---
 

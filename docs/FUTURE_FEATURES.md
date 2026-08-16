@@ -1,285 +1,121 @@
 # Future Features
 
-This file contains desirable product/gameplay ideas that are intentionally unscheduled and non-blocking for the current Dynasty MVP.
+This is an unscheduled, non-blocking idea bank. Inclusion is not commitment,
+priority, or a date. Only deliberate selection in `ROADMAP.md` creates planned
+work; this file never owns **NEXT**.
 
-Inclusion does not mean commitment, priority, or an implementation date. An idea may move into `ROADMAP.md` only after it is deliberately selected as planned work. Bugs, technical debt, maintainability risks, and current-design scaling watchpoints belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md` instead.
+Selected Roadmap features receive at most a short pointer here. Completed
+features are removed unless a genuinely future extension remains. Confirmed
+defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
-This file is a parking lot: an idea may remain here indefinitely. When repeated
-Playtesting evidence supports it and the project deliberately selects it, move
-the selected work into Roadmap and remove or reword duplicate future-only text.
-See `DOCUMENTATION_POLICY.md`.
+## Selected elsewhere
 
-## Recruiting boundary
+- **History & Recognition:** Season Archive / Yearbook, Records & Milestones,
+  and Awards & Honors are selected under Phase 7C in `ROADMAP.md`.
+- **Recruit Attachment:** Recruit Details, Follow Recruits, and Recruit → Player
+  continuity are selected under Phase 7D in `ROADMAP.md`.
 
-Board + Focus + Offer Recruiting, its player-facing UI, Late Recruiting,
-finalization, freshman enrollment, Offseason presentation, and repeatable Dynasty
-rollover are implemented. Historical browsing and persistence remain future
-product work. See `ROADMAP.md` for deliberately selected sequencing.
+The Roadmap owns their order and scope. They are not specified again here.
 
-### Recruiting depth — future and non-blocking
+## Recruiting depth
 
-- Campus visits and signing-day presentation
-- Geography and home-state preferences
-- Recruiting pipelines and facilities
-- NIL
-- Playing-time promises
-- Deeper recruit personality and preferences
-- Dynamic interest from Tournament success
-- Depth-chart opportunity effects
-- Coaching/staff recruiting bonuses
-- Decommitments
-- Scouting uncertainty and hidden ratings/Potential
-- Transfer-portal interactions
-- Recruiting battles, class-history UI, and retrospectives
-- Recruiting class rankings, awards, and recognition
+- campus visits and signing-day presentation;
+- geography, home-state preference, and pipelines;
+- facilities, NIL, staff/recruiting bonuses, and program resources;
+- playing-time promises and depth-chart opportunity;
+- personality and deeper Recruit preferences;
+- scouting uncertainty and hidden ratings/Potential;
+- decommitments and transfer-portal interactions;
+- recruiting class rankings and retrospective class evaluation; and
+- dynamic interest from winning or Tournament success.
 
-These enhancements are intentionally unscheduled and are not Dynasty MVP
-requirements. Current Recruiting exposes exact ratings/Potential, gives no
-winning or Tournament attraction bonus, and treats commitments as final.
+These ideas would require explicit player-facing rules and, where they affect
+attraction/AI/talent movement, fresh calibration. Their existence is not a
+reason to retune accepted Recruiting now.
 
-Recruit Talent Distribution V1 and the current talent economy are accepted and frozen. Transfer-portal behavior, NIL, facilities, staff modifiers, NBA/early-departure rules, or other future Recruiting inputs may require a new long-run calibration after their design is implemented; their possibility is not a reason to retune the present system.
+High-school statistics remain model-undefined because no canonical high-school
+season is simulated. If revisited, decide whether displayed values are scouting
+context, attribute-derived estimates, competition-adjusted production, or
+intentional uncertainty before treating them as facts.
 
-### Recruit identity and pre-college attachment
+## Player and statistical depth
 
-Recruit Details, Follow Recruits, and Recruit → Player continuity are now
-deliberately selected under Phase 7D in `ROADMAP.md`; that roadmap owns their
-sequence. They could make
-existing prospects memorable before commitment and preserve the relationship
-when a Recruit becomes an enrolled Player. Presentation can begin from existing
-canonical facts: name, height, position, stars, national/position rank, OVR,
-POT, attributes, offers, Focus/readiness, and interested Programs. This is a
-future extension, not a reopening of accepted Followed Players V1.
+### Player Identity / statistical variety — PARKED
 
-Deeper motivations remain separate simulation work. Home-state/geographic
-preference, winning, playing-time opportunity, and similar interests would need
-explicit attraction and AI behavior plus geography, depth, and Prestige
-calibration. Personality, scouting uncertainty, and hidden POT likewise remain
-undesigned.
-
-High-school statistics are also model-undesigned because the game does not
-simulate a canonical high-school season. If revisited, decide whether they are
-scouting context, attribute-derived estimates, competition-adjusted production,
-or intentionally uncertain information before presenting them as facts.
-
-## Statistics and League immersion
-
-Around the Country, Player Legacy / Alumni, and Season Preview are accepted and
-frozen Phase 7B features. Related unscheduled extensions remain parked below;
-`ROADMAP.md` owns selected scope and sequence.
-
-### Player Profile / Statistical Identity
-
-Most Players should remain recognizably shaped by their listed position, so PGs
-normally lead assist production and PFs/Centers normally lead rebounding. A
-future direction could add greater rare variability within those norms:
-unusually tall or strong-rebounding guards, playmaking bigs, point-forward
-wings, stretch Centers, undersized skilled bigs, and other cross-positional
-statistical anomalies. These should emerge from unusual combinations of
-attributes, physical profile, position, minutes, production, and any later
-earned involvement concepts—not from named-player templates. Rarity is a design
-requirement because an exception is valuable precisely when it is memorable.
-No frequency or formula is selected.
-
-Potential presentation labels include `Playmaking Big`, `Point Forward`,
-`Jumbo Creator`, `Rebounding Guard`, `Stretch Five`, and `Combo Guard`.
-Prefer deriving any label after the fact from a Player's actual profile and
-production rather than storing an archetype flag first and forcing generation
-to match it. Thresholds and formal archetype rules remain undesigned.
-
-This direction could strengthen several separate future features:
-
-- optional Followed Players extensions such as story amplification or notifications, beyond accepted V1;
-- League News/Round Recap through unusual leaderboard positions, triple-double
-  profiles, and statistical milestones;
-- Awards, Career History, and Program Records by making accomplishments more
-  distinct than comparisons among similar positional prototypes;
-- Recruiting by making unusual Recruit profiles memorable targets without
-  changing current Recruiting mechanics; and
-- the shot-selection/statistical-identity investigation, so stretch bigs,
-  pass-first guards, scoring PGs, and playmaking Centers may eventually produce
-  differently for evidence-supported reasons.
-
-The completed deterministic characterization found a mixed result. Fresh
-Season 1 Universes regularly contain elite multi-category Players, and extreme
-attributes translate inside conventional positions. Cross-position profile
-supply is sparse, however, and strong position-specific per-40 baselines keep
-all sampled Top-10 assists at PG, all Top-10 rebounds at PF/C, and nearly all
-Top-10 blocks at C. Current approximately-36-MPG leaders also reduce raw
-extremes relative to historical 40-MPG stories. See
-`PLAYER_IDENTITY_RESEARCH.md` for the consolidated method and evidence.
-
-Additional profile calibration is parked with no selected phase. No tuning
-target or implementation is selected; manual gameplay must provide a concrete
-reason to reopen it. Historical evidence and experiment results live in
+Rare cross-position identities, Development identity retention, Passing/Steals
+translation, and profile labels remain ideas rather than selected work. No
+Player Identity phase is scheduled. Canonical generation and OVR remain active;
+full historical evidence and reopening criteria live in
 `PLAYER_IDENTITY_RESEARCH.md`.
 
-The follow-up Elite Player Profile / OVR Specialization characterization found
-that shared talent generation makes elite Players increasingly all-around and
-that the rounded weighted-average OVR formula adds position-dependent
-completeness gates. This is strongest for broadly weighted SFs and for
-offense-only PG/SG profiles; Centers can retain low perimeter skills more
-readily, though specialized traditional or playmaking Centers still rarely
-reach 95 naturally. A future design review should evaluate profile shape, OVR
-valuation, and stat translation as separate but interacting layers while
-protecting the current `2.88` 90+, `0.28` 95+, and `0.04` 97+ Players per fresh
-Universe.
+### Postseason and combined statistics
 
-Two evidence-supported principles should be evaluated, not assumed as final
-rules: OVR measures total basketball value within a position rather than
-attribute completeness; and positions describe common profiles without making
-those profiles mandatory. Do not add archetype flags or tune constants from
-these principles alone.
+- postseason Player totals, averages, leaders, and game logs;
+- combined regular-season + Tournament statistics;
+- postseason Team statistics; and
+- explicit Tournament résumés and signature games.
 
-The completed investigation accepted Candidate A V2 as experimental input only
-and rejected OVR Candidate B v1. Passing and Steals remain possible later
-translation investigations; Rebounding escape and Blocks flexibility remain
-deferred. Full evidence lives in `PLAYER_IDENTITY_RESEARCH.md`.
-
-Candidate A V2 is accepted as experimental input, not production behavior.
-Development Identity Retention remains a parked compatibility question, not a
-diagnosed Development defect or a prerequisite for feature work.
-
-Any future OVR candidate must audit Development headroom by comparing `POT −
-canonical OVR` with `POT − candidate OVR` for all Players, elite cohorts,
-Candidate A selections, Recruits, and high-POT developmental Players. Candidate
-adjustment may legitimately consume some runway for recognized specialists,
-but it must not broadly compress career growth opportunity. This does not alter
-or diagnose Development V1.
-
-Player Identity does not depend on a full OVR redesign. Profile generation,
-identity retention through Development, and targeted statistical translation
-can still make Players more recognizable and worth following while canonical
-OVR remains active. A safe imperfect rating is preferable to destabilizing
-mature downstream systems solely to perfect every unusual Player's displayed
-value.
-
-### Postseason Player Stats
-
-Tournament `GameResult` values already retain full `PlayerGameStats`. Future pure projections could provide Postseason Player totals/averages, Program postseason Player tables, and Tournament leaders without changing regular-season `PlayerSeasonStats` semantics.
-
-### Combined regular-season and Postseason Stats
-
-A future presentation could distinguish `REGULAR SEASON`, `POSTSEASON`, and `OVERALL`. Prefer a distinct projection rather than silently expanding existing regular-season APIs.
-
-### Postseason Team Stats
-
-Derive Tournament Team totals and rates from Postseason results, analogous to current regular-season `TeamSeasonStats`.
+Current Former Player career aggregation is regular-season-only. These future
+projections should reuse retained Tournament `PlayerGameStats` without changing
+current regular-season semantics.
 
 ### Additional leader views
 
-- National Team statistical leaders: PPG, opponent PPG, margin, RPG, APG, and FG%
-- Conference-filtered Player leaders
-- Player season/game highs for PTS, REB, and AST
-- Shooting-percentage leaders with deliberately designed minimum-attempt qualifications
+- shooting percentage with minimum-attempt qualification;
+- three-pointers, minutes, efficiency, and class/position filters;
+- Conference and freshman leaderboards; and
+- historical Season leaderboards once an archive experience exists.
 
-## Awards and recognition
+## History and immersion beyond selected work
 
-Awards & Honors is selected as the last milestone of Phase 7C in `ROADMAP.md`.
-The exact choices below remain undesigned possibilities rather than a second
-active plan:
+- broad Program Alumni browser and global historical Player search;
+- richer Program history, rivalries, banners, and prestige history;
+- signature games and player-facing Tournament career summaries;
+- polls/rankings and richer résumé context;
+- broadcast-style story packages and Season retrospectives;
+- Conference history and Tournament records; and
+- coach career records and legacy.
 
-- Player of the Year
-- All-Conference and Conference awards
-- All-American teams
-- Postseason or Tournament honors
-
-Award formulas and voting logic are intentionally undesigned.
-
-## Rankings and world context
-
-- Top 25 and ranking history
-- Strength-of-schedule and résumé systems
-- Conference strength or reputation
-
-These require separate basketball and presentation design; they are not cosmetic extensions of current leaderboards.
+Records, Awards, and the initial Season Archive are already selected in Phase
+7C; the ideas above are extensions, not expanded 7C scope by default.
 
 ## Tournament depth
 
-- Conference tournaments
-- Postseason statistical leaderboards
-- Regional structure if the universe expands
-- More sophisticated selection and seeding after scaling
-
-For first-round Conference-rematch avoidance, see
-`KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; that is a current-design quality watchpoint
-rather than a duplicate feature entry here.
+- bracket-pool or spectator tools;
+- bubble/selection-show presentation;
+- historical bracket browsing;
+- richer neutral-site presentation;
+- Conference Tournament systems; and
+- expanded fields or alternate formats only after deliberate product design.
 
 ## Roster and coaching depth
 
-- Redshirts
-- Injuries, fatigue, morale, and chemistry
-- Playing-time expectations
-- Generic roster spots or scholarship accounting
-- Roster-size changes
-- Persistent Player secondary-position identity beyond current derived Rotation V1 eligibility
-- Position changes
-- Roster cuts and walk-ons
-- Transfer portal
-- Early professional departures
-- Fifth-year eligibility
-- Deeper tactics, schemes, and live coaching
-- Rotation-preference carryover between seasons
-- Staff and coaching carousel
+- manual canonical starters or role definitions with simulation meaning;
+- redshirts, medical redshirts, and eligibility exceptions;
+- injuries, fatigue, morale, chemistry, and discipline;
+- transfers and early professional departures;
+- coaching staffs, schemes, practices, and player-development choices;
+- substitution patterns and rotation presets; and
+- possession-level/live coaching.
 
-None is required for the current Dynasty MVP. Rotation V1 already permits
-derived adjacent-position floor minutes, but Recruiting openings, roster
-construction, Offers, and Player identity still use natural position. These
-future systems would change that deeper boundary.
-
-### Player-development depth
-
-Player Development V1 is accepted and frozen. Optional later depth may include:
-
-- age/class-based regression
-- playing-time or statistical-performance development effects
-- coaching, staff, or facility development modifiers
-- user-selected training focus
-- position changes
-- dynamic Potential or scouting uncertainty
-
-These are unscheduled enhancements, not prerequisites for the accepted Season Rollover V0. Redshirts, transfers, and early professional departures remain separate optional roster-depth systems above.
+These systems would materially change simulation or lifecycle behavior and need
+their own selected phases and validation.
 
 ## Presentation and broader modes
 
-- Save/load and persistence UX
-- Starting-five, matchup-comparison, or positional-insight presentation
-- Explicit Player or Team archetype presentation
-- Multiplayer or online leagues
-
-These are optional product directions, not current UI defects.
-
-### Spectator / League Observer Mode
-
-An unscheduled future mode could run a simulation without controlling a
-Program: advance rounds and Seasons while observing News, League developments,
-Player and Program details, Recruiting context, and Tournament results as a
-world-simulation experience. No design or priority is selected, and this is not
-part of Phase 7. Current Season Hub, Coaching, Recruiting, Quick Sim, and
-Postseason flows likely assume a controlled Program, so the concept requires a
-dedicated future design and architecture pass before it could be scheduled.
-
-## History and immersion
-
-Player Legacy / Alumni is selected for Phase 7B, while Season Archive / Yearbook
-and Records & Milestones are selected for Phase 7C. `ROADMAP.md` owns their
-sequence. Related unscheduled extensions remain parked here:
-
-- Program history pages beyond the selected archive/records scope
-- Deeper historical League leaderboards
-- Additional career-stat presentation
-
-The accepted Dynasty archive and stable returning Player identity preserve the source facts needed to keep these ideas possible; their projections and presentation remain unimplemented.
+- save/load and Dynasty management;
+- accessibility and localization expansion;
+- spectator / League Observer mode;
+- richer responsive/mobile navigation;
+- optional presentation themes; and
+- export/share tools for Seasons, brackets, and careers.
 
 ## Universe expansion
 
-- More Programs and Conferences
-- A larger National Tournament
-- Conference realignment
-- Dynamic Program prestige
+- additional Programs or Conferences;
+- configurable league sizes and schedules;
+- generated Universes; and
+- custom Program/conference editing.
 
-Expansion details remain intentionally high-level and must not turn Universe V0's `32 / 4 / 8` configuration into generic engine assumptions.
-
-Systems that change departures, eligibility, roster capacity, Player Development,
-position capacity, or prestige should rerun long-run talent calibration when
-implemented. Ordinary presentation work should not reopen frozen Talent V1,
-Development V1, Recruiting, or Rotation V1.
+Universe expansion must preserve stable identity, validation, deterministic
+generation, and generic engine boundaries.

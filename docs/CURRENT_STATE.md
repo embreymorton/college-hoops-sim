@@ -15,7 +15,7 @@ simulation tuning.
 College Hoops supports a repeatable multi-season Dynasty:
 
 ```text
-Program selection → Preseason → Regular Season + Recruiting → Tournament
+Program selection → Season opening / Regular Season + Recruiting → Tournament
 → Late Recruiting → Offseason → Development + roster assembly
 → next Season → repeat
 ```
@@ -149,7 +149,8 @@ automatically.
 | Document | Purpose |
 | --- | --- |
 | `ROADMAP.md` | Completed sequence and deliberately selected horizon |
-| `PLAYTESTING.md` | Current empirical evidence and causal history |
+| `PLAYTESTING.md` | Active priorities, live WATCH items, and current empirical evidence |
+| `PLAYTESTING_ARCHIVE.md` | Conditional closed playtesting evidence |
 | `PLAYER_IDENTITY_RESEARCH.md` | Parked Player Identity experiments and reopening criteria |
 | `ARCHITECTURE.md` | Canonical ownership, boundaries, and dependencies |
 | `SIMULATION.md` | Accepted production formulas, constants, and invariants |

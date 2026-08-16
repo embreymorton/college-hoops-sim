@@ -14,7 +14,12 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
 - **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, enter Late Recruiting, finalize the class, review departures/development/incoming Players in Offseason, begin the next Season, and repeat.
 - **Deterministic replayability:** each interactive Dynasty receives one unique creation seed; all rosters, schedules, Recruiting, and simulations remain deterministic from that stored seed. Explicit-seed tests and inspection workflows remain repeatable.
 
-The current playable core is complete. Intentionally deferred systems include persistence/save-load, Dynasty history browsing, career stats, awards, transfers, injuries, staff, rankings, and deeper offseason decisions.
+The current playable core is complete. Targeted Dynasty history exists through
+Followed Former Players, Historical Player Details, regular-season career
+aggregation, and Career Progression. Intentionally deferred systems include
+persistence/save-load, broad Season/Alumni browsing, postseason or combined
+career aggregation, records, awards, transfers, injuries, staff, rankings, and
+deeper offseason decisions.
 
 ## Commands
 
@@ -40,7 +45,7 @@ The current playable core is complete. Intentionally deferred systems include pe
 
 Project constraints live in [`docs/`](docs/). For ongoing work, start with
 [current state](docs/CURRENT_STATE.md), then [playtesting](docs/PLAYTESTING.md),
-the [roadmap](docs/ROADMAP.md), and the
+the Roadmap's [Current Selected Horizon](docs/ROADMAP.md#current-selected-horizon), and the
 [assistant operating guide](docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md).
 Read [calibration](docs/CALIBRATION.md) when changing simulation/balance and the
 [documentation policy](docs/DOCUMENTATION_POLICY.md) when updating docs.
@@ -50,3 +55,5 @@ Optional ideas belong in
 Parked Player Identity experiments live in
 [the historical research archive](docs/PLAYER_IDENTITY_RESEARCH.md) and are not
 part of normal feature-session reading.
+Closed gameplay evidence lives in the conditional
+[playtesting archive](docs/PLAYTESTING_ARCHIVE.md), also outside the normal read set.

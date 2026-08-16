@@ -23,9 +23,10 @@ work follows this policy's targeted acceptance updates.
 | Document | Owns | Update when | Do not use for |
 | --- | --- | --- | --- |
 | `README.md` | Concise project overview and major playable capability | Player-facing capability or overall project status materially changes; entry path changes | Milestone internals, diagnostic history, exact constants, backlogs |
-| `docs/CURRENT_STATE.md` | What is true right now: implemented, canonical, frozen, major watchpoints, planning start | Accepted architecture/production truth changes; major system freezes; planning start materially changes | Append-only history |
-| `docs/ROADMAP.md` | Completed sequence and a small deliberately selected horizon | Milestone accepted, reordered, selected, cancelled, or deferred | Wishlist, playtest notebook, debt dump |
-| `docs/PLAYTESTING.md` | Empirical gameplay evidence and causal history | Meaningful observation, investigation, diagnostic, resolution, watchpoint, or design-significant story | Automatic bug classification from one anecdote |
+| `docs/CURRENT_STATE.md` | Current production truth, frozen boundaries, live WATCH summary, and exactly one concise mirror of Roadmap NEXT | Accepted truth/freeze changes or Roadmap NEXT changes | History, acceptance chronology, experiment details |
+| `docs/ROADMAP.md` | The one authoritative NEXT, later PLANNED sequence, and compact completion status | Milestone accepted, reordered, selected, cancelled, or deferred | Implementation detail, research notebooks, acceptance logs |
+| `docs/PLAYTESTING.md` | Current priorities, live WATCH items, active empirical evidence, and concise recent acceptance evidence | Current observation, priority evidence, watchpoint, or narrative acceptance changes | Product sequencing, closed-history bulk, experiment mechanics |
+| `docs/PLAYTESTING_ARCHIVE.md` | Conditional-read closed playtesting evidence and causal history | Closed evidence no longer affects current planning but remains useful | Current priorities, NEXT, normal session reading |
 | `docs/CALIBRATION.md` | How tuning and validation are performed | Methodology, presets, audits, comparison, parallelism, or acceptance process changes | Current balance constants |
 | `docs/SIMULATION.md` | Accepted production formulas, constants, invariants, and validated calibration results | Production simulation behavior is accepted | Candidate formulas, failed experiments, diagnostic-only alternatives |
 | `docs/GAME_DESIGN.md` | Accepted player-facing rules and control semantics | Accepted gameplay behavior changes | Implementation internals |
@@ -37,7 +38,127 @@ work follows this policy's targeted acceptance updates.
 | `docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md` | How assistants reason, validate, prompt, and hand off work | Process, prompting, validation philosophy, or documentation governance changes | Current product state |
 
 `CURRENT_STATE.md` is curated and replaced, not append-only. `PLAYTESTING.md`
-normally preserves useful causal history even after resolution.
+is an active front door; detailed closed causal history moves to
+`PLAYTESTING_ARCHIVE.md` when it begins to obscure current evidence.
+
+## Sequencing authority
+
+Only `ROADMAP.md` owns **NEXT** and **PLANNED** sequencing.
+
+- `CURRENT_STATE.md` mirrors exactly one concise Roadmap NEXT pointer.
+- `PLAYTESTING.md` supplies evidence and priorities but never selects NEXT.
+- `FUTURE_FEATURES.md` contains unscheduled ideas and never uses NEXT.
+- research/archive documents never select product sequencing.
+
+Planning can change Roadmap sequence only when the user explicitly chooses a
+sequencing decision. Informal interest and historical experimental momentum do
+not select work.
+
+## Anti-bloat and conditional-read rules
+
+- **Current State:** if text mainly answers “how did we get here?”, move it.
+  If the file grows materially beyond roughly 200–250 lines, audit ownership
+  before adding more.
+- **Roadmap:** completed milestones normally need only a status and 1–3 durable
+  outcome bullets. Formulas, helpers, gates, samples, and acceptance chronology
+  belong elsewhere.
+- **Playtesting:** keep priorities and live WATCH items near the top. Archive
+  closed evidence when it pushes current evidence down.
+- **Future Features:** do not duplicate a selected Roadmap specification or a
+  completed feature.
+- **Research:** use descriptive experiment names, not product-phase numbering,
+  unless the experiment is itself a selected Roadmap milestone.
+
+When completed or parked research overwhelms Current State, Roadmap, or active
+Playtesting, extract it to a conditional-read research/archive document. Active
+docs retain only status, relevant conclusion, and a link; evidence is preserved.
+
+## Playtest Note Synthesis
+
+Raw user playtest notes are evidence inputs, not documentation-ready prose.
+Analyze them in conversation first, then extract:
+
+- what worked or confused the user;
+- what changed user behavior or created attachment;
+- what repeated and may indicate a systemic issue;
+- what was only an isolated anecdote; and
+- what is WORKING, OBSERVED, WATCH, CONFIRMED/DEFECT, RESOLVED, or a FUTURE
+  IDEA.
+
+The default transformation is:
+
+```text
+raw playthrough anecdotes → product evidence/pattern → concise documentation
+```
+
+Do not maintain a chronological diary of every Player, Recruit, Program, score,
+or performance. Not every playtest session requires a documentation update; if
+no durable/current evidence changed, `Documentation: none required` is valid.
+
+### Selective named examples
+
+Preserve a specific Player, Recruit, Program, or game only when the concrete
+example materially improves causal understanding—for example, it is the
+clearest live signal, explains why behavior changed, forms an important multi-
+Season narrative, triggered Follow/inspect/recruit interest, or is deliberately
+tracked across sessions. Usually one strong exemplar is better than a list.
+
+Use this test: if removing the name/details does not weaken the causal record,
+summarize the pattern. If it does, retain one concise example. Do not overcorrect
+into automatically nameless documentation; emotional and behavioral evidence
+such as “I followed him,” “I remembered her next Season,” “this upset mattered,”
+or “I wanted to inspect that Program” is valid product evidence.
+
+Named examples are development evidence, not canonical world history. Mentioning
+an entity does not create permanent simulation metadata, a hidden Hall of Fame,
+a feature requirement, or a commitment to preserve it forever. Canonical world
+history remains in Dynasty state and archives.
+
+### Destination rules
+
+- **Current State:** named anecdotes are almost never appropriate; record the
+  durable product truth.
+- **Roadmap:** named anecdotes are almost never appropriate; record product need,
+  status, and sequencing.
+- **Active Playtesting:** use a selective exemplar only when it materially
+  explains a current priority, WATCH item, acceptance signal, or behavior.
+  Summarize repeated same-pattern examples rather than listing them.
+- **Playtesting Archive:** selected named narratives are appropriate when they
+  preserve why a system changed, why a feature was accepted, or what long-term
+  attachment felt like. Still synthesize; never copy a game-by-game diary.
+- **Research documents:** concrete examples may remain when they directly
+  support the research evidence; do not move them into active Playtesting solely
+  because they name a Player.
+
+### Anecdote, escalation, and migration
+
+One disappointing Recruit, frequent-looking box-score outlier, or memorable arc
+normally begins as OBSERVED, WATCH, or a useful example—not a systemic defect,
+tuning requirement, or Roadmap change. Repeated normal-play evidence may justify
+escalation. Never run calibration solely because one playthrough had an outlier.
+
+While evidence affects current planning, keep its concise conclusion in active
+`PLAYTESTING.md`. After acceptance/resolution or when it is no longer active,
+retain a short closure if useful and move richer durable narrative to
+`PLAYTESTING_ARCHIVE.md`. Do not permanently duplicate the same detailed story
+in both files.
+
+### Reusable workflow
+
+```text
+raw user notes
+→ analyze in chat
+→ classify observations
+→ extract patterns and behavior changes
+→ choose only materially useful named exemplars
+→ update active Playtesting only with current evidence
+→ archive selected closed narratives later when useful
+```
+
+Prompts for playtest-note documentation passes must say: synthesize rather than
+copy; preserve names only when they strengthen the causal record; put current
+conclusions/WATCH items in active Playtesting; put selected closed narratives in
+the archive; and keep anecdotes out of Current State and Roadmap.
 
 ## Acceptance-driven updates
 
@@ -45,6 +166,11 @@ normally preserves useful causal history even after resolution.
 
 Do not update accepted source-of-truth docs or claim unvalidated behavior is
 current. Code comments and temporary implementation notes are allowed.
+
+Exploratory planning is also not accepted truth. Do not put proposed
+architecture in `ARCHITECTURE.md`, proposed UI in `UI_DESIGN.md`, or speculative
+behavior in production owner docs. Update accepted docs only after implementation,
+automated validation, and required manual acceptance.
 
 ### Diagnostic completed; production unchanged
 
@@ -61,13 +187,19 @@ Do not add candidate formulas to `SIMULATION.md`.
 
 After every acceptance gate passes:
 
-1. Update the specific production source-of-truth documents affected.
-2. Update `CURRENT_STATE.md` if current accepted truth materially changed.
-3. Update `ROADMAP.md` if milestone status or sequencing changed.
-4. Update `PLAYTESTING.md` if a tracked observation changed status.
-5. Update `README.md` only for a material project-level capability change.
+1. List the durable accepted facts that changed.
+2. Map each fact to its owner in the matrix above.
+3. Update only those owner documents.
+4. Update Roadmap when milestone status/sequence changed and Current State when
+   current truth, freeze state, or its mirrored NEXT changed.
+5. Put empirical manual acceptance in Playtesting.
+6. Update README only for a material project-level capability change.
 
 Do not automatically perform a broad documentation sync.
+
+Presentation-only polish defaults to **no documentation update**. Update docs
+only when polish establishes/materially changes a reusable UI pattern, resolves
+a tracked Playtesting/Known Issue item, or changes milestone acceptance/status.
 
 ### Failed or reverted implementation
 
@@ -125,9 +257,11 @@ When a later model replaces an older one, state the relationship explicitly.
 Do not leave an old paragraph declaring a system frozen while a later section
 quietly supersedes it.
 
-`PLAYTESTING.md` differs: preserve important observation → evidence → hypothesis
-→ diagnostic → implementation → validation → resolution/watch chains because
-they explain why the current system exists. Supported statuses are `OBSERVED`,
+`PLAYTESTING.md` keeps current evidence and concise conclusions. Preserve useful
+closed observation → evidence → hypothesis → investigation → decision chains in
+`PLAYTESTING_ARCHIVE.md` when they no longer affect active planning. Large
+topic-specific research belongs in a conditional research owner such as
+`PLAYER_IDENTITY_RESEARCH.md`. Supported evidence statuses are `OBSERVED`,
 `INVESTIGATING`, `CONFIRMED`, `RESOLVED`, and `WATCH`.
 
 ## Staleness and duplication
@@ -158,8 +292,8 @@ reduces duplication.
 Fresh planning sessions determine priorities from:
 
 1. `CURRENT_STATE.md`;
-2. current evidence/priorities in `PLAYTESTING.md`;
-3. selected sequencing in `ROADMAP.md`; and
+2. selected sequencing in `ROADMAP.md` (the only NEXT/PLANNED authority);
+3. current evidence/priorities in `PLAYTESTING.md`; and
 4. current code inspection.
 
 `FUTURE_FEATURES.md` is a parking lot. An idea can remain there indefinitely.
@@ -218,3 +352,15 @@ After roughly 5–10 meaningful accepted milestones, or at a major phase end, a
 lightweight consistency audit may check stale versions, implemented features
 still listed as future, resolved issues still active, conflicting `NEXT`
 priorities, and missing links. Do not rewrite documentation merely for style.
+
+### Phase-close hygiene
+
+At phase close, perform one small targeted check:
+
+- compress the closed Roadmap phase and advance its sole NEXT marker;
+- replace the Current State checkpoint rather than appending chronology;
+- remove/reword Future Features entries that shipped or became selected; and
+- clear resolved WATCH language and archive closed Playtesting evidence when it
+  no longer affects current planning.
+
+Do not turn this checklist into a repository-wide rewrite after every phase.

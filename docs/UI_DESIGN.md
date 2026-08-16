@@ -96,26 +96,19 @@ so an invalid row no longer renders taller than its neighbors. The 0–40
 validation rule itself, `RotationEditorPanel`'s other markup, and Game Prep /
 Tournament Game Prep are unchanged.
 
-## Followed Players V1 — accepted (Phase 7A)
+## Following and Player Legacy — accepted current pattern
 
 Player Details exposes one compact `Follow` / `Following` toggle beside Player
-identity. League extends its existing local `Leaders | Teams` tabs with
-`Following`; it does not add another global destination. The Following view is
-a dense current-season table (Player, Program, Pos, Cl, Ovr, PPG, RPG, APG)
-derived from stable followed IDs and current canonical facts. Player and
-Program names reuse existing detail navigation. Distinct quiet states cover no
-follow intent, no currently active followed Players, and mixed active/unresolved
-intent. Manual play accepted the full cross-Program retrieval loop. No inline
-unfollow action, notifications, historical snapshot, custom sorting, or new
-Player-profile surface is part of V1.
+identity. League's local `News | Leaders | Teams | Following` navigation keeps
+Following inside League rather than adding a global destination. The same
+ordered stable-ID intent derives `Active Players`, `Former Players`, and a quiet
+unavailable state for IDs absent from active and archived rosters.
 
-### Player Legacy / Alumni V1 — accepted (Phase 7B.2)
-
-Following now derives two ordered sections from the same stable Follow-ID
-intent: Active Players retain the accepted current-season table, while Former
-Players show Player, final Program, position, observed Dynasty Season range,
-Final OVR, and regular-season career PPG. IDs absent from active and archived
-rosters remain a quiet unavailable state and are never mislabeled as Former.
+Active rows show current Player/Program identity, class, OVR, and regular-season
+rates. Former rows show final Program, position, observed Dynasty Season range,
+Final OVR, and regular-season career PPG. Player and Program names reuse the
+existing detail navigation. Distinct quiet states cover no follow intent, no
+active Players, and unavailable IDs; unknown IDs are never mislabeled Former.
 
 The existing Player Details destination is status-aware rather than duplicated
 as an Alumni route. Former Player Details shows Former Player identity and
@@ -352,8 +345,12 @@ Postseason Hub inherits every shared-component change above (`CompletedMatchupCa
 ```text
 League
 ├── News / Around the Country (default)
+│   └── Season Preview retrieval action
 ├── National Leaders (PPG / RPG / APG / SPG / BPG)
 ├── Teams directory
+├── Following
+│   ├── Active Players
+│   └── Former Players / unavailable IDs
 ├── Team Details
 │   ├── record
 │   ├── OFF / DEF / OVR
@@ -388,6 +385,10 @@ completed competition checkpoint produced no stories, a quiet status says that
 checkpoint is complete with no notable news while older empty checkpoints remain
 absent. Before any checkpoint completes, the original New Dynasty empty state
 still explains that a complete round is required.
+
+The News heading retains a compact Season Preview action throughout the active
+regular Season and Tournament, while the Hub promotion itself is limited to
+Rounds 1–2. Season Preview is a destination, not a fifth League tab.
 
 ### Player Details + Development History — implemented (6E.8)
 

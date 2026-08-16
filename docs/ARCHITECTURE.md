@@ -92,18 +92,13 @@ The Season store is not authoritative for Program records, Conference records, s
 
 Followed Players is application intent rather than basketball truth. Zustand
 stores only a duplicate-free ordered list of stable Player IDs for the current
-Dynasty. A pure application read model resolves those IDs against current
-Season rosters and Universe Program definitions, returning an explicit
-unresolved result after a Player leaves the active universe. Intent survives
-Season rollover, clears when a new Dynasty is initialized, never stores Player
-or Team snapshots, and has no simulation effect.
-
-The Phase 7A.3A Following view projection composes that low-level resolution
-with `calculateOverall()` and the canonical `derivePlayerSeasonStats()` path.
-It returns active current-roster rows in first-followed order plus unresolved
-Player IDs and a total-followed count, allowing presentation to distinguish no
-follow intent from follow intent with no active Players. OVR and Season rates
-remain derived numeric facts rather than stored or preformatted UI state.
+Dynasty. Pure read models resolve each ID through active regular-season rosters,
+then completed regular-season archives, producing `active | former | unknown`.
+Active rows compose `calculateOverall()` and current
+`derivePlayerSeasonStats()`; former rows compose archived identity and
+regular-season career projections. Unknown IDs remain explicit without being
+mislabeled Former. Intent survives rollover, clears for a new Dynasty, stores
+no Player/Team snapshots, and has no simulation effect.
 
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
@@ -262,7 +257,13 @@ At initialization, each qualified Program's exact end-of-regular-season Team and
 
 The complete 15-game bracket is fixed when Postseason begins. Round-of-16 slots reference seeds; later slots reference stable prior-game winner sources. Completed `GameResult` facts resolve those sources without rebuilding or reseeding the bracket. The current tournament round, ready games, remaining or eliminated Programs, tournament completion, and National Champion are derived projections rather than parallel mutable flags or counters.
 
-Each completed tournament result is canonical and preserves the existing full home/away `PlayerGameStats` arrays. Postseason Quick Sim derives the same compact whole-game leader projection from that stored result. Postseason Player aggregates, combined regular/postseason statistics, career statistics, and tournament records are not yet implemented; future projections should derive them from retained results rather than introduce competing statistical truth.
+Each completed tournament result is canonical and preserves the existing full
+home/away `PlayerGameStats` arrays. Postseason Quick Sim derives the same compact
+whole-game leader projection from that stored result. Regular-season Former
+Player career aggregation is implemented from completed Season archives;
+Postseason Player aggregates, combined regular/postseason career statistics,
+Tournament résumés, and Tournament records are not. Future projections should
+derive them from retained results rather than introduce competing truth.
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
 

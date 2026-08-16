@@ -10,6 +10,10 @@ This document defines how the project tunes and validates simulation systems eff
 - `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`: confirmed unresolved issues and watchpoints.
 - `ROADMAP.md`: milestone sequencing.
 
+Historical Player Identity/OVR experiments are preserved in
+`PLAYER_IDENTITY_RESEARCH.md`. They are not an active tuning queue and should
+not be run or continued without a fresh gameplay problem.
+
 ## Production fidelity
 
 Calibration calls real production domain APIs. It does not use fast Game Sim, approximate Seasons, fake Recruiting outcomes, simplified Postseason logic, or alternate Development behavior.

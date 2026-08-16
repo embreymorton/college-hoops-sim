@@ -78,7 +78,12 @@ neutral site
 
 The lower numerical seed remains the designated home Program solely for stable `GameResult` orientation and presentation semantics. In Postseason, home designation does not receive the normal three-point basketball home-court modifier. Regular-season callers omit the location option and preserve the accepted default home-site behavior. All existing overtime termination rules remain unchanged, including the pathological maximum-overtime safety fallback documented below.
 
-Postseason results are stored separately from `SeasonState`, so Player Season Stats V0 remains regular-season-only. The retained tournament `PlayerGameStats` can support future postseason Player stats, combined regular/postseason stats, career stats, and tournament records, but those projections are not implemented.
+Postseason results are stored separately from `SeasonState`, so Player Season
+Stats V0 remains regular-season-only. Dynasty archives already support Former
+Player regular-season career aggregation through pure projections. Retained
+Tournament `PlayerGameStats` can support future postseason Player statistics,
+combined regular/postseason career totals, Tournament résumés, and records;
+those additional projections are not implemented.
 
 Accepted inspection completed 384 of 384 regular-season games and all 15 tournament games. Field, bracket, and final Postseason validation passed; same-seed reproduction and ready-game execution-order independence passed; a different seed changed tournament outcomes; National Champion derivation and full Player-stat preservation passed; and neutral-site sampling confirmed removal of the normal home-court effect.
 

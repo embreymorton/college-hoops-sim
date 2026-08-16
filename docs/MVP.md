@@ -141,6 +141,16 @@ and frozen.
 
 The simulation/domain and player-facing Dynasty MVP are complete, and the current talent economy is frozen. The player controls each major lifecycle checkpoint rather than being advanced automatically through Recruiting finalization, Offseason, or rollover.
 
-## Not currently implemented
+## Outside the Original MVP Scope
 
-The project does not yet include persistence/save-load, Dynasty history browsing, career statistics, awards, possession play-by-play, live coaching, injuries, transfers, rankings, or deeper offseason decisions. These are future expansion, not playable-core requirements; see `FUTURE_FEATURES.md`.
+The original MVP did not require persistence/save-load, historical browsing,
+career statistics, awards, possession play-by-play, permanent Coaching, injuries,
+transfers, rankings, or deeper offseason decisions. Later post-MVP work has
+implemented permanent Coaching plus targeted history features: Followed Former
+Players, active/former/unknown resolution, regular-season career aggregation,
+Historical Player Details, and Career Progression.
+
+Still unimplemented are persistence/save-load, broad Season/Alumni browsing,
+postseason/combined career aggregation, records, awards, possession play-by-play
+or live coaching, injuries, transfers, rankings, and deeper offseason decisions.
+See `FUTURE_FEATURES.md`.
