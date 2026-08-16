@@ -33,8 +33,9 @@ The playable product includes:
   History / Yearbook destination;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
-- Board + Focus + Offer Recruiting, Recruiting battles/readiness, Late
-  Recruiting, class finalization, and Recruit-to-Player identity continuity;
+- Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
+  Recruit Details, Late Recruiting, class finalization, and Recruit-to-Player
+  identity continuity;
 - departures, Player Development, incoming classes, exact next-season roster
   assembly, archived Seasons, and repeatable Dynasty rollover; and
 - one stored creation seed per normal interactive Dynasty, with explicit-seed
@@ -130,18 +131,22 @@ Experiment B v1 is rejected and must not be activated or retuned in place.
 Read [PLAYER_IDENTITY_RESEARCH.md](PLAYER_IDENTITY_RESEARCH.md) only when new
 manual gameplay evidence justifies deliberately reopening Player tuning.
 
-**NEXT — 7D.1 Recruit Details.** Recruit Details is the active feature horizon:
-additive inspection beneath the accepted Recruiting information architecture,
-using canonical Recruit/Player facts and existing player-safe battle
-projections. The functional destination now opens from Board, Battles, and
-National Class, presents canonical profile/ratings/class facts and player-safe
-Recruiting context, and returns to its preserved parent Recruiting mode. It has
-not yet been manually accepted or frozen. Follow Recruit and Recruit → active
-Player continuity are not implemented.
+**Phase 7D.1 — Recruit Details is COMPLETE / ACCEPTED / FROZEN.** The polished
+stable-ID destination opens from Board, Battles, and National Class; presents
+the canonical profile, exact OVR/POT and nine ratings, safe derived Recruiting
+context, and contextual versions of existing management actions; resolves
+committed status; and returns to its preserved parent Recruiting mode. The
+tournament-complete progression recovery that unblocked acceptance was also
+manually verified.
 
-`7C.2 Records & Milestones`, `7C.3 Awards & Honors`, `7D.2 Follow Recruits`, and
-`7D.3 Recruit → Player continuity` remain **PLANNED**, not selected. Player
-Identity work remains parked unless new evidence deliberately reopens it.
+**NEXT — 7D.2 Follow Recruits.** This milestone is selected, not implemented.
+Its purpose is to preserve attachment to individual prospects during the
+Recruiting process without changing Recruiting mechanics or prematurely
+defining Recruit → Player continuity.
+
+`7C.2 Records & Milestones`, `7C.3 Awards & Honors`, and `7D.3 Recruit → Player
+continuity` remain **PLANNED**, not selected. Player Identity work remains
+parked unless new evidence deliberately reopens it.
 
 ## Fresh-session rules
 

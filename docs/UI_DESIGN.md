@@ -240,8 +240,17 @@ and nine ratings, class context, the controlled Program snapshot, and the
 existing player-safe pursuing-Program groups. Committed Recruits show their
 destination instead of unresolved standings. Back returns to Recruiting in the
 same Board/Battles/National parent mode; fresh root Recruiting entry still
-defaults to Board. National filter persistence is not required in V1. Final
-visual hierarchy remains pending manual 7D.1 playtesting.
+defaults to Board. National filter persistence is not required in V1.
+
+The accepted detail hierarchy is profile/identity first, ratings/evaluation
+second, Current Recruitment third, Your Program status and actions fourth, and
+pursuing Programs or the committed destination fifth. The contained header
+makes the Recruit name primary while OVR/POT remain secondary but scannable;
+the nine ratings reuse the shared Player Details grid language. Management
+controls are contextual versions of existing Board, Focus, and Offer behavior,
+not a new action model. Committed Recruits read as resolved instead of
+actionable, and the ordering remains legible at narrow widths. This hierarchy
+and interaction model are accepted and frozen for Phase 7D.1.
 
 ```text
 Season/Postseason Hub Recruiting column

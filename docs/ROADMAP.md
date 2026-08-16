@@ -15,11 +15,11 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — 7D.1 Recruit Details
+### NEXT — 7D.2 Follow Recruits
 
-Add an inspection layer beneath the existing Recruiting information
-architecture so prospects become more memorable through their canonical Player
-profile, class context, and player-safe Recruiting battle information.
+Allow the user to preserve interest in individual prospects during the
+Recruiting process without changing Recruiting mechanics or prematurely
+defining Recruit → Player continuity.
 
 ### PLANNED — remainder of Phase 7C
 
@@ -29,8 +29,7 @@ profile, class context, and player-safe Recruiting battle information.
 
 ### PLANNED — Phase 7D Recruit Attachment V1
 
-1. **7D.2 — Follow Recruits**
-2. **7D.3 — Recruit → Player continuity**, preserving existing identity
+1. **7D.3 — Recruit → Player continuity**, preserving existing identity
    continuity where already canonical.
 
 ### After Current Phase 7 Work — Fresh Planning Checkpoint
@@ -138,6 +137,16 @@ persistence, RNG, or simulation changes.
 7C.1 derives all presentation from `CompletedSeasonArchive` through pure
 projections and transient/local UI state. It added no copied historical
 summaries, canonical mutation, RNG, or simulation behavior.
+
+### Phase 7D — Recruit Attachment V1 — IN PROGRESS
+
+- **7D.1 Recruit Details — COMPLETE / ACCEPTED / FROZEN:** added stable-ID
+  Recruit inspection from Board, Battles, and National Class with canonical
+  profile and exact ratings, safe derived Recruiting context, contextual
+  existing management actions, committed-state resolution, and parent-mode
+  return behavior.
+- Later attachment and continuity work remains governed by the Current Selected
+  Horizon above.
 
 ## Historical Player Identity Research — COMPLETE / PARKED
 

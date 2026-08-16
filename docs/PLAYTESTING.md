@@ -28,12 +28,9 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-1. The Tournament-complete progression recovery below is now manually
-   verified; resume the selected 7D.1 Recruit Details playtest. Recruit
-   Details already helped explain what prospects are good at; acceptance was
-   interrupted before answering the broader question: Does deeper Recruit
-   inspection make prospects more memorable and increase attachment during
-   normal Recruiting?
+1. For selected Phase 7D.2: Can following a Recruit preserve attachment during
+   the Recruiting process without cluttering the existing Followed Players
+   experience or changing Recruiting mechanics?
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.
@@ -46,20 +43,6 @@ This priority list is evidence guidance, not an independent sequencing decision.
 The authoritative milestone selection remains in `ROADMAP.md`.
 
 ## Live WATCH Items
-
-### Tournament-complete progression recovery — FIXED / MANUALLY VERIFIED
-
-Fresh normal play reproduced a Dynasty-blocking path: after the Tournament
-completed and Late Recruiting was identified as next, navigating through other
-screens could leave the progression control inaccessible. The confirmed minimal
-case was `Tournament Complete → View Final Regular Season`: canonical Tournament
-completion and Period 28 Recruiting eligibility remained intact, but the
-handoff was presented only on the Tournament Hub. The final regular-season view
-now derives and exposes the same canonical handoff, and regression coverage
-proves it advances to Late Recruiting without navigation mutating Dynasty state.
-The user manually navigated `Tournament Complete → navigate around → Late
-Recruiting` after the fix and confirmed progression remains reachable; the
-issue is closed pending no new contrary evidence.
 
 ### Low-prestige rebuild and mature-league ceiling
 
@@ -115,6 +98,23 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Phase 7D.1 — Recruit Details — ACCEPTED / FROZEN
+
+- The user's central finding was: “It is definitely very useful to get insights
+  into what recruits are good at.” Exact canonical OVR, POT, and nine-rating
+  presentation supplied that value without synthetic strength/weakness labels.
+- Board, Battles, and National Class entry paths and parent-mode return behavior
+  worked as intended.
+- The polished identity-first hierarchy, safe Recruiting context,
+  committed-state treatment, and contextual versions of existing Board, Focus,
+  and Offer actions improved the inspect → decide → act loop and were accepted.
+- **Tournament-complete progression recovery — FIXED / MANUALLY VERIFIED.** The
+  canonical-state-derived Late Recruiting handoff remained reachable after the
+  user navigated away from the completed Tournament and back through the final
+  regular-season review.
+- This acceptance does not claim Recruit following or Recruit → Player
+  continuity UI; those remain Phase 7D.2 and Phase 7D.3 work respectively.
 
 ### Phase 7C.1 — Season Archive / Yearbook — ACCEPTED / FROZEN
 

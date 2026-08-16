@@ -352,15 +352,20 @@ Recruiting belongs exclusively to the Dynasty/cross-season domain. The basketbal
 Recruit Details remains a projection-driven application destination:
 
 ```text
-RecruitingState + deriveRecruitDetailsView()
-→ transient selected Recruit Player ID / session destination
+RecruitingState + Recruit.player stable future Player identity
+→ deriveRecruitDetailsView() safe projections
+→ transient selected Recruit Player ID + parent Recruiting mode
 → Recruit Details UI
 ```
 
 The selected ID and parent Recruiting mode are presentation state in Zustand;
-the screen resolves current facts on demand and stores no Recruit snapshot,
-ratings, battle state, or duplicate canonical Recruiting data. Stale IDs recover
-locally to the preserved Recruiting parent mode.
+the screen resolves the canonical profile, exact ratings, Recruiting status,
+pursuing-Program context, and controlled-Program context on demand and stores no
+Recruit snapshot or duplicate canonical Recruiting data. Contextual Board,
+Focus, and Offer controls call the existing Recruiting transitions, so Recruit
+Details adds no parallel eligibility or simulation rules. Committed Recruits
+resolve to a non-actionable committed state. Stale IDs recover locally to the
+preserved Recruiting parent mode.
 
 The canonical `RecruitingState` stores the national Recruit class/profiles and class rankings, each Program's projected positional openings and Board targets, Focus flags, and Active Offer intent, accumulated Recruit/Program relationship progress, commitments with period/late timing, current phase, and last resolved period. Current standings, standing order, target status, remaining positional need, Active Offer counts, available offer capacity, and Focus counts are pure projections. This follows the same rule as Season state: store facts, derive summaries.
 
