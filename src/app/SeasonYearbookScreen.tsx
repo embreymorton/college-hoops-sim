@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import {
   ExplorationBackButton,
   TournamentBracket,
@@ -7,7 +7,9 @@ import {
 import {
   deriveCompletedSeasonYearbook,
   type CompletedSeasonYearbook,
+  type HistoricalConferenceStandings,
   type HistoricalLeaderRow,
+  type HistoricalLeaderboards,
   type HistoricalTournamentOutcome,
 } from '../dynasty'
 import { TOURNAMENT_ROUNDS } from '../postseason'
@@ -29,6 +31,8 @@ const LEADER_CATEGORIES = [
   { key: 'blocks', title: 'Blocks', unit: 'BPG' },
 ] as const
 
+type LeaderCategoryKey = (typeof LEADER_CATEGORIES)[number]['key']
+
 function tournamentOutcomeLabel(outcome: HistoricalTournamentOutcome): string {
   switch (outcome.status) {
     case 'did-not-qualify':
@@ -45,6 +49,11 @@ function tournamentOutcomeLabel(outcome: HistoricalTournamentOutcome): string {
 function tournamentEntryLabel(outcome: HistoricalTournamentOutcome): string | null {
   if (outcome.status === 'did-not-qualify') return null
   return `${formatSeedLabel(outcome.seed)} Seed · ${formatBidType(outcome.bidType)} Bid`
+}
+
+/** "Atlantic Foundry Conference" → "Atlantic Foundry" for a compact tab label. */
+function formatConferenceTabLabel(conferenceName: string): string {
+  return conferenceName.replace(/ Conference$/, '')
 }
 
 function buildHistoricalBracket(
@@ -107,38 +116,123 @@ function LeaderTable({
   readonly onSelectPlayer: (programId: string, playerId: string) => void
 }) {
   return (
-    <div className="leader-board">
-      <div className="leader-board__header">
-        <span className="leader-board__title">{title}</span>
-        <span className="leader-board__unit">{unit}</span>
+    <div className="table-scroll">
+      <table className="data-table leader-board__table">
+        <caption className="visually-hidden">{`National ${title} leaders`}</caption>
+        <thead>
+          <tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Program</th><th scope="col">{unit}</th></tr>
+        </thead>
+        <tbody>
+          {rows.map((row) => (
+            <tr key={row.player.playerId} data-player-id={row.player.playerId}>
+              <td className="leader-board__rank">{row.rank}</td>
+              <td className="player-name-cell">
+                <button
+                  type="button"
+                  className="text-link-button"
+                  onClick={() => onSelectPlayer(row.player.program.programId, row.player.playerId)}
+                >
+                  {row.player.firstName} {row.player.lastName}
+                </button>
+              </td>
+              <td>{row.player.program.name}</td>
+              <td>{formatRating(row.value)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
+/** One conference table at a time, defaulting to the controlled Program's own conference. */
+function ConferenceStandingsCard({
+  standings,
+  controlledProgramId,
+  defaultConferenceId,
+}: {
+  readonly standings: readonly HistoricalConferenceStandings[]
+  readonly controlledProgramId: string
+  readonly defaultConferenceId: string
+}) {
+  const [selectedConferenceId, setSelectedConferenceId] = useState(defaultConferenceId)
+  const active =
+    standings.find(({ conference }) => conference.id === selectedConferenceId) ?? standings[0]!
+
+  return (
+    <article className="yearbook-league-card" aria-labelledby="final-standings-heading">
+      <h3 id="final-standings-heading" className="section-subtitle">Final Standings</h3>
+      <div role="group" aria-label="Conference" className="tab-list yearbook-league-tabs">
+        {standings.map(({ conference }) => (
+          <button
+            key={conference.id}
+            type="button"
+            className="tab"
+            aria-pressed={conference.id === active.conference.id}
+            onClick={() => setSelectedConferenceId(conference.id)}
+          >
+            {formatConferenceTabLabel(conference.name)}
+          </button>
+        ))}
       </div>
       <div className="table-scroll">
-        <table className="data-table leader-board__table">
-          <caption className="visually-hidden">{`National ${title} leaders`}</caption>
-          <thead>
-            <tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Program</th><th scope="col">{unit}</th></tr>
-          </thead>
+        <table className="data-table standings-table">
+          <caption className="visually-hidden">{active.conference.name} standings</caption>
+          <thead><tr><th scope="col">Pos</th><th scope="col">Program</th><th scope="col">W-L</th><th scope="col">Conf</th></tr></thead>
           <tbody>
-            {rows.map((row) => (
-              <tr key={row.player.playerId} data-player-id={row.player.playerId}>
-                <td className="leader-board__rank">{row.rank}</td>
-                <td className="player-name-cell">
-                  <button
-                    type="button"
-                    className="text-link-button"
-                    onClick={() => onSelectPlayer(row.player.program.programId, row.player.playerId)}
-                  >
-                    {row.player.firstName} {row.player.lastName}
-                  </button>
-                </td>
-                <td>{row.player.program.name}</td>
-                <td>{formatRating(row.value)}</td>
-              </tr>
-            ))}
+            {active.rows.map((row) => {
+              const isControlled = row.program.programId === controlledProgramId
+              return (
+                <tr key={row.program.programId} data-controlled={isControlled}>
+                  <td>{row.place}</td>
+                  <td>{row.program.name}{isControlled && <span className="standings-you-tag"> · You</span>}</td>
+                  <td>{formatRecord(row.wins, row.losses)}</td>
+                  <td>{formatRecord(row.conferenceWins, row.conferenceLosses)}</td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>
-    </div>
+    </article>
+  )
+}
+
+/** One national leaderboard at a time, defaulting to Scoring. */
+function StatisticalLeadersCard({
+  national,
+  onSelectPlayer,
+}: {
+  readonly national: HistoricalLeaderboards
+  readonly onSelectPlayer: (programId: string, playerId: string) => void
+}) {
+  const [selectedCategory, setSelectedCategory] = useState<LeaderCategoryKey>('points')
+  const active = LEADER_CATEGORIES.find(({ key }) => key === selectedCategory)!
+
+  return (
+    <article className="yearbook-league-card" aria-labelledby="yearbook-leaders-heading">
+      <h3 id="yearbook-leaders-heading" className="section-subtitle">Statistical Leaders</h3>
+      <p className="section-hint">Regular season only.</p>
+      <div role="group" aria-label="Statistical category" className="tab-list yearbook-league-tabs">
+        {LEADER_CATEGORIES.map(({ key, unit }) => (
+          <button
+            key={key}
+            type="button"
+            className="tab"
+            aria-pressed={key === selectedCategory}
+            onClick={() => setSelectedCategory(key)}
+          >
+            {unit}
+          </button>
+        ))}
+      </div>
+      <LeaderTable
+        title={active.title}
+        unit={active.unit}
+        rows={national[active.key]}
+        onSelectPlayer={onSelectPlayer}
+      />
+    </article>
   )
 }
 
@@ -232,137 +326,107 @@ export function SeasonYearbookScreen() {
 
       <section className="section" aria-labelledby="your-season-heading">
         <h2 id="your-season-heading" className="section-title">Your Season</h2>
-        <div className="player-stat-block">
-          <p className="eyebrow-tag">{controlled.program.name}</p>
-          <div className="stat-trio player-stat-block__row">
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">{formatRecord(controlled.overallRecord.wins, controlled.overallRecord.losses)}</span>
-              <span className="stat-trio__label">Overall</span>
+        <div className="yearbook-recap-card">
+          <div className="yearbook-recap-card__summary">
+            <p className="eyebrow-tag">{controlled.program.name}</p>
+            <div className="stat-trio player-stat-block__row">
+              <div className="stat-trio__item">
+                <span className="stat-trio__value">{formatRecord(controlled.overallRecord.wins, controlled.overallRecord.losses)}</span>
+                <span className="stat-trio__label">Overall</span>
+              </div>
+              <div className="stat-trio__item">
+                <span className="stat-trio__value">{formatRecord(controlled.conferenceRecord.wins, controlled.conferenceRecord.losses)}</span>
+                <span className="stat-trio__label">Conference</span>
+              </div>
+              <div className="stat-trio__item">
+                <span className="stat-trio__value">{formatOrdinal(controlled.conferencePlace)}</span>
+                <span className="stat-trio__label">Conf Finish</span>
+              </div>
+              <div className="stat-trio__item">
+                <span className="stat-trio__value stat-trio__value--text">{tournamentOutcomeLabel(controlled.tournamentOutcome)}</span>
+                <span className="stat-trio__label">Tournament</span>
+              </div>
             </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">{formatRecord(controlled.conferenceRecord.wins, controlled.conferenceRecord.losses)}</span>
-              <span className="stat-trio__label">Conference</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">{formatOrdinal(controlled.conferencePlace)}</span>
-              <span className="stat-trio__label">Conf Finish</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value stat-trio__value--text">{tournamentOutcomeLabel(controlled.tournamentOutcome)}</span>
-              <span className="stat-trio__label">Tournament</span>
-            </div>
+            {tournamentEntry && <p className="section-hint">{tournamentEntry}</p>}
           </div>
-          {tournamentEntry && <p className="section-hint">{tournamentEntry}</p>}
-        </div>
 
-        {tournamentGames.length > 0 && (
-          <div className="recent-results" role="region" aria-label="Your Tournament Run">
-            <h3 className="section-subtitle">Tournament Run</h3>
-            <ul className="recent-results__list">
-              {tournamentGames.map((game) => {
-                const controlledIsHome = game.homeProgram.programId === controlled.program.programId
-                const controlledScore = controlledIsHome ? game.result.homeScore : game.result.awayScore
-                const opponentScore = controlledIsHome ? game.result.awayScore : game.result.homeScore
-                const opponentSeed = controlledIsHome ? game.awaySeed : game.homeSeed
-                const outcome = game.resultForControlledProgram
-                return (
-                  <li key={game.gameId}>
-                    <div className="recent-results__row" data-outcome={outcome} data-interactive="false">
-                      <span className="recent-results__outcome">{outcome === 'win' ? 'W' : 'L'}</span>
-                      <span className="recent-results__score">{controlledScore}-{opponentScore}</span>
-                      <span className="recent-results__opponent">
-                        {formatTournamentRoundName(game.round)} · {formatSeedLabel(opponentSeed)} {game.opponent.name}
-                      </span>
+          <div className="yearbook-recap-card__section" role="region" aria-label="Your Team Leaders">
+            <h3 className="section-subtitle">Team Leaders</h3>
+            <div className="team-leaders">
+              {LEADER_CATEGORIES.map(({ key, unit }) => {
+                const leader = yearbook.statisticalLeaders.controlledProgram[key][0]
+                if (!leader) {
+                  return (
+                    <div key={key} className="team-leaders__item" data-empty="true">
+                      <span className="team-leaders__unit">{unit}</span>
+                      <span className="team-leaders__empty">No qualifier</span>
                     </div>
-                  </li>
+                  )
+                }
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    className="team-leaders__item"
+                    data-player-id={leader.player.playerId}
+                    onClick={() => openPlayerDetails(leader.player.program.programId, leader.player.playerId)}
+                  >
+                    <span className="team-leaders__value">{formatRating(leader.value)}</span>
+                    <span className="team-leaders__unit">{unit}</span>
+                    <span className="team-leaders__player">{leader.player.firstName} {leader.player.lastName}</span>
+                  </button>
                 )
               })}
-            </ul>
+            </div>
           </div>
-        )}
+
+          {tournamentGames.length > 0 && (
+            <div className="yearbook-recap-card__section" role="region" aria-label="Your Tournament Run">
+              <h3 className="section-subtitle">Tournament Run</h3>
+              <ul className="recent-results__list">
+                {tournamentGames.map((game) => {
+                  const controlledIsHome = game.homeProgram.programId === controlled.program.programId
+                  const controlledScore = controlledIsHome ? game.result.homeScore : game.result.awayScore
+                  const opponentScore = controlledIsHome ? game.result.awayScore : game.result.homeScore
+                  const opponentSeed = controlledIsHome ? game.awaySeed : game.homeSeed
+                  const outcome = game.resultForControlledProgram
+                  return (
+                    <li key={game.gameId}>
+                      <div className="recent-results__row" data-outcome={outcome} data-interactive="false">
+                        <span className="recent-results__outcome">{outcome === 'win' ? 'W' : 'L'}</span>
+                        <span className="recent-results__score">{controlledScore}-{opponentScore}</span>
+                        <span className="recent-results__opponent">
+                          {formatTournamentRoundName(game.round)} · {formatSeedLabel(opponentSeed)} {game.opponent.name}
+                        </span>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="season-around-league-heading">
+        <h2 id="season-around-league-heading" className="section-title">Season Around the League</h2>
+        <div className="yearbook-league-grid">
+          <ConferenceStandingsCard
+            standings={yearbook.conferenceStandings}
+            controlledProgramId={controlled.program.programId}
+            defaultConferenceId={controlled.program.conferenceId}
+          />
+          <StatisticalLeadersCard
+            national={yearbook.statisticalLeaders.national}
+            onSelectPlayer={openPlayerDetails}
+          />
+        </div>
       </section>
 
       <section className="section" aria-labelledby="national-tournament-heading">
         <h2 id="national-tournament-heading" className="section-title">National Tournament</h2>
         <div role="region" aria-label="Archived Tournament Bracket">
           <TournamentBracket slots={bracketSlots} />
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="final-standings-heading">
-        <h2 id="final-standings-heading" className="section-title">Final Conference Standings</h2>
-        <p className="section-hint">Final regular-season conference and overall records.</p>
-        <div className="yearbook-standings-grid">
-          {yearbook.conferenceStandings.map(({ conference, rows }) => (
-            <article key={conference.id} className="yearbook-standings-card">
-              <h3 className="section-subtitle">{conference.name}</h3>
-              <div className="table-scroll">
-                <table className="data-table standings-table">
-                  <caption className="visually-hidden">{conference.name} standings</caption>
-                  <thead><tr><th scope="col">Pos</th><th scope="col">Program</th><th scope="col">W-L</th><th scope="col">Conf</th></tr></thead>
-                  <tbody>
-                    {rows.map((row) => {
-                      const isControlled = row.program.programId === controlled.program.programId
-                      return (
-                        <tr key={row.program.programId} data-controlled={isControlled}>
-                          <td>{row.place}</td>
-                          <td>{row.program.name}{isControlled && <span className="standings-you-tag"> · You</span>}</td>
-                          <td>{formatRecord(row.wins, row.losses)}</td>
-                          <td>{formatRecord(row.conferenceWins, row.conferenceLosses)}</td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="yearbook-leaders-heading">
-        <h2 id="yearbook-leaders-heading" className="section-title">Regular-Season Statistical Leaders</h2>
-        <p className="section-hint">Tournament statistics are not included.</p>
-        <div className="leaders-grid">
-          {LEADER_CATEGORIES.map(({ key, title, unit }) => (
-            <LeaderTable
-              key={key}
-              title={title}
-              unit={unit}
-              rows={yearbook.statisticalLeaders.national[key]}
-              onSelectPlayer={openPlayerDetails}
-            />
-          ))}
-        </div>
-
-        <div className="yearbook-team-leaders" role="region" aria-label="Your Team Leaders">
-          <h3 className="section-subtitle">Your Team Leaders</h3>
-          <div className="team-leaders">
-            {LEADER_CATEGORIES.map(({ key, unit }) => {
-              const leader = yearbook.statisticalLeaders.controlledProgram[key][0]
-              if (!leader) {
-                return (
-                  <div key={key} className="team-leaders__item" data-empty="true">
-                    <span className="team-leaders__unit">{unit}</span>
-                    <span className="team-leaders__empty">No qualifier</span>
-                  </div>
-                )
-              }
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  className="team-leaders__item"
-                  data-player-id={leader.player.playerId}
-                  onClick={() => openPlayerDetails(leader.player.program.programId, leader.player.playerId)}
-                >
-                  <span className="team-leaders__value">{formatRating(leader.value)}</span>
-                  <span className="team-leaders__unit">{unit}</span>
-                  <span className="team-leaders__player">{leader.player.firstName} {leader.player.lastName}</span>
-                </button>
-              )
-            })}
-          </div>
         </div>
       </section>
     </main>

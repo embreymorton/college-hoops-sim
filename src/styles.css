@@ -937,22 +937,56 @@ p {
   color: var(--ink-1);
 }
 
-.yearbook-standings-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--space-5);
-}
+/* One cohesive Your Season recap: summary, Team Leaders, and Tournament Run
+   stacked as divided subsections of a single bordered card rather than
+   separate floating blocks. */
 
-.yearbook-standings-card {
-  min-width: 0;
-  padding: var(--space-4);
+.yearbook-recap-card {
+  display: flex;
+  flex-direction: column;
   background: var(--surface-1);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
 }
 
-.yearbook-standings-card .standings-table {
-  min-width: 22rem;
+.yearbook-recap-card__summary,
+.yearbook-recap-card__section {
+  padding: var(--space-4) var(--space-5);
+}
+
+.yearbook-recap-card__section {
+  border-top: 1px solid var(--line);
+}
+
+/* Season Around the League: Final Standings + Statistical Leaders side by
+   side on desktop, each with a compact tab selector for progressive
+   disclosure instead of showing every table/leaderboard at once. */
+
+.yearbook-league-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.yearbook-league-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.yearbook-league-tabs {
+  flex-wrap: wrap;
+}
+
+.yearbook-league-card .standings-table,
+.yearbook-league-card .leader-board__table {
+  min-width: 20rem;
 }
 
 .league-news {
@@ -1075,7 +1109,7 @@ p {
   .league-screen__navigation { align-items: stretch; }
   .league-screen__navigation > .tab-list .tab { padding-inline: 0.85rem; }
   .history-season-card { grid-template-columns: 1fr; gap: var(--space-2); }
-  .yearbook-standings-grid { grid-template-columns: 1fr; }
+  .yearbook-league-grid { grid-template-columns: 1fr; }
   .news-story { padding-inline: var(--space-3); }
   .news-story__meta { align-items: flex-start; }
 }

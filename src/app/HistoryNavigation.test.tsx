@@ -311,44 +311,91 @@ describe('Core Yearbook UI', () => {
     expect(bracket).toHaveTextContent(expected.championship.runnerUp.name)
   })
 
-  it('renders every final Conference in canonical order and highlights the controlled Program', () => {
+  it('defaults standings to the controlled Program conference, switches via tabs, and preserves canonical rows/highlighting', () => {
     const { expected, rendered } = renderYearbook(CONTROLLED_PROGRAM_ID)
+    const standingsCard = screen.getByRole('heading', { name: 'Final Standings' }).closest('article')!
+    const controlled = expected.controlledProgramSeason
+    const defaultConference = expected.conferenceStandings.find(
+      ({ conference }) => conference.id === controlled.program.conferenceId,
+    )!
 
-    for (const conference of expected.conferenceStandings) {
-      expect(screen.getByRole('heading', { name: conference.conference.name })).toBeInTheDocument()
-      const card = screen.getByRole('heading', { name: conference.conference.name }).closest('article')!
-      const renderedPrograms = Array.from(card.querySelectorAll('tbody tr td:nth-child(2)'))
+    const renderedProgramNames = () =>
+      Array.from(standingsCard.querySelectorAll('tbody tr td:nth-child(2)'))
         .map((cell) => cell.textContent?.replace(' · You', ''))
-      expect(renderedPrograms).toEqual(conference.rows.map((row) => row.program.name))
-    }
+
+    expect(renderedProgramNames()).toEqual(defaultConference.rows.map((row) => row.program.name))
     expect(rendered.container.querySelectorAll('tr[data-controlled="true"]')).toHaveLength(1)
-    const standingsSection = screen.getByRole('heading', { name: 'Final Conference Standings' }).closest('section')!
-    expect(within(standingsSection).getByText(/· You/)).toBeInTheDocument()
+    expect(within(standingsCard).getByText(/· You/)).toBeInTheDocument()
+    // Only one standings table (plus one leaderboard table) is presented at a time.
+    expect(screen.getAllByRole('table')).toHaveLength(2)
+
+    for (const { conference, rows } of expected.conferenceStandings) {
+      fireEvent.click(within(standingsCard).getByRole('button', {
+        name: conference.name.replace(/ Conference$/, ''),
+      }))
+
+      expect(renderedProgramNames()).toEqual(rows.map((row) => row.program.name))
+      const isControlledHere = rows.some(
+        (row) => row.program.programId === controlled.program.programId,
+      )
+      expect(rendered.container.querySelectorAll('tr[data-controlled="true"]')).toHaveLength(
+        isControlledHere ? 1 : 0,
+      )
+    }
   })
 
-  it('labels regular-season scope and preserves national and controlled Player IDs', () => {
+  it('defaults leaders to Scoring/PPG, switches categories via tabs, and preserves national and controlled Player IDs', () => {
     const { expected, rendered } = renderYearbook(CONTROLLED_PROGRAM_ID)
 
-    expect(screen.getByRole('heading', { name: 'Regular-Season Statistical Leaders' }))
-      .toBeInTheDocument()
-    expect(screen.getByText('Tournament statistics are not included.')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Season Around the League' })).toBeInTheDocument()
+    expect(screen.getByText('Regular season only.')).toBeInTheDocument()
     expect(screen.getByRole('region', { name: 'Your Team Leaders' })).toBeInTheDocument()
 
+    const leadersCard = screen.getByRole('heading', { name: 'Statistical Leaders' }).closest('article')!
+    expect(within(leadersCard).getByRole('button', { name: 'PPG' })).toHaveAttribute('aria-pressed', 'true')
+
+    const unitByCategory = {
+      points: 'PPG', rebounds: 'RPG', assists: 'APG', steals: 'SPG', blocks: 'BPG',
+    } as const
+
     for (const category of ['points', 'rebounds', 'assists', 'steals', 'blocks'] as const) {
+      fireEvent.click(within(leadersCard).getByRole('button', { name: unitByCategory[category] }))
+
       const national = expected.statisticalLeaders.national[category][0]!
       const controlled = expected.statisticalLeaders.controlledProgram[category][0]!
+      expect(within(leadersCard).getByText(`${national.player.firstName} ${national.player.lastName}`))
+        .toBeInTheDocument()
       expect(rendered.container.querySelector(`[data-player-id="${national.player.playerId}"]`))
         .not.toBeNull()
       expect(rendered.container.querySelector(`[data-player-id="${controlled.player.playerId}"]`))
         .not.toBeNull()
+
+      // Only the selected leaderboard is presented at a time.
+      expect(within(leadersCard).getAllByRole('table')).toHaveLength(1)
+      expect(within(leadersCard).getByRole('columnheader', { name: unitByCategory[category] }))
+        .toBeInTheDocument()
     }
+  })
+
+  it('orders sections Champion → Your Season → Season Around the League → National Tournament', () => {
+    const { rendered } = renderYearbook(CONTROLLED_PROGRAM_ID)
+    const headings = Array.from(rendered.container.querySelectorAll('h1, h2')).map(
+      (el) => el.textContent,
+    )
+    const yourSeasonIndex = headings.indexOf('Your Season')
+    const leagueIndex = headings.indexOf('Season Around the League')
+    const tournamentIndex = headings.indexOf('National Tournament')
+
+    expect(yourSeasonIndex).toBeGreaterThan(0)
+    expect(leagueIndex).toBeGreaterThan(yourSeasonIndex)
+    expect(tournamentIndex).toBeGreaterThan(leagueIndex)
   })
 
   it('opens a national leader as a former Player and restores the same Yearbook on Back', () => {
     const { expected } = renderYearbook(CONTROLLED_PROGRAM_ID)
     const leader = expected.statisticalLeaders.national.points[0]!
     const leaderName = `${leader.player.firstName} ${leader.player.lastName}`
-    const scoringBoard = screen.getByText('Scoring').closest('.leader-board')! as HTMLElement
+    const scoringBoard = screen.getByRole('heading', { name: 'Statistical Leaders' }).closest('article')! as HTMLElement
 
     fireEvent.click(within(scoringBoard).getByRole('button', { name: leaderName }))
 
@@ -405,7 +452,7 @@ describe('Core Yearbook UI', () => {
     const expected = deriveCompletedSeasonYearbook(useDynastyStore.getState().dynasty!, 1)
     render(<App />)
     const leader = expected.statisticalLeaders.national.points[0]!
-    const scoringBoard = screen.getByText('Scoring').closest('.leader-board')! as HTMLElement
+    const scoringBoard = screen.getByRole('heading', { name: 'Statistical Leaders' }).closest('article')! as HTMLElement
 
     fireEvent.click(within(scoringBoard).getByRole('button', {
       name: `${leader.player.firstName} ${leader.player.lastName}`,
