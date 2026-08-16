@@ -1285,29 +1285,98 @@ p {
   align-items: stretch;
 }
 
+/* Compact full-width doorway — deliberately lighter than SeasonHeader/
+   NextGameCard: a thin accent rule instead of a heavy bordered block, and a
+   single row of copy so it never reads as another Hub module. */
 .season-preview-promotion {
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
-  margin-bottom: 1rem;
+  gap: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-5);
+  margin-bottom: var(--space-5);
 }
 
-.season-preview-promotion .section-title { margin: 0.2rem 0; }
+.season-preview-promotion__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
 
-.season-preview-screen { display: grid; gap: 1rem; }
-.season-preview-hero { padding-block: 1.5rem; }
+.season-preview-promotion .eyebrow-tag { margin: 0; }
+.season-preview-promotion .section-title { margin: 0; }
+.season-preview-promotion .section-hint { margin: 0; }
+
+.season-preview-promotion__cta {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.season-preview-promotion__cta::after {
+  content: '→';
+  margin-left: 0.5em;
+}
+
+.season-preview-screen { display: grid; gap: var(--space-5); }
+
+.season-preview-screen > .exploration-back-button { justify-self: start; }
+
+.season-preview-hero {
+  padding-block: var(--space-2) 0;
+  gap: var(--space-2);
+}
+
 .season-preview-group { min-width: 0; max-width: 100%; }
-.season-preview-group .section-title { margin-bottom: 0.75rem; }
+.season-preview-group .section-title { margin-bottom: var(--space-2); }
+
+/* Bordered surface housing each section's table, matching the app's other
+   contained-table panels (e.g. .leader-board) instead of bare floating rows. */
+.season-preview-panel {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
 .table-scroll { width: 100%; min-width: 0; overflow-x: auto; }
-.season-preview-table { width: 100%; min-width: 38rem; border-collapse: collapse; }
-.season-preview-table th,
-.season-preview-table td { padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--color-border); text-align: left; white-space: nowrap; }
-.season-preview-table th { color: var(--color-text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.season-preview-table { width: 100%; min-width: 34rem; }
+
+.season-preview-table .team-color-dot {
+  margin-right: 0.4rem;
+  vertical-align: middle;
+  position: relative;
+  top: -1px;
+}
+
+.season-preview-leap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.5em;
+}
+
+.season-preview-leap__path {
+  color: var(--ink-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.season-preview-leap__delta {
+  font-family: var(--font-score);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent-strong);
+}
+
 .league-news__title-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
 
 @media (max-width: 520px) {
-  .season-preview-promotion { align-items: flex-start; flex-direction: column; }
+  .season-preview-promotion { align-items: stretch; flex-direction: column; }
+  .season-preview-promotion__cta { align-self: stretch; text-align: center; }
   .league-news__title-row { align-items: flex-start; flex-direction: column; }
 }
 

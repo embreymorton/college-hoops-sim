@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react'
 import { calculateOverall } from '../engine'
 import {
   deriveSeasonPreview,
+  type BiggestLeapPreview,
   type FollowedSeasonPreview,
   type FreshFacePreview,
   type ReturningStarPreview,
@@ -11,6 +13,7 @@ import { useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 
 const PROGRAM_NAMES: ReadonlyMap<string, string> = new Map(UNIVERSE_V0.programs.map((program) => [program.id, program.name]))
+const PROGRAM_ACCENTS: ReadonlyMap<string, string> = new Map(UNIVERSE_V0.programs.map((program) => [program.id, program.branding.primaryColor]))
 
 function PlayerLink({ row }: { readonly row: SeasonPreviewPlayerBase }) {
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
@@ -19,28 +22,75 @@ function PlayerLink({ row }: { readonly row: SeasonPreviewPlayerBase }) {
 
 function ProgramLink({ row }: { readonly row: SeasonPreviewPlayerBase }) {
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
-  return <button type="button" className="text-link-button" onClick={() => openTeamDetails(row.programId)}>{PROGRAM_NAMES.get(row.programId) ?? row.programId}</button>
+  return (
+    <button type="button" className="text-link-button" onClick={() => openTeamDetails(row.programId)}>
+      <span className="team-color-dot" style={{ background: PROGRAM_ACCENTS.get(row.programId) }} aria-hidden="true" />
+      {' '}{PROGRAM_NAMES.get(row.programId) ?? row.programId}
+    </button>
+  )
 }
 
-function StandardTable({ title, rows, extra }: {
+interface PreviewColumn<T extends SeasonPreviewPlayerBase> {
+  readonly header: string
+  readonly className?: string
+  readonly render: (row: T) => ReactNode
+}
+
+function playerColumn<T extends SeasonPreviewPlayerBase>(): PreviewColumn<T> {
+  return { header: 'Player', className: 'player-name-cell', render: (row) => <PlayerLink row={row} /> }
+}
+
+function programColumn<T extends SeasonPreviewPlayerBase>(): PreviewColumn<T> {
+  return { header: 'Program', render: (row) => <ProgramLink row={row} /> }
+}
+
+function posClassColumn<T extends SeasonPreviewPlayerBase>(): PreviewColumn<T> {
+  return { header: 'Pos/Cl', className: 'player-pos-cell', render: (row) => `${row.player.position}/${row.player.classYear}` }
+}
+
+function posColumn<T extends SeasonPreviewPlayerBase>(): PreviewColumn<T> {
+  return { header: 'Pos', className: 'player-pos-cell', render: (row) => row.player.position }
+}
+
+function ovrColumn<T extends SeasonPreviewPlayerBase>(): PreviewColumn<T> {
+  return { header: 'OVR', render: (row) => row.currentOverall }
+}
+
+function ovrPotColumn<T extends SeasonPreviewPlayerBase>(): PreviewColumn<T> {
+  return { header: 'OVR/POT', render: (row) => `${row.currentOverall}/${row.player.potential}` }
+}
+
+function signed(value: number): string { return value > 0 ? `+${value}` : String(value) }
+
+function PreviewTable<T extends SeasonPreviewPlayerBase>({ title, rows, columns }: {
   readonly title: string
-  readonly rows: readonly SeasonPreviewPlayerBase[]
-  readonly extra?: (row: SeasonPreviewPlayerBase) => React.ReactNode
+  readonly rows: readonly T[]
+  readonly columns: readonly PreviewColumn<T>[]
 }) {
   return (
     <section className="section season-preview-group">
       <h2 className="section-title">{title}</h2>
-      <div className="table-scroll">
-        <table className="season-preview-table">
-          <thead><tr><th>Player</th><th>Program</th><th>Class</th><th>OVR</th>{extra ? <th>Preview note</th> : null}</tr></thead>
-          <tbody>{rows.map((row) => <tr key={row.playerId}><td><PlayerLink row={row} /></td><td><ProgramLink row={row} /></td><td>{row.player.classYear}</td><td>{row.currentOverall}</td>{extra ? <td>{extra(row)}</td> : null}</tr>)}</tbody>
-        </table>
+      <div className="season-preview-panel">
+        <div className="table-scroll">
+          <table className="data-table season-preview-table">
+            <thead>
+              <tr>{columns.map((column) => <th key={column.header} scope="col">{column.header}</th>)}</tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.playerId}>
+                  {columns.map((column) => (
+                    <td key={column.header} className={column.className}>{column.render(row)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </section>
   )
 }
-
-function signed(value: number): string { return value > 0 ? `+${value}` : String(value) }
 
 export function SeasonPreviewScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
@@ -56,17 +106,83 @@ export function SeasonPreviewScreen() {
       <header className="section season-preview-hero">
         <p className="eyebrow-tag">Season {preview.seasonNumber}</p>
         <h1 className="section-title">Season Preview</h1>
-        <p className="section-hint">The players shaping the national picture before the season settles in.</p>
+        <p className="section-hint">Meet the Players shaping the national picture before the season settles in.</p>
       </header>
       {preview.kind === 'initial' ? <>
-        <StandardTable title="Established Players" rows={preview.establishedPlayers} />
-        <StandardTable title="Freshmen to Know" rows={preview.freshmenToKnow} />
+        <PreviewTable
+          title="Established Players"
+          rows={preview.establishedPlayers}
+          columns={[playerColumn(), programColumn(), posClassColumn(), ovrColumn()]}
+        />
+        <PreviewTable
+          title="Freshmen to Know"
+          rows={preview.freshmenToKnow}
+          columns={[playerColumn(), programColumn(), posColumn(), ovrPotColumn()]}
+        />
       </> : <>
-        <StandardTable title="Returning Stars" rows={preview.returningStars} extra={(base) => { const row = base as ReturningStarPreview; return `${row.previousPointsPerGame.toFixed(1)} PPG last season · ${signed(row.overallChange)} OVR` }} />
-        <StandardTable title="Biggest Leaps" rows={preview.biggestLeaps} extra={(base) => `${signed((base as ReturningStarPreview).overallChange)} OVR`} />
-        <StandardTable title="Fresh Faces" rows={preview.freshFaces} extra={(base) => { const row = base as FreshFacePreview; return `${row.stars}-star · No. ${row.nationalRank} recruit` }} />
+        <PreviewTable
+          title="Returning Stars"
+          rows={preview.returningStars}
+          columns={[
+            playerColumn<ReturningStarPreview>(),
+            programColumn<ReturningStarPreview>(),
+            posClassColumn<ReturningStarPreview>(),
+            ovrColumn<ReturningStarPreview>(),
+            {
+              header: 'Last Season',
+              render: (row) => `${row.previousPointsPerGame.toFixed(1)} PPG · ${signed(row.overallChange)} OVR`,
+            },
+          ]}
+        />
+        <PreviewTable
+          title="Biggest Leaps"
+          rows={preview.biggestLeaps}
+          columns={[
+            playerColumn<BiggestLeapPreview>(),
+            programColumn<BiggestLeapPreview>(),
+            posClassColumn<BiggestLeapPreview>(),
+            {
+              header: 'OVR Change',
+              render: (row) => (
+                <span className="season-preview-leap">
+                  <span className="season-preview-leap__path">{row.previousOverall} → {row.currentOverall}</span>
+                  <span className="season-preview-leap__delta">{signed(row.overallChange)}</span>
+                </span>
+              ),
+            },
+          ]}
+        />
+        <PreviewTable
+          title="Fresh Faces"
+          rows={preview.freshFaces}
+          columns={[
+            playerColumn<FreshFacePreview>(),
+            programColumn<FreshFacePreview>(),
+            posColumn<FreshFacePreview>(),
+            { header: 'Recruit', render: (row) => `${row.stars}★ · No. ${row.nationalRank}` },
+            ovrPotColumn<FreshFacePreview>(),
+          ]}
+        />
       </>}
-      {preview.followedPlayers.length > 0 ? <StandardTable title={preview.kind === 'initial' ? 'Your Following' : 'Following'} rows={preview.followedPlayers} extra={(base) => { const row = base as FollowedSeasonPreview; return row.kind === 'initial' ? `OVR ${calculateOverall(row.player)}` : row.kind === 'freshman' ? 'Incoming freshman' : `${signed(row.overallChange!)} OVR` }} /> : null}
+      {preview.followedPlayers.length > 0 ? (
+        <PreviewTable
+          title={preview.kind === 'initial' ? 'Your Following' : 'Following'}
+          rows={preview.followedPlayers}
+          columns={[
+            playerColumn<FollowedSeasonPreview>(),
+            programColumn<FollowedSeasonPreview>(),
+            posClassColumn<FollowedSeasonPreview>(),
+            {
+              header: 'Context',
+              render: (row) => row.kind === 'initial'
+                ? `OVR ${calculateOverall(row.player)}`
+                : row.kind === 'freshman'
+                  ? 'Incoming freshman'
+                  : `${signed(row.overallChange!)} OVR`,
+            },
+          ]}
+        />
+      ) : null}
     </main>
   )
 }
