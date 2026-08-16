@@ -63,9 +63,9 @@ or intentionally uncertain information before presenting them as facts.
 
 ## Statistics and League immersion
 
-Around the Country, Player Legacy / Alumni, and Preseason / Season Context are
-now selected for Phase 7B in `ROADMAP.md`; the roadmap owns their scope and
-sequence. Related unscheduled extensions remain parked below.
+Around the Country, Player Legacy / Alumni, and Season Preview are accepted and
+frozen Phase 7B features. Related unscheduled extensions remain parked below;
+`ROADMAP.md` owns selected scope and sequence.
 
 ### Player Profile / Statistical Identity
 
@@ -105,12 +105,13 @@ attributes translate inside conventional positions. Cross-position profile
 supply is sparse, however, and strong position-specific per-40 baselines keep
 all sampled Top-10 assists at PG, all Top-10 rebounds at PF/C, and nearly all
 Top-10 blocks at C. Current approximately-36-MPG leaders also reduce raw
-extremes relative to historical 40-MPG stories. See `PLAYTESTING.md` for the
-full method and evidence.
+extremes relative to historical 40-MPG stories. See
+`PLAYER_IDENTITY_RESEARCH.md` for the consolidated method and evidence.
 
-Additional profile calibration is parked under Phase 7E in `ROADMAP.md`, not
-scheduled as immediate work. No tuning target or implementation is selected;
-manual gameplay must provide a concrete reason to reopen it.
+Additional profile calibration is parked with no selected phase. No tuning
+target or implementation is selected; manual gameplay must provide a concrete
+reason to reopen it. Historical evidence and experiment results live in
+`PLAYER_IDENTITY_RESEARCH.md`.
 
 The follow-up Elite Player Profile / OVR Specialization characterization found
 that shared talent generation makes elite Players increasingly all-around and
@@ -132,7 +133,7 @@ these principles alone.
 The completed investigation accepted Candidate A V2 as experimental input only
 and rejected OVR Candidate B v1. Passing and Steals remain possible later
 translation investigations; Rebounding escape and Blocks flexibility remain
-deferred. Full evidence lives in `PLAYTESTING.md`.
+deferred. Full evidence lives in `PLAYER_IDENTITY_RESEARCH.md`.
 
 Candidate A V2 is accepted as experimental input, not production behavior.
 Development Identity Retention remains a parked compatibility question, not a

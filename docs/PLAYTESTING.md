@@ -789,6 +789,10 @@ One Center attempted roughly ten three-pointers and shot poorly in a game. One g
 
 ## Player Statistical Identity / Superstar Separation — CHARACTERIZED / MIXED
 
+> Historical research summary. The consolidated experiment record and
+> reopening criteria now live in `PLAYER_IDENTITY_RESEARCH.md`; this chronology
+> remains only as dated causal evidence.
+
 The latest multi-Season manual playthrough found production too homogeneous and
 produced few obvious national superstars. Representative leader levels were
 roughly `7.3 APG`, `1.7 SPG`, and high-`2s BPG`; rebounding felt plausible.
@@ -909,7 +913,7 @@ profile supply and position-prior escape without undoing role-aware minutes.
 Phase 7B remains unassigned pending review; Recruit Identity / Recruit Details
 remains an alternative product milestone rather than bundled work.
 
-## Phase 7B.1A — Elite Player Profile / OVR Specialization — CHARACTERIZED / BOTH
+## Historical research — Elite Player Profile / OVR Specialization — CHARACTERIZED / BOTH
 
 This final major pre-design diagnostic reused the canonical `250`-Universe
 Season 1 sample and exact seed family from the Statistical Identity pass:
@@ -1661,7 +1665,7 @@ Active Player Details, current Following rows, News, Team navigation, Season
 progression, and Offseason navigation remained unchanged. The feature derives
 from existing immutable archives and adds no persisted Alumni state,
 Tournament career totals, historical game log, awards, records, or simulation
-behavior. Phase 7B.3 — Preseason / Season Context V1 is next.
+behavior. At that acceptance checkpoint, Phase 7B.3 was next.
 
 ## Phase 7B.3 — Season Preview — ACCEPTED (2026-08-15)
 
@@ -1678,7 +1682,9 @@ non-star development leaps, Recruit-rank ordering, and exact prior archive /
 Recruiting-class invariant failures. The full repository-source suite passes
 (`145` files, `1,694` tests). No Preview object, snapshot, dismissal, RNG,
 progression, Recruiting, or simulation behavior is persisted or changed. Phase
-7B is closed; Phase 7C.1 is next.
+7B is complete, accepted, and frozen; Phase 7C.1 — Season Archive / Yearbook is
+next. Phase 7D remains selected after Phase 7C. No Phase 7E is selected; later
+planning must begin from fresh playtest evidence.
 
 Refinement observations remain **WATCH**, not accepted behavior changes:
 
@@ -1727,7 +1733,7 @@ The 6-block frequency observation remains **WATCH** only; thresholds and Game
 Simulation were not reopened. Avery Martin's multi-season story continues to
 support the already-selected Player Legacy / Alumni V1 milestone.
 
-## Phase 7B.2A — Profile Generation Candidate A — WATCH (2026-08-14)
+## Historical research — Profile Generation Experiment A — WATCH (2026-08-14)
 
 The preregistered configuration used OVR 70+ eligibility and selection
 `min(15%, 2% + 0.5% × (OVR-70))`; 92% conventional / 8% unusual-secondary;
@@ -1777,7 +1783,7 @@ unusual share, weighted neutrality, and ±1 OVR fixed while testing weakness
 removal distributed across fewer, position-plausible sacrifices. Recheck 95+
 shape and Steals separation; do not begin OVR Candidate B yet.
 
-## Phase 7B.2A.1 — Candidate A V2 Weakness Distribution — ACCEPT (2026-08-14)
+## Historical research — Profile Generation Experiment A V2 — ACCEPT AS EXPERIMENTAL INPUT (2026-08-14)
 
 V1's broad weakness loops over-eagerly exhausted the weighted budget, often
 driving three or four low-priority attributes to their floor. V2 retained the
@@ -1851,7 +1857,7 @@ Player Development V1 preserves strengths, weaknesses, spread, attribute rank
 order, and identity across different POT-runway careers. No Development problem
 is asserted and no Development behavior changed here.
 
-## Phase 7B.2B — OVR Candidate B — REJECT (2026-08-14)
+## Historical research — OVR Experiment B v1 — REJECT (2026-08-14)
 
 The preregistered formula began with unrounded current OVR. Its best three
 non-Stamina attributes required a third rating of 88; it added
@@ -1904,7 +1910,7 @@ narrow transparent scale-calibration design diagnostic. Player Development remai
 uses production OVR for headroom/targets/POT caps, so hypothetical Candidate B
 activation would require explicit compatibility work before 7B.2D.
 
-## Phase 7B checkpoint reset after Candidate B v1 — SUPERSEDED (2026-08-14)
+## Historical Player Identity checkpoint reset — SUPERSEDED (2026-08-14)
 
 ### Causal diagnosis
 
@@ -1986,7 +1992,8 @@ evidence-supported Passing and Steals experiments, and manual Player Identity
 playtesting. Rebounding remains deferred until enough real profiles exist;
 Blocks remains WATCH; scoring and current role-aware MPG remain protected.
 
-Phase 7B remains active. Its success criterion is recognizable, varied Players
+At that historical checkpoint, Phase 7B remained active. Its success criterion
+was recognizable, varied Players
 worth following—not perfect displayed value for every specialist. A safe,
 imperfect canonical OVR is preferable to indefinite redesign across Recruiting,
 Recruit POT, rankings/stars, Rotation, Team Strength, Development, and stats.

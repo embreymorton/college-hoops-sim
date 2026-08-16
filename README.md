@@ -47,3 +47,6 @@ Read [calibration](docs/CALIBRATION.md) when changing simulation/balance and the
 Optional ideas belong in
 [future features](docs/FUTURE_FEATURES.md); confirmed risks belong in
 [known issues and optimizations](docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md).
+Parked Player Identity experiments live in
+[the historical research archive](docs/PLAYER_IDENTITY_RESEARCH.md) and are not
+part of normal feature-session reading.
