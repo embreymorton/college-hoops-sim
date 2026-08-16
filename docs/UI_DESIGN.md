@@ -231,7 +231,17 @@ Hub      = status        (compact totals, Roster Needs, Focus targets — no com
 Board    = management    (Rank/Player/Stars/Ovr/Pot/Readiness/Focus/Status/Action)
 Battles  = intelligence  (Recruit + our Program + competitors, in cards)
 National = discovery     (unchanged)
+Details  = inspection / attachment
 ```
+
+Recruit identity links on Board, Battles, and National Class open the functional
+Recruit Details child destination. It presents canonical profile, exact OVR/POT
+and nine ratings, class context, the controlled Program snapshot, and the
+existing player-safe pursuing-Program groups. Committed Recruits show their
+destination instead of unresolved standings. Back returns to Recruiting in the
+same Board/Battles/National parent mode; fresh root Recruiting entry still
+defaults to Board. National filter persistence is not required in V1. Final
+visual hierarchy remains pending manual 7D.1 playtesting.
 
 ```text
 Season/Postseason Hub Recruiting column

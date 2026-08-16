@@ -15,6 +15,7 @@ interface RecruitingBattlesGridProps {
   readonly cards: readonly BattleCardSummary[]
   readonly controlledProgram: ProgramDefinition
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
+  readonly onOpenRecruitDetails: (playerId: string) => void
 }
 
 /**
@@ -27,6 +28,7 @@ export function RecruitingBattlesGrid({
   cards,
   controlledProgram,
   programsById,
+  onOpenRecruitDetails,
 }: RecruitingBattlesGridProps) {
   if (cards.length === 0) {
     return (
@@ -44,6 +46,7 @@ export function RecruitingBattlesGrid({
           card={card}
           controlledProgram={controlledProgram}
           programsById={programsById}
+          onOpenRecruitDetails={onOpenRecruitDetails}
         />
       ))}
     </ul>
@@ -54,12 +57,14 @@ interface RecruitingBattleCardProps {
   readonly card: BattleCardSummary
   readonly controlledProgram: ProgramDefinition
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
+  readonly onOpenRecruitDetails: (playerId: string) => void
 }
 
 function RecruitingBattleCard({
   card,
   controlledProgram,
   programsById,
+  onOpenRecruitDetails,
 }: RecruitingBattleCardProps) {
   const { battle } = card
   const isCommitted = battle.commitment !== null
@@ -92,7 +97,13 @@ function RecruitingBattleCard({
         <span className="recruiting-battle-card__rank">
           {formatRankLabel(card.nationalRank)}
         </span>
-        <span className="recruiting-battle-card__name">{card.playerName}</span>
+        <button
+          type="button"
+          className="text-link-button recruiting-battle-card__name recruit-details-link"
+          onClick={() => onOpenRecruitDetails(card.playerId)}
+        >
+          {card.playerName}
+        </button>
         <span className="recruiting-battle-card__pos">{card.position}</span>
         <RecruitStars stars={card.stars} />
       </div>

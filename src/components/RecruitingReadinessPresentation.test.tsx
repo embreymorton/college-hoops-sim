@@ -145,6 +145,7 @@ describe('Readiness presentation across surfaces (6E.14B-B)', () => {
           cards={[battleCard(readiness)]}
           controlledProgram={CONTROLLED_PROGRAM}
           programsById={PROGRAMS_BY_ID}
+          onOpenRecruitDetails={() => undefined}
         />,
       )
       const card = document.querySelector('.recruiting-battle-card') as HTMLElement

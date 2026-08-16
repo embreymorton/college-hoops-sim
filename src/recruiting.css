@@ -950,6 +950,102 @@
   margin: 0.1rem 0 0;
 }
 
+/* Recruit Details functional checkpoint; final hierarchy remains subject to playtest. */
+.recruit-details-link {
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+}
+
+.recruit-details-screen {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.recruit-details-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.recruit-details-header h1 {
+  margin: 0.25rem 0;
+}
+
+.recruit-details-header__rank {
+  margin: 0.75rem 0 0.25rem;
+  font-weight: 700;
+}
+
+.recruit-details-header__ratings,
+.recruit-details-snapshot {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.recruit-details-header__ratings > div,
+.recruit-details-snapshot > div {
+  min-width: 7rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  background: var(--surface-1);
+}
+
+.recruit-details-header__ratings dt,
+.recruit-details-snapshot__label {
+  display: block;
+  color: var(--ink-1);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recruit-details-header__ratings dd {
+  margin: 0.15rem 0 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+}
+
+.recruit-details-snapshot .section-hint {
+  display: block;
+  margin-top: 0.35rem;
+}
+
+.recruit-details-battle {
+  margin-top: 1.25rem;
+}
+
+.recruit-details-battle__group + .recruit-details-battle__group {
+  margin-top: 1rem;
+}
+
+.recruit-details-commitment__program {
+  margin: 0.25rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+@media (max-width: 560px) {
+  .recruit-details-header {
+    display: grid;
+  }
+
+  .recruit-details-header__ratings,
+  .recruit-details-snapshot {
+    width: 100%;
+  }
+
+  .recruit-details-header__ratings > div,
+  .recruit-details-snapshot > div {
+    min-width: 0;
+  }
+}
+
 /* ==========================================================================
    Recruiting Update recap — compact, automatic, no Dismiss (6E.12C).
    Composes inside the Hub Recruiting module (6E.16B) rather than as a

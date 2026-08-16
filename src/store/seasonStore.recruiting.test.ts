@@ -24,6 +24,32 @@ beforeEach(() => {
 })
 
 describe('Dynasty section navigation', () => {
+  it.each(['board', 'battles', 'national'] as const)(
+    'opens Recruit Details from %s and returns without resetting its parent mode',
+    (mode) => {
+      const dynasty = seedRecruitingSession()
+      const playerId = dynasty.recruiting!.recruits[0]!.player.id
+      useDynastyStore.getState().setRecruitingMode(mode)
+
+      useDynastyStore.getState().openRecruitDetails(playerId)
+
+      expect(useDynastyStore.getState()).toMatchObject({
+        view: 'recruitDetails',
+        selectedRecruitPlayerId: playerId,
+        recruitingMode: mode,
+      })
+      expect(useDynastyStore.getState().dynasty).toBe(dynasty)
+
+      useDynastyStore.getState().returnToRecruiting()
+
+      expect(useDynastyStore.getState()).toMatchObject({
+        view: 'recruiting',
+        selectedRecruitPlayerId: null,
+        recruitingMode: mode,
+      })
+    },
+  )
+
   it('starts each fresh session in Board mode', () => {
     expect(useDynastyStore.getState().recruitingMode).toBe('board')
     useDynastyStore.getState().setRecruitingMode('guide')
@@ -47,6 +73,23 @@ describe('Dynasty section navigation', () => {
     useDynastyStore.getState().goToRecruiting()
 
     expect(useDynastyStore.getState().recruitingMode).toBe('board')
+    expect(useDynastyStore.getState().selectedRecruitPlayerId).toBeNull()
+  })
+
+  it('clears a stale Recruit Details destination when a new Dynasty initializes', () => {
+    useDynastyStore.setState({
+      view: 'recruitDetails',
+      selectedRecruitPlayerId: 'stale-recruit',
+      recruitingMode: 'battles',
+    })
+
+    useDynastyStore.getState().selectProgram(CONTROLLED_PROGRAM_ID)
+
+    expect(useDynastyStore.getState()).toMatchObject({
+      view: 'hub',
+      selectedRecruitPlayerId: null,
+      recruitingMode: 'board',
+    })
   })
 
   it('shows Season / Recruiting / League during the regular season', () => {

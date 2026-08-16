@@ -222,6 +222,43 @@ describe('Recruiting mode session context', () => {
   })
 })
 
+describe('Recruit Details entry points', () => {
+  it('opens Recruit Details from Board identity without replacing management controls', () => {
+    renderRecruitingScreen()
+    expect(screen.getByRole('button', { name: 'Focus Active Fixture' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Active Fixture' }))
+
+    expect(useDynastyStore.getState()).toMatchObject({
+      view: 'recruitDetails',
+      selectedRecruitPlayerId: 'fx-active-sg',
+      recruitingMode: 'board',
+    })
+  })
+
+  it('opens Recruit Details from Battles and returns to Battles', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'Battles' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Active Fixture' }))
+
+    fireEvent.click(screen.getByRole('button', { name: /Back to Recruiting/ }))
+
+    expect(useDynastyStore.getState().recruitingMode).toBe('battles')
+    expect(screen.getByRole('button', { name: 'Battles' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  it('opens Recruit Details from National Class and returns to National Class', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'National Class' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Available Fixture' }))
+
+    fireEvent.click(screen.getByRole('button', { name: /Back to Recruiting/ }))
+
+    expect(useDynastyStore.getState().recruitingMode).toBe('national')
+    expect(screen.getByRole('button', { name: 'National Class' })).toHaveAttribute('aria-pressed', 'true')
+  })
+})
+
 describe('Recruiting Overview', () => {
   it('renders Board/Signed/Openings/Offers as one compact snapshot, with Board shown exactly once', () => {
     renderRecruitingScreen()

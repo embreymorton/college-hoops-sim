@@ -48,6 +48,7 @@ export function RecruitingScreen() {
   const goToRecruiting = useDynastyStore((state) => state.goToRecruiting)
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const addRecruitingTarget = useDynastyStore((state) => state.addRecruitingTarget)
+  const openRecruitDetails = useDynastyStore((state) => state.openRecruitDetails)
   const removeRecruitingTarget = useDynastyStore((state) => state.removeRecruitingTarget)
   const setRecruitingFocus = useDynastyStore((state) => state.setRecruitingFocus)
   const offerRecruitingTarget = useDynastyStore((state) => state.offerRecruitingTarget)
@@ -239,6 +240,7 @@ export function RecruitingScreen() {
                 onOffer={offerRecruitingTarget}
                 onWithdraw={withdrawRecruitingOffer}
                 onRemove={removeRecruitingTarget}
+                onOpenRecruitDetails={openRecruitDetails}
               />
             </>
           )
@@ -247,6 +249,7 @@ export function RecruitingScreen() {
             cards={deriveBattleCardSummaries(dynasty, board)}
             controlledProgram={controlledProgram}
             programsById={PROGRAMS_BY_ID}
+            onOpenRecruitDetails={openRecruitDetails}
           />
         ) : mode === 'national' ? (
           <NationalRecruitTable
@@ -254,6 +257,7 @@ export function RecruitingScreen() {
             board={board}
             programsById={PROGRAMS_BY_ID}
             onAddToBoard={addRecruitingTarget}
+            onOpenRecruitDetails={openRecruitDetails}
           />
         ) : (
           <RecruitingGuide />

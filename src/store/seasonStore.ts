@@ -206,6 +206,7 @@ export type SeasonSessionView =
   | 'teamDetails'
   | 'playerDetails'
   | 'recruiting'
+  | 'recruitDetails'
   | 'offseason'
 
 export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following'
@@ -267,6 +268,8 @@ export interface DynastySessionState {
   readonly selectedPlayerProgramId: string | null
   /** The Player currently open in Player Details. */
   readonly selectedPlayerId: string | null
+  /** Stable future-Player ID currently open in Recruit Details. */
+  readonly selectedRecruitPlayerId: string | null
   /**
    * The message from the most recent rejected Recruiting board/offer action,
    * if any. Recruiting UI derives disabled states to keep this rare; when a
@@ -398,6 +401,10 @@ export interface DynastySessionState {
   goBackFromExploration(): void
   /** Opens the Recruiting destination; always reachable while Dynasty Recruiting is active. */
   goToRecruiting(): void
+  /** Opens Recruit Details without changing the current Recruiting parent mode. */
+  openRecruitDetails(playerId: string): void
+  /** Returns from Recruit Details without applying fresh/root Recruiting defaults. */
+  returnToRecruiting(): void
   /**
    * Adds a National Class Recruit to the controlled Program's board at the
    * normal Board status. No-op with a surfaced error if the canonical board API
@@ -675,6 +682,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   selectedTeamProgramId: null,
   selectedPlayerProgramId: null,
   selectedPlayerId: null,
+  selectedRecruitPlayerId: null,
   recruitingActionError: null,
   pendingRecruitingSetupIntent: null,
   recruitingActivityBaselinePeriod: null,
@@ -735,6 +743,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       selectedTeamProgramId: null,
       selectedPlayerProgramId: null,
       selectedPlayerId: null,
+      selectedRecruitPlayerId: null,
       recruitingActionError: null,
       pendingRecruitingSetupIntent: null,
       recruitingActivityBaselinePeriod: null,
@@ -1651,11 +1660,20 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       view: 'recruiting',
       recruitingMode: 'board',
+      selectedRecruitPlayerId: null,
       explorationViewHistory: [],
       selectedArchivedSeasonNumber: null,
       recruitingActionError: null,
       recruitingActivityBaselinePeriod: null,
     })
+  },
+
+  openRecruitDetails(selectedRecruitPlayerId) {
+    set({ view: 'recruitDetails', selectedRecruitPlayerId })
+  },
+
+  returnToRecruiting() {
+    set({ view: 'recruiting', selectedRecruitPlayerId: null })
   },
 
   addRecruitingTarget(playerId) {
@@ -1915,6 +1933,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         selectedTeamProgramId: null,
         selectedPlayerProgramId: null,
         selectedPlayerId: null,
+        selectedRecruitPlayerId: null,
         recruitingActionError: null,
         pendingRecruitingSetupIntent: null,
         recruitingActivityBaselinePeriod: null,

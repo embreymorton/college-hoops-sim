@@ -30,7 +30,9 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 1. Playtest the selected 7D.1 Recruit Details horizon against its acceptance
    question: Does deeper Recruit inspection make prospects more memorable and
-   increase attachment during normal Recruiting?
+   increase attachment during normal Recruiting? Validate the pending loops
+   `National → Recruit Details → Back`, `Board → Recruit Details → Back`, and
+   `Battles → Recruit Details → Back`; no positive evidence is recorded yet.
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.

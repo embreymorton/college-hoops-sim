@@ -27,6 +27,7 @@ interface NationalRecruitTableProps {
   readonly board: ProgramRecruitingBoard
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
   readonly onAddToBoard: (playerId: string) => void
+  readonly onOpenRecruitDetails: (playerId: string) => void
 }
 
 /** The full national Recruit pool, filterable by position/need, in National Rank order. */
@@ -35,6 +36,7 @@ export function NationalRecruitTable({
   board,
   programsById,
   onAddToBoard,
+  onOpenRecruitDetails,
 }: NationalRecruitTableProps) {
   const [filter, setFilter] = useState<ClassFilter>('all')
   const recruiting = dynasty.recruiting!
@@ -124,7 +126,13 @@ export function NationalRecruitTable({
                   <tr key={recruit.player.id} data-status={status}>
                     <td>{recruit.nationalRank}</td>
                     <td className="player-name-cell">
-                      {recruit.player.firstName} {recruit.player.lastName}
+                      <button
+                        type="button"
+                        className="text-link-button recruit-details-link"
+                        onClick={() => onOpenRecruitDetails(recruit.player.id)}
+                      >
+                        {recruit.player.firstName} {recruit.player.lastName}
+                      </button>
                       <span className="leader-board__pos">{recruit.player.position}</span>
                     </td>
                     <td>

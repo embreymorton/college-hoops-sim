@@ -9,6 +9,7 @@ import { PlayerDetailsScreen } from './PlayerDetailsScreen'
 import { PostseasonHubScreen } from './PostseasonHubScreen'
 import { ProgramSelectScreen } from './ProgramSelectScreen'
 import { RecruitingScreen } from './RecruitingScreen'
+import { RecruitDetailsScreen } from './RecruitDetailsScreen'
 import { SeasonHubScreen } from './SeasonHubScreen'
 import { SeasonPostgameScreen } from './SeasonPostgameScreen'
 import { SeasonPreviewScreen } from './SeasonPreviewScreen'
@@ -80,6 +81,9 @@ export function DynastyApp() {
       break
     case 'recruiting':
       screen = <RecruitingScreen />
+      break
+    case 'recruitDetails':
+      screen = <RecruitDetailsScreen />
       break
     case 'offseason':
       screen = <OffseasonScreen />

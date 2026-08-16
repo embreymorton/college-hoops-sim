@@ -21,6 +21,7 @@ interface RecruitingBoardTableProps {
   readonly onOffer: (playerId: string) => void
   readonly onWithdraw: (playerId: string) => void
   readonly onRemove: (playerId: string) => void
+  readonly onOpenRecruitDetails: (playerId: string) => void
 }
 
 interface FocusToggleProps {
@@ -62,6 +63,7 @@ export function RecruitingBoardTable({
   onOffer,
   onWithdraw,
   onRemove,
+  onOpenRecruitDetails,
 }: RecruitingBoardTableProps) {
   const recruiting = dynasty.recruiting!
   // Strictly by National Rank — a fixed identity order, so changing a
@@ -105,7 +107,13 @@ export function RecruitingBoardTable({
               <tr key={target.playerId} data-status={target.status}>
                 <td>{recruit.nationalRank}</td>
                 <td className="player-name-cell">
-                  {recruit.player.firstName} {recruit.player.lastName}
+                  <button
+                    type="button"
+                    className="text-link-button recruit-details-link"
+                    onClick={() => onOpenRecruitDetails(target.playerId)}
+                  >
+                    {recruit.player.firstName} {recruit.player.lastName}
+                  </button>
                   <span className="leader-board__pos">{position}</span>
                 </td>
                 <td>
