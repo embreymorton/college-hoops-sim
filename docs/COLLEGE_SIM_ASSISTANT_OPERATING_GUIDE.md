@@ -619,8 +619,9 @@ visual inspection.
 
 **`frontend-design` skill rule:** when a prompt's primary responsibility is
 frontend implementation, UI composition, or visual polish, and the
-`frontend-design` skill is available, the prompt should explicitly instruct
-Claude Code to use it. The current repository and accepted project docs
+`frontend-design` skill is available, the generated prompt **MUST explicitly
+instruct Claude Code near the top to use it**. Omitting that instruction is a
+prompt-generation mistake. The current repository and accepted project docs
 (`UI_DESIGN.md` above all) remain authoritative; `frontend-design` supplements
 `UI_DESIGN.md`'s existing patterns rather than replacing them. Use it to
 improve hierarchy, composition, responsiveness, and polish within the
@@ -628,6 +629,50 @@ established design language — it is never permission to introduce a new
 design system or reopen accepted UI architecture (Hub/Board/Battles/National
 separation, navigation structure, and similar accepted decisions stay fixed
 unless the milestone itself is scoped to reopen them).
+
+## Visual Polish Fast Path
+
+Use this path when the handoff is known-green and explicitly identifies
+accepted/frozen contracts and tests. Freeze domain behavior, canonical state,
+navigation, and established interaction contracts unless visual inspection
+reveals a concrete defect. Allowed work is React/CSS presentation,
+presentational extraction, accessibility, and local presentation state.
+
+Inspect the quick-start docs, `UI_DESIGN.md`, the target surface and shared
+styles, plus only two to four comparable existing surfaces. During iteration,
+run targeted UI/component/shared tests, typecheck, changed-file lint, and a diff
+check. Run the full suite only when shared behavior, state, domain code, broad
+infrastructure, or final milestone closure warrants it.
+
+Browser validation should cover one representative desktop viewport, about
+390px mobile, the changed interaction, and overflow/layout; capture screenshots
+when they improve comparison. Reuse fixtures or existing app state when they
+are sufficient instead of repeatedly replaying the full lifecycle.
+
+The preferred sequence is:
+
+```text
+Codex structural implementation + comprehensive validation
+→ Claude targeted frontend-design polish + visual validation
+→ narrow follow-up with targeted validation, if needed
+→ user acceptance
+→ one final comprehensive closure validation
+```
+
+A concise polish prompt should identify these fields near the top:
+
+```text
+Agent: Claude Code
+Required skill: frontend-design
+Execution mode: focused visual polish
+Accepted/frozen: ...
+Evidence: ...
+Target: ...
+Comparable references (2–4): ...
+Allowed / out of scope: ...
+Proportional validation: ...
+User acceptance required: ...
+```
 
 Project examples include Recruiting Management UI and onboarding, Season Hub
 composition, Late Recruiting and Offseason UX, Player Details UX, Postseason

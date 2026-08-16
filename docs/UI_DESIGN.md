@@ -390,6 +390,31 @@ The News heading retains a compact Season Preview action throughout the active
 regular Season and Tournament, while the Hub promotion itself is limited to
 Rounds 1–2. Season Preview is a destination, not a fifth League tab.
 
+### Season Archive / Yearbook — accepted (7C.1)
+
+History is League-owned but remains a distinct secondary action, not a global
+destination or fifth tab. Its index shows completed Seasons only, newest first;
+the active Season never appears. A Yearbook should feel like one cohesive recap
+in the established app language, ordered as Champion / Season identity, Your
+Season (summary, Team Leaders, Tournament Run), Season Around the League, and
+the full archived National Tournament bracket as the final deep-dive. Do not
+surface the implementation label “read-only archive” in player-facing copy.
+
+Use progressive disclosure when simultaneous historical datasets would harm
+scanability. Season Around the League pairs one Final Standings card with a
+conference selector and one Statistical Leaders card with a category selector.
+Default to the controlled Program's conference and PPG; expose every conference
+and regular-season PPG/RPG/APG/SPG/BPG top ten. Pair the cards on desktop and
+stack them on mobile. Wide tables and the full bracket scroll locally; the page
+must not create body overflow at approximately 390px.
+
+Player rows use stable-ID exploration. Active Players open current Player
+Details, departed Players open Former/Alumni details, and unresolved IDs fail
+quietly. Back from Player Details restores the same Yearbook. This is contextual
+navigation through the existing exploration stack, not a season-specific
+historical Player route. The archived Tournament shows the complete bracket but
+offers no active simulation or game-detail controls.
+
 ### Player Details + Development History — implemented (6E.8)
 
 Player Details now tells a Player's career story without duplicating any canonical facts. Nine current-ability ratings display as a compact three-column grid — deliberately not nine oversized cards — directly below identity/OVR/POT. Career Progression is a dense, prominent table (not a secondary tab) with one row per Season the Player is found on a roster in, current or archived: Season number, class, OVR, offseason development gain (`overall[n] − overall[n-1]`, blank for the earliest known Season), and PPG/RPG/APG. The active partial Season is included as the latest row and stays visibly partial. Recruiting Origin — star rating, national/position rank, entry OVR/POT, and signed Program — appears only for Players resolved from finalized Recruiting history and is omitted entirely, with no placeholder, for original Universe Players.

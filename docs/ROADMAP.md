@@ -15,11 +15,11 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — 7C.1 Season Archive / Yearbook
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Begin **Phase 7C — History & Recognition V1** by giving completed Seasons a
-player-facing historical destination. Scope must be planned from current
-archives and accepted history boundaries before implementation.
+**7C.1 Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.** No
+successor has been explicitly selected. Roadmap order does not promote the
+remaining planned work.
 
 ### PLANNED — remainder of Phase 7C
 
@@ -127,6 +127,18 @@ number for it. Historical research remains available in
 
 Phase 7B added visibility/read models only: no parallel history, Preview/News
 persistence, RNG, or simulation changes.
+
+### Phase 7C — History & Recognition V1 — IN PROGRESS
+
+- **7C.1 Season Archive / Yearbook — COMPLETE / ACCEPTED / FROZEN:** added a
+  League-owned, completed-Seasons-only History destination with newest-first
+  Yearbooks, a controlled-Team recap, selectable league standings/leaders, and
+  the full archived Tournament bracket.
+- **7C.2 Records & Milestones** and **7C.3 Awards & Honors** remain PLANNED.
+
+7C.1 derives all presentation from `CompletedSeasonArchive` through pure
+projections and transient/local UI state. It added no copied historical
+summaries, canonical mutation, RNG, or simulation behavior.
 
 ## Historical Player Identity Research — COMPLETE / PARKED
 

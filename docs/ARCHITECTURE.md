@@ -313,7 +313,7 @@ complete, valid SeasonState
 
 The transition rejects incomplete regular seasons, incomplete Tournaments, missing champions, mismatched or invalid competition state, and duplicate archived season numbers. The returned Dynasty does not intentionally retain the completed competitions in both active and historical slots: active competition becomes `null` after the archive is created.
 
-`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Historical presentation, career totals, records, and awards are not implemented, but the facts needed for later projections are preserved.
+`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation and the 7C.1 Season Yearbook are implemented as pure projections over those facts; records and awards are not implemented.
 
 Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
 
@@ -460,6 +460,21 @@ Follow order. Missing, duplicate, or mismatched lifecycle inputs fail as
 structural invariants. No Preview snapshot, viewed/dismissed state, cache, RNG,
 or canonical mutation exists; Zustand stores only the transient
 `seasonPreview` route in the existing exploration history.
+
+Phase 7C.1 adds a pure completed-Season Yearbook boundary:
+
+```text
+CompletedSeasonArchive
+  → pure Yearbook projections
+  → transient/local selection and exploration state
+  → React presentation
+```
+
+The archive remains the sole historical source of Season, standings, Player
+statistics, and Tournament facts. Conference/stat-category selection and
+Yearbook return context are presentation state; no summary snapshot, historical
+Player copy, cache, RNG draw, or season-specific Player route is persisted.
+Stable Player IDs resolve through the existing active/former/unknown boundary.
 
 ## Team Season Stats and exploration projections
 

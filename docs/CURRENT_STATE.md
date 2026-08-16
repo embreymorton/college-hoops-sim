@@ -29,7 +29,8 @@ The playable product includes:
 - a stable 32-Program Universe, 24-round schedules, standings, Quick Sim, Game
   Prep, Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
-  Details, Following, News, Alumni, and Season Preview;
+  Details, Following, News, Alumni, Season Preview, and a completed-Season
+  History / Yearbook destination;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, Late
@@ -74,7 +75,8 @@ refactor these systems during unrelated feature work:
 - Tournament selection/seeding and progression;
 - Dynasty archive, offseason, roster-assembly, and rollover behavior;
 - Followed Players and Player Legacy resolver semantics; and
-- Phase 7B News, Alumni/Historical Player Details, and Season Preview.
+- Phase 7B News, Alumni/Historical Player Details, and Season Preview; and
+- Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -97,19 +99,23 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**Phase 7B — Player & League Stories V1 is COMPLETE / ACCEPTED / FROZEN.**
+**Phase 7C.1 — Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.**
 
-Accepted Phase 7B capabilities:
+League-owned History is a secondary action rather than a global destination or
+fifth League tab. It lists completed Seasons only, newest first, then presents
+one cohesive Season recap:
 
-- **7B.1 — Around the Country / News V1:** a deterministic on-demand current-
-  Season feed with accepted context polish;
-- **7B.2 — Player Legacy / Alumni V1:** stable-ID former-Player resolution,
-  Following retention, and historical Player Details; and
-- **7B.3 — Season Preview:** initial and rollover cast projections with Hub and
-  League News entry points.
+- Champion / Season identity;
+- Your Season summary, Team Leaders, and Tournament Run;
+- Season Around the League with one selectable Final Standings card and one
+  selectable Statistical Leaders card; and
+- the full archived National Tournament bracket as the final deep-dive.
 
-All three are visibility/read-model features. They add no parallel canonical
-history, event log, RNG, or simulation behavior.
+The Yearbook is a pure read-model over `CompletedSeasonArchive`; conference and
+stat-category selectors are transient local UI state. Player links resolve by
+stable ID to current details, Former/Alumni details, or quiet unresolved
+behavior, and Back returns to the same Yearbook. No copied summary, historical
+Player route, simulation behavior, or parallel canonical history was added.
 
 The current Player population is good enough for feature development. Player
 Identity / Superstar Separation tuning is **PARKED**. Canonical Player
@@ -119,19 +125,12 @@ Experiment B v1 is rejected and must not be activated or retuned in place.
 Read [PLAYER_IDENTITY_RESEARCH.md](PLAYER_IDENTITY_RESEARCH.md) only when new
 manual gameplay evidence justifies deliberately reopening Player tuning.
 
-**NEXT: Phase 7C.1 — Season Archive / Yearbook.**
+**No NEXT is selected — OPEN PLANNING CHECKPOINT.**
 
-The selected sequence after that remains:
-
-1. finish **Phase 7C — History & Recognition V1** (`7C.2 Records & Milestones`,
-   then `7C.3 Awards & Honors`);
-2. proceed to **Phase 7D — Recruit Attachment V1** (`Recruit Details`, `Follow
-   Recruits`, then Recruit → Player continuity); and
-3. after the currently selected Phase 7 work, perform a fresh playtest-driven
-   planning pass.
-
-No Phase 7E is currently selected. Player Identity work does not reopen
-automatically.
+`7C.2 Records & Milestones`, `7C.3 Awards & Honors`, and Phase 7D remain
+**PLANNED**, not selected. The next milestone requires an explicit planning
+decision; Roadmap order and numbering do not promote one automatically. Player
+Identity work also remains parked unless new evidence deliberately reopens it.
 
 ## Fresh-session rules
 

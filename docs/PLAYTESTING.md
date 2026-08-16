@@ -28,10 +28,12 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-1. Gather product/IA evidence needed to plan the Roadmap-selected Season
-   Archive / Yearbook milestone.
-2. Continue observing whether News → inspect → Follow → Alumni creates durable
-   Player and Program attachment across normal multi-Season play.
+1. Use the Open Planning Checkpoint to decide the next milestone from current
+   gameplay evidence; do not promote planned Records, Awards, or Recruit work
+   automatically.
+2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
+   create durable Player and Program attachment across normal multi-Season
+   play.
 3. Observe which Season facts players naturally want preserved before defining
    Records or Awards.
 4. Monitor genuinely live WATCH items below without promoting them into work
@@ -95,25 +97,33 @@ feature milestone.
 Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
-## Active Phase Evidence — History and Recognition
-
-Phase 7C has not been implemented. Current evidence supports beginning with a
-Season Archive / Yearbook because the simulation already creates memorable
-Season-level facts that become difficult to retrieve after rollover:
-
-- champions, Tournament runs, upsets, and painful exits;
-- standings, records, statistical leaders, and notable News stories;
-- recruiting classes and important incoming Players;
-- followed Players' Season context and eventual career progression; and
-- the desire to revisit “what happened that year” before defining records or
-  subjective awards.
-
-Planning should determine the smallest useful player-facing archive from
-canonical completed history. Do not infer that every item above belongs in
-7C.1, and do not create new persisted duplicate history when existing archives
-can support a projection.
-
 ## Recent Accepted-Phase Evidence
+
+### Phase 7C.1 — Season Archive / Yearbook — ACCEPTED / FROZEN
+
+Manual acceptance established that History belongs to League as a secondary
+action, not a global destination or fifth tab. The accepted Yearbook lists only
+completed Seasons newest-first and reads as one recap: Champion / Season
+identity, Your Season, Season Around the League, then the full archived
+Tournament bracket.
+
+The controlled-Team section combines summary, Team Leaders, and Tournament Run.
+League context uses one Final Standings card with a conference selector and one
+Statistical Leaders card with a category selector; controlled conference and
+PPG are the defaults, with all conferences and PPG/RPG/APG/SPG/BPG top tens
+available. Statistics are regular-season only. Desktop paired cards stack on
+mobile, and the accepted 390px layout has no body overflow.
+
+Stable-ID Player links reach current details for active Players and
+Former/Alumni details for departed Players, fail quietly when unresolved, and
+return to the same Yearbook on Back. The Tournament is a full read-only
+archived bracket without active simulation or game-detail affordances. All of
+this remains projection and local presentation state over canonical completed
+archives; 7C.1 did not add copied summaries or a season-specific Player route.
+
+Records, Awards, historical Team/game details, News replay, Recruiting
+retrospectives, combined statistics, compaction, and simulation/calibration
+changes remain outside accepted 7C.1 scope.
 
 ### Phase 7B — Player & League Stories — ACCEPTED / FROZEN
 
