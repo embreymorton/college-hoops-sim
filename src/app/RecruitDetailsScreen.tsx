@@ -1,6 +1,12 @@
-import { useEffect } from 'react'
-import { PlayerRatingsGrid, RecruitStars } from '../components'
-import { deriveRecruitDetailsView, type RecruitDetailsView } from '../dynasty'
+import { useEffect, type CSSProperties, type ReactNode } from 'react'
+import { PlayerRatingsGrid, RecruitingReadinessBadge, RecruitStars } from '../components'
+import {
+  deriveProgramRecruitingBoard,
+  deriveRecruitDetailsView,
+  deriveTargetStatus,
+  RECRUITING_BOARD_LIMIT,
+  type RecruitDetailsView,
+} from '../dynasty'
 import type { Player } from '../engine'
 import { useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -8,8 +14,8 @@ import {
   deriveBattleGroups,
   formatBattlePositionLabel,
   formatControlledPositionLabel,
-  formatReadinessLabel,
 } from './recruitingBattleFormatters'
+import { formatOfferCapacityMessage } from './recruitingFormatters'
 import { formatHeight } from './formatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -21,6 +27,11 @@ export function RecruitDetailsScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
   const playerId = useDynastyStore((state) => state.selectedRecruitPlayerId)
   const returnToRecruiting = useDynastyStore((state) => state.returnToRecruiting)
+  const addRecruitingTarget = useDynastyStore((state) => state.addRecruitingTarget)
+  const removeRecruitingTarget = useDynastyStore((state) => state.removeRecruitingTarget)
+  const setRecruitingFocus = useDynastyStore((state) => state.setRecruitingFocus)
+  const offerRecruitingTarget = useDynastyStore((state) => state.offerRecruitingTarget)
+  const withdrawRecruitingOffer = useDynastyStore((state) => state.withdrawRecruitingOffer)
 
   let details: RecruitDetailsView | null = null
   let invalidSelection = false
@@ -47,6 +58,8 @@ export function RecruitDetailsScreen() {
   if (!controlledProgram) return null
 
   const { battle } = details
+  const isCommitted = battle.commitment !== null
+  const isCommittedToUs = isCommitted && battle.commitment!.programId === dynasty.controlledProgramId
   const commitmentProgram = battle.commitment
     ? PROGRAMS_BY_ID.get(battle.commitment.programId)
     : undefined
@@ -67,6 +80,100 @@ export function RecruitDetailsScreen() {
     Number.POSITIVE_INFINITY,
   )
 
+  // Only the controlled Program's own commitment earns the header's accent
+  // border — a commitment elsewhere stays neutral so the page never
+  // over-celebrates a rival Program.
+  const accentStyle = isCommittedToUs
+    ? ({ '--team-accent': controlledProgram.branding.primaryColor } as CSSProperties)
+    : undefined
+
+  let managementActions: ReactNode = null
+  if (!isCommitted) {
+    const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+    const { isOnBoard, isFocused, hasActiveOffer, targetStatus } = battle.controlled
+    const isActive = targetStatus === 'active'
+    const canRemove = isOnBoard && targetStatus !== 'committed'
+    const availableOfferSlots = board.availableOfferSlotsByPosition[details.position]
+    const canOffer = isOnBoard && isActive && !hasActiveOffer && availableOfferSlots > 0
+    const boardIsFull = board.targets.length >= RECRUITING_BOARD_LIMIT
+    const nationalStatus = isOnBoard
+      ? targetStatus
+      : deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, details.playerId)
+    const canAddToBoard = !isOnBoard && nationalStatus === 'active'
+    const fullName = `${details.firstName} ${details.lastName}`
+
+    managementActions = (
+      <div className="recruit-details-actions">
+        {isOnBoard ? (
+          <>
+            <button
+              type="button"
+              className="button button--ghost recruiting-action-button"
+              disabled={!isActive}
+              aria-label={`${isFocused ? 'Unfocus' : 'Focus'} ${fullName}`}
+              onClick={() => setRecruitingFocus(details.playerId, !isFocused)}
+            >
+              {isFocused ? '★ Focused' : '☆ Focus'}
+            </button>
+            {isActive && hasActiveOffer && (
+              <button
+                type="button"
+                className="button button--ghost recruiting-action-button"
+                onClick={() => withdrawRecruitingOffer(details.playerId)}
+              >
+                Withdraw Offer
+              </button>
+            )}
+            {isActive && !hasActiveOffer && (
+              <>
+                <button
+                  type="button"
+                  className="button button--primary recruiting-action-button"
+                  disabled={!canOffer}
+                  onClick={() => offerRecruitingTarget(details.playerId)}
+                >
+                  Offer
+                </button>
+                {!canOffer && (
+                  <p className="recruiting-capacity-note">
+                    {formatOfferCapacityMessage(
+                      details.position,
+                      board.activeOfferCountsByPosition[details.position],
+                      board.remainingOpeningsByPosition[details.position],
+                    )}
+                  </p>
+                )}
+              </>
+            )}
+            {canRemove && (
+              <button
+                type="button"
+                className="text-link-button recruiting-remove-button"
+                onClick={() => removeRecruitingTarget(details.playerId)}
+              >
+                Remove from Board
+              </button>
+            )}
+          </>
+        ) : canAddToBoard ? (
+          boardIsFull ? (
+            <button type="button" className="button button--ghost recruiting-action-button" disabled>
+              Board Full
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="button button--primary recruiting-action-button"
+              onClick={() => addRecruitingTarget(details.playerId)}
+            >
+              Add to Board
+            </button>
+          )
+        ) : null}
+      </div>
+    )
+  }
+
   return (
     <div className="recruit-details-screen">
       <button
@@ -77,63 +184,88 @@ export function RecruitDetailsScreen() {
         ← Back to Recruiting
       </button>
 
-      <header className="recruit-details-header section">
-        <div>
-          <p className="eyebrow-tag">Recruit Profile</p>
-          <h1>{details.firstName} {details.lastName}</h1>
-          <RecruitStars stars={details.stars} />
-          <p className="recruit-details-header__rank">
-            #{details.nationalRank} National · #{details.positionRank} {details.position}
-          </p>
-          <p className="section-hint">
-            {details.position} · {formatHeight(details.height)} · Recruiting Class — Season {details.targetSeasonNumber}
-          </p>
+      <header className="season-header recruit-details-header" style={accentStyle}>
+        <div className="season-header__identity">
+          <div>
+            <p className="eyebrow-tag">Recruit Profile</p>
+            <h1 className="season-header__name">
+              {details.firstName} {details.lastName}
+            </h1>
+            <p className="season-header__meta recruit-details-header__meta">
+              <RecruitStars stars={details.stars} />
+              <span className="recruit-details-header__rank">
+                #{details.nationalRank} National · #{details.positionRank} {details.position}
+              </span>
+            </p>
+            <p className="section-hint">
+              {details.position} · {formatHeight(details.height)} · Recruiting Class — Season {details.targetSeasonNumber}
+            </p>
+          </div>
         </div>
-        <dl className="recruit-details-header__ratings" aria-label="Recruit ability">
-          <div><dt>OVR</dt><dd>{details.overall}</dd></div>
-          <div><dt>POT</dt><dd>{details.potential}</dd></div>
-        </dl>
+        <div className="stat-trio season-header__stats" aria-label="Recruit ability">
+          <div className="stat-trio__item">
+            <span className="stat-trio__value">{details.overall}</span>
+            <span className="stat-trio__label">Ovr</span>
+          </div>
+          <div className="stat-trio__item">
+            <span className="stat-trio__value">{details.potential}</span>
+            <span className="stat-trio__label">Pot</span>
+          </div>
+        </div>
       </header>
 
       <section className="section" aria-labelledby="recruit-ratings-heading">
-        <div className="section-heading"><h2 id="recruit-ratings-heading">Player Ratings</h2></div>
+        <div className="section-heading"><h2 id="recruit-ratings-heading" className="section-title">Player Ratings</h2></div>
         <PlayerRatingsGrid player={player} />
       </section>
 
       <section className="section recruit-details-recruitment" aria-labelledby="recruitment-heading">
-        <div className="section-heading"><h2 id="recruitment-heading">Current Recruitment</h2></div>
-        {battle.commitment ? (
-          <div className="recruit-details-commitment" data-position={battle.controlled.position}>
-            <p className="eyebrow-tag">Committed</p>
+        <div className="section-heading"><h2 id="recruitment-heading" className="section-title">Current Recruitment</h2></div>
+        {isCommitted ? (
+          <div
+            className="recruit-details-commitment"
+            data-position={isCommittedToUs ? 'committed-to-us' : 'committed-elsewhere'}
+          >
+            <p className="eyebrow-tag">Recruitment Resolved</p>
             <p className="recruit-details-commitment__program">
-              Committed to {commitmentProgram?.name ?? battle.commitment.programId}
+              <span
+                className="team-color-dot"
+                style={{ background: commitmentProgram?.branding.primaryColor }}
+                aria-hidden="true"
+              />
+              Committed to {commitmentProgram?.name ?? battle.commitment!.programId}
             </p>
           </div>
         ) : (
           <>
-            <div className="recruit-details-snapshot">
-              <div>
-                <span className="recruit-details-snapshot__label">Readiness</span>
-                <strong>{formatReadinessLabel(battle.readiness)}</strong>
-              </div>
-              <div>
-                <span className="recruit-details-snapshot__label">Your Program</span>
-                <strong>{battle.controlled.isOnBoard
+            <div className="recruit-details-readiness-row">
+              <span className="recruit-details-readiness-row__label">Readiness</span>
+              <RecruitingReadinessBadge readiness={battle.readiness} />
+            </div>
+
+            <div
+              className="recruit-details-your-program"
+              data-position={battle.controlled.position}
+            >
+              <p className="eyebrow-tag">Your Program</p>
+              <p className="recruit-details-your-program__standing">
+                {battle.controlled.isOnBoard
                   ? formatControlledPositionLabel(battle.controlled.position)
-                  : 'Not on your Board'}</strong>
-                <span className="section-hint">
-                  {[
-                    battle.controlled.isOnBoard && 'On your Board',
-                    battle.controlled.isFocused && 'Focused',
-                    battle.controlled.hasActiveOffer ? 'Offered' : 'No Offer',
-                    battle.controlled.targetStatus === 'position-filled' && 'Position Filled',
-                  ].filter(Boolean).join(' · ')}
-                </span>
-              </div>
+                  : 'Not on your Board'}
+              </p>
+              <p className="section-hint">
+                {[
+                  battle.controlled.isOnBoard && 'On your Board',
+                  battle.controlled.isFocused && 'Focused',
+                  battle.controlled.hasActiveOffer ? 'Offered' : 'No Offer',
+                  battle.controlled.targetStatus === 'position-filled' && 'Position Filled',
+                ].filter(Boolean).join(' · ')}
+              </p>
+              {managementActions}
             </div>
 
             <div className="recruit-details-battle">
-              <h3>Pursuing Programs</h3>
+              <h3 className="section-subtitle">Pursuing Programs</h3>
               {groups.length === 0 ? (
                 <p className="section-hint">No Programs are currently pursuing this Recruit.</p>
               ) : groups.map((group) => (

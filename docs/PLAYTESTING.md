@@ -28,11 +28,12 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-1. Manually confirm the Tournament-complete progression recovery below, then
-   resume the selected 7D.1 Recruit Details playtest. Recruit Details already
-   helped explain what prospects are good at; acceptance was interrupted before
-   answering the broader question: Does deeper Recruit inspection make
-   prospects more memorable and increase attachment during normal Recruiting?
+1. The Tournament-complete progression recovery below is now manually
+   verified; resume the selected 7D.1 Recruit Details playtest. Recruit
+   Details already helped explain what prospects are good at; acceptance was
+   interrupted before answering the broader question: Does deeper Recruit
+   inspection make prospects more memorable and increase attachment during
+   normal Recruiting?
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.
@@ -46,7 +47,7 @@ The authoritative milestone selection remains in `ROADMAP.md`.
 
 ## Live WATCH Items
 
-### Tournament-complete progression recovery — CONFIRMED / FIXED, PENDING MANUAL CONFIRMATION
+### Tournament-complete progression recovery — FIXED / MANUALLY VERIFIED
 
 Fresh normal play reproduced a Dynasty-blocking path: after the Tournament
 completed and Late Recruiting was identified as next, navigating through other
@@ -56,8 +57,9 @@ completion and Period 28 Recruiting eligibility remained intact, but the
 handoff was presented only on the Tournament Hub. The final regular-season view
 now derives and exposes the same canonical handoff, and regression coverage
 proves it advances to Late Recruiting without navigation mutating Dynasty state.
-Manual confirmation of `Tournament Complete → navigate around → Late
-Recruiting` remains required before closing the issue.
+The user manually navigated `Tournament Complete → navigate around → Late
+Recruiting` after the fix and confirmed progression remains reachable; the
+issue is closed pending no new contrary evidence.
 
 ### Low-prestige rebuild and mature-league ceiling
 

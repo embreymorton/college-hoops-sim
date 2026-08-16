@@ -1,7 +1,12 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { DynastyState, RecruitingCommitment } from '../dynasty'
-import { getRecruit } from '../dynasty'
+import {
+  deriveProgramRecruitingBoard,
+  deriveTargetStatus,
+  getRecruit,
+  RECRUITING_BOARD_LIMIT,
+} from '../dynasty'
 import { createRecruitingDynasty } from '../dynasty/recruiting/testSupport'
 import { calculateOverall } from '../engine'
 import { useDynastyStore } from '../store'
@@ -64,10 +69,10 @@ describe('Recruit Details screen', () => {
     expect(screen.getByText(`Recruiting Class — Season ${dynasty.recruiting!.targetSeasonNumber}`, { exact: false })).toBeInTheDocument()
 
     const ability = screen.getByLabelText('Recruit ability')
-    expect(within(ability).getByText('OVR').nextElementSibling).toHaveTextContent(
+    expect(within(ability).getByText('Ovr').previousElementSibling).toHaveTextContent(
       String(calculateOverall(recruit.player)),
     )
-    expect(within(ability).getByText('POT').nextElementSibling).toHaveTextContent(
+    expect(within(ability).getByText('Pot').previousElementSibling).toHaveTextContent(
       String(recruit.player.potential),
     )
     const finishingLabel = screen.getByText('Finishing')
@@ -110,6 +115,8 @@ describe('Recruit Details screen', () => {
       expect(screen.getByText(`Committed to ${UNIVERSE_V0.programs.find(({ id }) => id === programId)!.name}`)).toBeInTheDocument()
       expect(screen.queryByRole('heading', { name: 'Pursuing Programs' })).not.toBeInTheDocument()
       expect(screen.queryByText('Leading')).not.toBeInTheDocument()
+      // No management actions once resolved.
+      expect(screen.queryByRole('button', { name: /Focus|Remove from Board|Add to Board|Offer/ })).not.toBeInTheDocument()
     },
   )
 
@@ -129,5 +136,139 @@ describe('Recruit Details screen', () => {
       recruitingMode: 'national',
     }))
     expect(screen.getByRole('button', { name: 'National Class' })).toHaveAttribute('aria-pressed', 'true')
+  })
+
+  describe('management actions', () => {
+    it('reuses the canonical Unfocus action for a focused Board target', () => {
+      const dynasty = createRecruitingDynasty('recruit-details-focus-action')
+      // The default board's initial plan focuses its first RECRUITING_FOCUS_LIMIT
+      // active recommendations, so an already-focused target always exists here.
+      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+        (entry) => entry.isFocused,
+      )!
+      renderDetails(dynasty, target.playerId)
+
+      const recruit = getRecruit(dynasty.recruiting!, target.playerId)!
+      const fullName = `${recruit.player.firstName} ${recruit.player.lastName}`
+      fireEvent.click(screen.getByRole('button', { name: `Unfocus ${fullName}` }))
+
+      expect(useDynastyStore.getState().dynasty!.recruiting!
+        .programs[dynasty.controlledProgramId]!.board
+        .find((entry) => entry.playerId === target.playerId)!.isFocused).toBe(false)
+    })
+
+    it('reuses the canonical Remove action for a Board target', () => {
+      const dynasty = createRecruitingDynasty('recruit-details-remove-action')
+      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+        (entry) => deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, entry.playerId) === 'active',
+      )!
+      renderDetails(dynasty, target.playerId)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Remove from Board' }))
+
+      expect(useDynastyStore.getState().dynasty!.recruiting!
+        .programs[dynasty.controlledProgramId]!.board
+        .some((entry) => entry.playerId === target.playerId)).toBe(false)
+    })
+
+    it('reuses the canonical Offer action for an un-offered Board target, matching Board offer-capacity eligibility', () => {
+      const dynasty = createRecruitingDynasty('recruit-details-offer-action')
+      const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+      const target = board.targets.find((entry) => entry.status === 'active' && !entry.hasActiveOffer)
+
+      if (!target) {
+        // Default board init already offers everywhere capacity allows; nothing to assert.
+        return
+      }
+      renderDetails(dynasty, target.playerId)
+
+      const offerButton = screen.getByRole('button', { name: 'Offer' })
+      const hasCapacity = board.availableOfferSlotsByPosition[
+        getRecruit(dynasty.recruiting!, target.playerId)!.player.position
+      ] > 0
+      expect(offerButton).toHaveProperty('disabled', !hasCapacity)
+
+      fireEvent.click(offerButton)
+
+      expect(useDynastyStore.getState().dynasty!.recruiting!
+        .programs[dynasty.controlledProgramId]!.board
+        .find((entry) => entry.playerId === target.playerId)!.hasActiveOffer).toBe(hasCapacity)
+    })
+
+    it('reuses the canonical Withdraw action for an offered Board target', () => {
+      const dynasty = createRecruitingDynasty('recruit-details-withdraw-action')
+      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+        (entry) => entry.hasActiveOffer
+          && deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, entry.playerId) === 'active',
+      )
+
+      if (!target) {
+        // Default board init happened to extend no offers for this seed; nothing to assert.
+        return
+      }
+      renderDetails(dynasty, target.playerId)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Withdraw Offer' }))
+
+      expect(useDynastyStore.getState().dynasty!.recruiting!
+        .programs[dynasty.controlledProgramId]!.board
+        .find((entry) => entry.playerId === target.playerId)!.hasActiveOffer).toBe(false)
+    })
+
+    it('reuses the canonical Add to Board action for a Recruit not yet pursued', () => {
+      const dynasty = createRecruitingDynasty('recruit-details-add-action')
+      useDynastyStore.setState({ dynasty })
+      const controlledProgramId = dynasty.controlledProgramId
+      const initialBoard = dynasty.recruiting!.programs[controlledProgramId]!.board
+      // The default board fills all `RECRUITING_BOARD_LIMIT` slots; remove one
+      // to make room, matching how National already handles a full board.
+      useDynastyStore.getState().removeRecruitingTarget(initialBoard[0]!.playerId)
+
+      const recruiting = useDynastyStore.getState().dynasty!.recruiting!
+      const boardIds = new Set(
+        recruiting.programs[controlledProgramId]!.board.map(({ playerId }) => playerId),
+      )
+      const addable = recruiting.recruits.find(
+        (recruit) =>
+          !boardIds.has(recruit.player.id)
+          && deriveTargetStatus(recruiting, controlledProgramId, recruit.player.id) === 'active',
+      )!
+
+      useDynastyStore.setState({
+        view: 'recruitDetails',
+        selectedRecruitPlayerId: addable.player.id,
+      })
+      render(<App />)
+
+      fireEvent.click(screen.getByRole('button', { name: 'Add to Board' }))
+
+      expect(useDynastyStore.getState().dynasty!.recruiting!
+        .programs[controlledProgramId]!.board
+        .some((entry) => entry.playerId === addable.player.id)).toBe(true)
+    })
+
+    it('shows Board Full instead of a click-through Add action once the Board is already full', () => {
+      const dynasty = createRecruitingDynasty('recruit-details-capacity')
+      useDynastyStore.setState({ dynasty })
+      useDynastyStore.getState().fillRemainingRecruitingBoard()
+      const filled = useDynastyStore.getState().dynasty!
+      const board = deriveProgramRecruitingBoard(filled, filled.controlledProgramId)
+      expect(board.targets.length).toBe(RECRUITING_BOARD_LIMIT)
+      const boardIds = new Set(board.targets.map(({ playerId }) => playerId))
+      const recruiting = filled.recruiting!
+      const playerId = recruiting.recruits.find(
+        (recruit) =>
+          !boardIds.has(recruit.player.id)
+          && deriveTargetStatus(recruiting, filled.controlledProgramId, recruit.player.id) === 'active',
+      )!.player.id
+
+      useDynastyStore.setState({
+        view: 'recruitDetails',
+        selectedRecruitPlayerId: playerId,
+      })
+      render(<App />)
+
+      expect(screen.getByRole('button', { name: 'Board Full' })).toBeDisabled()
+    })
   })
 })
