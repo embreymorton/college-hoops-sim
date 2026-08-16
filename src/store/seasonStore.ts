@@ -217,6 +217,8 @@ export interface DynastySessionState {
   readonly dynasty: DynastyState | null
   /** Stable user intent for the current Dynasty; current facts are derived from active Season state. */
   readonly followedPlayerIds: readonly string[]
+  /** Stable Recruit/future-Player IDs kept separate from Player follows until Phase 7D.3. */
+  readonly followedRecruitIds: readonly string[]
   /** Retained separately because SeasonState only stores the current Rotation. */
   readonly controlledProgramDefaultRotation: RotationV1 | null
   /**
@@ -295,6 +297,9 @@ export interface DynastySessionState {
   followPlayer(playerId: string): void
   unfollowPlayer(playerId: string): void
   isPlayerFollowed(playerId: string): boolean
+  followRecruit(playerId: string): void
+  unfollowRecruit(playerId: string): void
+  isRecruitFollowed(playerId: string): boolean
   /** Zero minutes omits the Player, preserving canonical Rotation shape. */
   setDraftPlayerPositionMinutes(
     playerId: string,
@@ -662,6 +667,7 @@ function resolveControlledTournamentGame(
 export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   dynasty: null,
   followedPlayerIds: [],
+  followedRecruitIds: [],
   controlledProgramDefaultRotation: null,
   draftRotation: null,
   view: 'programSelect',
@@ -723,6 +729,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       dynasty,
       followedPlayerIds: [],
+      followedRecruitIds: [],
       controlledProgramDefaultRotation: initializedProgram.rotation,
       draftRotation: initializedProgram.rotation,
       view: 'hub',
@@ -768,6 +775,26 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
   isPlayerFollowed(playerId) {
     return get().followedPlayerIds.includes(playerId)
+  },
+
+  followRecruit(playerId) {
+    const { followedRecruitIds } = get()
+    if (followedRecruitIds.includes(playerId)) return
+    set({ followedRecruitIds: [...followedRecruitIds, playerId] })
+  },
+
+  unfollowRecruit(playerId) {
+    const { followedRecruitIds } = get()
+    if (!followedRecruitIds.includes(playerId)) return
+    set({
+      followedRecruitIds: followedRecruitIds.filter(
+        (followedRecruitId) => followedRecruitId !== playerId,
+      ),
+    })
+  },
+
+  isRecruitFollowed(playerId) {
+    return get().followedRecruitIds.includes(playerId)
   },
 
   setDraftPlayerPositionMinutes(playerId, floorPosition, minutes) {

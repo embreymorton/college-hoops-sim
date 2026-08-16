@@ -93,6 +93,7 @@ export {
   deriveRecruitingCommitmentActivity,
 } from './recruiting/battleView'
 export { deriveRecruitDetailsView } from './recruiting/detailsView'
+export { deriveFollowingRecruitsView } from './recruiting/followingView'
 export type {
   AssembleNextSeasonRostersOptions,
   CompletedSeasonArchive,
@@ -191,3 +192,4 @@ export type {
   RecruitingCommitmentActivityKind,
   RecruitingReadiness,
 } from './recruiting/battleView'
+export type { FollowingRecruitsView } from './recruiting/followingView'

@@ -77,6 +77,8 @@ describe('Dynasty transition orchestration', () => {
     useDynastyStore.getState().finalizeRecruitingClass()
     useDynastyStore.getState().beginDynastyOffseason()
     const prepared = useDynastyStore.getState().dynasty!
+    const followedRecruitId = prepared.recruiting!.recruits[0]!.player.id
+    useDynastyStore.getState().followRecruit(followedRecruitId)
 
     useDynastyStore.setState({
       view: 'postseasonGameHistory',
@@ -117,6 +119,8 @@ describe('Dynasty transition orchestration', () => {
     expect(next.controlledProgramId).toBe(prepared.controlledProgramId)
     expect(next.recruiting).toMatchObject({ targetSeasonNumber: 3, lastResolvedPeriod: 0 })
     expect(next.recruiting!.programs[next.controlledProgramId]!.board).toEqual([])
+    expect(state.followedRecruitIds).toEqual([followedRecruitId])
+    expect(state.followedPlayerIds).not.toContain(followedRecruitId)
     expect(state.controlledProgramDefaultRotation).toEqual(controlledRotation)
     expect(state.draftRotation).toEqual(controlledRotation)
     expect(state).toMatchObject({

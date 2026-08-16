@@ -100,6 +100,24 @@ regular-season career projections. Unknown IDs remain explicit without being
 mislabeled Former. Intent survives rollover, clears for a new Dynasty, stores
 no Player/Team snapshots, and has no simulation effect.
 
+Followed Recruits is separate application intent until Phase 7D.3. Zustand
+stores a duplicate-free, first-followed ordered list of stable Recruit/future-
+Player IDs for the current Dynasty. The foundation resolves those IDs only
+against the active canonical `RecruitingState`:
+
+```text
+stable followed Recruit IDs + canonical RecruitingState
+→ pure Following Recruits projection
+→ resolved current-class Recruit Details + explicit unresolved IDs
+```
+
+The projection composes the existing safe Recruit Details/battle read models,
+stores no Recruit snapshot, and exposes no hidden Recruiting inputs. Recruiting
+updates and commitments do not clear intent; a new Dynasty does. Season rollover
+does not convert Recruit follows into the separate frozen Followed Players list,
+and IDs absent from the new active class remain unresolved rather than producing
+fabricated rows. Recruit → active Player follow transfer remains Phase 7D.3.
+
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
 Permanent Coaching navigation uses the same session drafts and validated write
