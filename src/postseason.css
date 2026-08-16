@@ -114,6 +114,10 @@ button.bracket-slot--complete:focus-visible {
   background: var(--surface-2);
 }
 
+.bracket-slot--read-only {
+  cursor: default;
+}
+
 .bracket-slot__row {
   display: flex;
   align-items: center;

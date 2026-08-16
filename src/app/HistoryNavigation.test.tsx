@@ -182,9 +182,9 @@ describe('Yearbook shell', () => {
     render(<App />)
 
     expect(screen.getByRole('heading', { name: 'Season 1 Yearbook' })).toBeInTheDocument()
-    expect(screen.getByText(`National Champion: ${expected.championship.nationalChampion.name}`))
+    expect(screen.getByText(expected.championship.nationalChampion.name, { selector: '.yearbook-champion__name' }))
       .toBeInTheDocument()
-    expect(screen.getByText(new RegExp(`Your Program: ${expected.controlledProgramSeason.program.name}`)))
+    expect(screen.getByText(expected.controlledProgramSeason.program.name, { selector: '.yearbook-your-season .eyebrow-tag' }))
       .toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: '← Back to History' }))
@@ -208,5 +208,141 @@ describe('Yearbook shell', () => {
       selectedArchivedSeasonNumber: null,
       explorationViewHistory: ['league'],
     })
+  })
+})
+
+describe('Core Yearbook UI', () => {
+  function renderYearbook(programId: string) {
+    setHistory([archive])
+    const dynasty = useDynastyStore.getState().dynasty!
+    const historicalDynasty = { ...dynasty, controlledProgramId: programId }
+    useDynastyStore.setState({
+      dynasty: historicalDynasty,
+      view: 'seasonYearbook',
+      selectedArchivedSeasonNumber: 1,
+      explorationViewHistory: ['league', 'history'],
+    })
+    const expected = deriveCompletedSeasonYearbook(historicalDynasty, 1)
+    const rendered = render(<App />)
+    return { expected, rendered }
+  }
+
+  it('makes the Champion, opponent, championship score, and controlled Season prominent', () => {
+    const { expected } = renderYearbook(CONTROLLED_PROGRAM_ID)
+    const titleGame = expected.championship.game
+
+    expect(screen.getByRole('heading', { name: 'Season 1 Yearbook' })).toBeInTheDocument()
+    expect(screen.getByText(expected.championship.nationalChampion.name, { selector: 'strong' }))
+      .toBeInTheDocument()
+    expect(screen.getByText(new RegExp(
+      `Championship.*${expected.championship.nationalChampion.name}.*${expected.championship.runnerUp.name}`,
+    ))).toHaveTextContent(String(titleGame.result.homeScore))
+    const yourSeason = screen.getByRole('heading', { name: 'Your Season' }).closest('section')!
+    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.overallRecord.wins}-${expected.controlledProgramSeason.overallRecord.losses}`, { selector: 'strong' }))
+      .toBeInTheDocument()
+    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.conferenceRecord.wins}-${expected.controlledProgramSeason.conferenceRecord.losses}`, { selector: 'strong' }))
+      .toBeInTheDocument()
+    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.conferencePlace}${
+      expected.controlledProgramSeason.conferencePlace === 1 ? 'st' :
+      expected.controlledProgramSeason.conferencePlace === 2 ? 'nd' :
+      expected.controlledProgramSeason.conferencePlace === 3 ? 'rd' : 'th'
+    }`)).toBeInTheDocument()
+  })
+
+  it('presents non-qualification normally and omits a Tournament run', () => {
+    const missedId = archive.season.programStates && Object.keys(archive.season.programStates).find(
+      (programId) => !archive.postseason.field.some((entry) => entry.programId === programId),
+    )!
+    renderYearbook(missedId)
+
+    expect(screen.getByText('Did Not Qualify')).toBeInTheDocument()
+    expect(screen.queryByRole('region', { name: 'Your Tournament Run' })).not.toBeInTheDocument()
+  })
+
+  it('handles eliminated and National Champion outcomes with canonical seed/bid context', () => {
+    const championId = archive.postseason.resultsByGameId[
+      archive.postseason.bracket.games.find(({ round }) => round === 'championship')!.id
+    ]!.winnerId
+    const eliminatedId = archive.postseason.field.find(({ programId }) => {
+      if (programId === championId) return false
+      const projection = deriveCompletedSeasonYearbook(
+        { ...useDynastyStore.getState().dynasty!, history: [archive], controlledProgramId: programId },
+        1,
+      )
+      return projection.controlledProgramSeason.tournamentOutcome.status === 'eliminated'
+    })!.programId
+
+    const eliminatedRender = renderYearbook(eliminatedId)
+    const eliminated = eliminatedRender.expected.controlledProgramSeason
+    expect(screen.getByText(new RegExp(`#${eliminated.tournamentOutcome.status === 'eliminated' ? eliminated.tournamentOutcome.seed : ''} Seed`)))
+      .toBeInTheDocument()
+
+    eliminatedRender.rendered.unmount()
+    useDynastyStore.setState(useDynastyStore.getInitialState())
+    resetAndSelect()
+    const champion = renderYearbook(championId).expected.controlledProgramSeason
+    expect(screen.getByText('National Champion', { selector: '.yearbook-tournament-result strong' }))
+      .toBeInTheDocument()
+    expect(champion.tournamentOutcome.status).toBe('national-champion')
+  })
+
+  it('renders the controlled Tournament run in round order with opponent, scores, and W/L', () => {
+    const participantId = archive.postseason.field[0]!.programId
+    const { expected } = renderYearbook(participantId)
+    const run = screen.getByRole('region', { name: 'Your Tournament Run' })
+    const games = within(run).getAllByRole('article')
+
+    expect(games).toHaveLength(expected.controlledProgramSeason.tournamentGames.length)
+    expected.controlledProgramSeason.tournamentGames.forEach((game, index) => {
+      expect(games[index]).toHaveTextContent(game.opponent.name)
+      expect(games[index]).toHaveTextContent(game.resultForControlledProgram === 'win' ? 'W' : 'L')
+      expect(games[index]).toHaveTextContent(String(game.result.homeScore))
+      expect(games[index]).toHaveTextContent(String(game.result.awayScore))
+    })
+  })
+
+  it('renders all 15 resolved Tournament games as a read-only bracket', () => {
+    const { expected, rendered } = renderYearbook(CONTROLLED_PROGRAM_ID)
+    const bracket = screen.getByRole('region', { name: 'Archived Tournament Bracket' })
+    const gameSlots = rendered.container.querySelectorAll('[data-game-id]')
+
+    expect(gameSlots).toHaveLength(expected.tournament.games.length)
+    expect(gameSlots).toHaveLength(15)
+    expect(within(bracket).queryAllByRole('button')).toHaveLength(0)
+    expect(bracket).toHaveTextContent(expected.championship.nationalChampion.name)
+    expect(bracket).toHaveTextContent(expected.championship.runnerUp.name)
+  })
+
+  it('renders every final Conference in canonical order and highlights the controlled Program', () => {
+    const { expected, rendered } = renderYearbook(CONTROLLED_PROGRAM_ID)
+
+    for (const conference of expected.conferenceStandings) {
+      expect(screen.getByRole('heading', { name: conference.conference.name })).toBeInTheDocument()
+      const card = screen.getByRole('heading', { name: conference.conference.name }).closest('article')!
+      const renderedPrograms = Array.from(card.querySelectorAll('tbody tr td:nth-child(2)'))
+        .map((cell) => cell.textContent?.replace(' · You', ''))
+      expect(renderedPrograms).toEqual(conference.rows.map((row) => row.program.name))
+    }
+    expect(rendered.container.querySelectorAll('tr[data-controlled="true"]')).toHaveLength(1)
+    const standingsSection = screen.getByRole('heading', { name: 'Final Conference Standings' }).closest('section')!
+    expect(within(standingsSection).getByText(/· You/)).toBeInTheDocument()
+  })
+
+  it('labels regular-season scope and preserves national and controlled Player IDs', () => {
+    const { expected, rendered } = renderYearbook(CONTROLLED_PROGRAM_ID)
+
+    expect(screen.getByRole('heading', { name: 'Regular-Season Statistical Leaders' }))
+      .toBeInTheDocument()
+    expect(screen.getByText('Tournament statistics are not included.')).toBeInTheDocument()
+    expect(screen.getByRole('region', { name: 'Your Team Leaders' })).toBeInTheDocument()
+
+    for (const category of ['points', 'rebounds', 'assists', 'steals', 'blocks'] as const) {
+      const national = expected.statisticalLeaders.national[category][0]!
+      const controlled = expected.statisticalLeaders.controlledProgram[category][0]!
+      expect(rendered.container.querySelector(`[data-player-id="${national.player.playerId}"]`))
+        .not.toBeNull()
+      expect(rendered.container.querySelector(`[data-player-id="${controlled.player.playerId}"]`))
+        .not.toBeNull()
+    }
   })
 })

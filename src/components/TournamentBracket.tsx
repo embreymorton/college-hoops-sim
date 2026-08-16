@@ -26,8 +26,8 @@ export interface BracketSlot {
 interface TournamentBracketProps {
   /** All 15 games across all four rounds, in any order. */
   readonly slots: readonly BracketSlot[]
-  /** Only ever called for a completed game — opens its historical result. */
-  readonly onSelectGame: (gameId: string) => void
+  /** When omitted, renders the completed bracket as a read-only historical artifact. */
+  readonly onSelectGame?: (gameId: string) => void
 }
 
 const TOTAL_ROW_UNITS = 16
@@ -97,7 +97,7 @@ function BracketSlotCard({
   onSelectGame,
 }: {
   slot: BracketSlot
-  onSelectGame: (gameId: string) => void
+  onSelectGame?: (gameId: string) => void
 }) {
   const rows = (
     <>
@@ -106,7 +106,7 @@ function BracketSlotCard({
     </>
   )
 
-  if (slot.isComplete) {
+  if (slot.isComplete && onSelectGame) {
     return (
       <button
         type="button"
@@ -122,8 +122,13 @@ function BracketSlotCard({
   }
 
   return (
-    <div className="bracket-slot" data-game-id={slot.gameId}>
+    <div
+      className={`bracket-slot${slot.isComplete ? ' bracket-slot--complete bracket-slot--read-only' : ''}`}
+      data-game-id={slot.gameId}
+      aria-label={slotAriaLabel(slot)}
+    >
       {rows}
+      {slot.isUpset && <span className="bracket-slot__upset">Upset</span>}
     </div>
   )
 }
