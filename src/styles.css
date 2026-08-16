@@ -237,6 +237,15 @@ p {
   color: var(--ink-1);
 }
 
+.section-subtitle {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
 /* ==========================================================================
    Matchup select row
    ========================================================================== */
@@ -928,108 +937,6 @@ p {
   color: var(--ink-1);
 }
 
-.yearbook-hero {
-  border-color: var(--line-strong);
-  background: linear-gradient(135deg, var(--surface-2), var(--surface-1));
-}
-
-.yearbook-champion {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  margin-top: var(--space-5);
-  padding-top: var(--space-5);
-  border-top: 1px solid var(--line);
-}
-
-.yearbook-champion__label {
-  font-family: var(--font-display);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.yearbook-champion__name {
-  font-family: var(--font-display);
-  font-size: clamp(1.8rem, 4vw, 3.2rem);
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.yearbook-champion__result {
-  color: var(--ink-1);
-  font-family: var(--font-score);
-  font-variant-numeric: tabular-nums;
-}
-
-.yearbook-your-season {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(12rem, 1fr);
-  gap: var(--space-5);
-  padding: var(--space-5);
-  background: var(--surface-1);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-}
-
-.yearbook-record-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--space-4);
-  margin-top: var(--space-3);
-}
-
-.yearbook-record-grid > div,
-.yearbook-tournament-result {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.yearbook-record-grid strong,
-.yearbook-tournament-result strong {
-  font-family: var(--font-score);
-  font-size: 1.65rem;
-}
-
-.yearbook-record-grid span,
-.yearbook-tournament-result > span:last-child {
-  color: var(--ink-1);
-  font-size: 0.78rem;
-}
-
-.yearbook-tournament-result {
-  padding-left: var(--space-5);
-  border-left: 1px solid var(--line);
-}
-
-.yearbook-run {
-  margin-top: var(--space-5);
-}
-
-.yearbook-run__games {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
-  gap: var(--space-3);
-}
-
-.yearbook-run__game {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-3) var(--space-4);
-  background: var(--surface-1);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--ink-2);
-  border-radius: var(--radius-sm);
-  font-family: var(--font-score);
-}
-
-.yearbook-run__game[data-result='win'] { border-left-color: var(--accent); }
-.yearbook-run__game > span:last-child { color: var(--ink-1); }
-
 .yearbook-standings-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1044,55 +951,8 @@ p {
   border-radius: var(--radius-md);
 }
 
-.yearbook-standings-table {
-  min-width: 30rem;
-}
-
-.yearbook-standings-table tbody tr[data-controlled='true'] {
-  background: var(--surface-2);
-  box-shadow: inset 3px 0 0 var(--accent);
-}
-
-.yearbook-standings-table tbody tr[data-controlled='true'] td {
-  color: var(--ink-0);
-  font-weight: 600;
-}
-
-.yearbook-leaders-grid {
-  margin-top: var(--space-4);
-}
-
-.yearbook-team-leaders {
-  margin-top: var(--space-6);
-}
-
-.yearbook-team-leaders__grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: var(--space-3);
-}
-
-.yearbook-team-leader {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
-  padding: var(--space-3);
-  background: var(--surface-1);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-
-.yearbook-team-leader strong {
-  font-family: var(--font-score);
-  font-size: 1.2rem;
-}
-
-.yearbook-team-leader > span:last-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--ink-1);
+.yearbook-standings-card .standings-table {
+  min-width: 22rem;
 }
 
 .league-news {
@@ -1215,12 +1075,7 @@ p {
   .league-screen__navigation { align-items: stretch; }
   .league-screen__navigation > .tab-list .tab { padding-inline: 0.85rem; }
   .history-season-card { grid-template-columns: 1fr; gap: var(--space-2); }
-  .yearbook-your-season { grid-template-columns: 1fr; padding: var(--space-4); }
-  .yearbook-tournament-result { padding-left: 0; padding-top: var(--space-4); border-left: 0; border-top: 1px solid var(--line); }
-  .yearbook-record-grid { gap: var(--space-2); }
-  .yearbook-record-grid strong { font-size: 1.35rem; }
   .yearbook-standings-grid { grid-template-columns: 1fr; }
-  .yearbook-team-leaders__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .news-story { padding-inline: var(--space-3); }
   .news-story__meta { align-items: flex-start; }
 }

@@ -168,7 +168,7 @@ describe('League History entry and index', () => {
     )
 
     fireEvent.click(screen.getByRole('button', { name: /Season 1/ }))
-    expect(screen.getByRole('heading', { name: 'Season 1 Yearbook' })).toBeInTheDocument()
+    expect(screen.getByText('Season 1 · Completed')).toBeInTheDocument()
   })
 })
 
@@ -181,10 +181,9 @@ describe('Yearbook shell', () => {
     useDynastyStore.getState().openArchivedSeason(1)
     render(<App />)
 
-    expect(screen.getByRole('heading', { name: 'Season 1 Yearbook' })).toBeInTheDocument()
-    expect(screen.getByText(expected.championship.nationalChampion.name, { selector: '.yearbook-champion__name' }))
+    expect(screen.getByRole('heading', { name: expected.championship.nationalChampion.name }))
       .toBeInTheDocument()
-    expect(screen.getByText(expected.controlledProgramSeason.program.name, { selector: '.yearbook-your-season .eyebrow-tag' }))
+    expect(screen.getByText(expected.controlledProgramSeason.program.name, { selector: '.eyebrow-tag' }))
       .toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: '← Back to History' }))
@@ -231,16 +230,15 @@ describe('Core Yearbook UI', () => {
     const { expected } = renderYearbook(CONTROLLED_PROGRAM_ID)
     const titleGame = expected.championship.game
 
-    expect(screen.getByRole('heading', { name: 'Season 1 Yearbook' })).toBeInTheDocument()
-    expect(screen.getByText(expected.championship.nationalChampion.name, { selector: 'strong' }))
+    expect(screen.getByRole('heading', { name: expected.championship.nationalChampion.name }))
       .toBeInTheDocument()
     expect(screen.getByText(new RegExp(
-      `Championship.*${expected.championship.nationalChampion.name}.*${expected.championship.runnerUp.name}`,
+      `National Champion.*${expected.championship.runnerUp.name}`,
     ))).toHaveTextContent(String(titleGame.result.homeScore))
     const yourSeason = screen.getByRole('heading', { name: 'Your Season' }).closest('section')!
-    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.overallRecord.wins}-${expected.controlledProgramSeason.overallRecord.losses}`, { selector: 'strong' }))
+    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.overallRecord.wins}-${expected.controlledProgramSeason.overallRecord.losses}`, { selector: '.stat-trio__value' }))
       .toBeInTheDocument()
-    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.conferenceRecord.wins}-${expected.controlledProgramSeason.conferenceRecord.losses}`, { selector: 'strong' }))
+    expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.conferenceRecord.wins}-${expected.controlledProgramSeason.conferenceRecord.losses}`, { selector: '.stat-trio__value' }))
       .toBeInTheDocument()
     expect(within(yourSeason).getByText(`${expected.controlledProgramSeason.conferencePlace}${
       expected.controlledProgramSeason.conferencePlace === 1 ? 'st' :
@@ -281,7 +279,7 @@ describe('Core Yearbook UI', () => {
     useDynastyStore.setState(useDynastyStore.getInitialState())
     resetAndSelect()
     const champion = renderYearbook(championId).expected.controlledProgramSeason
-    expect(screen.getByText('National Champion', { selector: '.yearbook-tournament-result strong' }))
+    expect(screen.getByText('National Champion', { selector: '.stat-trio__value--text' }))
       .toBeInTheDocument()
     expect(champion.tournamentOutcome.status).toBe('national-champion')
   })
@@ -290,7 +288,7 @@ describe('Core Yearbook UI', () => {
     const participantId = archive.postseason.field[0]!.programId
     const { expected } = renderYearbook(participantId)
     const run = screen.getByRole('region', { name: 'Your Tournament Run' })
-    const games = within(run).getAllByRole('article')
+    const games = within(run).getAllByRole('listitem')
 
     expect(games).toHaveLength(expected.controlledProgramSeason.tournamentGames.length)
     expected.controlledProgramSeason.tournamentGames.forEach((game, index) => {
@@ -344,5 +342,92 @@ describe('Core Yearbook UI', () => {
       expect(rendered.container.querySelector(`[data-player-id="${controlled.player.playerId}"]`))
         .not.toBeNull()
     }
+  })
+
+  it('opens a national leader as a former Player and restores the same Yearbook on Back', () => {
+    const { expected } = renderYearbook(CONTROLLED_PROGRAM_ID)
+    const leader = expected.statisticalLeaders.national.points[0]!
+    const leaderName = `${leader.player.firstName} ${leader.player.lastName}`
+    const scoringBoard = screen.getByText('Scoring').closest('.leader-board')! as HTMLElement
+
+    fireEvent.click(within(scoringBoard).getByRole('button', { name: leaderName }))
+
+    expect(useDynastyStore.getState()).toMatchObject({
+      view: 'playerDetails',
+      selectedPlayerProgramId: leader.player.program.programId,
+      selectedPlayerId: leader.player.playerId,
+      selectedArchivedSeasonNumber: 1,
+    })
+    expect(screen.getByText('Former Player')).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '← Back to Yearbook' }))
+
+    expect(useDynastyStore.getState()).toMatchObject({
+      view: 'seasonYearbook',
+      selectedArchivedSeasonNumber: 1,
+    })
+    expect(screen.getByRole('heading', { name: expected.championship.nationalChampion.name }))
+      .toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '← Back to History' }))
+    expect(screen.getByRole('heading', { name: 'History' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
+    expect(useDynastyStore.getState().view).toBe('league')
+  })
+
+  it('opens the controlled Program leader for the correctly resolved Player', () => {
+    const { expected } = renderYearbook(CONTROLLED_PROGRAM_ID)
+    const leader = expected.statisticalLeaders.controlledProgram.points[0]
+    if (!leader) return
+
+    const teamLeaders = screen.getByRole('region', { name: 'Your Team Leaders' })
+    const leaderButton = within(teamLeaders).getAllByRole('button', {
+      name: new RegExp(`${leader.player.firstName} ${leader.player.lastName}`),
+    })[0]!
+    fireEvent.click(leaderButton)
+
+    expect(useDynastyStore.getState()).toMatchObject({
+      view: 'playerDetails',
+      selectedPlayerProgramId: leader.player.program.programId,
+      selectedPlayerId: leader.player.playerId,
+    })
+  })
+
+  it('opens a still-active Player using the active Player Details destination', () => {
+    const dynasty = useDynastyStore.getState().dynasty!
+    useDynastyStore.setState({
+      dynasty: { ...dynasty, activeSeason: archive.season, history: [archive] },
+      view: 'seasonYearbook',
+      selectedArchivedSeasonNumber: 1,
+      explorationViewHistory: ['league', 'history'],
+    })
+    const expected = deriveCompletedSeasonYearbook(useDynastyStore.getState().dynasty!, 1)
+    render(<App />)
+    const leader = expected.statisticalLeaders.national.points[0]!
+    const scoringBoard = screen.getByText('Scoring').closest('.leader-board')! as HTMLElement
+
+    fireEvent.click(within(scoringBoard).getByRole('button', {
+      name: `${leader.player.firstName} ${leader.player.lastName}`,
+    }))
+
+    expect(useDynastyStore.getState().view).toBe('playerDetails')
+    expect(screen.queryByText('Former Player')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Game Log' })).toBeInTheDocument()
+  })
+
+  it('does not crash when a Player ID cannot resolve', () => {
+    setHistory([archive])
+    const dynasty = useDynastyStore.getState().dynasty!
+    useDynastyStore.setState({
+      dynasty: { ...dynasty, controlledProgramId: CONTROLLED_PROGRAM_ID },
+      view: 'playerDetails',
+      selectedPlayerProgramId: CONTROLLED_PROGRAM_ID,
+      selectedPlayerId: 'unresolvable-player-id',
+      selectedArchivedSeasonNumber: 1,
+      explorationViewHistory: ['league', 'history', 'seasonYearbook'],
+    })
+
+    expect(() => render(<App />)).not.toThrow()
   })
 })
