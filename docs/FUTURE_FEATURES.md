@@ -32,6 +32,28 @@ The Roadmap owns its order and scope. It is not specified again here.
 - recruiting class rankings and retrospective class evaluation; and
 - dynamic interest from winning or Tournament success.
 
+### Recruiting battle feedback and assistance
+
+Future Recruiting presentation could give qualitative distance-to-leader
+feedback for contested targets—enough to distinguish a close battle from a long
+shot without necessarily exposing exact hidden scores or eliminating
+uncertainty. The player-facing language, information boundary, and derivation
+must be designed from current Recruiting architecture before implementation.
+
+Focus-slot assistance could also help when a commitment frees capacity while
+other offered, uncommitted targets remain. A user-triggered `Fill Open Focus`, a
+prompt, and automatic reallocation have materially different agency costs; none
+is selected. Any assistant behavior must avoid silently making strategic
+decisions for the user.
+
+### Recruiting class retrospectives / Recruit legacy
+
+Retrospectives could connect a recruiting class's initial evaluation and
+commitments to later active-Player development and completed careers. Manual
+play supplied a useful payoff example when a remembered elite Recruit later
+appeared as a senior national scoring leader. This is evidence for the existing
+retrospective idea, not a selected feature or evaluation formula.
+
 These ideas would require explicit player-facing rules and, where they affect
 attraction/AI/talent movement, fresh calibration. Their existence is not a
 reason to retune accepted Recruiting now.
@@ -81,6 +103,25 @@ current regular-season semantics.
 The initial Season Archive and Records are complete; Awards remains PLANNED in
 Phase 7C. The ideas above are extensions, not expanded 7C scope by default.
 
+### Program signature games and memorable moments
+
+Program history could preserve defining games and performances—such as a
+#16-over-#1 Tournament upset led by a 29-point Player performance—separately
+from statistical leaderboards. Records answer “what are the best statistical
+marks?”; signature moments would answer “what games and performances defined
+this Program's Dynasty?” Event selection and scoring remain deliberately
+undefined. A future code-informed design should first determine what canonical
+Tournament, GameResult, and box-score history is retained.
+
+### Program legends / notable alumni
+
+Program Legacy could eventually connect memorable graduated Players to the
+Programs where their careers mattered, using notable alumni or Program-specific
+historical recognition. Manual play produced attachment to a developed star, a
+career rebounding/blocking contributor, and the scorer associated with a major
+upset. This does not imply a Hall of Fame, retired numbers, Awards, or separate
+Program Record Books; those remain distinct possible extensions.
+
 ## Tournament depth
 
 - bracket-pool or spectator tools;
@@ -102,6 +143,37 @@ Phase 7C. The ideas above are extensions, not expanded 7C scope by default.
 
 These systems would materially change simulation or lifecycle behavior and need
 their own selected phases and validation.
+
+### Rotation locks and assistant repair
+
+A coaching-assistance concept could let the user lock a small number of
+intentional minute assignments, then ask the existing assistant/default
+Rotation behavior to construct a valid remainder around them where possible.
+This mirrors Recruiting's useful pattern of manual priorities followed by
+`Fill Remaining`, without selecting a final interaction or algorithm.
+
+A smaller related action could attempt to repair an invalid manual Rotation
+while preserving valid intentional choices instead of resetting everything.
+Treat this as part of the same design family unless code inspection establishes
+a meaningfully independent, lower-scope contract.
+
+### Playing time influencing Development
+
+Playing opportunity could someday affect offseason Development, giving Rotation
+choices longer-term consequences. This is a gameplay-system concept only:
+stars could become self-reinforcing, maximum-minute strategies could become
+obviously optimal, bench-development tradeoffs would need careful design, and
+injuries, fatigue, or other counterweights might matter. Development V1 is
+accepted and frozen and should not be reopened from this single playthrough.
+
+### Draft and professional outcomes
+
+Graduating Players could receive draft or professional destination/history
+outcomes that extend their legacy beyond college. This is a major future system,
+not a small Alumni enhancement: one-and-done careers, early entry, eligibility,
+AI roster consequences, recruiting and roster turnover, prospect evaluation,
+and league balance all become design and simulation concerns. No version of
+that lifecycle is selected.
 
 ## Coach Career & Dynasty Identity
 
@@ -185,9 +257,22 @@ change Program attractiveness, but Recruiting effects and calibration remain
 future decisions. Prestige could also influence job attractiveness and Coach-
 career opportunities if that major system is later selected.
 
+An approximately eight-Season Pine Valley rebuild supplied direct product
+evidence: meaningful quality gains, multiple Tournament appearances, and a
+#16-over-#1 upset changed the Program's visible résumé while Prestige remained
+about 36 and recruiting still appeared constrained by its original reputation.
+Any evolution should remain gradual enough to preserve Program identity and
+weight sustained success more than one Cinderella result; decline may also have
+consequences. If Prestige becomes dynamic, showing its current value on a
+frequently visited surface such as the Season Hub could make downstream effects
+easier to understand. No formula, threshold, or UI placement is selected.
+
 ## Presentation and broader modes
 
 - save/load and Dynasty management;
+- League-tab Team/Program header consistency with the established Season,
+  Coaching, and Recruiting surfaces, without inventing content solely to fill a
+  header;
 - accessibility and localization expansion;
 - spectator / League Observer mode;
 - richer responsive/mobile navigation;

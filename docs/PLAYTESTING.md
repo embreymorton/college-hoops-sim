@@ -41,14 +41,67 @@ informs the next planning discussion but does not create a NEXT.
 This priority list is evidence guidance, not an independent sequencing decision.
 The authoritative milestone selection remains in `ROADMAP.md`.
 
+## Current Multi-Season Play Evidence — OBSERVED
+
+A manual Pine Valley Dynasty through approximately Season 8 produced a
+compelling low-Prestige rebuild: `1–23 → 2–22 → gradual talent improvement →
+Tournament qualification → #16-over-#1 upset → another Tournament appearance →
+later decline after key graduations`. Recruiting, Development, Tournament
+progression, and roster turnover combined into memorable long-form stories
+without making success immediately sustainable. This supports the current
+Dynasty loop as fun and attachment-producing; one run does not prove that its
+rebuild curve is perfectly balanced.
+
+The run also supplied these current product signals:
+
+- **WORKING:** large and repeated Player gains, attribute-specific offseason
+  summaries, and disappointment at limited growth all made Development outcomes
+  matter. Offseason Storytelling is producing payoff without evidence to reopen
+  accepted Development mechanics.
+- **WORKING:** low-OVR/high-POT projects, contested battles, and eventually
+  landing four- and five-star Recruits created attachment. Recognizing an early
+  elite Recruit years later as a senior national scoring leader strengthened
+  the Recruit → Player continuity story and provides evidence for unscheduled
+  recruiting-class retrospective ideas.
+- **WORKING:** Records supplied durable comparison across Seasons, including a
+  47-point Single Game mark later broken by a 52-point game and Players reaching
+  Season/Career rebounding, scoring, and blocking lists. Record News correctly
+  omitted inherited Season 1 history under its frozen contract.
+- **WORKING:** the Recruiting Guide was useful after the player forgot what
+  recruiting states meant, supporting lightweight contextual guidance for
+  interconnected systems.
+- **OBSERVED:** the user often wanted to preserve one or two intentional minute
+  assignments, then have an assistant construct or repair a legal Rotation
+  around them. Manual edits could temporarily create invalid Rotations and
+  required rebuilding the remainder by hand.
+- **OBSERVED:** recruiting standing showed Focus, Offer, and rank but not whether
+  a contested target was barely behind, meaningfully behind, or effectively out
+  of reach. The uncertainty remained exciting, suggesting a need to investigate
+  better qualitative feedback without exposing exact hidden scores.
+- **OBSERVED:** when a focused Recruit committed, the newly open Focus slot was
+  easy to leave unused despite other offered targets. Whether assistance should
+  be automatic, prompted, or explicitly user-triggered remains an open design
+  question.
+- **OBSERVED:** a #16-over-#1 upset led by Lucas Bradley's 29 points felt worthy
+  of Program-level remembrance distinct from a statistical Record. Graduated
+  Players such as a roughly 91-OVR Tobias Stone and career leaderboard presence
+  from Trey Adams also created demand for stronger Program-specific alumni
+  memory; these examples are evidence, not canonical recognition rules.
+
 ## Live WATCH Items
 
 ### Low-prestige rebuild and mature-league ceiling
 
 Pine Valley has felt like a genuine multi-year grind, and mature leagues have
 occasionally produced one clear powerhouse with most Programs clustered below.
-This remains interesting/acceptable. Reopen only if repeated play shows the
-rebuild is inert or the league loses believable upper-tier Programs.
+In the latest multi-Season run, Pine Valley rose from consecutive one- and
+two-win Seasons to multiple Tournament appearances and a #16-over-#1 upset, yet
+its visible Prestige remained approximately 36 and recruiting still appeared
+constrained by its original environment. This is meaningful evidence for
+investigating gradual Program-reputation evolution, not proof of a broken
+formula or authorization to retune Recruiting. Reopen balance only if repeated
+play shows the rebuild is inert or the league loses believable upper-tier
+Programs.
 
 ### Concentrated single-attribute Development gains
 
@@ -72,8 +125,10 @@ feature work.
 ### Shot selection and statistical translation
 
 Shot mix is simplified, and Steals/cross-position identities showed the clearest
-historical compression. Player Identity tuning remains parked. Investigate only
-if new manual play identifies a concrete repeated gameplay problem.
+historical compression. A Single Game steal record around 6 drew attention as
+potentially low in one run, but remains a WATCH signal rather than a confirmed
+tuning problem. Player Identity tuning remains parked; investigate only if new
+manual play identifies a concrete repeated gameplay problem.
 
 ### Persistence and history growth
 
