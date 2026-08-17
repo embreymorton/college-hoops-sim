@@ -63,6 +63,59 @@ function naturalStartingFive(): ProjectedStartingFive {
 }
 
 describe('SimpleRotationPanel', () => {
+  it('invokes explicit draft-only Fill Remaining assistance', () => {
+    const team = makeTeam()
+    const onFill = vi.fn()
+    render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={defaultMinutes(team)}
+        committedMinutesByPlayerId={defaultMinutes(team)}
+        projectedStartingFive={null}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onFill={onFill}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: 'Fill Remaining' }))
+    expect(onFill).toHaveBeenCalledOnce()
+    expect(screen.getByText(
+      'Edited MPG stays locked during Fill Remaining. Your Rotation changes only when you Apply.',
+    )).toBeInTheDocument()
+  })
+
+  it('marks only preserved MPG controls as Locked', () => {
+    const team = makeTeam()
+    const minutes = { ...defaultMinutes(team), 'PG-starter': 36, 'SG-starter': 32 }
+    render(
+      <SimpleRotationPanel
+        team={team}
+        program={{ primaryColor: '#123456' }}
+        minutesByPlayerId={minutes}
+        preservedPlayerIds={['PG-starter']}
+        committedMinutesByPlayerId={defaultMinutes(team)}
+        projectedStartingFive={null}
+        issues={[]}
+        onSetPlayerMinutes={vi.fn()}
+        onApply={vi.fn()}
+        onDiscard={vi.fn()}
+        onSelectPlayer={vi.fn()}
+        headingId="heading"
+      />,
+    )
+
+    const preservedRow = screen.getByText('PG-starter Player').closest('tr')!
+    const ordinaryRow = screen.getByText('SG-starter Player').closest('tr')!
+    expect(within(preservedRow).getByText('Locked')).toBeInTheDocument()
+    expect(within(ordinaryRow).queryByText('Locked')).not.toBeInTheDocument()
+    expect(preservedRow).toHaveAttribute('data-preserved', 'true')
+  })
+
   it('groups Players with positive minutes as Rotation Players and zero-minute Players as Reserves', () => {
     const team = makeTeam()
     const minutes = { ...defaultMinutes(team), 'PG-starter': 36, 'PG-backup': 0 }

@@ -422,6 +422,27 @@ describe('seasonStore Coaching foundation', () => {
 })
 
 describe('seasonStore Simple Rotation Coaching integration', () => {
+  it('fills the Simple draft around edited MPG without committing until Apply', () => {
+    selectProgram()
+    useDynastyStore.getState().goToCoaching()
+    const before = useDynastyStore.getState()
+    const controlled = before.dynasty!.activeSeason!.programStates['charlotte-tech']!
+    const canonical = controlled.rotation
+    const [playerId, minutes] = Object.entries(before.coachingSimpleMinutesByPlayerId!)
+      .find(([, value]) => value < 40)!
+
+    useDynastyStore.getState().setCoachingSimplePlayerMinutes(playerId, minutes + 1)
+    const result = useDynastyStore.getState().fillCoachingSimpleRotation()
+
+    expect(result?.valid).toBe(true)
+    const state = useDynastyStore.getState()
+    expect(state.coachingSimpleMinutesByPlayerId![playerId]).toBe(minutes + 1)
+    expect(state.coachingSimplePreservedPlayerIds).toEqual([playerId])
+    expect(Object.values(state.coachingSimpleMinutesByPlayerId!).reduce((sum, value) => sum + value, 0)).toBe(200)
+    expect(state.dynasty!.activeSeason!.programStates['charlotte-tech']!.rotation).toBe(canonical)
+    expect(validateRotationV1(controlled.team, result!.valid ? result!.rotation : canonical).valid).toBe(true)
+  })
+
   it('initializes every roster Player from canonical aggregate MPG, including zero-minute Reserves', () => {
     selectProgram()
     const controlled = useDynastyStore.getState().dynasty!.activeSeason!

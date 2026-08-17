@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import {
   cloneRotationV1,
   compileSimpleRotationIntent,
+  fillSimpleRotationIntent,
   derivePlayerMinutesV1,
   MAX_PLAYER_MINUTES,
   validateRotationV1,
@@ -246,6 +247,7 @@ export interface DynastySessionState {
   readonly postseasonDraftRotation: RotationV1 | null
   /** UI-only aggregate MPG intent for Coaching Simple Rotation, including zero-minute roster Players. */
   readonly coachingSimpleMinutesByPlayerId: Readonly<Record<string, number>> | null
+  readonly coachingSimplePreservedPlayerIds: readonly string[]
   /** Structured issues from the most recent failed Simple Rotation apply attempt. */
   readonly coachingSimpleRotationIssues: readonly SimpleRotationIntentIssue[]
   /** The controlled Program's most recently completed Tournament game, for inline Hub feedback or postgame. */
@@ -328,6 +330,7 @@ export interface DynastySessionState {
   resetCoachingDraftRotation(): void
   /** Updates only UI intent; incomplete 198/200 and 204/200 drafts remain representable. */
   setCoachingSimplePlayerMinutes(playerId: string, minutes: number): void
+  fillCoachingSimpleRotation(): SimpleRotationIntentResult | null
   /** Compiles and commits only feasible Simple intent, returning the compiler result for callers. */
   applyCoachingSimpleRotation(): SimpleRotationIntentResult | null
   /** Discards Simple edits and rebuilds aggregate MPG from the current canonical Rotation. */
@@ -728,6 +731,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   postseasonControlledDefaultRotation: null,
   postseasonDraftRotation: null,
   coachingSimpleMinutesByPlayerId: null,
+  coachingSimplePreservedPlayerIds: [],
   coachingSimpleRotationIssues: [],
   lastPlayedTournamentGameId: null,
   viewedTournamentGameId: null,
@@ -792,6 +796,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       postseasonControlledDefaultRotation: null,
       postseasonDraftRotation: null,
       coachingSimpleMinutesByPlayerId: null,
+      coachingSimplePreservedPlayerIds: [],
       coachingSimpleRotationIssues: [],
       lastPlayedTournamentGameId: null,
       viewedTournamentGameId: null,
@@ -935,6 +940,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           postseasonTeam,
           postseasonRotation,
         ),
+        coachingSimplePreservedPlayerIds: [],
         coachingSimpleRotationIssues: [],
         view: 'coaching',
         explorationViewHistory: [],
@@ -958,6 +964,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         seasonTeam,
         seasonRotation,
       ),
+      coachingSimplePreservedPlayerIds: [],
       coachingSimpleRotationIssues: [],
       view: 'coaching',
       explorationViewHistory: [],
@@ -991,6 +998,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
             controlledState.team,
             controlledState.rotation,
           ),
+          coachingSimplePreservedPlayerIds: [],
           coachingSimpleRotationIssues: [],
         })
       }
@@ -1008,6 +1016,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           controlledState.team,
           controlledState.rotation,
         ),
+        coachingSimplePreservedPlayerIds: [],
         coachingSimpleRotationIssues: [],
       })
     }
@@ -1040,13 +1049,14 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           controlledState.team,
           controlledState.rotation,
         ),
+        coachingSimplePreservedPlayerIds: [],
         coachingSimpleRotationIssues: [],
       })
     }
   },
 
   setCoachingSimplePlayerMinutes(playerId, minutes) {
-    const { dynasty, coachingSimpleMinutesByPlayerId } = get()
+    const { dynasty, coachingSimpleMinutesByPlayerId, coachingSimplePreservedPlayerIds } = get()
     const controlledProgramId = dynasty?.controlledProgramId
     const controlledTeam = dynasty?.activePostseason
       ?.programStates[controlledProgramId!]?.team ??
@@ -1069,8 +1079,44 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           Math.max(0, Math.round(minutes)),
         ),
       },
+      coachingSimplePreservedPlayerIds: coachingSimplePreservedPlayerIds.includes(playerId)
+        ? coachingSimplePreservedPlayerIds
+        : [...coachingSimplePreservedPlayerIds, playerId],
       coachingSimpleRotationIssues: [],
     })
+  },
+
+  fillCoachingSimpleRotation() {
+    const { dynasty, coachingSimpleMinutesByPlayerId, coachingSimplePreservedPlayerIds } = get()
+    const controlledProgramId = dynasty?.controlledProgramId
+    const controlledState = dynasty?.activePostseason?.programStates[controlledProgramId!] ??
+      dynasty?.activeSeason?.programStates[controlledProgramId!]
+    if (!controlledState || !coachingSimpleMinutesByPlayerId) return null
+
+    const preserved = Object.fromEntries(
+      coachingSimplePreservedPlayerIds.map((playerId) => [
+        playerId,
+        coachingSimpleMinutesByPlayerId[playerId] ?? 0,
+      ]),
+    )
+    const result = fillSimpleRotationIntent(
+      controlledState.team,
+      coachingSimpleMinutesByPlayerId,
+      preserved,
+    )
+    if (!result.valid) {
+      set({ coachingSimpleRotationIssues: result.issues })
+      return result
+    }
+
+    set({
+      coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+        controlledState.team,
+        result.rotation,
+      ),
+      coachingSimpleRotationIssues: [],
+    })
+    return result
   },
 
   applyCoachingSimpleRotation() {
@@ -1110,6 +1156,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           controlledState.team,
           result.rotation,
         ),
+        coachingSimplePreservedPlayerIds: [],
         coachingSimpleRotationIssues: [],
       })
     } else if (dynasty.activeSeason) {
@@ -1127,6 +1174,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           controlledState.team,
           result.rotation,
         ),
+        coachingSimplePreservedPlayerIds: [],
         coachingSimpleRotationIssues: [],
       })
     }
@@ -1148,6 +1196,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         controlledState.team,
         controlledState.rotation,
       ),
+      coachingSimplePreservedPlayerIds: [],
       coachingSimpleRotationIssues: [],
     })
   },
@@ -2027,6 +2076,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         postseasonControlledDefaultRotation: null,
         postseasonDraftRotation: null,
         coachingSimpleMinutesByPlayerId: null,
+        coachingSimplePreservedPlayerIds: [],
         coachingSimpleRotationIssues: [],
         lastPlayedTournamentGameId: null,
         viewedTournamentGameId: null,

@@ -24,6 +24,8 @@ interface SimpleRotationPanelProps {
   readonly program: BrandingSource
   /** UI-only aggregate MPG draft, including explicit zeroes for Reserves. */
   readonly minutesByPlayerId: Readonly<Record<string, number>>
+  /** Player MPG values currently held exact by Fill Remaining. */
+  readonly preservedPlayerIds?: readonly string[]
   /** Aggregate MPG from the currently committed canonical Rotation, for the Discard/unsaved state. */
   readonly committedMinutesByPlayerId: Readonly<Record<string, number>>
   /**
@@ -35,6 +37,7 @@ interface SimpleRotationPanelProps {
   readonly projectedStartingFive: ProjectedStartingFive | null
   readonly issues: readonly SimpleRotationIntentIssue[]
   readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
+  readonly onFill?: () => void
   readonly onApply: () => void
   readonly onDiscard: () => void
   readonly onSelectPlayer: (playerId: string) => void
@@ -52,10 +55,12 @@ export function SimpleRotationPanel({
   team,
   program,
   minutesByPlayerId,
+  preservedPlayerIds = [],
   committedMinutesByPlayerId,
   projectedStartingFive,
   issues,
   onSetPlayerMinutes,
+  onFill = () => {},
   onApply,
   onDiscard,
   onSelectPlayer,
@@ -77,6 +82,7 @@ export function SimpleRotationPanel({
       (committedMinutesByPlayerId[player.id] ?? 0),
   )
   const issueMessages = describeSimpleRotationIssues(issues)
+  const preservedPlayerIdSet = new Set(preservedPlayerIds)
 
   const { starters, bench, reserves, hasProjectedStartingFive } =
     deriveSimpleRotationSections(team, minutesByPlayerId, projectedStartingFive)
@@ -104,6 +110,15 @@ export function SimpleRotationPanel({
         <div className="simple-rotation-actions">
           <button
             type="button"
+            className="button button--assistant"
+            onClick={onFill}
+            title="Keep every MPG value you edited and complete the rest of the Rotation"
+          >
+            <span className="button__icon" aria-hidden="true">✦</span>
+            Fill Remaining
+          </button>
+          <button
+            type="button"
             className="button button--ghost"
             onClick={onDiscard}
             disabled={!isChanged}
@@ -120,6 +135,10 @@ export function SimpleRotationPanel({
           </button>
         </div>
       </div>
+      <p className="section-hint simple-rotation-fill-hint">
+        Edited MPG stays locked during Fill Remaining. Your Rotation changes
+        only when you Apply.
+      </p>
 
       {issueMessages.length > 0 && (
         <div className="simple-rotation-issues" role="status">
@@ -147,6 +166,7 @@ export function SimpleRotationPanel({
             <StartingFiveGroup
               starters={starters}
               minutesByPlayerId={minutesByPlayerId}
+              preservedPlayerIdSet={preservedPlayerIdSet}
               onSetPlayerMinutes={onSetPlayerMinutes}
               onSelectPlayer={onSelectPlayer}
             />
@@ -155,6 +175,7 @@ export function SimpleRotationPanel({
             label={hasProjectedStartingFive ? 'Bench' : 'Rotation Players'}
             players={bench}
             minutesByPlayerId={minutesByPlayerId}
+            preservedPlayerIdSet={preservedPlayerIdSet}
             onSetPlayerMinutes={onSetPlayerMinutes}
             onSelectPlayer={onSelectPlayer}
             emptyMessage={
@@ -167,6 +188,7 @@ export function SimpleRotationPanel({
             label="Reserves"
             players={reserves}
             minutesByPlayerId={minutesByPlayerId}
+            preservedPlayerIdSet={preservedPlayerIdSet}
             onSetPlayerMinutes={onSetPlayerMinutes}
             onSelectPlayer={onSelectPlayer}
             emptyMessage="Every roster Player is currently in the rotation."
@@ -181,6 +203,7 @@ interface SimpleRotationGroupProps {
   readonly label: string
   readonly players: readonly Player[]
   readonly minutesByPlayerId: Readonly<Record<string, number>>
+  readonly preservedPlayerIdSet: ReadonlySet<string>
   readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
   readonly onSelectPlayer: (playerId: string) => void
   readonly emptyMessage: string
@@ -190,6 +213,7 @@ function SimpleRotationGroup({
   label,
   players,
   minutesByPlayerId,
+  preservedPlayerIdSet,
   onSetPlayerMinutes,
   onSelectPlayer,
   emptyMessage,
@@ -221,6 +245,7 @@ function SimpleRotationGroup({
             key={player.id}
             data-player-id={player.id}
             data-zero-minutes={minutes === 0}
+            data-preserved={preservedPlayerIdSet.has(player.id)}
           >
             <td className="player-name-cell">
               <button
@@ -235,16 +260,11 @@ function SimpleRotationGroup({
             <td>{player.classYear}</td>
             <td>{calculateOverall(player)}</td>
             <td className="rotation-minutes-cell">
-              <MinuteStepper
-                id={`simple-minutes-${player.id}`}
-                value={minutes}
-                label={`${playerLabel} minutes`}
-                onChange={(nextMinutes) =>
-                  onSetPlayerMinutes(
-                    player.id,
-                    Math.min(MAX_PLAYER_MINUTES, nextMinutes),
-                  )
-                }
+              <SimpleMinutesControl
+                player={player}
+                minutes={minutes}
+                preserved={preservedPlayerIdSet.has(player.id)}
+                onSetPlayerMinutes={onSetPlayerMinutes}
               />
             </td>
           </tr>
@@ -257,6 +277,7 @@ function SimpleRotationGroup({
 interface StartingFiveGroupProps {
   readonly starters: readonly SimpleRotationStarter[]
   readonly minutesByPlayerId: Readonly<Record<string, number>>
+  readonly preservedPlayerIdSet: ReadonlySet<string>
   readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
   readonly onSelectPlayer: (playerId: string) => void
 }
@@ -269,6 +290,7 @@ interface StartingFiveGroupProps {
 function StartingFiveGroup({
   starters,
   minutesByPlayerId,
+  preservedPlayerIdSet,
   onSetPlayerMinutes,
   onSelectPlayer,
 }: StartingFiveGroupProps) {
@@ -294,6 +316,7 @@ function StartingFiveGroup({
             key={player.id}
             data-player-id={player.id}
             data-zero-minutes={minutes === 0}
+            data-preserved={preservedPlayerIdSet.has(player.id)}
             className="simple-rotation-starter-row"
           >
             <td className="player-name-cell">
@@ -311,21 +334,60 @@ function StartingFiveGroup({
             <td>{player.classYear}</td>
             <td>{calculateOverall(player)}</td>
             <td className="rotation-minutes-cell">
-              <MinuteStepper
-                id={`simple-minutes-${player.id}`}
-                value={minutes}
-                label={`${playerLabel} minutes`}
-                onChange={(nextMinutes) =>
-                  onSetPlayerMinutes(
-                    player.id,
-                    Math.min(MAX_PLAYER_MINUTES, nextMinutes),
-                  )
-                }
+              <SimpleMinutesControl
+                player={player}
+                minutes={minutes}
+                preserved={preservedPlayerIdSet.has(player.id)}
+                onSetPlayerMinutes={onSetPlayerMinutes}
               />
             </td>
           </tr>
         )
       })}
     </tbody>
+  )
+}
+
+interface SimpleMinutesControlProps {
+  readonly player: Player
+  readonly minutes: number
+  readonly preserved: boolean
+  readonly onSetPlayerMinutes: (playerId: string, minutes: number) => void
+}
+
+function SimpleMinutesControl({
+  player,
+  minutes,
+  preserved,
+  onSetPlayerMinutes,
+}: SimpleMinutesControlProps) {
+  const playerLabel = `${player.firstName} ${player.lastName}`
+
+  return (
+    <div className="simple-minutes-control" data-preserved={preserved}>
+      {preserved && (
+        <span className="simple-minutes-control__preserved" title="Fill Remaining will keep this MPG value exact">
+          <svg
+            className="simple-minutes-control__lock"
+            viewBox="0 0 16 16"
+            aria-hidden="true"
+          >
+            <path d="M4.5 7V5a3.5 3.5 0 0 1 7 0v2h.5a1 1 0 0 1 1 1v6H3V8a1 1 0 0 1 1-1h.5Zm1.5 0h4V5a2 2 0 1 0-4 0v2Z" />
+          </svg>
+          Locked
+        </span>
+      )}
+      <MinuteStepper
+        id={`simple-minutes-${player.id}`}
+        value={minutes}
+        label={`${playerLabel} minutes`}
+        onChange={(nextMinutes) =>
+          onSetPlayerMinutes(
+            player.id,
+            Math.min(MAX_PLAYER_MINUTES, nextMinutes),
+          )
+        }
+      />
+    </div>
   )
 }

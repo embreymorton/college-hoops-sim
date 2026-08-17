@@ -1587,6 +1587,67 @@ p {
   margin-left: auto;
 }
 
+.button--assistant {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.button--assistant:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.button--assistant:active {
+  transform: translateY(1px);
+}
+
+.button__icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.simple-rotation-fill-hint {
+  margin: var(--space-3) var(--space-5) var(--space-4);
+}
+
+.simple-minutes-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: 0.2rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+}
+
+.simple-minutes-control[data-preserved='true'] {
+  background: var(--accent-soft);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.simple-minutes-control__preserved {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: var(--accent-strong);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.simple-minutes-control__lock {
+  width: 0.75rem;
+  height: 0.75rem;
+  fill: currentColor;
+}
+
 .simple-rotation-issues {
   display: flex;
   flex-direction: column;

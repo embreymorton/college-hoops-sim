@@ -74,11 +74,17 @@ export function CoachingScreen() {
   const coachingSimpleRotationIssues = useDynastyStore(
     (state) => state.coachingSimpleRotationIssues,
   )
+  const coachingSimplePreservedPlayerIds = useDynastyStore(
+    (state) => state.coachingSimplePreservedPlayerIds,
+  )
   const setCoachingSimplePlayerMinutes = useDynastyStore(
     (state) => state.setCoachingSimplePlayerMinutes,
   )
   const applyCoachingSimpleRotation = useDynastyStore(
     (state) => state.applyCoachingSimpleRotation,
+  )
+  const fillCoachingSimpleRotation = useDynastyStore(
+    (state) => state.fillCoachingSimpleRotation,
   )
   const resetCoachingSimpleRotation = useDynastyStore(
     (state) => state.resetCoachingSimpleRotation,
@@ -187,6 +193,7 @@ export function CoachingScreen() {
                 team={controlledTeam}
                 program={{ primaryColor: controlledProgram.branding.primaryColor }}
                 minutesByPlayerId={coachingSimpleMinutesByPlayerId}
+                preservedPlayerIds={coachingSimplePreservedPlayerIds}
                 committedMinutesByPlayerId={deriveSimplePlayerMinutes(
                   controlledTeam,
                   canonicalRotation,
@@ -194,6 +201,7 @@ export function CoachingScreen() {
                 projectedStartingFive={projectedStartingFive}
                 issues={coachingSimpleRotationIssues}
                 onSetPlayerMinutes={setCoachingSimplePlayerMinutes}
+                onFill={fillCoachingSimpleRotation}
                 onApply={() => applyCoachingSimpleRotation()}
                 onDiscard={resetCoachingSimpleRotation}
                 onSelectPlayer={(playerId) =>

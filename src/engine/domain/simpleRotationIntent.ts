@@ -1,3 +1,4 @@
+import { calculateOverall } from './overall'
 import { POSITIONS, type Position } from './player'
 import {
   MAX_PLAYER_MINUTES,
@@ -41,6 +42,8 @@ export type SimpleRotationIntentResult =
       readonly issues: readonly SimpleRotationIntentIssue[]
     }
 
+export type FillSimpleRotationIntentResult = SimpleRotationIntentResult
+
 interface FlowEdge {
   readonly to: number
   readonly reverseIndex: number
@@ -73,6 +76,134 @@ function addFlowEdge(
   graph[from]!.push(forward)
   graph[to]!.push(reverse)
   return forward
+}
+
+/**
+ * Completes a partial Simple Rotation while treating every supplied preserved
+ * Player total as exact. The current draft is a preference only for all other
+ * Players. A deterministic min-cost flow chooses a legal 200-minute completion,
+ * then the existing Simple compiler remains the final canonical assignment
+ * boundary.
+ */
+export function fillSimpleRotationIntent(
+  team: Team,
+  currentMinutesByPlayerId: Readonly<Record<string, number>>,
+  preservedMinutesByPlayerId: Readonly<Record<string, number>>,
+): FillSimpleRotationIntentResult {
+  const rosterById = new Map(team.roster.map((player) => [player.id, player] as const))
+  const issues: SimpleRotationIntentIssue[] = []
+  let preservedTotal = 0
+
+  for (const [playerId, minutes] of Object.entries(preservedMinutesByPlayerId)) {
+    if (!rosterById.has(playerId)) {
+      issues.push({ code: 'UNKNOWN_PLAYER', message: `Unknown player ID "${playerId}" in preserved Simple Rotation intent.`, playerId })
+    }
+    if (!Number.isFinite(minutes) || minutes < 0 || minutes > MAX_PLAYER_MINUTES) {
+      issues.push({ code: 'INVALID_PLAYER_MINUTES', message: `Player "${playerId}" preserved ${minutes} minutes; the valid range is 0–${MAX_PLAYER_MINUTES}.`, playerId, actual: minutes, expected: MAX_PLAYER_MINUTES })
+    } else {
+      preservedTotal += minutes
+    }
+  }
+
+  if (preservedTotal > TOTAL_ROTATION_MINUTES) {
+    issues.push({ code: 'INVALID_TOTAL_MINUTES', message: `Preserved Simple Rotation intent requests ${preservedTotal} total minutes, above ${TOTAL_ROTATION_MINUTES}.`, actual: preservedTotal, expected: TOTAL_ROTATION_MINUTES })
+  }
+  if (issues.length > 0) return { valid: false, rotation: null, issues }
+
+  const players = [...team.roster].sort((a, b) => a.id.localeCompare(b.id))
+  const source = 0
+  const playerOffset = 1
+  const positionOffset = playerOffset + players.length
+  const sink = positionOffset + POSITIONS.length
+  const graph: FlowEdge[][] = Array.from({ length: sink + 1 }, () => [])
+  const sourceEdges = new Map<string, FlowEdge[]>()
+  const assignmentEdges = new Map<string, FlowEdge>()
+
+  for (const [index, player] of players.entries()) {
+    const node = playerOffset + index
+    const preserved = Object.prototype.hasOwnProperty.call(preservedMinutesByPlayerId, player.id)
+    const requested = preservedMinutesByPlayerId[player.id] ?? 0
+    const preferred = Math.min(MAX_PLAYER_MINUTES, Math.max(0, Math.round(currentMinutesByPlayerId[player.id] ?? 0)))
+    const edges: FlowEdge[] = []
+
+    for (let minute = 0; minute < (preserved ? requested : MAX_PLAYER_MINUTES); minute += 1) {
+      const preferenceCost = preserved
+        ? -1_000_000
+        : minute < preferred
+          ? -10_000 - calculateOverall(player)
+          : -calculateOverall(player)
+      edges.push(addFlowEdge(graph, source, node, 1, preferenceCost))
+    }
+    sourceEdges.set(player.id, edges)
+
+    for (const position of getEligibleRotationPositions(player)) {
+      const edge = addFlowEdge(
+        graph,
+        node,
+        positionOffset + POSITIONS.indexOf(position),
+        MAX_PLAYER_MINUTES,
+        position === player.position ? 0 : 1,
+      )
+      assignmentEdges.set(`${player.id}:${position}`, edge)
+    }
+  }
+
+  for (const [index] of POSITIONS.entries()) {
+    addFlowEdge(graph, positionOffset + index, sink, MINUTES_PER_POSITION, 0)
+  }
+
+  let totalFlow = 0
+  while (totalFlow < TOTAL_ROTATION_MINUTES) {
+    const distances = Array<number>(graph.length).fill(Number.POSITIVE_INFINITY)
+    const previousNode = Array<number>(graph.length).fill(-1)
+    const previousEdge = Array<number>(graph.length).fill(-1)
+    distances[source] = 0
+
+    for (let pass = 0; pass < graph.length - 1; pass += 1) {
+      let changed = false
+      for (let node = 0; node < graph.length; node += 1) {
+        if (!Number.isFinite(distances[node])) continue
+        for (const [edgeIndex, edge] of graph[node]!.entries()) {
+          const next = distances[node]! + edge.cost
+          if (edge.capacity > 0 && next < distances[edge.to]!) {
+            distances[edge.to] = next
+            previousNode[edge.to] = node
+            previousEdge[edge.to] = edgeIndex
+            changed = true
+          }
+        }
+      }
+      if (!changed) break
+    }
+    if (previousNode[sink] === -1) break
+
+    let added = TOTAL_ROTATION_MINUTES - totalFlow
+    for (let node = sink; node !== source; node = previousNode[node]!) {
+      added = Math.min(added, graph[previousNode[node]!]![previousEdge[node]!]!.capacity)
+    }
+    for (let node = sink; node !== source; node = previousNode[node]!) {
+      const edge = graph[previousNode[node]!]![previousEdge[node]!]!
+      const reverse = graph[edge.to]![edge.reverseIndex]!
+      edge.capacity -= added
+      edge.flow += added
+      reverse.capacity += added
+      reverse.flow -= added
+    }
+    totalFlow += added
+  }
+
+  const preservedMismatch = Object.entries(preservedMinutesByPlayerId).some(
+    ([playerId, minutes]) => sourceEdges.get(playerId)?.reduce((sum, edge) => sum + edge.flow, 0) !== minutes,
+  )
+  if (totalFlow !== TOTAL_ROTATION_MINUTES || preservedMismatch) {
+    return { valid: false, rotation: null, issues: [{ code: 'INFEASIBLE_POSITION_COVERAGE', message: 'The preserved Player minutes cannot produce legal floor-position coverage.' }] }
+  }
+
+  const completed = Object.fromEntries(players.map((player) => [
+    player.id,
+    sourceEdges.get(player.id)!.reduce((sum, edge) => sum + edge.flow, 0),
+  ]))
+  return compileSimpleRotationIntent(team, completed)
 }
 
 /**

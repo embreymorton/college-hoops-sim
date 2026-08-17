@@ -3,6 +3,7 @@ import { generateDefaultRotationV1, generateTeam } from '../generation'
 import { createRng } from '../random'
 import {
   compileSimpleRotationIntent,
+  fillSimpleRotationIntent,
   derivePlayerMinutesV1,
   POSITIONS,
   validateRotationV1,
@@ -250,5 +251,84 @@ describe('compileSimpleRotationIntent', () => {
         sourceTeam,
       )
     }
+  })
+})
+
+describe('fillSimpleRotationIntent', () => {
+  it('preserves one edited star exactly and fills a legal deterministic draft', () => {
+    const sourceTeam = generateTeam({
+      name: 'Preserve One',
+      abbreviation: 'ONE',
+      prestige: 70,
+      rng: createRng('preserve-one'),
+    })
+    const current = derivePlayerMinutesV1(generateDefaultRotationV1(sourceTeam))
+    const star = [...sourceTeam.roster].sort((a, b) => a.id.localeCompare(b.id))[0]!
+    const preserved = { [star.id]: 36 }
+
+    const first = fillSimpleRotationIntent(sourceTeam, current, preserved)
+    const second = fillSimpleRotationIntent(sourceTeam, current, preserved)
+
+    expect(first).toEqual(second)
+    expect(first.valid).toBe(true)
+    if (!first.valid) throw new Error('Expected fill to succeed.')
+    expect(derivePlayerMinutesV1(first.rotation)[star.id]).toBe(36)
+    expect(validateRotationV1(sourceTeam, first.rotation).valid).toBe(true)
+  })
+
+  it('handles no preserved values and several preserved values including zero', () => {
+    const sourceTeam = team(POSITIONS.flatMap((position) => [
+      player(`${position}-a`, position),
+      player(`${position}-b`, position),
+    ]))
+    const current = Object.fromEntries(sourceTeam.roster.map((candidate) => [candidate.id, 20]))
+    const none = fillSimpleRotationIntent(sourceTeam, current, {})
+    expect(none.valid).toBe(true)
+
+    const preserved = { 'PG-a': 40, 'SG-a': 32, 'SF-b': 0 }
+    const several = fillSimpleRotationIntent(sourceTeam, current, preserved)
+    expect(several.valid).toBe(true)
+    if (!several.valid) throw new Error('Expected preserved fill to succeed.')
+    const totals = derivePlayerMinutesV1(several.rotation)
+    expect(totals['PG-a']).toBe(40)
+    expect(totals['SG-a']).toBe(32)
+    expect(totals['SF-b'] ?? 0).toBe(0)
+  })
+
+  it('accepts preserved values already totaling 200 when they are legal', () => {
+    const sourceTeam = team(POSITIONS.map((position) => player(position, position)))
+    const preserved = Object.fromEntries(POSITIONS.map((position) => [position, 40]))
+    expect(fillSimpleRotationIntent(sourceTeam, preserved, preserved).valid).toBe(true)
+  })
+
+  it('rejects totals above 200, invalid values, and unknown IDs', () => {
+    const sourceTeam = team(POSITIONS.map((position) => player(position, position)))
+    const result = fillSimpleRotationIntent(sourceTeam, {}, {
+      PG: 41,
+      SG: 40,
+      SF: 40,
+      PF: 40,
+      C: 40,
+      unknown: -1,
+    })
+    expect(result.valid).toBe(false)
+    expect(result.issues).toEqual(expect.arrayContaining([
+      expect.objectContaining({ code: 'INVALID_PLAYER_MINUTES', playerId: 'PG' }),
+      expect.objectContaining({ code: 'UNKNOWN_PLAYER', playerId: 'unknown' }),
+    ]))
+  })
+
+  it('reports impossible positional coverage without changing preserved intent', () => {
+    const sourceTeam = team([
+      player('pg', 'PG'), player('sg', 'SG'), player('sf', 'SF'),
+      player('pf', 'PF'), player('c', 'C'),
+    ])
+    const result = fillSimpleRotationIntent(sourceTeam, {}, {
+      pg: 40, sg: 40, sf: 40, pf: 40, c: 0,
+    })
+    expect(result.valid).toBe(false)
+    expect(result.issues).toContainEqual(expect.objectContaining({
+      code: 'INFEASIBLE_POSITION_COVERAGE',
+    }))
   })
 })

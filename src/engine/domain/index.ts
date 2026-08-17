@@ -66,11 +66,12 @@ export {
   TEAM_ROSTER_SIZE,
 } from './team'
 export type { Team } from './team'
-export { compileSimpleRotationIntent } from './simpleRotationIntent'
+export { compileSimpleRotationIntent, fillSimpleRotationIntent } from './simpleRotationIntent'
 export type {
   SimpleRotationIntentIssue,
   SimpleRotationIntentIssueCode,
   SimpleRotationIntentResult,
+  FillSimpleRotationIntentResult,
 } from './simpleRotationIntent'
 export { deriveProjectedStartingFive } from './projectedStartingFive'
 export type {

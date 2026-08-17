@@ -35,6 +35,7 @@ export {
   validateRotationInput,
   validateRotationV1,
   compileSimpleRotationIntent,
+  fillSimpleRotationIntent,
   deriveProjectedStartingFive,
 } from './domain'
 export type {
@@ -59,6 +60,7 @@ export type {
   SimpleRotationIntentIssue,
   SimpleRotationIntentIssueCode,
   SimpleRotationIntentResult,
+  FillSimpleRotationIntentResult,
   ProjectedStartingFive,
   ProjectedStartingFiveIssue,
   ProjectedStartingFiveIssueCode,

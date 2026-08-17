@@ -15,10 +15,14 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### NEXT — Rotation Assistant V1 — Preserve & Fill
 
-Program Legacy V1 is complete, accepted, and frozen. No authoritative successor has been
-selected; phase order and the PLANNED list do not select one automatically.
+Add an explicit Simple Rotation assistance action that preserves the Player MPG
+values the coach intentionally edits, deterministically fills the remaining
+minutes into a legal Rotation, and updates only the reviewable Simple draft.
+The existing Apply action remains the sole commit boundary. This milestone does
+not optimize a "best" Rotation, alter Rotation V1 eligibility or validation,
+extend Advanced Rotation, or change simulation and AI behavior.
 
 ### PLANNED — remainder of Phase 7C
 

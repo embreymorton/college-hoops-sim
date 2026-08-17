@@ -28,14 +28,16 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Open Planning Checkpoint.** Program Legacy V1 is COMPLETE / ACCEPTED / FROZEN. Team
-Details history passed canonical multi-Season projection coverage and direct
-desktop / narrow-width inspection. No successor is selected; current evidence
-informs the next planning discussion but does not create a NEXT.
+**Rotation Assistant V1 — Preserve & Fill is NEXT.** The selected milestone
+responds to the observed burden of rebuilding the remainder of a Simple
+Rotation after preserving a few intentional MPG decisions. It is explicit,
+draft-only assistance around the frozen Rotation V1 contract, not Auto Coach.
 
-1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
+1. Verify Preserve & Fill keeps edited MPG exact, produces legal deterministic
+   drafts, and never commits before Apply.
+2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
-2. Monitor genuinely live WATCH items below without promoting them into work
+3. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.
