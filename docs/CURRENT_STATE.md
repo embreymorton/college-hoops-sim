@@ -64,6 +64,10 @@ At a canonically completed Tournament with Recruiting synchronized through
 Period 28, the explicit Late Recruiting handoff remains available from both the
 Tournament Hub and the final regular-season review reached through normal
 navigation. Navigation does not own or clear that lifecycle eligibility.
+Handoff visibility derives from completed Tournament state plus Recruiting
+remaining in its postseason phase; the transition command synchronizes any
+lagging completed postseason Recruiting period before entering Late Recruiting,
+so leaving for League and returning cannot strand progression.
 
 During an active Tournament, Coaching uses postseason team/rotation state only
 when the controlled Program qualified and has canonical Tournament state. A
@@ -173,9 +177,10 @@ uncertainty remain future-only.
 
 **Phase 7C.2 — Records & Milestones V1 is NEXT and IMPLEMENTED / PENDING MANUAL
 ACCEPTANCE.** History is now the fifth League tab with Yearbooks / Records
-sub-navigation. Records derive completed-regular-season Single Game totals,
-qualified Season rates, and stable-ID Career totals as deterministic Top 10s.
-The active Season and postseason statistics do not contribute; no record state
+sub-navigation. Records combine completed archives with a derived live overlay:
+active regular-season games contribute authoritative Single Game results and
+Career totals, while qualifying active Season rates rank provisionally with a
+LIVE marker. Postseason Player statistics never contribute, and no record state
 is stored. One shared projection derives every category and scope, while the UI
 selects a category and presents Single Game, Single Season, and Career panels
 together. Player links reuse active/former resolution and preserve the selected

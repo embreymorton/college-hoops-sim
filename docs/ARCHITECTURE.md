@@ -546,22 +546,25 @@ Stable Player IDs resolve through the existing active/former/unknown boundary.
 Phase 7C.2 extends the same boundary without adding canonical state:
 
 ```text
-CompletedSeasonArchive[]
+CompletedSeasonArchive[] + active SeasonState
   → pure completed-regular-season record projection
   → transient History/category selection
   → React presentation
 ```
 
-Single Game records read archived scheduled-game box scores, Season records
+Single Game records read completed scheduled-game box scores, Season records
 reuse national-leader qualification and rate semantics, and Career records sum
-Season totals by stable Player ID. Sorting includes stable fact-based tie keys,
-so archive order cannot change output. The active Season and archived
-postseason are intentionally outside the projection. The projection traverses
-each archive once for game candidates and derives Season statistics once for
-shared use across all five categories and Career aggregation; it returns all
-three scopes for all categories together. React memoizes that pure result by
-stable completed-history and Universe references, making a category switch a
-cheap selection rather than a historical recomputation.
+Season totals by stable Player ID. Completed active regular-season games form a
+derived live overlay: Single Game and Career facts are authoritative, while
+active Season rates are marked provisional. An active Season is omitted when
+its Season number is already archived, preventing rollover duplication;
+postseason Player statistics are never inputs. Sorting includes stable
+fact-based tie keys, so archive order cannot change output. The projection
+traverses each Season once for game candidates and derives Season statistics
+once for shared use across all five categories and Career aggregation; it
+returns all three scopes for all categories together. React memoizes that pure
+result by stable history, Universe, and active-Season references, making a
+category switch cheap while completed-round state naturally invalidates it.
 
 ## Team Season Stats and exploration projections
 

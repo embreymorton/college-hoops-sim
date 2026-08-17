@@ -898,6 +898,7 @@ p {
 .records-panel { min-width: 0; }
 .records-panel__table { min-width: 24rem; }
 .records-panel__context { display: block; color: var(--ink-1); font-size: 0.7rem; font-family: var(--font-body); white-space: nowrap; }
+.records-panel__live { margin-left: 0.4rem; color: var(--accent); font-family: var(--font-display); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
 
 .league-history-action {
   flex: 0 0 auto;

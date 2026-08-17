@@ -1933,7 +1933,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     if (!dynasty) return
 
     try {
-      const nextDynasty = prepareLateRecruiting(dynasty)
+      const synchronized = syncRecruitingThroughCompletedPostseasonRounds(dynasty)
+      const nextDynasty = prepareLateRecruiting(synchronized)
       set({
         dynasty: nextDynasty,
         view: 'recruiting',

@@ -33,16 +33,22 @@ ACCEPTANCE.** Initial play found the query-like scope/category form less
 history-forward than the app's established leader presentation and exposed a
 noticeable Season-record delay. The implemented refinement now shows all three
 record scopes together for one selected category and shares historical
-derivation work; automated projection and navigation coverage is green. Normal
-player play remains the acceptance gate.
+derivation work. Follow-up play accepted that structure and speed, exposed a
+reproducible Tournament → League → Tournament Late Recruiting blocker, and
+selected a live regular-season Records refinement. The blocker is now resolved
+from canonical lifecycle state, and Records overlay active Single Game/Career
+facts plus provisional LIVE Season rates. Automated projection and navigation
+coverage is green; normal player play remains the acceptance gate.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.
 2. Play League → History → Records across early and multi-Season Dynasties;
    assess whether the three scopes and supplied context make legends easy to
-   discover and compare, including Player Details round trips.
-3. Monitor genuinely live WATCH items below without promoting them into work
+   discover and compare, including live updates and Player Details round trips.
+3. Reverify completed Tournament → League → Tournament → Late Recruiting in
+   normal play after the canonical handoff recovery.
+4. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.

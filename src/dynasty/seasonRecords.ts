@@ -23,6 +23,8 @@ export interface RecordBookEntry {
   readonly gamesPlayed?: number
   readonly firstSeasonNumber?: number
   readonly lastSeasonNumber?: number
+  /** True only for a provisional active-Season rate entry. */
+  readonly isLive?: boolean
 }
 
 export interface CategoryRecordBook {
@@ -77,6 +79,7 @@ function sortAndRank(candidates: readonly Candidate[], limit: number): RecordBoo
       gamesPlayed: candidate.gamesPlayed,
       firstSeasonNumber: candidate.firstSeasonNumber,
       lastSeasonNumber: candidate.lastSeasonNumber,
+      isLive: candidate.isLive,
     }))
 }
 
@@ -108,24 +111,35 @@ function emptyCandidates(): Record<RecordCategory, Candidate[]> {
  * Category selection is deliberately left to the UI as a cheap read.
  */
 export function deriveDynastyRecordBook(
-  dynasty: Pick<DynastyState, 'history' | 'universe'>,
+  dynasty: Pick<DynastyState, 'history' | 'universe' | 'activeSeason'>,
   limit = 10,
 ): DynastyRecordBook {
   const programs = new Map(dynasty.universe.programs.map((program) => [program.id, program]))
   const archives = [...dynasty.history].sort(
     (first, second) => first.seasonNumber - second.seasonNumber,
   )
+  const archivedSeasonNumbers = new Set(archives.map(({ seasonNumber }) => seasonNumber))
+  const seasons = [
+    ...archives.map(({ seasonNumber, season }) => ({ seasonNumber, season, isLive: false })),
+    ...(dynasty.activeSeason && !archivedSeasonNumbers.has(dynasty.activeSeason.seasonNumber)
+      ? [{
+          seasonNumber: dynasty.activeSeason.seasonNumber,
+          season: dynasty.activeSeason,
+          isLive: true,
+        }]
+      : []),
+  ].sort((first, second) => first.seasonNumber - second.seasonNumber)
   const gameCandidates = emptyCandidates()
   const seasonCandidates = emptyCandidates()
   const careerByPlayerId = new Map<string, CareerAccumulator>()
 
-  for (const archive of archives) {
-    const players = playerMap(archive.season)
+  for (const seasonSource of seasons) {
+    const players = playerMap(seasonSource.season)
 
-    for (const game of [...archive.season.schedule.games].sort((first, second) =>
+    for (const game of [...seasonSource.season.schedule.games].sort((first, second) =>
       first.id.localeCompare(second.id),
     )) {
-      const result = archive.season.resultsByGameId[game.id]
+      const result = seasonSource.season.resultsByGameId[game.id]
       if (!result) continue
 
       for (const [programId, opponentId, rows] of [
@@ -145,17 +159,17 @@ export function deriveDynastyRecordBook(
             gameCandidates[category].push({
               ...identity(match.player, program),
               value: stats[category],
-              seasonNumber: archive.seasonNumber,
+              seasonNumber: seasonSource.seasonNumber,
               opponentProgramName: opponent.name,
-              tieKey: `${archive.seasonNumber}:${game.id}:${stats.playerId}`,
+              tieKey: `${seasonSource.seasonNumber}:${game.id}:${stats.playerId}`,
             })
           }
         }
       }
     }
 
-    const statsRows = deriveSeasonPlayerStats(archive.season)
-    const qualifiedRows = deriveQualifiedSeasonPlayerStats(archive.season, statsRows)
+    const statsRows = deriveSeasonPlayerStats(seasonSource.season)
+    const qualifiedRows = deriveQualifiedSeasonPlayerStats(seasonSource.season, statsRows)
 
     for (const category of RECORD_CATEGORIES) {
       for (const stats of qualifiedRows) {
@@ -167,8 +181,9 @@ export function deriveDynastyRecordBook(
           ...identity(match.player, program),
           value: stats[RATE_FIELD[category]] as number,
           gamesPlayed: stats.gamesPlayed,
-          seasonNumber: archive.seasonNumber,
-          tieKey: `${archive.seasonNumber}:${stats.playerId}`,
+          seasonNumber: seasonSource.seasonNumber,
+          isLive: seasonSource.isLive,
+          tieKey: `${seasonSource.seasonNumber}:${stats.playerId}`,
         })
       }
     }
@@ -186,7 +201,7 @@ export function deriveDynastyRecordBook(
       career.player = match.player
       career.programIds.push(stats.programId)
       career.gamesPlayed += stats.gamesPlayed
-      career.seasonNumbers.push(archive.seasonNumber)
+      career.seasonNumbers.push(seasonSource.seasonNumber)
       for (const category of RECORD_CATEGORIES) career.totals[category] += stats[category]
       careerByPlayerId.set(stats.playerId, career)
     }

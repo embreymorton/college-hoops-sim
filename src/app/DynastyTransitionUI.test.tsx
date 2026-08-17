@@ -141,6 +141,37 @@ describe('Season-complete handoff', () => {
     expect(useDynastyStore.getState().view).toBe('recruiting')
   })
 
+  it('reconstructs the canonical handoff after Tournament → League → Tournament even if Recruiting synchronization lagged', () => {
+    const boundary = championshipBoundary()
+    const lagged = {
+      ...boundary,
+      recruiting: {
+        ...boundary.recruiting!,
+        phase: 'postseason' as const,
+        lastResolvedPeriod: 27,
+      },
+    }
+    useDynastyStore.setState({ dynasty: lagged, view: 'postseasonHub' })
+    render(<App />)
+
+    expect(screen.getByRole('button', { name: 'Continue to Late Recruiting' })).toBeInTheDocument()
+    for (let pass = 0; pass < 2; pass += 1) {
+      fireEvent.click(screen.getByRole('button', { name: 'League' }))
+      expect(useDynastyStore.getState().dynasty!.recruiting!.lastResolvedPeriod).toBe(27)
+      fireEvent.click(screen.getByRole('button', { name: 'Tournament' }))
+      expect(screen.getByRole('button', { name: 'Continue to Late Recruiting' })).toBeInTheDocument()
+    }
+
+    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    expect(useDynastyStore.getState().dynasty!.recruiting).toMatchObject({
+      phase: 'late',
+      lastResolvedPeriod: 28,
+    })
+    expect(useDynastyStore.getState().view).toBe('recruiting')
+    useDynastyStore.getState().enterLateRecruiting()
+    expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
+  })
+
   it('keeps the Late Recruiting progression control available after viewing the final regular season', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })

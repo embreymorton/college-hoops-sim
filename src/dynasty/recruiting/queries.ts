@@ -13,7 +13,6 @@ import type {
 } from './domain'
 import { createRng } from '../../engine'
 import { isTournamentComplete } from '../../postseason'
-import { FINAL_RECRUITING_PERIOD } from './constants'
 
 export function getRecruit(
   recruiting: RecruitingState,
@@ -30,9 +29,7 @@ export function canEnterLateRecruiting(dynasty: DynastyState): boolean {
     postseason &&
       isTournamentComplete(postseason) &&
       recruiting &&
-      recruiting.phase !== 'late' &&
-      recruiting.phase !== 'finalized' &&
-      recruiting.lastResolvedPeriod === FINAL_RECRUITING_PERIOD,
+      recruiting.phase === 'postseason',
   )
 }
 

@@ -45,7 +45,7 @@ function RecordPanel({ title, unit, rows, kind, onSelectPlayer }: RecordPanelPro
           <td className="leader-board__rank">{row.rank}</td>
           <td className="player-name-cell">
             <button type="button" className="text-link-button" onClick={() => onSelectPlayer(row.programId, row.playerId)}>{row.firstName} {row.lastName}</button>
-            <span className="records-panel__context">{context(row, kind)}</span>
+            <span className="records-panel__context">{context(row, kind)}{row.isLive ? <span className="records-panel__live">Live</span> : null}</span>
           </td>
           <td title={row.programName}>{row.programAbbreviation}</td>
           <td>{kind === 'season' ? row.value.toFixed(1) : row.value}</td>
@@ -57,18 +57,19 @@ function RecordPanel({ title, unit, rows, kind, onSelectPlayer }: RecordPanelPro
 export function RecordsScreen() {
   const history = useDynastyStore((state) => state.dynasty!.history)
   const universe = useDynastyStore((state) => state.dynasty!.universe)
+  const activeSeason = useDynastyStore((state) => state.dynasty!.activeSeason)
   const category = useDynastyStore((state) => state.recordCategory)
   const setCategory = useDynastyStore((state) => state.setRecordCategory)
   const openPlayer = useDynastyStore((state) => state.openPlayerDetails)
   const recordBook = useMemo(
-    () => deriveDynastyRecordBook({ history, universe }),
-    [history, universe],
+    () => deriveDynastyRecordBook({ history, universe, activeSeason }),
+    [history, universe, activeSeason],
   )
   const selected = recordBook[category]
 
   return <section className="records-screen" aria-labelledby="records-heading">
     <header className="records-screen__header">
-      <div><h2 id="records-heading" className="section-title">Dynasty Record Book</h2><p className="section-hint">Completed regular Seasons only.</p></div>
+      <div><h2 id="records-heading" className="section-title">Dynasty Record Book</h2><p className="section-hint">Regular-season records across your Dynasty, including the current Season.</p></div>
       <div role="group" aria-label="Statistical category" className="tab-list records-category-tabs">
         {RECORD_CATEGORIES.map((key) => <button key={key} type="button" className="tab" aria-pressed={category === key} onClick={() => setCategory(key)}>{LABELS[key]}</button>)}
       </div>

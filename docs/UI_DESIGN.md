@@ -448,7 +448,9 @@ Records presents one PTS/REB/AST/STL/BLK category control followed by three
 simultaneous leader-style panels: Single Game, Single Season, and Career. Each
 panel owns a compact Top 10 table with Player, value, Program, and only
 canonically available Season/game/career context; the Season panel uses the
-matching per-game label. Panels compare side by side on desktop and stack on
+matching per-game label. Active regular-season Single Game and Career facts
+rank normally; provisional active Season rates carry a concise `LIVE` marker,
+while completed Season entries remain unmarked. Panels compare side by side on desktop and stack on
 mobile. Category state survives Player Details round trips. The League strip
 may scroll horizontally on narrow screens rather than forcing five tabs into
 the viewport; neither it nor Records may create body-level overflow.

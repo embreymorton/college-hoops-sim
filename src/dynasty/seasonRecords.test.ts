@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest'
 import { initializePostseason, simulatePendingGamesInTournamentRound, TOURNAMENT_ROUNDS } from '../postseason'
-import { deriveNationalPlayerLeaders } from '../season'
+import { deriveNationalPlayerLeaders, deriveSeasonPlayerStats } from '../season'
 import { completeRounds, createRecruitingDynasty } from './recruiting/testSupport'
 import { beginOffseason } from './dynastyState'
 import { deriveDynastyRecordBook } from './seasonRecords'
@@ -19,12 +19,89 @@ beforeAll(() => {
 })
 
 describe('deriveDynastyRecordBook', () => {
-  it('returns empty history cleanly and never reads the active Season', () => {
-    const activeOnly = { ...dynasty, history: [], activeSeason: archive.season }
+  function activeSeasonWithOneGame() {
+    const activeSeason = structuredClone(archive.season)
+    const game = activeSeason.schedule.games[0]!
+    const result = structuredClone(activeSeason.resultsByGameId[game.id]!)
+    const scorer = result.homePlayerStats.find(({ minutes }) => minutes > 0)!
+    scorer.points = 999
+    return {
+      ...activeSeason,
+      seasonNumber: 2,
+      resultsByGameId: { [game.id]: result },
+    }
+  }
+
+  it('returns an empty Record Book before any regular-season game completes', () => {
+    const activeOnly = {
+      ...dynasty,
+      history: [],
+      activeSeason: { ...archive.season, seasonNumber: 2, resultsByGameId: {} },
+    }
     const book = deriveDynastyRecordBook(activeOnly)
     expect(book.points.singleGame).toEqual([])
     expect(book.points.singleSeason).toEqual([])
     expect(book.points.career).toEqual([])
+  })
+
+  it('overlays active regular-season Single Game, provisional Season, and Career facts', () => {
+    const activeSeason = activeSeasonWithOneGame()
+    const input = { ...dynasty, activeSeason }
+    const book = deriveDynastyRecordBook(input)
+    const liveGame = book.points.singleGame[0]!
+    const liveSeason = book.points.singleSeason.find(
+      (row) => row.playerId === liveGame.playerId && row.seasonNumber === 2,
+    )!
+    const historicalStats = deriveSeasonPlayerStats(archive.season).find(
+      (row) => row.playerId === liveGame.playerId,
+    )!
+    const activeStats = deriveSeasonPlayerStats(activeSeason).find(
+      (row) => row.playerId === liveGame.playerId,
+    )!
+    const liveCareer = book.points.career.find((row) => row.playerId === liveGame.playerId)!
+
+    expect(liveGame).toMatchObject({ value: 999, seasonNumber: 2 })
+    expect(liveGame.isLive).toBeUndefined()
+    expect(liveSeason).toMatchObject({ value: 999, gamesPlayed: 1, isLive: true })
+    expect(liveCareer.value).toBe(historicalStats.points + activeStats.points)
+    expect(liveCareer.lastSeasonNumber).toBe(2)
+
+    const programId = Object.entries(activeSeason.programStates).find(([, state]) =>
+      state.team.roster.some(({ id }) => id === liveGame.playerId),
+    )![0]
+    const secondGame = activeSeason.schedule.games.find((game) =>
+      game.id !== Object.keys(activeSeason.resultsByGameId)[0] &&
+      (game.homeProgramId === programId || game.awayProgramId === programId),
+    )!
+    const secondResult = structuredClone(archive.season.resultsByGameId[secondGame.id]!)
+    const secondStats = (secondGame.homeProgramId === programId
+      ? secondResult.homePlayerStats
+      : secondResult.awayPlayerStats).find(({ playerId }) => playerId === liveGame.playerId)!
+    secondStats.points = 1
+    const updated = deriveDynastyRecordBook({
+      ...input,
+      activeSeason: {
+        ...activeSeason,
+        resultsByGameId: {
+          ...activeSeason.resultsByGameId,
+          [secondGame.id]: secondResult,
+        },
+      },
+    }).points.singleSeason.find(
+      (row) => row.playerId === liveGame.playerId && row.seasonNumber === 2,
+    )!
+    expect(updated).toMatchObject({ value: 500, gamesPlayed: 2, isLive: true })
+  })
+
+  it('excludes postseason stats and avoids duplicate active/completed Season representation', () => {
+    const postseason = structuredClone(archive.postseason)
+    const postseasonResult = Object.values(postseason.resultsByGameId)[0]!
+    postseasonResult.homePlayerStats[0]!.points = 9999
+    const withPostseason = { ...dynasty, activePostseason: postseason }
+    expect(deriveDynastyRecordBook(withPostseason)).toEqual(deriveDynastyRecordBook(dynasty))
+
+    const duplicateActive = { ...dynasty, activeSeason: archive.season }
+    expect(deriveDynastyRecordBook(duplicateActive)).toEqual(deriveDynastyRecordBook(dynasty))
   })
 
   it('derives regular-season game highs from archived box scores with deterministic context', () => {
