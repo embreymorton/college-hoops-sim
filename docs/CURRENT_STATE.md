@@ -96,7 +96,9 @@ refactor these systems during unrelated feature work:
 - Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries;
   and
 - Phase 7C.2 Dynasty Record Book, live Records overlay, and record-breaking
-  Single Game News behavior and read-model boundaries.
+  Single Game News behavior and read-model boundaries; and
+- Program Legacy V1's all-Program historical projection and Team Details
+  presentation contract.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -119,8 +121,8 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — Open Planning Checkpoint.** Program Legacy V1 is complete
-and accepted, and no successor has been explicitly selected. Phase 7C.3 remains
+**No NEXT selected — Open Planning Checkpoint.** Program Legacy V1 is complete,
+accepted, and frozen, and no successor has been explicitly selected. Phase 7C.3 remains
 PLANNED but is not automatically next.
 
 Team Details now exposes every Program's history during the current Dynasty:
@@ -129,7 +131,10 @@ runner-up finishes, best Tournament and regular-season results, and the five
 most recent completed Seasons. One pure projection derives the presentation from
 `CompletedSeasonArchive` facts and the existing canonical Tournament-outcome
 semantics. Current location and Prestige are context only; no Program-history
-state, simulation behavior, or Prestige mechanics were added.
+state, simulation behavior, or Prestige mechanics were added. Programs with no
+Tournament appearances show `No Tournament Appearances` at the résumé level
+while their individual Recent Seasons still show `Did Not Qualify`. National
+Champion receives restrained presentation-only emphasis.
 
 Offseason Storytelling V1 remains a pure presentation projection over the
 completed Season archive and canonical Offseason state. Every graduating senior

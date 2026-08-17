@@ -28,7 +28,7 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Open Planning Checkpoint.** Program Legacy V1 is COMPLETE / ACCEPTED. Team
+**Open Planning Checkpoint.** Program Legacy V1 is COMPLETE / ACCEPTED / FROZEN. Team
 Details history passed canonical multi-Season projection coverage and direct
 desktop / narrow-width inspection. No successor is selected; current evidence
 informs the next planning discussion but does not create a NEXT.
@@ -98,7 +98,7 @@ automatic defect.
 
 ## Recent Accepted-Phase Evidence
 
-### Program Legacy V1 — ACCEPTED
+### Program Legacy V1 — ACCEPTED / FROZEN
 
 Direct inspection confirmed a deliberate empty state before Season 1 history,
 then a compact all-Program Dynasty résumé and Recent Seasons trail after
@@ -106,7 +106,10 @@ rollover. Desktop presentation kept current Team information prominent; at
 390px, the summary and recent rows stacked without body overflow while Team
 averages, results, leaders, and roster remained usable. Multi-rollover tests
 confirmed records, appearances, titles, runner-up finishes, best results, and
-newest-first capping remain pure projections over canonical archives.
+newest-first capping remain pure projections over canonical archives. Final
+closure also verified that never-qualified Programs receive the aggregate `No
+Tournament Appearances` label while Recent Seasons preserve `Did Not Qualify`,
+and that National Champion emphasis remains presentation-only.
 
 ### Offseason Storytelling V1 — ACCEPTED
 

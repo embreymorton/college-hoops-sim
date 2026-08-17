@@ -320,6 +320,12 @@
   color: var(--ink-1);
 }
 
+.program-legacy__champion,
+.program-legacy__season span.program-legacy__champion {
+  font-weight: 700;
+  color: var(--accent, var(--ink-0));
+}
+
 .team-averages {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -17,7 +17,7 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Program Legacy V1 is complete and accepted. No authoritative successor has been
+Program Legacy V1 is complete, accepted, and frozen. No authoritative successor has been
 selected; phase order and the PLANNED list do not select one automatically.
 
 ### PLANNED — remainder of Phase 7C
@@ -48,10 +48,12 @@ number for it. Historical research remains available in
 
 ## Completed Phase Summary
 
-### Program Legacy V1 — COMPLETE / ACCEPTED
+### Program Legacy V1 — COMPLETE / ACCEPTED / FROZEN
 
 - Team Details now gives every Program a compact Dynasty résumé and five-Season
   recent trail derived from completed regular-season and Tournament archives.
+- Programs without a Tournament appearance receive an aggregate empty-state
+  label while individual missed Seasons retain their canonical outcome.
 - Added no mutable Program history, simulation behavior, or Prestige mechanics,
   and returned the Roadmap to an Open Planning Checkpoint.
 

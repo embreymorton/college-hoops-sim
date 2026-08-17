@@ -28,7 +28,11 @@ export function ProgramLegacySection({ legacy }: ProgramLegacySectionProps) {
       <div className="program-legacy__highlights">
         <p>
           <span>Best Tournament Finish</span>
-          <strong>{legacy.bestTournamentOutcome ? formatHistoricalTournamentOutcome(legacy.bestTournamentOutcome) : '—'}</strong>
+          <strong className={legacy.bestTournamentOutcome?.status === 'national-champion' ? 'program-legacy__champion' : undefined}>
+            {legacy.tournamentAppearances === 0 || !legacy.bestTournamentOutcome
+              ? 'No Tournament Appearances'
+              : formatHistoricalTournamentOutcome(legacy.bestTournamentOutcome)}
+          </strong>
         </p>
         <p>
           <span>Best Regular Season</span>
@@ -47,7 +51,9 @@ export function ProgramLegacySection({ legacy }: ProgramLegacySectionProps) {
             <div className="program-legacy__season" role="listitem" key={season.seasonNumber}>
               <strong>Season {season.seasonNumber}</strong>
               <span>{formatRecord(season.record.wins, season.record.losses)}</span>
-              <span>{formatHistoricalTournamentOutcome(season.tournamentOutcome)}</span>
+              <span className={season.tournamentOutcome.status === 'national-champion' ? 'program-legacy__champion' : undefined}>
+                {formatHistoricalTournamentOutcome(season.tournamentOutcome)}
+              </span>
             </div>
           ))}
         </div>

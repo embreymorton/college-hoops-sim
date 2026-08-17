@@ -49,4 +49,49 @@ describe('ProgramLegacySection', () => {
     expect(screen.getByText('Season 1 · 21-3')).toBeInTheDocument()
     expect(screen.getByRole('listitem')).toHaveTextContent('Season 1')
   })
+
+  it('shows "No Tournament Appearances" rather than "Did Not Qualify" when the Program has never made the Tournament', () => {
+    render(<ProgramLegacySection legacy={{
+      ...oneSeasonLegacy,
+      tournamentAppearances: 0,
+      championships: 0,
+      runnerUpFinishes: 0,
+      bestTournamentOutcome: { status: 'did-not-qualify' },
+      recentSeasons: [3, 2, 1].map((seasonNumber) => ({
+        seasonNumber,
+        record: { wins: 10, losses: 14 },
+        tournamentOutcome: { status: 'did-not-qualify' } as const,
+      })),
+    }} />)
+
+    expect(screen.getByText('No Tournament Appearances')).toBeInTheDocument()
+    expect(screen.queryByText('Did Not Qualify', { selector: '.program-legacy__highlights strong' })).not.toBeInTheDocument()
+    expect(screen.getAllByText('Did Not Qualify', { selector: '.program-legacy__season span' })).toHaveLength(3)
+  })
+
+  it('still shows canonical Tournament finish labels once a Program has made the Tournament', () => {
+    render(<ProgramLegacySection legacy={oneSeasonLegacy} />)
+
+    expect(screen.getByText('Runner-Up', { selector: '.program-legacy__highlights strong' })).toBeInTheDocument()
+  })
+
+  it('renders National Champion with emphasis in both the highlight and Recent Seasons', () => {
+    render(<ProgramLegacySection legacy={{
+      ...oneSeasonLegacy,
+      championships: 1,
+      runnerUpFinishes: 0,
+      bestTournamentOutcome: { status: 'national-champion', seed: 1, bidType: 'automatic' },
+      recentSeasons: [{
+        seasonNumber: 1,
+        record: { wins: 21, losses: 3 },
+        tournamentOutcome: { status: 'national-champion', seed: 1, bidType: 'automatic' },
+      }],
+    }} />)
+
+    const highlight = screen.getByText('National Champion', { selector: '.program-legacy__highlights strong' })
+    expect(highlight).toHaveClass('program-legacy__champion')
+
+    const row = screen.getByText('National Champion', { selector: '.program-legacy__season span' })
+    expect(row).toHaveClass('program-legacy__champion')
+  })
 })

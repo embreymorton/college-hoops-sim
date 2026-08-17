@@ -406,7 +406,11 @@ current Dynasty's archives. Before any completed Season, the section uses one
 quiet empty state. Current city/state and Prestige appear only as header context.
 The summary remains subordinate to current Team information and stacks without
 body overflow at the narrow target; it is not a Program Records or trophy-room
-destination.
+destination. When a Program has never qualified, Best Tournament Finish reads
+`No Tournament Appearances`; Recent Seasons still use the canonical `Did Not
+Qualify` outcome for each missed Season. `National Champion` alone receives a
+restrained accent-color and weight treatment, with no badge or structural
+decoration.
 
 Around the Country is a compact vertical feed grouped by newest fully completed
 round. Each story has a restrained type label, linked entity headline, and one
