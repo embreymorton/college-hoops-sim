@@ -128,7 +128,8 @@ persistence, RNG, or simulation changes.
   the full archived Tournament bracket.
 - **7C.2 Records & Milestones — IMPLEMENTED / PENDING MANUAL ACCEPTANCE:** adds
   completed-regular-season Single Game, Season, and Career Top 10 records under
-  the first-class League History tab.
+  the first-class League History tab, plus strict new Single Game record stories
+  in active-Season News after completed history exists.
 - **7C.3 Awards & Honors** remains PLANNED.
 
 7C.1 and 7C.2 derive their presentation from `CompletedSeasonArchive` through

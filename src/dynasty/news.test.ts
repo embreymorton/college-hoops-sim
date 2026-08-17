@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest'
 import type { PlayerGameStats } from '../engine'
 import { initializePostseason, simulatePendingGamesInTournamentRound } from '../postseason'
-import { deriveNewsFeed, type PlayerPerformanceNewsStory } from './news'
+import { RECORD_CATEGORIES, type RecordCategory } from './seasonRecords'
+import { deriveNewsFeed, type PlayerPerformanceNewsStory, type SingleGameRecordNewsStory } from './news'
 import { completeRounds, createRecruitingDynasty } from './recruiting/testSupport'
 
 function withCompletedRounds(seed: string, rounds: number) {
@@ -46,7 +47,115 @@ function quietCompletedRounds(seed: string, rounds: number) {
   }
 }
 
+const HISTORICAL_MAXIMA: Readonly<Record<RecordCategory, number>> = { points: 40, rebounds: 20, assists: 12, steals: 5, blocks: 6 }
+
+function withHistoricalBaseline(seed: string, activeRounds: number) {
+  const initial = createRecruitingDynasty(seed)
+  const historical = completeRounds(initial.activeSeason!, 1)
+  const historicalGame = historical.schedule.games.find(({ round }) => round === 1)!
+  const historicalResult = historical.resultsByGameId[historicalGame.id]!
+  const baselineRow = { ...quietStats(historicalResult.homePlayerStats)[0]! }
+  for (const category of RECORD_CATEGORIES) baselineRow[category] = HISTORICAL_MAXIMA[category]
+  const historicalResults = Object.fromEntries(Object.entries(historical.resultsByGameId).map(([id, result]) => [id, {
+    ...result,
+    homePlayerStats: id === historicalGame.id ? [baselineRow, ...quietStats(result.homePlayerStats).slice(1)] : quietStats(result.homePlayerStats),
+    awayPlayerStats: quietStats(result.awayPlayerStats),
+  }]))
+  const active = completeRounds(initial.activeSeason!, activeRounds)
+  const activeResults = Object.fromEntries(Object.entries(active.resultsByGameId).map(([id, result]) => [id, { ...result, homePlayerStats: quietStats(result.homePlayerStats), awayPlayerStats: quietStats(result.awayPlayerStats) }]))
+  return {
+    ...initial,
+    history: [{ seasonNumber: 1, season: { ...historical, resultsByGameId: historicalResults }, postseason: {} as never }],
+    activeSeason: { ...active, id: `${active.id}:season-2`, seasonNumber: 2, resultsByGameId: activeResults },
+  }
+}
+
+function setHomeStat(dynasty: ReturnType<typeof withHistoricalBaseline>, gameId: string, rowIndex: number, category: RecordCategory, value: number) {
+  const season = dynasty.activeSeason!
+  const result = season.resultsByGameId[gameId]!
+  const homePlayerStats = result.homePlayerStats.map((row, index) => index === rowIndex ? { ...row, [category]: value } : row)
+  return { ...dynasty, activeSeason: { ...season, resultsByGameId: { ...season.resultsByGameId, [gameId]: { ...result, homePlayerStats } } } }
+}
+
+function recordStories(dynasty: ReturnType<typeof withHistoricalBaseline>): SingleGameRecordNewsStory[] {
+  return deriveNewsFeed(dynasty, []).groups.flatMap(({ stories }) => stories).filter((story): story is SingleGameRecordNewsStory => story.kind === 'single-game-record')
+}
+
 describe('Around the Country V1 projection', () => {
+  it('requires completed history and uses strict historical maxima in every supported category', () => {
+    const noHistory = performanceFixture('points', 60)
+    expect(deriveNewsFeed(noHistory.dynasty, []).groups.flatMap(({ stories }) => stories).some(({ kind }) => kind === 'single-game-record')).toBe(false)
+
+    for (const category of RECORD_CATEGORIES) {
+      const baseline = withHistoricalBaseline(`news-record-${category}`, 1)
+      const game = baseline.activeSeason!.schedule.games.find(({ round }) => round === 1)!
+      expect(recordStories(setHomeStat(baseline, game.id, 0, category, HISTORICAL_MAXIMA[category] - 1))).toHaveLength(0)
+      expect(recordStories(setHomeStat(baseline, game.id, 0, category, HISTORICAL_MAXIMA[category]))).toHaveLength(0)
+      expect(recordStories(setHomeStat(baseline, game.id, 0, category, HISTORICAL_MAXIMA[category] + 1))[0]).toMatchObject({ records: [{ category, value: HISTORICAL_MAXIMA[category] + 1 }] })
+    }
+  })
+
+  it('collapses multiple records into one major story and suppresses the generic performance for that Player/game', () => {
+    const baseline = withHistoricalBaseline('news-record-collapse', 1)
+    const game = baseline.activeSeason!.schedule.games.find(({ round }) => round === 1)!
+    const withPoints = setHomeStat(baseline, game.id, 0, 'points', 51)
+    const dynasty = setHomeStat(withPoints, game.id, 0, 'rebounds', 24)
+    const playerId = dynasty.activeSeason!.resultsByGameId[game.id]!.homePlayerStats[0]!.playerId
+    const stories = deriveNewsFeed(dynasty, [playerId]).groups.flatMap(({ stories }) => stories)
+    expect(stories.filter(({ kind }) => kind === 'single-game-record')).toEqual([expect.objectContaining({ importance: 'major', isFollowed: true, records: [{ category: 'points', value: 51 }, { category: 'rebounds', value: 24 }] })])
+    expect(stories.some((story) => story.kind === 'player-performance' && story.gameId === game.id && story.playerId === playerId)).toBe(false)
+  })
+
+  it('advances the active-season baseline in canonical round and game order', () => {
+    let dynasty = withHistoricalBaseline('news-record-running', 3)
+    const games = [1, 2, 3].map((round) => dynasty.activeSeason!.schedule.games.filter((game) => game.round === round).sort((a, b) => a.index - b.index)[0]!)
+    dynasty = setHomeStat(dynasty, games[0]!.id, 0, 'points', 41)
+    dynasty = setHomeStat(dynasty, games[1]!.id, 0, 'points', 40)
+    dynasty = setHomeStat(dynasty, games[2]!.id, 0, 'points', 43)
+    expect(recordStories(dynasty).map(({ gameId, records }) => ({ gameId, value: records[0]!.value }))).toEqual([
+      { gameId: games[2]!.id, value: 43 },
+      { gameId: games[0]!.id, value: 41 },
+    ])
+
+    let sameRound = withHistoricalBaseline('news-record-same-round', 1)
+    const ordered = sameRound.activeSeason!.schedule.games.filter(({ round }) => round === 1).sort((a, b) => a.index - b.index)
+    sameRound = setHomeStat(sameRound, ordered[0]!.id, 0, 'points', 42)
+    sameRound = setHomeStat(sameRound, ordered[1]!.id, 0, 'points', 41)
+    expect(recordStories(sameRound).map(({ gameId }) => gameId)).toEqual([ordered[0]!.id])
+  })
+
+  it('allows different Players to set different category records in one completed round', () => {
+    let dynasty = withHistoricalBaseline('news-record-multiple-players', 1)
+    const games = dynasty.activeSeason!.schedule.games.filter(({ round }) => round === 1).sort((a, b) => a.index - b.index)
+    dynasty = setHomeStat(dynasty, games[0]!.id, 0, 'points', 42)
+    dynasty = setHomeStat(dynasty, games[1]!.id, 0, 'rebounds', 22)
+    expect(recordStories(dynasty)).toEqual([
+      expect.objectContaining({ gameId: games[0]!.id, records: [{ category: 'points', value: 42 }] }),
+      expect.objectContaining({ gameId: games[1]!.id, records: [{ category: 'rebounds', value: 22 }] }),
+    ])
+
+    const sameGameBaseline = withHistoricalBaseline('news-record-same-game-players', 1)
+    const sameGame = sameGameBaseline.activeSeason!.schedule.games.find(({ round }) => round === 1)!
+    const firstPlayer = setHomeStat(sameGameBaseline, sameGame.id, 0, 'points', 42)
+    const twoPlayers = setHomeStat(firstPlayer, sameGame.id, 1, 'points', 41)
+    expect(recordStories(twoPlayers)).toEqual([
+      expect.objectContaining({ gameId: sameGame.id, records: [{ category: 'points', value: 42 }] }),
+      expect.objectContaining({ gameId: sameGame.id, records: [{ category: 'points', value: 41 }] }),
+    ])
+  })
+
+  it('never creates record stories from Tournament performances', () => {
+    const canonical = withCompletedRounds('news-record-postseason', 24)
+    const baseline = withHistoricalBaseline('news-record-postseason', 24)
+    let postseason = initializePostseason({ universe: canonical.universe, season: canonical.activeSeason! })
+    postseason = simulatePendingGamesInTournamentRound({ postseason, round: 'round-of-16', simulationSeed: 'news-record-postseason-games' })
+    const game = postseason.bracket.games.find(({ round }) => round === 'round-of-16')!
+    const result = postseason.resultsByGameId[game.id]!
+    const homePlayerStats = result.homePlayerStats.map((row, index) => index === 0 ? { ...row, points: 99, rebounds: 30, assists: 20, steals: 10, blocks: 10 } : row)
+    const dynasty = { ...baseline, activePostseason: { ...postseason, resultsByGameId: { ...postseason.resultsByGameId, [game.id]: { ...result, homePlayerStats } } } }
+    expect(deriveNewsFeed(dynasty, []).groups.flatMap(({ stories }) => stories).some(({ kind }) => kind === 'single-game-record')).toBe(false)
+  })
+
   it.each([
     ['points', 34, false], ['points', 35, true], ['rebounds', 17, false], ['rebounds', 18, true],
     ['assists', 11, false], ['assists', 12, true], ['blocks', 5, false], ['blocks', 6, true],

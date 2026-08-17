@@ -1,6 +1,7 @@
 import type { PlayerGameStats, Position } from '../engine'
 import { TOURNAMENT_ROUNDS, type TournamentRound } from '../postseason'
 import type { DynastyState } from './domain'
+import { RECORD_CATEGORIES, type RecordCategory } from './seasonRecords'
 
 export type NewsImportance = 'standard' | 'notable' | 'major'
 export type NewsCheckpoint =
@@ -19,6 +20,12 @@ export interface PlayerPerformanceNewsStory extends NewsStoryBase {
   readonly playerId: string; readonly stats: Pick<PlayerGameStats, 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks'>
   readonly achievements: readonly PlayerPerformanceAchievement[]; readonly primaryVariant: PlayerPerformanceVariant; readonly isFollowed: boolean; readonly won: boolean
 }
+export interface SingleGameRecordNewsStory extends NewsStoryBase {
+  readonly kind: 'single-game-record'; readonly gameId: string; readonly programId: string; readonly opponentProgramId: string
+  readonly playerId: string; readonly records: readonly { readonly category: RecordCategory; readonly value: number }[]
+  readonly stats: Pick<PlayerGameStats, 'points' | 'rebounds' | 'assists' | 'steals' | 'blocks'>
+  readonly isFollowed: boolean; readonly won: boolean
+}
 export interface RecruitCommitmentNewsStory extends NewsStoryBase {
   readonly kind: 'recruit-commitment'; readonly recruitId: string; readonly destinationProgramId: string
   readonly targetSeasonNumber: number; readonly nationalRank: number; readonly position: Position; readonly stars: 5
@@ -35,7 +42,7 @@ export interface WinningStreakNewsStory extends NewsStoryBase {
   readonly kind: 'winning-streak'; readonly gameId: string; readonly programId: string; readonly opponentProgramId: string
   readonly streakWins: 10; readonly programScore: number; readonly opponentScore: number
 }
-export type NewsStory = PlayerPerformanceNewsStory | RecruitCommitmentNewsStory | TournamentUpsetNewsStory | UndefeatedRunEndedNewsStory | WinningStreakNewsStory
+export type NewsStory = PlayerPerformanceNewsStory | SingleGameRecordNewsStory | RecruitCommitmentNewsStory | TournamentUpsetNewsStory | UndefeatedRunEndedNewsStory | WinningStreakNewsStory
 export interface NewsFeedGroup { readonly id: string; readonly checkpoint: NewsCheckpoint; readonly stories: readonly NewsStory[] }
 export interface NewsFeed {
   readonly seasonId: string
@@ -46,7 +53,7 @@ export interface NewsFeed {
 }
 
 const IMPORTANCE_ORDER: Readonly<Record<NewsImportance, number>> = { major: 0, notable: 1, standard: 2 }
-const FAMILY_ORDER: Readonly<Record<NewsStory['kind'], number>> = { 'tournament-upset': 0, 'player-performance': 1, 'undefeated-run-ended': 2, 'winning-streak': 3, 'recruit-commitment': 4 }
+const FAMILY_ORDER: Readonly<Record<NewsStory['kind'], number>> = { 'tournament-upset': 0, 'single-game-record': 1, 'player-performance': 2, 'undefeated-run-ended': 3, 'winning-streak': 4, 'recruit-commitment': 5 }
 
 function groupId(checkpoint: NewsCheckpoint): string {
   if (checkpoint.kind === 'regular-season-round') return `news:v1:group:${checkpoint.seasonId}:regular:${checkpoint.round}`
@@ -86,6 +93,71 @@ function derivePerformanceStories(options: {
   })
 }
 
+function historicalSingleGameMaxima(dynasty: DynastyState): Record<RecordCategory, number> {
+  const maxima = { points: 0, rebounds: 0, assists: 0, steals: 0, blocks: 0 }
+  for (const archive of dynasty.history) {
+    for (const result of Object.values(archive.season.resultsByGameId)) {
+      for (const stats of [...result.homePlayerStats, ...result.awayPlayerStats]) {
+        if (stats.minutes <= 0) continue
+        for (const category of RECORD_CATEGORIES) {
+          maxima[category] = Math.max(maxima[category], stats[category])
+        }
+      }
+    }
+  }
+  return maxima
+}
+
+function deriveRegularGamePlayerStories(options: {
+  gameId: string; sourceOrder: number; checkpoint: NewsCheckpoint; homeProgramId: string; awayProgramId: string
+  homeStats: readonly PlayerGameStats[]; awayStats: readonly PlayerGameStats[]; followed: ReadonlySet<string>; winnerProgramId: string
+  runningMaxima: Record<RecordCategory, number>; hasHistoricalBaseline: boolean
+}): Array<PlayerPerformanceNewsStory | SingleGameRecordNewsStory> {
+  const { gameId, sourceOrder, checkpoint, homeProgramId, awayProgramId, homeStats, awayStats, followed, winnerProgramId, runningMaxima, hasHistoricalBaseline } = options
+  const stories: Array<PlayerPerformanceNewsStory | SingleGameRecordNewsStory> = []
+  const performances = [
+    ...homeStats.map((stats) => ({ stats, programId: homeProgramId, opponentProgramId: awayProgramId })),
+    ...awayStats.map((stats) => ({ stats, programId: awayProgramId, opponentProgramId: homeProgramId })),
+  ]
+  for (const { stats, programId, opponentProgramId } of performances) {
+    if (stats.minutes <= 0) continue
+    const records = hasHistoricalBaseline
+      ? RECORD_CATEGORIES.filter((category) => stats[category] > runningMaxima[category])
+          .map((category) => ({ category, value: stats[category] }))
+      : []
+    if (records.length > 0) {
+      stories.push({
+        kind: 'single-game-record',
+        id: `news:v1:single-game-record:${gameId}:${stats.playerId}`,
+        checkpoint,
+        sourceOrder,
+        importance: 'major',
+        gameId,
+        programId,
+        opponentProgramId,
+        playerId: stats.playerId,
+        records,
+        stats: { points: stats.points, rebounds: stats.rebounds, assists: stats.assists, steals: stats.steals, blocks: stats.blocks },
+        isFollowed: followed.has(stats.playerId),
+        won: winnerProgramId === programId,
+      })
+      continue
+    }
+    stories.push(...derivePerformanceStories({
+      gameId, sourceOrder, checkpoint, homeProgramId: programId,
+      awayProgramId: opponentProgramId, homeStats: [stats], awayStats: [],
+      followed, winnerProgramId,
+    }))
+  }
+  for (const { stats } of performances) {
+    if (stats.minutes <= 0) continue
+    for (const category of RECORD_CATEGORIES) {
+      runningMaxima[category] = Math.max(runningMaxima[category], stats[category])
+    }
+  }
+  return stories
+}
+
 function winnerAndLoserScore(result: { homeTeamId: string; homeScore: number; awayScore: number; winnerId: string }) {
   return result.winnerId === result.homeTeamId ? { winnerScore: result.homeScore, loserScore: result.awayScore } : { winnerScore: result.awayScore, loserScore: result.homeScore }
 }
@@ -108,6 +180,8 @@ export function deriveNewsFeed(dynasty: DynastyState, followedPlayerIds: readonl
   const add = (story: NewsStory) => { const id = groupId(story.checkpoint); const value = grouped.get(id) ?? { checkpoint: story.checkpoint, stories: [] }; value.stories.push(story); grouped.set(id, value) }
   const records = new Map(Object.keys(season.programStates).map((id) => [id, { wins: 0, losses: 0, streak: 0 }]))
   const regularGames = [...season.schedule.games].sort((a, b) => a.round - b.round || a.index - b.index)
+  const runningSingleGameMaxima = historicalSingleGameMaxima(dynasty)
+  const hasHistoricalRecordBaseline = dynasty.history.length > 0
   let latestCompletedCompetitionCheckpoint: NewsCheckpoint | null = null
   for (let round = 1; round <= season.schedule.roundCount; round += 1) {
     const games = regularGames.filter((game) => game.round === round)
@@ -116,7 +190,7 @@ export function deriveNewsFeed(dynasty: DynastyState, followedPlayerIds: readonl
     latestCompletedCompetitionCheckpoint = checkpoint
     for (const game of games) {
       const result = season.resultsByGameId[game.id]!
-      derivePerformanceStories({ gameId: game.id, sourceOrder: game.index, checkpoint, homeProgramId: game.homeProgramId, awayProgramId: game.awayProgramId, homeStats: result.homePlayerStats, awayStats: result.awayPlayerStats, followed, winnerProgramId: result.winnerId }).forEach(add)
+      deriveRegularGamePlayerStories({ gameId: game.id, sourceOrder: game.index, checkpoint, homeProgramId: game.homeProgramId, awayProgramId: game.awayProgramId, homeStats: result.homePlayerStats, awayStats: result.awayPlayerStats, followed, winnerProgramId: result.winnerId, runningMaxima: runningSingleGameMaxima, hasHistoricalBaseline: hasHistoricalRecordBaseline }).forEach(add)
       const winnerId = result.winnerId
       const loserId = winnerId === game.homeProgramId ? game.awayProgramId : game.homeProgramId
       const winner = records.get(winnerId)!

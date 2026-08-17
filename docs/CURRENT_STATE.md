@@ -186,6 +186,13 @@ selects a category and presents Single Game, Single Season, and Career panels
 together. Player links reuse active/former resolution and preserve the selected
 category on Back.
 
+After at least one completed Season, Around the Country also promotes strict
+new Dynasty single-game regular-season records. Historical archive maxima seed
+one running active-Season baseline; completed active games advance it in
+canonical round/game order. One Player/game becomes one combined record story,
+replacing that Player/game's generic performance story. Ties, postseason box
+scores, and Season 1 never qualify.
+
 `7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
 work remains parked unless new evidence deliberately reopens it.
 

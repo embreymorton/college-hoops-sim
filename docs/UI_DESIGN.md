@@ -415,6 +415,13 @@ checkpoint is complete with no notable news while older empty checkpoints remain
 absent. Before any checkpoint completes, the original New Dynasty empty state
 still explains that a complete round is required.
 
+Once the Dynasty has completed history, a strict new PTS/REB/AST/STL/BLK
+single-game high receives one `DYNASTY RECORD` story (plural when one Player
+breaks multiple categories in the game). The headline retains linked Player,
+Program, and opponent navigation and the usual Followed marker. It replaces the
+generic performance card for that Player/game; ties, top-ten-only games,
+postseason games, and Season 1 do not receive record treatment.
+
 The News heading retains a compact Season Preview action throughout the active
 regular Season and Tournament, while the Hub promotion itself is limited to
 Rounds 1–2. Season Preview is a destination, not a fifth League tab.

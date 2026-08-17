@@ -499,6 +499,16 @@ RNG draw, or event record is persisted. Zustand
 stores only transient `leagueTab` navigation context so detail Back restores the
 originating tab and fresh League entry resets to News.
 
+When completed history exists, the same projection derives record-breaking
+regular-season stories without new state. It scans completed archives once for
+the five Single Game maxima, then processes completed active games in canonical
+round/game order. A value must strictly exceed the running maximum; each
+qualifying Player/game emits one combined major story and suppresses that
+Player/game's generic performance candidate. All Players in one game compare
+against the same pregame baseline; the running maximum advances after the game,
+including non-story rows, preserving deterministic same-round behavior.
+Postseason performances never enter this path.
+
 Phase 7B.2 adds a pure stable-identity read boundary:
 
 ```text

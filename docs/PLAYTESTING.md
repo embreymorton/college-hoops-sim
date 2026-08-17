@@ -40,6 +40,13 @@ from canonical lifecycle state, and Records overlay active Single Game/Career
 facts plus provisional LIVE Season rates. Automated projection and navigation
 coverage is green; normal player play remains the acceptance gate.
 
+The pending build also adds strict record-breaking Single Game stories to News
+after Season 1. Automated coverage verifies historical and running baselines,
+all five categories, canonical same-round order, combined-category copy,
+generic-story deduplication, and postseason exclusion. Manual acceptance should
+confirm their prominence within the existing roughly-12-story collapsed feed
+and the Player/Program navigation round trip.
+
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.
@@ -48,7 +55,10 @@ coverage is green; normal player play remains the acceptance gate.
    discover and compare, including live updates and Player Details round trips.
 3. Reverify completed Tournament → League → Tournament → Late Recruiting in
    normal play after the canonical handoff recovery.
-4. Monitor genuinely live WATCH items below without promoting them into work
+4. Trigger record-breaking games during Seasons 2+ and verify combined copy,
+   Follow markers, feed prominence, Show All behavior, and Player/Program Back
+   navigation; confirm ties and Tournament performances remain ordinary News.
+5. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.

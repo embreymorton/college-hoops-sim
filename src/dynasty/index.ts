@@ -153,6 +153,7 @@ export type {
   PlayerPerformanceAchievement,
   PlayerPerformanceNewsStory,
   PlayerPerformanceVariant,
+  SingleGameRecordNewsStory,
   RecruitCommitmentNewsStory,
   TournamentUpsetNewsStory,
   UndefeatedRunEndedNewsStory,
