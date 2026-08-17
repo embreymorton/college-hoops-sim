@@ -29,8 +29,12 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 ## Current Playtesting Priorities
 
 **Phase 7C.2 Records & Milestones V1 — IMPLEMENTED / PENDING MANUAL
-ACCEPTANCE.** Automated projection and navigation coverage is green; normal
-player play is the remaining acceptance gate.
+ACCEPTANCE.** Initial play found the query-like scope/category form less
+history-forward than the app's established leader presentation and exposed a
+noticeable Season-record delay. The implemented refinement now shows all three
+record scopes together for one selected category and shares historical
+derivation work; automated projection and navigation coverage is green. Normal
+player play remains the acceptance gate.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season

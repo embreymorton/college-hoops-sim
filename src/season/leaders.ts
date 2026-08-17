@@ -61,10 +61,13 @@ function getCompletedGamesByProgramId(
 }
 
 /** Every current-roster Player who has appeared in enough of their own Program's completed games. */
-function getQualifiedSeasonPlayerStats(season: SeasonState): PlayerSeasonStats[] {
+export function deriveQualifiedSeasonPlayerStats(
+  season: SeasonState,
+  playerStats: readonly PlayerSeasonStats[] = deriveSeasonPlayerStats(season),
+): PlayerSeasonStats[] {
   const completedGamesByProgramId = getCompletedGamesByProgramId(season)
 
-  return deriveSeasonPlayerStats(season).filter((stats) => {
+  return playerStats.filter((stats) => {
     const completedGames = completedGamesByProgramId.get(stats.programId) ?? 0
 
     return (
@@ -85,7 +88,7 @@ export function deriveNationalPlayerLeaders(
   season: SeasonState,
   limit: number = NATIONAL_LEADER_LIMIT,
 ): NationalLeaderboards {
-  const qualified = getQualifiedSeasonPlayerStats(season)
+  const qualified = deriveQualifiedSeasonPlayerStats(season)
   const leaderboards = {} as Record<
     NationalLeaderCategory,
     readonly NationalLeaderEntry[]

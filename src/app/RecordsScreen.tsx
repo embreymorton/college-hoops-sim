@@ -1,42 +1,82 @@
-import { deriveDynastyRecordBook, type RecordCategory, type RecordScope } from '../dynasty'
+import { useMemo } from 'react'
+import {
+  deriveDynastyRecordBook,
+  RECORD_CATEGORIES,
+  type RecordBookEntry,
+  type RecordCategory,
+} from '../dynasty'
 import { useDynastyStore } from '../store'
 
-const CATEGORIES: readonly RecordCategory[] = ['points', 'rebounds', 'assists', 'steals', 'blocks']
-const LABELS: Record<RecordCategory, string> = { points: 'PTS', rebounds: 'REB', assists: 'AST', steals: 'STL', blocks: 'BLK' }
+const LABELS: Record<RecordCategory, string> = {
+  points: 'PTS', rebounds: 'REB', assists: 'AST', steals: 'STL', blocks: 'BLK',
+}
+const RATE_LABELS: Record<RecordCategory, string> = {
+  points: 'PPG', rebounds: 'RPG', assists: 'APG', steals: 'SPG', blocks: 'BPG',
+}
 
-export function RecordsScreen() {
-  const dynasty = useDynastyStore((s) => s.dynasty)!
-  const scope = useDynastyStore((s) => s.recordScope)
-  const category = useDynastyStore((s) => s.recordCategory)
-  const setScope = useDynastyStore((s) => s.setRecordScope)
-  const setCategory = useDynastyStore((s) => s.setRecordCategory)
-  const openPlayer = useDynastyStore((s) => s.openPlayerDetails)
-  const book = deriveDynastyRecordBook(dynasty, scope, category)
-  const unit = scope === 'season' ? `${LABELS[category][0]}PG`.replace('RPG', 'RPG').replace('APG', 'APG').replace('SPG', 'SPG').replace('BPG', 'BPG') : LABELS[category]
+interface RecordPanelProps {
+  readonly title: string
+  readonly unit: string
+  readonly rows: readonly RecordBookEntry[]
+  readonly kind: 'game' | 'season' | 'career'
+  readonly onSelectPlayer: (programId: string, playerId: string) => void
+}
 
-  return <section className="records-screen" aria-labelledby="records-heading">
-    <div className="records-selectors">
-      <label>Record scope
-        <select value={scope} onChange={(e) => setScope(e.target.value as RecordScope)}>
-          <option value="game">Single Game</option><option value="season">Season</option><option value="career">Career</option>
-        </select>
-      </label>
-      <label>Statistical category
-        <select value={category} onChange={(e) => setCategory(e.target.value as RecordCategory)}>
-          {CATEGORIES.map((key) => <option key={key} value={key}>{scope === 'season' ? ({ points: 'PPG', rebounds: 'RPG', assists: 'APG', steals: 'SPG', blocks: 'BPG' } as const)[key] : LABELS[key]}</option>)}
-        </select>
-      </label>
+function context(row: RecordBookEntry, kind: RecordPanelProps['kind']): string {
+  if (kind === 'game') return `S${row.seasonNumber} · vs ${row.opponentProgramName}`
+  if (kind === 'season') return `S${row.seasonNumber} · ${row.gamesPlayed} GP`
+  const span = row.firstSeasonNumber === row.lastSeasonNumber
+    ? `S${row.firstSeasonNumber}`
+    : `S${row.firstSeasonNumber}–${row.lastSeasonNumber}`
+  return `${span} · ${row.gamesPlayed} GP`
+}
+
+function RecordPanel({ title, unit, rows, kind, onSelectPlayer }: RecordPanelProps) {
+  return <article className="leader-board records-panel">
+    <div className="leader-board__header">
+      <span className="leader-board__title">{title}</span>
+      <span className="leader-board__unit">{unit}</span>
     </div>
-    <h2 id="records-heading" className="section-title">Dynasty Record Book</h2>
-    {book.entries.length === 0 ? <p className="league-empty-state">No completed Season records are available yet.</p> :
-      <div className="records-table-wrap"><table className="data-table records-table">
-        <caption className="visually-hidden">Top ten {unit} {scope} records</caption>
-        <thead><tr><th>Rank</th><th>Player</th><th>{unit}</th><th>Program</th><th>Context</th></tr></thead>
-        <tbody>{book.entries.map((row) => <tr key={`${row.rank}-${row.playerId}-${row.seasonNumber ?? 'career'}`}>
-          <td>{row.rank}</td><td><button type="button" className="text-button" onClick={() => openPlayer(row.programId, row.playerId)}>{row.firstName} {row.lastName}</button></td>
-          <td>{scope === 'season' ? row.value.toFixed(1) : row.value}</td><td>{row.programAbbreviation}</td>
-          <td>{scope === 'game' ? `Season ${row.seasonNumber} · vs ${row.opponentProgramName}` : scope === 'season' ? `Season ${row.seasonNumber} · ${row.gamesPlayed} GP` : `${row.firstSeasonNumber === row.lastSeasonNumber ? `Season ${row.firstSeasonNumber}` : `Seasons ${row.firstSeasonNumber}–${row.lastSeasonNumber}`} · ${row.gamesPlayed} GP`}</td>
+    {rows.length === 0 ? <p className="league-empty-state">No completed Season records yet.</p> :
+      <div className="table-scroll"><table className="data-table leader-board__table records-panel__table">
+        <caption className="visually-hidden">Top ten {title} {unit} records</caption>
+        <thead><tr><th scope="col">#</th><th scope="col">Player</th><th scope="col">Program</th><th scope="col">{unit}</th></tr></thead>
+        <tbody>{rows.map((row) => <tr key={`${row.rank}-${row.playerId}-${row.seasonNumber ?? 'career'}-${row.opponentProgramName ?? ''}`}>
+          <td className="leader-board__rank">{row.rank}</td>
+          <td className="player-name-cell">
+            <button type="button" className="text-link-button" onClick={() => onSelectPlayer(row.programId, row.playerId)}>{row.firstName} {row.lastName}</button>
+            <span className="records-panel__context">{context(row, kind)}</span>
+          </td>
+          <td title={row.programName}>{row.programAbbreviation}</td>
+          <td>{kind === 'season' ? row.value.toFixed(1) : row.value}</td>
         </tr>)}</tbody>
       </table></div>}
+  </article>
+}
+
+export function RecordsScreen() {
+  const history = useDynastyStore((state) => state.dynasty!.history)
+  const universe = useDynastyStore((state) => state.dynasty!.universe)
+  const category = useDynastyStore((state) => state.recordCategory)
+  const setCategory = useDynastyStore((state) => state.setRecordCategory)
+  const openPlayer = useDynastyStore((state) => state.openPlayerDetails)
+  const recordBook = useMemo(
+    () => deriveDynastyRecordBook({ history, universe }),
+    [history, universe],
+  )
+  const selected = recordBook[category]
+
+  return <section className="records-screen" aria-labelledby="records-heading">
+    <header className="records-screen__header">
+      <div><h2 id="records-heading" className="section-title">Dynasty Record Book</h2><p className="section-hint">Completed regular Seasons only.</p></div>
+      <div role="group" aria-label="Statistical category" className="tab-list records-category-tabs">
+        {RECORD_CATEGORIES.map((key) => <button key={key} type="button" className="tab" aria-pressed={category === key} onClick={() => setCategory(key)}>{LABELS[key]}</button>)}
+      </div>
+    </header>
+    <div className="records-panel-grid">
+      <RecordPanel title="Single Game" unit={LABELS[category]} rows={selected.singleGame} kind="game" onSelectPlayer={openPlayer} />
+      <RecordPanel title="Single Season" unit={RATE_LABELS[category]} rows={selected.singleSeason} kind="season" onSelectPlayer={openPlayer} />
+      <RecordPanel title="Career" unit={LABELS[category]} rows={selected.career} kind="career" onSelectPlayer={openPlayer} />
+    </div>
   </section>
 }

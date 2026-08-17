@@ -444,13 +444,14 @@ navigation through the existing exploration stack, not a season-specific
 historical Player route. The archived Tournament shows the complete bracket but
 offers no active simulation or game-detail controls.
 
-Records presents Single Game, Season, and Career scope plus the matching five
-counting-stat categories (per-game labels for Season). A compact, locally
-scrollable Top 10 table supplies Player, value, Program, and only canonically
-available Season/game/career context. Selector state survives Player Details
-round trips. The League strip may scroll horizontally on narrow screens rather
-than forcing five tabs into the viewport; neither it nor Records may create
-body-level overflow.
+Records presents one PTS/REB/AST/STL/BLK category control followed by three
+simultaneous leader-style panels: Single Game, Single Season, and Career. Each
+panel owns a compact Top 10 table with Player, value, Program, and only
+canonically available Season/game/career context; the Season panel uses the
+matching per-game label. Panels compare side by side on desktop and stack on
+mobile. Category state survives Player Details round trips. The League strip
+may scroll horizontally on narrow screens rather than forcing five tabs into
+the viewport; neither it nor Records may create body-level overflow.
 
 ### Player Details + Development History — implemented (6E.8)
 

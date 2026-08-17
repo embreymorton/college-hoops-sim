@@ -97,10 +97,11 @@ export { deriveRecruitDetailsView } from './recruiting/detailsView'
 export { deriveFollowingRecruitsView } from './recruiting/followingView'
 export type {
   DynastyRecordBook,
+  CategoryRecordBook,
   RecordBookEntry,
   RecordCategory,
-  RecordScope,
 } from './seasonRecords'
+export { RECORD_CATEGORIES } from './seasonRecords'
 export type {
   AssembleNextSeasonRostersOptions,
   CompletedSeasonArchive,

@@ -21,23 +21,24 @@ beforeAll(() => {
 describe('deriveDynastyRecordBook', () => {
   it('returns empty history cleanly and never reads the active Season', () => {
     const activeOnly = { ...dynasty, history: [], activeSeason: archive.season }
-    expect(deriveDynastyRecordBook(activeOnly, 'game', 'points').entries).toEqual([])
-    expect(deriveDynastyRecordBook(activeOnly, 'season', 'points').entries).toEqual([])
-    expect(deriveDynastyRecordBook(activeOnly, 'career', 'points').entries).toEqual([])
+    const book = deriveDynastyRecordBook(activeOnly)
+    expect(book.points.singleGame).toEqual([])
+    expect(book.points.singleSeason).toEqual([])
+    expect(book.points.career).toEqual([])
   })
 
   it('derives regular-season game highs from archived box scores with deterministic context', () => {
-    const book = deriveDynastyRecordBook(dynasty, 'game', 'points')
-    expect(book.entries).toHaveLength(10)
-    expect(book.entries[0]!.value).toBeGreaterThanOrEqual(book.entries[1]!.value)
-    expect(book.entries[0]).toMatchObject({ rank: 1, seasonNumber: 1 })
-    expect(book.entries[0]!.opponentProgramName).toBeTruthy()
+    const rows = deriveDynastyRecordBook(dynasty).points.singleGame
+    expect(rows).toHaveLength(10)
+    expect(rows[0]!.value).toBeGreaterThanOrEqual(rows[1]!.value)
+    expect(rows[0]).toMatchObject({ rank: 1, seasonNumber: 1 })
+    expect(rows[0]!.opponentProgramName).toBeTruthy()
   })
 
   it('reuses qualified national Season rates and excludes nonqualifiers', () => {
     const expected = deriveNationalPlayerLeaders(archive.season).points
-    const book = deriveDynastyRecordBook(dynasty, 'season', 'points')
-    expect(book.entries.map((row) => [row.playerId, row.value, row.gamesPlayed]))
+    const rows = deriveDynastyRecordBook(dynasty).points.singleSeason
+    expect(rows.map((row) => [row.playerId, row.value, row.gamesPlayed]))
       .toEqual(expected.map((row) => [row.playerId, row.value, row.gamesPlayed]))
   })
 
@@ -46,17 +47,31 @@ describe('deriveDynastyRecordBook', () => {
     Object.assign(second, { seasonNumber: 2, season: { ...second.season, seasonNumber: 2 } })
     const forward = { ...dynasty, history: [archive, second] }
     const reverse = { ...dynasty, history: [second, archive] }
-    const one = deriveDynastyRecordBook(dynasty, 'career', 'points')
-    const two = deriveDynastyRecordBook(forward, 'career', 'points')
-    expect(two.entries[0]!.value).toBe(one.entries[0]!.value * 2)
-    expect(two.entries[0]).toMatchObject({ firstSeasonNumber: 1, lastSeasonNumber: 2 })
-    expect(deriveDynastyRecordBook(reverse, 'career', 'points')).toEqual(two)
+    const one = deriveDynastyRecordBook(dynasty)
+    const two = deriveDynastyRecordBook(forward)
+    expect(two.points.career[0]!.value).toBe(one.points.career[0]!.value * 2)
+    expect(two.points.career[0]).toMatchObject({ firstSeasonNumber: 1, lastSeasonNumber: 2 })
+    expect(deriveDynastyRecordBook(reverse)).toEqual(two)
   })
 
   it('limits Top 10, supports shorter lists, and does not mutate archives', () => {
     const before = structuredClone(dynasty.history)
-    expect(deriveDynastyRecordBook(dynasty, 'game', 'rebounds', 3).entries).toHaveLength(3)
-    expect(deriveDynastyRecordBook(dynasty, 'career', 'blocks', 100).entries.length).toBeLessThanOrEqual(100)
+    const limited = deriveDynastyRecordBook(dynasty, 3)
+    expect(limited.rebounds.singleGame).toHaveLength(3)
+    expect(limited.blocks.singleSeason).toHaveLength(3)
+    expect(limited.blocks.career).toHaveLength(3)
     expect(dynasty.history).toEqual(before)
+  })
+
+  it('exposes every category with all three scopes from the same history', () => {
+    const book = deriveDynastyRecordBook(dynasty)
+    for (const category of ['points', 'rebounds', 'assists', 'steals', 'blocks'] as const) {
+      expect(book[category].singleGame.length).toBeGreaterThan(0)
+      expect(book[category].singleSeason.length).toBeGreaterThan(0)
+      expect(book[category].career.length).toBeGreaterThan(0)
+      expect(book[category].singleGame[0]!.seasonNumber).toBe(1)
+      expect(book[category].singleSeason[0]!.seasonNumber).toBe(1)
+      expect(book[category].career[0]!.firstSeasonNumber).toBe(1)
+    }
   })
 })

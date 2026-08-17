@@ -33,7 +33,6 @@ import {
   rolloverDynastyToNextSeason,
   type DynastyState,
   type RecordCategory,
-  type RecordScope,
   type RecruitingState,
 } from '../dynasty'
 import {
@@ -264,7 +263,6 @@ export interface DynastySessionState {
   /** Transient League return context; fresh root entry always resets this to News. */
   readonly leagueTab: LeagueTab
   readonly historyTab: HistoryTab
-  readonly recordScope: RecordScope
   readonly recordCategory: RecordCategory
   /** Transient Recruiting return context; fresh root entry always resets this to Board. */
   readonly recruitingMode: RecruitingMode
@@ -404,7 +402,6 @@ export interface DynastySessionState {
   recoverHistoryIndex(): void
   setLeagueTab(tab: LeagueTab): void
   setHistoryTab(tab: HistoryTab): void
-  setRecordScope(scope: RecordScope): void
   setRecordCategory(category: RecordCategory): void
   setRecruitingMode(mode: RecruitingMode): void
   /** Opens Team Details for any Program in the Universe, not only the controlled one. */
@@ -737,7 +734,6 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   explorationViewHistory: [],
   leagueTab: 'news',
   historyTab: 'yearbooks',
-  recordScope: 'game',
   recordCategory: 'points',
   recruitingMode: 'board',
   selectedArchivedSeasonNumber: null,
@@ -802,7 +798,6 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       explorationViewHistory: [],
       leagueTab: 'news',
       historyTab: 'yearbooks',
-      recordScope: 'game',
       recordCategory: 'points',
       recruitingMode: 'board',
       selectedArchivedSeasonNumber: null,
@@ -1721,7 +1716,6 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   setHistoryTab(historyTab) { set({ historyTab }) },
-  setRecordScope(recordScope) { set({ recordScope }) },
   setRecordCategory(recordCategory) { set({ recordCategory }) },
 
   setRecruitingMode(recruitingMode) {

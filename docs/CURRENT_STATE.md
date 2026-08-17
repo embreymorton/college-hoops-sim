@@ -176,8 +176,10 @@ ACCEPTANCE.** History is now the fifth League tab with Yearbooks / Records
 sub-navigation. Records derive completed-regular-season Single Game totals,
 qualified Season rates, and stable-ID Career totals as deterministic Top 10s.
 The active Season and postseason statistics do not contribute; no record state
-is stored. Player links reuse active/former resolution and preserve Records
-selectors on Back.
+is stored. One shared projection derives every category and scope, while the UI
+selects a category and presents Single Game, Single Season, and Career panels
+together. Player links reuse active/former resolution and preserve the selected
+category on Back.
 
 `7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
 work remains parked unless new evidence deliberately reopens it.

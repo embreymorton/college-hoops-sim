@@ -176,19 +176,17 @@ describe('League History entry and index', () => {
     useDynastyStore.getState().goToLeague()
     useDynastyStore.getState().setLeagueTab('history')
     useDynastyStore.getState().setHistoryTab('records')
-    useDynastyStore.getState().setRecordScope('career')
     useDynastyStore.getState().setRecordCategory('assists')
     render(<App />)
 
-    const table = screen.getByRole('table', { name: /top ten ast career records/i })
+    const table = screen.getByRole('table', { name: /top ten career ast records/i })
     fireEvent.click(within(table).getAllByRole('button')[0]!)
     expect(screen.getByText(/former player/i)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
 
     expect(screen.getByRole('button', { name: 'History' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.getByRole('button', { name: 'Records' })).toHaveAttribute('aria-pressed', 'true')
-    expect(screen.getByLabelText('Record scope')).toHaveValue('career')
-    expect(screen.getByLabelText('Statistical category')).toHaveValue('assists')
+    expect(within(screen.getByRole('group', { name: 'Statistical category' })).getByRole('button', { name: 'AST' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('opens an active record Player in normal Player Details', () => {
@@ -200,10 +198,38 @@ describe('League History entry and index', () => {
     useDynastyStore.getState().setHistoryTab('records')
     render(<App />)
 
-    const table = screen.getByRole('table', { name: /top ten pts game records/i })
+    const table = screen.getByRole('table', { name: /top ten single game pts records/i })
     fireEvent.click(within(table).getAllByRole('button')[0]!)
     expect(screen.queryByText('Former Player')).not.toBeInTheDocument()
     expect(document.querySelector('.season-header__name')).toBeInTheDocument()
+  })
+
+  it('shows all three record scopes together and changes them with one category control', () => {
+    setHistory([archive])
+    useDynastyStore.getState().goToLeague()
+    useDynastyStore.getState().setLeagueTab('history')
+    useDynastyStore.getState().setHistoryTab('records')
+    render(<App />)
+
+    expect(screen.queryByLabelText('Record scope')).not.toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten single game pts records/i })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten single season ppg records/i })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten career pts records/i })).toBeInTheDocument()
+
+    fireEvent.click(within(screen.getByRole('group', { name: 'Statistical category' })).getByRole('button', { name: 'BLK' }))
+    expect(screen.getByRole('table', { name: /top ten single game blk records/i })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten single season bpg records/i })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten career blk records/i })).toBeInTheDocument()
+  })
+
+  it('renders a clean empty state in all three record panels', () => {
+    useDynastyStore.getState().goToLeague()
+    useDynastyStore.getState().setLeagueTab('history')
+    useDynastyStore.getState().setHistoryTab('records')
+    render(<App />)
+
+    expect(screen.getAllByText('No completed Season records yet.')).toHaveLength(3)
+    expect(screen.queryByRole('table', { name: /records/i })).not.toBeInTheDocument()
   })
 })
 
