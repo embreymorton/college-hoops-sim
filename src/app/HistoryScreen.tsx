@@ -1,4 +1,3 @@
-import { ExplorationBackButton } from '../components'
 import {
   deriveCompletedSeasonIndex,
   type HistoricalTournamentOutcome,
@@ -21,13 +20,10 @@ function formatTournamentOutcome(outcome: HistoricalTournamentOutcome): string {
 
 /** League-owned index of canonical completed Seasons. */
 export function HistoryScreen() {
+  const view = useDynastyStore((state) => state.view)
+  const explorationViewHistory = useDynastyStore((state) => state.explorationViewHistory)
+  const goBackFromExploration = useDynastyStore((state) => state.goBackFromExploration)
   const dynasty = useDynastyStore((state) => state.dynasty)
-  const explorationViewHistory = useDynastyStore(
-    (state) => state.explorationViewHistory,
-  )
-  const goBackFromExploration = useDynastyStore(
-    (state) => state.goBackFromExploration,
-  )
   const openArchivedSeason = useDynastyStore(
     (state) => state.openArchivedSeason,
   )
@@ -39,11 +35,8 @@ export function HistoryScreen() {
     seasons = deriveCompletedSeasonIndex(dynasty)
   } catch (error) {
     return (
-      <main className="history-screen">
-        <ExplorationBackButton
-          destination={explorationViewHistory.at(-1) ?? 'league'}
-          onClick={goBackFromExploration}
-        />
+      <div className="history-screen">
+        {view === 'history' ? <ExplorationBackButton destination={explorationViewHistory.at(-1) ?? 'league'} onClick={goBackFromExploration} /> : null}
         <section className="section">
           <h1 className="section-title">History</h1>
           <p className="league-empty-state">
@@ -52,16 +45,13 @@ export function HistoryScreen() {
               : 'Completed Season history could not be loaded.'}
           </p>
         </section>
-      </main>
+      </div>
     )
   }
 
   return (
-    <main className="history-screen">
-      <ExplorationBackButton
-        destination={explorationViewHistory.at(-1) ?? 'league'}
-        onClick={goBackFromExploration}
-      />
+    <div className="history-screen">
+      {view === 'history' ? <ExplorationBackButton destination={explorationViewHistory.at(-1) ?? 'league'} onClick={goBackFromExploration} /> : null}
       <header className="section">
         <p className="eyebrow-tag">League Archive</p>
         <h1 className="section-title">History</h1>
@@ -97,6 +87,7 @@ export function HistoryScreen() {
           </div>
         )}
       </section>
-    </main>
+    </div>
   )
 }
+import { ExplorationBackButton } from '../components'

@@ -362,7 +362,7 @@ complete, valid SeasonState
 
 The transition rejects incomplete regular seasons, incomplete Tournaments, missing champions, mismatched or invalid competition state, and duplicate archived season numbers. The returned Dynasty does not intentionally retain the completed competitions in both active and historical slots: active competition becomes `null` after the archive is created.
 
-`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation and the 7C.1 Season Yearbook are implemented as pure projections over those facts; records and awards are not implemented.
+`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, the Season Yearbook, and the 7C.2 Record Book are pure projections over those facts; awards are not implemented.
 
 Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
 
@@ -542,6 +542,21 @@ statistics, and Tournament facts. Conference/stat-category selection and
 Yearbook return context are presentation state; no summary snapshot, historical
 Player copy, cache, RNG draw, or season-specific Player route is persisted.
 Stable Player IDs resolve through the existing active/former/unknown boundary.
+
+Phase 7C.2 extends the same boundary without adding canonical state:
+
+```text
+CompletedSeasonArchive[]
+  → pure completed-regular-season record projection
+  → transient History/scope/category selection
+  → React presentation
+```
+
+Single Game records read archived scheduled-game box scores, Season records
+reuse national-leader qualification and rate semantics, and Career records sum
+Season totals by stable Player ID. Sorting includes stable fact-based tie keys,
+so archive order cannot change output. The active Season and archived
+postseason are intentionally outside the projection.
 
 ## Team Season Stats and exploration projections
 

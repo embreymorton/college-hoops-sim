@@ -889,6 +889,14 @@ p {
   overflow-x: auto;
 }
 
+.league-history { display: grid; gap: var(--space-4); }
+.history-tab-list { justify-self: start; max-width: 100%; overflow-x: auto; }
+.records-selectors { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.records-selectors label { display: grid; gap: var(--space-1); color: var(--ink-1); font-size: 0.8rem; }
+.records-selectors select { min-width: 10rem; }
+.records-table-wrap { max-width: 100%; overflow-x: auto; }
+.records-table { min-width: 42rem; }
+
 .league-history-action {
   flex: 0 0 auto;
   padding: 0.5rem 0.8rem;

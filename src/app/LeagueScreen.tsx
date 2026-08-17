@@ -15,6 +15,8 @@ import {
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
+import { HistoryScreen } from './HistoryScreen'
+import { RecordsScreen } from './RecordsScreen'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -43,7 +45,8 @@ export function LeagueScreen() {
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
   const openSeasonPreview = useDynastyStore((state) => state.openSeasonPreview)
-  const openHistory = useDynastyStore((state) => state.openHistory)
+  const historyTab = useDynastyStore((state) => state.historyTab)
+  const setHistoryTab = useDynastyStore((state) => state.setHistoryTab)
 
   if (!season || !dynasty) {
     return null
@@ -99,14 +102,8 @@ export function LeagueScreen() {
           >
             Following
           </button>
+          <button type="button" className="tab" aria-pressed={tab === 'history'} onClick={() => setTab('history')}>History</button>
         </div>
-        <button
-          type="button"
-          className="button button--ghost league-history-action"
-          onClick={openHistory}
-        >
-          History
-        </button>
         </div>
 
         {tab === 'news' ? (
@@ -132,12 +129,20 @@ export function LeagueScreen() {
             controlledProgramId={controlledProgramId}
             onSelectProgram={openTeamDetails}
           />
-        ) : (
+        ) : tab === 'following' ? (
           <FollowingSection
             projection={followingView}
             onSelectPlayer={openPlayerDetails}
             onSelectProgram={openTeamDetails}
           />
+        ) : (
+          <div className="league-history">
+            <div role="group" aria-label="History section" className="tab-list history-tab-list">
+              <button type="button" className="tab" aria-pressed={historyTab === 'yearbooks'} onClick={() => setHistoryTab('yearbooks')}>Yearbooks</button>
+              <button type="button" className="tab" aria-pressed={historyTab === 'records'} onClick={() => setHistoryTab('records')}>Records</button>
+            </div>
+            {historyTab === 'yearbooks' ? <HistoryScreen /> : <RecordsScreen />}
+          </div>
         )}
       </section>
     </>

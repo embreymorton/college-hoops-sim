@@ -123,7 +123,7 @@ describe('History store navigation', () => {
 })
 
 describe('League History entry and index', () => {
-  it('keeps exactly four League tabs and presents History as a separate action', () => {
+  it('presents History as the fifth first-class League tab', () => {
     useDynastyStore.getState().goToLeague()
     render(<App />)
 
@@ -134,9 +134,9 @@ describe('League History entry and index', () => {
       'Leaders',
       'Teams',
       'Following',
+      'History',
     ])
-    expect(screen.getByRole('button', { name: 'History' })).toBeInTheDocument()
-    expect(tabs).not.toContain(screen.getByRole('button', { name: 'History' }))
+    expect(tabs).toContain(screen.getByRole('button', { name: 'History' }))
   })
 
   it('opens from a representative League tab and shows the zero-history state', () => {
@@ -148,8 +148,8 @@ describe('League History entry and index', () => {
 
     expect(screen.getByRole('heading', { name: 'History' })).toBeInTheDocument()
     expect(screen.getByText(/completed seasons will appear here after/i)).toBeInTheDocument()
-    fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
-    expect(screen.getByRole('button', { name: 'Leaders' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'History' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Yearbooks' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('renders canonical summaries newest-first and opens the intended Season', () => {
@@ -169,6 +169,41 @@ describe('League History entry and index', () => {
 
     fireEvent.click(screen.getByRole('button', { name: /Season 1/ }))
     expect(screen.getByText('Season 1 · Completed')).toBeInTheDocument()
+  })
+
+  it('preserves Records selectors through former Player Details and Back', () => {
+    setHistory([archive])
+    useDynastyStore.getState().goToLeague()
+    useDynastyStore.getState().setLeagueTab('history')
+    useDynastyStore.getState().setHistoryTab('records')
+    useDynastyStore.getState().setRecordScope('career')
+    useDynastyStore.getState().setRecordCategory('assists')
+    render(<App />)
+
+    const table = screen.getByRole('table', { name: /top ten ast career records/i })
+    fireEvent.click(within(table).getAllByRole('button')[0]!)
+    expect(screen.getByText(/former player/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
+
+    expect(screen.getByRole('button', { name: 'History' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: 'Records' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByLabelText('Record scope')).toHaveValue('career')
+    expect(screen.getByLabelText('Statistical category')).toHaveValue('assists')
+  })
+
+  it('opens an active record Player in normal Player Details', () => {
+    setHistory([archive])
+    const current = useDynastyStore.getState().dynasty!
+    useDynastyStore.setState({ dynasty: { ...current, activeSeason: { ...structuredClone(archive.season), seasonNumber: 2 } } })
+    useDynastyStore.getState().goToLeague()
+    useDynastyStore.getState().setLeagueTab('history')
+    useDynastyStore.getState().setHistoryTab('records')
+    render(<App />)
+
+    const table = screen.getByRole('table', { name: /top ten pts game records/i })
+    fireEvent.click(within(table).getAllByRole('button')[0]!)
+    expect(screen.queryByText('Former Player')).not.toBeInTheDocument()
+    expect(document.querySelector('.season-header__name')).toBeInTheDocument()
   })
 })
 

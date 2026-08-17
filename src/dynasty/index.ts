@@ -5,6 +5,7 @@ export {
   resolveDynastyPlayer,
 } from './playerLegacy'
 export { deriveNewsFeed } from './news'
+export { deriveDynastyRecordBook } from './seasonRecords'
 export {
   deriveSeasonPreview,
   shouldPromoteSeasonPreview,
@@ -94,6 +95,12 @@ export {
 } from './recruiting/battleView'
 export { deriveRecruitDetailsView } from './recruiting/detailsView'
 export { deriveFollowingRecruitsView } from './recruiting/followingView'
+export type {
+  DynastyRecordBook,
+  RecordBookEntry,
+  RecordCategory,
+  RecordScope,
+} from './seasonRecords'
 export type {
   AssembleNextSeasonRostersOptions,
   CompletedSeasonArchive,

@@ -99,7 +99,7 @@ Tournament Game Prep are unchanged.
 ## Following and Player Legacy — accepted current pattern
 
 Player Details exposes one compact `Follow` / `Following` toggle beside Player
-identity. League's local `News | Leaders | Teams | Following` navigation keeps
+identity. League's local `News | Leaders | Teams | Following | History` navigation keeps
 Following inside League rather than adding a global destination. The same
 ordered stable-ID intent derives `Active Players`, `Former Players`, and a quiet
 unavailable state for IDs absent from active and archived rosters.
@@ -421,8 +421,8 @@ Rounds 1–2. Season Preview is a destination, not a fifth League tab.
 
 ### Season Archive / Yearbook — accepted (7C.1)
 
-History is League-owned but remains a distinct secondary action, not a global
-destination or fifth tab. Its index shows completed Seasons only, newest first;
+History is League-owned as the fifth first-class League tab, with a second-level
+`Yearbooks | Records` navigation. Its Yearbooks index shows completed Seasons only, newest first;
 the active Season never appears. A Yearbook should feel like one cohesive recap
 in the established app language, ordered as Champion / Season identity, Your
 Season (summary, Team Leaders, Tournament Run), Season Around the League, and
@@ -443,6 +443,14 @@ quietly. Back from Player Details restores the same Yearbook. This is contextual
 navigation through the existing exploration stack, not a season-specific
 historical Player route. The archived Tournament shows the complete bracket but
 offers no active simulation or game-detail controls.
+
+Records presents Single Game, Season, and Career scope plus the matching five
+counting-stat categories (per-game labels for Season). A compact, locally
+scrollable Top 10 table supplies Player, value, Program, and only canonically
+available Season/game/career context. Selector state survives Player Details
+round trips. The League strip may scroll horizontally on narrow screens rather
+than forcing five tabs into the viewport; neither it nor Records may create
+body-level overflow.
 
 ### Player Details + Development History — implemented (6E.8)
 

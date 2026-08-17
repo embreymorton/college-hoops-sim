@@ -30,7 +30,7 @@ The playable product includes:
   Prep, Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
   Details, Following, News, Alumni, Season Preview, and a completed-Season
-  History / Yearbook destination;
+  first-class League History with Yearbooks and a Dynasty Record Book;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
@@ -113,9 +113,9 @@ does not itself authorize implementation:
 
 **Phase 7C.1 — Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.**
 
-League-owned History is a secondary action rather than a global destination or
-fifth League tab. It lists completed Seasons only, newest first, then presents
-one cohesive Season recap:
+League-owned History now appears as the fifth League tab, with Yearbooks and
+Records as peer sub-destinations. Yearbooks list completed Seasons only, newest
+first, then present one cohesive Season recap:
 
 - Champion / Season identity;
 - Your Season summary, Team Leaders, and Tournament Run;
@@ -171,12 +171,16 @@ Exact Recruit OVR, POT, and individual ratings remain current production
 visibility. Scouting grades, ranges, estimates, hidden information, and other
 uncertainty remain future-only.
 
-**No NEXT selected — Open Planning Checkpoint.** Fresh planning must review
-current evidence before the user explicitly selects another milestone.
+**Phase 7C.2 — Records & Milestones V1 is NEXT and IMPLEMENTED / PENDING MANUAL
+ACCEPTANCE.** History is now the fifth League tab with Yearbooks / Records
+sub-navigation. Records derive completed-regular-season Single Game totals,
+qualified Season rates, and stable-ID Career totals as deterministic Top 10s.
+The active Season and postseason statistics do not contribute; no record state
+is stored. Player links reuse active/former resolution and preserve Records
+selectors on Back.
 
-`7C.2 Records & Milestones` and `7C.3 Awards & Honors` remain **PLANNED**, not
-selected or NEXT. Player Identity work remains parked unless new evidence
-deliberately reopens it.
+`7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
+work remains parked unless new evidence deliberately reopens it.
 
 ## Fresh-session rules
 

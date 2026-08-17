@@ -28,14 +28,16 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**OPEN PLANNING CHECKPOINT — no NEXT selected.** Current evidence should inform
-fresh planning; it does not select a successor by itself.
+**Phase 7C.2 Records & Milestones V1 — IMPLEMENTED / PENDING MANUAL
+ACCEPTANCE.** Automated projection and navigation coverage is green; normal
+player play is the remaining acceptance gate.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season
    play.
-2. Observe which Season facts players naturally want preserved before defining
-   Records or Awards.
+2. Play League → History → Records across early and multi-Season Dynasties;
+   assess whether the three scopes and supplied context make legends easy to
+   discover and compare, including Player Details round trips.
 3. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
@@ -142,9 +144,10 @@ Player continuity was not part of 7D.2 acceptance.
 
 ### Phase 7C.1 — Season Archive / Yearbook — ACCEPTED / FROZEN
 
-Manual acceptance established that History belongs to League as a secondary
-action, not a global destination or fifth tab. The accepted Yearbook lists only
-completed Seasons newest-first and reads as one recap: Champion / Season
+Manual acceptance established that History belongs to League. Its original
+7C.1 secondary-action placement was subsequently promoted by implemented 7C.2
+to a first-class League tab without changing the accepted Yearbook. The
+Yearbook lists only completed Seasons newest-first and reads as one recap: Champion / Season
 identity, Your Season, Season Around the League, then the full archived
 Tournament bracket.
 
