@@ -196,7 +196,14 @@ export function deriveSeasonPreview(
       first.playerId.localeCompare(second.playerId),
     )
     .slice(0, 3)
-    .map(({ previousPointsPerGame: _previousPointsPerGame, ...row }) => row)
+    .map((row) => ({
+      playerId: row.playerId,
+      programId: row.programId,
+      player: row.player,
+      currentOverall: row.currentOverall,
+      previousOverall: row.previousOverall,
+      overallChange: row.overallChange,
+    }))
 
   const recruitingClass = matchingClasses[0]!.recruitingState
   const recruitsById = new Map(
