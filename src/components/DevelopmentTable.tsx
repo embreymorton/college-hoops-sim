@@ -1,18 +1,38 @@
-import type { DevelopmentRow } from '../app/offseasonFormatters'
+import { formatDevelopmentGains, type DevelopmentRow } from '../app/offseasonFormatters'
 
 interface DevelopmentTableProps {
   readonly rows: readonly DevelopmentRow[]
+  readonly biggestLeap: DevelopmentRow | null
 }
 
 /** Returning Players' before/after development — the Offseason's strongest section. */
-export function DevelopmentTable({ rows }: DevelopmentTableProps) {
+export function DevelopmentTable({ rows, biggestLeap }: DevelopmentTableProps) {
   if (rows.length === 0) {
     return <p className="league-empty-state">No returning Players to develop.</p>
   }
 
   return (
-    <div className="table-scroll">
-      <table className="data-table development-table">
+    <>
+      {biggestLeap && (
+        <div className="biggest-leap" aria-label="Biggest Leap">
+          <div>
+            <span className="biggest-leap__label">Biggest Leap</span>
+            <strong>
+              {biggestLeap.player.firstName} {biggestLeap.player.lastName}
+            </strong>
+          </div>
+          <strong className="biggest-leap__ovr">
+            {biggestLeap.summary.previousOverall} →{' '}
+            {biggestLeap.summary.currentOverall} OVR (+
+            {biggestLeap.summary.overallChange})
+          </strong>
+          <span className="development-gains">
+            {formatDevelopmentGains(biggestLeap.gains)}
+          </span>
+        </div>
+      )}
+      <div className="table-scroll">
+        <table className="data-table development-table">
         <caption className="visually-hidden">Returning Player development</caption>
         <thead>
           <tr>
@@ -22,11 +42,12 @@ export function DevelopmentTable({ rows }: DevelopmentTableProps) {
             <th scope="col">Old Ovr</th>
             <th scope="col">New Ovr</th>
             <th scope="col">Change</th>
+            <th scope="col">Top Gains</th>
             <th scope="col">Pot</th>
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ player, summary }) => (
+          {rows.map(({ player, summary, gains }) => (
             <tr key={player.id}>
               <td className="player-name-cell">
                 {player.firstName} {player.lastName}
@@ -41,11 +62,15 @@ export function DevelopmentTable({ rows }: DevelopmentTableProps) {
               >
                 {summary.overallChange > 0 ? `+${summary.overallChange}` : summary.overallChange}
               </td>
+              <td className="development-gains">
+                {formatDevelopmentGains(gains) || '—'}
+              </td>
               <td>{player.potential}</td>
             </tr>
           ))}
         </tbody>
-      </table>
-    </div>
+        </table>
+      </div>
+    </>
   )
 }

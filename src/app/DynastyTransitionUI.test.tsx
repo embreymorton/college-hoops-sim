@@ -305,6 +305,9 @@ describe('Offseason', () => {
     expect(screen.getByRole('heading', { name: 'Player Development' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Incoming Class' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Next Season Roster' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Biggest Leap')).toHaveTextContent(/OVR \(\+\d+\)/)
+    expect(screen.getAllByText(/\d+ seasons? with Charlotte Tech · \d+\.\d PPG · \d+\.\d RPG · \d+\.\d APG · Peak \d+ OVR/).length).toBeGreaterThan(1)
+    expect(screen.getAllByText(/\w+(?: \w+)? \+\d+/).length).toBeGreaterThan(1)
 
     const offseason = useDynastyStore.getState().dynasty!.offseason!
     expect(

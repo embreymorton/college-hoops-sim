@@ -28,10 +28,9 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Open Planning Checkpoint.** Phase 7C.2 Records & Milestones V1 is COMPLETE /
-ACCEPTED / FROZEN. The Record Book, live regular-season overlay,
-record-breaking News, Player navigation, and Tournament progression recovery
-were manually accepted. No successor is selected; current evidence informs the
+**Open Planning Checkpoint.** Offseason Storytelling V1 is COMPLETE / ACCEPTED.
+The focused turnover presentation passed automated coverage and direct desktop /
+narrow-width inspection. No successor is selected; current evidence informs the
 next planning discussion but does not create a NEXT.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
@@ -98,6 +97,15 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Offseason Storytelling V1 — ACCEPTED
+
+Direct inspection of a canonical Season 1 Offseason confirmed that every
+graduating senior retained representation with observed Program-tenure context,
+the Biggest Leap matched the largest returning-Player OVR gain, positive
+attribute gains remained readable and capped, unchanged Players degraded safely,
+and a 390px viewport had no body-level overflow. Development mechanics and
+Offseason progression remained unchanged.
 
 ### Phase 7C.2 — Records & Milestones V1 — ACCEPTED / FROZEN
 

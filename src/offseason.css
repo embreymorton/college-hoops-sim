@@ -11,6 +11,29 @@
 }
 
 /* ==========================================================================
+   Departures
+   ========================================================================== */
+
+.departures-table {
+  table-layout: fixed;
+  min-width: 52rem;
+}
+
+.departures-table__player {
+  width: 13rem;
+}
+
+.departures-table__position,
+.departures-table__overall {
+  width: 4.5rem;
+}
+
+.departures-table th:last-child,
+.departures-table td:last-child {
+  text-align: left;
+}
+
+/* ==========================================================================
    Player development
    ========================================================================== */
 
@@ -21,6 +44,44 @@
 
 .development-table__change[data-positive='true'] {
   color: var(--accent);
+}
+
+.biggest-leap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--accent);
+  background: var(--surface-1);
+}
+
+.biggest-leap > div {
+  display: grid;
+}
+
+.biggest-leap__label {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.biggest-leap__ovr {
+  font-family: var(--font-score);
+  white-space: nowrap;
+}
+
+.biggest-leap > .development-gains {
+  margin-left: var(--space-2);
+}
+
+.development-gains,
+.departure-career {
+  color: var(--ink-1);
+  font-size: 0.78rem;
+  white-space: nowrap;
 }
 
 /* ==========================================================================
@@ -71,6 +132,16 @@
 
   .offseason-position-balance {
     white-space: normal;
+  }
+
+  .biggest-leap {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .biggest-leap > .development-gains {
+    margin-left: 0;
   }
 
   .offseason-footer {

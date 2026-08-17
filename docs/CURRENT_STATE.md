@@ -36,8 +36,9 @@ The playable product includes:
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
   Recruit Details, Late Recruiting, class finalization, and Recruit-to-Player
   identity continuity;
-- departures, Player Development, incoming classes, exact next-season roster
-  assembly, archived Seasons, and repeatable Dynasty rollover; and
+- departures with graduating-senior career context, Player Development with
+  top attribute gains and a Biggest Leap spotlight, incoming classes, exact
+  next-season roster assembly, archived Seasons, and repeatable Dynasty rollover; and
 - one stored creation seed per normal interactive Dynasty, with explicit-seed
   paths remaining exactly reproducible.
 
@@ -118,10 +119,18 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — Open Planning Checkpoint.** Phase 7C.2 is complete,
-accepted, and frozen, and the repository contains no explicitly user-selected
+**No NEXT selected — Open Planning Checkpoint.** Offseason Storytelling V1 is
+complete and accepted, and the repository contains no explicitly user-selected
 successor. Phase 7C.3 remains PLANNED but is not automatically NEXT. Fresh
 planning must review current evidence before the user selects a direction.
+
+Offseason Storytelling V1 remains a pure presentation projection over the
+completed Season archive and canonical Offseason state. Every graduating senior
+receives observed seasons with the Program, PPG/RPG/APG, and peak OVR from
+existing Career History projections; the wording does not imply pre-Dynasty
+history. Returning Players show up to three positive canonical attribute gains,
+and the deterministic largest positive OVR increase receives one compact Biggest
+Leap spotlight. No story state or Development mechanic was added.
 
 **Phase 7C.1 — Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.**
 

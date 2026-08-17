@@ -1,11 +1,16 @@
 import { calculateOverall, POSITIONS, type Player, type Position } from '../engine'
 import {
+  deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
+  derivePlayerCareerHistory,
+  derivePlayerCareerSummary,
   deriveProgramCommitments,
   getRecruit,
   type CompletedSeasonArchive,
+  type DynastyState,
   type OffseasonProgramState,
   type PlayerDevelopmentSummary,
+  type PlayerAttributeDevelopmentGain,
   type Recruit,
   type RecruitingState,
 } from '../dynasty'
@@ -36,19 +41,53 @@ function comparePositionThenName(first: Player, second: Player): number {
 }
 
 /** Graduating Seniors from the archived roster for one Program. */
+export interface DepartureRow {
+  readonly player: Player
+  readonly seniorCareer: {
+    readonly seasonsPlayed: number
+    readonly pointsPerGame: number
+    readonly reboundsPerGame: number
+    readonly assistsPerGame: number
+    readonly peakOverall: number
+  } | null
+}
+
 export function deriveDepartures(
+  dynasty: DynastyState,
   archive: CompletedSeasonArchive,
   programId: string,
-): readonly Player[] {
+): readonly DepartureRow[] {
   return latestArchivedRoster(archive, programId)
     .filter(({ classYear }) => classYear === 'SR')
     .slice()
     .sort(comparePositionThenName)
+    .map((player) => {
+      const history = derivePlayerCareerHistory(dynasty, player.id)
+      const summary = derivePlayerCareerSummary(history)
+      return {
+        player,
+        seniorCareer: {
+          seasonsPlayed: history.seasons.length,
+          pointsPerGame: summary.pointsPerGame,
+          reboundsPerGame: summary.reboundsPerGame,
+          assistsPerGame: summary.assistsPerGame,
+          peakOverall: summary.peakOverall,
+        },
+      }
+    })
 }
 
 export interface DevelopmentRow {
   readonly player: Player
   readonly summary: PlayerDevelopmentSummary
+  readonly gains: readonly PlayerAttributeDevelopmentGain[]
+}
+
+export function deriveVisibleDevelopmentGains(
+  before: Player,
+  after: Player,
+): readonly PlayerAttributeDevelopmentGain[] {
+  return deriveAttributeDevelopmentGains(before, after).slice(0, 3)
 }
 
 /** Before/after development for every returning (non-graduated) Player. */
@@ -61,12 +100,13 @@ export function deriveDevelopmentRows(
     latestArchivedRoster(archive, programId).map((player) => [player.id, player]),
   )
   return offseasonProgram.returningPlayers
-    .map((after) => {
+    .map((after): DevelopmentRow | undefined => {
       const before = archivedById.get(after.id)
       if (!before) return undefined
       return {
         player: after,
         summary: deriveDevelopmentSummary(programId, before, after),
+        gains: deriveVisibleDevelopmentGains(before, after),
       }
     })
     .filter((row): row is DevelopmentRow => row !== undefined)
@@ -74,6 +114,45 @@ export function deriveDevelopmentRows(
       second.summary.overallChange - first.summary.overallChange ||
       comparePositionThenName(first.player, second.player),
     )
+}
+
+/** Highest positive OVR gain; row ordering supplies the stable tiebreak. */
+export function deriveBiggestLeap(
+  rows: readonly DevelopmentRow[],
+): DevelopmentRow | null {
+  return rows
+    .filter(({ summary }) => summary.overallChange > 0)
+    .slice()
+    .sort((first, second) =>
+      second.summary.overallChange - first.summary.overallChange ||
+      comparePositionThenName(first.player, second.player),
+    )[0] ?? null
+}
+
+const ATTRIBUTE_LABELS: Readonly<Record<PlayerAttributeDevelopmentGain['attribute'], string>> = {
+  finishing: 'Finishing',
+  shooting: 'Shooting',
+  playmaking: 'Playmaking',
+  ballHandling: 'Ball Handling',
+  perimeterDefense: 'Perimeter Def',
+  interiorDefense: 'Interior Def',
+  rebounding: 'Rebounding',
+  athleticism: 'Athleticism',
+  stamina: 'Stamina',
+}
+
+export function formatDevelopmentGains(
+  gains: readonly PlayerAttributeDevelopmentGain[],
+): string {
+  return gains.map(({ attribute, change }) => `${ATTRIBUTE_LABELS[attribute]} +${change}`).join(' · ')
+}
+
+export function formatSeniorCareerContext(
+  career: NonNullable<DepartureRow['seniorCareer']>,
+  programName: string,
+): string {
+  const seasons = `${career.seasonsPlayed} ${career.seasonsPlayed === 1 ? 'season' : 'seasons'}`
+  return `${seasons} with ${programName} · ${career.pointsPerGame.toFixed(1)} PPG · ${career.reboundsPerGame.toFixed(1)} RPG · ${career.assistsPerGame.toFixed(1)} APG · Peak ${career.peakOverall} OVR`
 }
 
 export type CommitTiming = 'regular' | 'postseason' | 'late'

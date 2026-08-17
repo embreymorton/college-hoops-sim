@@ -17,7 +17,7 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Phase 7C.2 is complete, accepted, and frozen. No authoritative successor has
+Offseason Storytelling V1 is complete and accepted. No authoritative successor has
 been selected. Fresh planning must review current play evidence before the user
 explicitly selects a new NEXT; phase order and the PLANNED list do not select it.
 
@@ -48,6 +48,13 @@ number for it. Historical research remains available in
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Offseason Storytelling V1 — COMPLETE / ACCEPTED
+
+- Enriched the existing Offseason turnover report with canonical senior career
+  context, top attribute-gain summaries, and one deterministic Biggest Leap
+  spotlight without changing Development or rollover mechanics.
+- Returned the Roadmap to an Open Planning Checkpoint with no successor selected.
 
 ### Phase 0 — Foundation — COMPLETE
 

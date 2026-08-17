@@ -10,6 +10,7 @@ import { assembleNextSeasonRosters } from '../dynasty'
 import { useDynastyStore } from '../store'
 import {
   deriveDepartures,
+  deriveBiggestLeap,
   deriveDevelopmentRows,
   deriveIncomingClass,
   derivePositionCounts,
@@ -42,8 +43,9 @@ export function OffseasonScreen() {
     return null
   }
 
-  const departures = deriveDepartures(archive, controlledProgramId)
+  const departures = deriveDepartures(dynasty, archive, controlledProgramId)
   const developmentRows = deriveDevelopmentRows(archive, controlledProgramId, offseasonProgram)
+  const biggestLeap = deriveBiggestLeap(developmentRows)
   const incoming = deriveIncomingClass(
     completedRecruitingClass.recruitingState,
     controlledProgramId,
@@ -110,7 +112,7 @@ export function OffseasonScreen() {
         <h2 id="development-heading" className="section-title">
           Player Development
         </h2>
-        <DevelopmentTable rows={developmentRows} />
+        <DevelopmentTable rows={developmentRows} biggestLeap={biggestLeap} />
       </section>
 
       <section className="section" aria-labelledby="incoming-heading">
