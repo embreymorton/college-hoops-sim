@@ -1,11 +1,16 @@
 import {
   DynastySectionNav,
   FollowingSection,
+  LeagueHeader,
   LeagueTeamsDirectory,
   NationalLeadersSection,
   NewsFeedSection,
 } from '../components'
 import { deriveNewsFeed } from '../dynasty'
+import { calculateTeamStrength } from '../engine'
+import { formatTournamentRoundName } from './postseasonFormatters'
+import { getCurrentTournamentRound, isTournamentComplete } from '../postseason'
+import { deriveProgramRecord, getCurrentRound } from '../season'
 import { deriveNationalPlayerLeaders } from '../season'
 import {
   deriveFollowingView,
@@ -56,8 +61,37 @@ export function LeagueScreen() {
   const followingView = deriveFollowingView(followedPlayerIds, dynasty)
   const newsFeed = deriveNewsFeed(dynasty, followedPlayerIds)
 
+  const controlledProgram = controlledProgramId
+    ? PROGRAMS_BY_ID.get(controlledProgramId)
+    : undefined
+  const controlledSeasonState = controlledProgramId
+    ? season.programStates[controlledProgramId]
+    : undefined
+  const postseasonControlledState = controlledProgramId
+    ? postseason?.programStates[controlledProgramId]
+    : undefined
+  const controlledTeam = postseasonControlledState?.team ?? controlledSeasonState?.team
+  const canonicalRotation =
+    postseasonControlledState?.rotation ?? controlledSeasonState?.rotation
+
+  const phaseLabel = postseason
+    ? isTournamentComplete(postseason)
+      ? 'Postseason · Final'
+      : (() => {
+          const currentTournamentRound = getCurrentTournamentRound(postseason)
+          return currentTournamentRound
+            ? `Postseason · ${formatTournamentRoundName(currentTournamentRound)}`
+            : 'Postseason'
+        })()
+    : (() => {
+        const currentRound = getCurrentRound(season)
+        return currentRound
+          ? `Regular Season · Round ${currentRound} of ${season.schedule.roundCount}`
+          : 'Regular Season · Complete'
+      })()
+
   return (
-    <>
+    <div className="league-page">
       <DynastySectionNav
         competitionLabel={postseason ? 'Tournament' : 'Season'}
         activeSection="league"
@@ -66,6 +100,17 @@ export function LeagueScreen() {
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
+
+      {controlledProgram && controlledProgramId && controlledTeam && canonicalRotation ? (
+        <LeagueHeader
+          seasonNumber={season.seasonNumber}
+          phaseLabel={phaseLabel}
+          programName={controlledProgram.name}
+          accentColor={controlledProgram.branding.primaryColor}
+          overallRecord={deriveProgramRecord(season, controlledProgramId)}
+          overallRating={calculateTeamStrength(controlledTeam, canonicalRotation).overall}
+        />
+      ) : null}
 
       <section className="section league-screen" aria-label="League">
         <div className="league-screen__navigation">
@@ -145,6 +190,6 @@ export function LeagueScreen() {
           </div>
         )}
       </section>
-    </>
+    </div>
   )
 }

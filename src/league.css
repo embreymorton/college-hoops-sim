@@ -2,6 +2,15 @@
    League & Player Exploration V0 — extends styles.css's tokens and components
    ========================================================================== */
 
+/* Local vertical rhythm for the League root — matches Season/Coaching/
+   Recruiting's tighter spacing; `.app-main`'s default gap is unchanged
+   elsewhere. */
+.league-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
 /* Hub section switch (Season/Tournament ↔ League) */
 
 .hub-section-tabs {

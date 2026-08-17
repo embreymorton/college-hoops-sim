@@ -232,6 +232,10 @@ describe('League — Following', () => {
       'aria-pressed',
       'true',
     )
-    expect(screen.getByText('Charlotte Tech')).toBeInTheDocument()
+    expect(
+      within(document.querySelector('.league-teams-directory') as HTMLElement).getByText(
+        'Charlotte Tech',
+      ),
+    ).toBeInTheDocument()
   })
 })

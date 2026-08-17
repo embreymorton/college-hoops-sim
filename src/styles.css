@@ -1382,6 +1382,18 @@ p {
   gap: var(--space-6);
 }
 
+.league-header__program {
+  text-align: right;
+}
+
+.league-header__program .season-header__identity {
+  justify-content: flex-end;
+}
+
+.league-header__program-name {
+  font-size: 1.1rem;
+}
+
 .follow-player-button {
   margin-top: var(--space-3);
   padding: 0.4rem 0.9rem;
@@ -2515,6 +2527,14 @@ p {
   .season-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .league-header__program {
+    text-align: left;
+  }
+
+  .league-header__program .season-header__identity {
+    justify-content: flex-start;
   }
 
   .program-select__conferences {
