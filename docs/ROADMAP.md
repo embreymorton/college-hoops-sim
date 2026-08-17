@@ -17,15 +17,14 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Phase 7D is accepted and frozen. Review fresh production/playtesting evidence
-before selecting another milestone; PLANNED work below is not automatically
-NEXT.
+Phase 7C.2 is complete, accepted, and frozen. No authoritative successor has
+been selected. Fresh planning must review current play evidence before the user
+explicitly selects a new NEXT; phase order and the PLANNED list do not select it.
 
 ### PLANNED — remainder of Phase 7C
 
-1. **7C.2 — Records & Milestones**
-2. **7C.3 — Awards & Honors** — sequenced after archive/records because
-   subjective award formulas may require separate design and tuning.
+1. **7C.3 — Awards & Honors** — remains valid future work whose subjective
+   formulas would require separate design and tuning; it is not NEXT.
 
 ### After Current Phase 7 Work — Fresh Planning Checkpoint
 
@@ -127,11 +126,15 @@ persistence, RNG, or simulation changes.
   League-owned, completed-Seasons-only History destination with newest-first
   Yearbooks, a controlled-Team recap, selectable league standings/leaders, and
   the full archived Tournament bracket.
-- **7C.2 Records & Milestones** and **7C.3 Awards & Honors** remain PLANNED.
+- **7C.2 Records & Milestones — COMPLETE / ACCEPTED / FROZEN:** added
+  completed-regular-season Single Game, Season, and Career Top 10 records under
+  the first-class League History tab, plus strict new Single Game record stories
+  in active-Season News after completed history exists.
+- **7C.3 Awards & Honors** remains PLANNED.
 
-7C.1 derives all presentation from `CompletedSeasonArchive` through pure
-projections and transient/local UI state. It added no copied historical
-summaries, canonical mutation, RNG, or simulation behavior.
+7C.1 and 7C.2 derive their presentation from `CompletedSeasonArchive` through
+pure projections and transient/local UI state. They add no copied historical
+summaries or records, canonical mutation, RNG, or simulation behavior.
 
 ### Phase 7D — Recruit Attachment V1 — COMPLETE / ACCEPTED / FROZEN
 

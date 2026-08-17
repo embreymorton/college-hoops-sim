@@ -45,6 +45,21 @@ function playerSupport(story: Extract<NewsStory, { kind: 'player-performance' }>
   return values.join(' · ')
 }
 
+const RECORD_LABELS = { points: 'points', rebounds: 'rebounds', assists: 'assists', steals: 'steals', blocks: 'blocks' } as const
+
+function recordList(story: Extract<NewsStory, { kind: 'single-game-record' }>): string {
+  const values = story.records.map(({ category, value }) => `${value} ${RECORD_LABELS[category]}`)
+  if (values.length === 1) return values[0]!
+  return `${values.slice(0, -1).join(', ')} and ${values.at(-1)}`
+}
+
+function recordSupport(story: Extract<NewsStory, { kind: 'single-game-record' }>): string {
+  const values = [`${story.stats.points} PTS`, `${story.stats.rebounds} REB`, `${story.stats.assists} AST`]
+  if (story.records.some(({ category }) => category === 'steals')) values.push(`${story.stats.steals} STL`)
+  if (story.records.some(({ category }) => category === 'blocks')) values.push(`${story.stats.blocks} BLK`)
+  return values.join(' · ')
+}
+
 type PlayerPerformanceStory = Extract<NewsStory, { kind: 'player-performance' }>
 
 function secondaryPerformancePhrase(story: PlayerPerformanceStory): string {
@@ -97,6 +112,15 @@ export function formatNewsCheckpoint(checkpoint: NewsCheckpoint): string {
 
 /** Deterministic factual copy assembled from projected facts and current identities. */
 export function presentNewsStory(story: NewsStory, dynasty: DynastyState): NewsStoryPresentation {
+  if (story.kind === 'single-game-record') {
+    const outcome = story.won ? ' defeats ' : ' falls to '
+    return {
+      label: story.records.length > 1 ? 'DYNASTY RECORDS' : 'DYNASTY RECORD',
+      headline: [playerPart(dynasty, story.programId, story.playerId), text(` sets ${story.records.length > 1 ? 'new Dynasty single-game records' : 'a new Dynasty single-game record'} with ${recordList(story)} as `), programPart(dynasty, story.programId), text(outcome), programPart(dynasty, story.opponentProgramId), text('.')],
+      support: recordSupport(story),
+    }
+  }
+
   if (story.kind === 'player-performance') {
     const labels = { 'fifty-point': '50-POINT PERFORMANCE', 'triple-double': 'TRIPLE-DOUBLE', 'forty-point': 'MONSTER NIGHT', rebounding: 'GLASS WORK', assists: 'PLAYMAKER', blocks: 'RIM PROTECTOR', steals: 'DEFENSIVE DISRUPTION', scoring: 'BIG NIGHT' } as const
     return { label: labels[story.primaryVariant], headline: playerPerformanceHeadline(story, dynasty), support: playerSupport(story) }

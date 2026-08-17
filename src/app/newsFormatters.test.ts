@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import type { NewsCheckpoint, PlayerPerformanceAchievement, PlayerPerformanceNewsStory, RecruitCommitmentNewsStory } from '../dynasty'
+import type { NewsCheckpoint, PlayerPerformanceAchievement, PlayerPerformanceNewsStory, RecruitCommitmentNewsStory, SingleGameRecordNewsStory } from '../dynasty'
 import { createRecruitingDynasty } from '../dynasty/recruiting/testSupport'
 import { presentNewsStory, type NewsStoryPresentation } from './newsFormatters'
 
@@ -42,6 +42,21 @@ function performanceStory(options: {
 }
 
 describe('News presentation polish', () => {
+  it('presents one combined Dynasty-record headline with Player and Program navigation', () => {
+    const story: SingleGameRecordNewsStory = {
+      kind: 'single-game-record', id: 'news:v1:single-game-record:test-game:test-player', checkpoint: { kind: 'regular-season-round', seasonId: dynasty.activeSeason!.id, round: 1 },
+      importance: 'major', sourceOrder: 0, gameId: 'test-game', programId: program!.id, opponentProgramId: opponent!.id,
+      playerId: player.id, records: [{ category: 'points', value: 47 }, { category: 'steals', value: 8 }],
+      stats: { points: 47, rebounds: 9, assists: 6, steals: 8, blocks: 1 }, isFollowed: true, won: true,
+    }
+    const presentation = presentNewsStory(story, dynasty)
+    expect(presentation.label).toBe('DYNASTY RECORDS')
+    expect(headlineText(presentation)).toContain(`sets new Dynasty single-game records with 47 points and 8 steals as ${program!.name} defeats ${opponent!.name}.`)
+    expect(presentation.support).toBe('47 PTS · 9 REB · 6 AST · 8 STL')
+    expect(presentation.headline.filter(({ kind }) => kind === 'player')).toEqual([expect.objectContaining({ playerId: player.id })])
+    expect(presentation.headline.filter(({ kind }) => kind === 'program')).toHaveLength(2)
+  })
+
   it('separates overall national Recruit rank from position and preserves No. 1 treatment', () => {
     const recruit = dynasty.recruiting!.recruits[0]!
     const base: RecruitCommitmentNewsStory = {

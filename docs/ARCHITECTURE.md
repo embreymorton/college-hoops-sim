@@ -362,7 +362,7 @@ complete, valid SeasonState
 
 The transition rejects incomplete regular seasons, incomplete Tournaments, missing champions, mismatched or invalid competition state, and duplicate archived season numbers. The returned Dynasty does not intentionally retain the completed competitions in both active and historical slots: active competition becomes `null` after the archive is created.
 
-`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation and the 7C.1 Season Yearbook are implemented as pure projections over those facts; records and awards are not implemented.
+`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, the Season Yearbook, and the 7C.2 Record Book are pure projections over those facts; awards are not implemented.
 
 Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
 
@@ -457,6 +457,15 @@ The returned `DynastyState` preserves `controlledProgramId`, `history`, and `com
 
 The application can repeat Season → Recruiting → Postseason → Late Recruiting → Offseason → rollover. A new interactive Dynasty receives one unique creation seed; all domain systems remain deterministic from that stored seed, while explicit-seed test, inspection, and calibration workflows retain their fixed behavior. Interactive rollover clears only the controlled Program's fresh Recruiting board/offers; autonomous/default domain Recruiting plans remain unchanged for AI Programs.
 
+The explicit Tournament → Late Recruiting handoff is derived from canonical
+Tournament completion plus Recruiting remaining in its postseason phase; it
+does not depend on one exact synchronized Recruiting counter. Navigation is
+read-only, so returning to Tournament reconstructs the same eligibility. The
+Continue command idempotently synchronizes any completed Tournament rounds
+still missing from Recruiting before entering Late Recruiting. Repeated
+navigation cannot consume the action, and a completed transition cannot advance
+twice.
+
 The immutable full-snapshot architecture remained correct and JSON-serializable through accepted 50-Season Dynasty runs: no history overwrite, identity collision, Schedule/Game-ID collision, or serialization failure occurred. Full snapshots have a measurable storage cost, however. One canonical serialized `DynastyState` measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50—approximately linear growth near 3 MB per completed Season. Persistence architecture must evaluate this before production-scale saves or very long user Dynasties, without prematurely prescribing compression, pruning, database storage, or another representation.
 
 Long-run calibration changes no ownership boundary. Board + Focus + Offer,
@@ -498,6 +507,16 @@ latest round without creating a fake event. No news item, checkpoint, cache,
 RNG draw, or event record is persisted. Zustand
 stores only transient `leagueTab` navigation context so detail Back restores the
 originating tab and fresh League entry resets to News.
+
+When completed history exists, the same projection derives record-breaking
+regular-season stories without new state. It scans completed archives once for
+the five Single Game maxima, then processes completed active games in canonical
+round/game order. A value must strictly exceed the running maximum; each
+qualifying Player/game emits one combined major story and suppresses that
+Player/game's generic performance candidate. All Players in one game compare
+against the same pregame baseline; the running maximum advances after the game,
+including non-story rows, preserving deterministic same-round behavior.
+Postseason performances never enter this path.
 
 Phase 7B.2 adds a pure stable-identity read boundary:
 
@@ -542,6 +561,29 @@ statistics, and Tournament facts. Conference/stat-category selection and
 Yearbook return context are presentation state; no summary snapshot, historical
 Player copy, cache, RNG draw, or season-specific Player route is persisted.
 Stable Player IDs resolve through the existing active/former/unknown boundary.
+
+Phase 7C.2 extends the same boundary without adding canonical state:
+
+```text
+CompletedSeasonArchive[] + active SeasonState
+  → pure completed-regular-season record projection
+  → transient History/category selection
+  → React presentation
+```
+
+Single Game records read completed scheduled-game box scores, Season records
+reuse national-leader qualification and rate semantics, and Career records sum
+Season totals by stable Player ID. Completed active regular-season games form a
+derived live overlay: Single Game and Career facts are authoritative, while
+active Season rates are marked provisional. An active Season is omitted when
+its Season number is already archived, preventing rollover duplication;
+postseason Player statistics are never inputs. Sorting includes stable
+fact-based tie keys, so archive order cannot change output. The projection
+traverses each Season once for game candidates and derives Season statistics
+once for shared use across all five categories and Career aggregation; it
+returns all three scopes for all categories together. React memoizes that pure
+result by stable history, Universe, and active-Season references, making a
+category switch cheap while completed-round state naturally invalidates it.
 
 ## Team Season Stats and exploration projections
 

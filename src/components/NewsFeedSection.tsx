@@ -63,7 +63,7 @@ export function NewsFeedSection({ feed, dynasty, onSelectPlayer, onSelectProgram
                     <article className="news-story" data-importance={story.importance} key={story.id}>
                       <div className="news-story__meta">
                         <p className="eyebrow-tag">{presentation.label}</p>
-                        {story.kind === 'player-performance' && story.isFollowed ? <span className="news-story__following" aria-label="Following this player">★ Following</span> : null}
+                        {(story.kind === 'player-performance' || story.kind === 'single-game-record') && story.isFollowed ? <span className="news-story__following" aria-label="Following this player">★ Following</span> : null}
                       </div>
                       <p className="news-story__headline">{presentation.headline.map((part, index) => <StoryPart key={`${story.id}:part:${index}`} part={part} onSelectPlayer={onSelectPlayer} onSelectProgram={onSelectProgram} />)}</p>
                       <p className="news-story__support">{presentation.support}</p>

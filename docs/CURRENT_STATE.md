@@ -30,7 +30,7 @@ The playable product includes:
   Prep, Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
   Details, Following, News, Alumni, Season Preview, and a completed-Season
-  History / Yearbook destination;
+  first-class League History with Yearbooks and a Dynasty Record Book;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
@@ -64,6 +64,10 @@ At a canonically completed Tournament with Recruiting synchronized through
 Period 28, the explicit Late Recruiting handoff remains available from both the
 Tournament Hub and the final regular-season review reached through normal
 navigation. Navigation does not own or clear that lifecycle eligibility.
+Handoff visibility derives from completed Tournament state plus Recruiting
+remaining in its postseason phase; the transition command synchronizes any
+lagging completed postseason Recruiting period before entering Late Recruiting,
+so leaving for League and returning cannot strand progression.
 
 During an active Tournament, Coaching uses postseason team/rotation state only
 when the controlled Program qualified and has canonical Tournament state. A
@@ -88,7 +92,10 @@ refactor these systems during unrelated feature work:
 - Dynasty archive, offseason, roster-assembly, and rollover behavior;
 - Followed Players and Player Legacy resolver semantics; and
 - Phase 7B News, Alumni/Historical Player Details, and Season Preview; and
-- Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries.
+- Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries;
+  and
+- Phase 7C.2 Dynasty Record Book, live Records overlay, and record-breaking
+  Single Game News behavior and read-model boundaries.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -111,11 +118,16 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
+**No NEXT selected — Open Planning Checkpoint.** Phase 7C.2 is complete,
+accepted, and frozen, and the repository contains no explicitly user-selected
+successor. Phase 7C.3 remains PLANNED but is not automatically NEXT. Fresh
+planning must review current evidence before the user selects a direction.
+
 **Phase 7C.1 — Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.**
 
-League-owned History is a secondary action rather than a global destination or
-fifth League tab. It lists completed Seasons only, newest first, then presents
-one cohesive Season recap:
+League-owned History now appears as the fifth League tab, with Yearbooks and
+Records as peer sub-destinations. Yearbooks list completed Seasons only, newest
+first, then present one cohesive Season recap:
 
 - Champion / Season identity;
 - Your Season summary, Team Leaders, and Tournament Run;
@@ -171,12 +183,26 @@ Exact Recruit OVR, POT, and individual ratings remain current production
 visibility. Scouting grades, ranges, estimates, hidden information, and other
 uncertainty remain future-only.
 
-**No NEXT selected — Open Planning Checkpoint.** Fresh planning must review
-current evidence before the user explicitly selects another milestone.
+**Phase 7C.2 — Records & Milestones V1 is COMPLETE / ACCEPTED / FROZEN.**
+History is the fifth League tab with Yearbooks / Records
+sub-navigation. Records combine completed archives with a derived live overlay:
+active regular-season games contribute authoritative Single Game results and
+Career totals, while qualifying active Season rates rank provisionally with a
+LIVE marker. Postseason Player statistics never contribute, and no record state
+is stored. One shared projection derives every category and scope, while the UI
+selects a category and presents Single Game, Single Season, and Career panels
+together. Player links reuse active/former resolution and preserve the selected
+category on Back.
 
-`7C.2 Records & Milestones` and `7C.3 Awards & Honors` remain **PLANNED**, not
-selected or NEXT. Player Identity work remains parked unless new evidence
-deliberately reopens it.
+After at least one completed Season, Around the Country also promotes strict
+new Dynasty single-game regular-season records. Historical archive maxima seed
+one running active-Season baseline; completed active games advance it in
+canonical round/game order. One Player/game becomes one combined record story,
+replacing that Player/game's generic performance story. Ties, postseason box
+scores, and Season 1 never qualify.
+
+`7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
+work remains parked unless new evidence deliberately reopens it.
 
 ## Fresh-session rules
 

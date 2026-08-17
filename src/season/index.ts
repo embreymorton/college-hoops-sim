@@ -33,6 +33,7 @@ export {
 } from './simulation'
 export { deriveConferenceStandings } from './standings'
 export {
+  deriveQualifiedSeasonPlayerStats,
   deriveNationalPlayerLeaders,
   deriveTeamPlayerLeaders,
   getMinimumQualifyingGamesPlayed,

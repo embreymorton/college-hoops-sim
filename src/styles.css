@@ -889,6 +889,17 @@ p {
   overflow-x: auto;
 }
 
+.league-history { display: grid; gap: var(--space-4); }
+.history-tab-list { justify-self: start; max-width: 100%; overflow-x: auto; }
+.records-screen { display: grid; gap: var(--space-4); min-width: 0; }
+.records-screen__header { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: var(--space-3); }
+.records-category-tabs { max-width: 100%; overflow-x: auto; }
+.records-panel-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); min-width: 0; }
+.records-panel { min-width: 0; }
+.records-panel__table { min-width: 24rem; }
+.records-panel__context { display: block; color: var(--ink-1); font-size: 0.7rem; font-family: var(--font-body); white-space: nowrap; }
+.records-panel__live { margin-left: 0.4rem; color: var(--accent); font-family: var(--font-display); font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+
 .league-history-action {
   flex: 0 0 auto;
   padding: 0.5rem 0.8rem;
@@ -1110,6 +1121,7 @@ p {
   .league-screen__navigation > .tab-list .tab { padding-inline: 0.85rem; }
   .history-season-card { grid-template-columns: 1fr; gap: var(--space-2); }
   .yearbook-league-grid { grid-template-columns: 1fr; }
+  .records-panel-grid { grid-template-columns: 1fr; }
   .news-story { padding-inline: var(--space-3); }
   .news-story__meta { align-items: flex-start; }
 }

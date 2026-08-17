@@ -32,6 +32,7 @@ import {
   FINAL_RECRUITING_PERIOD,
   rolloverDynastyToNextSeason,
   type DynastyState,
+  type RecordCategory,
   type RecruitingState,
 } from '../dynasty'
 import {
@@ -209,7 +210,8 @@ export type SeasonSessionView =
   | 'recruitDetails'
   | 'offseason'
 
-export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following'
+export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following' | 'history'
+export type HistoryTab = 'yearbooks' | 'records'
 export type RecruitingMode = 'board' | 'battles' | 'national' | 'following' | 'guide'
 
 export interface DynastySessionState {
@@ -260,6 +262,8 @@ export interface DynastySessionState {
   readonly explorationViewHistory: readonly SeasonSessionView[]
   /** Transient League return context; fresh root entry always resets this to News. */
   readonly leagueTab: LeagueTab
+  readonly historyTab: HistoryTab
+  readonly recordCategory: RecordCategory
   /** Transient Recruiting return context; fresh root entry always resets this to Board. */
   readonly recruitingMode: RecruitingMode
   /** Transient History selection; canonical archive facts remain in DynastyState.history. */
@@ -397,6 +401,8 @@ export interface DynastySessionState {
   /** Recovers an invalid/stale Yearbook selection to the History index. */
   recoverHistoryIndex(): void
   setLeagueTab(tab: LeagueTab): void
+  setHistoryTab(tab: HistoryTab): void
+  setRecordCategory(category: RecordCategory): void
   setRecruitingMode(mode: RecruitingMode): void
   /** Opens Team Details for any Program in the Universe, not only the controlled one. */
   openTeamDetails(programId: string): void
@@ -727,6 +733,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   viewedTournamentGameId: null,
   explorationViewHistory: [],
   leagueTab: 'news',
+  historyTab: 'yearbooks',
+  recordCategory: 'points',
   recruitingMode: 'board',
   selectedArchivedSeasonNumber: null,
   selectedTeamProgramId: null,
@@ -789,6 +797,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       viewedTournamentGameId: null,
       explorationViewHistory: [],
       leagueTab: 'news',
+      historyTab: 'yearbooks',
+      recordCategory: 'points',
       recruitingMode: 'board',
       selectedArchivedSeasonNumber: null,
       selectedTeamProgramId: null,
@@ -1662,9 +1672,9 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
   openHistory() {
     const { view, explorationViewHistory } = get()
-
     set({
       view: 'history',
+      historyTab: 'yearbooks',
       selectedArchivedSeasonNumber: null,
       explorationViewHistory: [...explorationViewHistory, view],
     })
@@ -1695,6 +1705,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       : explorationViewHistory
     set({
       view: 'history',
+      historyTab: 'yearbooks',
       selectedArchivedSeasonNumber: null,
       explorationViewHistory: historyIndex,
     })
@@ -1703,6 +1714,9 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   setLeagueTab(leagueTab) {
     set({ leagueTab })
   },
+
+  setHistoryTab(historyTab) { set({ historyTab }) },
+  setRecordCategory(recordCategory) { set({ recordCategory }) },
 
   setRecruitingMode(recruitingMode) {
     set({ recruitingMode })
@@ -1919,7 +1933,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     if (!dynasty) return
 
     try {
-      const nextDynasty = prepareLateRecruiting(dynasty)
+      const synchronized = syncRecruitingThroughCompletedPostseasonRounds(dynasty)
+      const nextDynasty = prepareLateRecruiting(synchronized)
       set({
         dynasty: nextDynasty,
         view: 'recruiting',

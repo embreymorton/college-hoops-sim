@@ -28,15 +28,15 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**OPEN PLANNING CHECKPOINT — no NEXT selected.** Current evidence should inform
-fresh planning; it does not select a successor by itself.
+**Open Planning Checkpoint.** Phase 7C.2 Records & Milestones V1 is COMPLETE /
+ACCEPTED / FROZEN. The Record Book, live regular-season overlay,
+record-breaking News, Player navigation, and Tournament progression recovery
+were manually accepted. No successor is selected; current evidence informs the
+next planning discussion but does not create a NEXT.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
-   create durable Player and Program attachment across normal multi-Season
-   play.
-2. Observe which Season facts players naturally want preserved before defining
-   Records or Awards.
-3. Monitor genuinely live WATCH items below without promoting them into work
+   create durable Player and Program attachment across normal multi-Season play.
+2. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.
@@ -99,6 +99,28 @@ automatic defect.
 
 ## Recent Accepted-Phase Evidence
 
+### Phase 7C.2 — Records & Milestones V1 — ACCEPTED / FROZEN
+
+Manual play accepted History as the fifth League tab with Yearbooks and Records,
+the simultaneous Single Game / Single Season / Career Top-10 presentation, one
+PTS/REB/AST/STL/BLK selector, live regular-season contributions, provisional
+`LIVE` Season rates, and stable-ID Player detail round trips. Shared derivation
+removed the earlier repeated Season-stat work; category changes are cheap view
+selection and long-history work scales approximately linearly.
+
+Record-breaking Single Game News was also accepted after Season 1: only strict
+new regular-season Dynasty highs qualify, same-game categories combine, generic
+duplicate performance stories are suppressed, and ties, Top-10-only entries,
+and postseason performances do not qualify. Existing News ranking, grouping,
+Following, and entity navigation remain intact.
+
+The Tournament → League → Tournament progression blocker found during play is
+**RESOLVED / MANUALLY VERIFIED**. Handoff visibility derives from canonical
+Tournament completion plus postseason-phase Recruiting; Continue catches up any
+missing completed Tournament Recruiting rounds before entering Late Recruiting.
+Navigation remains read-only, repeated navigation cannot consume the action,
+and the transition cannot advance twice.
+
 ### Phase 7D.3 — Recruit → Player Continuity — ACCEPTED / FROZEN
 
 Followed Recruit continuity into existing Player Following worked as expected
@@ -142,9 +164,10 @@ Player continuity was not part of 7D.2 acceptance.
 
 ### Phase 7C.1 — Season Archive / Yearbook — ACCEPTED / FROZEN
 
-Manual acceptance established that History belongs to League as a secondary
-action, not a global destination or fifth tab. The accepted Yearbook lists only
-completed Seasons newest-first and reads as one recap: Champion / Season
+Manual acceptance established that History belongs to League. Its original
+7C.1 secondary-action placement was subsequently promoted by implemented 7C.2
+to a first-class League tab without changing the accepted Yearbook. The
+Yearbook lists only completed Seasons newest-first and reads as one recap: Champion / Season
 identity, Your Season, Season Around the League, then the full archived
 Tournament bracket.
 
