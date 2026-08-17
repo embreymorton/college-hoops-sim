@@ -17,9 +17,8 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Offseason Storytelling V1 is complete and accepted. No authoritative successor has
-been selected. Fresh planning must review current play evidence before the user
-explicitly selects a new NEXT; phase order and the PLANNED list do not select it.
+Program Legacy V1 is complete and accepted. No authoritative successor has been
+selected; phase order and the PLANNED list do not select one automatically.
 
 ### PLANNED — remainder of Phase 7C
 
@@ -48,6 +47,13 @@ number for it. Historical research remains available in
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Program Legacy V1 — COMPLETE / ACCEPTED
+
+- Team Details now gives every Program a compact Dynasty résumé and five-Season
+  recent trail derived from completed regular-season and Tournament archives.
+- Added no mutable Program history, simulation behavior, or Prestige mechanics,
+  and returned the Roadmap to an Open Planning Checkpoint.
 
 ### Offseason Storytelling V1 — COMPLETE / ACCEPTED
 

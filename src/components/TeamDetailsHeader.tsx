@@ -7,6 +7,8 @@ interface TeamDetailsHeaderProps {
   readonly programName: string
   readonly accentColor: string
   readonly conferenceName: string
+  readonly locationLabel?: string
+  readonly prestige?: number
   readonly isControlled: boolean
   readonly overallRecord: { readonly wins: number; readonly losses: number }
   readonly conferenceRecord: { readonly wins: number; readonly losses: number }
@@ -18,6 +20,8 @@ export function TeamDetailsHeader({
   programName,
   accentColor,
   conferenceName,
+  locationLabel,
+  prestige,
   isControlled,
   overallRecord,
   conferenceRecord,
@@ -38,7 +42,11 @@ export function TeamDetailsHeader({
             {programName}
             {isControlled && <span className="standings-you-tag"> · You</span>}
           </h1>
-          <p className="season-header__meta">{conferenceName}</p>
+          <p className="season-header__meta">
+            {[conferenceName, locationLabel, prestige === undefined ? null : `Prestige ${prestige}`]
+              .filter(Boolean)
+              .join(' · ')}
+          </p>
         </div>
       </div>
       <div className="stat-trio season-header__stats">

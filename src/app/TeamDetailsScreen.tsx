@@ -1,12 +1,14 @@
 import { calculateTeamStrength } from '../engine'
 import {
   ExplorationBackButton,
+  ProgramLegacySection,
   RecentResultsSection,
   TeamAverages,
   TeamDetailsHeader,
   TeamLeadersStrip,
   TeamStatsTable,
 } from '../components'
+import { deriveProgramLegacy } from '../dynasty'
 import {
   deriveConferenceRecord,
   deriveProgramPlayerSeasonStats,
@@ -42,8 +44,9 @@ export function TeamDetailsScreen() {
     (state) => state.goBackFromExploration,
   )
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
+  const dynasty = useDynastyStore((state) => state.dynasty)
 
-  if (!season || !selectedTeamProgramId) {
+  if (!dynasty || !season || !selectedTeamProgramId) {
     return null
   }
 
@@ -60,6 +63,7 @@ export function TeamDetailsScreen() {
   const overallRecord = deriveProgramRecord(season, selectedTeamProgramId)
   const conferenceRecord = deriveConferenceRecord(season, selectedTeamProgramId)
   const strength = calculateTeamStrength(programState.team, programState.rotation)
+  const programLegacy = deriveProgramLegacy(dynasty, selectedTeamProgramId)
   const teamStats = deriveTeamSeasonStats(season, selectedTeamProgramId)
   const teamLeaders = deriveTeamPlayerLeaders(season, selectedTeamProgramId)
   const playerStats = deriveProgramPlayerSeasonStats(season, selectedTeamProgramId)
@@ -92,11 +96,20 @@ export function TeamDetailsScreen() {
         programName={program.name}
         accentColor={program.branding.primaryColor}
         conferenceName={conference?.name ?? ''}
+        locationLabel={`${program.location.city}, ${program.location.stateCode}`}
+        prestige={programState.team.prestige}
         isControlled={selectedTeamProgramId === controlledProgramId}
         overallRecord={overallRecord}
         conferenceRecord={conferenceRecord}
         strength={strength}
       />
+
+      <section className="section" aria-labelledby="program-legacy-heading">
+        <h2 id="program-legacy-heading" className="section-title">
+          Dynasty History
+        </h2>
+        <ProgramLegacySection legacy={programLegacy} />
+      </section>
 
       <section className="section" aria-labelledby="team-averages-heading">
         <h2 id="team-averages-heading" className="section-title">

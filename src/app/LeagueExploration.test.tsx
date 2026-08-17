@@ -216,6 +216,9 @@ describe('Team Details', () => {
       ).toBeInTheDocument()
     }
     expect(screen.getAllByText(/no completed games yet/i)).toHaveLength(2)
+    expect(screen.getByRole('heading', { name: 'Dynasty History' })).toBeInTheDocument()
+    expect(screen.getByText(/history will appear after this Season/i)).toBeInTheDocument()
+    expect(screen.getByText(/Providence, RI · Prestige 88/)).toBeInTheDocument()
     const averages = screen
       .getByRole('heading', { name: 'Team Averages' })
       .closest('section') as HTMLElement

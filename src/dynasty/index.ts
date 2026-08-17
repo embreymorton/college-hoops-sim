@@ -7,6 +7,10 @@ export {
 export { deriveNewsFeed } from './news'
 export { deriveDynastyRecordBook } from './seasonRecords'
 export {
+  deriveProgramLegacy,
+  PROGRAM_LEGACY_RECENT_SEASON_LIMIT,
+} from './programLegacy'
+export {
   deriveSeasonPreview,
   shouldPromoteSeasonPreview,
 } from './seasonPreview'
@@ -144,6 +148,7 @@ export type {
   HistoricalTournamentGame,
   HistoricalTournamentOutcome,
 } from './seasonYearbook'
+export type { ProgramLegacy, ProgramLegacySeason } from './programLegacy'
 export type {
   NewsCheckpoint,
   NewsFeed,

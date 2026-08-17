@@ -209,7 +209,8 @@ function tournamentGames(
     })
 }
 
-function tournamentOutcome(
+/** Canonical completed-Tournament outcome for any Program in one archive. */
+export function deriveHistoricalTournamentOutcome(
   archive: CompletedSeasonArchive,
   programId: string,
 ): HistoricalTournamentOutcome {
@@ -314,7 +315,7 @@ export function deriveCompletedSeasonIndex(
         nationalChampion: programIdentity(programs, championId),
         controlledProgram: programIdentity(programs, dynasty.controlledProgramId),
         controlledProgramRecord: deriveProgramRecord(archive.season, dynasty.controlledProgramId),
-        controlledTournamentOutcome: tournamentOutcome(archive, dynasty.controlledProgramId),
+        controlledTournamentOutcome: deriveHistoricalTournamentOutcome(archive, dynasty.controlledProgramId),
       }
     })
     .sort((first, second) => second.seasonNumber - first.seasonNumber)
@@ -377,7 +378,7 @@ export function deriveCompletedSeasonYearbook(
       overallRecord: deriveProgramRecord(archive.season, dynasty.controlledProgramId),
       conferenceRecord: deriveConferenceRecord(archive.season, dynasty.controlledProgramId),
       conferencePlace,
-      tournamentOutcome: tournamentOutcome(archive, dynasty.controlledProgramId),
+      tournamentOutcome: deriveHistoricalTournamentOutcome(archive, dynasty.controlledProgramId),
       tournamentGames: games.filter((game) => {
         const isHome = game.homeProgram.programId === dynasty.controlledProgramId
         const isAway = game.awayProgram.programId === dynasty.controlledProgramId

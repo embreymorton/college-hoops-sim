@@ -28,10 +28,10 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Open Planning Checkpoint.** Offseason Storytelling V1 is COMPLETE / ACCEPTED.
-The focused turnover presentation passed automated coverage and direct desktop /
-narrow-width inspection. No successor is selected; current evidence informs the
-next planning discussion but does not create a NEXT.
+**Open Planning Checkpoint.** Program Legacy V1 is COMPLETE / ACCEPTED. Team
+Details history passed canonical multi-Season projection coverage and direct
+desktop / narrow-width inspection. No successor is selected; current evidence
+informs the next planning discussion but does not create a NEXT.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
@@ -97,6 +97,16 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Program Legacy V1 — ACCEPTED
+
+Direct inspection confirmed a deliberate empty state before Season 1 history,
+then a compact all-Program Dynasty résumé and Recent Seasons trail after
+rollover. Desktop presentation kept current Team information prominent; at
+390px, the summary and recent rows stacked without body overflow while Team
+averages, results, leaders, and roster remained usable. Multi-rollover tests
+confirmed records, appearances, titles, runner-up finishes, best results, and
+newest-first capping remain pure projections over canonical archives.
 
 ### Offseason Storytelling V1 — ACCEPTED
 

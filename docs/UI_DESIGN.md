@@ -383,6 +383,7 @@ League
 ├── Team Details
 │   ├── record
 │   ├── OFF / DEF / OVR
+│   ├── Dynasty History / recent completed Seasons
 │   ├── Team averages
 │   ├── Team leaders
 │   ├── recent results
@@ -397,6 +398,15 @@ League
 ```
 
 Conference standings, Tournament field rows, Team rosters, national leader rows, Player game-log opponents, and Program links support cross-League Team/Player exploration with context-aware return navigation. These views consume derived regular-season projections and stable Universe identities rather than duplicating statistical state in Zustand.
+
+Program Legacy V1 extends Team Details for every Program with one compact
+`Dynasty History` section. A five-metric résumé, best Tournament and regular-
+season results, and the five newest completed Seasons derive entirely from the
+current Dynasty's archives. Before any completed Season, the section uses one
+quiet empty state. Current city/state and Prestige appear only as header context.
+The summary remains subordinate to current Team information and stacks without
+body overflow at the narrow target; it is not a Program Records or trophy-room
+destination.
 
 Around the Country is a compact vertical feed grouped by newest fully completed
 round. Each story has a restrained type label, linked entity headline, and one

@@ -230,6 +230,96 @@
    Team Details
    ========================================================================== */
 
+.program-legacy {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.8fr);
+  gap: var(--space-4);
+}
+
+.program-legacy__resume {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-column: 1 / -1;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+
+.program-legacy__resume > div {
+  min-width: 0;
+  padding: var(--space-4);
+  border-right: 1px solid var(--line);
+}
+
+.program-legacy__resume > div:last-child {
+  border-right: 0;
+}
+
+.program-legacy__resume dt,
+.program-legacy__highlights span,
+.program-legacy__recent h3 {
+  font-family: var(--font-display);
+  font-size: 0.64rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.program-legacy__resume dd {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-score);
+  font-size: 1.45rem;
+  color: var(--ink-0);
+}
+
+.program-legacy__highlights,
+.program-legacy__recent {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+
+.program-legacy__highlights {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.program-legacy__highlights p {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  padding: var(--space-4);
+}
+
+.program-legacy__highlights p + p {
+  border-left: 1px solid var(--line);
+}
+
+.program-legacy__recent h3 {
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.program-legacy__season {
+  display: grid;
+  grid-template-columns: 5.5rem 3.5rem minmax(0, 1fr);
+  gap: var(--space-3);
+  padding: 0.5rem var(--space-4);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.78rem;
+}
+
+.program-legacy__season:last-child {
+  border-bottom: 0;
+}
+
+.program-legacy__season span:last-child {
+  color: var(--ink-1);
+}
+
 .team-averages {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -479,7 +569,39 @@
    Responsive
    ========================================================================== */
 
+@media (max-width: 800px) {
+  .program-legacy {
+    grid-template-columns: 1fr;
+  }
+
+  .program-legacy__resume {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 560px) {
+  .program-legacy__resume {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .program-legacy__resume > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .program-legacy__highlights {
+    grid-template-columns: 1fr;
+  }
+
+  .program-legacy__highlights p + p {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  .program-legacy__season {
+    grid-template-columns: 5.25rem 3rem minmax(0, 1fr);
+    gap: var(--space-2);
+  }
+
   .league-teams-directory__row {
     grid-template-columns: 1fr auto;
     row-gap: 0.3rem;

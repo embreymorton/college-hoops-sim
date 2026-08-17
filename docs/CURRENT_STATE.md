@@ -29,7 +29,7 @@ The playable product includes:
 - a stable 32-Program Universe, 24-round schedules, standings, Quick Sim, Game
   Prep, Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
-  Details, Following, News, Alumni, Season Preview, and a completed-Season
+  Details, derived Program Dynasty histories, Following, News, Alumni, Season Preview, and a completed-Season
   first-class League History with Yearbooks and a Dynasty Record Book;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
@@ -119,10 +119,17 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — Open Planning Checkpoint.** Offseason Storytelling V1 is
-complete and accepted, and the repository contains no explicitly user-selected
-successor. Phase 7C.3 remains PLANNED but is not automatically NEXT. Fresh
-planning must review current evidence before the user selects a direction.
+**No NEXT selected — Open Planning Checkpoint.** Program Legacy V1 is complete
+and accepted, and no successor has been explicitly selected. Phase 7C.3 remains
+PLANNED but is not automatically next.
+
+Team Details now exposes every Program's history during the current Dynasty:
+cumulative completed-Season record, Tournament appearances, championships,
+runner-up finishes, best Tournament and regular-season results, and the five
+most recent completed Seasons. One pure projection derives the presentation from
+`CompletedSeasonArchive` facts and the existing canonical Tournament-outcome
+semantics. Current location and Prestige are context only; no Program-history
+state, simulation behavior, or Prestige mechanics were added.
 
 Offseason Storytelling V1 remains a pure presentation projection over the
 completed Season archive and canonical Offseason state. Every graduating senior
