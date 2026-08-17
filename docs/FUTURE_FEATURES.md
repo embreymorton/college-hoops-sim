@@ -10,8 +10,8 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 ## Selected elsewhere
 
-- **History & Recognition:** Season Archive / Yearbook, Records & Milestones,
-  and Awards & Honors are selected under Phase 7C in `ROADMAP.md`.
+- **History & Recognition:** Awards & Honors remains PLANNED under Phase 7C in
+  `ROADMAP.md`; completed Yearbooks and Records are production capabilities.
 
 The Roadmap owns its order and scope. It is not specified again here.
 
@@ -78,8 +78,8 @@ current regular-season semantics.
 - broadcast-style story packages and Season retrospectives;
 - Conference history and Tournament records.
 
-Records, Awards, and the initial Season Archive are already selected in Phase
-7C; the ideas above are extensions, not expanded 7C scope by default.
+The initial Season Archive and Records are complete; Awards remains PLANNED in
+Phase 7C. The ideas above are extensions, not expanded 7C scope by default.
 
 ## Tournament depth
 

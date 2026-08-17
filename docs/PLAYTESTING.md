@@ -28,37 +28,15 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Phase 7C.2 Records & Milestones V1 — IMPLEMENTED / PENDING MANUAL
-ACCEPTANCE.** Initial play found the query-like scope/category form less
-history-forward than the app's established leader presentation and exposed a
-noticeable Season-record delay. The implemented refinement now shows all three
-record scopes together for one selected category and shares historical
-derivation work. Follow-up play accepted that structure and speed, exposed a
-reproducible Tournament → League → Tournament Late Recruiting blocker, and
-selected a live regular-season Records refinement. The blocker is now resolved
-from canonical lifecycle state, and Records overlay active Single Game/Career
-facts plus provisional LIVE Season rates. Automated projection and navigation
-coverage is green; normal player play remains the acceptance gate.
-
-The pending build also adds strict record-breaking Single Game stories to News
-after Season 1. Automated coverage verifies historical and running baselines,
-all five categories, canonical same-round order, combined-category copy,
-generic-story deduplication, and postseason exclusion. Manual acceptance should
-confirm their prominence within the existing roughly-12-story collapsed feed
-and the Player/Program navigation round trip.
+**Open Planning Checkpoint.** Phase 7C.2 Records & Milestones V1 is COMPLETE /
+ACCEPTED / FROZEN. The Record Book, live regular-season overlay,
+record-breaking News, Player navigation, and Tournament progression recovery
+were manually accepted. No successor is selected; current evidence informs the
+next planning discussion but does not create a NEXT.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
-   create durable Player and Program attachment across normal multi-Season
-   play.
-2. Play League → History → Records across early and multi-Season Dynasties;
-   assess whether the three scopes and supplied context make legends easy to
-   discover and compare, including live updates and Player Details round trips.
-3. Reverify completed Tournament → League → Tournament → Late Recruiting in
-   normal play after the canonical handoff recovery.
-4. Trigger record-breaking games during Seasons 2+ and verify combined copy,
-   Follow markers, feed prominence, Show All behavior, and Player/Program Back
-   navigation; confirm ties and Tournament performances remain ordinary News.
-5. Monitor genuinely live WATCH items below without promoting them into work
+   create durable Player and Program attachment across normal multi-Season play.
+2. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.
@@ -120,6 +98,28 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Phase 7C.2 — Records & Milestones V1 — ACCEPTED / FROZEN
+
+Manual play accepted History as the fifth League tab with Yearbooks and Records,
+the simultaneous Single Game / Single Season / Career Top-10 presentation, one
+PTS/REB/AST/STL/BLK selector, live regular-season contributions, provisional
+`LIVE` Season rates, and stable-ID Player detail round trips. Shared derivation
+removed the earlier repeated Season-stat work; category changes are cheap view
+selection and long-history work scales approximately linearly.
+
+Record-breaking Single Game News was also accepted after Season 1: only strict
+new regular-season Dynasty highs qualify, same-game categories combine, generic
+duplicate performance stories are suppressed, and ties, Top-10-only entries,
+and postseason performances do not qualify. Existing News ranking, grouping,
+Following, and entity navigation remain intact.
+
+The Tournament → League → Tournament progression blocker found during play is
+**RESOLVED / MANUALLY VERIFIED**. Handoff visibility derives from canonical
+Tournament completion plus postseason-phase Recruiting; Continue catches up any
+missing completed Tournament Recruiting rounds before entering Late Recruiting.
+Navigation remains read-only, repeated navigation cannot consume the action,
+and the transition cannot advance twice.
 
 ### Phase 7D.3 — Recruit → Player Continuity — ACCEPTED / FROZEN
 

@@ -15,16 +15,16 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — Phase 7C.2 Records & Milestones V1
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-The completed-Season Dynasty Record Book is implemented and automated validation
-is green. Manual player acceptance remains required before 7C.2 can become
-COMPLETE / ACCEPTED / FROZEN.
+Phase 7C.2 is complete, accepted, and frozen. No authoritative successor has
+been selected. Fresh planning must review current play evidence before the user
+explicitly selects a new NEXT; phase order and the PLANNED list do not select it.
 
 ### PLANNED — remainder of Phase 7C
 
-1. **7C.3 — Awards & Honors** — sequenced after archive/records because
-   subjective award formulas may require separate design and tuning.
+1. **7C.3 — Awards & Honors** — remains valid future work whose subjective
+   formulas would require separate design and tuning; it is not NEXT.
 
 ### After Current Phase 7 Work — Fresh Planning Checkpoint
 
@@ -126,7 +126,7 @@ persistence, RNG, or simulation changes.
   League-owned, completed-Seasons-only History destination with newest-first
   Yearbooks, a controlled-Team recap, selectable league standings/leaders, and
   the full archived Tournament bracket.
-- **7C.2 Records & Milestones — IMPLEMENTED / PENDING MANUAL ACCEPTANCE:** adds
+- **7C.2 Records & Milestones — COMPLETE / ACCEPTED / FROZEN:** added
   completed-regular-season Single Game, Season, and Career Top 10 records under
   the first-class League History tab, plus strict new Single Game record stories
   in active-Season News after completed history exists.

@@ -92,7 +92,10 @@ refactor these systems during unrelated feature work:
 - Dynasty archive, offseason, roster-assembly, and rollover behavior;
 - Followed Players and Player Legacy resolver semantics; and
 - Phase 7B News, Alumni/Historical Player Details, and Season Preview; and
-- Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries.
+- Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries;
+  and
+- Phase 7C.2 Dynasty Record Book, live Records overlay, and record-breaking
+  Single Game News behavior and read-model boundaries.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -114,6 +117,11 @@ does not itself authorize implementation:
   [KNOWN_ISSUES_AND_OPTIMIZATIONS.md](KNOWN_ISSUES_AND_OPTIMIZATIONS.md).
 
 ## Current planning checkpoint
+
+**No NEXT selected — Open Planning Checkpoint.** Phase 7C.2 is complete,
+accepted, and frozen, and the repository contains no explicitly user-selected
+successor. Phase 7C.3 remains PLANNED but is not automatically NEXT. Fresh
+planning must review current evidence before the user selects a direction.
 
 **Phase 7C.1 — Season Archive / Yearbook is COMPLETE / ACCEPTED / FROZEN.**
 
@@ -175,8 +183,8 @@ Exact Recruit OVR, POT, and individual ratings remain current production
 visibility. Scouting grades, ranges, estimates, hidden information, and other
 uncertainty remain future-only.
 
-**Phase 7C.2 — Records & Milestones V1 is NEXT and IMPLEMENTED / PENDING MANUAL
-ACCEPTANCE.** History is now the fifth League tab with Yearbooks / Records
+**Phase 7C.2 — Records & Milestones V1 is COMPLETE / ACCEPTED / FROZEN.**
+History is the fifth League tab with Yearbooks / Records
 sub-navigation. Records combine completed archives with a derived live overlay:
 active regular-season games contribute authoritative Single Game results and
 Career totals, while qualifying active Season rates rank provisionally with a

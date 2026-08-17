@@ -457,6 +457,15 @@ The returned `DynastyState` preserves `controlledProgramId`, `history`, and `com
 
 The application can repeat Season → Recruiting → Postseason → Late Recruiting → Offseason → rollover. A new interactive Dynasty receives one unique creation seed; all domain systems remain deterministic from that stored seed, while explicit-seed test, inspection, and calibration workflows retain their fixed behavior. Interactive rollover clears only the controlled Program's fresh Recruiting board/offers; autonomous/default domain Recruiting plans remain unchanged for AI Programs.
 
+The explicit Tournament → Late Recruiting handoff is derived from canonical
+Tournament completion plus Recruiting remaining in its postseason phase; it
+does not depend on one exact synchronized Recruiting counter. Navigation is
+read-only, so returning to Tournament reconstructs the same eligibility. The
+Continue command idempotently synchronizes any completed Tournament rounds
+still missing from Recruiting before entering Late Recruiting. Repeated
+navigation cannot consume the action, and a completed transition cannot advance
+twice.
+
 The immutable full-snapshot architecture remained correct and JSON-serializable through accepted 50-Season Dynasty runs: no history overwrite, identity collision, Schedule/Game-ID collision, or serialization failure occurred. Full snapshots have a measurable storage cost, however. One canonical serialized `DynastyState` measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50—approximately linear growth near 3 MB per completed Season. Persistence architecture must evaluate this before production-scale saves or very long user Dynasties, without prematurely prescribing compression, pruning, database storage, or another representation.
 
 Long-run calibration changes no ownership boundary. Board + Focus + Offer,

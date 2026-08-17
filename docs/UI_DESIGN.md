@@ -451,6 +451,8 @@ navigation through the existing exploration stack, not a season-specific
 historical Player route. The archived Tournament shows the complete bracket but
 offers no active simulation or game-detail controls.
 
+### Dynasty Record Book — accepted (7C.2)
+
 Records presents one PTS/REB/AST/STL/BLK category control followed by three
 simultaneous leader-style panels: Single Game, Single Season, and Career. Each
 panel owns a compact Top 10 table with Player, value, Program, and only
