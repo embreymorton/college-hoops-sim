@@ -15,27 +15,62 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — Rotation Assistant V1 — Preserve & Fill
+### NEXT — Phase 8A — Dynamic Program Prestige V1 — Performance & Reputation
 
-Add an explicit Simple Rotation assistance action that preserves the Player MPG
-values the coach intentionally edits, deterministically fills the remaining
-minutes into a legal Rotation, and updates only the reviewable Simple draft.
-The existing Apply action remains the sole commit boundary. This milestone does
-not optimize a "best" Rotation, alter Rotation V1 eligibility or validation,
-extend Advanced Rotation, or change simulation and AI behavior.
+Begin **Phase 8 — Dynamic Dynasty World**, whose product question is how results
+accumulated during a Dynasty should change the future basketball world rather
+than only be remembered historically.
+
+Once per completed Season, when entering Offseason after Late Recruiting is
+finalized, derive an objective performance target for every Program and move
+current `Team.prestige` only a small, bounded amount toward it. Regular-season
+results establish the primary ordering and Tournament achievement contributes
+to the same effective performance signal rather than stacking a large separate
+bonus. The accepted implementation should:
+
+- keep immutable `ProgramDefinition.basePrestige` as the Dynasty starting point
+  while allowing current Prestige to evolve from its prior value without
+  automatic base-prestige regression;
+- stay on the inclusive 1–100 scale, normally move no more than approximately
+  three points per Season, reward or punish sustained results across multiple
+  Seasons, and prevent one Cinderella run or poor Season from instantly
+  redefining a Program;
+- let the next Season and next Recruiting cycle consume the updated canonical
+  `Team.prestige`; do not add a second reputation state or retune frozen
+  Recruiting formulas in this milestone;
+- show the controlled Program's previous value, new value, signed change, and a
+  short broad reason on the existing Offseason surface; and
+- add only the targeted long-run safeguard needed to assess average Prestige
+  drift, upward/downward mobility, single-Season movement, 5–10 Season
+  compounding, Program tiers, champion variety, and Recruiting snowball risk.
+
+The exact performance-to-target mapping, postseason weights, convergence rate,
+rounding, and whether the normal cap is exactly `±3` remain implementation-pass
+decisions. Prefer a league-relative résumé ordering plus a calibrated target
+curve and capped convergence; reuse existing results-only postseason ranking
+and Tournament-outcome projections where their semantics fit. Do not broaden
+8A into facilities, finances, coaching, transfers, realignment, or Recruiting
+redesign.
+
+### Rotation Assistant V1 — IMPLEMENTED / AWAITING MANUAL ACCEPTANCE
+
+The Preserve & Fill domain operation, Simple Rotation draft integration, player
+feedback, and automated coverage are present in production. It preserves edited
+MPG, deterministically fills a legal reviewable draft, and leaves Apply as the
+sole commit boundary. Manual acceptance has not yet been recorded, so the
+milestone is not marked accepted or frozen.
 
 ### PLANNED — remainder of Phase 7C
 
 1. **7C.3 — Awards & Honors** — remains valid future work whose subjective
    formulas would require separate design and tuning; it is not NEXT.
 
-### After Current Phase 7 Work — Fresh Planning Checkpoint
+### Future Phase 8 work
 
-No later phase or Phase 7E is selected. After Phase 7C and Phase 7D are
-accepted, review fresh manual-play evidence and choose what the game most needs
-next. Do not automatically reopen Player Identity work or reserve a phase
-number for it. Historical research remains available in
-`PLAYER_IDENTITY_RESEARCH.md` and requires new gameplay evidence to reopen.
+No 8B, 8C, or 8D milestone is defined or selected. Phase 8A does not close
+Phase 7: Awards & Honors and other work that genuinely belongs to Dynasty
+stories, attachment, memory, recognition, or history remains valid unscheduled
+Phase 7 work.
 
 ## Numbering and sequencing policy
 

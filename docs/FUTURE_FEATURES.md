@@ -243,29 +243,11 @@ generation, and generic engine boundaries.
 
 ### Evolving Program prestige
 
-Program prestige could evolve visibly across a long Dynasty: sustained winning
-may raise it and sustained failure may lower it, with gradual changes that keep
-one Cinderella run from instantly creating an elite Program and one poor Season
-from erasing an established power. Future design may consider wins/losses,
-Conference performance, Tournament qualification and advancement,
-championships, multi-Season recent performance, and existing/historical
-prestige, but no formula or threshold is selected.
-
-The key design decision is whether dynamic prestige begins as descriptive only
-or also feeds systems such as Recruiting. Long-term success reasonably could
-change Program attractiveness, but Recruiting effects and calibration remain
-future decisions. Prestige could also influence job attractiveness and Coach-
-career opportunities if that major system is later selected.
-
-An approximately eight-Season Pine Valley rebuild supplied direct product
-evidence: meaningful quality gains, multiple Tournament appearances, and a
-#16-over-#1 upset changed the Program's visible résumé while Prestige remained
-about 36 and recruiting still appeared constrained by its original reputation.
-Any evolution should remain gradual enough to preserve Program identity and
-weight sustained success more than one Cinderella result; decline may also have
-consequences. If Prestige becomes dynamic, showing its current value on a
-frequently visited surface such as the Season Hub could make downstream effects
-easier to understand. No formula, threshold, or UI placement is selected.
+Dynamic Program Prestige V1 has been deliberately selected as Roadmap milestone
+8A. Its active scope and unresolved decisions now live in `ROADMAP.md`; this
+future-idea entry no longer duplicates or competes with the selected plan.
+Possible later uses such as job attractiveness remain unscheduled and are not
+part of 8A.
 
 ## Presentation and broader modes
 

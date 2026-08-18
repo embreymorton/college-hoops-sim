@@ -28,16 +28,22 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Rotation Assistant V1 — Preserve & Fill is NEXT.** The selected milestone
-responds to the observed burden of rebuilding the remainder of a Simple
-Rotation after preserving a few intentional MPG decisions. It is explicit,
-draft-only assistance around the frozen Rotation V1 contract, not Auto Coach.
+**Phase 8A — Dynamic Program Prestige V1 — Performance & Reputation is NEXT.**
+The selected milestone responds directly to the live low-Prestige rebuild
+signal: meaningful sustained results should gradually change future Program
+standing and flow through existing Recruiting, without turning one Season into
+an instant transformation.
 
-1. Verify Preserve & Fill keeps edited MPG exact, produces legal deterministic
-   drafts, and never commits before Apply.
-2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
+1. During implementation, verify bounded single-Season movement, sustained
+   upward and downward mobility, league-average stability, believable Program
+   tiers/champion variety, and no obvious Recruiting runaway over 5–10 Seasons;
+   include a smaller 25-Season drift check if the short run cannot answer it.
+2. Manually accept or reject the already implemented Rotation Assistant V1:
+   edited MPG stays exact, Fill Remaining produces a legal deterministic draft,
+   and Apply remains the only commit boundary.
+3. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
-3. Monitor genuinely live WATCH items below without promoting them into work
+4. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.
