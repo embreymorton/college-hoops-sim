@@ -183,6 +183,13 @@ either draft remain isolated. Entering Coaching and Simple discard/reset both
 rebuild aggregate MPG from the active Postseason Rotation when present,
 otherwise from the active Season Rotation.
 
+Rotation Assistant V1 adds only transient preserved-Player IDs beside that
+Simple draft. Editing a Player marks his current MPG as preserved; the explicit
+Fill Remaining operation treats those totals as hard constraints and returns a
+legal draft or structured issues. It never writes Season/Postseason state.
+Successful Apply or Discard clears preserved intent, while Apply remains the
+only canonical commit boundary.
+
 Projected Starting Five is another pure read boundary over committed Rotation
 V1. `deriveProjectedStartingFive(team, rotation)` returns Player IDs keyed by
 canonical `Position`; it stores no starter fact and has no simulation effect.

@@ -142,7 +142,9 @@ Advanced remains available for exact positional control and is unchanged.
 SimpleRotationPanel
 ├── budget header — "N / 200 MINUTES" + a live under/over hint
 │   ("Assign N more minutes" / "Remove N minutes" / "Up to date.")
-├── Discard Changes / Apply Rotation
+├── Fill Remaining / Discard Changes / Apply Rotation
+│   (edited MPG displays a Locked cue and remains exact during explicit Fill;
+│    the assistant result remains a draft)
 │   (Apply enabled only at exactly 200; Discard enabled only when the
 │    draft differs from the committed Rotation)
 ├── translated compiler issues (role="status"), e.g. infeasible positional
@@ -168,6 +170,13 @@ both directions, disabled Apply while off-200, a translated
 `INFEASIBLE_POSITION_COVERAGE` failure that preserves the draft and leaves
 canonical state untouched, Discard restoring committed values, and correct
 Simple ⇄ Advanced sync after a successful commit in both Season and Postseason.
+
+Rotation Assistant V1 acceptance additionally confirmed the emphasized Fill
+Remaining action, concise draft/Apply helper copy, Locked row treatment,
+successful Apply/Discard cleanup, and unchanged impossible constraints with
+existing issue feedback. At widths up to 560px the action area uses a two-column
+grid: Fill spans the row, while Discard and Apply remain fully visible beneath
+it; the 390px page remains free of body-level horizontal overflow.
 
 ## Postseason experience — implemented
 

@@ -650,6 +650,15 @@ diagnostic boundaries. The exact-40/star-workload watchpoint is resolved and
 frozen after Phase 6E.9B. Interior/forward-heavy secondary paths and rare large
 incumbent displacement remain WATCH.
 
+Rotation Assistant V1's pure `fillSimpleRotationIntent()` operation accepts the
+current aggregate Simple draft plus the explicitly preserved Player MPG values.
+It uses the same deterministic exact position-coverage solver while treating
+preserved totals as hard constraints and preferring the existing draft for all
+other Player minutes. Success returns a validated 200-minute `RotationV1` for
+review; invalid totals or infeasible coverage return structured issues and no
+Rotation. The operation consumes no RNG and does not mutate or commit its
+inputs.
+
 ## Implemented v0.1 derived strength
 
 Player offense and defense are pure, deterministic functions of current attributes and position. They accept no RNG, do not mutate inputs, and are never stored on Player. Current attributes retain their shared validation requirement: every rating must be finite and within the inclusive 40–99 range. Every positional weight set sums to `1.00`.

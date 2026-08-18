@@ -38,12 +38,9 @@ an instant transformation.
    upward and downward mobility, league-average stability, believable Program
    tiers/champion variety, and no obvious Recruiting runaway over 5–10 Seasons;
    include a smaller 25-Season drift check if the short run cannot answer it.
-2. Manually accept or reject the already implemented Rotation Assistant V1:
-   edited MPG stays exact, Fill Remaining produces a legal deterministic draft,
-   and Apply remains the only commit boundary.
-3. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
+2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
-4. Monitor genuinely live WATCH items below without promoting them into work
+3. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 This priority list is evidence guidance, not an independent sequencing decision.
@@ -160,6 +157,18 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Rotation Assistant V1 — ACCEPTED / FROZEN
+
+Manual Simple Rotation acceptance confirmed that edited MPG receives a clear
+Locked treatment, Fill Remaining preserves those values exactly while producing
+a legal 200-minute draft, and canonical Rotation changes only after Apply.
+Apply and Discard both clear transient locked state; Discard restores the last
+committed values. An over-constrained preserved draft kept every locked value,
+disabled Apply, showed the existing minute-total feedback, and left canonical
+state unchanged. Desktop presentation remained clear, and a small acceptance
+fix made the three actions fully reachable without horizontal overflow at
+390px.
 
 ### Program Legacy V1 — ACCEPTED / FROZEN
 

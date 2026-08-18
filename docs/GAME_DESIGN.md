@@ -110,6 +110,14 @@ automatically become 40-minute flexible defaults. Manual legal assignments may
 still reach 40. Exact constants, validation, and behavioral evidence live in
 `SIMULATION.md`.
 
+In Simple Rotation, **Fill Remaining** is explicit draft assistance. MPG values
+the coach edits are visibly locked, remain exact during the fill, and the rest
+of the roster is completed into a legal 200-minute Rotation when possible.
+Nothing becomes canonical until **Apply Rotation**; **Discard Changes** restores
+the committed Rotation. Impossible locked constraints are never overridden and
+instead retain the draft with player-facing correction feedback. Advanced
+Rotation and AI Rotation strategy are unchanged.
+
 ## Initial derived team strength
 
 Current ability can differ meaningfully between offense and defense. Positional context changes how attributes translate into each rating: perimeter creation and defense matter more for guards, while finishing, interior defense, and rebounding matter more for frontcourt players.

@@ -52,13 +52,14 @@ and Tournament-outcome projections where their semantics fit. Do not broaden
 8A into facilities, finances, coaching, transfers, realignment, or Recruiting
 redesign.
 
-### Rotation Assistant V1 — IMPLEMENTED / AWAITING MANUAL ACCEPTANCE
+### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 
 The Preserve & Fill domain operation, Simple Rotation draft integration, player
-feedback, and automated coverage are present in production. It preserves edited
-MPG, deterministically fills a legal reviewable draft, and leaves Apply as the
-sole commit boundary. Manual acceptance has not yet been recorded, so the
-milestone is not marked accepted or frozen.
+feedback, and automated coverage are accepted. It preserves edited MPG,
+deterministically fills a legal reviewable draft, and leaves Apply as the sole
+commit boundary. Apply and Discard clear transient locked state; impossible
+constraints retain the draft and surface existing issue feedback without a
+silent commit.
 
 ### PLANNED — remainder of Phase 7C
 

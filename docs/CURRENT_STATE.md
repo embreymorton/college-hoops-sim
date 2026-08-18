@@ -85,8 +85,8 @@ refactor these systems during unrelated feature work:
 - Recruit Talent Distribution V1 and the production Recruit POT Candidate B
   finalizer;
 - Player Development V1;
-- Rotation V1, role-aware defaults, Simple Rotation, and Starting Five
-  projection/presentation;
+- Rotation V1, role-aware defaults, Simple Rotation, Rotation Assistant V1 —
+  Preserve & Fill, and Starting Five projection/presentation;
 - Team Strength, Game Simulation, Player box scores, and current statistical
   projections;
 - Tournament selection/seeding and progression;
@@ -132,10 +132,12 @@ Exact mapping and convergence constants remain for the implementation pass and
 targeted long-run validation. `basePrestige` remains immutable starting
 configuration; current `Team.prestige` remains the evolving canonical value.
 
-Rotation Assistant V1 — Preserve & Fill is implemented in the domain, store,
-and Simple Rotation UI with automated coverage. It remains **AWAITING MANUAL
-ACCEPTANCE**, so it is not yet accepted or frozen. Phase 7C.3 remains PLANNED
-and valid, but is not NEXT.
+Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
+The explicit action preserves edited MPG, fills the remaining legal 200-minute
+Simple draft deterministically, and never commits before Apply. Apply and
+Discard clear transient locked state; impossible constraints retain the draft
+and show existing issue feedback. Phase 7C.3 remains PLANNED and valid, but is
+not NEXT.
 
 Team Details now exposes every Program's history during the current Dynasty:
 cumulative completed-Season record, Tournament appearances, championships,
