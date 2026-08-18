@@ -2,7 +2,11 @@ import { MAX_TEAM_PRESTIGE, MIN_TEAM_PRESTIGE } from '../engine'
 import { rankAtLargeCandidates, type PostseasonState } from '../postseason'
 import type { SeasonState } from '../season'
 import type { UniverseDefinition } from '../universe'
-import type { ProgramPrestigeReason, ProgramPrestigeUpdate } from './domain'
+import type {
+  DynastyState,
+  ProgramPrestigeReason,
+  ProgramPrestigeUpdate,
+} from './domain'
 
 export type PrestigeTargetMapping = 'linear-range' | 'league-distribution'
 
@@ -17,6 +21,23 @@ export const PROGRAM_PRESTIGE_V1 = {
   annualCap: 3,
   convergenceRate: 0.15,
 } as const
+
+export interface ProgramPrestigeHistoryRow {
+  readonly label: 'Start' | `Season ${number}`
+  readonly seasonNumber: number | null
+  readonly prestige: number
+  readonly change: number | null
+  readonly current: boolean
+}
+
+export interface ProgramPrestigeHistory {
+  readonly programId: string
+  readonly startingPrestige: number
+  readonly currentPrestige: number
+  readonly dynastyChange: number
+  readonly peakPrestige: number
+  readonly rows: readonly ProgramPrestigeHistoryRow[]
+}
 
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(maximum, Math.max(minimum, value))
@@ -108,4 +129,58 @@ export function projectProgramPrestigeUpdates(
       reason: reasonFor(actualChange, floor, programIds.length),
     }
   })
+}
+
+/** Derives a Program's Prestige trail from immutable definitions and canonical snapshots. */
+export function deriveProgramPrestigeHistory(
+  dynasty: Pick<DynastyState, 'universe' | 'history' | 'activeSeason' | 'offseason'>,
+  programId: string,
+): ProgramPrestigeHistory {
+  const definition = dynasty.universe.programs.find(({ id }) => id === programId)
+  if (!definition) throw new RangeError(`Unknown Program ID "${programId}" for Prestige history.`)
+
+  const snapshots = dynasty.history
+    .slice()
+    .sort((first, second) => first.seasonNumber - second.seasonNumber)
+    .map((archive) => {
+      const team = archive.postseason.programStates[programId]?.team ??
+        archive.season.programStates[programId]?.team
+      if (!team) {
+        throw new RangeError(
+          `Completed Season ${archive.seasonNumber} is missing Program "${programId}".`,
+        )
+      }
+      return { seasonNumber: archive.seasonNumber, prestige: team.prestige }
+    })
+
+  const activeTeam = dynasty.activeSeason?.programStates[programId]?.team
+  const offseasonProgram = dynasty.offseason?.programs[programId]
+  const currentPrestige = activeTeam?.prestige ?? offseasonProgram?.prestige ??
+    snapshots.at(-1)?.prestige ?? definition.basePrestige
+  const currentSeasonNumber = dynasty.activeSeason?.seasonNumber ??
+    dynasty.offseason?.targetSeasonNumber ?? null
+  const timeline = [
+    { seasonNumber: null, prestige: definition.basePrestige },
+    ...snapshots,
+    ...(currentSeasonNumber !== null &&
+      !snapshots.some(({ seasonNumber }) => seasonNumber === currentSeasonNumber)
+      ? [{ seasonNumber: currentSeasonNumber, prestige: currentPrestige }]
+      : []),
+  ]
+  const rows = timeline.map((snapshot, index): ProgramPrestigeHistoryRow => ({
+    label: snapshot.seasonNumber === null ? 'Start' : `Season ${snapshot.seasonNumber}`,
+    seasonNumber: snapshot.seasonNumber,
+    prestige: snapshot.prestige,
+    change: index === 0 ? null : snapshot.prestige - timeline[index - 1]!.prestige,
+    current: index === timeline.length - 1,
+  }))
+
+  return {
+    programId,
+    startingPrestige: definition.basePrestige,
+    currentPrestige,
+    dynastyChange: currentPrestige - definition.basePrestige,
+    peakPrestige: Math.max(...timeline.map(({ prestige }) => prestige), currentPrestige),
+    rows,
+  }
 }

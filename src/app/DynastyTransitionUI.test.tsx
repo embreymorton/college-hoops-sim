@@ -128,6 +128,10 @@ describe('Season-complete handoff', () => {
         boundary.activePostseason,
       )
 
+      expect(
+        screen.queryByRole('button', { name: 'Continue to Late Recruiting' }),
+      ).not.toBeInTheDocument()
+
       fireEvent.click(screen.getByRole('button', { name: 'Tournament' }))
       expect(
         screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
@@ -139,6 +143,7 @@ describe('Season-complete handoff', () => {
     )
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
     expect(useDynastyStore.getState().view).toBe('recruiting')
+    expect(screen.queryByRole('button', { name: 'Continue to Late Recruiting' })).not.toBeInTheDocument()
   })
 
   it('reconstructs the canonical handoff after Tournament → League → Tournament even if Recruiting synchronization lagged', () => {
@@ -170,6 +175,29 @@ describe('Season-complete handoff', () => {
     expect(useDynastyStore.getState().view).toBe('recruiting')
     useDynastyStore.getState().enterLateRecruiting()
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
+  })
+
+  it('keeps detail routes free of the hub-only Late Recruiting card', () => {
+    const boundary = championshipBoundary()
+    const team = boundary.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!.team
+    const player = team.roster[0]!
+    useDynastyStore.setState({
+      dynasty: boundary,
+      view: 'teamDetails',
+      selectedTeamProgramId: CONTROLLED_PROGRAM_ID,
+      explorationViewHistory: ['league'],
+    })
+    const rendered = render(<App />)
+
+    expect(screen.queryByRole('button', { name: 'Continue to Late Recruiting' })).not.toBeInTheDocument()
+    useDynastyStore.setState({
+      view: 'playerDetails',
+      selectedPlayerProgramId: CONTROLLED_PROGRAM_ID,
+      selectedPlayerId: player.id,
+      explorationViewHistory: ['league', 'teamDetails'],
+    })
+    rendered.rerender(<App />)
+    expect(screen.queryByRole('button', { name: 'Continue to Late Recruiting' })).not.toBeInTheDocument()
   })
 
   it('keeps the Late Recruiting progression control available after viewing the final regular season', () => {
@@ -302,8 +330,10 @@ describe('Offseason', () => {
 
     expect(useDynastyStore.getState().view).toBe('offseason')
     expect(screen.getByRole('heading', { name: 'Departures' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Program Prestige' })).toBeInTheDocument()
-    expect(screen.getByText(/Reputation (improved|declined|held steady)/)).toBeInTheDocument()
+    expect(screen.getByText('Program Prestige')).toBeInTheDocument()
+    expect(screen.getByText(/Strong season|Tournament run|National contender|Met expectations|Disappointing season|Major decline/)).toBeInTheDocument()
+    expect(document.querySelector('.offseason-header .offseason-prestige')).toBeInTheDocument()
+    expect(document.querySelector('.prestige-update')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Player Development' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Incoming Class' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Next Season Roster' })).toBeInTheDocument()

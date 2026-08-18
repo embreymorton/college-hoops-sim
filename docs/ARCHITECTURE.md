@@ -371,6 +371,11 @@ The transition rejects incomplete regular seasons, incomplete Tournaments, missi
 
 `CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, Program Legacy, the Season Yearbook, and the 7C.2 Record Book are pure projections over those facts; awards are not implemented. Program Legacy aggregates any stable Program ID across completed archives for Team Details, reusing canonical regular-season record and Tournament-outcome queries; it stores no Program-history facts and does not infer historical Prestige.
 
+Team Details' Prestige history is likewise a pure projection: immutable
+`basePrestige` supplies Start, completed Season Team snapshots supply historical
+Season values, and active Team/Offseason Prestige supplies current context.
+No mutable Prestige-history collection exists.
+
 Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
 
 For each Program, offseason construction uses the latest competitive Team snapshot: the Postseason Team for a qualified Program, otherwise its regular-season Team. `Team.prestige` is copied unchanged. Seniors are omitted; non-seniors are developed and advanced. The implementation guarantees returning Player IDs remain unique across the Universe.
@@ -467,7 +472,8 @@ The application can repeat Season → Recruiting → Postseason → Late Recruit
 The explicit Tournament → Late Recruiting handoff is derived from canonical
 Tournament completion plus Recruiting remaining in its postseason phase; it
 does not depend on one exact synchronized Recruiting counter. Navigation is
-read-only, so returning to Tournament reconstructs the same eligibility. The
+read-only, so returning to the Season/Postseason hub reconstructs the pending
+action from canonical state without displaying it on unrelated routes. The
 Continue command idempotently synchronizes any completed Tournament rounds
 still missing from Recruiting before entering Late Recruiting. Repeated
 navigation cannot consume the action, and a completed transition cannot advance

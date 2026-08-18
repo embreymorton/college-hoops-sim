@@ -2,13 +2,14 @@ import { calculateTeamStrength } from '../engine'
 import {
   ExplorationBackButton,
   ProgramLegacySection,
+  ProgramPrestigeHistory,
   RecentResultsSection,
   TeamAverages,
   TeamDetailsHeader,
   TeamLeadersStrip,
   TeamStatsTable,
 } from '../components'
-import { deriveProgramLegacy } from '../dynasty'
+import { deriveProgramLegacy, deriveProgramPrestigeHistory } from '../dynasty'
 import {
   deriveConferenceRecord,
   deriveProgramPlayerSeasonStats,
@@ -64,6 +65,7 @@ export function TeamDetailsScreen() {
   const conferenceRecord = deriveConferenceRecord(season, selectedTeamProgramId)
   const strength = calculateTeamStrength(programState.team, programState.rotation)
   const programLegacy = deriveProgramLegacy(dynasty, selectedTeamProgramId)
+  const prestigeHistory = deriveProgramPrestigeHistory(dynasty, selectedTeamProgramId)
   const teamStats = deriveTeamSeasonStats(season, selectedTeamProgramId)
   const teamLeaders = deriveTeamPlayerLeaders(season, selectedTeamProgramId)
   const playerStats = deriveProgramPlayerSeasonStats(season, selectedTeamProgramId)
@@ -108,6 +110,7 @@ export function TeamDetailsScreen() {
         <h2 id="program-legacy-heading" className="section-title">
           Dynasty History
         </h2>
+        <ProgramPrestigeHistory history={prestigeHistory} />
         <ProgramLegacySection legacy={programLegacy} />
       </section>
 

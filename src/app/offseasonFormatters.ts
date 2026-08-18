@@ -17,12 +17,12 @@ import {
 } from '../dynasty'
 
 const PRESTIGE_REASON_COPY: Readonly<Record<ProgramPrestigeReason, string>> = {
-  'national-contender': 'Reputation improved after a national contender season.',
-  'tournament-run': 'Reputation improved after a strong Tournament run.',
-  'strong-season': 'Reputation improved after a strong season.',
-  'met-expectations': 'Reputation held steady after meeting expectations.',
-  'disappointing-season': 'Reputation declined after a disappointing season.',
-  'major-decline': 'Reputation declined after a major down year.',
+  'national-contender': 'National contender',
+  'tournament-run': 'Tournament run',
+  'strong-season': 'Strong season',
+  'met-expectations': 'Met expectations',
+  'disappointing-season': 'Disappointing season',
+  'major-decline': 'Major decline',
 }
 
 export function formatPrestigeReason(reason: ProgramPrestigeReason): string {

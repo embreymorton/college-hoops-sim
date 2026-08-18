@@ -64,7 +64,8 @@ and simulation use explicit seeded RNG streams; production does not use
 At a canonically completed Tournament with Recruiting synchronized through
 Period 28, the explicit Late Recruiting handoff remains available from both the
 Tournament Hub and the final regular-season review reached through normal
-navigation. Navigation does not own or clear that lifecycle eligibility.
+navigation. League, Coaching, Recruiting, and detail surfaces remain free of
+the competition-hub card. Navigation does not own or clear lifecycle eligibility.
 Handoff visibility derives from completed Tournament state plus Recruiting
 remaining in its postseason phase; the transition command synchronizes any
 lagging completed postseason Recruiting period before entering Late Recruiting,
@@ -148,8 +149,9 @@ cumulative completed-Season record, Tournament appearances, championships,
 runner-up finishes, best Tournament and regular-season results, and the five
 most recent completed Seasons. One pure projection derives the presentation from
 `CompletedSeasonArchive` facts and the existing canonical Tournament-outcome
-semantics. Current location and Prestige are context only; no Program-history
-state, simulation behavior, or Prestige mechanics were added. Programs with no
+semantics. Dynamic Prestige context now derives current, starting, net, peak,
+and a collapsed Season trail from the Program definition, archived Team
+snapshots, and current Team without adding mutable history. Programs with no
 Tournament appearances show `No Tournament Appearances` at the résumé level
 while their individual Recent Seasons still show `Did Not Qualify`. National
 Champion receives restrained presentation-only emphasis.

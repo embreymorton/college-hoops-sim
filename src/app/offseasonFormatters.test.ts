@@ -41,7 +41,7 @@ describe('Offseason Development storytelling projections', () => {
     expect(formatSignedPrestigeChange(0)).toBe('0')
     expect(formatSignedPrestigeChange(-2)).toBe('-2')
     expect(formatPrestigeReason('tournament-run')).toBe(
-      'Reputation improved after a strong Tournament run.',
+      'Tournament run',
     )
   })
   it('uses canonical before/after attributes, keeps positive gains, orders them, and caps at three', () => {

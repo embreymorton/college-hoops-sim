@@ -9,7 +9,7 @@ import {
   type TournamentRound,
 } from '../postseason'
 import { initializeUniverse, UNIVERSE_V0 } from '../universe'
-import { projectProgramPrestigeUpdates } from './prestige'
+import { deriveProgramPrestigeHistory, projectProgramPrestigeUpdates } from './prestige'
 
 let season: SeasonState
 let postseason: PostseasonState
@@ -33,6 +33,44 @@ beforeAll(() => {
 })
 
 describe('Program Prestige V1 projection', () => {
+  it('derives starting, archived, current, net, and peak Prestige without stored history', () => {
+    const program = UNIVERSE_V0.programs[0]!
+    const archivedPrestige = season.programStates[program.id]!.team.prestige
+    const currentPrestige = archivedPrestige + 3
+    const activeSeason = {
+      ...season,
+      seasonNumber: 2,
+      programStates: {
+        ...season.programStates,
+        [program.id]: {
+          ...season.programStates[program.id]!,
+          team: {
+            ...season.programStates[program.id]!.team,
+            prestige: currentPrestige,
+          },
+        },
+      },
+    }
+    const history = deriveProgramPrestigeHistory({
+      universe: UNIVERSE_V0,
+      history: [{ seasonNumber: 1, season, postseason }],
+      activeSeason,
+      offseason: null,
+    }, program.id)
+
+    expect(history).toMatchObject({
+      startingPrestige: program.basePrestige,
+      currentPrestige,
+      dynastyChange: currentPrestige - program.basePrestige,
+      peakPrestige: currentPrestige,
+    })
+    expect(history.rows).toEqual([
+      { label: 'Start', seasonNumber: null, prestige: program.basePrestige, change: null, current: false },
+      { label: 'Season 1', seasonNumber: 1, prestige: archivedPrestige, change: archivedPrestige - program.basePrestige, current: false },
+      { label: 'Season 2', seasonNumber: 2, prestige: currentPrestige, change: 3, current: true },
+    ])
+  })
+
   it('is deterministic, complete, bounded, capped, and immutable', () => {
     const beforeSeason = structuredClone(season)
     const beforePostseason = structuredClone(postseason)

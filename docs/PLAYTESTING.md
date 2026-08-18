@@ -39,6 +39,11 @@ an instant transformation.
    success/failure feels meaningful across several Seasons. Automated checks
    found bounded movement, believable mobility and tiers, stable Recruiting,
    and no distribution collapse through a focused 25-Season drift run.
+   The acceptance follow-up moved this summary into the Offseason header and
+   added derived starting/net/peak and Season-by-Season context to Team Details.
+   It also strengthened canonical navigation recovery coverage after the Late
+   Recruiting defect recurred while keeping the progression card scoped to the
+   Season/Postseason hub context.
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
 3. Monitor genuinely live WATCH items below without promoting them into work

@@ -36,6 +36,7 @@ export {
 export { rolloverDynastyToNextSeason } from './rollover'
 export {
   PROGRAM_PRESTIGE_V1,
+  deriveProgramPrestigeHistory,
   projectProgramPrestigeUpdates,
 } from './prestige'
 export {
@@ -132,6 +133,8 @@ export type {
 } from './domain'
 export type {
   PrestigeTargetMapping,
+  ProgramPrestigeHistory,
+  ProgramPrestigeHistoryRow,
   ProgramPrestigeProjectionOptions,
 } from './prestige'
 export type {
