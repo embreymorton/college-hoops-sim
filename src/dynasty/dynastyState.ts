@@ -11,8 +11,13 @@ import {
   type SeasonState,
 } from '../season'
 import { validateUniverseDefinition } from '../universe'
+import type { UniverseDefinition } from '../universe'
 import { clonePostseason, cloneSeason } from './cloning'
 import { developReturningPlayer } from './development'
+import {
+  projectProgramPrestigeUpdates,
+  type ProgramPrestigeProjectionOptions,
+} from './prestige'
 import type {
   CompletedSeasonArchive,
   DynastyState,
@@ -77,14 +82,20 @@ function latestTeam(
 }
 
 function createOffseasonState(
+  universe: UniverseDefinition,
   dynastySeed: RngSeed,
   completedSeasonNumber: number,
   season: SeasonState,
   postseason: PostseasonState,
   programIds: readonly string[],
+  prestigeOptions: ProgramPrestigeProjectionOptions,
 ): OffseasonState {
   const programs: Record<string, OffseasonProgramState> = {}
   const returningIds = new Set<string>()
+  const prestigeUpdates = new Map(
+    projectProgramPrestigeUpdates(universe, season, postseason, prestigeOptions)
+      .map((update) => [update.programId, update]),
+  )
 
   for (const programId of [...programIds].sort()) {
     const seasonProgram = season.programStates[programId]
@@ -115,7 +126,8 @@ function createOffseasonState(
 
     programs[programId] = {
       programId,
-      prestige: sourceTeam.prestige,
+      prestige: prestigeUpdates.get(programId)!.newPrestige,
+      prestigeUpdate: prestigeUpdates.get(programId)!,
       returningPlayers,
     }
   }
@@ -128,7 +140,10 @@ function createOffseasonState(
 }
 
 /** Archives a fully completed year and creates temporary offseason rosters. */
-export function beginOffseason(dynasty: DynastyState): DynastyState {
+export function beginOffseason(
+  dynasty: DynastyState,
+  prestigeOptions: ProgramPrestigeProjectionOptions = {},
+): DynastyState {
   const season = dynasty.activeSeason
   const postseason = dynasty.activePostseason
   if (!season) throw new RangeError('Dynasty has no active Season to archive.')
@@ -170,11 +185,13 @@ export function beginOffseason(dynasty: DynastyState): DynastyState {
     postseason: clonePostseason(postseason),
   }
   const offseason = createOffseasonState(
+    dynasty.universe,
     dynasty.dynastySeed,
     season.seasonNumber,
     season,
     postseason,
     dynasty.universe.programs.map(({ id }) => id),
+    prestigeOptions,
   )
 
   return {

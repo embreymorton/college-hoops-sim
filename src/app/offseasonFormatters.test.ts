@@ -5,6 +5,8 @@ import {
   deriveVisibleDevelopmentGains,
   formatDevelopmentGains,
   formatSeniorCareerContext,
+  formatPrestigeReason,
+  formatSignedPrestigeChange,
   type DevelopmentRow,
 } from './offseasonFormatters'
 
@@ -34,6 +36,14 @@ const baseAttributes: Player['attributes'] = {
 }
 
 describe('Offseason Development storytelling projections', () => {
+  it('formats broad Prestige feedback without exposing model internals', () => {
+    expect(formatSignedPrestigeChange(3)).toBe('+3')
+    expect(formatSignedPrestigeChange(0)).toBe('0')
+    expect(formatSignedPrestigeChange(-2)).toBe('-2')
+    expect(formatPrestigeReason('tournament-run')).toBe(
+      'Reputation improved after a strong Tournament run.',
+    )
+  })
   it('uses canonical before/after attributes, keeps positive gains, orders them, and caps at three', () => {
     const before = player('gains', baseAttributes)
     const after = player('gains', {

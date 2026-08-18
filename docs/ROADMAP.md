@@ -15,7 +15,7 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — Phase 8A — Dynamic Program Prestige V1 — Performance & Reputation
+### NEXT — Phase 8A — Dynamic Program Prestige V1 — IMPLEMENTED / AWAITING MANUAL ACCEPTANCE
 
 Begin **Phase 8 — Dynamic Dynasty World**, whose product question is how results
 accumulated during a Dynasty should change the future basketball world rather
@@ -51,6 +51,13 @@ curve and capped convergence; reuse existing results-only postseason ranking
 and Tournament-outcome projections where their semantics fit. Do not broaden
 8A into facilities, finances, coaching, transfers, realignment, or Recruiting
 redesign.
+
+Implementation selects the canonical starting Prestige distribution as the
+league-relative target curve, Tournament advancement floors effective rank,
+and 15% capped convergence with a maximum annual movement of three. Automated,
+responsive, 3-seed × 10-Season, and 25-Season drift checks are green. Manual
+Dynasty acceptance remains required before this milestone can be marked
+COMPLETE / ACCEPTED / FROZEN.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 

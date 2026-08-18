@@ -28,16 +28,17 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Phase 8A — Dynamic Program Prestige V1 — Performance & Reputation is NEXT.**
+**Phase 8A — Dynamic Program Prestige V1 is IMPLEMENTED / AWAITING MANUAL ACCEPTANCE.**
 The selected milestone responds directly to the live low-Prestige rebuild
 signal: meaningful sustained results should gradually change future Program
 standing and flow through existing Recruiting, without turning one Season into
 an instant transformation.
 
-1. During implementation, verify bounded single-Season movement, sustained
-   upward and downward mobility, league-average stability, believable Program
-   tiers/champion variety, and no obvious Recruiting runaway over 5–10 Seasons;
-   include a smaller 25-Season drift check if the short run cannot answer it.
+1. Manually verify that the Offseason Prestige summary feels clear, zero change
+   is understandable, one result does not feel transformative, and sustained
+   success/failure feels meaningful across several Seasons. Automated checks
+   found bounded movement, believable mobility and tiers, stable Recruiting,
+   and no distribution collapse through a focused 25-Season drift run.
 2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
 3. Monitor genuinely live WATCH items below without promoting them into work

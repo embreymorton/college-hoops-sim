@@ -24,6 +24,7 @@ import { UNIVERSE_V0 } from '../universe'
 import {
   autoFinalizeRecruiting,
   beginOffseason,
+  deriveBaseRecruitAttraction,
   rolloverDynastyToNextSeason,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
@@ -160,6 +161,27 @@ describe('Dynasty Season Rollover V0', () => {
     expect(recruiting.recruits).not.toEqual(
       canonical.completedRecruitingHistory[0]!.recruitingState.recruits,
     )
+    const programId = first.controlledProgramId
+    const recruit = recruiting.recruits[0]!
+    const baselineAttraction = deriveBaseRecruitAttraction(first, recruit, programId)
+    const higherPrestige = {
+      ...first,
+      activeSeason: {
+        ...first.activeSeason!,
+        programStates: {
+          ...first.activeSeason!.programStates,
+          [programId]: {
+            ...first.activeSeason!.programStates[programId]!,
+            team: {
+              ...first.activeSeason!.programStates[programId]!.team,
+              prestige: first.activeSeason!.programStates[programId]!.team.prestige + 1,
+            },
+          },
+        },
+      },
+    }
+    expect(deriveBaseRecruitAttraction(higherPrestige, recruit, programId))
+      .toBeGreaterThan(baselineAttraction)
     for (const [programId, program] of Object.entries(recruiting.programs)) {
       const seniors = first.activeSeason!.programStates[programId]!.team.roster
         .filter(({ classYear }) => classYear === 'SR')

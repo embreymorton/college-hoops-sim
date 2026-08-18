@@ -121,16 +121,20 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT — Phase 8A — Dynamic Program Prestige V1 — Performance & Reputation.**
+**NEXT — Phase 8A — Dynamic Program Prestige V1 — IMPLEMENTED / AWAITING MANUAL ACCEPTANCE.**
 This starts **Phase 8 — Dynamic Dynasty World** without closing Phase 7 or
 selecting any later Phase 8 milestone. The bounded V1 will update each
 Program's current Prestige once per completed Season at the Offseason boundary,
 move it slowly toward a results-based target that includes Tournament
 achievement, carry the new value into the next Season and existing Recruiting
 systems, and explain the controlled Program's change on the Offseason surface.
-Exact mapping and convergence constants remain for the implementation pass and
-targeted long-run validation. `basePrestige` remains immutable starting
-configuration; current `Team.prestige` remains the evolving canonical value.
+The implementation ranks completed regular-season results, applies bounded
+Tournament advancement floors, maps effective rank onto the canonical starting
+Prestige distribution, and moves 15% toward that target with symmetric rounding
+and an annual cap of three. `basePrestige` remains immutable starting
+configuration; current `Team.prestige` is updated in Offseason, rolls into the
+next Team, and naturally feeds the existing Recruiting cycle. Automated and
+targeted long-run checks are green; manual acceptance is still outstanding.
 
 Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
 The explicit action preserves edited MPG, fills the remaining legal 200-minute

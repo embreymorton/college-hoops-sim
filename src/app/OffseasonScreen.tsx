@@ -16,6 +16,8 @@ import {
   derivePositionCounts,
   deriveRosterAverageOverall,
   formatAverage,
+  formatPrestigeReason,
+  formatSignedPrestigeChange,
 } from './offseasonFormatters'
 
 /** The turnover report: who left, who improved, who arrived, what's next. */
@@ -100,6 +102,25 @@ export function OffseasonScreen() {
           {actionError}
         </p>
       )}
+
+      <section className="section" aria-labelledby="prestige-heading">
+        <h2 id="prestige-heading" className="section-title">Program Prestige</h2>
+        <div className="prestige-update" data-change={
+          offseasonProgram.prestigeUpdate.change > 0
+            ? 'positive'
+            : offseasonProgram.prestigeUpdate.change < 0 ? 'negative' : 'unchanged'
+        }>
+          <p className="prestige-update__values">
+            <span>{offseasonProgram.prestigeUpdate.previousPrestige}</span>
+            <span aria-hidden="true">→</span>
+            <span>{offseasonProgram.prestigeUpdate.newPrestige}</span>
+            <strong>{formatSignedPrestigeChange(offseasonProgram.prestigeUpdate.change)}</strong>
+          </p>
+          <p className="prestige-update__reason">
+            {formatPrestigeReason(offseasonProgram.prestigeUpdate.reason)}
+          </p>
+        </div>
+      </section>
 
       <section className="section" aria-labelledby="departures-heading">
         <h2 id="departures-heading" className="section-title">

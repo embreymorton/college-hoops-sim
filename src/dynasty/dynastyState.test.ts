@@ -109,11 +109,17 @@ describe('Dynasty offseason transition', () => {
     expect(next.activeSeason).toBeNull()
     expect(next.activePostseason).toBeNull()
     expect(next.history).toHaveLength(1)
+    expect(next.recruiting).toEqual(source.recruiting)
     expect(archive.seasonNumber).toBe(1)
     expect(archive.season.resultsByGameId).toEqual(completeSeason.resultsByGameId)
     expect(archive.postseason.resultsByGameId).toEqual(completePostseason.resultsByGameId)
     expect(archive.season.resultsByGameId).not.toBe(completeSeason.resultsByGameId)
     expect(archive.postseason.resultsByGameId).not.toBe(completePostseason.resultsByGameId)
+    for (const program of UNIVERSE_V0.programs) {
+      expect(archive.season.programStates[program.id]!.team.prestige).toBe(
+        source.activeSeason!.programStates[program.id]!.team.prestige,
+      )
+    }
     expect(deriveNationalChampion(archive.postseason)).toBeDefined()
     expect(JSON.stringify(source)).toBe(sourceSnapshot)
     expect(JSON.parse(JSON.stringify(next))).toEqual(next)
@@ -134,7 +140,9 @@ describe('Dynasty offseason transition', () => {
       const expectedReturners = sourceTeam.roster.filter(({ classYear }) => classYear !== 'SR')
 
       expect(offseason.programId).toBe(program.id)
-      expect(offseason.prestige).toBe(sourceTeam.prestige)
+      expect(offseason.prestige).toBe(offseason.prestigeUpdate.newPrestige)
+      expect(offseason.prestigeUpdate.previousPrestige).toBe(sourceTeam.prestige)
+      expect(Math.abs(offseason.prestigeUpdate.change)).toBeLessThanOrEqual(3)
       expect(offseason.returningPlayers).toHaveLength(expectedReturners.length)
       expect(offseason.returningPlayers.length).toBeLessThanOrEqual(TEAM_ROSTER_SIZE)
       expect('rotation' in offseason).toBe(false)

@@ -17,6 +17,7 @@ import {
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
   type DynastyState,
+  type ProgramPrestigeProjectionOptions,
 } from '../src/dynasty'
 import {
   getGamesForTournamentRound,
@@ -257,6 +258,7 @@ export function runDynastyCalibration(
   seed: string,
   seasonsToComplete: number,
   auditLevel: AuditLevel = 'full',
+  prestigeOptions: ProgramPrestigeProjectionOptions = {},
 ): DynastyRunResult {
   let dynasty = createDynasty(seed)
   const seasons: SeasonTalentMetrics[] = []
@@ -432,7 +434,7 @@ export function runDynastyCalibration(
 
       const priorSeasonSnapshots = archivedSeasonSnapshots
       const priorRecruitingSnapshots = archivedRecruitingSnapshots
-      dynasty = beginOffseason(dynasty)
+      dynasty = beginOffseason(dynasty, prestigeOptions)
       if (auditLevel === 'full' && (
         CHECKPOINTS.has(season.seasonNumber) ||
         season.seasonNumber === seasonsToComplete

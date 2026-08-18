@@ -335,6 +335,30 @@ Validation checks Player IDs/names, accepted position-specific height ranges, va
 
 One accepted 5C.1 canonical inspection observed 290 returners and 94 commitments, producing 384 Players across 32 of 32 exact 12-Player rosters. It found 384 unique active IDs, zero changed returner or Recruit-enrollment IDs, and zero duplicates. Completed Season history, completed Recruiting history, and Offseason input all remained unchanged. These returner/commitment counts describe that sample, not fixed future distributions.
 
+## Implemented Dynamic Program Prestige V1
+
+Once per completed Season, `beginOffseason()` ranks all 32 Programs with the
+accepted results-only regular-season résumé ordering. Tournament achievement
+can only improve that effective rank: qualification floors it at the top 16,
+then wins floor it at the top 8, top 4, top 2, and top 1. Effective rank maps to
+the corresponding percentile in the Universe's immutable starting Prestige
+distribution. Current Prestige moves 15% toward that target using deterministic
+symmetric rounding, clamped to an annual maximum of three and the inclusive
+1–100 domain. There is no Program-specific pull toward `basePrestige`.
+
+The completed Recruiting class is already finalized before this boundary. The
+new Prestige enters canonical Offseason state, rollover copies it to the next
+Team, and the following Recruiting cycle reads it through existing formulas.
+Archived Season Teams retain their historical Prestige snapshots.
+
+Candidate comparison favored distribution targets with the gap-sensitive cap
+of three over a linear curve or cap of two. A 3-seed × 10-Season run retained
+14 unique champions, `0.829` Prestige/Team-OVR correlation, no class-fill or
+identity failures, and no premium-Recruit monopoly. A focused 25-Season seed
+ended at mean `67.75` versus the starting `66.47`, range `45–83`, 15 unique
+champions, and zero lifecycle failures. The small upward drift remains a manual
+acceptance WATCH item rather than an automatic tuning trigger.
+
 ## Implemented Dynasty Season Rollover V0
 
 `rolloverDynastyToNextSeason()` is the atomic pure orchestration boundary. It requires no active Season/Postseason, a prepared Offseason, exactly one matching completed Season archive and finalized Recruiting class, unique Season/Recruiting history keys, finalized active Recruiting equal to its historical snapshot, compatible seasons/Programs, and a valid roster assembly. Failure returns no partial Dynasty and mutates no input.

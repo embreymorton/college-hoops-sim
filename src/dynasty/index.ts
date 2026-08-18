@@ -35,6 +35,10 @@ export {
 } from './rosterAssembly'
 export { rolloverDynastyToNextSeason } from './rollover'
 export {
+  PROGRAM_PRESTIGE_V1,
+  projectProgramPrestigeUpdates,
+} from './prestige'
+export {
   addRecruitingBoardTarget,
   alignGeneratedRecruitingFocus,
   buildDefaultRecruitingBoard,
@@ -120,10 +124,16 @@ export type {
   OffseasonProgramState,
   OffseasonRosterOutlook,
   OffseasonState,
+  ProgramPrestigeReason,
+  ProgramPrestigeUpdate,
   PlayerAttributeDevelopmentGain,
   PlayerDevelopmentSummary,
   ProjectedRosterOutlook,
 } from './domain'
+export type {
+  PrestigeTargetMapping,
+  ProgramPrestigeProjectionOptions,
+} from './prestige'
 export type {
   PlayerCareerHistory,
   PlayerCareerSeasonRow,

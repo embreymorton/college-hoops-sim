@@ -302,6 +302,8 @@ describe('Offseason', () => {
 
     expect(useDynastyStore.getState().view).toBe('offseason')
     expect(screen.getByRole('heading', { name: 'Departures' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Program Prestige' })).toBeInTheDocument()
+    expect(screen.getByText(/Reputation (improved|declined|held steady)/)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Player Development' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Incoming Class' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Next Season Roster' })).toBeInTheDocument()

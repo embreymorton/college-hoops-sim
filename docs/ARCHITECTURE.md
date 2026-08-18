@@ -375,7 +375,7 @@ Stable identity does not mean shared mutable state. A returning Player may appea
 
 For each Program, offseason construction uses the latest competitive Team snapshot: the Postseason Team for a qualified Program, otherwise its regular-season Team. `Team.prestige` is copied unchanged. Seniors are omitted; non-seniors are developed and advanced. The implementation guarantees returning Player IDs remain unique across the Universe.
 
-`OffseasonState` contains completed and target season numbers plus one `OffseasonProgramState` per Program. Each Program state contains `programId`, preserved current prestige, and returning Players. It deliberately contains no Rotation and is not a `Team`:
+`OffseasonState` contains completed and target season numbers plus one `OffseasonProgramState` per Program. Each Program state contains `programId`, the updated current Prestige and its deterministic transition summary, and returning Players. `beginOffseason()` derives the Prestige update from the completed Season and Tournament after the completed Recruiting cycle, while the newly cloned archive retains the historical Team snapshot. It deliberately contains no Rotation and is not a `Team`:
 
 ```text
 12 current Players − 3 seniors

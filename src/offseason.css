@@ -10,6 +10,35 @@
   margin-bottom: var(--space-1);
 }
 
+.prestige-update {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  border-left: 3px solid var(--border-strong);
+  background: var(--surface-1);
+}
+
+.prestige-update[data-change='positive'] { border-left-color: var(--accent); }
+.prestige-update[data-change='negative'] { border-left-color: var(--line-strong); }
+
+.prestige-update__values {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+  font-family: var(--font-score);
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.prestige-update__values strong { margin-left: var(--space-2); color: var(--ink-1); }
+.prestige-update[data-change='positive'] .prestige-update__values strong { color: var(--accent); }
+.prestige-update[data-change='negative'] .prestige-update__values strong { color: var(--ink-0); }
+.prestige-update__reason { margin: 0; color: var(--ink-1); }
+
 /* ==========================================================================
    Departures
    ========================================================================== */
@@ -133,6 +162,8 @@
   .offseason-position-balance {
     white-space: normal;
   }
+
+  .prestige-update { align-items: flex-start; flex-direction: column; gap: var(--space-2); }
 
   .biggest-leap {
     align-items: flex-start;

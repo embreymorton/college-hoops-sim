@@ -77,6 +77,16 @@ describe('Dynasty long-run calibration metrics', () => {
         ([programId, { team }]) => [programId, {
           programId,
           prestige: team.prestige,
+          prestigeUpdate: {
+            programId,
+            previousPrestige: team.prestige,
+            targetPrestige: team.prestige,
+            newPrestige: team.prestige,
+            change: 0,
+            regularSeasonRank: 1,
+            effectivePerformanceRank: 1,
+            reason: 'met-expectations',
+          },
           returningPlayers: team.roster
             .filter(({ classYear }) => classYear !== 'SR')
             .map((player) => developReturningPlayer({
