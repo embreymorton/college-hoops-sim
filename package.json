@@ -48,6 +48,7 @@
     "sim:dynasty-standard": "node --import tsx scripts/runDynastyLongRun.ts --preset standard",
     "sim:dynasty-acceptance": "node --import tsx scripts/runDynastyLongRun.ts --preset acceptance",
     "sim:dynasty-equilibrium": "node --import tsx scripts/runDynastyLongRun.ts --preset equilibrium",
+    "sim:elite-dominance-audit": "node --import tsx scripts/eliteProgramDominanceAudit.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

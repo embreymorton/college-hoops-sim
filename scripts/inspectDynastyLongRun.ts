@@ -32,8 +32,10 @@ import {
 import { generateRegularSeasonSchedule, validateRegularSeasonSchedule } from '../src/schedule'
 import {
   initializeSeason,
+  deriveProgramRecord,
   simulatePendingGamesInRound,
 } from '../src/season'
+import { rankAtLargeCandidates } from '../src/postseason'
 import { initializeUniverse, UNIVERSE_V0 } from '../src/universe'
 import {
   PRESTIGE_BANDS,
@@ -125,6 +127,25 @@ export interface ProgramRosterTrace {
   readonly players: readonly RosterPlayerTrace[]
 }
 
+export interface RegularSeasonGameTrace {
+  readonly seasonNumber: number
+  readonly homeProgramId: string
+  readonly awayProgramId: string
+  readonly homeStrength: number
+  readonly awayStrength: number
+  readonly winnerId: string
+  readonly margin: number
+}
+
+export interface ProgramSeasonOutcomeTrace {
+  readonly seasonNumber: number
+  readonly programId: string
+  readonly wins: number
+  readonly losses: number
+  readonly resumeRank: number
+  readonly tournamentSeed: number | null
+}
+
 interface StructuralHealth {
   invalidRosters: number
   invalidRotations: number
@@ -162,6 +183,8 @@ export interface DynastyRunResult {
   readonly rotationMinutes: readonly RotationMinuteObservation[]
   readonly generatedRecruits: readonly GeneratedRecruitTrace[]
   readonly rosterTraces: readonly ProgramRosterTrace[]
+  readonly regularSeasonGames: readonly RegularSeasonGameTrace[]
+  readonly programSeasonOutcomes: readonly ProgramSeasonOutcomeTrace[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -310,6 +333,8 @@ export function runDynastyCalibration(
   const rotationMinutes: RotationMinuteObservation[] = []
   const generatedRecruits: GeneratedRecruitTrace[] = []
   const rosterTraces: ProgramRosterTrace[] = []
+  const regularSeasonGames: RegularSeasonGameTrace[] = []
+  const programSeasonOutcomes: ProgramSeasonOutcomeTrace[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -374,6 +399,21 @@ export function runDynastyCalibration(
       }
       const seasonMetrics = extractSeasonTalentMetrics(season)
       seasons.push(seasonMetrics)
+      const strengthByProgramId = new Map(
+        seasonMetrics.teams.map(({ programId, overall }) => [programId, overall]),
+      )
+      regularSeasonGames.push(...season.schedule.games.map((game) => {
+        const result = season.resultsByGameId[game.id]!
+        return {
+          seasonNumber: season.seasonNumber,
+          homeProgramId: game.homeProgramId,
+          awayProgramId: game.awayProgramId,
+          homeStrength: strengthByProgramId.get(game.homeProgramId)!,
+          awayStrength: strengthByProgramId.get(game.awayProgramId)!,
+          winnerId: result.winnerId,
+          margin: Math.abs(result.homeScore - result.awayScore),
+        }
+      }))
       rotationMinutes.push(...extractSeasonRotationMinuteObservations(season, seed))
       graduating.push(...playerRecords(
         season.seasonNumber,
@@ -389,6 +429,27 @@ export function runDynastyCalibration(
       }
 
       const initializedPostseason = initializePostseason({ universe: dynasty.universe, season })
+      const resumeOrder = rankAtLargeCandidates(
+        season,
+        Object.keys(season.programStates),
+      )
+      const resumeRankByProgramId = new Map(
+        resumeOrder.map((programId, index) => [programId, index + 1]),
+      )
+      const tournamentSeedByProgramId = new Map(
+        initializedPostseason.field.map(({ programId, seed }) => [programId, seed]),
+      )
+      programSeasonOutcomes.push(...Object.keys(season.programStates).map((programId) => {
+        const record = deriveProgramRecord(season, programId)
+        return {
+          seasonNumber: season.seasonNumber,
+          programId,
+          wins: record.wins,
+          losses: record.losses,
+          resumeRank: resumeRankByProgramId.get(programId)!,
+          tournamentSeed: tournamentSeedByProgramId.get(programId) ?? null,
+        }
+      }))
       let baselinePostseason: PostseasonState = {
         ...initializedPostseason,
         field: seedSelectedFieldWithProtectedAutomatics(
@@ -589,6 +650,8 @@ export function runDynastyCalibration(
     rotationMinutes,
     generatedRecruits,
     rosterTraces,
+    regularSeasonGames,
+    programSeasonOutcomes,
     health,
     rollovers,
   }

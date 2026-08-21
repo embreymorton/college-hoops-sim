@@ -13,6 +13,16 @@ describe('Tournament balance diagnostic metrics', () => {
     const observation = first.tournamentBalance[0]!
 
     expect(second.tournamentBalance).toEqual(first.tournamentBalance)
+    expect(second.regularSeasonGames).toEqual(first.regularSeasonGames)
+    expect(second.programSeasonOutcomes).toEqual(first.programSeasonOutcomes)
+    expect(first.regularSeasonGames).toHaveLength(384)
+    expect(first.programSeasonOutcomes).toHaveLength(32)
+    expect(first.programSeasonOutcomes.map(({ resumeRank }) => resumeRank).sort(
+      (a, b) => a - b,
+    )).toEqual(Array.from({ length: 32 }, (_, index) => index + 1))
+    expect(first.regularSeasonGames.every((game) =>
+      game.winnerId === game.homeProgramId || game.winnerId === game.awayProgramId,
+    )).toBe(true)
     expect(observation.seasonNumber).toBe(1)
     expect(observation.field).toHaveLength(16)
     expect(observation.games).toHaveLength(15)
