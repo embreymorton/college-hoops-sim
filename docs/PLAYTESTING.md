@@ -184,6 +184,37 @@ accepted Development behavior, preserving mobility and durable hierarchy. Keep
 Phase 8A **IMPLEMENTED / AWAITING MANUAL ACCEPTANCE** and do not select a later
 milestone.
 
+The focused expectation-relative comparison is now complete and the tested
+candidate is **REJECTED**. A small QUICK screen selected rank-surprise bands of
+`5 / 11 / 17` (deadband / two-point / three-point threshold) for the paired
+three-seed × 25-Season run. Expected rank came from current Prestige's
+league-relative position in the immutable starting distribution; regular-season
+résumé rank plus the existing bounded Tournament floors supplied effective
+actual rank. The candidate made `50.6%` of annual changes zero and hit `±3` in
+only `3.6%`, but by Season 25 its pooled Prestige SD/range had fallen to
+`8.87 / 44`, with no `85+` or `90+` Programs. Current 8A finished at
+`9.76 / 45`, with four `85+` Programs; static remained `13.31 / 55`.
+
+The candidate preserved the low tail better than current 8A (`5` Programs at
+`45` or lower and `2` at `39` or lower, versus `2 / 0`) and retained meaningful
+mobility (`17` ending observations at `+10`, one at `+20`, and eight at `-10`
+across 96 seed/Program endings). It did not preserve the elite tail. Team
+hierarchy stayed close to current 8A (28 `85+`, three `88+`, zero `90+` Team
+occurrences; maximum `89.52`), Recruiting remained healthy but below static
+concentration, and champion diversity remained broad (`11 / 16 / 16` unique
+champions; leading shares `16% / 20% / 16%`). No lifecycle failure occurred.
+
+The failure is structural rather than a need for more threshold search: the
+highest starting tier maps to expected rank `#1`, so repeated credible top-eight
+Seasons exert one-way downward pressure, while the lowest tier has mirrored
+one-way upward pressure. A final wider `7 / 13 / 19` QUICK check only delayed
+the problem; Great Lakes declined from `91` to `77` over 25 Seasons. Current
+Prestige plus an expectation deadband is therefore **not enough memory under
+this exact-rank mapping**. Do not promote the candidate or silently accept 8A.
+A follow-up may test a derived two- or three-Season résumé only if it directly
+addresses this persistence failure; do not implement that hybrid as part of
+the completed comparison.
+
 ### Low-prestige rebuild and mature-league ceiling
 
 Pine Valley has felt like a genuine multi-year grind, and mature leagues have

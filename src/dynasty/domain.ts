@@ -38,6 +38,7 @@ export interface ProgramPrestigeUpdate {
   readonly newPrestige: number
   readonly change: number
   readonly regularSeasonRank: number
+  readonly expectedPerformanceRank: number
   readonly effectivePerformanceRank: number
   readonly reason: ProgramPrestigeReason
 }

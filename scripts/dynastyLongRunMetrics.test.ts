@@ -84,6 +84,7 @@ describe('Dynasty long-run calibration metrics', () => {
             newPrestige: team.prestige,
             change: 0,
             regularSeasonRank: 1,
+            expectedPerformanceRank: 1,
             effectivePerformanceRank: 1,
             reason: 'met-expectations',
           },

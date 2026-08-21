@@ -37,7 +37,9 @@ export {
 export { rolloverDynastyToNextSeason } from './rollover'
 export {
   PROGRAM_PRESTIGE_V1,
+  EXPECTATION_RELATIVE_PRESTIGE_CANDIDATE,
   deriveProgramPrestigeHistory,
+  expectedRankForPrestige,
   projectProgramPrestigeUpdates,
 } from './prestige'
 export {
@@ -133,7 +135,9 @@ export type {
   ProjectedRosterOutlook,
 } from './domain'
 export type {
+  PrestigeSurpriseBands,
   PrestigeTargetMapping,
+  PrestigeUpdateModel,
   ProgramPrestigeHistory,
   ProgramPrestigeHistoryRow,
   ProgramPrestigeProjectionOptions,

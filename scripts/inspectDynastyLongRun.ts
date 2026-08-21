@@ -126,6 +126,18 @@ export interface ProgramRosterTrace {
   readonly players: readonly RosterPlayerTrace[]
 }
 
+export interface PrestigeTransitionTrace {
+  readonly seasonNumber: number
+  readonly programId: string
+  readonly previousPrestige: number
+  readonly newPrestige: number
+  readonly change: number
+  readonly expectedRank: number
+  readonly regularSeasonRank: number
+  readonly effectiveRank: number
+  readonly tournamentWins: number | null
+}
+
 interface StructuralHealth {
   invalidRosters: number
   invalidRotations: number
@@ -163,6 +175,7 @@ export interface DynastyRunResult {
   readonly rotationMinutes: readonly RotationMinuteObservation[]
   readonly generatedRecruits: readonly GeneratedRecruitTrace[]
   readonly rosterTraces: readonly ProgramRosterTrace[]
+  readonly prestigeTransitions: readonly PrestigeTransitionTrace[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -313,6 +326,7 @@ export function runDynastyCalibration(
   const rotationMinutes: RotationMinuteObservation[] = []
   const generatedRecruits: GeneratedRecruitTrace[] = []
   const rosterTraces: ProgramRosterTrace[] = []
+  const prestigeTransitions: PrestigeTransitionTrace[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -528,6 +542,24 @@ export function runDynastyCalibration(
           },
         }
       }
+      for (const program of Object.values(dynasty.offseason!.programs)) {
+        const update = program.prestigeUpdate
+        const qualified = postseason.field.some(({ programId }) => programId === update.programId)
+        prestigeTransitions.push({
+          seasonNumber: season.seasonNumber,
+          programId: update.programId,
+          previousPrestige: update.previousPrestige,
+          newPrestige: program.prestige,
+          change: program.prestige - update.previousPrestige,
+          expectedRank: update.expectedPerformanceRank,
+          regularSeasonRank: update.regularSeasonRank,
+          effectiveRank: update.effectivePerformanceRank,
+          tournamentWins: qualified
+            ? Object.values(postseason.resultsByGameId)
+              .filter(({ winnerId }) => winnerId === update.programId).length
+            : null,
+        })
+      }
       if (auditLevel === 'full' && (
         CHECKPOINTS.has(season.seasonNumber) ||
         season.seasonNumber === seasonsToComplete
@@ -615,6 +647,7 @@ export function runDynastyCalibration(
     rotationMinutes,
     generatedRecruits,
     rosterTraces,
+    prestigeTransitions,
     health,
     rollovers,
   }

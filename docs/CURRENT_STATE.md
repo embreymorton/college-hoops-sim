@@ -140,6 +140,12 @@ targeted long-run checks are green, but the formula is not accepted: validation
 showed that it compresses both elite and weak Prestige tails. Manual acceptance
 is paused pending an expectation-relative replacement-model comparison against
 the new control of static Prestige plus accepted Candidate A Development.
+That focused comparison is complete: the tested expectation-relative exact-rank
+candidate is rejected because it compressed the elite tail even more than
+current 8A despite a majority-zero movement profile. Production remains on the
+unaccepted 8A formula. The next targeted question, without reopening accepted
+Development or Recruiting, is whether a derived two- or three-Season résumé can
+provide the missing persistence.
 
 Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
 The explicit action preserves edited MPG, fills the remaining legal 200-minute

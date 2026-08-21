@@ -2,9 +2,10 @@ import { runDynastyCalibration } from './inspectDynastyLongRun'
 import type { ProgramPrestigeProjectionOptions } from '../src/dynasty'
 
 const candidates: readonly { label: string; options: ProgramPrestigeProjectionOptions }[] = [
-  { label: 'A linear / cap 3', options: { targetMapping: 'linear-range', annualCap: 3 } },
-  { label: 'B distribution / cap 2', options: { targetMapping: 'league-distribution', annualCap: 2 } },
-  { label: 'B distribution / gap-tier cap 3', options: { targetMapping: 'league-distribution', annualCap: 3 } },
+  { label: 'Expectation relative 4 / 10 / 16', options: { updateModel: 'expectation-relative', surpriseBands: { deadband: 4, twoPointThreshold: 10, threePointThreshold: 16 } } },
+  { label: 'Expectation relative 5 / 11 / 17', options: { updateModel: 'expectation-relative', surpriseBands: { deadband: 5, twoPointThreshold: 11, threePointThreshold: 17 } } },
+  { label: 'Expectation relative 4 / 11 / 18', options: { updateModel: 'expectation-relative', surpriseBands: { deadband: 4, twoPointThreshold: 11, threePointThreshold: 18 } } },
+  { label: 'Expectation relative 7 / 13 / 19', options: { updateModel: 'expectation-relative', surpriseBands: { deadband: 7, twoPointThreshold: 13, threePointThreshold: 19 } } },
 ]
 
 function median(values: readonly number[]): number {
@@ -22,10 +23,7 @@ const selected = selectedIndex >= 0
 
 for (const candidate of selected) {
   const run = runDynastyCalibration('prestige-v1-candidate', seasons, 'light', candidate.options)
-  const movements = run.seasons.slice(1).flatMap((season, index) => {
-    const prior = new Map(run.seasons[index]!.teams.map((team) => [team.programId, team.prestige]))
-    return season.teams.map((team) => team.prestige - prior.get(team.programId)!)
-  })
+  const movements = run.prestigeTransitions.map(({ change }) => change)
   const final = run.seasons.at(-1)!.teams.map(({ prestige }) => prestige)
   const pine = run.seasons.map((season) => season.teams.find(({ programId }) => programId === 'pine-valley')!.prestige)
   const greatLakes = run.seasons.map((season) => season.teams.find(({ programId }) => programId === 'great-lakes')!.prestige)
@@ -33,7 +31,7 @@ for (const candidate of selected) {
     candidate: candidate.label,
     movement: {
       changedPercent: movements.filter(Boolean).length / movements.length,
-      atCapPercent: movements.filter((value) => Math.abs(value) === candidate.options.annualCap).length / movements.length,
+      atCapPercent: movements.filter((value) => Math.abs(value) === (candidate.options.annualCap ?? 3)).length / movements.length,
       minimum: Math.min(...movements),
       maximum: Math.max(...movements),
     },

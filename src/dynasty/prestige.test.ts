@@ -9,7 +9,11 @@ import {
   type TournamentRound,
 } from '../postseason'
 import { initializeUniverse, UNIVERSE_V0 } from '../universe'
-import { deriveProgramPrestigeHistory, projectProgramPrestigeUpdates } from './prestige'
+import {
+  deriveProgramPrestigeHistory,
+  expectedRankForPrestige,
+  projectProgramPrestigeUpdates,
+} from './prestige'
 
 let season: SeasonState
 let postseason: PostseasonState
@@ -131,5 +135,31 @@ describe('Program Prestige V1 projection', () => {
     }
     const champion = deriveNationalChampion(postseason)!
     expect(updates.find(({ programId }) => programId === champion)!.effectivePerformanceRank).toBe(1)
+  })
+
+  it('maps current Prestige deterministically onto immutable starting tiers', () => {
+    const distribution = [91, 85, 85, 70, 36]
+    expect(expectedRankForPrestige(100, distribution)).toBe(1)
+    expect(expectedRankForPrestige(91, distribution)).toBe(1)
+    expect(expectedRankForPrestige(85, distribution)).toBe(2.5)
+    expect(expectedRankForPrestige(80, distribution)).toBe(4)
+    expect(expectedRankForPrestige(1, distribution)).toBe(5)
+  })
+
+  it('supports a deterministic expectation-relative diagnostic without changing V1 defaults', () => {
+    const defaultUpdates = projectProgramPrestigeUpdates(UNIVERSE_V0, season, postseason)
+    const first = projectProgramPrestigeUpdates(UNIVERSE_V0, season, postseason, {
+      updateModel: 'expectation-relative',
+      surpriseBands: { deadband: 5, twoPointThreshold: 11, threePointThreshold: 17 },
+    })
+    const second = projectProgramPrestigeUpdates(UNIVERSE_V0, season, postseason, {
+      updateModel: 'expectation-relative',
+      surpriseBands: { deadband: 5, twoPointThreshold: 11, threePointThreshold: 17 },
+    })
+
+    expect(first).toEqual(second)
+    expect(first.some(({ change }) => change === 0)).toBe(true)
+    expect(first.every(({ change }) => Math.abs(change) <= 3)).toBe(true)
+    expect(projectProgramPrestigeUpdates(UNIVERSE_V0, season, postseason)).toEqual(defaultUpdates)
   })
 })
