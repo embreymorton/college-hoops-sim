@@ -21,7 +21,6 @@ import {
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
   type DynastyState,
-  type ProgramPrestigeProjectionOptions,
 } from '../src/dynasty'
 import {
   getGamesForTournamentRound,
@@ -126,18 +125,6 @@ export interface ProgramRosterTrace {
   readonly players: readonly RosterPlayerTrace[]
 }
 
-export interface PrestigeTransitionTrace {
-  readonly seasonNumber: number
-  readonly programId: string
-  readonly previousPrestige: number
-  readonly newPrestige: number
-  readonly change: number
-  readonly expectedRank: number
-  readonly regularSeasonRank: number
-  readonly effectiveRank: number
-  readonly tournamentWins: number | null
-}
-
 interface StructuralHealth {
   invalidRosters: number
   invalidRotations: number
@@ -175,7 +162,6 @@ export interface DynastyRunResult {
   readonly rotationMinutes: readonly RotationMinuteObservation[]
   readonly generatedRecruits: readonly GeneratedRecruitTrace[]
   readonly rosterTraces: readonly ProgramRosterTrace[]
-  readonly prestigeTransitions: readonly PrestigeTransitionTrace[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -308,8 +294,6 @@ export function runDynastyCalibration(
   seed: string,
   seasonsToComplete: number,
   auditLevel: AuditLevel = 'full',
-  prestigeOptions: ProgramPrestigeProjectionOptions = {},
-  prestigeBehavior: 'dynamic' | 'static' = 'dynamic',
 ): DynastyRunResult {
   let dynasty = createDynasty(seed)
   const seasons: SeasonTalentMetrics[] = []
@@ -326,7 +310,6 @@ export function runDynastyCalibration(
   const rotationMinutes: RotationMinuteObservation[] = []
   const generatedRecruits: GeneratedRecruitTrace[] = []
   const rosterTraces: ProgramRosterTrace[] = []
-  const prestigeTransitions: PrestigeTransitionTrace[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -518,48 +501,7 @@ export function runDynastyCalibration(
 
       const priorSeasonSnapshots = archivedSeasonSnapshots
       const priorRecruitingSnapshots = archivedRecruitingSnapshots
-      dynasty = beginOffseason(dynasty, prestigeOptions)
-      if (prestigeBehavior === 'static') {
-        // Diagnostic-only pre-8A baseline: preserve the completed production
-        // lifecycle, but prevent its projected Prestige update from reaching
-        // rollover and the next Recruiting cycle.
-        dynasty = {
-          ...dynasty,
-          offseason: {
-            ...dynasty.offseason!,
-            programs: Object.fromEntries(Object.entries(dynasty.offseason!.programs)
-              .map(([programId, program]) => [programId, {
-                ...program,
-                prestige: program.prestigeUpdate.previousPrestige,
-                prestigeUpdate: {
-                  ...program.prestigeUpdate,
-                  targetPrestige: program.prestigeUpdate.previousPrestige,
-                  newPrestige: program.prestigeUpdate.previousPrestige,
-                  change: 0,
-                  reason: 'met-expectations' as const,
-                },
-              }])),
-          },
-        }
-      }
-      for (const program of Object.values(dynasty.offseason!.programs)) {
-        const update = program.prestigeUpdate
-        const qualified = postseason.field.some(({ programId }) => programId === update.programId)
-        prestigeTransitions.push({
-          seasonNumber: season.seasonNumber,
-          programId: update.programId,
-          previousPrestige: update.previousPrestige,
-          newPrestige: program.prestige,
-          change: program.prestige - update.previousPrestige,
-          expectedRank: update.expectedPerformanceRank,
-          regularSeasonRank: update.regularSeasonRank,
-          effectiveRank: update.effectivePerformanceRank,
-          tournamentWins: qualified
-            ? Object.values(postseason.resultsByGameId)
-              .filter(({ winnerId }) => winnerId === update.programId).length
-            : null,
-        })
-      }
+      dynasty = beginOffseason(dynasty)
       if (auditLevel === 'full' && (
         CHECKPOINTS.has(season.seasonNumber) ||
         season.seasonNumber === seasonsToComplete
@@ -647,7 +589,6 @@ export function runDynastyCalibration(
     rotationMinutes,
     generatedRecruits,
     rosterTraces,
-    prestigeTransitions,
     health,
     rollovers,
   }

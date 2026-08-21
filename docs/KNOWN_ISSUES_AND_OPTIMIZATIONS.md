@@ -9,18 +9,18 @@ measured scaling risk, or validated watchpoint. Follow
 
 ## Open items
 
-### P1 — Dynamic Prestige hierarchy compression
+### P1 — Mature Dynasty hierarchy
 
 A targeted same-seed comparison confirmed two related unresolved risks. First,
 the mature roster economy compresses Team OVR even when Prestige is held at its
 starting value: three static-Prestige 25-Season runs produced no `90+` Team OVR,
 only 22 `85+` Program-Seasons out of 2,400, and a maximum of `89.25`. Second,
-Dynamic Prestige worsens mature hierarchy and independently compresses its own
+The rejected Dynamic Prestige V1 worsened mature hierarchy and independently compressed its own
 tails: at Season 25, pooled Prestige SD/range moved from `13.3`/`55` static to
 `9.3`/`38` dynamic, while pooled Team OVR SD moved from `4.00` to `3.23`.
 
-Treat this as a Phase 8A acceptance blocker, not authorization for broad
-calibration. A follow-up static-Prestige trace found adequate but scarce elite
+Phase 8A was rejected and rolled back to static Prestige. This evidence does not
+authorize broad calibration. A follow-up static-Prestige trace found adequate but scarce elite
 supply and viable Recruiting concentration: the average class contained about
 24 `85+` POT and seven `90+` POT Recruits, while the best destination averaged
 about three premium signees and Programs could stack 7–8 across two classes.
@@ -48,11 +48,11 @@ reproduced the experiment. The new static control produced Season-25 Team OVR
 mean/SD/min/max `76.97`/`4.06`/`63.40`/`84.07`, 31/3/0
 `85+`/`88+`/`90+` Program-Seasons, and a `89.52` maximum. The Development
 realization correction is resolved and frozen; zero `90+` Teams is not itself a
-failure. The remaining P1 issue is the current Dynamic Prestige formula's loss
-of durable reputation tails. Compare expectation-relative alternatives against
-the accepted static control, adding a recent 2–3 Season résumé only if needed
-for persistence. Do not create another Development variant or change Recruit
-supply, Recruiting allocation, roster lifecycle, Rotation, or Team Strength.
+failure. Expectation-relative and three-Season rolling-résumé Prestige
+experiments also failed to preserve the elite tail and are rejected. If future
+work is explicitly selected, investigate the broader mature Dynasty ecosystem
+before reconsidering Prestige from first principles. Do not treat any rejected
+formula as the successor or create another Development variant from this evidence.
 
 ### P1 — Correct Super Sim completion-summary wording
 

@@ -289,7 +289,7 @@ function theoreticalTeam(label: string, starters: number, bench: number) {
   return { label, starters, bench, playerOvrs: [...new Set(roster.map(calculateOverall))], strength: calculateTeamStrength(team, rotation) }
 }
 
-const runs = SEEDS.map((seed) => runDynastyCalibration(seed, 25, 'light', {}, 'static'))
+const runs = SEEDS.map((seed) => runDynastyCalibration(seed, 25, 'light'))
 process.stdout.write(JSON.stringify({
   seeds: SEEDS,
   acceptedStaticBaseline: acceptedStaticBaseline(runs),

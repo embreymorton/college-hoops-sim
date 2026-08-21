@@ -16,36 +16,6 @@
   gap: var(--space-6);
 }
 
-.offseason-prestige {
-  display: grid;
-  min-width: 12rem;
-  padding-right: var(--space-6);
-  border-right: 1px solid var(--line);
-}
-
-.offseason-prestige__label,
-.offseason-prestige__reason {
-  color: var(--ink-1);
-  font-size: 0.64rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.offseason-prestige__values {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  font-family: var(--font-score);
-  font-size: 1.65rem;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.offseason-prestige__values strong { margin-left: var(--space-1); color: var(--ink-1); }
-.offseason-prestige[data-change='positive'] .offseason-prestige__values strong { color: var(--accent); }
-.offseason-prestige__reason { letter-spacing: 0; text-transform: none; }
 
 /* ==========================================================================
    Departures
@@ -178,7 +148,6 @@
     width: 100%;
   }
 
-  .offseason-prestige { min-width: 0; padding-right: var(--space-4); }
 
   .biggest-leap {
     align-items: flex-start;

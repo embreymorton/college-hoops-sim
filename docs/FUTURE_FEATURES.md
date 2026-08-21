@@ -243,11 +243,14 @@ generation, and generic engine boundaries.
 
 ### Evolving Program prestige
 
-Dynamic Program Prestige V1 has been deliberately selected as Roadmap milestone
-8A. Its active scope and unresolved decisions now live in `ROADMAP.md`; this
-future-idea entry no longer duplicates or competes with the selected plan.
-Possible later uses such as job attractiveness remain unscheduled and are not
-part of 8A.
+Dynamic Program Prestige remains an unscheduled concept after Phase 8A was
+rejected and rolled back. The tested percentile-target, expectation-relative,
+and rolling-résumé implementations compressed the long-run Program hierarchy
+and are evidence only, not preferred future designs. Any renewed investigation
+should begin from the broader Dynasty ecosystem and first principles; retaining
+static Prestige or choosing not to implement Dynamic Prestige remain valid.
+`PLAYTESTING.md` owns the unscheduled Elite Program Dominance Audit that would
+locate any causal bottleneck before a future Prestige direction is considered.
 
 ## Presentation and broader modes
 

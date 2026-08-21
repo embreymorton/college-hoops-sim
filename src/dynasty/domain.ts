@@ -18,29 +18,7 @@ export interface CompletedSeasonArchive {
 export interface OffseasonProgramState {
   readonly programId: string
   readonly prestige: number
-  readonly prestigeUpdate: ProgramPrestigeUpdate
   readonly returningPlayers: readonly Player[]
-}
-
-export type ProgramPrestigeReason =
-  | 'national-contender'
-  | 'tournament-run'
-  | 'strong-season'
-  | 'met-expectations'
-  | 'disappointing-season'
-  | 'major-decline'
-
-/** Pure, deterministic result of one completed Season's reputation update. */
-export interface ProgramPrestigeUpdate {
-  readonly programId: string
-  readonly previousPrestige: number
-  readonly targetPrestige: number
-  readonly newPrestige: number
-  readonly change: number
-  readonly regularSeasonRank: number
-  readonly expectedPerformanceRank: number
-  readonly effectivePerformanceRank: number
-  readonly reason: ProgramPrestigeReason
 }
 
 export interface OffseasonState {

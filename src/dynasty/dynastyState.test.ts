@@ -140,9 +140,7 @@ describe('Dynasty offseason transition', () => {
       const expectedReturners = sourceTeam.roster.filter(({ classYear }) => classYear !== 'SR')
 
       expect(offseason.programId).toBe(program.id)
-      expect(offseason.prestige).toBe(offseason.prestigeUpdate.newPrestige)
-      expect(offseason.prestigeUpdate.previousPrestige).toBe(sourceTeam.prestige)
-      expect(Math.abs(offseason.prestigeUpdate.change)).toBeLessThanOrEqual(3)
+      expect(offseason.prestige).toBe(sourceTeam.prestige)
       expect(offseason.returningPlayers).toHaveLength(expectedReturners.length)
       expect(offseason.returningPlayers.length).toBeLessThanOrEqual(TEAM_ROSTER_SIZE)
       expect('rotation' in offseason).toBe(false)

@@ -15,54 +15,26 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — Phase 8A — Dynamic Program Prestige V1 — IMPLEMENTED / AWAITING MANUAL ACCEPTANCE
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Begin **Phase 8 — Dynamic Dynasty World**, whose product question is how results
-accumulated during a Dynasty should change the future basketball world rather
-than only be remembered historically.
+**Phase 8A — Dynamic Program Prestige V1 — REJECTED / ROLLED BACK / DEFERRED.**
+The production implementation and its player-facing transition UI were removed;
+Program Prestige is static again. Long-run validation found that the V1 formula
+materially compressed durable high and low Prestige tails. Expectation-relative
+and three-Season rolling-résumé variants were also tested and rejected because
+they failed to preserve a meaningful elite hierarchy; added inertia delayed the
+same failure rather than resolving it.
 
-Once per completed Season, when entering Offseason after Late Recruiting is
-finalized, derive an objective performance target for every Program and move
-current `Team.prestige` only a small, bounded amount toward it. Regular-season
-results establish the primary ordering and Tournament achievement contributes
-to the same effective performance signal rather than stacking a large separate
-bonus. The accepted implementation should:
+Dynamic Prestige remains a possible future Dynasty concept, not an implied
+successor design. Future work may reconsider Prestige, another part of the
+Dynasty ecosystem, static Prestige, or no Dynamic Prestige at all. No later
+milestone has been selected.
 
-- keep immutable `ProgramDefinition.basePrestige` as the Dynasty starting point
-  while allowing current Prestige to evolve from its prior value without
-  automatic base-prestige regression;
-- stay on the inclusive 1–100 scale, normally move no more than approximately
-  three points per Season, reward or punish sustained results across multiple
-  Seasons, and prevent one Cinderella run or poor Season from instantly
-  redefining a Program;
-- let the next Season and next Recruiting cycle consume the updated canonical
-  `Team.prestige`; do not add a second reputation state or retune frozen
-  Recruiting formulas in this milestone;
-- show the controlled Program's previous value, new value, signed change, and a
-  short broad reason on the existing Offseason surface; and
-- add only the targeted long-run safeguard needed to assess average Prestige
-  drift, upward/downward mobility, single-Season movement, 5–10 Season
-  compounding, Program tiers, champion variety, and Recruiting snowball risk.
-
-The exact performance-to-target mapping, postseason weights, convergence rate,
-rounding, and whether the normal cap is exactly `±3` remain implementation-pass
-decisions. Prefer a league-relative résumé ordering plus a calibrated target
-curve and capped convergence; reuse existing results-only postseason ranking
-and Tournament-outcome projections where their semantics fit. Do not broaden
-8A into facilities, finances, coaching, transfers, realignment, or Recruiting
-redesign.
-
-Implementation selects the canonical starting Prestige distribution as the
-league-relative target curve, Tournament advancement floors effective rank,
-and 15% capped convergence with a maximum annual movement of three. Automated,
-responsive, 3-seed × 10-Season, and 25-Season drift checks are green, but the
-current formula is not accepted because it compresses durable high and low
-Prestige tails. The focused comparison against static Prestige plus accepted
-Candidate A Development rejected the exact-rank expectation-relative candidate:
-even with a majority-zero deadband it compressed the elite tail more than
-current 8A. A derived recent 2–3 Season résumé is now the next targeted
-persistence question, not a preaccepted replacement. Phase 8A remains NEXT and
-no Phase 8B is created.
+The **Elite Program Dominance Audit** is an unscheduled diagnostic investigation,
+not NEXT. It would examine where static Prestige stops translating into durable
+Program advantage across Recruiting, roster formation, Development, Team
+Strength, game outcomes, and résumé standing. Recording the question does not
+reopen any frozen system or select an implementation.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -80,10 +52,10 @@ silent commit.
 
 ### Future Phase 8 work
 
-No 8B, 8C, or 8D milestone is defined or selected. Phase 8A does not close
-Phase 7: Awards & Honors and other work that genuinely belongs to Dynasty
-stories, attachment, memory, recognition, or history remains valid unscheduled
-Phase 7 work.
+No 8B, 8C, or 8D milestone is defined or selected. The rejected Phase 8A does
+not close Phase 7: Awards & Honors and other work that genuinely belongs to
+Dynasty stories, attachment, memory, recognition, or history remains valid
+unscheduled Phase 7 work.
 
 ## Numbering and sequencing policy
 

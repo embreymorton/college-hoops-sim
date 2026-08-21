@@ -330,10 +330,6 @@ describe('Offseason', () => {
 
     expect(useDynastyStore.getState().view).toBe('offseason')
     expect(screen.getByRole('heading', { name: 'Departures' })).toBeInTheDocument()
-    expect(screen.getByText('Program Prestige')).toBeInTheDocument()
-    expect(screen.getByText(/Strong season|Tournament run|National contender|Met expectations|Disappointing season|Major decline/)).toBeInTheDocument()
-    expect(document.querySelector('.offseason-header .offseason-prestige')).toBeInTheDocument()
-    expect(document.querySelector('.prestige-update')).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Player Development' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Incoming Class' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Next Season Roster' })).toBeInTheDocument()

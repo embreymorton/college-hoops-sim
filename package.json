@@ -44,7 +44,6 @@
     "sim:roster-rollover": "node --import tsx scripts/inspectRosterRollover.ts",
     "sim:season-rollover": "node --import tsx scripts/inspectSeasonRollover.ts",
     "sim:dynasty-long-run": "node --import tsx scripts/runDynastyLongRun.ts",
-    "sim:program-prestige": "node --import tsx scripts/inspectProgramPrestige.ts",
     "sim:dynasty-quick": "node --import tsx scripts/runDynastyLongRun.ts --preset quick",
     "sim:dynasty-standard": "node --import tsx scripts/runDynastyLongRun.ts --preset standard",
     "sim:dynasty-acceptance": "node --import tsx scripts/runDynastyLongRun.ts --preset acceptance",

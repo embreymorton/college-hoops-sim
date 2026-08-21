@@ -11,27 +11,9 @@ import {
   type OffseasonProgramState,
   type PlayerDevelopmentSummary,
   type PlayerAttributeDevelopmentGain,
-  type ProgramPrestigeReason,
   type Recruit,
   type RecruitingState,
 } from '../dynasty'
-
-const PRESTIGE_REASON_COPY: Readonly<Record<ProgramPrestigeReason, string>> = {
-  'national-contender': 'National contender',
-  'tournament-run': 'Tournament run',
-  'strong-season': 'Strong season',
-  'met-expectations': 'Met expectations',
-  'disappointing-season': 'Disappointing season',
-  'major-decline': 'Major decline',
-}
-
-export function formatPrestigeReason(reason: ProgramPrestigeReason): string {
-  return PRESTIGE_REASON_COPY[reason]
-}
-
-export function formatSignedPrestigeChange(change: number): string {
-  return change > 0 ? `+${change}` : String(change)
-}
 
 /**
  * Offseason-presentation formatting helpers. These read canonical

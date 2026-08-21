@@ -28,25 +28,20 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 
 ## Current Playtesting Priorities
 
-**Phase 8A — Dynamic Program Prestige V1 is IMPLEMENTED / AWAITING MANUAL ACCEPTANCE.**
-The selected milestone responds directly to the live low-Prestige rebuild
-signal: meaningful sustained results should gradually change future Program
-standing and flow through existing Recruiting, without turning one Season into
-an instant transformation.
+**Phase 8A — Dynamic Program Prestige V1 is REJECTED / ROLLED BACK / DEFERRED.**
+Production uses static Prestige again. Long-run testing established that the
+implemented V1 and two follow-up model families compressed durable Program
+hierarchy too strongly. Dynamic Prestige remains a possible concept, but there
+is no active replacement design and the Roadmap is at an Open Planning Checkpoint.
 
-1. Keep manual acceptance paused while replacing the confirmed long-run
-   hierarchy behavior below. The Offseason summary still needs ordinary feel validation,
-   but the earlier aggregate drift safeguard did not test static-vs-dynamic
-   tail persistence and therefore missed meaningful Prestige compression.
-   The acceptance follow-up moved this summary into the Offseason header and
-   added derived starting/net/peak and Season-by-Season context to Team Details.
-   It also strengthened canonical navigation recovery coverage after the Late
-   Recruiting defect recurred while keeping the progression card scoped to the
-   Season/Postseason hub context.
-2. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
+1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
-3. Monitor genuinely live WATCH items below without promoting them into work
+2. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
+
+The next unresolved Program-hierarchy question is captured below as the
+unscheduled **Elite Program Dominance Audit**. It is not Roadmap NEXT and does
+not authorize calibration or implementation.
 
 This priority list is evidence guidance, not an independent sequencing decision.
 The authoritative milestone selection remains in `ROADMAP.md`.
@@ -178,11 +173,8 @@ Dynamic Prestige validation. The narrow Development correction is **COMPLETE /
 ACCEPTED / FROZEN**; do not create another variant from this result.
 
 Do not tune Recruiting, Recruit generation, graduation, Rotation, or Team
-Strength directly from these diagnostics. The next comparison should evaluate
-expectation-relative Dynamic Prestige models against static Prestige plus the
-accepted Development behavior, preserving mobility and durable hierarchy. Keep
-Phase 8A **IMPLEMENTED / AWAITING MANUAL ACCEPTANCE** and do not select a later
-milestone.
+Strength directly from these diagnostics. Static Prestige plus accepted
+Development is production truth. No follow-up Prestige model is selected.
 
 The focused expectation-relative comparison is now complete and the tested
 candidate is **REJECTED**. A small QUICK screen selected rank-surprise bands of
@@ -211,9 +203,98 @@ one-way upward pressure. A final wider `7 / 13 / 19` QUICK check only delayed
 the problem; Great Lakes declined from `91` to `77` over 25 Seasons. Current
 Prestige plus an expectation deadband is therefore **not enough memory under
 this exact-rank mapping**. Do not promote the candidate or silently accept 8A.
-A follow-up may test a derived two- or three-Season résumé only if it directly
-addresses this persistence failure; do not implement that hybrid as part of
-the completed comparison.
+This result does not identify a preferred successor.
+
+A final 25-Season screen tested a three-Season rolling résumé with `3 / 2 / 1`
+recency weights while retaining the expectation-relative `5 / 11 / 17` movement
+rules. It also failed: Season-25 Prestige SD/range was `9.88 / 45`, no Program
+remained at `85+`, and added inertia mainly delayed flagship decline. Great
+Lakes moved `91 → 80` and Northbridge `88 → 73`; no Program moved `±20`.
+Recruiting and lifecycle health remained valid. The candidate was rejected
+without a multi-seed gate because it clearly missed the continuation thresholds.
+
+Phase 8A is therefore **REJECTED / ROLLED BACK / DEFERRED**. The production
+contract is static Prestige. Future work, only if explicitly selected, should
+investigate the underlying Dynasty ecosystem and reconsider Prestige from first
+principles without treating any rejected model as design guidance.
+
+### Elite Program Dominance Audit — UNSCHEDULED DIAGNOSTIC
+
+Central question:
+
+> **Under static Prestige, does the simulation naturally produce durable elite
+> Programs, meaningful weak Programs, powerhouse runs, and believable hierarchy
+> turnover? If not, where does the causal chain first break?**
+
+The audit exists to distinguish whether the rejected Dynamic Prestige models
+were themselves the primary problem or whether an earlier part of the Dynasty
+ecosystem does not consistently produce durable powerhouse performance. Neither
+conclusion is presumed. The diagnostic should trace:
+
+```text
+Prestige → Recruiting outcomes → roster formation
+→ Development / Player realization → Team Strength
+→ game outcomes → Season résumé
+```
+
+The goal is to identify the first stage where expected Program hierarchy stops
+translating into downstream advantage:
+
+1. **Prestige → Recruiting:** measure premium and 5-star destinations;
+   top-10/top-25/top-50 Recruit distribution; incoming class OVR, POT, and
+   quality rank; elite Program premium-battle win/loss rates; and separation
+   among elite, middle, and weak Prestige tiers. Do not presume Recruiting is
+   underpowered.
+2. **Recruiting → roster quality:** determine whether class advantages create
+   sustained Team Strength/OVR rank, top-3/top-5/top-8 Player quality, starter
+   quality, depth, and high-OVR Player counts. Trace graduation, roster turnover,
+   and year-to-year strength volatility. Development is accepted/frozen; its
+   downstream effects may be diagnosed without presuming revision.
+3. **Team Strength → game outcomes:** measure favorite win rates for near-even,
+   small, moderate, large, and extreme Strength gaps. Also inspect elite-versus-
+   weak results, upset and blowout frequency, low-loss Season frequency, and
+   whether clearly strong Teams experience excessive schedule-level variance.
+   Do not presume Game Simulation creates too many upsets.
+4. **Game outcomes → Season résumé:** compare records, Team Strength rank, and
+   résumé rank; inspect schedule and Conference effects, Tournament qualification
+   and seeding, and how often elite Teams produce top-5, top-10, and top-16
+   résumés. Do not presume résumé logic is too harsh.
+
+A useful longitudinal view would follow several initially elite, middle, and
+weak Programs across many static-Prestige Seasons:
+
+| Season | Recruit class rank | Incoming talent | Team Strength rank | Record | Résumé rank | Tournament result |
+| ------ | -----------------: | --------------: | -----------------: | -----: | ----------: | ----------------- |
+| N | — | — | — | — | — | — |
+
+Named Programs may illustrate a causal pattern, but no conclusion should rest
+on one Program. Interpretation should remain open to:
+
+- **Recruiting bottleneck:** elite Prestige does not create sufficient talent advantage.
+- **Roster/Development bottleneck:** recruiting advantage exists but does not
+  become sustained roster strength.
+- **Strength translation bottleneck:** roster advantage exists but Team Strength
+  does not represent it sufficiently.
+- **Game outcome bottleneck:** clearly stronger Teams lose too frequently.
+- **Résumé bottleneck:** strong Seasons are not recognized appropriately.
+- **No major bottleneck:** static-Prestige hierarchy is already plausible and
+  the rejected Prestige models were the main issue.
+- **Mixed/systemic result:** several smaller effects collectively limit durable hierarchy.
+
+> Accepted/frozen systems may be **diagnosed** without being reopened.
+
+Recruiting, Development, Team Strength, Game Simulation, résumé logic, and other
+frozen systems become gameplay-change candidates only if audit evidence
+specifically implicates them. Their presence in the causal chain schedules no
+revision.
+
+The product standard is a Dynasty capable of durable but replaceable elite
+Programs, meaningful weak identities, multi-Season powerhouse runs, occasional
+collapses and rebuilds, upward mobility, competitive and champion variety, and
+understandable relationships among recruiting talent, roster quality, and
+results. The audit would determine whether the current simulation already
+supports those outcomes and, if not, why. No replacement Prestige model or
+implementation work is selected.
 
 ### Low-prestige rebuild and mature-league ceiling
 

@@ -115,6 +115,31 @@ describe('Dynasty Season Rollover V0', () => {
     expect(priorArchive).toEqual(archivedBefore)
   })
 
+  it('keeps Prestige static through multiple Offseason, rollover, and Recruiting cycles', () => {
+    let offseason = canonical
+
+    for (let transition = 0; transition < 3; transition += 1) {
+      for (const definition of UNIVERSE_V0.programs) {
+        expect(offseason.offseason!.programs[definition.id]!.prestige).toBe(
+          definition.basePrestige,
+        )
+      }
+
+      const active = rolloverDynastyToNextSeason(offseason)
+      for (const definition of UNIVERSE_V0.programs) {
+        expect(active.activeSeason!.programStates[definition.id]!.team.prestige).toBe(
+          definition.basePrestige,
+        )
+      }
+      const recruit = active.recruiting!.recruits[0]!
+      expect(Number.isFinite(
+        deriveBaseRecruitAttraction(active, recruit, active.controlledProgramId),
+      )).toBe(true)
+
+      if (transition < 2) offseason = finishCompetitionAndBeginOffseason(active)
+    }
+  })
+
   it('generates a valid season-specific Schedule with unique cross-season IDs', () => {
     const first = rolloverDynastyToNextSeason(canonical)
     const second = rolloverDynastyToNextSeason(canonical)

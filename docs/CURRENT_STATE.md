@@ -123,29 +123,21 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT — Phase 8A — Dynamic Program Prestige V1 — IMPLEMENTED / AWAITING MANUAL ACCEPTANCE.**
-This starts **Phase 8 — Dynamic Dynasty World** without closing Phase 7 or
-selecting any later Phase 8 milestone. The bounded V1 will update each
-Program's current Prestige once per completed Season at the Offseason boundary,
-move it slowly toward a results-based target that includes Tournament
-achievement, carry the new value into the next Season and existing Recruiting
-systems, and explain the controlled Program's change on the Offseason surface.
-The implementation ranks completed regular-season results, applies bounded
-Tournament advancement floors, maps effective rank onto the canonical starting
-Prestige distribution, and moves 15% toward that target with symmetric rounding
-and an annual cap of three. `basePrestige` remains immutable starting
-configuration; current `Team.prestige` is updated in Offseason, rolls into the
-next Team, and naturally feeds the existing Recruiting cycle. Automated and
-targeted long-run checks are green, but the formula is not accepted: validation
-showed that it compresses both elite and weak Prestige tails. Manual acceptance
-is paused pending an expectation-relative replacement-model comparison against
-the new control of static Prestige plus accepted Candidate A Development.
-That focused comparison is complete: the tested expectation-relative exact-rank
-candidate is rejected because it compressed the elite tail even more than
-current 8A despite a majority-zero movement profile. Production remains on the
-unaccepted 8A formula. The next targeted question, without reopening accepted
-Development or Recruiting, is whether a derived two- or three-Season résumé can
-provide the missing persistence.
+**No NEXT selected — Open Planning Checkpoint.**
+
+**Phase 8A — Dynamic Program Prestige V1 is REJECTED / ROLLED BACK / DEFERRED.**
+Production has returned to static Program Prestige: immutable
+`ProgramDefinition.basePrestige` initializes `Team.prestige`, Offseason copies
+that value unchanged, rollover preserves it, and Recruiting continues consuming
+the same established Prestige value. The rejected V1 and its expectation-relative
+and rolling-résumé experiments materially compressed the long-run Program
+hierarchy, especially the elite tail. Dynamic Prestige remains a possible
+Dynasty concept, but no replacement design is selected. Any future investigation
+should begin from current ecosystem evidence and first principles. The
+unscheduled **Elite Program Dominance Audit** records the next unresolved
+question: whether the static-Prestige Dynasty ecosystem naturally produces
+durable Program hierarchy and, if not, where the causal chain first breaks. It
+does not presume a broken system or select implementation work.
 
 Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
 The explicit action preserves edited MPG, fills the remaining legal 200-minute
@@ -154,17 +146,15 @@ Discard clear transient locked state; impossible constraints retain the draft
 and show existing issue feedback. Phase 7C.3 remains PLANNED and valid, but is
 not NEXT.
 
-Team Details now exposes every Program's history during the current Dynasty:
+Team Details exposes every Program's history during the current Dynasty:
 cumulative completed-Season record, Tournament appearances, championships,
 runner-up finishes, best Tournament and regular-season results, and the five
 most recent completed Seasons. One pure projection derives the presentation from
 `CompletedSeasonArchive` facts and the existing canonical Tournament-outcome
-semantics. Dynamic Prestige context now derives current, starting, net, peak,
-and a collapsed Season trail from the Program definition, archived Team
-snapshots, and current Team without adding mutable history. Programs with no
-Tournament appearances show `No Tournament Appearances` at the résumé level
-while their individual Recent Seasons still show `Did Not Qualify`. National
-Champion receives restrained presentation-only emphasis.
+semantics. Current static Prestige remains visible in the Team header. Programs
+with no Tournament appearances show `No Tournament Appearances` at the résumé
+level while their individual Recent Seasons still show `Did Not Qualify`.
+National Champion receives restrained presentation-only emphasis.
 
 Offseason Storytelling V1 remains a pure presentation projection over the
 completed Season archive and canonical Offseason state. Every graduating senior

@@ -14,10 +14,6 @@ import { validateUniverseDefinition } from '../universe'
 import type { UniverseDefinition } from '../universe'
 import { clonePostseason, cloneSeason } from './cloning'
 import { developReturningPlayer } from './development'
-import {
-  projectProgramPrestigeUpdates,
-  type ProgramPrestigeProjectionOptions,
-} from './prestige'
 import type {
   CompletedSeasonArchive,
   DynastyState,
@@ -88,14 +84,9 @@ function createOffseasonState(
   season: SeasonState,
   postseason: PostseasonState,
   programIds: readonly string[],
-  prestigeOptions: ProgramPrestigeProjectionOptions,
 ): OffseasonState {
   const programs: Record<string, OffseasonProgramState> = {}
   const returningIds = new Set<string>()
-  const prestigeUpdates = new Map(
-    projectProgramPrestigeUpdates(universe, season, postseason, prestigeOptions)
-      .map((update) => [update.programId, update]),
-  )
 
   for (const programId of [...programIds].sort()) {
     const seasonProgram = season.programStates[programId]
@@ -126,8 +117,7 @@ function createOffseasonState(
 
     programs[programId] = {
       programId,
-      prestige: prestigeUpdates.get(programId)!.newPrestige,
-      prestigeUpdate: prestigeUpdates.get(programId)!,
+      prestige: sourceTeam.prestige,
       returningPlayers,
     }
   }
@@ -140,10 +130,7 @@ function createOffseasonState(
 }
 
 /** Archives a fully completed year and creates temporary offseason rosters. */
-export function beginOffseason(
-  dynasty: DynastyState,
-  prestigeOptions: ProgramPrestigeProjectionOptions = {},
-): DynastyState {
+export function beginOffseason(dynasty: DynastyState): DynastyState {
   const season = dynasty.activeSeason
   const postseason = dynasty.activePostseason
   if (!season) throw new RangeError('Dynasty has no active Season to archive.')
@@ -191,7 +178,6 @@ export function beginOffseason(
     season,
     postseason,
     dynasty.universe.programs.map(({ id }) => id),
-    prestigeOptions,
   )
 
   return {

@@ -36,13 +36,6 @@ export {
 } from './rosterAssembly'
 export { rolloverDynastyToNextSeason } from './rollover'
 export {
-  PROGRAM_PRESTIGE_V1,
-  EXPECTATION_RELATIVE_PRESTIGE_CANDIDATE,
-  deriveProgramPrestigeHistory,
-  expectedRankForPrestige,
-  projectProgramPrestigeUpdates,
-} from './prestige'
-export {
   addRecruitingBoardTarget,
   alignGeneratedRecruitingFocus,
   buildDefaultRecruitingBoard,
@@ -128,20 +121,10 @@ export type {
   OffseasonProgramState,
   OffseasonRosterOutlook,
   OffseasonState,
-  ProgramPrestigeReason,
-  ProgramPrestigeUpdate,
   PlayerAttributeDevelopmentGain,
   PlayerDevelopmentSummary,
   ProjectedRosterOutlook,
 } from './domain'
-export type {
-  PrestigeSurpriseBands,
-  PrestigeTargetMapping,
-  PrestigeUpdateModel,
-  ProgramPrestigeHistory,
-  ProgramPrestigeHistoryRow,
-  ProgramPrestigeProjectionOptions,
-} from './prestige'
 export type {
   PlayerCareerHistory,
   PlayerCareerSeasonRow,

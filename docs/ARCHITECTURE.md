@@ -371,16 +371,11 @@ The transition rejects incomplete regular seasons, incomplete Tournaments, missi
 
 `CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, Program Legacy, the Season Yearbook, and the 7C.2 Record Book are pure projections over those facts; awards are not implemented. Program Legacy aggregates any stable Program ID across completed archives for Team Details, reusing canonical regular-season record and Tournament-outcome queries; it stores no Program-history facts and does not infer historical Prestige.
 
-Team Details' Prestige history is likewise a pure projection: immutable
-`basePrestige` supplies Start, completed Season Team snapshots supply historical
-Season values, and active Team/Offseason Prestige supplies current context.
-No mutable Prestige-history collection exists.
-
 Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
 
 For each Program, offseason construction uses the latest competitive Team snapshot: the Postseason Team for a qualified Program, otherwise its regular-season Team. `Team.prestige` is copied unchanged. Seniors are omitted; non-seniors are developed and advanced. The implementation guarantees returning Player IDs remain unique across the Universe.
 
-`OffseasonState` contains completed and target season numbers plus one `OffseasonProgramState` per Program. Each Program state contains `programId`, the updated current Prestige and its deterministic transition summary, and returning Players. `beginOffseason()` derives the Prestige update from the completed Season and Tournament after the completed Recruiting cycle, while the newly cloned archive retains the historical Team snapshot. It deliberately contains no Rotation and is not a `Team`:
+`OffseasonState` contains completed and target season numbers plus one `OffseasonProgramState` per Program. Each Program state contains `programId`, the unchanged static Prestige, and returning Players. `beginOffseason()` copies Prestige from the latest completed competitive Team snapshot; rollover copies it into the next Team. It deliberately contains no Rotation and is not a `Team`:
 
 ```text
 12 current Players − 3 seniors

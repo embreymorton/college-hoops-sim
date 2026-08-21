@@ -74,7 +74,7 @@ These ranges describe initial generation only. They do not implement or guarante
 
 A Team is a plain serializable record containing ID, name, abbreviation, prestige, and exactly 12 players. It does not store overall rating, record, ranking, rotation, coaching, recruiting, conference, or schedule state.
 
-Prestige is long-term Program reputation on an inclusive 1–100 scale. Starting `basePrestige` is immutable, while current Prestige changes gradually once per completed Season from league-relative regular-season performance and bounded Tournament achievement. The new value enters Offseason, carries into the next Team, and affects the existing Recruit attraction and planning systems without changing their formulas. Prestige does not modify Player Development V1.
+Prestige is static long-term Program reputation on an inclusive 1–100 scale. Immutable `basePrestige` initializes each Team's Prestige; Offseason and rollover preserve that value across Seasons, and Recruiting consumes it through the established attraction and planning formulas. Prestige does not modify Player Development V1.
 
 Each roster contains two players at every natural position plus one extra player at two distinct, seeded positions. Position counts therefore vary between two and three while always covering `PG`, `SG`, `SF`, `PF`, and `C`.
 
