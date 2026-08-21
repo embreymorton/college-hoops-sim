@@ -9,6 +9,25 @@ measured scaling risk, or validated watchpoint. Follow
 
 ## Open items
 
+### P1 — Mature Dynasty hierarchy compression
+
+A targeted same-seed comparison confirmed two related unresolved risks. First,
+the mature roster economy compresses Team OVR even when Prestige is held at its
+starting value: three static-Prestige 25-Season runs produced no `90+` Team OVR,
+only 22 `85+` Program-Seasons out of 2,400, and a maximum of `89.25`. Second,
+Dynamic Prestige worsens mature hierarchy and independently compresses its own
+tails: at Season 25, pooled Prestige SD/range moved from `13.3`/`55` static to
+`9.3`/`38` dynamic, while pooled Team OVR SD moved from `4.00` to `3.23`.
+
+Treat this as a Phase 8A acceptance blocker, not authorization for broad
+calibration. The smallest next diagnostic should isolate recruit-class talent
+availability, elite-signing concentration, Development ceilings, and
+rotation-weighted roster translation under static Prestige. Do not retune
+Recruiting, Recruit generation, Development, or Team Strength until that causal
+slice identifies the limiting mechanism. Dynamic Prestige should then be
+revisited separately for durable reputation inertia without making the original
+Programs permanently elite.
+
 ### P1 — Correct Super Sim completion-summary wording
 
 The current summary derives “games simulated” from the controlled Program's record delta. If its target-round game was already complete but Super Sim resolves only remaining AI games, the UI can misleadingly show `0 games simulated` and a `0-0` segment.

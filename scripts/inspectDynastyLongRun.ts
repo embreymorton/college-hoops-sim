@@ -259,6 +259,7 @@ export function runDynastyCalibration(
   seasonsToComplete: number,
   auditLevel: AuditLevel = 'full',
   prestigeOptions: ProgramPrestigeProjectionOptions = {},
+  prestigeBehavior: 'dynamic' | 'static' = 'dynamic',
 ): DynastyRunResult {
   let dynasty = createDynasty(seed)
   const seasons: SeasonTalentMetrics[] = []
@@ -435,6 +436,29 @@ export function runDynastyCalibration(
       const priorSeasonSnapshots = archivedSeasonSnapshots
       const priorRecruitingSnapshots = archivedRecruitingSnapshots
       dynasty = beginOffseason(dynasty, prestigeOptions)
+      if (prestigeBehavior === 'static') {
+        // Diagnostic-only pre-8A baseline: preserve the completed production
+        // lifecycle, but prevent its projected Prestige update from reaching
+        // rollover and the next Recruiting cycle.
+        dynasty = {
+          ...dynasty,
+          offseason: {
+            ...dynasty.offseason!,
+            programs: Object.fromEntries(Object.entries(dynasty.offseason!.programs)
+              .map(([programId, program]) => [programId, {
+                ...program,
+                prestige: program.prestigeUpdate.previousPrestige,
+                prestigeUpdate: {
+                  ...program.prestigeUpdate,
+                  targetPrestige: program.prestigeUpdate.previousPrestige,
+                  newPrestige: program.prestigeUpdate.previousPrestige,
+                  change: 0,
+                  reason: 'met-expectations' as const,
+                },
+              }])),
+          },
+        }
+      }
       if (auditLevel === 'full' && (
         CHECKPOINTS.has(season.seasonNumber) ||
         season.seasonNumber === seasonsToComplete

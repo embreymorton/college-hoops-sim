@@ -34,11 +34,10 @@ signal: meaningful sustained results should gradually change future Program
 standing and flow through existing Recruiting, without turning one Season into
 an instant transformation.
 
-1. Manually verify that the Offseason Prestige summary feels clear, zero change
-   is understandable, one result does not feel transformative, and sustained
-   success/failure feels meaningful across several Seasons. Automated checks
-   found bounded movement, believable mobility and tiers, stable Recruiting,
-   and no distribution collapse through a focused 25-Season drift run.
+1. Keep manual acceptance open while resolving the confirmed long-run hierarchy
+   concern below. The Offseason summary still needs ordinary feel validation,
+   but the earlier aggregate drift safeguard did not test static-vs-dynamic
+   tail persistence and therefore missed meaningful Prestige compression.
    The acceptance follow-up moved this summary into the Offseason header and
    added derived starting/net/peak and Season-by-Season context to Team Details.
    It also strengthened canonical navigation recovery coverage after the Late
@@ -100,6 +99,31 @@ The run also supplied these current product signals:
   memory; these examples are evidence, not canonical recognition rules.
 
 ## Live WATCH Items
+
+### Long-run Program hierarchy — CONFIRMED / ACCEPTANCE BLOCKER
+
+A paired three-seed, 25-Season diagnostic compared the production Dynasty loop
+with Dynamic Prestige against a tooling-only pre-8A baseline that held Prestige
+static. By Season 25, Dynamic Prestige reduced Prestige standard deviation from
+`13.3` to `9.3` and the top-to-bottom range from `55` to `38`; all `85+` and
+`39-or-lower` Programs disappeared. It also reduced Team OVR standard deviation
+from `4.00` static to `3.23` dynamic at that checkpoint and weakened premium
+Recruit concentration and the Prestige/class-quality relationship.
+
+The missing powerhouse ceiling is not primarily an 8A regression. Across 2,400
+Program-Seasons per branch, static Prestige produced zero `90+` Team OVRs, only
+22 `85+` occurrences, and a maximum of `89.25`; Dynamic Prestige produced zero,
+24, and the same maximum. Both branches compressed sharply from the starting
+Universe by Season 5. This is an existing mature talent-economy limitation that
+Dynamic Prestige modestly worsens, while Dynamic Prestige independently erases
+the reputation tails it is intended to make mobile rather than eliminate.
+
+Do not tune Recruiting, Development, Recruit generation, or Prestige from this
+diagnostic alone. Before Phase 8A acceptance, investigate the smallest
+talent-flow slice that explains why static Prestige cannot regularly form elite
+rosters, then revise Prestige with a narrow inertia-based model after separating
+that ceiling from reputation movement. Keep Phase 8A **IMPLEMENTED / AWAITING
+MANUAL ACCEPTANCE** and do not select a later milestone.
 
 ### Low-prestige rebuild and mature-league ceiling
 
