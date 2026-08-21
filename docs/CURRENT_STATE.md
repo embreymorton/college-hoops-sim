@@ -85,7 +85,8 @@ refactor these systems during unrelated feature work:
 - Recruiting mechanics and accepted Recruiting information architecture;
 - Recruit Talent Distribution V1 and the production Recruit POT Candidate B
   finalizer;
-- Player Development V1;
+- Player Development V1, including the accepted high-POT/high-headroom
+  realization opportunity;
 - Rotation V1, role-aware defaults, Simple Rotation, Rotation Assistant V1 —
   Preserve & Fill, and Starting Five projection/presentation;
 - Team Strength, Game Simulation, Player box scores, and current statistical
@@ -135,7 +136,10 @@ Prestige distribution, and moves 15% toward that target with symmetric rounding
 and an annual cap of three. `basePrestige` remains immutable starting
 configuration; current `Team.prestige` is updated in Offseason, rolls into the
 next Team, and naturally feeds the existing Recruiting cycle. Automated and
-targeted long-run checks are green; manual acceptance is still outstanding.
+targeted long-run checks are green, but the formula is not accepted: validation
+showed that it compresses both elite and weak Prestige tails. Manual acceptance
+is paused pending an expectation-relative replacement-model comparison against
+the new control of static Prestige plus accepted Candidate A Development.
 
 Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
 The explicit action preserves edited MPG, fills the remaining legal 200-minute

@@ -10,6 +10,7 @@ import {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentTendency,
   deriveDevelopmentSummary,
+  deriveHighPotentialDevelopmentOpportunity,
   developReturningPlayer,
 } from './index'
 
@@ -129,6 +130,38 @@ describe('Player Development V1', () => {
     const second = develop(structuredClone(before))
     expect(first).toEqual(second)
     expect(calculateOverall(first)).toBeGreaterThan(calculateOverall(before))
+  })
+
+  it('locks the accepted high-POT and headroom opportunity thresholds', () => {
+    expect(deriveHighPotentialDevelopmentOpportunity(84, 20)).toBe(0)
+    expect(deriveHighPotentialDevelopmentOpportunity(85, 7)).toBe(0)
+    expect(deriveHighPotentialDevelopmentOpportunity(85, 8)).toBe(1)
+    expect(deriveHighPotentialDevelopmentOpportunity(89, 20)).toBe(1)
+    expect(deriveHighPotentialDevelopmentOpportunity(90, 11)).toBe(1)
+    expect(deriveHighPotentialDevelopmentOpportunity(90, 12)).toBe(2)
+    expect(deriveHighPotentialDevelopmentOpportunity(99, 30)).toBe(2)
+  })
+
+  it('keeps weak-tendency elite-POT Players capable of disappointing', () => {
+    const dynastySeed = 'weak-elite-disappointment'
+    const before = Array.from({ length: 100 }, (_, index) =>
+      player('FR', `weak-elite-${index}`),
+    ).find((candidate) => deriveDevelopmentTendency(candidate, dynastySeed) === 'weak')!
+    before.potential = 99
+    let current = before
+    for (let season = 1; season <= 3; season += 1) {
+      current = developReturningPlayer({
+        player: current,
+        dynastySeed,
+        completedSeasonNumber: season,
+        programId: 'charlotte-tech',
+      })
+    }
+
+    expect(deriveDevelopmentTendency(before, dynastySeed)).toBe('weak')
+    expect(current.classYear).toBe('SR')
+    expect(calculateOverall(current)).toBeLessThan(before.potential - 10)
+    expect(calculateOverall(current)).toBeGreaterThanOrEqual(calculateOverall(before))
   })
 
   it('uses independent Player identity seeds and changes at least some development across dynasty seeds', () => {

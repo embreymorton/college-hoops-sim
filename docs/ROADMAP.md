@@ -55,9 +55,13 @@ redesign.
 Implementation selects the canonical starting Prestige distribution as the
 league-relative target curve, Tournament advancement floors effective rank,
 and 15% capped convergence with a maximum annual movement of three. Automated,
-responsive, 3-seed × 10-Season, and 25-Season drift checks are green. Manual
-Dynasty acceptance remains required before this milestone can be marked
-COMPLETE / ACCEPTED / FROZEN.
+responsive, 3-seed × 10-Season, and 25-Season drift checks are green, but the
+current formula is not accepted because it compresses durable high and low
+Prestige tails. Manual acceptance is paused while an expectation-relative
+replacement is compared against static Prestige plus accepted Candidate A
+Development. Test recent 2–3 Season résumé persistence only if expectation-
+relative movement alone is insufficient; do not preselect a hybrid. Phase 8A
+remains NEXT and no Phase 8B is created.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 

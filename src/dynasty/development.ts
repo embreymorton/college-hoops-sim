@@ -121,6 +121,15 @@ export function deriveDevelopmentTendency(
   return roll < 0.3 ? 'weak' : roll < 0.8 ? 'steady' : 'strong'
 }
 
+/** Accepted high-POT realization opportunity; headroom keeps POT aspirational. */
+export function deriveHighPotentialDevelopmentOpportunity(
+  potential: number,
+  headroom: number,
+): number {
+  if (potential < 85 || headroom < 8) return 0
+  return potential >= 90 && headroom >= 12 ? 2 : 1
+}
+
 function weightedAttribute(
   position: Position,
   attributes: PlayerAttributes,
@@ -188,6 +197,10 @@ export function developReturningPlayer({
   const breakoutGain = headroom >= 8 && rng.chance(breakoutChance)
     ? rng.int(3, 6)
     : 0
+  const highPotentialOpportunity = deriveHighPotentialDevelopmentOpportunity(
+    player.potential,
+    headroom,
+  )
   const targetOverall = Math.min(
     player.potential,
     currentOverall + Math.max(
@@ -195,7 +208,8 @@ export function developReturningPlayer({
       Math.min(
         completedClass === 'FR' ? 12 : completedClass === 'SO' ? 10 : 8,
         rng.int(minimumGain, maximumGain) + tendency.baselineAdjustment +
-        headroomOpportunity + seasonalVariance + breakoutGain,
+        headroomOpportunity + seasonalVariance + breakoutGain +
+        highPotentialOpportunity,
       ),
     ),
   )

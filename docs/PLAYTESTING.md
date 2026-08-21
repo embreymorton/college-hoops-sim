@@ -34,8 +34,8 @@ signal: meaningful sustained results should gradually change future Program
 standing and flow through existing Recruiting, without turning one Season into
 an instant transformation.
 
-1. Keep manual acceptance open while resolving the confirmed long-run hierarchy
-   concern below. The Offseason summary still needs ordinary feel validation,
+1. Keep manual acceptance paused while replacing the confirmed long-run
+   hierarchy behavior below. The Offseason summary still needs ordinary feel validation,
    but the earlier aggregate drift safeguard did not test static-vs-dynamic
    tail persistence and therefore missed meaningful Prestige compression.
    The acceptance follow-up moved this summary into the Offseason header and
@@ -118,12 +118,71 @@ Universe by Season 5. This is an existing mature talent-economy limitation that
 Dynamic Prestige modestly worsens, while Dynamic Prestige independently erases
 the reputation tails it is intended to make mobile rather than eliminate.
 
-Do not tune Recruiting, Development, Recruit generation, or Prestige from this
-diagnostic alone. Before Phase 8A acceptance, investigate the smallest
-talent-flow slice that explains why static Prestige cannot regularly form elite
-rosters, then revise Prestige with a narrow inertia-based model after separating
-that ceiling from reputation movement. Keep Phase 8A **IMPLEMENTED / AWAITING
-MANUAL ACCEPTANCE** and do not select a later milestone.
+A follow-up static-Prestige talent trace located the main roster bottleneck.
+Classes contain roughly 160 Recruits, including about 13 at `80+` OVR, 3–4 at
+`85+` OVR, 24 at `85+` POT, and seven at `90+` POT. Recruiting can concentrate
+about three premium Recruits in the best class and 7–8 across two classes. The
+larger loss occurs during realization: among fully observed `85+` POT signees,
+only `44–48%` reached `85` OVR, `8–11%` reached `90`, and average unused ceiling
+at graduation was about `7.6` OVR points. Strong rosters did form, but senior
+classes frequently owned 70–109 rotation minutes and their departure immediately
+reduced Team OVR by roughly 2–5 points.
+
+Team Strength is not concealing monster rosters. Its correlation with
+rotation-weighted Player OVR was `0.995–0.996`, with only about a `0.2` point
+average difference. A 90 Team OVR therefore requires nearly all 200 rotation
+minutes to be supplied by roughly 90-level two-way contributors; five uniform
+90 starters with 80-level backups produced only `88.45`. Treat the ceiling as a
+Development-realization and elite-cohort-overlap issue first, with talent supply
+and Recruiting dispersion secondary rather than absent.
+
+A three-seed × 25-Season static-Prestige Development experiment compared the
+production baseline with two narrow high-POT variants. Candidate A added at
+most two annual opportunity points while `85+`/`90+` POT Players retained large
+headroom. It raised `85+` POT average peak OVR from `81.08` to `82.73`, reduced
+unused POT from `7.64` to `5.99`, increased `85+` Team occurrences from `22` to
+`31`, and produced one two-Season `85+` run. Mature league Team OVR rose only
+about `0.2–0.3`, SD and the weak tail remained intact, and recruiting classes
+were exactly unchanged. Player variance also remained substantial: peak SD was
+`6.73`, 25% of annual transitions still gained zero, and some `95+` POT Players
+still graduated around 69 OVR.
+
+Candidate A nevertheless did not restore the intended monster-roster tail: its
+maximum was `89.52`, it produced no `90+` Team, and only three `88+`
+Program-Seasons—the same count as baseline. Candidate B's probabilistic
+`JR→SR` relief was too weak, leaving unused POT at `7.05`, producing 24 `85+`
+Team occurrences, and retaining the baseline `89.25` maximum.
+
+The final Candidate A+ experiment increased Candidate A's high-end opportunity
+maximum from two to three points for `90+` POT Players with at least 12 points
+of headroom. It improved the `90+` POT cohort's average peak from `84.77` to
+`85.88`, reduced unused POT from `8.00` to `6.88`, and raised the share reaching
+85/90 OVR from `58.2%`/`35.5%` to `64.5%`/`38.3%`. The additional realization
+arrived mainly late: first attainment of 90 OVR was nearly unchanged through
+the junior Season, while the senior share rose. That individual improvement did
+not translate into stronger elite-roster overlap. Candidate A+ produced 32/3/0
+`85+`/`88+`/`90+` Team occurrences versus Candidate A's 31/3/0, the same elite
+run lengths, and only raised the maximum from `89.52` to `89.63`. Its mature
+league Team mean was just `0.04` higher, with the same weak-Team floor and
+slightly greater champion concentration.
+
+Candidate A is therefore the accepted production Development model; Candidate
+A+ is rejected as a meaningful improvement. Production parity reproduced every
+recorded Candidate A headline metric exactly. The accepted static-Prestige
+control has Season-25 Team OVR mean/SD/min/max/range of
+`76.97`/`4.06`/`63.40`/`84.07`/`20.67`, 31/3/0 `85+`/`88+`/`90+` Team
+occurrences, a `89.52` maximum, `0.608` adjacent-Season top-four retention, and
+longest elite runs of 2/1/0 Seasons. Its three runs produced 14/15/14 unique
+champions with leading shares of `16%`/`24%`/`20%`. This is now the control for
+Dynamic Prestige validation. The narrow Development correction is **COMPLETE /
+ACCEPTED / FROZEN**; do not create another variant from this result.
+
+Do not tune Recruiting, Recruit generation, graduation, Rotation, or Team
+Strength directly from these diagnostics. The next comparison should evaluate
+expectation-relative Dynamic Prestige models against static Prestige plus the
+accepted Development behavior, preserving mobility and durable hierarchy. Keep
+Phase 8A **IMPLEMENTED / AWAITING MANUAL ACCEPTANCE** and do not select a later
+milestone.
 
 ### Low-prestige rebuild and mature-league ceiling
 

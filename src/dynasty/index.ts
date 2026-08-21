@@ -23,6 +23,7 @@ export {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
   deriveDevelopmentTendency,
+  deriveHighPotentialDevelopmentOpportunity,
   developReturningPlayer,
 } from './development'
 export {

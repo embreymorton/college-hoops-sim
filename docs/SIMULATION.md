@@ -91,8 +91,6 @@ The accepted 200-replay diagnostic used one selected 16-Team field across many t
 
 ## Implemented Player Development V1
 
-Player Development is a pure Dynasty-layer operation over one returning Player. It changes Player attributes and advances class while reusing the existing position-aware `calculateOverall()` function; OVR is never stored or incremented directly. Potential remains fixed.
-
 Development V1 remains a pure Dynasty-layer operation over one returning Player. It changes position-aware attributes and advances class while reusing `calculateOverall()`; OVR is never stored or incremented directly. Potential remains fixed and is always a hard ceiling.
 
 The completed class provides a baseline, not an absolute gain ceiling:
@@ -110,7 +108,9 @@ baseline = inclusive class-range draw
 opportunity = floor((headroom / 8) × class multiplier × tendency multiplier)
 variance = inclusive draw from -1 to +1
 breakout = 0, or +3 to +6 when headroom is at least 8
-target increment = min(class cap, max(0, baseline + tendency adjustment + opportunity + variance + breakout))
+high-POT opportunity = +1 when POT ≥ 85 and headroom ≥ 8,
+                       plus +1 more when POT ≥ 90 and headroom ≥ 12
+target increment = min(class cap, max(0, baseline + tendency adjustment + opportunity + variance + breakout + high-POT opportunity))
 target OVR = min(POT, current OVR + target increment)
 ```
 
@@ -147,6 +147,18 @@ Development V1 has no regression and no dependency on playing time, starts, rota
 The accepted direct diagnostic ran 5,500 deterministic production-API careers. Annual OVR gain median/P90/P95/max was `+2/+7/+9/+12`; `+6`, `+8`, and `+10` gains occurred in `16.0%`, `8.4%`, and `4.4%` of the deliberately high-headroom-balanced sample. High-Potential raw outcomes remained diverse: 55/90 careers were `23.0%` bust, `11.6%` low, `27.6%` solid, `16.0%` hit, and `21.8%` breakout under diagnostic-only total-gain labels. Their senior OVR median/P90/P95/max was `69/81/82/85`, compared with `60/60/60/61` for 55/60.
 
 The full 5-seed × 10-season acceptance run retained valid rosters, Rotations, schedules, Focus state, commitments, lifecycle, history, serialization, and deterministic replay. Season 10 averaged `78.8` active Players at 80+, `21.4` at 85+, `1.8` at 90+, and `0.2` at 95+—well below the pre-Recruit-Talent-V1 inflated ecosystem. It produced a Season-10 Team OVR median/P90/max of `77.3/80.3/84.6`; rare strong contenders remained possible (champion/runner-up strengths ranged to `89.1/88.9`) without a hidden Prestige Development multiplier.
+
+The accepted high-POT realization revision was promoted after an exact
+production-parity run under diagnostic-only static Prestige. Across the same
+three deterministic 25-Season seeds, `85+` POT careers averaged `82.73` peak
+OVR with median `85.00`, `5.99` unused POT, and `51.5%`/`10.9%` reaching 85/90.
+The `90+` POT cohort averaged `84.77` peak OVR with median `86.33`, `8.00`
+unused POT, and `58.2%`/`35.5%` reaching 85/90. Season-25 Team OVR remained
+well spread (`76.97` mean, `4.06` SD, `63.40–84.07`); the full sample produced
+31/3/0 `85+`/`88+`/`90+` Program-Seasons and a `89.52` maximum. High POT remains
+opportunity rather than destiny: a representative 96-POT Player still finished
+at 69 OVR. This narrow revision is accepted and frozen; all other Development
+V1 behavior and dependencies remain unchanged.
 
 ## Implemented Recruiting V0
 
@@ -545,7 +557,12 @@ The same sample observed Recruit OVR `P10/P25/P50/P75/P90 = 53/60/66/73/79`, Pot
 
 The current 5-seed × 10-season equilibrium smoke remained deterministic and structurally valid: all 50 recruiting cycles filled every opening with zero fallback/emergency Recruits, invalid Focus states, duplicate commitments, or lifecycle failures. By Season 10 it averaged `74.2` active Players at 80+, `20.2` at 85+, and `2.0` at 90+ per 384-player League, down from the pre-V1 talent-rich equilibrium. Team OVR averaged `76.28` in the late window, with clear Prestige separation (`79.36`, `77.41`, `73.28`, `66.74` for 80–100 through 1–39 bands).
 
-Player Development is unchanged. The V1 smoke shows no continuing talent inflation; its mature high end is below the earlier directional density target, so Development is not currently a candidate for an inflation reduction. Any future adjustment to Development, NBA/early departures, transfers, redshirts, roster capacity, or Recruit supply requires a new isolated talent-flow calibration.
+At the time of this Recruit-distribution acceptance, Player Development was
+unchanged. That smoke remains evidence against talent inflation; the later
+accepted high-POT realization revision only added the narrowly documented
+headroom-sensitive opportunity above. Any future adjustment to Development,
+NBA/early departures, transfers, redshirts, roster capacity, or Recruit supply
+requires a new isolated talent-flow calibration.
 
 The Candidate B paired experiment passed all `22/22` pre-registered gates, and
 production activation reproduced the accepted 500-class result exactly by

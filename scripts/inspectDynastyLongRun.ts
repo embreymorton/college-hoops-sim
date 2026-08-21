@@ -5,6 +5,10 @@ import {
   POSITIONS,
   TEAM_ROSTER_SIZE,
   calculateOverall,
+  calculatePlayerDefense,
+  calculatePlayerOffense,
+  calculateTeamStrength,
+  derivePlayerMinutesV1,
   validateRotationV1,
 } from '../src/engine'
 import {
@@ -91,6 +95,37 @@ export interface TournamentStrengthRecord {
   readonly overall: number
 }
 
+export interface GeneratedRecruitTrace {
+  readonly targetSeasonNumber: number
+  readonly playerId: string
+  readonly position: string
+  readonly nationalRank: number
+  readonly stars: number
+  readonly overall: number
+  readonly potential: number
+}
+
+export interface RosterPlayerTrace {
+  readonly playerId: string
+  readonly classYear: string
+  readonly position: string
+  readonly overall: number
+  readonly potential: number
+  readonly minutes: number
+  readonly contribution: number
+}
+
+export interface ProgramRosterTrace {
+  readonly seasonNumber: number
+  readonly programId: string
+  readonly prestige: number
+  readonly offense: number
+  readonly defense: number
+  readonly overall: number
+  readonly rotationWeightedPlayerOverall: number
+  readonly players: readonly RosterPlayerTrace[]
+}
+
 interface StructuralHealth {
   invalidRosters: number
   invalidRotations: number
@@ -126,6 +161,8 @@ export interface DynastyRunResult {
   readonly tournamentBalance: readonly TournamentBalanceObservation[]
   readonly tournamentBalanceCandidate: readonly TournamentBalanceObservation[]
   readonly rotationMinutes: readonly RotationMinuteObservation[]
+  readonly generatedRecruits: readonly GeneratedRecruitTrace[]
+  readonly rosterTraces: readonly ProgramRosterTrace[]
   readonly health: StructuralHealth
   readonly rollovers: number
 }
@@ -274,6 +311,8 @@ export function runDynastyCalibration(
   const tournamentBalance: TournamentBalanceObservation[] = []
   const tournamentBalanceCandidate: TournamentBalanceObservation[] = []
   const rotationMinutes: RotationMinuteObservation[] = []
+  const generatedRecruits: GeneratedRecruitTrace[] = []
+  const rosterTraces: ProgramRosterTrace[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -285,6 +324,36 @@ export function runDynastyCalibration(
     for (let iteration = 0; iteration < seasonsToComplete; iteration += 1) {
       auditActiveSeason(dynasty, health)
       let season = dynasty.activeSeason!
+      generatedRecruits.push(...dynasty.recruiting!.recruits.map((recruit) => ({
+        targetSeasonNumber: dynasty.recruiting!.targetSeasonNumber,
+        playerId: recruit.player.id,
+        position: recruit.player.position,
+        nationalRank: recruit.nationalRank,
+        stars: recruit.stars,
+        overall: calculateOverall(recruit.player),
+        potential: recruit.player.potential,
+      })))
+      for (const [programId, { team, rotation }] of Object.entries(season.programStates)) {
+        const minutes = derivePlayerMinutesV1(rotation)
+        const strength = calculateTeamStrength(team, rotation)
+        rosterTraces.push({
+          seasonNumber: season.seasonNumber,
+          programId,
+          prestige: team.prestige,
+          ...strength,
+          rotationWeightedPlayerOverall: team.roster.reduce((sum, player) =>
+            sum + calculateOverall(player) * (minutes[player.id] ?? 0), 0) / 200,
+          players: team.roster.map((player) => ({
+            playerId: player.id,
+            classYear: player.classYear,
+            position: player.position,
+            overall: calculateOverall(player),
+            potential: player.potential,
+            minutes: minutes[player.id] ?? 0,
+            contribution: (calculatePlayerOffense(player) + calculatePlayerDefense(player)) / 2,
+          })).sort((first, second) => second.minutes - first.minutes || second.overall - first.overall),
+        })
+      }
       const activePlayerIds = Object.values(season.programStates).flatMap(
         ({ team }) => team.roster.map(({ id }) => id),
       )
@@ -544,6 +613,8 @@ export function runDynastyCalibration(
     tournamentBalance,
     tournamentBalanceCandidate,
     rotationMinutes,
+    generatedRecruits,
+    rosterTraces,
     health,
     rollovers,
   }

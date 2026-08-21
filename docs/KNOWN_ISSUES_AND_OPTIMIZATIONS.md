@@ -9,7 +9,7 @@ measured scaling risk, or validated watchpoint. Follow
 
 ## Open items
 
-### P1 — Mature Dynasty hierarchy compression
+### P1 — Dynamic Prestige hierarchy compression
 
 A targeted same-seed comparison confirmed two related unresolved risks. First,
 the mature roster economy compresses Team OVR even when Prestige is held at its
@@ -20,13 +20,39 @@ tails: at Season 25, pooled Prestige SD/range moved from `13.3`/`55` static to
 `9.3`/`38` dynamic, while pooled Team OVR SD moved from `4.00` to `3.23`.
 
 Treat this as a Phase 8A acceptance blocker, not authorization for broad
-calibration. The smallest next diagnostic should isolate recruit-class talent
-availability, elite-signing concentration, Development ceilings, and
-rotation-weighted roster translation under static Prestige. Do not retune
-Recruiting, Recruit generation, Development, or Team Strength until that causal
-slice identifies the limiting mechanism. Dynamic Prestige should then be
-revisited separately for durable reputation inertia without making the original
-Programs permanently elite.
+calibration. A follow-up static-Prestige trace found adequate but scarce elite
+supply and viable Recruiting concentration: the average class contained about
+24 `85+` POT and seven `90+` POT Recruits, while the best destination averaged
+about three premium signees and Programs could stack 7–8 across two classes.
+Development realization was the largest loss. Only `44–48%` of fully observed
+`85+` POT signees reached `85` OVR, only `8–11%` reached `90`, and they graduated
+about `7.6` points below Potential on average. Senior turnover then removed
+large portions of the strongest Rotations at once.
+
+Team Strength is not a display-scale bottleneck: correlation with
+rotation-weighted Player OVR was `0.995–0.996`, with an average difference near
+`0.2`. A constructed uniform 90 roster produces exactly 90, while five 90-level
+starters backed by 80-level Players produces `88.45`. If a calibration pass is
+explicitly selected, use the tested headroom-sensitive Candidate A. That
+experiment reduced `85+` POT unused ceiling from `7.64` to `5.99` without
+meaningful broad inflation, increased `85+` Team occurrences from 22 to 31, and
+created a two-Season elite run, but still produced no `90+` Team and only three
+`88+` Program-Seasons. The late-career-only Candidate B was too weak. A final
+Candidate A+ test gave `90+` POT Players one additional high-headroom
+opportunity point and improved individual peak realization, but mostly during
+senior Seasons; it produced only 32/3/0 `85+`/`88+`/`90+` Team occurrences
+versus Candidate A's 31/3/0 and raised maximum Team OVR only `89.52 → 89.63`.
+Candidate A+ is therefore rejected as a meaningful team-tail improvement.
+Candidate A is now the accepted production model and exact production parity
+reproduced the experiment. The new static control produced Season-25 Team OVR
+mean/SD/min/max `76.97`/`4.06`/`63.40`/`84.07`, 31/3/0
+`85+`/`88+`/`90+` Program-Seasons, and a `89.52` maximum. The Development
+realization correction is resolved and frozen; zero `90+` Teams is not itself a
+failure. The remaining P1 issue is the current Dynamic Prestige formula's loss
+of durable reputation tails. Compare expectation-relative alternatives against
+the accepted static control, adding a recent 2–3 Season résumé only if needed
+for persistence. Do not create another Development variant or change Recruit
+supply, Recruiting allocation, roster lifecycle, Rotation, or Team Strength.
 
 ### P1 — Correct Super Sim completion-summary wording
 
