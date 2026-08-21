@@ -337,6 +337,8 @@ The current 16-Team tournament selects the top half of a 32-Program universe. Th
 
 Do not retune Game Simulation solely because V0 seed upset percentages differ from real NCAA history. Revisit only if repeated gameplay shows that seed value feels meaningless, strong Teams lack a meaningful advantage, or tournament outcomes feel excessively random. The accepted championship seed-band diagnostic currently shows that higher seeds retain strong overall tournament value; deeper seeds still winning occasionally is intentional upset potential, not automatically a defect.
 
-Repeated manual play now justifies the planned diagnostic in `PLAYTESTING.md`:
-measure seeding/ranking quality, actual OVR gaps, and matchup variance separately
-before changing anything. This investigation does not itself establish a bug.
+The completed competitive-compression diagnostic confirmed that mature
+Tournament fields are tightly clustered and seed gaps often overstate actual
+Strength gaps. This does not independently implicate Game Simulation: do not
+tune Game Sim solely to reduce upset rates. `PLAYTESTING.md` owns the underlying
+roster-quality compression and its unresolved product/design boundary.

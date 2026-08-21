@@ -133,6 +133,15 @@ Program Record Books; those remain distinct possible extensions.
 
 ## Roster and coaching depth
 
+- **Offseason roster management / roster competition:** an unscheduled design
+  family for making roster construction less vacancy-bound while preserving a
+  coherent legal roster. Possible directions include limited recruiting beyond
+  immediate senior vacancies followed by offseason roster resolution,
+  player release/non-renewal or another resolution mechanism, variable turnover
+  such as transfers or early departures, or a future roster-role abstraction.
+  These are alternatives to investigate, not a combined specification. Exact
+  oversigning, removal, transfer, scholarship, UI, AI, and role rules remain
+  deliberately undefined. No direction is selected or prioritized.
 - manual canonical starters or role definitions with simulation meaning;
 - redshirts, medical redshirts, and eligibility exceptions;
 - injuries, fatigue, morale, chemistry, and discipline;
@@ -247,10 +256,13 @@ Dynamic Program Prestige remains an unscheduled concept after Phase 8A was
 rejected and rolled back. The tested percentile-target, expectation-relative,
 and rolling-résumé implementations compressed the long-run Program hierarchy
 and are evidence only, not preferred future designs. Any renewed investigation
-should begin from the broader Dynasty ecosystem and first principles; retaining
-static Prestige or choosing not to implement Dynamic Prestige remain valid.
-`PLAYTESTING.md` owns the unscheduled Elite Program Dominance Audit that would
-locate any causal bottleneck before a future Prestige direction is considered.
+should begin from first principles; retaining static Prestige or choosing not
+to implement Dynamic Prestige remain valid. The completed hierarchy audit found
+that static Prestige already creates meaningful advantage and that the mature
+amplitude problem lies in elite-talent co-location under the stable roster
+lifecycle. Dynamic Prestige remains a mobility concept, not the demonstrated
+fix for compression, and should be considered independently of or after any
+future roster-lifecycle design.
 
 ## Presentation and broader modes
 

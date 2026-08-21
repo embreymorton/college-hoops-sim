@@ -40,6 +40,9 @@ export {
   alignGeneratedRecruitingFocus,
   buildDefaultRecruitingBoard,
   cleanupInvalidRecruitingOffers,
+  deriveAiOfferUtility,
+  deriveAiOfferSwitchingThreshold,
+  deriveAiPositionCandidateUtility,
   fillRemainingRecruitingBoard,
   manageProgramRecruitingOffers,
   offerRecruit,
@@ -81,6 +84,7 @@ export {
   deriveRecruitProgramStandings,
   deriveRecruitStarRating,
   deriveRemainingOpeningsByPosition,
+  deriveOpeningAssignments,
   deriveTargetStatus,
   getRecruit,
 } from './recruiting/queries'
@@ -89,9 +93,11 @@ export {
   deriveCommitmentConfidenceThresholds,
   deriveProgramRemainingRecruitingCapacity,
   resolveRecruitingPeriod,
+  resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer,
   resolvePostseasonRecruitingPeriod,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
+  syncRecruitingThroughCompletedRoundsWithEarlyClosePremiumSecondOffer,
 } from './recruiting/simulation'
 export { initializeRecruiting } from './recruiting/state'
 export {

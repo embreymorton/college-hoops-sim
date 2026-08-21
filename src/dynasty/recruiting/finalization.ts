@@ -20,6 +20,8 @@ import {
   deriveRemainingOpeningsByPosition,
   deriveTargetStatus,
   getRecruit,
+  canProgramOfferRecruit,
+  canRecruitUseRemainingOpening,
 } from './queries'
 
 function standing(
@@ -172,6 +174,31 @@ function fillOfferVacancies(
   let current = cleanupInvalidRecruitingOffers(recruiting)
   for (const programId of Object.keys(current.programs).sort()) {
     let program = current.programs[programId]!
+    if (current.experimentalRotationCompatibleOpenings) {
+      while (program.board.filter((target) => target.hasActiveOffer && deriveTargetStatus(current, programId, target.playerId) === 'active').length <
+        Object.values(deriveRemainingOpeningsByPosition(current, program)).reduce((sum, value) => sum + value, 0)) {
+        const boardChoice = program.board.filter((target) =>
+          !target.hasActiveOffer && deriveTargetStatus(current, programId, target.playerId) === 'active' &&
+          canProgramOfferRecruit(current, program, target.playerId),
+        ).sort((a, b) => standing(dynasty, current, b.playerId, programId) - standing(dynasty, current, a.playerId, programId) || a.playerId.localeCompare(b.playerId))[0]
+        let playerId = boardChoice?.playerId
+        if (!playerId && (programId !== dynasty.controlledProgramId || expandControlledPool)) {
+          const choice = current.recruits.filter((recruit) =>
+            !current.commitmentsByPlayerId[recruit.player.id] &&
+            !program.board.some((target) => target.playerId === recruit.player.id && target.hasActiveOffer) &&
+            canProgramOfferRecruit(current, program, recruit.player.id),
+          ).sort((a, b) => b.qualityScore - a.qualityScore || a.nationalRank - b.nationalRank || a.player.id.localeCompare(b.player.id))[0]
+          if (choice) {
+            playerId = choice.player.id
+            program = addTarget(dynasty, current, program, playerId)
+          }
+        }
+        if (!playerId) break
+        program = { ...program, board: program.board.map((target) => target.playerId === playerId ? { ...target, hasActiveOffer: true } : target) }
+      }
+      current = { ...current, programs: { ...current.programs, [programId]: program } }
+      continue
+    }
     for (const position of POSITIONS) {
       const remaining = deriveRemainingOpeningsByPosition(current, program)[position]
       let offered = deriveActiveOfferCountsByPosition(current, program)[position]
@@ -253,15 +280,17 @@ export function preparePremiumLateMarket(
         if (program.board.some((target) =>
           target.playerId === recruit.player.id && target.hasActiveOffer,
         )) return []
-        if (deriveRemainingOpeningsByPosition(
-          current,
-          program,
-        )[recruit.player.position] <= 0) return []
+        if (!canRecruitUseRemainingOpening(current, program, recruit.player.id)) return []
         const replacement = program.board
           .filter((target) => {
             const targetRecruit = getRecruit(current, target.playerId)
-            return target.hasActiveOffer &&
-              targetRecruit?.player.position === recruit.player.position &&
+            return target.hasActiveOffer && targetRecruit !== undefined &&
+              (current.experimentalRotationCompatibleOpenings
+                ? canProgramOfferRecruit(current, {
+                    ...program,
+                    board: program.board.map((entry) => entry.playerId === target.playerId ? { ...entry, hasActiveOffer: false } : entry),
+                  }, recruit.player.id)
+                : targetRecruit?.player.position === recruit.player.position) &&
               targetRecruit.nationalRank > recruit.nationalRank
           })
           .sort((first, second) => {
@@ -340,7 +369,7 @@ function resolveLateOffers(
       const program = current.programs[programId]!
       return program.board.some((target) =>
         target.playerId === recruit.player.id && target.hasActiveOffer,
-      ) && deriveRemainingOpeningsByPosition(current, program)[recruit.player.position] > 0
+      ) && canRecruitUseRemainingOpening(current, program, recruit.player.id)
     })
     if (candidates.length === 0) continue
     const candidateSet = new Set(candidates)
@@ -390,10 +419,7 @@ function fallbackMatch(
   )) {
     if (current.commitmentsByPlayerId[recruit.player.id]) continue
     const programs = Object.keys(current.programs).sort().filter((programId) =>
-      deriveRemainingOpeningsByPosition(
-        current,
-        current.programs[programId]!,
-      )[recruit.player.position] > 0,
+      canRecruitUseRemainingOpening(current, current.programs[programId]!, recruit.player.id),
     )
     if (programs.length === 0) continue
     const winner = programs
@@ -442,6 +468,13 @@ function fallbackMatch(
 }
 
 function assertSufficientSupply(recruiting: RecruitingState): void {
+  if (recruiting.experimentalRotationCompatibleOpenings) {
+    const demand = Object.values(recruiting.programs).reduce((sum, program) =>
+      sum + Object.values(deriveRemainingOpeningsByPosition(recruiting, program)).reduce((a, b) => a + b, 0), 0)
+    const supply = recruiting.recruits.filter((recruit) => !recruiting.commitmentsByPlayerId[recruit.player.id]).length
+    if (supply < demand) throw new RangeError('Insufficient unsigned Recruit supply for compatible Late Recruiting.')
+    return
+  }
   for (const position of POSITIONS) {
     const demand = Object.values(recruiting.programs).reduce(
       (sum, program) => sum + deriveRemainingOpeningsByPosition(

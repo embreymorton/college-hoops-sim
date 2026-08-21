@@ -39,6 +39,7 @@ export interface TournamentGameRecord {
   readonly homeOverall: number
   readonly awayOverall: number
   readonly winnerId: string
+  readonly margin: number
   readonly overallDifference: number
   readonly seedUpset: boolean
   readonly strengthUpset: boolean
@@ -186,6 +187,7 @@ export function extractTournamentBalanceObservation(
         homeOverall: home.overall,
         awayOverall: away.overall,
         winnerId: result.winnerId,
+        margin: Math.abs(result.homeScore - result.awayScore),
         overallDifference: Math.abs(home.overall - away.overall),
         ...classifyUpsets({
           homeProgramId: home.programId,

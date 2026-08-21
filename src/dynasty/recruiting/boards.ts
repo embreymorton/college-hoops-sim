@@ -1,4 +1,4 @@
-import type { Position } from '../../engine'
+import { POSITIONS, type Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import {
   FINAL_RECRUITING_PERIOD,
@@ -7,6 +7,7 @@ import {
 } from './constants'
 import type {
   AddRecruitingBoardTargetOptions,
+  Recruit,
   RecruitingBoardTarget,
   RecruitingProgramState,
   RecruitingState,
@@ -20,6 +21,9 @@ import {
   deriveRemainingOpeningsByPosition,
   deriveTargetStatus,
   getRecruit,
+  canProgramOfferRecruit,
+  canRecruitUseProjectedOpening,
+  deriveEligibleRecruitingOpeningPositions,
 } from './queries'
 
 function withProgramBoard(
@@ -64,7 +68,7 @@ export function addRecruitingBoardTarget({
   if (recruiting.commitmentsByPlayerId[playerId]) {
     throw new RangeError('A committed Recruit cannot be added to a board.')
   }
-  if (program.projectedOpeningsByPosition[recruit.player.position] === 0) {
+  if (!canRecruitUseProjectedOpening(recruiting, program, recruit)) {
     throw new RangeError('Recruit position does not match a projected opening.')
   }
   if (deriveTargetStatus(recruiting, program.programId, playerId) !== 'active') {
@@ -86,14 +90,13 @@ export function offerRecruit({
   const target = program.board.find((entry) => entry.playerId === playerId)
   if (!target) throw new RangeError('Recruit must be on the controlled Program board before receiving an offer.')
   if (target.hasActiveOffer) throw new RangeError('Recruit already has an active offer.')
-  const recruit = getRecruit(recruiting, playerId)!
   if (recruiting.commitmentsByPlayerId[playerId]) {
     throw new RangeError('A committed Recruit cannot receive an offer.')
   }
   if (deriveTargetStatus(recruiting, program.programId, playerId) !== 'active') {
     throw new RangeError('Recruit is not active for this Program position.')
   }
-  if (deriveAvailableOfferSlotsByPosition(recruiting, program)[recruit.player.position] <= 0) {
+  if (!canProgramOfferRecruit(recruiting, program, playerId)) {
     throw new RangeError('Program has no remaining active-offer capacity at this position.')
   }
   return withProgramBoard(dynasty, program.programId, program.board.map((entry) =>
@@ -159,28 +162,45 @@ export function setRecruitingFocus({
   )
 }
 
+export function deriveAiPositionCandidateUtility(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+  programId: string,
+  recruit: Recruit,
+): number {
+  const team = dynasty.activeSeason!.programStates[programId]!.team
+  const candidates = recruiting.recruits.filter(
+    (candidate) => candidate.player.position === recruit.player.position &&
+      recruiting.commitmentsByPlayerId[candidate.player.id] === undefined,
+  )
+  const idealPositionRank = Math.max(
+    1,
+    Math.round(candidates.length * (1.08 - team.prestige * 0.0095)),
+  )
+  return -Math.abs(recruit.positionRank - idealPositionRank) * 2 +
+    deriveBaseRecruitAttraction(dynasty, recruit, programId)
+}
+
 function positionCandidates(
   dynasty: DynastyState,
   recruiting: RecruitingState,
   programId: string,
   position: Position,
 ): RecruitingBoardTarget[] {
-  const team = dynasty.activeSeason!.programStates[programId]!.team
   const candidates = recruiting.recruits.filter(
     (recruit) =>
-      recruit.player.position === position &&
+      deriveEligibleRecruitingOpeningPositions(recruiting, recruit).includes(position) &&
       recruiting.commitmentsByPlayerId[recruit.player.id] === undefined,
-  )
-  const idealPositionRank = Math.max(
-    1,
-    Math.round(candidates.length * (1.08 - team.prestige * 0.0095)),
   )
   return candidates
     .map((recruit) => ({
       recruit,
-      utility:
-        -Math.abs(recruit.positionRank - idealPositionRank) * 2 +
-        deriveBaseRecruitAttraction(dynasty, recruit, programId),
+      utility: deriveAiPositionCandidateUtility(
+        dynasty,
+        recruiting,
+        programId,
+        recruit,
+      ),
     }))
     .sort(
       (first, second) =>
@@ -195,7 +215,7 @@ function positionCandidates(
     }))
 }
 
-function offerUtility(
+export function deriveAiOfferUtility(
   dynasty: DynastyState,
   recruiting: RecruitingState,
   programId: string,
@@ -238,6 +258,11 @@ function offerUtility(
   )
 }
 
+/** Existing production switching margin, shared by baseline and paired diagnostics. */
+export function deriveAiOfferSwitchingThreshold(planningPeriod: number): number {
+  return Math.max(3, 10 - planningPeriod * 0.3)
+}
+
 function addPremiumDiscoveryTarget(
   dynasty: DynastyState,
   recruiting: RecruitingState,
@@ -263,8 +288,8 @@ function addPremiumDiscoveryTarget(
       } satisfies RecruitingBoardTarget,
     }))
     .sort((first, second) =>
-      offerUtility(dynasty, recruiting, program.programId, second.target) -
-        offerUtility(dynasty, recruiting, program.programId, first.target) ||
+      deriveAiOfferUtility(dynasty, recruiting, program.programId, second.target) -
+        deriveAiOfferUtility(dynasty, recruiting, program.programId, first.target) ||
       first.recruit.nationalRank - second.recruit.nationalRank ||
       first.recruit.player.id.localeCompare(second.recruit.player.id),
     )
@@ -276,11 +301,11 @@ function addPremiumDiscoveryTarget(
   )
   const bestExistingUtility = Math.max(
     ...samePosition.map((target) =>
-      offerUtility(dynasty, recruiting, program.programId, target),
+        deriveAiOfferUtility(dynasty, recruiting, program.programId, target),
     ),
     Number.NEGATIVE_INFINITY,
   )
-  const candidateUtility = offerUtility(
+  const candidateUtility = deriveAiOfferUtility(
     dynasty,
     recruiting,
     program.programId,
@@ -305,15 +330,15 @@ function addPremiumDiscoveryTarget(
   const replaceable = samePosition
     .filter(({ hasActiveOffer }) => !hasActiveOffer)
     .sort((first, second) =>
-      offerUtility(dynasty, recruiting, program.programId, first) -
-        offerUtility(dynasty, recruiting, program.programId, second) ||
+      deriveAiOfferUtility(dynasty, recruiting, program.programId, first) -
+        deriveAiOfferUtility(dynasty, recruiting, program.programId, second) ||
       second.playerId.localeCompare(first.playerId),
     )[0]
   if (
     !replaceable ||
     !lateUncoveredPremium &&
     candidateUtility <
-      offerUtility(dynasty, recruiting, program.programId, replaceable) +
+      deriveAiOfferUtility(dynasty, recruiting, program.programId, replaceable) +
         4
   ) return program
   return {
@@ -347,6 +372,27 @@ export function cleanupInvalidRecruitingOffers(
 ): RecruitingState {
   const programs = Object.fromEntries(Object.keys(recruiting.programs).sort().map((programId) => {
     const program = recruiting.programs[programId]!
+    if (recruiting.experimentalRotationCompatibleOpenings) {
+      let board = program.board.map((target) => ({
+        ...target,
+        isFocused: target.isFocused && deriveTargetStatus(recruiting, programId, target.playerId) === 'active',
+        hasActiveOffer: false,
+      }))
+      for (const target of program.board.filter(({ hasActiveOffer }) => hasActiveOffer)) {
+        if (deriveTargetStatus(recruiting, programId, target.playerId) !== 'active') continue
+        const candidateProgram = { ...program, board }
+        if (!canProgramOfferRecruit(recruiting, candidateProgram, target.playerId)) continue
+        board = board.map((entry) => entry.playerId === target.playerId ? { ...entry, hasActiveOffer: true } : entry)
+      }
+      const focusedIds = new Set(board.filter((target) =>
+        target.isFocused && deriveTargetStatus(recruiting, programId, target.playerId) === 'active',
+      ).slice(0, RECRUITING_FOCUS_LIMIT).map(({ playerId }) => playerId))
+      board = board.map((target) => ({
+        ...target,
+        isFocused: target.isFocused ? focusedIds.has(target.playerId) : false,
+      }))
+      return [programId, { ...program, board }]
+    }
     const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
     const retainedByPosition: Partial<Record<Position, number>> = {}
     const board = program.board.map((target) => {
@@ -377,6 +423,22 @@ export function manageProgramRecruitingOffers(
   programId: string,
 ): RecruitingProgramState {
   const program = recruiting.programs[programId]!
+  if (recruiting.experimentalRotationCompatibleOpenings) {
+    let board = program.board.map((target) => ({ ...target, hasActiveOffer: false }))
+    const eligible = [...program.board]
+      .filter((target) => deriveTargetStatus(recruiting, programId, target.playerId) === 'active')
+      .sort((first, second) =>
+        Number(second.hasActiveOffer) - Number(first.hasActiveOffer) ||
+        deriveAiOfferUtility(dynasty, recruiting, programId, second) - deriveAiOfferUtility(dynasty, recruiting, programId, first) ||
+        first.playerId.localeCompare(second.playerId),
+      )
+    for (const target of eligible) {
+      const candidateProgram = { ...program, board }
+      if (!canProgramOfferRecruit(recruiting, candidateProgram, target.playerId)) continue
+      board = board.map((entry) => entry.playerId === target.playerId ? { ...entry, hasActiveOffer: true } : entry)
+    }
+    return { ...program, board }
+  }
   const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
   let board = [...program.board]
   for (const position of Object.keys(remaining) as Position[]) {
@@ -385,8 +447,8 @@ export function manageProgramRecruitingOffers(
       return recruit?.player.position === position &&
         deriveTargetStatus(recruiting, programId, target.playerId) === 'active'
     }).sort((first, second) =>
-      offerUtility(dynasty, recruiting, programId, second) -
-        offerUtility(dynasty, recruiting, programId, first) ||
+      deriveAiOfferUtility(dynasty, recruiting, programId, second) -
+        deriveAiOfferUtility(dynasty, recruiting, programId, first) ||
       first.playerId.localeCompare(second.playerId),
     )
     const desiredCount = remaining[position]
@@ -400,14 +462,13 @@ export function manageProgramRecruitingOffers(
       const selectedTargets = eligible.filter(({ playerId }) => selected.has(playerId))
       const worst = selectedTargets.at(-1)
       const bestBackup = eligible.find(({ playerId }) => !selected.has(playerId))
-      const switchingThreshold = Math.max(
-        3,
-        10 - (recruiting.lastResolvedPeriod + 1) * 0.3,
+      const switchingThreshold = deriveAiOfferSwitchingThreshold(
+        recruiting.lastResolvedPeriod + 1,
       )
       if (
         worst && bestBackup &&
-        offerUtility(dynasty, recruiting, programId, bestBackup) >
-          offerUtility(dynasty, recruiting, programId, worst) + switchingThreshold
+        deriveAiOfferUtility(dynasty, recruiting, programId, bestBackup) >
+          deriveAiOfferUtility(dynasty, recruiting, programId, worst) + switchingThreshold
       ) {
         selected.delete(worst.playerId)
         selected.add(bestBackup.playerId)
@@ -421,6 +482,93 @@ export function manageProgramRecruitingOffers(
     })
   }
   return { ...program, board }
+}
+
+/** Tooling-only candidate: one close premium extra Offer per position through Period 8. */
+function addEarlyClosePremiumSecondOffers(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): RecruitingProgramState {
+  const planningPeriod = recruiting.lastResolvedPeriod + 1
+  if (planningPeriod > 8) return program
+  let board = [...program.board]
+  for (const position of POSITIONS) {
+    const active = board.filter((target) => {
+      const recruit = getRecruit(recruiting, target.playerId)
+      return recruit?.player.position === position &&
+        deriveTargetStatus(recruiting, program.programId, target.playerId) === 'active'
+    })
+    const offered = active.filter(({ hasActiveOffer }) => hasActiveOffer)
+    const normalCapacity = deriveRemainingOpeningsByPosition(
+      recruiting,
+      { ...program, board },
+    )[position]
+    if (normalCapacity <= 0 || offered.length !== normalCapacity) continue
+    const premiumOffered = offered.filter((target) =>
+      getRecruit(recruiting, target.playerId)!.stars >= 4,
+    ).sort((a, b) =>
+      deriveAiOfferUtility(dynasty, recruiting, program.programId, a) -
+        deriveAiOfferUtility(dynasty, recruiting, program.programId, b),
+    )[0]
+    if (!premiumOffered) continue
+    const alternative = active.filter((target) =>
+      !target.hasActiveOffer && getRecruit(recruiting, target.playerId)!.stars >= 4,
+    ).sort((a, b) =>
+      deriveAiOfferUtility(dynasty, recruiting, program.programId, b) -
+        deriveAiOfferUtility(dynasty, recruiting, program.programId, a) ||
+      a.playerId.localeCompare(b.playerId),
+    )[0]
+    if (!alternative) continue
+    const margin = deriveAiOfferUtility(
+      dynasty,
+      recruiting,
+      program.programId,
+      premiumOffered,
+    ) - deriveAiOfferUtility(
+      dynasty,
+      recruiting,
+      program.programId,
+      alternative,
+    )
+    if (margin > deriveAiOfferSwitchingThreshold(planningPeriod)) continue
+    board = board.map((target) => target.playerId === alternative.playerId
+      ? { ...target, hasActiveOffer: true }
+      : target)
+  }
+  return { ...program, board }
+}
+
+/** Tooling-only candidate collapse using the existing production Offer utility. */
+export function collapseEarlyClosePremiumSecondOffers(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+): RecruitingState {
+  const programs = Object.fromEntries(Object.keys(recruiting.programs).sort().map((programId) => {
+    const program = recruiting.programs[programId]!
+    let board = [...program.board]
+    for (const position of POSITIONS) {
+      const capacity = deriveRemainingOpeningsByPosition(recruiting, program)[position]
+      const retained = board.filter((target) => {
+        const recruit = getRecruit(recruiting, target.playerId)
+        return target.hasActiveOffer && recruit?.player.position === position &&
+          deriveTargetStatus(recruiting, programId, target.playerId) === 'active'
+      }).sort((a, b) =>
+        deriveAiOfferUtility(dynasty, recruiting, programId, b) -
+          deriveAiOfferUtility(dynasty, recruiting, programId, a) ||
+        a.playerId.localeCompare(b.playerId),
+      ).slice(0, capacity)
+      const retainedIds = new Set(retained.map(({ playerId }) => playerId))
+      board = board.map((target) => {
+        const recruit = getRecruit(recruiting, target.playerId)
+        return recruit?.player.position === position && target.hasActiveOffer
+          ? { ...target, hasActiveOffer: retainedIds.has(target.playerId) }
+          : target
+      })
+    }
+    return [programId, { ...program, board }]
+  }))
+  return { ...recruiting, programs }
 }
 
 /**
@@ -455,7 +603,7 @@ function retainAiPremiumPursuits(
     const replaceable = offeredAtPosition
       .filter((entry) => !retainedIds.has(entry.playerId))
       .sort((first, second) =>
-        offerUtility(dynasty, recruiting, programId, first) - offerUtility(dynasty, recruiting, programId, second) ||
+        deriveAiOfferUtility(dynasty, recruiting, programId, first) - deriveAiOfferUtility(dynasty, recruiting, programId, second) ||
         first.playerId.localeCompare(second.playerId),
       )[0]
     if (!replaceable) continue
@@ -569,7 +717,8 @@ function appendDefaultRecruitingTargets(
         board.length >= RECRUITING_BOARD_LIMIT ||
         addedByPosition[position] >= targetCounts[position]
       ) continue
-      const target = queues[position].shift()
+      let target = queues[position].shift()
+      while (target && selected.has(target.playerId)) target = queues[position].shift()
       if (!target) continue
       board.push(target)
       selected.add(target.playerId)
@@ -648,8 +797,8 @@ export function alignGeneratedRecruitingFocus(
       .sort((first, second) =>
         Number(second.hasActiveOffer && second.isFocused) - Number(first.hasActiveOffer && first.isFocused) ||
         Number(second.hasActiveOffer) - Number(first.hasActiveOffer) ||
-        offerUtility({ ...dynasty, recruiting: activeRecruiting }, activeRecruiting, programId, second) -
-          offerUtility({ ...dynasty, recruiting: activeRecruiting }, activeRecruiting, programId, first) ||
+        deriveAiOfferUtility({ ...dynasty, recruiting: activeRecruiting }, activeRecruiting, programId, second) -
+          deriveAiOfferUtility({ ...dynasty, recruiting: activeRecruiting }, activeRecruiting, programId, first) ||
         first.playerId.localeCompare(second.playerId),
       )
       .slice(0, RECRUITING_FOCUS_LIMIT)
@@ -667,6 +816,7 @@ export const alignAiRecruitingFocus = alignGeneratedRecruitingFocus
 export function refreshAiRecruitingBoards(
   dynasty: DynastyState,
   recruiting: RecruitingState,
+  experimentalEarlyClosePremiumSecondOffer = false,
 ): RecruitingState {
   const cleaned = cleanupInvalidRecruitingOffers(recruiting)
   const context = { ...dynasty, recruiting: cleaned }
@@ -700,6 +850,13 @@ export function refreshAiRecruitingBoards(
       program.board,
       programs[programId]!,
     )
+    if (experimentalEarlyClosePremiumSecondOffer) {
+      programs[programId] = addEarlyClosePremiumSecondOffers(
+        context,
+        { ...cleaned, programs },
+        programs[programId]!,
+      )
+    }
     programs[programId] = alignAiRecruitingFocus(
       context,
       { ...cleaned, programs },

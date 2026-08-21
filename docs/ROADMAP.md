@@ -30,11 +30,10 @@ successor design. Future work may reconsider Prestige, another part of the
 Dynasty ecosystem, static Prestige, or no Dynamic Prestige at all. No later
 milestone has been selected.
 
-The **Elite Program Dominance Audit** is an unscheduled diagnostic investigation,
-not NEXT. It would examine where static Prestige stops translating into durable
-Program advantage across Recruiting, roster formation, Development, Team
-Strength, game outcomes, and résumé standing. Recording the question does not
-reopen any frozen system or select an implementation.
+The **Elite Program Dominance / Competitive Compression** diagnostic is
+decision-complete. It found no justification for further ordinary Recruiting
+micro-rule tuning and moved the unresolved product question to the deeper roster
+lifecycle/offseason-management boundary. No successor work is selected.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 

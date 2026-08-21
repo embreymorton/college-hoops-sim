@@ -39,9 +39,10 @@ is no active replacement design and the Roadmap is at an Open Planning Checkpoin
 2. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
-The next unresolved Program-hierarchy question is captured below as the
-unscheduled **Elite Program Dominance Audit**. It is not Roadmap NEXT and does
-not authorize calibration or implementation.
+The Elite Program Dominance / Competitive Compression investigation is
+**decision-complete**. Ordinary Recruiting micro-rule experiments are closed;
+the remaining question concerns the deeper roster-lifecycle/offseason-management
+design boundary. No implementation or Roadmap successor is selected.
 
 This priority list is evidence guidance, not an independent sequencing decision.
 The authoritative milestone selection remains in `ROADMAP.md`.
@@ -95,206 +96,52 @@ The run also supplied these current product signals:
 
 ## Live WATCH Items
 
-### Long-run Program hierarchy — CONFIRMED / ACCEPTANCE BLOCKER
+### Long-run Program hierarchy — CONFIRMED / DECISION-COMPLETE
 
-A paired three-seed, 25-Season diagnostic compared the production Dynasty loop
-with Dynamic Prestige against a tooling-only pre-8A baseline that held Prestige
-static. By Season 25, Dynamic Prestige reduced Prestige standard deviation from
-`13.3` to `9.3` and the top-to-bottom range from `55` to `38`; all `85+` and
-`39-or-lower` Programs disappeared. It also reduced Team OVR standard deviation
-from `4.00` static to `3.23` dynamic at that checkpoint and weakened premium
-Recruit concentration and the Prestige/class-quality relationship.
+Mature Dynasties are excessively compressed, especially inside the Tournament
+field. Representative mature Team Strength SD was about `3.71`, while the
+Tournament field was about `2.33`; many nominally large seed gaps therefore
+contain modest actual Strength gaps. Résumé/seeding can exaggerate the apparent
+meaning of those matchups, but neither résumé logic nor Game Simulation creates
+the underlying roster compression.
 
-The missing powerhouse ceiling is not primarily an 8A regression. Across 2,400
-Program-Seasons per branch, static Prestige produced zero `90+` Team OVRs, only
-22 `85+` occurrences, and a maximum of `89.25`; Dynamic Prestige produced zero,
-24, and the same maximum. Both branches compressed sharply from the starting
-Universe by Season 5. This is an existing mature talent-economy limitation that
-Dynamic Prestige modestly worsens, while Dynamic Prestige independently erases
-the reputation tails it is intended to make mobile rather than eliminate.
+Static Prestige still produces a real hierarchy: high-Prestige Programs sign
+better classes, accumulate more premium talent, and field stronger rosters than
+weak Programs. The mature universe also contains enough elite individual
+talent—roughly 30 Players at `85+` and five at `90+` per Season—and
+Development realizes a clear age/quality curve. Concentrated top-three and
+top-five Player OVR translate strongly into Team Strength. Player supply,
+Development, Rotation weighting, Team Strength, and Game Simulation are
+reasonably exonerated as first-order compression causes.
 
-A follow-up static-Prestige talent trace located the main roster bottleneck.
-Classes contain roughly 160 Recruits, including about 13 at `80+` OVR, 3–4 at
-`85+` OVR, 24 at `85+` POT, and seven at `90+` POT. Recruiting can concentrate
-about three premium Recruits in the best class and 7–8 across two classes. The
-larger loss occurs during realization: among fully observed `85+` POT signees,
-only `44–48%` reached `85` OVR, `8–11%` reached `90`, and average unused ceiling
-at graduation was about `7.6` OVR points. Strong rosters did form, but senior
-classes frequently owned 70–109 rotation minutes and their departure immediately
-reduced Team OVR by roughly 2–5 points.
-
-Team Strength is not concealing monster rosters. Its correlation with
-rotation-weighted Player OVR was `0.995–0.996`, with only about a `0.2` point
-average difference. A 90 Team OVR therefore requires nearly all 200 rotation
-minutes to be supplied by roughly 90-level two-way contributors; five uniform
-90 starters with 80-level backups produced only `88.45`. Treat the ceiling as a
-Development-realization and elite-cohort-overlap issue first, with talent supply
-and Recruiting dispersion secondary rather than absent.
-
-A three-seed × 25-Season static-Prestige Development experiment compared the
-production baseline with two narrow high-POT variants. Candidate A added at
-most two annual opportunity points while `85+`/`90+` POT Players retained large
-headroom. It raised `85+` POT average peak OVR from `81.08` to `82.73`, reduced
-unused POT from `7.64` to `5.99`, increased `85+` Team occurrences from `22` to
-`31`, and produced one two-Season `85+` run. Mature league Team OVR rose only
-about `0.2–0.3`, SD and the weak tail remained intact, and recruiting classes
-were exactly unchanged. Player variance also remained substantial: peak SD was
-`6.73`, 25% of annual transitions still gained zero, and some `95+` POT Players
-still graduated around 69 OVR.
-
-Candidate A nevertheless did not restore the intended monster-roster tail: its
-maximum was `89.52`, it produced no `90+` Team, and only three `88+`
-Program-Seasons—the same count as baseline. Candidate B's probabilistic
-`JR→SR` relief was too weak, leaving unused POT at `7.05`, producing 24 `85+`
-Team occurrences, and retaining the baseline `89.25` maximum.
-
-The final Candidate A+ experiment increased Candidate A's high-end opportunity
-maximum from two to three points for `90+` POT Players with at least 12 points
-of headroom. It improved the `90+` POT cohort's average peak from `84.77` to
-`85.88`, reduced unused POT from `8.00` to `6.88`, and raised the share reaching
-85/90 OVR from `58.2%`/`35.5%` to `64.5%`/`38.3%`. The additional realization
-arrived mainly late: first attainment of 90 OVR was nearly unchanged through
-the junior Season, while the senior share rose. That individual improvement did
-not translate into stronger elite-roster overlap. Candidate A+ produced 32/3/0
-`85+`/`88+`/`90+` Team occurrences versus Candidate A's 31/3/0, the same elite
-run lengths, and only raised the maximum from `89.52` to `89.63`. Its mature
-league Team mean was just `0.04` higher, with the same weak-Team floor and
-slightly greater champion concentration.
-
-Candidate A is therefore the accepted production Development model; Candidate
-A+ is rejected as a meaningful improvement. Production parity reproduced every
-recorded Candidate A headline metric exactly. The accepted static-Prestige
-control has Season-25 Team OVR mean/SD/min/max/range of
-`76.97`/`4.06`/`63.40`/`84.07`/`20.67`, 31/3/0 `85+`/`88+`/`90+` Team
-occurrences, a `89.52` maximum, `0.608` adjacent-Season top-four retention, and
-longest elite runs of 2/1/0 Seasons. Its three runs produced 14/15/14 unique
-champions with leading shares of `16%`/`24%`/`20%`. This is now the control for
-Dynamic Prestige validation. The narrow Development correction is **COMPLETE /
-ACCEPTED / FROZEN**; do not create another variant from this result.
-
-Do not tune Recruiting, Recruit generation, graduation, Rotation, or Team
-Strength directly from these diagnostics. Static Prestige plus accepted
-Development is production truth. No follow-up Prestige model is selected.
-
-The focused expectation-relative comparison is now complete and the tested
-candidate is **REJECTED**. A small QUICK screen selected rank-surprise bands of
-`5 / 11 / 17` (deadband / two-point / three-point threshold) for the paired
-three-seed × 25-Season run. Expected rank came from current Prestige's
-league-relative position in the immutable starting distribution; regular-season
-résumé rank plus the existing bounded Tournament floors supplied effective
-actual rank. The candidate made `50.6%` of annual changes zero and hit `±3` in
-only `3.6%`, but by Season 25 its pooled Prestige SD/range had fallen to
-`8.87 / 44`, with no `85+` or `90+` Programs. Current 8A finished at
-`9.76 / 45`, with four `85+` Programs; static remained `13.31 / 55`.
-
-The candidate preserved the low tail better than current 8A (`5` Programs at
-`45` or lower and `2` at `39` or lower, versus `2 / 0`) and retained meaningful
-mobility (`17` ending observations at `+10`, one at `+20`, and eight at `-10`
-across 96 seed/Program endings). It did not preserve the elite tail. Team
-hierarchy stayed close to current 8A (28 `85+`, three `88+`, zero `90+` Team
-occurrences; maximum `89.52`), Recruiting remained healthy but below static
-concentration, and champion diversity remained broad (`11 / 16 / 16` unique
-champions; leading shares `16% / 20% / 16%`). No lifecycle failure occurred.
-
-The failure is structural rather than a need for more threshold search: the
-highest starting tier maps to expected rank `#1`, so repeated credible top-eight
-Seasons exert one-way downward pressure, while the lowest tier has mirrored
-one-way upward pressure. A final wider `7 / 13 / 19` QUICK check only delayed
-the problem; Great Lakes declined from `91` to `77` over 25 Seasons. Current
-Prestige plus an expectation deadband is therefore **not enough memory under
-this exact-rank mapping**. Do not promote the candidate or silently accept 8A.
-This result does not identify a preferred successor.
-
-A final 25-Season screen tested a three-Season rolling résumé with `3 / 2 / 1`
-recency weights while retaining the expectation-relative `5 / 11 / 17` movement
-rules. It also failed: Season-25 Prestige SD/range was `9.88 / 45`, no Program
-remained at `85+`, and added inertia mainly delayed flagship decline. Great
-Lakes moved `91 → 80` and Northbridge `88 → 73`; no Program moved `±20`.
-Recruiting and lifecycle health remained valid. The candidate was rejected
-without a multi-seed gate because it clearly missed the continuation thresholds.
-
-Phase 8A is therefore **REJECTED / ROLLED BACK / DEFERRED**. The production
-contract is static Prestige. Future work, only if explicitly selected, should
-investigate the underlying Dynasty ecosystem and reconsider Prestige from first
-principles without treating any rejected model as design guidance.
-
-### Elite Program Dominance Audit — UNSCHEDULED DIAGNOSTIC
-
-Central question:
-
-> **Under static Prestige, does the simulation naturally produce durable elite
-> Programs, meaningful weak Programs, powerhouse runs, and believable hierarchy
-> turnover? If not, where does the causal chain first break?**
-
-The audit exists to distinguish whether the rejected Dynamic Prestige models
-were themselves the primary problem or whether an earlier part of the Dynasty
-ecosystem does not consistently produce durable powerhouse performance. Neither
-conclusion is presumed. The diagnostic should trace:
+The missing outcome is co-location: elite Players do not frequently coexist on
+the same roster in sufficient numbers to create temporary powerhouse peaks. The
+current lifecycle strongly stabilizes that concentration:
 
 ```text
-Prestige → Recruiting outcomes → roster formation
-→ Development / Player realization → Team Strength
-→ game outcomes → Season résumé
+fixed 12-player roster
++ senior-only departures
++ usually 2–4 exact-position replacement slots
++ synchronized four-year cohorts
 ```
 
-The goal is to identify the first stage where expected Program hierarchy stops
-translating into downstream advantage:
+Raw opening count itself did not predict future Strength; premium quality inside
+the available slots did. Larger classes are not a demonstrated remedy. The
+unresolved question is whether the deeper vacancy-replacement lifecycle or
+future offseason roster management deserves deliberate product design. No
+implementation is selected.
 
-1. **Prestige → Recruiting:** measure premium and 5-star destinations;
-   top-10/top-25/top-50 Recruit distribution; incoming class OVR, POT, and
-   quality rank; elite Program premium-battle win/loss rates; and separation
-   among elite, middle, and weak Prestige tiers. Do not presume Recruiting is
-   underpowered.
-2. **Recruiting → roster quality:** determine whether class advantages create
-   sustained Team Strength/OVR rank, top-3/top-5/top-8 Player quality, starter
-   quality, depth, and high-OVR Player counts. Trace graduation, roster turnover,
-   and year-to-year strength volatility. Development is accepted/frozen; its
-   downstream effects may be diagnosed without presuming revision.
-3. **Team Strength → game outcomes:** measure favorite win rates for near-even,
-   small, moderate, large, and extreme Strength gaps. Also inspect elite-versus-
-   weak results, upset and blowout frequency, low-loss Season frequency, and
-   whether clearly strong Teams experience excessive schedule-level variance.
-   Do not presume Game Simulation creates too many upsets.
-4. **Game outcomes → Season résumé:** compare records, Team Strength rank, and
-   résumé rank; inspect schedule and Conference effects, Tournament qualification
-   and seeding, and how often elite Teams produce top-5, top-10, and top-16
-   résumés. Do not presume résumé logic is too harsh.
+Exact-position eligibility is also **CONFIRMED player-facing friction**: it can
+block attractive premium opportunities. Direct Rotation-compatible Recruiting
+produced incoherent natural-position rosters; a coverage-preserving variant
+produced fragile/skewed rosters and worsened compression (Team Strength SD
+`3.71 → 3.34`). An Offer-collision candidate likewise activated without
+meaningful downstream leverage. Ordinary Recruiting Offer/position micro-rule
+investigation is closed; a future answer would require a genuine roster/offseason
+design, not another isolated exception.
 
-A useful longitudinal view would follow several initially elite, middle, and
-weak Programs across many static-Prestige Seasons:
-
-| Season | Recruit class rank | Incoming talent | Team Strength rank | Record | Résumé rank | Tournament result |
-| ------ | -----------------: | --------------: | -----------------: | -----: | ----------: | ----------------- |
-| N | — | — | — | — | — | — |
-
-Named Programs may illustrate a causal pattern, but no conclusion should rest
-on one Program. Interpretation should remain open to:
-
-- **Recruiting bottleneck:** elite Prestige does not create sufficient talent advantage.
-- **Roster/Development bottleneck:** recruiting advantage exists but does not
-  become sustained roster strength.
-- **Strength translation bottleneck:** roster advantage exists but Team Strength
-  does not represent it sufficiently.
-- **Game outcome bottleneck:** clearly stronger Teams lose too frequently.
-- **Résumé bottleneck:** strong Seasons are not recognized appropriately.
-- **No major bottleneck:** static-Prestige hierarchy is already plausible and
-  the rejected Prestige models were the main issue.
-- **Mixed/systemic result:** several smaller effects collectively limit durable hierarchy.
-
-> Accepted/frozen systems may be **diagnosed** without being reopened.
-
-Recruiting, Development, Team Strength, Game Simulation, résumé logic, and other
-frozen systems become gameplay-change candidates only if audit evidence
-specifically implicates them. Their presence in the causal chain schedules no
-revision.
-
-The product standard is a Dynasty capable of durable but replaceable elite
-Programs, meaningful weak identities, multi-Season powerhouse runs, occasional
-collapses and rebuilds, upward mobility, competitive and champion variety, and
-understandable relationships among recruiting talent, roster quality, and
-results. The audit would determine whether the current simulation already
-supports those outcomes and, if not, why. No replacement Prestige model or
-implementation work is selected.
+The closed causal progression and rejected experiments are synthesized in
+`PLAYTESTING_ARCHIVE.md`.
 
 ### Low-prestige rebuild and mature-league ceiling
 
@@ -303,11 +150,10 @@ occasionally produced one clear powerhouse with most Programs clustered below.
 In the latest multi-Season run, Pine Valley rose from consecutive one- and
 two-win Seasons to multiple Tournament appearances and a #16-over-#1 upset, yet
 its visible Prestige remained approximately 36 and recruiting still appeared
-constrained by its original environment. This is meaningful evidence for
-investigating gradual Program-reputation evolution, not proof of a broken
-formula or authorization to retune Recruiting. Reopen balance only if repeated
-play shows the rebuild is inert or the league loses believable upper-tier
-Programs.
+constrained by its original environment. This remains useful evidence that
+rebuild stories work while upward mobility is limited under static Prestige. It
+does not select Dynamic Prestige, reopen Recruiting, or identify a compression
+solution.
 
 ### Concentrated single-attribute Development gains
 
@@ -321,12 +167,13 @@ Interior/forward-heavy eligibility and rare large incumbent displacement remain
 worth observing. Legal/manual 40-minute assignments are intentional; automatic
 default workload realism is resolved and frozen.
 
-### Premium Recruit Offer allocation
+### Recruiting position friction
 
-Premium Recruits sometimes attract many Board pursuers but fewer Offers. Prior
-evidence often traced this to positional Offer capacity or selection of another
-target. Any change requires a dedicated diagnostic; it is not part of current
-feature work.
+Exact-position vacancies can make desirable Recruits unavailable and feel
+annoying during normal Recruiting. Diagnostics confirmed the restriction is
+material, but both attempted compatibility exceptions were unhealthy. Preserve
+this as product evidence for a future roster/offseason design discussion, not
+authorization for another Recruiting micro-rule experiment.
 
 ### Shot selection and statistical translation
 

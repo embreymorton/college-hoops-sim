@@ -114,7 +114,8 @@ does not itself authorize implementation:
 - concentrated single-attribute offseason gains;
 - interior/forward-heavy Rotation secondary paths and rare incumbent
   displacement;
-- premium Recruit Offer allocation, pending its own diagnostic;
+- exact-position Recruiting friction and the deeper stable roster-lifecycle
+  design boundary, with ordinary Offer/position micro-rule experiments closed;
 - shot-selection/statistical translation only if fresh manual play identifies a
   concrete Player-identity problem;
 - active Dynasty persistence and serialized-history growth; and
@@ -133,11 +134,16 @@ the same established Prestige value. The rejected V1 and its expectation-relativ
 and rolling-résumé experiments materially compressed the long-run Program
 hierarchy, especially the elite tail. Dynamic Prestige remains a possible
 Dynasty concept, but no replacement design is selected. Any future investigation
-should begin from current ecosystem evidence and first principles. The
-unscheduled **Elite Program Dominance Audit** records the next unresolved
-question: whether the static-Prestige Dynasty ecosystem naturally produces
-durable Program hierarchy and, if not, where the causal chain first breaks. It
-does not presume a broken system or select implementation work.
+should begin from current ecosystem evidence and first principles.
+
+The Elite Program Dominance / Competitive Compression investigation is
+decision-complete. Mature compression is confirmed, especially inside the
+Tournament field. Player supply, Development realization, Rotation weighting,
+Team Strength, Game Simulation, and résumé logic are not currently demonstrated
+as the primary boundary, and ordinary Recruiting Offer/position candidates were
+rejected. The remaining unselected planning question is whether the deeper
+stable roster lifecycle or future offseason roster management deserves
+reopening. No roster-lifecycle implementation is selected.
 
 Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
 The explicit action preserves edited MPG, fills the remaining legal 200-minute

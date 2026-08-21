@@ -1,4 +1,5 @@
 import {
+  POSITIONS,
   generateDefaultRotationV1,
   validateRotationV1,
   type RngSeed,
@@ -9,6 +10,7 @@ import { initializeSeason } from '../season'
 import type { InitializedUniverse } from '../universe'
 import type { DynastyState } from './domain'
 import { initializeRecruiting } from './recruiting/state'
+import { deriveOpeningAssignments, deriveProgramCommitments, getRecruit } from './recruiting/queries'
 import { assembleNextSeasonRosters } from './rosterAssembly'
 
 const SCHEDULE_SEED_NAMESPACE = 'college-hoops-sim:dynasty-schedule:v0'
@@ -93,6 +95,7 @@ function assertNewRecruitIdentitySafety(
  */
 export function rolloverDynastyToNextSeason(
   dynasty: DynastyState,
+  options: { readonly experimentalRotationCompatibleOpenings?: boolean } = {},
 ): DynastyState {
   if (dynasty.activeSeason || dynasty.activePostseason) {
     throw new RangeError('Dynasty rollover requires no active Season or Postseason.')
@@ -143,7 +146,47 @@ export function rolloverDynastyToNextSeason(
       prestige: offseasonProgram.prestige,
       roster: assembled.players.map((player) => structuredClone(player)),
     }
-    const rotation = generateDefaultRotationV1(team)
+    let rotation
+    try {
+      rotation = generateDefaultRotationV1(team)
+    } catch (error) {
+      if (!options.experimentalRotationCompatibleOpenings) throw error
+      const counts = POSITIONS.map((position) =>
+        `${position}:${team.roster.filter((player) => player.position === position).length}`,
+      ).join(',')
+      const recruiting = completedRecruitingClass.recruitingState
+      const recruitingProgram = recruiting.programs[program.id]!
+      const commitments = deriveProgramCommitments(recruiting, program.id)
+      const assignments = deriveOpeningAssignments(recruiting, recruitingProgram, commitments.map((commitment) => commitment.playerId)) ?? {}
+      const displaced = commitments.flatMap((commitment) => {
+        const natural = getRecruit(recruiting, commitment.playerId)?.player.position
+        const opening = assignments[commitment.playerId]
+        return natural && opening && natural !== opening ? [`${natural}->${opening}`] : []
+      }).join(',') || 'none'
+      const leagueFlexible = Object.values(recruiting.programs).flatMap((candidateProgram) => {
+        const candidateCommitments = deriveProgramCommitments(recruiting, candidateProgram.programId)
+        const candidateAssignments = deriveOpeningAssignments(
+          recruiting,
+          candidateProgram,
+          candidateCommitments.map((commitment) => commitment.playerId),
+        ) ?? {}
+        return candidateCommitments.flatMap((commitment) => {
+          const recruit = getRecruit(recruiting, commitment.playerId)
+          const opening = candidateAssignments[commitment.playerId]
+          return recruit && opening && recruit.player.position !== opening
+            ? [{ mapping: `${recruit.player.position}->${opening}`, top25: recruit.nationalRank <= 25 }]
+            : []
+        })
+      })
+      const mappingCounts = [...new Set(leagueFlexible.map(({ mapping }) => mapping))]
+        .sort()
+        .map((mapping) => `${mapping}:${leagueFlexible.filter((row) => row.mapping === mapping).length}`)
+        .join(',')
+      throw new RangeError(
+        `Experimental compatible Recruiting produced a non-rotatable roster for Program "${program.id}" (${counts}; flexible commitments: ${displaced}; League flexible ${leagueFlexible.length}/${Object.keys(recruiting.commitmentsByPlayerId).length}, top-25 ${leagueFlexible.filter(({ top25 }) => top25).length}, mappings ${mappingCounts}): ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
+      )
+    }
     const rotationValidation = validateRotationV1(team, rotation)
     if (!rotationValidation.valid) {
       throw new RangeError(
@@ -193,7 +236,7 @@ export function rolloverDynastyToNextSeason(
     recruiting: null,
     offseason: null,
   }
-  const withRecruiting = initializeRecruiting(transitioned)
+  const withRecruiting = initializeRecruiting(transitioned, options)
   if (
     withRecruiting.recruiting?.targetSeasonNumber !==
       activeSeason.seasonNumber + 1 ||

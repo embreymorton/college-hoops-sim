@@ -28,6 +28,8 @@ export interface RecruitingProgramState {
   readonly programId: string
   readonly projectedOpeningsByPosition: PositionCounts
   readonly board: readonly RecruitingBoardTarget[]
+  /** Tooling-only coverage fact, present only for the compatible-opening experiment. */
+  readonly experimentalReturningPlayersByPosition?: PositionCounts
 }
 
 export type CommitmentTiming =
@@ -60,6 +62,8 @@ export interface RecruitingState {
     Record<string, number>
   >
   readonly commitmentsByPlayerId: Record<string, RecruitingCommitment>
+  /** Tooling-only candidate; omitted/false preserves exact-position production behavior. */
+  readonly experimentalRotationCompatibleOpenings?: boolean
 }
 
 /** Immutable Dynasty history for one finalized incoming recruiting class. */

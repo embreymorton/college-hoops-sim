@@ -8,6 +8,7 @@ import type { DynastyState } from '../domain'
 import { preparePremiumLateMarket } from './finalization'
 import {
   cleanupInvalidRecruitingOffers,
+  collapseEarlyClosePremiumSecondOffers,
   promoteControlledRecruitingBackups,
   refreshAiRecruitingBoards,
 } from './boards'
@@ -149,15 +150,22 @@ export function deriveCommitmentConfidenceThresholds(
 function resolveCanonicalPeriod(
   dynasty: DynastyState,
   period: number,
+  experimentalEarlyClosePremiumSecondOffer = false,
 ): DynastyState {
-  const periodStart = dynasty.recruiting!
+  const periodStart = experimentalEarlyClosePremiumSecondOffer && period === 9
+    ? collapseEarlyClosePremiumSecondOffers(dynasty, dynasty.recruiting!)
+    : dynasty.recruiting!
   let recruiting = cleanupInvalidRecruitingOffers(periodStart)
   recruiting = promoteControlledRecruitingBackups(
     dynasty,
     periodStart,
     recruiting,
   )
-  recruiting = refreshAiRecruitingBoards(dynasty, recruiting)
+  recruiting = refreshAiRecruitingBoards(
+    dynasty,
+    recruiting,
+    experimentalEarlyClosePremiumSecondOffer,
+  )
   if (period > REGULAR_SEASON_RECRUITING_PERIODS) {
     recruiting = preparePremiumLateMarket(dynasty, recruiting)
   }
@@ -185,7 +193,17 @@ function resolveCanonicalPeriod(
     lastResolvedPeriod: period,
     programs: canonicalPrograms(recruiting.programs),
   }
-  recruiting = refreshAiRecruitingBoards(dynasty, recruiting)
+  if (experimentalEarlyClosePremiumSecondOffer && period === 8) {
+    recruiting = collapseEarlyClosePremiumSecondOffers(
+      { ...dynasty, recruiting },
+      recruiting,
+    )
+  }
+  recruiting = refreshAiRecruitingBoards(
+    dynasty,
+    recruiting,
+    experimentalEarlyClosePremiumSecondOffer,
+  )
   return { ...dynasty, recruiting }
 }
 
@@ -206,6 +224,18 @@ export function resolveRecruitingPeriod(
   }
 
   return resolveCanonicalPeriod(dynasty, period)
+}
+
+/** Tooling-only paired candidate; baseline resolveRecruitingPeriod is unchanged. */
+export function resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer(
+  dynasty: DynastyState,
+  period: number,
+): DynastyState {
+  if (!dynasty.recruiting) throw new RangeError('Dynasty Recruiting is not initialized.')
+  if (period !== dynasty.recruiting.lastResolvedPeriod + 1) throw new RangeError('Recruiting periods must resolve once in canonical order.')
+  if (period < 1 || period > REGULAR_SEASON_RECRUITING_PERIODS) throw new RangeError('Recruiting period is outside the regular-season range.')
+  if (!dynasty.activeSeason || !isRoundComplete(dynasty.activeSeason, period)) throw new RangeError(`Recruiting Period ${period} requires completed basketball Round ${period}.`)
+  return resolveCanonicalPeriod(dynasty, period, true)
 }
 
 function postseasonRoundForPeriod(period: number): TournamentRound | undefined {
@@ -259,6 +289,19 @@ export function syncRecruitingThroughCompletedRounds(
       current,
       current.recruiting!.lastResolvedPeriod + 1,
     )
+  }
+  return current
+}
+
+/** Tooling-only paired candidate synchronization. */
+export function syncRecruitingThroughCompletedRoundsWithEarlyClosePremiumSecondOffer(
+  dynasty: DynastyState,
+): DynastyState {
+  const season = dynasty.activeSeason
+  if (!season || !dynasty.recruiting) throw new RangeError('Recruiting synchronization requires active Season Recruiting.')
+  let current = dynasty
+  while (current.recruiting!.lastResolvedPeriod < REGULAR_SEASON_RECRUITING_PERIODS && isRoundComplete(season, current.recruiting!.lastResolvedPeriod + 1)) {
+    current = resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer(current, current.recruiting!.lastResolvedPeriod + 1)
   }
   return current
 }

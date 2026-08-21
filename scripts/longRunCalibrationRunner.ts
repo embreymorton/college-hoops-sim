@@ -8,6 +8,7 @@ function runSeedInChild(
   seed: string,
   seasonsPerSeed: number,
   auditLevel: AuditLevel,
+  experimentalRotationCompatibleOpenings = false,
 ): Promise<DynastyRunResult> {
   return new Promise((complete, reject) => {
     const child = spawn(process.execPath, [
@@ -15,6 +16,7 @@ function runSeedInChild(
       '--seed', seed,
       '--seasons', String(seasonsPerSeed),
       '--audit', auditLevel,
+      ...(experimentalRotationCompatibleOpenings ? ['--rotation-compatible'] : []),
     ], { stdio: ['ignore', 'pipe', 'pipe'] })
     const output: Buffer[] = []
     const error: Buffer[] = []
@@ -40,12 +42,13 @@ export async function runLongRunCalibrationParallel(options: {
   readonly seeds: readonly string[]
   readonly auditLevel: AuditLevel
   readonly workers: number
+  readonly experimentalRotationCompatibleOpenings?: boolean
 }): Promise<LongRunCalibrationResult> {
   return {
     seeds: options.seeds,
     seasonsPerSeed: options.seasonsPerSeed,
     runs: await runOrderedParallel(options.seeds, options.workers, (seed) =>
-      runSeedInChild(seed, options.seasonsPerSeed, options.auditLevel),
+      runSeedInChild(seed, options.seasonsPerSeed, options.auditLevel, options.experimentalRotationCompatibleOpenings),
     ),
   }
 }
