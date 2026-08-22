@@ -22,6 +22,7 @@ import {
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { HistoryScreen } from './HistoryScreen'
 import { RecordsScreen } from './RecordsScreen'
+import { RecruitingHistoryScreen } from './RecruitingHistoryScreen'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -186,8 +187,15 @@ export function LeagueScreen() {
             <div role="group" aria-label="History section" className="tab-list history-tab-list">
               <button type="button" className="tab" aria-pressed={historyTab === 'yearbooks'} onClick={() => setHistoryTab('yearbooks')}>Yearbooks</button>
               <button type="button" className="tab" aria-pressed={historyTab === 'records'} onClick={() => setHistoryTab('records')}>Records</button>
+              <button type="button" className="tab" aria-pressed={historyTab === 'recruiting'} onClick={() => setHistoryTab('recruiting')}>Recruiting</button>
             </div>
-            {historyTab === 'yearbooks' ? <HistoryScreen /> : <RecordsScreen />}
+            {historyTab === 'yearbooks' ? (
+              <HistoryScreen />
+            ) : historyTab === 'records' ? (
+              <RecordsScreen />
+            ) : (
+              <RecruitingHistoryScreen />
+            )}
           </div>
         )}
       </section>

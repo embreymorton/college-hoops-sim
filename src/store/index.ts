@@ -26,6 +26,7 @@ export type {
   PendingSuperSim,
   DynastySessionState,
   LeagueTab,
+  RecruitingHistoryFilter,
   RecruitingMode,
   SeasonSessionView,
   SuperSimKind,

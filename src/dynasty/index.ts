@@ -1,6 +1,10 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
 export { derivePlayerCareerHistory } from './careerHistory'
 export {
+  deriveRecruitingClassIndex,
+  deriveRecruitingClassRetrospective,
+} from './recruitingRetrospective'
+export {
   derivePlayerCareerSummary,
   resolveDynastyPlayer,
 } from './playerLegacy'
@@ -138,6 +142,12 @@ export type {
   KnownDynastyPlayerResolution,
   PlayerCareerSummary,
 } from './playerLegacy'
+export type {
+  RecruitingClassIndexEntry,
+  RecruitingClassRetrospective,
+  RecruitingRetrospectiveOutcome,
+  RecruitingRetrospectiveRow,
+} from './recruitingRetrospective'
 export type { RecruitDetailsView } from './recruiting/detailsView'
 export type {
   CompletedSeasonIndexSummary,

@@ -948,6 +948,37 @@ p {
   color: var(--ink-1);
 }
 
+.recruiting-history {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.history-subsection-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.recruiting-history__back { align-self: flex-start; }
+.recruiting-history-card { grid-template-columns: minmax(13rem, 1.4fr) minmax(8rem, 0.8fr) minmax(9rem, 0.8fr); }
+.recruiting-history__table-scroll { max-width: 100%; }
+.recruiting-history-table { min-width: 38rem; }
+.recruiting-history-table th:first-child,
+.recruiting-history-table td:first-child { text-align: left; }
+.recruiting-history-table th:nth-child(2),
+.recruiting-history-table td:nth-child(2) { text-align: left; }
+.recruiting-history-table__recruit,
+.recruiting-history-table__entered { display: flex; flex-direction: column; gap: 0.2rem; }
+.recruiting-history-table__name { font-weight: 700; }
+.recruiting-history-table__rank { color: var(--ink-1); font-family: var(--font-score); }
+.recruiting-history-table__secondary,
+.recruiting-history-table__entered span:last-child { color: var(--ink-1); font-size: 0.7rem; }
+.recruiting-history-table__secondary .recruit-stars { display: inline; }
+.program-inline-identity { display: inline-flex; align-items: center; gap: var(--space-2); }
+.recruiting-history-table__outcome { font-weight: 600; }
+
 /* One cohesive Your Season recap: summary, Team Leaders, and Tournament Run
    stacked as divided subsections of a single bordered card rather than
    separate floating blocks. */
@@ -1120,6 +1151,9 @@ p {
   .league-screen__navigation { align-items: stretch; }
   .league-screen__navigation > .tab-list .tab { padding-inline: 0.85rem; }
   .history-season-card { grid-template-columns: 1fr; gap: var(--space-2); }
+  .recruiting-history-card { grid-template-columns: 1fr; }
+  .history-subsection-header { align-items: stretch; flex-direction: column; }
+  .recruiting-history__detail-header .tab-list { align-self: flex-start; }
   .yearbook-league-grid { grid-template-columns: 1fr; }
   .records-panel-grid { grid-template-columns: 1fr; }
   .news-story { padding-inline: var(--space-3); }
