@@ -36,6 +36,97 @@
   box-shadow: 0 0 0 1px var(--accent-soft), var(--shadow-panel);
 }
 
+/* Completed-Tournament truth: a compact title-game scoreboard rather than a
+   second lifecycle banner. */
+.national-championship-recap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+  border: 2px solid var(--accent-strong);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  box-shadow: 0 0 0 1px var(--accent-soft), var(--shadow-panel);
+}
+
+.national-championship-recap__heading,
+.national-championship-recap__team {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.national-championship-recap__heading .eyebrow-tag {
+  margin: 0;
+}
+
+.national-championship-recap__final {
+  color: var(--ink-2);
+  font-family: var(--font-condensed);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.national-championship-recap__scoreboard {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.national-championship-recap__team {
+  min-width: 0;
+  padding: var(--space-3) var(--space-4);
+  color: var(--ink-1);
+}
+
+.national-championship-recap__team + .national-championship-recap__team {
+  border-top: 1px solid var(--line);
+}
+
+.national-championship-recap__team[data-winner='true'] {
+  color: var(--ink-0);
+  background: var(--surface-2);
+}
+
+.national-championship-recap__team > :first-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.national-championship-recap__score {
+  flex: 0 0 auto;
+  font-family: var(--font-score);
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.national-championship-recap__champion {
+  margin: 0;
+  color: var(--ink-0);
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.national-championship-recap__action {
+  align-self: flex-start;
+}
+
+@media (max-width: 560px) {
+  .national-championship-recap__action {
+    align-self: stretch;
+    width: 100%;
+  }
+
+  .season-header__stats .stat-trio__value--text {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
 /* Entry point back into (or onward to) the Tournament from the Season Hub's
    completed-season panel. */
 .season-complete-panel__action {

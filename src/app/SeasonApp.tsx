@@ -1,5 +1,6 @@
 import { selectControlledProgramId, useDynastyStore } from '../store'
-import { RecruitingSetupDialog } from '../components'
+import { DynastyProgressionBar, RecruitingSetupDialog } from '../components'
+import { deriveDynastyProgressionAction } from '../dynasty'
 import { CoachingScreen } from './CoachingScreen'
 import { GamePrepScreen } from './GamePrepScreen'
 import { HistoryScreen } from './HistoryScreen'
@@ -22,6 +23,8 @@ import { TournamentPostgameScreen } from './TournamentPostgameScreen'
 export function DynastyApp() {
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const view = useDynastyStore((state) => state.view)
+  const dynasty = useDynastyStore((state) => state.dynasty)
+  const enterLateRecruiting = useDynastyStore((state) => state.enterLateRecruiting)
   const pendingRecruitingSetupIntent = useDynastyStore(
     (state) => state.pendingRecruitingSetupIntent,
   )
@@ -39,10 +42,17 @@ export function DynastyApp() {
     return <ProgramSelectScreen />
   }
 
+  const progression = dynasty
+    ? deriveDynastyProgressionAction(dynasty)
+    : { kind: 'none' as const }
+  const progressionBar = progression.kind === 'enter-late-recruiting'
+    ? <DynastyProgressionBar onContinue={enterLateRecruiting} />
+    : null
+
   let screen
   switch (view) {
     case 'coaching':
-      screen = <CoachingScreen />
+      screen = <CoachingScreen progressionBar={progressionBar} />
       break
     case 'gamePrep':
       screen = <GamePrepScreen />
@@ -52,7 +62,7 @@ export function DynastyApp() {
       screen = <SeasonPostgameScreen />
       break
     case 'postseasonHub':
-      screen = <PostseasonHubScreen />
+      screen = <PostseasonHubScreen progressionBar={progressionBar} />
       break
     case 'postseasonGamePrep':
       screen = <TournamentGamePrepScreen />
@@ -62,7 +72,7 @@ export function DynastyApp() {
       screen = <TournamentPostgameScreen />
       break
     case 'league':
-      screen = <LeagueScreen />
+      screen = <LeagueScreen progressionBar={progressionBar} />
       break
     case 'seasonPreview':
       screen = <SeasonPreviewScreen />
@@ -80,7 +90,7 @@ export function DynastyApp() {
       screen = <PlayerDetailsScreen />
       break
     case 'recruiting':
-      screen = <RecruitingScreen />
+      screen = <RecruitingScreen progressionBar={progressionBar} />
       break
     case 'recruitDetails':
       screen = <RecruitDetailsScreen />
@@ -97,6 +107,12 @@ export function DynastyApp() {
 
   return (
     <>
+      {progressionBar &&
+        view !== 'postseasonHub' &&
+        view !== 'hub' &&
+        view !== 'coaching' &&
+        view !== 'recruiting' &&
+        view !== 'league' && progressionBar}
       {screen}
       {pendingRecruitingSetupIntent && (
         <RecruitingSetupDialog

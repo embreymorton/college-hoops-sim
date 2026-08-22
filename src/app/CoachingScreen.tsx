@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   calculateTeamStrength,
   deriveProjectedStartingFive,
@@ -40,7 +40,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  * Phase 6E.17A — Postseason takes precedence over the regular Season exactly
  * as `goToCoaching()` established.
  */
-export function CoachingScreen() {
+export function CoachingScreen({ progressionBar }: { readonly progressionBar?: ReactNode }) {
   const [mode, setMode] = useState<CoachingMode>('roster')
   const [rotationMode, setRotationMode] = useState<RotationMode>('simple')
   const season = useDynastyStore(selectActiveSeason)
@@ -156,6 +156,7 @@ export function CoachingScreen() {
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
+      {progressionBar}
 
       <TeamDetailsHeader
         programName={controlledProgram.name}

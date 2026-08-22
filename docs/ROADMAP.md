@@ -144,6 +144,13 @@ unscheduled Phase 7 work.
   and Starting Five/Bench/Reserves presentation.
 - Detailed accepted UI patterns live in `UI_DESIGN.md`; causal evidence is
   indexed from `PLAYTESTING_ARCHIVE.md`.
+- Hardened Tournament → Late Recruiting as a canonical progression invariant:
+  one pure resolver, one idempotent transition command, contextual hub placement,
+  and a route-independent shell fallback for recoverable completed-Tournament
+  states.
+- Unified completed-Tournament progression presentation and replaced its
+  session-dependent status card with a canonical championship recap, controlled
+  Program `Finish`, and reused title-game box-score inspection.
 
 ### Phase 7A — Followed Players V1 — COMPLETE / ACCEPTED / FROZEN
 

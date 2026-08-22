@@ -2331,6 +2331,44 @@ p {
   padding: var(--space-5);
 }
 
+.dynasty-progression-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+
+.dynasty-progression-bar .eyebrow-tag,
+.dynasty-progression-bar__text {
+  margin: 0;
+}
+
+.dynasty-progression-bar__text {
+  margin-top: var(--space-1);
+  color: var(--ink-1);
+  font-size: 0.9rem;
+}
+
+.dynasty-progression-bar .button {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 560px) {
+  .dynasty-progression-bar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dynasty-progression-bar .button {
+    width: 100%;
+  }
+}
+
 .standings-table tbody tr[data-controlled='true'] {
   background: var(--surface-2);
   box-shadow: inset 3px 0 0 var(--accent);

@@ -213,10 +213,24 @@ Following, and entity navigation remain intact.
 
 The Tournament → League → Tournament progression blocker found during play is
 **RESOLVED / MANUALLY VERIFIED**. Handoff visibility derives from canonical
-Tournament completion plus postseason-phase Recruiting; Continue catches up any
-missing completed Tournament Recruiting rounds before entering Late Recruiting.
-Navigation remains read-only, repeated navigation cannot consume the action,
-and the transition cannot advance twice.
+Tournament completion through one pure resolver, including the genuine lagging
+regular-season Period 24 boundary. Continue catches up all missing completed
+Tournament Recruiting rounds before entering Late Recruiting. The contextual
+Tournament action and route-independent shell fallback use the same command;
+navigation remains read-only, repeated navigation cannot consume the action,
+and the transition cannot advance twice. Manual verification at a 390px viewport
+confirmed the fallback and CTA stay within the viewport after navigating from a
+completed non-qualifier Tournament to League.
+
+The completed Tournament presentation redesign is **IMPLEMENTED / VERIFIED**.
+Tournament now uses the same single Season Complete bar below navigation, while
+a canonical title-game recap owns champion, runner-up, final score, overtime,
+and existing box-score access. The controlled Program strip owns `Finish`, so a
+non-qualifier reads `Did Not Qualify` without dominating the national recap.
+Focused Tournament/lifecycle coverage passed, and manual 390px verification
+confirmed the required section order, one continuation CTA, no body/document
+overflow, full-width actions, Recruiting after the recap, and bracket-only
+horizontal scrolling.
 
 ### Recruiting Class Retrospectives V1 — ACCEPTED / FROZEN
 

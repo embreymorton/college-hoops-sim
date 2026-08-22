@@ -3,8 +3,8 @@ import { calculateTeamStrength } from '../engine'
 import {
   CompletedMatchupCard,
   DynastySectionNav,
+  NationalChampionshipRecap,
   RecruitingHubSummary,
-  SeasonCompleteHandoff,
   SuperSimConfirmDialog,
   SuperSimMenu,
   TournamentBracket,
@@ -16,9 +16,8 @@ import {
   type BracketSlotParticipant,
   type TournamentFieldRow,
 } from '../components'
-import { canEnterLateRecruiting, deriveProgramRecruitingBoard } from '../dynasty'
+import { deriveDynastyProgressionAction, deriveProgramRecruitingBoard } from '../dynasty'
 import {
-  deriveNationalChampion,
   getCurrentTournamentRound,
   getGamesForTournamentRound,
   getPendingGamesForTournamentRound,
@@ -52,6 +51,7 @@ import {
   deriveRecruitingActivityDescriptions,
 } from './recruitingBattleFormatters'
 import { describeRoundProgress } from './seasonFormatters'
+import { deriveCompletedTournamentRecap } from './completedTournamentRecap'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
@@ -145,7 +145,11 @@ function buildBracketSlots(
  * controlled-Program states — qualified/alive, eliminated, and did-not-
  * qualify — by branching purely on existing Postseason query output.
  */
-export function PostseasonHubScreen() {
+export function PostseasonHubScreen({
+  progressionBar,
+}: {
+  readonly progressionBar?: ReactNode
+}) {
   const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
@@ -174,9 +178,6 @@ export function PostseasonHubScreen() {
     (state) => state.generateControlledDraftBoard,
   )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
-  const enterLateRecruiting = useDynastyStore(
-    (state) => state.enterLateRecruiting,
-  )
   const pendingSuperSim = useDynastyStore((state) => state.pendingSuperSim)
   const pendingRecruitingSetupIntent = useDynastyStore(
     (state) => state.pendingRecruitingSetupIntent,
@@ -219,15 +220,16 @@ export function PostseasonHubScreen() {
   )
   const currentRound = getCurrentTournamentRound(postseason)
   const tournamentComplete = isTournamentComplete(postseason)
-  const championProgramId = tournamentComplete
-    ? deriveNationalChampion(postseason)
+  const progression = dynasty
+    ? deriveDynastyProgressionAction(dynasty)
+    : { kind: 'none' as const }
+  const completedRecap = tournamentComplete
+    ? deriveCompletedTournamentRecap({
+        postseason,
+        controlledProgramId,
+        programs: UNIVERSE_V0.programs,
+      })
     : undefined
-  const championProgram = championProgramId
-    ? PROGRAMS_BY_ID.get(championProgramId)
-    : undefined
-  const isLateRecruitingHandoffAvailable = dynasty
-    ? canEnterLateRecruiting(dynasty)
-    : false
 
   const controlledGame =
     currentRound !== undefined && controlledEntry
@@ -295,8 +297,7 @@ export function PostseasonHubScreen() {
   const completedHubTournamentGame =
     lastPlayedTournamentGame &&
     lastPlayedTournamentResult &&
-    (lastPlayedTournamentGame.round === currentRound ||
-      (tournamentComplete && lastPlayedTournamentGame.round === 'championship'))
+    lastPlayedTournamentGame.round === currentRound
       ? {
           game: lastPlayedTournamentGame,
           result: lastPlayedTournamentResult,
@@ -321,12 +322,9 @@ export function PostseasonHubScreen() {
     const controlledWon =
       completedHubTournamentGame.result.winnerId === controlledProgramId
 
-    const tournamentOutcome =
-      championProgramId === controlledProgramId
-        ? 'champion'
-        : isEliminated || !controlledWon
-          ? 'eliminated'
-          : 'advanced'
+    const tournamentOutcome = isEliminated || !controlledWon
+      ? 'eliminated'
+      : 'advanced'
 
     matchup = (
       <CompletedMatchupCard
@@ -369,23 +367,14 @@ export function PostseasonHubScreen() {
         }
       />
     )
-  } else if (tournamentComplete) {
-    const isControlledChampion = championProgramId === controlledProgramId
+  } else if (completedRecap) {
     matchup = (
-      <TournamentStatusBanner
-        variant="champion"
-        eyebrow={isControlledChampion ? 'National Champions' : 'Tournament Complete'}
-        headline={
-          isControlledChampion
-            ? `${controlledProgram.name} are your National Champions!`
-            : `${championProgram?.name ?? 'A Program'} is your National Champion.`
-        }
-        body={
-          isControlledChampion
-            ? 'The bracket is complete. Every result and box score below remains available.'
-            : controlledEntry
-              ? `${controlledProgram.name}'s tournament run has ended. The completed bracket and every box score remain available below.`
-              : `${controlledProgram.name} did not qualify this season. The completed bracket and every box score remain available below.`
+      <NationalChampionshipRecap
+        champion={completedRecap.champion}
+        runnerUp={completedRecap.runnerUp}
+        overtimeTag={formatOvertimeTag(completedRecap.overtimePeriods)}
+        onViewBoxScore={() =>
+          viewCompletedTournamentGame(completedRecap.championshipGameId)
         }
       />
     )
@@ -517,16 +506,22 @@ export function PostseasonHubScreen() {
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
+      {progressionBar}
       <TournamentStatusHeader
         programName={controlledProgram.name}
         accentColor={controlledProgram.branding.primaryColor}
-        seed={controlledEntry?.seed ?? null}
-        bidType={controlledEntry?.bidType ?? null}
+        seed={completedRecap?.controlledProgram.seed ?? controlledEntry?.seed ?? null}
+        bidType={
+          completedRecap?.controlledProgram.bidType ?? controlledEntry?.bidType ?? null
+        }
         roundLabel={
-          tournamentComplete || currentRound === undefined
-            ? 'Final'
+          completedRecap
+            ? completedRecap.controlledProgram.finish.label
+            : currentRound === undefined
+              ? 'Final'
             : formatTournamentRoundName(currentRound)
         }
+        statusLabel={completedRecap ? 'Finish' : 'Round'}
       />
 
       <div className="hub-primary-grid">
@@ -589,9 +584,6 @@ export function PostseasonHubScreen() {
             </div>
           )}
 
-          {isLateRecruitingHandoffAvailable && (
-            <SeasonCompleteHandoff onContinue={enterLateRecruiting} />
-          )}
         </section>
 
         {recruiting && recruitingBoard && (
@@ -612,7 +604,9 @@ export function PostseasonHubScreen() {
               activity={recruitingActivity}
               onGenerateDraftBoard={generateControlledDraftBoard}
               onBuildManually={goToRecruiting}
-              isSeasonComplete={tournamentComplete}
+              isSeasonComplete={
+                progression.kind === 'enter-late-recruiting'
+              }
             />
           </section>
         )}

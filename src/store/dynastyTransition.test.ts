@@ -20,7 +20,7 @@ function resetStore(): void {
   useDynastyStore.setState(useDynastyStore.getInitialState())
 }
 
-function championshipBoundary() {
+function championshipBoundary(syncPostseasonRecruiting = true) {
   let dynasty = createRecruitingDynasty('store-transition-v0')
   const season = completeRounds(dynasty.activeSeason!)
   dynasty = syncRecruitingThroughCompletedRounds({ ...dynasty, activeSeason: season })
@@ -33,15 +33,42 @@ function championshipBoundary() {
       simulationSeed: 'store-transition-v0:postseason',
     })
   }
-  return syncRecruitingThroughCompletedPostseasonRounds({
+  const boundary = {
     ...dynasty,
     activePostseason: postseason,
-  })
+  }
+  return syncPostseasonRecruiting
+    ? syncRecruitingThroughCompletedPostseasonRounds(boundary)
+    : boundary
 }
 
 beforeEach(resetStore)
 
 describe('Dynasty transition orchestration', () => {
+  it('synchronizes every missing postseason period exactly once before entering Late Recruiting', () => {
+    const lagged = championshipBoundary(false)
+    expect(lagged.recruiting).toMatchObject({
+      phase: 'regular-season',
+      lastResolvedPeriod: 24,
+      commitmentsByPlayerId: expect.any(Object),
+    })
+    const existingCommitments = structuredClone(lagged.recruiting!.commitmentsByPlayerId)
+    useDynastyStore.setState({ dynasty: lagged, view: 'league' })
+
+    useDynastyStore.getState().enterLateRecruiting()
+    const entered = useDynastyStore.getState().dynasty!
+    expect(entered.recruiting).toMatchObject({ phase: 'late', lastResolvedPeriod: 28 })
+    for (const [playerId, commitment] of Object.entries(existingCommitments)) {
+      expect(entered.recruiting!.commitmentsByPlayerId[playerId]).toEqual(commitment)
+    }
+    expect(new Set(Object.keys(entered.recruiting!.commitmentsByPlayerId)).size).toBe(
+      Object.keys(entered.recruiting!.commitmentsByPlayerId).length,
+    )
+
+    useDynastyStore.getState().enterLateRecruiting()
+    expect(useDynastyStore.getState().dynasty).toBe(entered)
+  })
+
   it('keeps the championship boundary explicit, then finalizes Recruiting exactly once', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })

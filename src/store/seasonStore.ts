@@ -19,6 +19,7 @@ import {
   autoFinalizeRecruiting,
   beginOffseason,
   buildDefaultRecruitingBoard,
+  deriveDynastyProgressionAction,
   fillRemainingRecruitingBoard,
   initializeDynastyState,
   initializeRecruiting,
@@ -2000,6 +2001,13 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   enterLateRecruiting() {
     const { dynasty } = get()
     if (!dynasty) return
+
+    const progression = deriveDynastyProgressionAction(dynasty)
+    if (progression.kind !== 'enter-late-recruiting') {
+      if (dynasty.recruiting?.phase === 'late' || dynasty.recruiting?.phase === 'finalized') return
+      set({ recruitingActionError: 'Late Recruiting is not currently available.' })
+      return
+    }
 
     try {
       const synchronized = syncRecruitingThroughCompletedPostseasonRounds(dynasty)

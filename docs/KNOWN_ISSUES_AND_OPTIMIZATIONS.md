@@ -19,6 +19,17 @@ only under the conditions in the conditional-read
 
 ## Open items
 
+### P1 — Tournament Complete → Late Recruiting handoff could disappear — RESOLVED
+
+The UI previously required Recruiting to already be in its postseason phase
+before showing Continue, while the transition command itself could recover a
+canonically completed Tournament still at regular-season Period 24. That split
+truth stranded valid Dynasties after navigation. One pure progression resolver
+now recognizes both valid boundaries, all placements share it, and every CTA
+dispatches the same idempotent command. Regression coverage includes the genuine
+Period 24 state, navigation across ordinary routes, repeated invocation, and
+commitment preservation.
+
 ### P1 — Correct Super Sim completion-summary wording
 
 The current summary derives “games simulated” from the controlled Program's record delta. If its target-round game was already complete but Super Sim resolves only remaining AI games, the UI can misleadingly show `0 games simulated` and a `0-0` segment.

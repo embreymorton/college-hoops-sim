@@ -369,7 +369,7 @@ plus CompletedRecruitingClass incoming Recruits
 → exact 12-Player next-season roster
 ```
 
-Late Recruiting is a distinct, user-reviewed final signing phase. It deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Major lifecycle checkpoints never advance automatically. Exact formulas and accepted calibration are documented in `SIMULATION.md`.
+Late Recruiting is a distinct, user-reviewed final signing phase. After the Tournament completes, Continue → Late Recruiting remains available across normal navigation until the canonical phase advances; the action may synchronize any still-missing postseason Recruiting periods first. It deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Major lifecycle checkpoints never advance automatically. Exact formulas and accepted calibration are documented in `SIMULATION.md`.
 
 ## Accepted Dynasty Season Rollover V0
 

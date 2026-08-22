@@ -15,7 +15,7 @@ import {
   SuperSimSummaryDialog,
 } from '../components'
 import {
-  canEnterLateRecruiting,
+  deriveDynastyProgressionAction,
   deriveProgramRecruitingBoard,
   shouldPromoteSeasonPreview,
 } from '../dynasty'
@@ -125,7 +125,7 @@ export function SeasonHubScreen() {
 
   const recruiting = dynasty?.recruiting
   const isLateRecruitingHandoffAvailable = dynasty
-    ? canEnterLateRecruiting(dynasty)
+    ? deriveDynastyProgressionAction(dynasty).kind === 'enter-late-recruiting'
     : false
   const recruitingBoard =
     dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined

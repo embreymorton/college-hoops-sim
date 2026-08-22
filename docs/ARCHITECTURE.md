@@ -317,11 +317,15 @@ completed-Season team/rotation instead. Neither path requires a Tournament game
 or opponent, and navigation does not create participation or mutate Tournament
 facts.
 
-Tournament-complete handoff eligibility is derived from canonical active
-Postseason completion plus synchronized Recruiting phase/Period 28 facts. Both
-the Tournament Hub and the final regular-season review expose that same derived
-handoff, so changing session views cannot strand the lifecycle or require a
-duplicated presentation boolean.
+Tournament-complete handoff eligibility comes from the one canonical Dynasty
+progression resolver, including both synchronized Period 28 and the recoverable
+Period 24 boundary. Tournament presents the shared progression bar below its
+navigation; changing session views cannot strand the lifecycle or require a
+duplicated presentation boolean. Separately, the completed-Hub recap is a pure
+projection over the canonical championship game and controlled Program ID. It
+derives champion, runner-up, oriented score, overtime, box-score game ID, and
+controlled finish without depending on last-played or selected-game session
+state.
 
 ## Accepted Dynasty and Recruiting ownership
 
@@ -497,15 +501,17 @@ The returned `DynastyState` preserves `controlledProgramId`, `history`, and `com
 
 The application can repeat Season → Recruiting → Postseason → Late Recruiting → Offseason → rollover. A new interactive Dynasty receives one unique creation seed; all domain systems remain deterministic from that stored seed, while explicit-seed test, inspection, and calibration workflows retain their fixed behavior. Interactive rollover clears only the controlled Program's fresh Recruiting board/offers; autonomous/default domain Recruiting plans remain unchanged for AI Programs.
 
-The explicit Tournament → Late Recruiting handoff is derived from canonical
-Tournament completion plus Recruiting remaining in its postseason phase; it
-does not depend on one exact synchronized Recruiting counter. Navigation is
-read-only, so returning to the Season/Postseason hub reconstructs the pending
-action from canonical state without displaying it on unrelated routes. The
-Continue command idempotently synchronizes any completed Tournament rounds
-still missing from Recruiting before entering Late Recruiting. Repeated
-navigation cannot consume the action, and a completed transition cannot advance
-twice.
+The explicit Tournament → Late Recruiting handoff has one authoritative,
+pure progression resolver in `src/dynasty/progression.ts`. It derives the next
+action from canonical Tournament completion and either recoverable boundary:
+Recruiting already synchronized in its postseason phase, or the genuine
+completed-Tournament lag state at regular-season Period 24. The application
+shell renders the action on ordinary routes, while Season/Postseason hubs place
+the same action contextually and suppress the shell duplicate. Both dispatch
+the single store command. That command idempotently synchronizes any missing
+completed-Tournament Recruiting rounds before entering Late Recruiting;
+repeated navigation cannot consume the action, and repeated invocation after a
+completed transition is a no-op.
 
 The immutable full-snapshot architecture remained correct and JSON-serializable through accepted 50-Season Dynasty runs: no history overwrite, identity collision, Schedule/Game-ID collision, or serialization failure occurred. Full snapshots have a measurable storage cost, however. One canonical serialized `DynastyState` measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50—approximately linear growth near 3 MB per completed Season. Persistence architecture must evaluate this before production-scale saves or very long user Dynasties, without prematurely prescribing compression, pruning, database storage, or another representation.
 

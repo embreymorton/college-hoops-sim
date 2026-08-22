@@ -194,42 +194,43 @@ The controlled Program may be qualified/alive, eliminated, or did not qualify. T
 
 Postseason-specific styles live in `src/postseason.css` beside shared `src/styles.css`. React and Zustand present and orchestrate public Postseason facts; they do not recreate selection, advancement, or champion rules.
 
-### Postseason Tournament-complete / Season-Complete composition — accepted (Phase 6E.10)
+### Completed Tournament composition — accepted
 
-The bracket is accepted and remains unchanged. On the completed-Tournament
-Hub, `hub-primary-grid` keeps its existing two-column shape, but the
-lifecycle content now composes coherently instead of the Season Complete
-handoff trailing as a separate full-width section:
+The completed Tournament uses the same compact `DynastyProgressionBar` as other
+normal routes, directly below primary navigation; the older local
+`SeasonCompleteHandoff` is not rendered there. Exactly one continuation CTA is
+visible, and `RecruitingHubSummary`'s non-actionable handoff hint derives from
+the same progression result.
 
 ```text
-hub-primary-grid__game (left)         hub-primary-grid__recruiting (right)
-├── Tournament outcome banner         ├── Recruiting summary
-│   (champion / eliminated /          │   (board, needs, signed/offers)
-│    did-not-qualify)                 └── "Late Recruiting is next —
-└── SeasonCompleteHandoff                 this board carries forward."
-    ("Season Complete" checkpoint,        (shown once the Tournament is
-     Continue to Late Recruiting)          complete)
+DynastySectionNav
+DynastyProgressionBar
+TournamentStatusHeader (Seed / Bid / Finish)
+hub-primary-grid
+├── National Championship recap
+└── Recruiting summary
+Bracket → Tournament field → final-regular-season navigation
 ```
 
-`SeasonCompleteHandoff` renders as a quieter sub-panel (`.season-complete-panel--secondary`)
-directly beneath the Tournament outcome banner in the same column, rather than
-as an isolated full-width panel below the grid. `RecruitingHubSummary` accepts
-an `isSeasonComplete` flag that adds the handoff hint without introducing any
-new Recruiting fact, mechanic, or persisted state. The responsive
-single-column breakpoint (`≤1040px`) stacks the same content in the same
-priority order: Tournament outcome, Season Complete, Recruiting, then
-bracket/field. This establishes the accepted pattern for a two-tier lifecycle
-banner (hero result + quieter next-step checkpoint) composing inside an
-existing primary grid column rather than as a trailing full-width section.
+The recap is a compact scoreboard projected from the canonical championship
+game: champion first, runner-up, oriented score, actual overtime marker, and the
+existing `View Box Score` historical-game action. It never depends on
+`lastPlayedTournamentGameId`, does not repeat the controlled Program's finish,
+and adds no MVP/standout semantics. The Program summary owns completed finish
+language: Did Not Qualify, Round of 16, Quarterfinals, Semifinals, Runner-Up, or
+National Champion. Active Tournament headers continue to show `Round`.
 
-This is presentation work only. Tournament balance/seeding is a separate
-simulation diagnostic and was not touched by this milestone.
+At `≤1040px`, recap precedes Recruiting in the existing single-column grid. At
+390px, progression and box-score actions are full-width, long names wrap within
+their surfaces, the page has no body-level overflow, and only the accepted
+bracket viewport scrolls horizontally. Tournament simulation, selection,
+seeding, Recruiting, and lifecycle semantics are unchanged.
 
 ## Dynasty lifecycle and Recruiting — implemented
 
 Regular navigation is `SEASON / RECRUITING / LEAGUE`; Tournament navigation is `TOURNAMENT / RECRUITING / LEAGUE`. The Season Hub pairs weekly competition context with Recruiting controls. Recruiting provides a Board and National Class, positional-needs ledger, PRESEASON state, and Generate Draft Board onboarding before the first period can resolve.
 
-After the championship, the player explicitly enters the distinct Late Recruiting mode, may make final legal Board/Offer changes, and finalizes the Recruiting class. Its pending action is reconstructed from canonical state on the Season/Postseason hub and does not appear above Coaching, Recruiting, League, or detail screens. A focused Offseason turnover screen presents roster OVR, departures, automatic Player Development, incoming Recruits, and the next roster before the explicit Season N+1 handoff returns to the normal Hub. These screens preserve the established modern-collegiate-athletics, broadcast-graphics, management-simulation visual direction rather than introducing a separate product style.
+After the championship, the player explicitly enters the distinct Late Recruiting mode, may make final legal Board/Offer changes, and finalizes the Recruiting class. One canonical progression action is reconstructed on every render: Tournament, Coaching, Recruiting, and League place the shared compact bar directly below stable primary navigation; the final-Season hub owns its contextual placement; and detail/history routes receive the shell fallback. Every placement uses the same command with no duplicate CTA. At the 560px breakpoint the fallback stacks and its button becomes full-width. A focused Offseason turnover screen presents roster OVR, departures, automatic Player Development, incoming Recruits, and the next roster before the explicit Season N+1 handoff returns to the normal Hub. These screens preserve the established modern-collegiate-athletics, broadcast-graphics, management-simulation visual direction rather than introducing a separate product style.
 
 ### Recruiting information architecture — implemented (6E.12C, supersedes 6E.12B)
 

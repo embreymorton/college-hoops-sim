@@ -62,15 +62,24 @@ and simulation use explicit seeded RNG streams; production does not use
 [SIMULATION.md](SIMULATION.md), and player-facing rules in
 [GAME_DESIGN.md](GAME_DESIGN.md).
 
-At a canonically completed Tournament with Recruiting synchronized through
-Period 28, the explicit Late Recruiting handoff remains available from both the
-Tournament Hub and the final regular-season review reached through normal
-navigation. League, Coaching, Recruiting, and detail surfaces remain free of
-the competition-hub card. Navigation does not own or clear lifecycle eligibility.
-Handoff visibility derives from completed Tournament state plus Recruiting
-remaining in its postseason phase; the transition command synchronizes any
-lagging completed postseason Recruiting period before entering Late Recruiting,
-so leaving for League and returning cannot strand progression.
+At a canonically completed Tournament, one pure Dynasty progression resolver
+keeps the explicit Late Recruiting handoff reachable whether Recruiting is
+already synchronized through Period 28 or remains at the genuine regular-season
+Period 24 boundary. Tournament, League, Coaching, and Recruiting place the
+shared progression bar directly below their stable primary navigation; the
+final-Season hub retains its contextual checkpoint, while detail/history routes
+receive the application-shell fallback. Every surface dispatches the
+same idempotent transition command, which synchronizes missing postseason
+Recruiting periods before entering Late Recruiting. Navigation does not own or
+clear eligibility, and the action disappears only after the canonical phase
+actually advances.
+
+The completed Tournament Hub derives one National Championship recap directly
+from the canonical title game, independent of last-played/selected-game session
+state. It presents champion, runner-up, oriented final score, overtime when
+applicable, and the existing read-only box-score action. The controlled Program
+summary changes its completed-state `Round` fact to `Finish`, covering Did Not
+Qualify through National Champion without duplicating that outcome in the recap.
 
 During an active Tournament, Coaching uses postseason team/rotation state only
 when the controlled Program qualified and has canonical Tournament state. A

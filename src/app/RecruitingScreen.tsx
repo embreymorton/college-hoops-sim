@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import {
   DynastySectionNav,
   FollowingRecruitsSection,
@@ -37,7 +37,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 )
 
 /** Recruiting: board management and the National Class, reachable through both lifecycle stages. */
-export function RecruitingScreen() {
+export function RecruitingScreen({ progressionBar }: { readonly progressionBar?: ReactNode }) {
   const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false)
   const [boardFillMessage, setBoardFillMessage] = useState<string | null>(null)
   const dynasty = useDynastyStore((state) => state.dynasty)
@@ -104,6 +104,7 @@ export function RecruitingScreen() {
           onSelectRecruiting={goToRecruiting}
           onSelectLeague={goToLeague}
         />
+        {progressionBar}
         <RecruitingClassSummary
           programName={controlledProgram.name}
           targetSeasonNumber={dynasty.recruiting.targetSeasonNumber}
@@ -143,6 +144,7 @@ export function RecruitingScreen() {
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
+      {progressionBar}
 
       <RecruitingHeader
         programName={controlledProgram.name}

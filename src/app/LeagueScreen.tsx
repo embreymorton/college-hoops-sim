@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import {
   DynastySectionNav,
   FollowingSection,
@@ -35,7 +36,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  * separate Back action or duplicate title — only Team/Player Details, one
  * level deeper, need their own exploration Back navigation.
  */
-export function LeagueScreen() {
+export function LeagueScreen({ progressionBar }: { readonly progressionBar?: ReactNode }) {
   const tab = useDynastyStore((state) => state.leagueTab)
   const setTab = useDynastyStore((state) => state.setLeagueTab)
   const dynasty = useDynastyStore((state) => state.dynasty)
@@ -101,6 +102,7 @@ export function LeagueScreen() {
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
       />
+      {progressionBar}
 
       {controlledProgram && controlledProgramId && controlledTeam && canonicalRotation ? (
         <LeagueHeader

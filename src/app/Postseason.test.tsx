@@ -392,7 +392,7 @@ describe('Postseason — eliminated', () => {
     const state = useDynastyStore.getState()
     expect(isTournamentComplete(state.dynasty!.activePostseason!)).toBe(true)
     expect(deriveNationalChampion(state.dynasty!.activePostseason!)).toBeDefined()
-    expect(screen.getByText('Tournament Complete')).toBeInTheDocument()
+    expect(screen.getByText('National Championship')).toBeInTheDocument()
   })
 })
 
@@ -649,9 +649,10 @@ describe('Postseason — Champion', () => {
 
     render(<App />)
 
-    expect(screen.getByText('National Champions')).toBeInTheDocument()
+    expect(within(tournamentHeader()).getByText('National Champion')).toBeInTheDocument()
+    expect(within(tournamentHeader()).getByText('Finish')).toBeInTheDocument()
     expect(
-      screen.getByText(/are your national champions/i),
+      screen.getByText(/is your national champion./i),
     ).toBeInTheDocument()
   })
 
@@ -671,7 +672,7 @@ describe('Postseason — Champion', () => {
     const { activePostseason: postseason, controlledProgramId } = useDynastyStore.getState().dynasty!
     const champion = deriveNationalChampion(postseason!)!
     expect(champion).not.toBe(controlledProgramId)
-    expect(screen.getByText('Tournament Complete')).toBeInTheDocument()
+    expect(screen.getByText('National Championship')).toBeInTheDocument()
     expect(
       screen.getByText(/is your national champion\./i),
     ).toBeInTheDocument()

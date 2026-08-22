@@ -27,7 +27,7 @@ function selectProgram(programId = CONTROLLED_PROGRAM_ID): void {
   useDynastyStore.getState().selectProgram(programId, DEFAULT_INTERACTIVE_TEST_SEED)
 }
 
-function championshipBoundary(): DynastyState {
+function championshipBoundary(syncPostseasonRecruiting = true): DynastyState {
   let dynasty = createRecruitingDynasty('dynasty-transition-ui-v0')
   const season = completeRounds(dynasty.activeSeason!)
   dynasty = syncRecruitingThroughCompletedRounds({ ...dynasty, activeSeason: season })
@@ -40,23 +40,26 @@ function championshipBoundary(): DynastyState {
       simulationSeed: 'dynasty-transition-ui-v0:postseason',
     })
   }
-  return syncRecruitingThroughCompletedPostseasonRounds({
+  const boundary = {
     ...dynasty,
     activePostseason: postseason,
-  })
+  }
+  return syncPostseasonRecruiting
+    ? syncRecruitingThroughCompletedPostseasonRounds(boundary)
+    : boundary
 }
 
 beforeEach(resetStore)
 
 describe('Season-complete handoff', () => {
-  it('shows Continue to Late Recruiting without auto-transitioning, then advances on click', () => {
+  it('shows the shared progression action without auto-transitioning, then advances on click', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
 
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('postseason')
     const continueButton = screen.getByRole('button', {
-      name: 'Continue to Late Recruiting',
+      name: 'Continue → Late Recruiting',
     })
     expect(continueButton).toBeInTheDocument()
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('postseason')
@@ -67,17 +70,25 @@ describe('Season-complete handoff', () => {
     expect(useDynastyStore.getState().view).toBe('recruiting')
   })
 
-  it('composes the Season Complete checkpoint inside the Tournament lifecycle column, not as an isolated full-width panel', () => {
+  it('places exactly one shared Season Complete bar below Tournament navigation', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
 
-    const gameColumn = document.querySelector('.hub-primary-grid__game') as HTMLElement
-    expect(gameColumn).not.toBeNull()
+    const sectionNav = screen.getByRole('group', { name: 'Section' })
+    const progressionBar = screen.getByRole('complementary', {
+      name: 'Dynasty progression',
+    })
     expect(
-      within(gameColumn).getByRole('button', { name: 'Continue to Late Recruiting' }),
-    ).toBeInTheDocument()
-    expect(within(gameColumn).getByText('Season Complete')).toBeInTheDocument()
+      sectionNav.compareDocumentPosition(progressionBar) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    expect(
+      screen.getAllByRole('button', { name: 'Continue → Late Recruiting' }),
+    ).toHaveLength(1)
+    expect(
+      screen.queryByRole('button', { name: 'Continue to Late Recruiting' }),
+    ).not.toBeInTheDocument()
 
     // Recruiting composes naturally alongside the checkpoint rather than as a detached sidebar.
     const recruitingColumn = document.querySelector(
@@ -99,7 +110,7 @@ describe('Season-complete handoff', () => {
     render(<App />)
 
     expect(
-      screen.queryByRole('button', { name: 'Continue to Late Recruiting' }),
+      screen.queryByRole('button', { name: 'Continue → Late Recruiting' }),
     ).not.toBeInTheDocument()
     expect(screen.queryByText('Season Complete')).not.toBeInTheDocument()
     expect(screen.queryByText(/late recruiting is next/i)).not.toBeInTheDocument()
@@ -118,7 +129,7 @@ describe('Season-complete handoff', () => {
     render(<App />)
 
     expect(
-      screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+      screen.getByRole('button', { name: 'Continue → Late Recruiting' }),
     ).toBeInTheDocument()
 
     for (const section of ['League', 'Coaching', 'Recruiting']) {
@@ -128,22 +139,30 @@ describe('Season-complete handoff', () => {
         boundary.activePostseason,
       )
 
+      expect(screen.getByRole('button', {
+        name: 'Continue → Late Recruiting',
+      })).toBeInTheDocument()
+      const sectionNav = screen.getByRole('group', { name: 'Section' })
+      const progressionBar = screen.getByRole('complementary', {
+        name: 'Dynasty progression',
+      })
       expect(
-        screen.queryByRole('button', { name: 'Continue to Late Recruiting' }),
-      ).not.toBeInTheDocument()
+        sectionNav.compareDocumentPosition(progressionBar) &
+          Node.DOCUMENT_POSITION_FOLLOWING,
+      ).toBeTruthy()
 
       fireEvent.click(screen.getByRole('button', { name: 'Tournament' }))
       expect(
-        screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+        screen.getByRole('button', { name: 'Continue → Late Recruiting' }),
       ).toBeInTheDocument()
     }
 
     fireEvent.click(
-      screen.getByRole('button', { name: 'Continue to Late Recruiting' }),
+      screen.getByRole('button', { name: 'Continue → Late Recruiting' }),
     )
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
     expect(useDynastyStore.getState().view).toBe('recruiting')
-    expect(screen.queryByRole('button', { name: 'Continue to Late Recruiting' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Continue → Late Recruiting' })).not.toBeInTheDocument()
   })
 
   it('reconstructs the canonical handoff after Tournament → League → Tournament even if Recruiting synchronization lagged', () => {
@@ -159,15 +178,15 @@ describe('Season-complete handoff', () => {
     useDynastyStore.setState({ dynasty: lagged, view: 'postseasonHub' })
     render(<App />)
 
-    expect(screen.getByRole('button', { name: 'Continue to Late Recruiting' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue → Late Recruiting' })).toBeInTheDocument()
     for (let pass = 0; pass < 2; pass += 1) {
       fireEvent.click(screen.getByRole('button', { name: 'League' }))
       expect(useDynastyStore.getState().dynasty!.recruiting!.lastResolvedPeriod).toBe(27)
       fireEvent.click(screen.getByRole('button', { name: 'Tournament' }))
-      expect(screen.getByRole('button', { name: 'Continue to Late Recruiting' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Continue → Late Recruiting' })).toBeInTheDocument()
     }
 
-    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue → Late Recruiting' }))
     expect(useDynastyStore.getState().dynasty!.recruiting).toMatchObject({
       phase: 'late',
       lastResolvedPeriod: 28,
@@ -177,7 +196,90 @@ describe('Season-complete handoff', () => {
     expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('late')
   })
 
-  it('keeps detail routes free of the hub-only Late Recruiting card', () => {
+  it('keeps the screenshot-state handoff actionable from Period 24 through navigation', () => {
+    const lagged = championshipBoundary(false)
+    const nonQualifier = Object.keys(lagged.activeSeason!.programStates).find(
+      (programId) => !lagged.activePostseason!.field.some((entry) => entry.programId === programId),
+    )!
+    const screenshotState = { ...lagged, controlledProgramId: nonQualifier }
+    const before = structuredClone(screenshotState)
+    useDynastyStore.setState({ dynasty: screenshotState, view: 'postseasonHub' })
+    render(<App />)
+
+    expect(screen.getByText('Tournament complete. Continue when you are ready.')).toBeInTheDocument()
+    expect(screen.getByText(/late recruiting is next/i)).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue → Late Recruiting' })).toBeInTheDocument()
+    const tournamentSummary = document.querySelector('.season-header') as HTMLElement
+    expect(within(tournamentSummary).getByText('Finish')).toBeInTheDocument()
+    expect(within(tournamentSummary).getByText('Did Not Qualify')).toBeInTheDocument()
+    expect(
+      screen.queryByText(/did not qualify this season/i),
+    ).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'League' }))
+    expect(useDynastyStore.getState().dynasty).toEqual(before)
+    const shellAction = screen.getByRole('button', { name: 'Continue → Late Recruiting' })
+    expect(shellAction).toBeInTheDocument()
+
+    fireEvent.click(shellAction)
+    expect(useDynastyStore.getState().dynasty!.recruiting).toMatchObject({
+      phase: 'late',
+      lastResolvedPeriod: 28,
+    })
+    expect(useDynastyStore.getState().view).toBe('recruiting')
+    expect(screen.queryByRole('button', { name: 'Continue → Late Recruiting' })).not.toBeInTheDocument()
+  })
+
+  it('renders the canonical championship recap regardless of session game history and reuses box-score navigation', () => {
+    const boundary = championshipBoundary()
+    const postseason = boundary.activePostseason!
+    const final = postseason.bracket.games.find(({ round }) => round === 'championship')!
+    const finalResult = postseason.resultsByGameId[final.id]!
+    const championName = boundary.universe.programs.find(
+      ({ id }) => id === finalResult.winnerId,
+    )!.name
+    const earlierGame = postseason.bracket.games.find(
+      ({ round }) => round === 'round-of-16',
+    )!
+    useDynastyStore.setState({
+      dynasty: boundary,
+      view: 'postseasonHub',
+      lastPlayedTournamentGameId: earlierGame.id,
+    })
+    const rendered = render(<App />)
+
+    const recap = screen.getByText('National Championship').closest(
+      '.national-championship-recap',
+    ) as HTMLElement
+    expect(recap).not.toBeNull()
+    expect(recap).toHaveTextContent(`${championName} is your National Champion.`)
+    expect(recap).toHaveTextContent(String(finalResult.homeScore))
+    expect(recap).toHaveTextContent(String(finalResult.awayScore))
+    const recapText = recap.textContent
+
+    useDynastyStore.setState({ lastPlayedTournamentGameId: final.id })
+    rendered.rerender(<App />)
+    expect(
+      screen.getByText('National Championship').closest(
+        '.national-championship-recap',
+      ),
+    ).toHaveTextContent(recapText!)
+
+    const before = useDynastyStore.getState().dynasty
+    fireEvent.click(screen.getByRole('button', { name: 'View Box Score' }))
+    expect(useDynastyStore.getState()).toMatchObject({
+      view: 'postseasonGameHistory',
+      viewedTournamentGameId: final.id,
+    })
+    expect(useDynastyStore.getState().dynasty).toBe(before)
+    expect(screen.getByRole('heading', { name: 'Player Box Score' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Back to Tournament Hub' }))
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+    expect(screen.getByText('National Championship')).toBeInTheDocument()
+  })
+
+  it('keeps the route-independent progression fallback on Team and Player Details', () => {
     const boundary = championshipBoundary()
     const team = boundary.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!.team
     const player = team.roster[0]!
@@ -189,7 +291,7 @@ describe('Season-complete handoff', () => {
     })
     const rendered = render(<App />)
 
-    expect(screen.queryByRole('button', { name: 'Continue to Late Recruiting' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue → Late Recruiting' })).toBeInTheDocument()
     useDynastyStore.setState({
       view: 'playerDetails',
       selectedPlayerProgramId: CONTROLLED_PROGRAM_ID,
@@ -197,7 +299,17 @@ describe('Season-complete handoff', () => {
       explorationViewHistory: ['league', 'teamDetails'],
     })
     rendered.rerender(<App />)
-    expect(screen.queryByRole('button', { name: 'Continue to Late Recruiting' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Continue → Late Recruiting' })).toBeInTheDocument()
+
+    for (const view of ['history', 'seasonYearbook'] as const) {
+      useDynastyStore.setState({
+        view,
+        selectedArchivedSeasonNumber: null,
+        explorationViewHistory: ['league'],
+      })
+      rendered.rerender(<App />)
+      expect(screen.getByRole('button', { name: 'Continue → Late Recruiting' })).toBeInTheDocument()
+    }
   })
 
   it('keeps the Late Recruiting progression control available after viewing the final regular season', () => {
@@ -230,7 +342,7 @@ describe('Late Recruiting presentation', () => {
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue → Late Recruiting' }))
 
     expect(screen.getByText('Late Recruiting — Final Signing Window')).toBeInTheDocument()
     expect(document.querySelector('.recruiting-overview')).toBeInTheDocument()
@@ -245,7 +357,7 @@ describe('Recruiting finalization', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue → Late Recruiting' }))
   }
 
   it('requires confirmation and leaves the Dynasty unchanged on Cancel', () => {
@@ -296,7 +408,7 @@ describe('Recruiting Class Complete summary', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue → Late Recruiting' }))
     fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
     fireEvent.click(screen.getByRole('alertdialog').querySelector('.button--primary') as HTMLElement)
 
@@ -319,7 +431,7 @@ describe('Offseason', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue → Late Recruiting' }))
     fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
     fireEvent.click(screen.getByRole('alertdialog').querySelector('.button--primary') as HTMLElement)
     fireEvent.click(screen.getByRole('button', { name: 'Begin Offseason' }))
@@ -349,7 +461,7 @@ describe('Begin next Season', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
-    fireEvent.click(screen.getByRole('button', { name: 'Continue to Late Recruiting' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Continue → Late Recruiting' }))
     fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
     fireEvent.click(screen.getByRole('alertdialog').querySelector('.button--primary') as HTMLElement)
     fireEvent.click(screen.getByRole('button', { name: 'Begin Offseason' }))

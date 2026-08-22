@@ -9,6 +9,7 @@ export {
   resolveDynastyPlayer,
 } from './playerLegacy'
 export { deriveNewsFeed } from './news'
+export { deriveDynastyProgressionAction } from './progression'
 export { deriveDynastyRecordBook } from './seasonRecords'
 export {
   deriveProgramLegacy,
@@ -77,7 +78,6 @@ export {
   generateRecruitingClass,
 } from './recruiting/generation'
 export {
-  canEnterLateRecruiting,
   deriveBaseRecruitAttraction,
   deriveActiveOfferCountsByPosition,
   deriveAvailableOfferSlotsByPosition,
@@ -133,6 +133,7 @@ export type {
   PlayerDevelopmentSummary,
   ProjectedRosterOutlook,
 } from './domain'
+export type { DynastyProgressionAction } from './progression'
 export type {
   PlayerCareerHistory,
   PlayerCareerSeasonRow,

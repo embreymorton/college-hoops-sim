@@ -10,6 +10,8 @@ interface TournamentStatusHeaderProps {
   readonly bidType: TournamentBidType | null
   /** "Round of 16" … "Championship", or "Final" once the Tournament is complete. */
   readonly roundLabel: string
+  /** Completed Tournaments describe the controlled Program's Finish instead. */
+  readonly statusLabel?: 'Round' | 'Finish'
 }
 
 /** The coach's Tournament identity, seed/bid, and current-round context. */
@@ -19,6 +21,7 @@ export function TournamentStatusHeader({
   seed,
   bidType,
   roundLabel,
+  statusLabel = 'Round',
 }: TournamentStatusHeaderProps) {
   const accentStyle = { '--team-accent': accentColor } as CSSProperties
 
@@ -52,7 +55,7 @@ export function TournamentStatusHeader({
           <span className="stat-trio__value stat-trio__value--text">
             {roundLabel}
           </span>
-          <span className="stat-trio__label">Round</span>
+          <span className="stat-trio__label">{statusLabel}</span>
         </div>
       </div>
     </div>
