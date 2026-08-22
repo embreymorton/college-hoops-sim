@@ -1,4 +1,3 @@
-import { POSITIONS } from '../../engine'
 import type { DynastyState } from '../domain'
 import { deriveProjectedRosterOutlook } from '../rosterOutlook'
 import {
@@ -13,7 +12,6 @@ import { generateRecruitingClass } from './generation'
 /** Starts the single national class recruiting alongside the active regular season. */
 export function initializeRecruiting(
   dynasty: DynastyState,
-  options: { readonly experimentalRotationCompatibleOpenings?: boolean } = {},
 ): DynastyState {
   const season = dynasty.activeSeason
   if (!season) throw new RangeError('Recruiting requires an active Season.')
@@ -33,18 +31,6 @@ export function initializeRecruiting(
         season.programStates[programId]!.team,
       ).projectedOpeningsByPosition,
       board: [],
-      ...(options.experimentalRotationCompatibleOpenings
-        ? {
-            experimentalReturningPlayersByPosition: Object.fromEntries(
-              POSITIONS.map((position) => [
-                position,
-                season.programStates[programId]!.team.roster.filter(
-                  (player) => player.classYear !== 'SR' && player.position === position,
-                ).length,
-              ]),
-            ) as RecruitingProgramState['projectedOpeningsByPosition'],
-          }
-        : {}),
     }
   }
 
@@ -57,9 +43,6 @@ export function initializeRecruiting(
     programs,
     relationshipProgressByPlayerId: {},
     commitmentsByPlayerId: {},
-    ...(options.experimentalRotationCompatibleOpenings
-      ? { experimentalRotationCompatibleOpenings: true }
-      : {}),
   }
   const context: DynastyState = { ...dynasty, recruiting }
   for (const programId of Object.keys(programs).sort()) {

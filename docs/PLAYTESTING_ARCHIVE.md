@@ -197,61 +197,11 @@ Experiment B v1, and reopening criteria live only in
 
 ## Program hierarchy / competitive-compression investigation
 
-Phase 8A Dynamic Prestige and its expectation-relative and rolling-résumé
-variants were rejected and rolled back because they compressed the durable high
-and low Prestige tails. Static Prestige remained production truth. Later
-evidence clarified that Dynamic Prestige concerns who occupies the hierarchy;
-it does not by itself create greater competitive amplitude.
-
-The subsequent static-Prestige causal audit traced the full chain from
-Recruiting through roster quality, Development, Team Strength, game outcomes,
-and résumé/seeding. It confirmed excessive mature compression: representative
-Team Strength SD was about `3.71`, Tournament-field SD about `2.33`, and many
-large seed differences represented modest actual Strength gaps. Static Prestige
-still created meaningful Recruiting and roster advantages, while Team Strength
-accurately represented concentrated Player quality. Game Simulation and résumé
-logic were not first-order causes of the underlying roster compression.
-
-Several narrower hypotheses were then closed:
-
-- An early second-premium-Offer candidate approximately doubled meaningful
-  Recruiting collisions but barely changed premium accumulation, exceptional
-  classes, or mature Strength separation. More collision alone was low leverage.
-- Direct Rotation-compatible Recruiting was architecturally invalid: secondary
-  Rotation eligibility allowed natural-position groups to disappear, preventing
-  default Rotation initialization. Rotation compatibility assumes an already
-  coherent roster.
-- Coverage-preserving flexibility remained materially active but produced
-  fragile/skewed natural-position distributions, weak Player-quality gains, and
-  worse compression (`3.71 → 3.34` Team Strength SD). Ordinary Recruiting
-  positional exceptions were therefore rejected as a healthy solution.
-
-The final Player-amplitude audit found roughly 30 mature Players at `85+` and
-five at `90+` per Season, stronger top-25 Player quality than Season 1, and a
-clear Development age curve. Top-three/top-five Player OVR correlated about
-`0.934`/`0.965` with Team Strength. Concentrating the actual Player pool into
-sequential legal diagnostic rosters yielded approximately `89.5`, `85.9`,
-`84.2`, `82.9`, `81.7`, and `80.8` Strength. This was an observational supply
-ceiling, not proposed allocation behavior.
-
-The investigation therefore moved boundary by boundary:
-
-```text
-Dynamic Prestige rejected
-→ static hierarchy traced end-to-end
-→ mature/Tournament compression confirmed
-→ Recruiting collision candidate rejected as low leverage
-→ direct positional flexibility rejected as invalid
-→ coverage-preserving flexibility rejected as unhealthy
-→ mature Player supply shown sufficient
-→ stable roster lifecycle remains the unresolved design boundary
-```
-
-The durable product question is whether a fixed 12-player, senior-only,
-vacancy-replacement lifecycle gives Programs enough ability to reshape existing
-rosters when exceptional talent is available. Raw class size did not predict
-future Strength; premium quality within fixed slots did. No roster-lifecycle
-change, offseason solution, or Roadmap successor was selected.
+This decision-complete investigation, including Dynamic Prestige, Development,
+Recruiting, positional-flexibility, Player-supply, roster-lifecycle, and bounded
+recruit-over evidence, now lives exclusively in the conditional-read
+[Dynasty Hierarchy Research archive](DYNASTY_HIERARCHY_RESEARCH.md). Mature
+compression is an accepted/deferred limitation, not an active tuning priority.
 
 ## Archive maintenance
 

@@ -6,7 +6,6 @@ import {
   refreshAiRecruitingBoards,
   removeRecruitingBoardTarget,
   setRecruitingFocus,
-  offerRecruit,
 } from './boards'
 import { RECRUITING_BOARD_LIMIT } from './constants'
 import type { RecruitingBoardTarget } from './domain'
@@ -14,87 +13,12 @@ import {
   deriveProgramCommitments,
   deriveProgramRecruitingBoard,
   deriveActiveOfferCountsByPosition,
-  deriveRemainingOpeningsByPosition,
   getRecruit,
-  deriveOpeningAssignments,
 } from './queries'
-import {
-  resolveRecruitingPeriod,
-  resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer,
-} from './simulation'
+import { resolveRecruitingPeriod } from './simulation'
 import { completeRounds, createRecruitingDynasty } from './testSupport'
 
 describe('Program recruiting boards', () => {
-  it('keeps exact-position production eligibility while the tooling candidate admits only Rotation-compatible roles', () => {
-    const source = createRecruitingDynasty('compatible-opening-eligibility')
-    const programId = source.controlledProgramId
-    const pg = source.recruiting!.recruits.find((recruit) => recruit.player.position === 'PG')!
-    const openings = { PG: 0, SG: 1, SF: 0, PF: 0, C: 0 } as const
-    const configure = (experimental: boolean) => ({
-      ...source,
-      recruiting: {
-        ...source.recruiting!,
-        ...(experimental ? { experimentalRotationCompatibleOpenings: true } : {}),
-        programs: {
-          ...source.recruiting!.programs,
-          [programId]: {
-            programId,
-            projectedOpeningsByPosition: openings,
-            board: [],
-            ...(experimental ? { experimentalReturningPlayersByPosition: { PG: 1, SG: 1, SF: 1, PF: 1, C: 1 } } : {}),
-          },
-        },
-      },
-    })
-    expect(() => addRecruitingBoardTarget({ dynasty: configure(false), playerId: pg.player.id })).toThrow(/does not match/)
-    const boarded = addRecruitingBoardTarget({ dynasty: configure(true), playerId: pg.player.id })
-    const offered = offerRecruit({ dynasty: boarded, playerId: pg.player.id })
-    expect(offered.recruiting!.programs[programId]!.board[0]).toMatchObject({ playerId: pg.player.id, hasActiveOffer: true })
-  })
-
-  it('assigns each compatible Recruit to one real opening and prefers exact fit when feasible', () => {
-    const dynasty = createRecruitingDynasty('compatible-opening-assignment')
-    const recruiting = { ...dynasty.recruiting!, experimentalRotationCompatibleOpenings: true }
-    const pg = recruiting.recruits.find((recruit) => recruit.player.position === 'PG')!
-    const sg = recruiting.recruits.find((recruit) => recruit.player.position === 'SG')!
-    const program = {
-      programId: dynasty.controlledProgramId,
-      projectedOpeningsByPosition: { PG: 0, SG: 1, SF: 1, PF: 0, C: 0 },
-      board: [],
-      experimentalReturningPlayersByPosition: { PG: 1, SG: 1, SF: 1, PF: 1, C: 1 },
-    }
-    expect(deriveOpeningAssignments(recruiting, program, [sg.player.id])).toEqual({ [sg.player.id]: 'SG' })
-    const paired = deriveOpeningAssignments(recruiting, program, [pg.player.id, sg.player.id])
-    expect(paired).toEqual({ [pg.player.id]: 'SG', [sg.player.id]: 'SF' })
-    expect(deriveOpeningAssignments(recruiting, program, [pg.player.id, sg.player.id, sg.player.id])).toEqual(paired)
-  })
-
-  it('rejects a compatible assignment that would eliminate the opening natural-position group', () => {
-    const dynasty = createRecruitingDynasty('compatible-opening-coverage')
-    const recruiting = { ...dynasty.recruiting!, experimentalRotationCompatibleOpenings: true }
-    const pf = recruiting.recruits.find((recruit) => recruit.player.position === 'PF')!
-    const pg = recruiting.recruits.find((recruit) => recruit.player.position === 'PG')!
-    const sg = recruiting.recruits.find((recruit) => recruit.player.position === 'SG')!
-    const base = { PG: 1, SG: 1, SF: 1, PF: 1, C: 1 }
-    expect(deriveOpeningAssignments(recruiting, {
-      programId: dynasty.controlledProgramId,
-      projectedOpeningsByPosition: { PG: 0, SG: 0, SF: 0, PF: 0, C: 1 },
-      experimentalReturningPlayersByPosition: { ...base, C: 0 },
-      board: [],
-    }, [pf.player.id])).toBeNull()
-    expect(deriveOpeningAssignments(recruiting, {
-      programId: dynasty.controlledProgramId,
-      projectedOpeningsByPosition: { PG: 0, SG: 1, SF: 0, PF: 0, C: 0 },
-      experimentalReturningPlayersByPosition: { ...base, SG: 0 },
-      board: [],
-    }, [pg.player.id])).toBeNull()
-    expect(deriveOpeningAssignments(recruiting, {
-      programId: dynasty.controlledProgramId,
-      projectedOpeningsByPosition: { PG: 0, SG: 0, SF: 1, PF: 0, C: 0 },
-      experimentalReturningPlayersByPosition: { ...base, SF: 0 },
-      board: [],
-    }, [sg.player.id])).toBeNull()
-  })
   it('gives all Programs valid need-aware default plans with no hidden controlled advantage', () => {
     const dynasty = createRecruitingDynasty('default-boards')
     const recruiting = dynasty.recruiting!
@@ -330,26 +254,4 @@ describe('Program recruiting boards', () => {
     }
   })
 
-  it('keeps the tooling-only second premium Offer bounded and collapses before Period 9', () => {
-    let dynasty = createRecruitingDynasty('early-close-premium-candidate')
-    dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 8) }
-    expect(resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer(dynasty, 1)).toEqual(
-      resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer(dynasty, 1),
-    )
-    let observedExtra = false
-    for (let period = 1; period <= 8; period += 1) {
-      dynasty = resolveRecruitingPeriodWithEarlyClosePremiumSecondOffer(dynasty, period)
-      for (const program of Object.values(dynasty.recruiting!.programs)) {
-        const offers = deriveActiveOfferCountsByPosition(dynasty.recruiting!, program)
-        const remaining = deriveRemainingOpeningsByPosition(dynasty.recruiting!, program)
-        for (const position of Object.keys(offers) as Array<keyof typeof offers>) {
-          if (period < 8 && offers[position] > remaining[position]) observedExtra = true
-          expect(offers[position]).toBeLessThanOrEqual(
-            remaining[position] + (period < 8 ? 1 : 0),
-          )
-        }
-      }
-    }
-    expect(observedExtra).toBe(true)
-  })
 })

@@ -62,3 +62,8 @@ Parked Player Identity experiments live in
 part of normal feature-session reading.
 Closed gameplay evidence lives in the conditional
 [playtesting archive](docs/PLAYTESTING_ARCHIVE.md), also outside the normal read set.
+The decision-complete hierarchy/compression investigation lives in
+[Dynasty Hierarchy Research](docs/DYNASTY_HIERARCHY_RESEARCH.md); read it only
+when deliberately reopening that question, when a future feature materially
+changes the talent economy, or when its historical evidence is specifically
+needed.

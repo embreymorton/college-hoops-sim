@@ -1,4 +1,4 @@
-import { POSITIONS, getEligibleRotationPositions, type Position } from '../../engine'
+import { POSITIONS, type Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import { PRESTIGE_SENSITIVITY } from './constants'
 import type {
@@ -114,69 +114,12 @@ export function deriveProgramCommitments(
     })
 }
 
-export function deriveEligibleRecruitingOpeningPositions(
-  recruiting: RecruitingState,
-  recruit: Recruit,
-): readonly Position[] {
-  return recruiting.experimentalRotationCompatibleOpenings
-    ? getEligibleRotationPositions(recruit.player)
-    : [recruit.player.position]
-}
-
-/** Deterministic tiny matching over one Program's 2–4 real opening slots. */
-export function deriveOpeningAssignments(
-  recruiting: RecruitingState,
-  program: RecruitingProgramState,
-  playerIds: readonly string[],
-): Readonly<Record<string, Position>> | null {
-  const ordered = [...new Set(playerIds)].sort((firstId, secondId) => {
-    const first = getRecruit(recruiting, firstId)!
-    const second = getRecruit(recruiting, secondId)!
-    const firstChoices = deriveEligibleRecruitingOpeningPositions(recruiting, first).filter((p) => program.projectedOpeningsByPosition[p] > 0)
-    const secondChoices = deriveEligibleRecruitingOpeningPositions(recruiting, second).filter((p) => program.projectedOpeningsByPosition[p] > 0)
-    return firstChoices.length - secondChoices.length || firstId.localeCompare(secondId)
-  })
-  const remaining = { ...program.projectedOpeningsByPosition }
-  const assignments: Record<string, Position> = {}
-  const coverageRemainsPossible = (): boolean => {
-    if (!recruiting.experimentalRotationCompatibleOpenings) return true
-    const returners = program.experimentalReturningPlayersByPosition
-    if (!returners) throw new RangeError('Compatible-opening experiment requires returning natural-position coverage facts.')
-    const naturalCommitted = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
-    for (const playerId of Object.keys(assignments)) {
-      const recruit = getRecruit(recruiting, playerId)
-      if (recruit) naturalCommitted[recruit.player.position] += 1
-    }
-    return POSITIONS.every((position) =>
-      returners[position] + naturalCommitted[position] + remaining[position] >= 1,
-    )
-  }
-  const assign = (index: number): boolean => {
-    if (index >= ordered.length) return coverageRemainsPossible()
-    const playerId = ordered[index]!
-    const recruit = getRecruit(recruiting, playerId)
-    if (!recruit) return false
-    const choices = deriveEligibleRecruitingOpeningPositions(recruiting, recruit)
-      .filter((position) => remaining[position] > 0)
-    for (const position of choices) {
-      remaining[position] -= 1
-      assignments[playerId] = position
-      if (coverageRemainsPossible() && assign(index + 1)) return true
-      remaining[position] += 1
-      delete assignments[playerId]
-    }
-    return false
-  }
-  return assign(0) ? assignments : null
-}
-
 export function canRecruitUseProjectedOpening(
-  recruiting: RecruitingState,
+  _recruiting: RecruitingState,
   program: RecruitingProgramState,
   recruit: Recruit,
 ): boolean {
-  return deriveEligibleRecruitingOpeningPositions(recruiting, recruit)
-    .some((position) => program.projectedOpeningsByPosition[position] > 0)
+  return program.projectedOpeningsByPosition[recruit.player.position] > 0
 }
 
 export function canRecruitUseRemainingOpening(
@@ -184,14 +127,11 @@ export function canRecruitUseRemainingOpening(
   program: RecruitingProgramState,
   playerId: string,
 ): boolean {
-  if (!recruiting.experimentalRotationCompatibleOpenings) {
-    const recruit = getRecruit(recruiting, playerId)
-    return Boolean(recruit && deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position] > 0)
-  }
-  return deriveOpeningAssignments(recruiting, program, [
-    ...deriveProgramCommitments(recruiting, program.programId).map((c) => c.playerId),
-    playerId,
-  ]) !== null
+  const recruit = getRecruit(recruiting, playerId)
+  return Boolean(recruit && deriveRemainingOpeningsByPosition(
+    recruiting,
+    program,
+  )[recruit.player.position] > 0)
 }
 
 export function canProgramOfferRecruit(
@@ -199,47 +139,21 @@ export function canProgramOfferRecruit(
   program: RecruitingProgramState,
   playerId: string,
 ): boolean {
-  if (!recruiting.experimentalRotationCompatibleOpenings) {
-    const recruit = getRecruit(recruiting, playerId)
-    if (!recruit) return false
-    const remaining = deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position]
-    const offered = program.board.filter((target) =>
-      target.hasActiveOffer && target.playerId !== playerId &&
-      getRecruit(recruiting, target.playerId)?.player.position === recruit.player.position &&
-      !recruiting.commitmentsByPlayerId[target.playerId],
-    ).length
-    return offered < remaining
-  }
-  const activeOfferIds = program.board.filter((target) =>
-    target.hasActiveOffer &&
-    !recruiting.commitmentsByPlayerId[target.playerId] &&
-    target.playerId !== playerId,
-  ).map((target) => target.playerId)
-  return deriveOpeningAssignments(recruiting, program, [
-    ...deriveProgramCommitments(recruiting, program.programId).map((c) => c.playerId),
-    ...activeOfferIds,
-    playerId,
-  ]) !== null
+  const recruit = getRecruit(recruiting, playerId)
+  if (!recruit) return false
+  const remaining = deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position]
+  const offered = program.board.filter((target) =>
+    target.hasActiveOffer && target.playerId !== playerId &&
+    getRecruit(recruiting, target.playerId)?.player.position === recruit.player.position &&
+    !recruiting.commitmentsByPlayerId[target.playerId],
+  ).length
+  return offered < remaining
 }
 
 export function deriveRemainingOpeningsByPosition(
   recruiting: RecruitingState,
   program: RecruitingProgramState,
 ): PositionCounts {
-  if (recruiting.experimentalRotationCompatibleOpenings) {
-    const assignments = deriveOpeningAssignments(
-      recruiting,
-      program,
-      deriveProgramCommitments(recruiting, program.programId).map((c) => c.playerId),
-    )
-    if (!assignments) throw new RangeError(`Program "${program.programId}" commitments exceed compatible opening capacity.`)
-    const consumed = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
-    for (const position of Object.values(assignments)) consumed[position] += 1
-    return Object.fromEntries(POSITIONS.map((position) => [
-      position,
-      program.projectedOpeningsByPosition[position] - consumed[position],
-    ])) as PositionCounts
-  }
   const committedCounts = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
   for (const commitment of deriveProgramCommitments(recruiting, program.programId)) {
     const recruit = getRecruit(recruiting, commitment.playerId)

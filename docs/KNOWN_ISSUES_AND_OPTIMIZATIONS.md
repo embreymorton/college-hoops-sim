@@ -7,52 +7,17 @@ diagnostic or engineering evidence confirms a real unresolved defect, debt item,
 measured scaling risk, or validated watchpoint. Follow
 `DOCUMENTATION_POLICY.md` when status changes.
 
+## Deferred / decision-complete limitations
+
+### Mature Dynasty hierarchy
+
+Mature roster and Tournament-field compression is real but accepted for the
+current product scope. A completed multi-system investigation found no supported
+targeted intervention; this is not an open P1 or active tuning priority. Reopen
+only under the conditions in the conditional-read
+[Dynasty Hierarchy Research archive](DYNASTY_HIERARCHY_RESEARCH.md).
+
 ## Open items
-
-### P1 — Mature Dynasty hierarchy
-
-A targeted same-seed comparison confirmed two related unresolved risks. First,
-the mature roster economy compresses Team OVR even when Prestige is held at its
-starting value: three static-Prestige 25-Season runs produced no `90+` Team OVR,
-only 22 `85+` Program-Seasons out of 2,400, and a maximum of `89.25`. Second,
-The rejected Dynamic Prestige V1 worsened mature hierarchy and independently compressed its own
-tails: at Season 25, pooled Prestige SD/range moved from `13.3`/`55` static to
-`9.3`/`38` dynamic, while pooled Team OVR SD moved from `4.00` to `3.23`.
-
-Phase 8A was rejected and rolled back to static Prestige. This evidence does not
-authorize broad calibration. A follow-up static-Prestige trace found adequate but scarce elite
-supply and viable Recruiting concentration: the average class contained about
-24 `85+` POT and seven `90+` POT Recruits, while the best destination averaged
-about three premium signees and Programs could stack 7–8 across two classes.
-Development realization was the largest loss. Only `44–48%` of fully observed
-`85+` POT signees reached `85` OVR, only `8–11%` reached `90`, and they graduated
-about `7.6` points below Potential on average. Senior turnover then removed
-large portions of the strongest Rotations at once.
-
-Team Strength is not a display-scale bottleneck: correlation with
-rotation-weighted Player OVR was `0.995–0.996`, with an average difference near
-`0.2`. A constructed uniform 90 roster produces exactly 90, while five 90-level
-starters backed by 80-level Players produces `88.45`. If a calibration pass is
-explicitly selected, use the tested headroom-sensitive Candidate A. That
-experiment reduced `85+` POT unused ceiling from `7.64` to `5.99` without
-meaningful broad inflation, increased `85+` Team occurrences from 22 to 31, and
-created a two-Season elite run, but still produced no `90+` Team and only three
-`88+` Program-Seasons. The late-career-only Candidate B was too weak. A final
-Candidate A+ test gave `90+` POT Players one additional high-headroom
-opportunity point and improved individual peak realization, but mostly during
-senior Seasons; it produced only 32/3/0 `85+`/`88+`/`90+` Team occurrences
-versus Candidate A's 31/3/0 and raised maximum Team OVR only `89.52 → 89.63`.
-Candidate A+ is therefore rejected as a meaningful team-tail improvement.
-Candidate A is now the accepted production model and exact production parity
-reproduced the experiment. The new static control produced Season-25 Team OVR
-mean/SD/min/max `76.97`/`4.06`/`63.40`/`84.07`, 31/3/0
-`85+`/`88+`/`90+` Program-Seasons, and a `89.52` maximum. The Development
-realization correction is resolved and frozen; zero `90+` Teams is not itself a
-failure. Expectation-relative and three-Season rolling-résumé Prestige
-experiments also failed to preserve the elite tail and are rejected. If future
-work is explicitly selected, investigate the broader mature Dynasty ecosystem
-before reconsidering Prestige from first principles. Do not treat any rejected
-formula as the successor or create another Development variant from this evidence.
 
 ### P1 — Correct Super Sim completion-summary wording
 
@@ -340,5 +305,5 @@ Do not retune Game Simulation solely because V0 seed upset percentages differ fr
 The completed competitive-compression diagnostic confirmed that mature
 Tournament fields are tightly clustered and seed gaps often overstate actual
 Strength gaps. This does not independently implicate Game Simulation: do not
-tune Game Sim solely to reduce upset rates. `PLAYTESTING.md` owns the underlying
-roster-quality compression and its unresolved product/design boundary.
+tune Game Sim solely to reduce upset rates. Historical evidence lives in
+`DYNASTY_HIERARCHY_RESEARCH.md`.

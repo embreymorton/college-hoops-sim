@@ -18,22 +18,12 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
 **Phase 8A — Dynamic Program Prestige V1 — REJECTED / ROLLED BACK / DEFERRED.**
-The production implementation and its player-facing transition UI were removed;
-Program Prestige is static again. Long-run validation found that the V1 formula
-materially compressed durable high and low Prestige tails. Expectation-relative
-and three-Season rolling-résumé variants were also tested and rejected because
-they failed to preserve a meaningful elite hierarchy; added inertia delayed the
-same failure rather than resolving it.
-
-Dynamic Prestige remains a possible future Dynasty concept, not an implied
-successor design. Future work may reconsider Prestige, another part of the
-Dynasty ecosystem, static Prestige, or no Dynamic Prestige at all. No later
-milestone has been selected.
-
-The **Elite Program Dominance / Competitive Compression** diagnostic is
-decision-complete. It found no justification for further ordinary Recruiting
-micro-rule tuning and moved the unresolved product question to the deeper roster
-lifecycle/offseason-management boundary. No successor work is selected.
+Production uses static Prestige. The subsequent hierarchy/compression
+investigation is decision-complete: mature compression is an accepted/deferred
+limitation for the current scope, and no additional targeted work is
+recommended. Historical evidence lives in the conditional-read
+[Dynasty Hierarchy Research archive](DYNASTY_HIERARCHY_RESEARCH.md). No
+successor milestone has been selected.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 

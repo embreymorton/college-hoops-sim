@@ -307,7 +307,6 @@ function validateAssemblyFacts(
     const expectedPositions = positionCounts(archivedRoster)
     const actualPositions = positionCounts(roster.players)
     if (
-      !recruiting.experimentalRotationCompatibleOpenings &&
       POSITIONS.some((position) => actualPositions[position] !== expectedPositions[position])
     ) {
       addIssue(issues, 'INVALID_POSITIONAL_COMPOSITION', `Program "${programId}" does not preserve its accepted positional composition.`, { programId })

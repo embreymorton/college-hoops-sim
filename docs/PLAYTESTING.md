@@ -98,62 +98,19 @@ The run also supplied these current product signals:
 
 ### Long-run Program hierarchy — CONFIRMED / DECISION-COMPLETE
 
-Mature Dynasties are excessively compressed, especially inside the Tournament
-field. Representative mature Team Strength SD was about `3.71`, while the
-Tournament field was about `2.33`; many nominally large seed gaps therefore
-contain modest actual Strength gaps. Résumé/seeding can exaggerate the apparent
-meaning of those matchups, but neither résumé logic nor Game Simulation creates
-the underlying roster compression.
+Mature compression is real but accepted for the current product scope after a
+multi-system investigation. It is not an active tuning priority. Deliberate
+reopening conditions and historical evidence live in
+[DYNASTY_HIERARCHY_RESEARCH.md](DYNASTY_HIERARCHY_RESEARCH.md).
 
-Static Prestige still produces a real hierarchy: high-Prestige Programs sign
-better classes, accumulate more premium talent, and field stronger rosters than
-weak Programs. The mature universe also contains enough elite individual
-talent—roughly 30 Players at `85+` and five at `90+` per Season—and
-Development realizes a clear age/quality curve. Concentrated top-three and
-top-five Player OVR translate strongly into Team Strength. Player supply,
-Development, Rotation weighting, Team Strength, and Game Simulation are
-reasonably exonerated as first-order compression causes.
+### Low-prestige rebuild
 
-The missing outcome is co-location: elite Players do not frequently coexist on
-the same roster in sufficient numbers to create temporary powerhouse peaks. The
-current lifecycle strongly stabilizes that concentration:
-
-```text
-fixed 12-player roster
-+ senior-only departures
-+ usually 2–4 exact-position replacement slots
-+ synchronized four-year cohorts
-```
-
-Raw opening count itself did not predict future Strength; premium quality inside
-the available slots did. Larger classes are not a demonstrated remedy. The
-unresolved question is whether the deeper vacancy-replacement lifecycle or
-future offseason roster management deserves deliberate product design. No
-implementation is selected.
-
-Exact-position eligibility is also **CONFIRMED player-facing friction**: it can
-block attractive premium opportunities. Direct Rotation-compatible Recruiting
-produced incoherent natural-position rosters; a coverage-preserving variant
-produced fragile/skewed rosters and worsened compression (Team Strength SD
-`3.71 → 3.34`). An Offer-collision candidate likewise activated without
-meaningful downstream leverage. Ordinary Recruiting Offer/position micro-rule
-investigation is closed; a future answer would require a genuine roster/offseason
-design, not another isolated exception.
-
-The closed causal progression and rejected experiments are synthesized in
-`PLAYTESTING_ARCHIVE.md`.
-
-### Low-prestige rebuild and mature-league ceiling
-
-Pine Valley has felt like a genuine multi-year grind, and mature leagues have
-occasionally produced one clear powerhouse with most Programs clustered below.
-In the latest multi-Season run, Pine Valley rose from consecutive one- and
-two-win Seasons to multiple Tournament appearances and a #16-over-#1 upset, yet
+Pine Valley has felt like a genuine multi-year grind. In the latest multi-Season
+run, Pine Valley rose from consecutive one- and two-win Seasons to multiple
+Tournament appearances and a #16-over-#1 upset, yet
 its visible Prestige remained approximately 36 and recruiting still appeared
 constrained by its original environment. This remains useful evidence that
-rebuild stories work while upward mobility is limited under static Prestige. It
-does not select Dynamic Prestige, reopen Recruiting, or identify a compression
-solution.
+rebuild stories work. It does not select Dynamic Prestige or reopen Recruiting.
 
 ### Concentrated single-attribute Development gains
 
@@ -170,10 +127,9 @@ default workload realism is resolved and frozen.
 ### Recruiting position friction
 
 Exact-position vacancies can make desirable Recruits unavailable and feel
-annoying during normal Recruiting. Diagnostics confirmed the restriction is
-material, but both attempted compatibility exceptions were unhealthy. Preserve
-this as product evidence for a future roster/offseason design discussion, not
-authorization for another Recruiting micro-rule experiment.
+annoying during normal Recruiting. Preserve this player-facing observation for
+future feature planning on its own merits; rejected hierarchy experiments do
+not authorize another Recruiting micro-rule.
 
 ### Shot selection and statistical translation
 

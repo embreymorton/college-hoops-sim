@@ -37,9 +37,12 @@ Normal feature-planning sessions read only:
 5. relevant production code.
 
 Do not automatically read `PLAYTESTING_ARCHIVE.md`,
-`PLAYER_IDENTITY_RESEARCH.md`, unrelated completed Roadmap sections, or
-unrelated historical research. Read them only when the active problem requires
-their evidence. The repository remains authoritative over chat memory.
+`PLAYER_IDENTITY_RESEARCH.md`, `DYNASTY_HIERARCHY_RESEARCH.md`, unrelated
+completed Roadmap sections, or unrelated historical research. Read them only
+when the active problem requires their evidence. Open the hierarchy archive
+only when deliberately reconsidering compression, when a future feature
+materially changes the talent economy, or when its historical evidence is
+specifically needed. The repository remains authoritative over chat memory.
 
 Future prompts should prefer:
 
@@ -47,7 +50,7 @@ Future prompts should prefer:
 Read CURRENT_STATE.md in full; the Current Selected Horizon in ROADMAP.md;
 Current Playtesting Priorities, Live WATCH, and directly relevant Playtesting
 sections; relevant owner docs; and relevant production code.
-Do not read conditional archives unless this task explicitly reopens them.
+Do not read conditional archives unless this task explicitly requires them.
 ```
 
 ## Fresh Chat Handoff Prompt
@@ -71,10 +74,10 @@ Minimum read set:
 - relevant owner documentation and production code as needed.
 
 Do not automatically read Playtesting Archive, Player Identity Research,
-unrelated completed Roadmap history, or unrelated historical research. Open a
-conditional archive only for a specific historical question. Preserve accepted
-and frozen systems; historical experiments alone do not justify reopening
-tuning or calibration.
+Dynasty Hierarchy Research, unrelated completed Roadmap history, or unrelated
+historical research. Open a conditional archive only for a specific historical
+question. Preserve accepted and frozen systems; historical experiments alone do
+not justify reopening tuning or calibration.
 
 First confirm current production truth, relevant accepted/frozen systems, live
 Playtesting/WATCH signals, and whether Roadmap has an authoritative NEXT.

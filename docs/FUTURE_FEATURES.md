@@ -133,15 +133,11 @@ Program Record Books; those remain distinct possible extensions.
 
 ## Roster and coaching depth
 
-- **Offseason roster management / roster competition:** an unscheduled design
-  family for making roster construction less vacancy-bound while preserving a
-  coherent legal roster. Possible directions include limited recruiting beyond
-  immediate senior vacancies followed by offseason roster resolution,
-  player release/non-renewal or another resolution mechanism, variable turnover
-  such as transfers or early departures, or a future roster-role abstraction.
-  These are alternatives to investigate, not a combined specification. Exact
-  oversigning, removal, transfer, scholarship, UI, AI, and role rules remain
-  deliberately undefined. No direction is selected or prioritized.
+- **Offseason roster management:** an unscheduled feature family that could add
+  player-valued offseason decisions, transfers, early departures, or roster
+  roles. Its rules remain deliberately undefined and no direction is selected.
+  Do not build it solely to change mature hierarchy; the rejected compression
+  experiments live in `DYNASTY_HIERARCHY_RESEARCH.md`.
 - manual canonical starters or role definitions with simulation meaning;
 - redshirts, medical redshirts, and eligibility exceptions;
 - injuries, fatigue, morale, chemistry, and discipline;
@@ -252,17 +248,11 @@ generation, and generic engine boundaries.
 
 ### Evolving Program prestige
 
-Dynamic Program Prestige remains an unscheduled concept after Phase 8A was
-rejected and rolled back. The tested percentile-target, expectation-relative,
-and rolling-résumé implementations compressed the long-run Program hierarchy
-and are evidence only, not preferred future designs. Any renewed investigation
-should begin from first principles; retaining static Prestige or choosing not
-to implement Dynamic Prestige remain valid. The completed hierarchy audit found
-that static Prestige already creates meaningful advantage and that the mature
-amplitude problem lies in elite-talent co-location under the stable roster
-lifecycle. Dynamic Prestige remains a mobility concept, not the demonstrated
-fix for compression, and should be considered independently of or after any
-future roster-lifecycle design.
+Dynamic Program Prestige remains an unscheduled world-evolution concept after
+Phase 8A was rejected and rolled back. It should be considered only for its own
+player value, not as a hierarchy fix; retaining static Prestige remains valid.
+Rejected models and reopening evidence live in
+`DYNASTY_HIERARCHY_RESEARCH.md`.
 
 ## Presentation and broader modes
 

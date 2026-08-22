@@ -35,11 +35,14 @@ work follows this policy's targeted acceptance updates.
 | `docs/KNOWN_ISSUES_AND_OPTIMIZATIONS.md` | Confirmed unresolved defects, debt, measured risks, validated watchpoints | Issue/risk confirmed, resolved, or superseded | Feature backlog or unverified playtest notes |
 | `docs/FUTURE_FEATURES.md` | Unscheduled, non-blocking idea bank | Deferred idea added, implemented, abandoned, or deliberately selected elsewhere | Priority order |
 | `docs/PLAYER_IDENTITY_RESEARCH.md` | Historical/parked Player Identity experiments, evidence, and reopening criteria | Only when deliberately reopening or adding evidence to that research | Production truth or normal feature-session reading |
+| `docs/DYNASTY_HIERARCHY_RESEARCH.md` | Decision-complete Dynasty hierarchy/compression evidence, rejected experiments, and reopening criteria | Only when deliberately reopening hierarchy research, when a future feature materially changes the talent economy, or when its history is specifically needed | Production truth, active tuning, or normal feature-session reading |
 | `docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md` | How assistants reason, validate, prompt, and hand off work | Process, prompting, validation philosophy, or documentation governance changes | Current product state |
 
 `CURRENT_STATE.md` is curated and replaced, not append-only. `PLAYTESTING.md`
 is an active front door; detailed closed causal history moves to
-`PLAYTESTING_ARCHIVE.md` when it begins to obscure current evidence.
+`PLAYTESTING_ARCHIVE.md` when it begins to obscure current evidence. Large
+topic-specific research belongs in its dedicated conditional-read owner rather
+than being duplicated across front-door or general archive documents.
 
 ## Sequencing authority
 

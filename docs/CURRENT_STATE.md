@@ -110,12 +110,11 @@ be confused with the rejected historical **OVR Experiment B v1**.
 [PLAYTESTING.md](PLAYTESTING.md) owns empirical evidence. The active watch list
 does not itself authorize implementation:
 
-- low-prestige rebuild feel and mature-league powerhouse ceilings;
+- low-prestige rebuild feel;
 - concentrated single-attribute offseason gains;
 - interior/forward-heavy Rotation secondary paths and rare incumbent
   displacement;
-- exact-position Recruiting friction and the deeper stable roster-lifecycle
-  design boundary, with ordinary Offer/position micro-rule experiments closed;
+- exact-position Recruiting friction;
 - shot-selection/statistical translation only if fresh manual play identifies a
   concrete Player-identity problem;
 - active Dynasty persistence and serialized-history growth; and
@@ -126,24 +125,12 @@ does not itself authorize implementation:
 
 **No NEXT selected — Open Planning Checkpoint.**
 
-**Phase 8A — Dynamic Program Prestige V1 is REJECTED / ROLLED BACK / DEFERRED.**
-Production has returned to static Program Prestige: immutable
-`ProgramDefinition.basePrestige` initializes `Team.prestige`, Offseason copies
-that value unchanged, rollover preserves it, and Recruiting continues consuming
-the same established Prestige value. The rejected V1 and its expectation-relative
-and rolling-résumé experiments materially compressed the long-run Program
-hierarchy, especially the elite tail. Dynamic Prestige remains a possible
-Dynasty concept, but no replacement design is selected. Any future investigation
-should begin from current ecosystem evidence and first principles.
-
-The Elite Program Dominance / Competitive Compression investigation is
-decision-complete. Mature compression is confirmed, especially inside the
-Tournament field. Player supply, Development realization, Rotation weighting,
-Team Strength, Game Simulation, and résumé logic are not currently demonstrated
-as the primary boundary, and ordinary Recruiting Offer/position candidates were
-rejected. The remaining unselected planning question is whether the deeper
-stable roster lifecycle or future offseason roster management deserves
-reopening. No roster-lifecycle implementation is selected.
+Dynamic Prestige was rejected and rolled back; production uses immutable static
+Program Prestige. The subsequent hierarchy/compression investigation is
+**decision-complete**. Mature compression remains a known accepted/deferred
+limitation for the current product scope, no targeted intervention is
+recommended, and no compression work is selected. Detailed conditional-read
+evidence lives in [DYNASTY_HIERARCHY_RESEARCH.md](DYNASTY_HIERARCHY_RESEARCH.md).
 
 Rotation Assistant V1 — Preserve & Fill is **COMPLETE / ACCEPTED / FROZEN**.
 The explicit action preserves edited MPG, fills the remaining legal 200-minute

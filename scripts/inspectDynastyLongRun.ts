@@ -22,7 +22,6 @@ import {
   deriveBaseRecruitAttraction,
   deriveRecruitProgramStandings,
   deriveTargetStatus,
-  deriveOpeningAssignments,
   initializeDynastyState,
   initializeRecruiting,
   MIN_MEANINGFUL_RELATIONSHIP,
@@ -31,7 +30,6 @@ import {
   rolloverDynastyToNextSeason,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
-  syncRecruitingThroughCompletedRoundsWithEarlyClosePremiumSecondOffer,
   type DynastyState,
 } from '../src/dynasty'
 import {
@@ -108,8 +106,6 @@ export interface ProgramRecruitingCapacityTrace {
   readonly projectedOpeningsByPosition: Readonly<Record<string, number>>
   readonly projectedOpenings: number
   readonly actualSignees: number
-  readonly openingAssignmentByPlayerId?: Readonly<Record<string, string>>
-  readonly experimentalReturningPlayersByPosition?: Readonly<Record<string, number>>
 }
 
 export interface TournamentStrengthRecord {
@@ -400,7 +396,7 @@ export interface LongRunCalibrationResult {
   readonly runs: readonly DynastyRunResult[]
 }
 
-function createDynasty(seed: string, experimentalRotationCompatibleOpenings = false): DynastyState {
+function createDynasty(seed: string): DynastyState {
   const initializedUniverse = initializeUniverse(UNIVERSE_V0, `${seed}:universe`)
   const activeSeason = initializeSeason({
     universe: UNIVERSE_V0,
@@ -418,7 +414,7 @@ function createDynasty(seed: string, experimentalRotationCompatibleOpenings = fa
     controlledProgramId: CONTROLLED_PROGRAM_ID,
     universe: UNIVERSE_V0,
     activeSeason,
-  }), { experimentalRotationCompatibleOpenings })
+  }))
 }
 
 function emptyHealth(): StructuralHealth {
@@ -522,10 +518,8 @@ export function runDynastyCalibration(
   seed: string,
   seasonsToComplete: number,
   auditLevel: AuditLevel = 'full',
-  experimentalEarlyClosePremiumSecondOffer = false,
-  experimentalRotationCompatibleOpenings = false,
 ): DynastyRunResult {
-  let dynasty = createDynasty(seed, experimentalRotationCompatibleOpenings)
+  let dynasty = createDynasty(seed)
   const seasons: SeasonTalentMetrics[] = []
   const developments: DevelopmentRecord[] = []
   const signedRecruits: SignedRecruitRecord[] = []
@@ -605,9 +599,7 @@ export function runDynastyCalibration(
           simulationSeed: `${seed}:season-${season.seasonNumber}:games`,
         })
         const beforeRecruiting = dynasty
-        dynasty = (experimentalEarlyClosePremiumSecondOffer
-          ? syncRecruitingThroughCompletedRoundsWithEarlyClosePremiumSecondOffer
-          : syncRecruitingThroughCompletedRounds)({
+        dynasty = syncRecruitingThroughCompletedRounds({
           ...dynasty,
           activeSeason: season,
         })
@@ -791,20 +783,6 @@ export function runDynastyCalibration(
             projectedOpenings: Object.values(openings).reduce((sum, count) => sum + count, 0),
             actualSignees: Object.values(finalized.recruitingState.commitmentsByPlayerId)
               .filter((commitment) => commitment.programId === programId).length,
-            ...(finalized.recruitingState.experimentalRotationCompatibleOpenings
-              ? {
-                  openingAssignmentByPlayerId: deriveOpeningAssignments(
-                    finalized.recruitingState,
-                    finalized.recruitingState.programs[programId]!,
-                    Object.values(finalized.recruitingState.commitmentsByPlayerId)
-                      .filter((commitment) => commitment.programId === programId)
-                      .map((commitment) => commitment.playerId),
-                  ) ?? {},
-                  experimentalReturningPlayersByPosition: {
-                    ...finalized.recruitingState.programs[programId]!.experimentalReturningPlayersByPosition,
-                  },
-                }
-              : {}),
           }
         }))
       signedRecruits.push(...extractSignedRecruitRecords(
@@ -847,7 +825,7 @@ export function runDynastyCalibration(
           recruitingHistoryNumbers.length - new Set(recruitingHistoryNumbers).size
       }
 
-      dynasty = rolloverDynastyToNextSeason(dynasty, { experimentalRotationCompatibleOpenings })
+      dynasty = rolloverDynastyToNextSeason(dynasty)
       rollovers += 1
       const nextPlayerIds = Object.values(dynasty.activeSeason!.programStates).flatMap(
         ({ team }) => team.roster.map(({ id }) => id),
