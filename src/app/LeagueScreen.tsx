@@ -109,6 +109,7 @@ export function LeagueScreen() {
           accentColor={controlledProgram.branding.primaryColor}
           overallRecord={deriveProgramRecord(season, controlledProgramId)}
           overallRating={calculateTeamStrength(controlledTeam, canonicalRotation).overall}
+          dynastySeed={dynasty.dynastySeed}
         />
       ) : null}
 

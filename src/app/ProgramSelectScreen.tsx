@@ -1,7 +1,8 @@
-import type { CSSProperties } from 'react'
+import { useId, useState, type CSSProperties } from 'react'
 import { useDynastyStore } from '../store'
 import { UNIVERSE_V0 } from '../universe'
 import type { ProgramDefinition } from '../universe'
+import { parseDynastySeedInput } from './dynastySeedInput'
 
 function programsForConference(conferenceId: string): ProgramDefinition[] {
   return UNIVERSE_V0.programs
@@ -12,6 +13,19 @@ function programsForConference(conferenceId: string): ProgramDefinition[] {
 /** Shown once, before a Season session exists: choose one of the 32 permanent programs. */
 export function ProgramSelectScreen() {
   const selectProgram = useDynastyStore((state) => state.selectProgram)
+  const [seedText, setSeedText] = useState('')
+  const seedInputId = useId()
+  const seedErrorId = useId()
+
+  const parsedSeed = parseDynastySeedInput(seedText)
+  const seedError = parsedSeed.kind === 'invalid' ? parsedSeed.reason : null
+
+  function handleSelectProgram(programId: string): void {
+    if (parsedSeed.kind === 'invalid') {
+      return
+    }
+    selectProgram(programId, parsedSeed.kind === 'valid' ? parsedSeed.seed : undefined)
+  }
 
   return (
     <section className="section program-select" aria-labelledby="program-select-heading">
@@ -21,6 +35,33 @@ export function ProgramSelectScreen() {
         </h2>
         <p className="section-hint">
           Starts Season 1 of a 24-round regular season across four conferences.
+        </p>
+      </div>
+      <div className="program-select__seed">
+        <label htmlFor={seedInputId} className="program-select__seed-label">
+          Dynasty Seed
+        </label>
+        <input
+          id={seedInputId}
+          type="text"
+          className="program-select__seed-input"
+          value={seedText}
+          onChange={(event) => setSeedText(event.target.value)}
+          placeholder="Optional — leave blank for a random Dynasty"
+          aria-describedby={seedErrorId}
+          aria-invalid={seedError !== null}
+        />
+        <p
+          id={seedErrorId}
+          className={
+            seedError
+              ? 'program-select__seed-hint program-select__seed-hint--error'
+              : 'program-select__seed-hint'
+          }
+        >
+          {seedError ?? (
+            "Use the same seed to recreate this Dynasty's starting world on compatible game versions."
+          )}
         </p>
       </div>
       <div className="program-select__conferences">
@@ -40,7 +81,8 @@ export function ProgramSelectScreen() {
                         '--team-accent': program.branding.primaryColor,
                       } as CSSProperties
                     }
-                    onClick={() => selectProgram(program.id)}
+                    disabled={parsedSeed.kind === 'invalid'}
+                    onClick={() => handleSelectProgram(program.id)}
                   >
                     <span
                       className="team-color-dot"
