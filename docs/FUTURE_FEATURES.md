@@ -42,6 +42,24 @@ prompt, and automatic reallocation have materially different agency costs; none
 is selected. Any assistant behavior must avoid silently making strategic
 decisions for the user.
 
+`Fill Remaining Board` is useful, but a large assistant-added group can obscure
+the targets the player chose manually. A future Board organization pass could
+distinguish target provenance through grouping, tags, or filtering—conceptually
+`My Targets` and `Assistant Suggestions`—without changing capacity, eligibility,
+or Fill Remaining selection behavior. The exact presentation is undecided.
+
+Board cleanup could also offer a deliberate way to remove or hide Recruits who
+committed elsewhere. Manual bulk `Clear Unavailable`, filtering, and a grouped
+unavailable section preserve different amounts of history and agency; none is
+selected, and automatic removal is not assumed preferable.
+
+Recruiting battle feedback could communicate qualitative closeness—whether a
+target is genuinely competitive, plausibly within reach, or a substantial
+long shot—without exposing exact hidden relationship scores or reducing
+Recruiting to deterministic arithmetic. Labels, thresholds, information timing,
+and eligibility for such feedback require design; this is decision-support UX,
+not a selected calibration project.
+
 High-school statistics remain model-undefined because no canonical high-school
 season is simulated. If revisited, decide whether displayed values are scouting
 context, attribute-derived estimates, competition-adjusted production, or
@@ -80,7 +98,17 @@ Player Details could derive PTS/REB/AST/STL/BLK single-game highs with opponent
 and game context from retained results. This would be historical presentation,
 not mutable achievement or milestone state. Whether the scope is regular-season
 only or includes Tournament games remains deliberately undecided because current
-career-history aggregation is regular-season-only.
+career-history aggregation is regular-season-only. Long manual play strengthened
+the motivation: a 40-point game felt immediately worth “immortalizing,” while a
+59-point historical Record Book discovery remained enjoyable many Seasons later.
+
+### Program record extensions
+
+Program/Team Details could derive Program-specific single-game, Season, and
+career records from retained history so memorable performances remain attached
+to the school where they happened. This would complement the existing global
+Dynasty Record Book and the separate, deliberately undefined signature-games
+concept; it need not create mutable record or achievement state.
 
 ## History and immersion beyond selected work
 
@@ -132,11 +160,21 @@ future Rivalry system deliberately adds canonical state or gameplay effects.
 
 ## Roster and coaching depth
 
-- **Offseason roster management:** an unscheduled feature family that could add
-  player-valued offseason decisions, transfers, early departures, or roster
-  roles. Its rules remain deliberately undefined and no direction is selected.
-  Do not build it solely to change mature hierarchy; the rejected compression
-  experiments live in `DYNASTY_HIERARCHY_RESEARCH.md`.
+- **Dedicated Offseason Experience / Offseason Lifecycle:** an unscheduled
+  product opportunity to organize existing meaningful events into a coherent,
+  intentional container before adding mechanics. Late Recruiting, Recruiting
+  Class Finalization, Departures, Development, Incoming Class, Roster Review,
+  and next-Season transition are candidate content seams, not an accepted phase
+  order. The first design question is how existing events should feel like one
+  offseason journey rather than the current normal-shell handoff plus one
+  turnover summary screen.
+
+  A durable offseason container could later host separately designed transfers,
+  professional departures, position changes, staff changes, or other roster
+  decisions, but none is implied for a first version. Rules remain deliberately
+  undefined and no direction is selected. Do not build it solely to change
+  mature hierarchy; the rejected compression experiments remain conditional-read
+  evidence in `DYNASTY_HIERARCHY_RESEARCH.md`.
 - manual canonical starters or role definitions with simulation meaning;
 - redshirts, medical redshirts, and eligibility exceptions;
 - injuries, fatigue, morale, chemistry, and discipline;
@@ -151,9 +189,23 @@ their own selected phases and validation.
 ### Matchup scout
 
 Game Prep could derive a compact opponent summary from existing Team Strength,
-Team Season Stats, Player leaders, recent results/form, and Rotation or major-
-contributor facts. A first version would be pregame information only, without
-new schemes, tactics, scouting state, or simulation effects.
+Team Season Stats, opponent record, Player leaders, recent results/form,
+Rotation or major-contributor facts, and prior matchup/series context where
+canonical history supports it. A roughly 14-Season playthrough reinforced that
+the current Rotation-centered Game Prep surface now lags the information
+richness elsewhere in the product. A first redesign would remain pregame
+presentation/scouting only. Offensive options, defensive tactics, schemes,
+pace, and Player-role instructions are separate Coaching-system questions that
+could affect Game Sim and require their own design.
+
+### Position changes and positional roster flexibility
+
+Future roster/coaching depth could explore position changes or broader rules
+for how incoming Players occupy roster openings. Exact-position scarcity can
+produce engaging choices, so one contested natural-C opening is not evidence
+that current construction is defective. Any flexibility design must consider
+Recruiting capacity, Rotation positional eligibility, roster lifecycle, and
+Team Strength/lineup semantics together rather than loosening only one boundary.
 
 ### Playing time influencing Development
 
@@ -235,7 +287,11 @@ Dynamic Program Prestige remains an unscheduled world-evolution concept after
 Phase 8A was rejected and rolled back. It should be considered only for its own
 player value, not as a hierarchy fix; retaining static Prestige remains valid.
 Rejected models and reopening evidence live in
-`DYNASTY_HIERARCHY_RESEARCH.md`.
+`DYNASTY_HIERARCHY_RESEARCH.md`. Long Pine Valley play raises a narrower future
+product question—whether sustained résumé success at a difficult rebuild should
+create an appropriate sense of structural progress—but modest results, low-seed
+bids, and short Tournament runs do not establish that Prestige is broken or
+satisfy the existing reopening criteria.
 
 ## Presentation and broader modes
 

@@ -49,50 +49,71 @@ The authoritative milestone selection remains in `ROADMAP.md`.
 
 ## Current Multi-Season Play Evidence — OBSERVED
 
-A manual Pine Valley Dynasty through approximately Season 8 produced a
-compelling low-Prestige rebuild: `1–23 → 2–22 → gradual talent improvement →
-Tournament qualification → #16-over-#1 upset → another Tournament appearance →
-later decline after key graduations`. Recruiting, Development, Tournament
-progression, and roster turnover combined into memorable long-form stories
-without making success immediately sustainable. This supports the current
-Dynasty loop as fun and attachment-producing; one run does not prove that its
-rebuild curve is perfectly balanced.
+A voluntary Pine Valley Dynasty lasting roughly 14 Seasons is strong qualitative
+evidence that the current loop can sustain long-form engagement. The rebuild
+remained difficult, with generally modest results, low-seed Tournament
+appearances, and short runs even after meaningful roster improvement. That
+difficulty created a durable story rather than proving either that the rebuild
+curve is ideal or that static Prestige is broken.
 
-The run also supplied these current product signals:
+The clearest product pattern was that attachment increasingly came from
+remembered decisions and their later consequences, not ratings alone. One
+natural-C opening forced a choice between Kobe Russell and Gavin Nichols;
+Russell signed with Pine Valley, Nichols was followed after signing elsewhere,
+and their Development was compared for several Seasons. Later results made the
+original decision feel validated. Followed Recruit/Player continuity, stable
+identity, Records, News, and retrospectives made that story easy to revisit.
 
-- **WORKING:** large and repeated Player gains, attribute-specific offseason
-  summaries, and disappointment at limited growth all made Development outcomes
-  matter. Offseason Storytelling is producing payoff without evidence to reopen
-  accepted Development mechanics.
-- **WORKING:** low-OVR/high-POT projects, contested battles, and eventually
-  landing four- and five-star Recruits created attachment. Recognizing an early
-  elite Recruit years later as a senior national scoring leader strengthened
-  the Recruit → Player continuity story and motivated the now-accepted factual
-  Recruiting Class Retrospectives V1.
-- **WORKING:** Records supplied durable comparison across Seasons, including a
-  47-point Single Game mark later broken by a 52-point game and Players reaching
-  Season/Career rebounding, scoring, and blocking lists. Record News correctly
-  omitted inherited Season 1 history under its frozen contract.
-- **WORKING:** the Recruiting Guide was useful after the player forgot what
-  recruiting states meant, supporting lightweight contextual guidance for
-  interconnected systems.
-- **OBSERVED:** the user often wanted to preserve one or two intentional minute
-  assignments, then have an assistant construct or repair a legal Rotation
-  around them. Manual edits could temporarily create invalid Rotations and
-  required rebuilding the remainder by hand.
-- **OBSERVED:** recruiting standing showed Focus, Offer, and rank but not whether
-  a contested target was barely behind, meaningfully behind, or effectively out
-  of reach. The uncertainty remained exciting, suggesting a need to investigate
-  better qualitative feedback without exposing exact hidden scores.
-- **OBSERVED:** when a focused Recruit committed, the newly open Focus slot was
-  easy to leave unused despite other offered targets. Whether assistance should
-  be automatic, prompted, or explicitly user-triggered remains an open design
-  question.
-- **OBSERVED:** a #16-over-#1 upset led by Lucas Bradley's 29 points felt worthy
-  of Program-level remembrance distinct from a statistical Record. Graduated
-  Players such as a roughly 91-OVR Tobias Stone and career leaderboard presence
-  from Trey Adams also created demand for stronger Program-specific alumni
-  memory; these examples are evidence, not canonical recognition rules.
+The run supplied these additional signals:
+
+- **WORKING:** Next Season Position Outlook materially improved live Recruit
+  evaluation by placing exact OVR/POT beside projected roster competition. This
+  validates the accepted V1 without automatically expanding it.
+- **WORKING:** `Fill Remaining Board` remained useful, while also exposing a
+  separate organization problem when assistant-added targets visually
+  overwhelmed manually chosen targets.
+- **WORKING:** Rotation Assistant `Fill Remaining` made it substantially easier
+  to preserve a deliberate minutes increase for one Player and build a legal
+  Rotation around that choice.
+- **WORKING:** Recruiting Class Retrospectives were explicitly enjoyable and
+  connected earlier evaluations to later outcomes; seeing a former 63/85
+  Recruit become an 81-OVR junior made the class history meaningful.
+- **WORKING:** Records and News sustained historical exploration many Seasons
+  later. A discovered 59-point game and Kobe Russell's Season/Career rebounding
+  ranks were memorable, while Darnell Green's 40-point game created an immediate
+  desire for discoverable Player career highs and Program memory.
+- **WORKING:** the historical disappearing Tournament → Late Recruiting action
+  did not recur during the long run. This is meaningful additional manual
+  validation of the accepted canonical progression architecture, not proof that
+  regression is mathematically impossible.
+- **OBSERVED:** offseason events now carry enough meaning that their fragmented
+  presentation is more noticeable. Late Recruiting still resembles the normal
+  Tournament shell, class completion merely leads to Begin Offseason, and the
+  current one-screen turnover summary does not yet feel like a coherent staged
+  offseason journey.
+- **OBSERVED:** Game Prep's Rotation-centered composition now feels older than
+  the richer Team Strength, statistics, leaders, results, and Player/Team detail
+  available elsewhere. This supports an informational matchup-scout opportunity,
+  separate from tactics or schemes that could affect simulation.
+- **OBSERVED:** qualitative Recruiting uncertainty remains valuable. While
+  second for PG Tyler Allen, the user wanted to know whether the gap was truly
+  competitive or a long shot without seeing exact hidden relationship scores.
+- **OBSERVED:** Board cleanup and provenance became workflow friction: many
+  assistant-added targets obscured manual choices, and committed-elsewhere
+  Recruits lacked an easy bulk cleanup/filter path. These are organization
+  issues, not evidence against current Board capacity or selection mechanics.
+- **OBSERVED:** exact-position capacity made the Russell/Nichols choice engaging
+  while also raising neutral interest in future position changes or broader
+  roster flexibility. One decision does not establish a Recruiting defect.
+- **OBSERVED:** memorable individual performances and Program-specific history
+  continue to create demand beyond global leaderboards. Future presentation can
+  remain derived from retained results rather than assume mutable achievement
+  state.
+
+Overall, the dominant friction in this run shifted toward lifecycle
+presentation, information architecture, workflow, and historical surfacing
+rather than basic simulation correctness. That is useful product evidence, not
+a claim that simulation work is permanently complete.
 
 ## Live WATCH Items
 
@@ -105,12 +126,32 @@ reopening conditions and historical evidence live in
 
 ### Low-prestige rebuild
 
-Pine Valley has felt like a genuine multi-year grind. In the latest multi-Season
-run, Pine Valley rose from consecutive one- and two-win Seasons to multiple
-Tournament appearances and a #16-over-#1 upset, yet
-its visible Prestige remained approximately 36 and recruiting still appeared
-constrained by its original environment. This remains useful evidence that
-rebuild stories work. It does not select Dynamic Prestige or reopen Recruiting.
+Pine Valley still felt like a genuine grind after roughly 14 Seasons: improved
+rosters did not consistently translate into strong résumés, Tournament bids
+were generally low seeds, and runs were short. Continued manual recruiting work
+renewed interest in structural Program progress, but a difficult rebuild
+remaining difficult may be intended. The unresolved product question is whether
+actual sustained résumé success receives an appropriate sense of structural
+progress. This run does not select Dynamic Prestige, propose a formula, or meet
+the existing reopening bar for the decision-complete hierarchy investigation.
+
+### Elite Recruit offer coverage
+
+**WATCH:** one top five-star PG reportedly had no Offers around Round 10 and was
+available to Pine Valley. This may be plausible market behavior, a positional
+supply edge case, or incomplete AI coverage. Before treating it as a defect,
+measure how often elite/top-ranked Recruits remain unoffered deep into a cycle
+and under what positional and class-supply conditions. No Recruiting AI or
+supply change is authorized by this example.
+
+### Very-high-OVR career ceiling
+
+**WATCH:** retrospective browsing suggested relatively few developed Players
+reaching approximately 95+ OVR. Liam Hill reaching 99 OVR as a generated Season
+0 Player confirms that the displayed ceiling is reachable, but does not answer
+how often completed Recruiting classes develop into that range. A future
+longitudinal diagnostic could measure peak/career OVR distribution across many
+classes. Development and Player Identity remain accepted/parked.
 
 ### Concentrated single-attribute Development gains
 
@@ -134,10 +175,11 @@ not authorize another Recruiting micro-rule.
 ### Shot selection and statistical translation
 
 Shot mix is simplified, and Steals/cross-position identities showed the clearest
-historical compression. A Single Game steal record around 6 drew attention as
-potentially low in one run, but remains a WATCH signal rather than a confirmed
-tuning problem. Player Identity tuning remains parked; investigate only if new
-manual play identifies a concrete repeated gameplay problem.
+historical compression. The roughly 14-Season Record Book topped out at seven
+steals in one game, strengthening earlier qualitative concern without proving a
+tuning problem. The evidence question is whether the long-run upper tail is
+appropriately rare or structurally compressed. Player Identity and Game Sim
+tuning remain parked/frozen pending a focused diagnostic and stronger evidence.
 
 ### Persistence and history growth
 

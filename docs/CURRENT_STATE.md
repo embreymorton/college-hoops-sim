@@ -123,12 +123,15 @@ be confused with the rejected historical **OVR Experiment B v1**.
 does not itself authorize implementation:
 
 - low-prestige rebuild feel;
+- elite Recruit offer coverage deep into a cycle;
+- the longitudinal frequency of developed Players reaching approximately 95+
+  OVR;
 - concentrated single-attribute offseason gains;
 - interior/forward-heavy Rotation secondary paths and rare incumbent
   displacement;
 - exact-position Recruiting friction;
-- shot-selection/statistical translation only if fresh manual play identifies a
-  concrete Player-identity problem;
+- shot-selection/statistical translation, including the single-game Steals
+  upper tail, only if focused evidence establishes a concrete problem;
 - active Dynasty persistence and serialized-history growth; and
 - minor wording, session-store, and test-infrastructure items tracked in
   [KNOWN_ISSUES_AND_OPTIMIZATIONS.md](KNOWN_ISSUES_AND_OPTIMIZATIONS.md).
