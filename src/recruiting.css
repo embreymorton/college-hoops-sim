@@ -924,6 +924,11 @@
 
 .recruiting-battle-card__row-name {
   color: var(--ink-0);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .recruiting-battle-card__row[data-controlled='true'] .recruiting-battle-card__row-name {
@@ -937,6 +942,8 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .recruiting-battle-card__row-offer {

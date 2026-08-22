@@ -14,6 +14,7 @@ import {
   deriveRecruitingActivityDescriptions,
   formatBattlePositionLabel,
   formatControlledPositionLabel,
+  formatControlledPursuitLabel,
   formatReadinessLabel,
 } from './recruitingBattleFormatters'
 
@@ -226,6 +227,81 @@ describe('Recruiting battle presentation formatters', () => {
         ['accentColor', 'hasActiveOffer', 'isControlled', 'programId', 'programName'].sort(),
       )
     }
+  })
+
+  it('surfaces the controlled Program pursuit rank and field size from the existing projection', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-pursuit-rank')
+    const configured = withDecisionState(dynasty, playerId, {
+      [programIds[0]]: 70,
+      [programIds[1]]: 100,
+      [programIds[2]]: 90,
+    })
+    const battle = deriveRecruitingBattleView(configured, playerId)
+
+    const controlledEntry = battle.pursuingPrograms.find(
+      (entry) => entry.programId === programIds[0],
+    )!
+    // The controlled Program has the lowest configured standing among the
+    // three explicitly ranked pursuers, so it cannot rank first.
+    expect(controlledEntry.pursuitRank).toBeGreaterThan(1)
+
+    const label = formatControlledPursuitLabel(battle, programIds[0], false, false)
+    expect(label).toBe(
+      `YOU · #${controlledEntry.pursuitRank} of ${battle.pursuingPrograms.length}`,
+    )
+  })
+
+  it('includes Focused/Offered metadata alongside the pursuit rank without dropping either', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-pursuit-rank-meta')
+    const configured = withDecisionState(dynasty, playerId, {
+      [programIds[0]]: 100,
+      [programIds[1]]: 90,
+      [programIds[2]]: 80,
+    })
+    const battle = deriveRecruitingBattleView(configured, playerId)
+    // The controlled Program has the highest configured standing, so it leads.
+    const total = battle.pursuingPrograms.length
+
+    expect(formatControlledPursuitLabel(battle, programIds[0], true, true)).toBe(
+      `YOU · #1 of ${total} · Focused · Offered`,
+    )
+    expect(formatControlledPursuitLabel(battle, programIds[0], false, false)).toBe(
+      `YOU · #1 of ${total}`,
+    )
+  })
+
+  it('omits the pursuit rank when the controlled Program is not currently pursuing', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-pursuit-rank-absent')
+    const recruiting = dynasty.recruiting!
+    const withoutControlled: DynastyState = {
+      ...dynasty,
+      recruiting: {
+        ...recruiting,
+        programs: {
+          ...recruiting.programs,
+          [programIds[0]]: { ...recruiting.programs[programIds[0]]!, board: [] },
+        },
+      },
+    }
+    const battle = deriveRecruitingBattleView(withoutControlled, playerId)
+
+    expect(battle.pursuingPrograms.some((entry) => entry.programId === programIds[0])).toBe(false)
+    expect(formatControlledPursuitLabel(battle, programIds[0], false, false)).toBe('YOU')
+  })
+
+  it('never renders raw standing totals, thresholds, or probabilities alongside the pursuit rank', () => {
+    const { dynasty, playerId, programIds } = battleFixture('formatters-pursuit-rank-hidden')
+    const configured = withDecisionState(dynasty, playerId, {
+      [programIds[0]]: 70,
+      [programIds[1]]: 100,
+      [programIds[2]]: 90,
+    })
+    const battle = deriveRecruitingBattleView(configured, playerId)
+    const label = formatControlledPursuitLabel(battle, programIds[0], false, false)
+
+    expect(label).not.toMatch(/%/)
+    expect(label).not.toMatch(/\d+\.\d/)
+    expect(label).toMatch(/^YOU · #\d+ of \d+$/)
   })
 
   it('joins provable commitment activity with identity without inventing standing movement', () => {

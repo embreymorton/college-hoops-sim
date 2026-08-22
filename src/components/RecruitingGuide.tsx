@@ -89,7 +89,9 @@ export function RecruitingGuide() {
         </h3>
         <p className="recruiting-guide__body">
           A recruit's pursuing Programs are grouped as Leading, Competitive, or Trailing —
-          categorical standings that do not expose exact hidden totals. Open the Battles tab for
+          categorical standings that do not expose exact hidden totals. When you are actively
+          pursuing, your row also shows your rank among the recruit's current pursuers, such as
+          "#2 of 9" — a count of active competitors, not a hidden score. Open the Battles tab for
           detailed Program-by-Program context on every recruit on your Board.
         </p>
       </section>

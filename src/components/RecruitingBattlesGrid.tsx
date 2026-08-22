@@ -2,6 +2,7 @@ import {
   deriveBattleGroups,
   formatBattlePositionLabel,
   formatControlledPositionLabel,
+  formatControlledPursuitLabel,
   formatReadinessLabel,
   type BattleCardSummary,
 } from '../app/recruitingBattleFormatters'
@@ -87,9 +88,12 @@ function RecruitingBattleCard({
     programsById,
     COMPETITOR_DISPLAY_LIMIT,
   )
-  const youLabel = ['YOU', card.isFocused && 'Focused', card.hasActiveOffer && 'Offered']
-    .filter((tag): tag is string => Boolean(tag))
-    .join(' · ')
+  const youLabel = formatControlledPursuitLabel(
+    battle,
+    controlledProgram.id,
+    card.isFocused,
+    card.hasActiveOffer,
+  )
 
   return (
     <li className="recruiting-battle-card" data-readiness={battle.readiness}>

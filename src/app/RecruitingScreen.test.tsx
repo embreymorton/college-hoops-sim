@@ -530,7 +530,8 @@ describe('Battles tab', () => {
     // (sole) leading entry — grouped, not pinned to a separate fixed row.
     expect(within(card).getByText('Leading')).toBeInTheDocument()
     expect(within(card).getByText('Charlotte Tech')).toBeInTheDocument()
-    expect(within(card).getByText('YOU')).toBeInTheDocument()
+    // Sole pursuer: pursuit rank #1 of 1 alongside the YOU marker.
+    expect(within(card).getByText('YOU · #1 of 1')).toBeInTheDocument()
     expect(card.querySelector('.team-color-dot')).not.toBeNull()
     // No redundant duplicate "We Lead" style standing badge alongside the group.
     expect(within(card).queryByText(/We Lead/)).not.toBeInTheDocument()
@@ -543,7 +544,7 @@ describe('Battles tab', () => {
     const card = screen
       .getByText('Offered Fixture')
       .closest('.recruiting-battle-card') as HTMLElement
-    expect(within(card).getByText('YOU · Focused · Offered')).toBeInTheDocument()
+    expect(within(card).getByText('YOU · #1 of 1 · Focused · Offered')).toBeInTheDocument()
   })
 
   it('does not repeat the group standing label inside the group', () => {
@@ -567,6 +568,8 @@ describe('Battles tab', () => {
       .closest('.recruiting-battle-card') as HTMLElement
     expect(within(card).getByText(/Committed To Northbridge/)).toBeInTheDocument()
     expect(within(card).queryByText('Charlotte Tech')).not.toBeInTheDocument()
+    // Committed cards stay simplified to the outcome — no stale pursuit rank.
+    expect(within(card).queryByText(/#\d+ of \d+/)).not.toBeInTheDocument()
   })
 
   it('caps long competitor lists with an overflow summary', () => {
@@ -633,6 +636,7 @@ describe('Guide', () => {
     const guide = document.querySelector('.recruiting-guide') as HTMLElement
     expect(within(guide).getByText(/Leading, Competitive, or Trailing/)).toBeInTheDocument()
     expect(within(guide).getByText(/Battles tab/)).toBeInTheDocument()
+    expect(within(guide).getByText(/rank among the recruit's current pursuers/)).toBeInTheDocument()
   })
 
   it('never exposes hidden numeric Recruiting internals', () => {

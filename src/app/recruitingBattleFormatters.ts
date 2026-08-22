@@ -81,6 +81,30 @@ export function formatControlledPositionLabel(
   }
 }
 
+/**
+ * Compact controlled-Program label for a Battles row: identity, its existing
+ * `pursuitRank` among the Recruit's current `pursuingPrograms` (never
+ * recomputed), then Focused/Offered when applicable. Omits the rank entirely
+ * when the controlled Program is not currently pursuing this Recruit.
+ */
+export function formatControlledPursuitLabel(
+  battle: RecruitingBattleView,
+  controlledProgramId: string,
+  isFocused: boolean,
+  hasActiveOffer: boolean,
+): string {
+  const controlledEntry = battle.pursuingPrograms.find(
+    (entry) => entry.programId === controlledProgramId,
+  )
+  const rankLabel = controlledEntry
+    ? `#${controlledEntry.pursuitRank} of ${battle.pursuingPrograms.length}`
+    : undefined
+
+  return ['YOU', rankLabel, isFocused && 'Focused', hasActiveOffer && 'Offered']
+    .filter((tag): tag is string => Boolean(tag))
+    .join(' · ')
+}
+
 export interface BattleGroupRow {
   readonly programId: string
   readonly programName: string
