@@ -27,6 +27,21 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
 
+function formatOrdinal(value: number): string {
+  const remainder100 = value % 100
+  if (remainder100 >= 11 && remainder100 <= 13) return `${value}th`
+  return `${value}${value % 10 === 1 ? 'st' : value % 10 === 2 ? 'nd' : value % 10 === 3 ? 'rd' : 'th'}`
+}
+
+function formatPositionRank(details: RecruitDetailsView['positionOutlook']): string | null {
+  if (details.viewedRecruitRank === null) return null
+  const committed = details.viewedRecruitInclusion === 'committed'
+  const lead = details.viewedRecruitIsTiedAtRank
+    ? committed ? 'Currently is tied for' : 'Would currently be tied for'
+    : committed ? 'Currently ranks' : 'Would currently rank'
+  return `${lead} ${formatOrdinal(details.viewedRecruitRank)} among ${details.rows.length} projected natural ${details.position}s`
+}
+
 /** Functional inspection destination for one Recruit in the active class. */
 export function RecruitDetailsScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
@@ -63,6 +78,7 @@ export function RecruitDetailsScreen() {
   if (!controlledProgram) return null
 
   const { battle } = details
+  const { positionOutlook } = details
   const isCommitted = battle.commitment !== null
   const isCommittedToUs = isCommitted && battle.commitment!.programId === dynasty.controlledProgramId
   const commitmentProgram = battle.commitment
@@ -223,6 +239,79 @@ export function RecruitDetailsScreen() {
       <section className="section" aria-labelledby="recruit-ratings-heading">
         <div className="section-heading"><h2 id="recruit-ratings-heading" className="section-title">Player Ratings</h2></div>
         <PlayerRatingsGrid player={player} />
+      </section>
+
+      <section className="section recruit-position-outlook" aria-labelledby="recruit-position-outlook-heading">
+        <div className="section-heading">
+          <h2 id="recruit-position-outlook-heading" className="section-title">
+            Next Season {positionOutlook.position} Outlook
+          </h2>
+        </div>
+
+        {positionOutlook.returningCount === 0 && (
+          <p className="section-hint">
+            No current {positionOutlook.position}s are projected to return.
+          </p>
+        )}
+
+        <ul className="recruit-position-outlook__list" aria-label={`Projected natural ${positionOutlook.position}s`}>
+          {positionOutlook.rows.map((row) => (
+            <li
+              key={row.playerId}
+              className="recruit-position-outlook__row"
+              data-viewed={row.isViewedRecruit || undefined}
+            >
+              <span className="recruit-position-outlook__identity">
+                <span className="recruit-position-outlook__name">
+                  {row.firstName} {row.lastName}
+                </span>
+                <span className="recruit-position-outlook__class">
+                  {row.kind === 'returner'
+                    ? `Next season ${row.projectedClassYear}`
+                    : 'Incoming FR'}
+                </span>
+              </span>
+              <span className="recruit-position-outlook__ratings">
+                <span><strong>{row.currentOverall}</strong> OVR</span>
+                <span><strong>{row.potential}</strong> POT</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {formatPositionRank(positionOutlook) && (
+          <p className="recruit-position-outlook__rank">
+            {formatPositionRank(positionOutlook)}
+          </p>
+        )}
+        {positionOutlook.viewedRecruitInclusion === 'excluded-committed-elsewhere' && (
+          <p className="recruit-position-outlook__status">
+            Committed elsewhere — not included in this projection.
+          </p>
+        )}
+        {positionOutlook.viewedRecruitInclusion === 'excluded-position-filled' && (
+          <p className="recruit-position-outlook__status">
+            Position filled — this Recruit is not included.
+          </p>
+        )}
+
+        {positionOutlook.departures.length > 0 && (
+          <div className="recruit-position-outlook__departures">
+            <p className="eyebrow-tag">Departing</p>
+            <ul>
+              {positionOutlook.departures.map((player) => (
+                <li key={player.playerId}>
+                  <span>{player.firstName} {player.lastName}</span>
+                  <span>Departing SR · {player.currentOverall} OVR</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <p className="section-hint recruit-position-outlook__note">
+          Ranking uses current OVR. Future Development and Rotation roles are not projected.
+        </p>
       </section>
 
       <section className="section recruit-details-recruitment" aria-labelledby="recruitment-heading">

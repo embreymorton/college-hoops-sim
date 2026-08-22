@@ -986,6 +986,86 @@
   color: var(--ink-0);
 }
 
+.recruit-position-outlook__list,
+.recruit-position-outlook__departures ul {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.recruit-position-outlook__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+}
+
+.recruit-position-outlook__row[data-viewed='true'] {
+  border-color: var(--accent);
+}
+
+.recruit-position-outlook__identity,
+.recruit-position-outlook__ratings {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.recruit-position-outlook__identity {
+  flex-wrap: wrap;
+}
+
+.recruit-position-outlook__name {
+  font-weight: 750;
+  color: var(--ink-0);
+}
+
+.recruit-position-outlook__class,
+.recruit-position-outlook__ratings {
+  color: var(--ink-2);
+  font-size: 0.82rem;
+}
+
+.recruit-position-outlook__ratings {
+  flex: 0 0 auto;
+}
+
+.recruit-position-outlook__ratings strong {
+  color: var(--ink-0);
+}
+
+.recruit-position-outlook__rank,
+.recruit-position-outlook__status {
+  margin: var(--space-3) 0 0;
+  font-weight: 700;
+  color: var(--ink-0);
+}
+
+.recruit-position-outlook__departures {
+  margin-top: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.recruit-position-outlook__departures li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  color: var(--ink-2);
+  font-size: 0.82rem;
+}
+
+.recruit-position-outlook__note {
+  margin-top: var(--space-3);
+}
+
 /* Readiness leads Current Recruitment — "how close is he to deciding?" is
    the first question this section answers, so it gets its own line above
    the quieter Your Program / Pursuing Programs detail. */
@@ -1091,6 +1171,13 @@
   .recruit-details-actions {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .recruit-position-outlook__row,
+  .recruit-position-outlook__departures li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-1);
   }
 }
 

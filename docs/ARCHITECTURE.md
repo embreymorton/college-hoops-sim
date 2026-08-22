@@ -395,6 +395,15 @@ FR / SO / JR → projected returner
 
 It returns current roster size plus departing and returning Player IDs and projected openings by natural position. It does not require Season completion, Postseason, OffseasonState, graduation, or RNG. Recruiting V0 consumes this projection rather than reimplementing graduation rules; board capacity remains distinct from offer/signing capacity.
 
+Recruit Details composes a separate pure `deriveRecruitPositionOutlook()` read
+model rather than expanding generic `ProjectedRosterOutlook` with hypothetical
+Recruit facts. It reads the controlled active Team, canonical Recruit identities
+and commitments, plus authoritative target status. The result contains natural-
+position returners, departing seniors, controlled incoming commitments, and an
+optional viewed-Recruit hypothetical. It promotes returner class labels only;
+current OVR/POT remain current facts, and current OVR alone determines ordering
+and competition rank. No projection is cached or stored.
+
 Recruiting belongs exclusively to the Dynasty/cross-season domain. The basketball Engine, Schedule, Season, and Postseason layers remain unaware of Recruiting. Recruiting may read Program identity, current `Team.prestige`, projected roster outlook, and completed-round state, but a Season N commitment is a future-roster fact and never mutates the current Team, Rotation, or `SeasonState`.
 
 `Recruit.player` is the future Player value, not a disposable profile. Its stable Player ID survives Recruit generation, commitment, the finalized incoming class, and Phase 5C freshman enrollment.
@@ -410,7 +419,8 @@ RecruitingState + Recruit.player stable future Player identity
 
 The selected ID and parent Recruiting mode are presentation state in Zustand;
 the screen resolves the canonical profile, exact ratings, Recruiting status,
-pursuing-Program context, and controlled-Program context on demand and stores no
+pursuing-Program context, controlled-Program context, and next-Season natural-
+position outlook on demand and stores no
 Recruit snapshot or duplicate canonical Recruiting data. Contextual Board,
 Focus, and Offer controls call the existing Recruiting transitions, so Recruit
 Details adds no parallel eligibility or simulation rules. Committed Recruits

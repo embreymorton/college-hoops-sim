@@ -106,6 +106,7 @@ export {
   deriveRecruitingCommitmentActivity,
 } from './recruiting/battleView'
 export { deriveRecruitDetailsView } from './recruiting/detailsView'
+export { deriveRecruitPositionOutlook } from './recruiting/positionOutlook'
 export { deriveFollowingRecruitsView } from './recruiting/followingView'
 export type {
   DynastyRecordBook,
@@ -149,6 +150,13 @@ export type {
   RecruitingRetrospectiveRow,
 } from './recruitingRetrospective'
 export type { RecruitDetailsView } from './recruiting/detailsView'
+export type {
+  RecruitPositionOutlook,
+  RecruitPositionOutlookDeparture,
+  RecruitPositionOutlookInclusion,
+  RecruitPositionOutlookRow,
+  RecruitPositionOutlookRowKind,
+} from './recruiting/positionOutlook'
 export type {
   CompletedSeasonIndexSummary,
   CompletedSeasonYearbook,

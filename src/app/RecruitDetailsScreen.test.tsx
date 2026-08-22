@@ -88,6 +88,25 @@ describe('Recruit Details screen', () => {
     expect(screen.getByText(
       `On your Board · ${target.isFocused ? 'Focused · ' : ''}${target.hasActiveOffer ? 'Offered' : 'No Offer'}`,
     )).toBeInTheDocument()
+
+    const ratingsHeading = screen.getByRole('heading', { name: 'Player Ratings' })
+    const outlookHeading = screen.getByRole('heading', {
+      name: `Next Season ${recruit.player.position} Outlook`,
+    })
+    const recruitmentHeading = screen.getByRole('heading', { name: 'Current Recruitment' })
+    expect(ratingsHeading.compareDocumentPosition(outlookHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(outlookHeading.compareDocumentPosition(recruitmentHeading) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+
+    const outlook = screen.getByRole('region', {
+      name: `Next Season ${recruit.player.position} Outlook`,
+    })
+    expect(within(outlook).getByLabelText(`Projected natural ${recruit.player.position}s`)).toBeInTheDocument()
+    const viewedRow = outlook.querySelector('[data-viewed="true"]')
+    expect(viewedRow).toHaveTextContent(`${calculateOverall(recruit.player)} OVR`)
+    expect(viewedRow).toHaveTextContent(`${recruit.player.potential} POT`)
+    expect(within(outlook).getByText(/Would currently (rank|be tied for)/)).toBeInTheDocument()
+    expect(within(outlook).getByText('Ranking uses current OVR. Future Development and Rotation roles are not projected.')).toBeInTheDocument()
+    expect(within(outlook).queryByText(/Fit score|Starter|Bench|Reserve|projected MPG/i)).not.toBeInTheDocument()
   })
 
   it('shows a Recruit outside the controlled Board without fabricating pursuit state', () => {
@@ -117,8 +136,42 @@ describe('Recruit Details screen', () => {
       expect(screen.queryByText('Leading')).not.toBeInTheDocument()
       // No management actions once resolved.
       expect(screen.queryByRole('button', { name: /Focus|Remove from Board|Add to Board|Offer/ })).not.toBeInTheDocument()
+      const outlook = screen.getByRole('region', { name: /Next Season .* Outlook/ })
+      if (destination === 'controlled') {
+        expect(within(outlook).getByText(/Currently (ranks|is tied for)/)).toBeInTheDocument()
+      } else {
+        expect(within(outlook).getByText('Committed elsewhere — not included in this projection.')).toBeInTheDocument()
+      }
     },
   )
+
+  it('shows a filled-position exclusion instead of an impossible hypothetical row', () => {
+    const dynasty = createRecruitingDynasty('recruit-details-filled-position')
+    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+    const recruit = getRecruit(dynasty.recruiting!, playerId)!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const filled = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [dynasty.controlledProgramId]: {
+            ...program,
+            projectedOpeningsByPosition: {
+              ...program.projectedOpeningsByPosition,
+              [recruit.player.position]: 0,
+            },
+          },
+        },
+      },
+    }
+    renderDetails(filled, playerId)
+
+    const outlook = screen.getByRole('region', { name: `Next Season ${recruit.player.position} Outlook` })
+    expect(within(outlook).getByText('Position filled — this Recruit is not included.')).toBeInTheDocument()
+    expect(within(outlook).queryByText(/Would currently/)).not.toBeInTheDocument()
+  })
 
   it('recovers an unknown selected Recruit locally back to the preserved Recruiting mode', async () => {
     const dynasty = createRecruitingDynasty('recruit-details-stale-screen')

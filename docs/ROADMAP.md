@@ -61,6 +61,14 @@ unscheduled Phase 7 work.
 
 ## Completed Phase Summary
 
+### Next Season Position Outlook V1 — COMPLETE / ACCEPTED
+
+- Recruit Details now shows the controlled Program's factual projected
+  natural-position group, current-OVR rank, incoming commitments, and departing
+  seniors without forecasting Development, Rotation roles, or playing time.
+- The pure Recruiting read model adds no state or mechanics changes and leaves
+  the Roadmap at an Open Planning Checkpoint.
+
 ### Program Legacy V1 — COMPLETE / ACCEPTED / FROZEN
 
 - Team Details now gives every Program a compact Dynasty résumé and five-Season

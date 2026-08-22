@@ -288,6 +288,13 @@ floor minutes only: a natural PG who may play SG floor minutes does not satisfy
 an SG Recruiting opening. Stored multi-position identity, position changes,
 generic scholarships, cuts, and transfers remain separate future systems.
 
+Recruit Details gives factual next-Season context for that same natural
+position. It shows projected returners with next-Season class and current
+OVR/POT, controlled incoming commitments, the viewed Recruit when still legal,
+and departing seniors. Current OVR alone determines ordering and tied rank; POT
+is display context only. This is not a future Rotation, depth chart, role or
+playing-time promise, Development forecast, or Recruiting-interest input.
+
 A Program may place up to 10 Recruits on its board, including backups and reaches beyond its available openings. Board membership means the Program is recruiting/following that Player. An Active Offer means the Program is currently willing to consume one projected opening at that Player's position if he commits. Only an active board target with a valid Active Offer may commit; an unoffered backup may still build relationship progress.
 
 For each position:

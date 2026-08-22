@@ -34,13 +34,7 @@ The Roadmap owns its order and scope. It is not specified again here.
   factual retrospective; and
 - dynamic interest from winning or Tournament success.
 
-### Recruiting battle feedback and assistance
-
-Future Recruiting presentation could give qualitative distance-to-leader
-feedback for contested targets—enough to distinguish a close battle from a long
-shot without necessarily exposing exact hidden scores or eliminating
-uncertainty. The player-facing language, information boundary, and derivation
-must be designed from current Recruiting architecture before implementation.
+### Recruiting assistance
 
 Focus-slot assistance could also help when a commitment frees capacity while
 other offered, uncommitted targets remain. A user-triggered `Fill Open Focus`, a
@@ -78,16 +72,24 @@ current regular-season semantics.
 
 - shooting percentage with minimum-attempt qualification;
 - three-pointers, minutes, efficiency, and class/position filters;
-- Conference and freshman leaderboards; and
-- historical Season leaderboards once an archive experience exists.
+- Conference and freshman leaderboards.
+
+### Player personal bests / career highs
+
+Player Details could derive PTS/REB/AST/STL/BLK single-game highs with opponent
+and game context from retained results. This would be historical presentation,
+not mutable achievement or milestone state. Whether the scope is regular-season
+only or includes Tournament games remains deliberately undecided because current
+career-history aggregation is regular-season-only.
 
 ## History and immersion beyond selected work
 
 - broad Program Alumni browser and global historical Player search;
-- richer Program history, rivalries, and banners;
+- Program rivalries, banners, and history beyond the accepted compact Dynasty
+  résumé;
 - signature games and player-facing Tournament career summaries;
 - polls/rankings and richer résumé context;
-- broadcast-style story packages and Season retrospectives;
+- richer broadcast-style story packages beyond the accepted Yearbooks; and
 - Conference history and Tournament records.
 
 The initial Season Archive and Records are complete; Awards remains PLANNED in
@@ -112,11 +114,18 @@ career rebounding/blocking contributor, and the scorer associated with a major
 upset. This does not imply a Hall of Fame, retired numbers, Awards, or separate
 Program Record Books; those remain distinct possible extensions.
 
+### Dynasty series history
+
+Repeated matchups between the controlled Program and another Program could be
+summarized from retained regular-season and Tournament results: all-time Dynasty
+series record, useful home/away splits, latest result, and Tournament meetings.
+This should remain a pure historical projection unless a separately designed
+future Rivalry system deliberately adds canonical state or gameplay effects.
+
 ## Tournament depth
 
 - bracket-pool or spectator tools;
 - bubble/selection-show presentation;
-- historical bracket browsing;
 - richer neutral-site presentation;
 - Conference Tournament systems; and
 - expanded fields or alternate formats only after deliberate product design.
@@ -139,18 +148,12 @@ Program Record Books; those remain distinct possible extensions.
 These systems would materially change simulation or lifecycle behavior and need
 their own selected phases and validation.
 
-### Rotation locks and assistant repair
+### Matchup scout
 
-A coaching-assistance concept could let the user lock a small number of
-intentional minute assignments, then ask the existing assistant/default
-Rotation behavior to construct a valid remainder around them where possible.
-This mirrors Recruiting's useful pattern of manual priorities followed by
-`Fill Remaining`, without selecting a final interaction or algorithm.
-
-A smaller related action could attempt to repair an invalid manual Rotation
-while preserving valid intentional choices instead of resetting everything.
-Treat this as part of the same design family unless code inspection establishes
-a meaningfully independent, lower-scope contract.
+Game Prep could derive a compact opponent summary from existing Team Strength,
+Team Season Stats, Player leaders, recent results/form, and Rotation or major-
+contributor facts. A first version would be pregame information only, without
+new schemes, tactics, scouting state, or simulation effects.
 
 ### Playing time influencing Development
 
@@ -196,16 +199,6 @@ all require separate design before implementation.
 
 ## Custom Universe & Replayability
 
-### Dynasty seed input and display
-
-The simulation is already deterministic. A relatively low-risk setup extension
-could allow a user-entered Dynasty seed, generate one when the field is blank,
-display the active seed somewhere discoverable, and support copying/sharing it
-to replay the same generated universe with another Program. Replayability is
-expected only within a compatible simulation/game version; later generation or
-simulation changes may produce different results from an older seed. This does
-not imply a save/version-migration system or prescribe the exact seed UI.
-
 ### Create / customize a school
 
 A bounded first version should customize or replace an existing Program slot
@@ -247,21 +240,25 @@ Rejected models and reopening evidence live in
 ## Presentation and broader modes
 
 - save/load and Dynasty management;
-- League-tab Team/Program header consistency with the established Season,
-  Coaching, and Recruiting surfaces, without inventing content solely to fill a
-  header;
 - accessibility and localization expansion;
 - spectator / League Observer mode;
 - richer responsive/mobile navigation;
 - optional presentation themes; and
 - export/share tools for Seasons, brackets, and careers.
 
+### Games to watch / round spotlight
+
+League presentation could derive a small set of notable upcoming games from
+public facts such as conference position, overall record, recent form/streaks,
+Team Strength, rematches, and consequential late-Season matchups. It should not
+create canonical importance state or affect simulation; any design should use
+understandable deterministic reasons for each spotlight.
+
 ## Rough scope character — non-authoritative
 
-- **Lower-risk / incremental:** visible and user-enterable Dynasty seed; Create
-  a Coach identity-only V1.
+- **Lower-risk / incremental:** Create a Coach identity-only V1.
 - **Medium-scope:** Create/Customize School within the fixed structure; CSV
-  Program metadata import; visible/dynamic Program prestige.
+  Program metadata import; dynamic Program prestige.
 - **Major future systems:** Coach Career/job market, changing controlled
   Programs, hot-seat/firing behavior, and variable-size custom universes.
 

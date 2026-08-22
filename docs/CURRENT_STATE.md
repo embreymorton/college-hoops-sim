@@ -35,8 +35,8 @@ The playable product includes:
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
-  Recruit Details, Late Recruiting, class finalization, and Recruit-to-Player
-  identity continuity;
+  Recruit Details with factual next-Season natural-position outlook, Late
+  Recruiting, class finalization, and Recruit-to-Player identity continuity;
 - departures with graduating-senior career context, Player Development with
   top attribute gains and a Biggest Leap spotlight, incoming classes, exact
   next-season roster assembly, archived Seasons, and repeatable Dynasty rollover; and
@@ -141,6 +141,13 @@ Simple draft deterministically, and never commits before Apply. Apply and
 Discard clear transient locked state; impossible constraints retain the draft
 and show existing issue feedback. Phase 7C.3 remains PLANNED and valid, but is
 not NEXT.
+
+Next Season Position Outlook V1 is **COMPLETE / ACCEPTED**. Recruit Details
+derives the controlled Program's projected natural-position group from current
+returners, departing seniors, controlled commitments, and the viewed Recruit's
+authoritative eligibility. Rows show current OVR/POT and projected class, while
+ordering and tied rank use current OVR only. The projection adds no canonical
+state and changes no Recruiting, Development, Rotation, or simulation behavior.
 
 Team Details exposes every Program's history during the current Dynasty:
 cumulative completed-Season record, Tournament appearances, championships,
