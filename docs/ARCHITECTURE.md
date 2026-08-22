@@ -431,6 +431,29 @@ This prevents simulation order from creating extra recruiting progress. Synchron
 
 Finalization stores an immutable cloned final `RecruitingState` in `CompletedRecruitingClass`, keyed by target season number, inside `completedRecruitingHistory`. This is the single historical source for finalized incoming-class facts and future Recruit history. It is deliberately separate from `CompletedSeasonArchive`, which owns basketball competition history. Finalized active Recruiting state and its history are not competing representations: finalization preserves the accepted current state as the archived class for enrollment and future historical projections.
 
+Recruiting Class Retrospectives adds a read-only boundary over that canonical
+history:
+
+```text
+completedRecruitingHistory + active/archive roster snapshots
+  → pure finalized-signee retrospective projection
+  → transient History class/filter and exploration state
+  → React presentation
+```
+
+Commitments define membership, so unsigned generated Recruits are excluded.
+Stable Player ID remains the only Recruit → Player identity seam; active and
+archived roster lookup structures resolve enrolled outcomes and historical
+snapshots derive former peak OVR. A class finalized before enrollment resolves
+as Incoming, while malformed post-enrollment identity yields a neutral
+unavailable result and never fabricates a replacement by name or Program.
+`completedRecruitingHistory` remains the sole Recruiting-history source: no
+retrospective registry, copied canonical facts, persistent cache, new Dynasty
+state, or simulation behavior exists. Zustand retains only presentation and
+navigation context. Archived relationship progress, attraction/standing,
+thresholds, probabilities, quality/readiness values, and Board/Focus/Offer
+internals remain outside the player-facing projection.
+
 ## Accepted next-season roster assembly and rollover
 
 Phase 5C.1's pure `assembleNextSeasonRosters()` boundary consumes exactly one lifecycle-compatible `OffseasonState`, finalized `CompletedRecruitingClass`, matching `CompletedSeasonArchive`, and `UniverseDefinition`:

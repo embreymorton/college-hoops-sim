@@ -30,7 +30,8 @@ The playable product includes:
   Prep, Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
   Details, derived Program Dynasty histories, Following, News, Alumni, Season Preview, and a completed-Season
-  first-class League History with Yearbooks and a Dynasty Record Book;
+  first-class League History with Yearbooks, a Dynasty Record Book, and
+  finalized national Recruiting class retrospectives;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
@@ -99,6 +100,8 @@ refactor these systems during unrelated feature work:
   and
 - Phase 7C.2 Dynasty Record Book, live Records overlay, and record-breaking
   Single Game News behavior and read-model boundaries; and
+- Recruiting Class Retrospectives V1's finalized-signee projection and History
+  presentation contract; and
 - Program Legacy V1's all-Program historical projection and Team Details
   presentation contract.
 
@@ -207,6 +210,24 @@ Recruit-follow order, converted Recruit ownership is retired, and existing
 Player Following becomes canonical. Unresolved Recruit IDs remain safely stored
 without fabricated continuity. The accepted behavior works for the controlled
 Program's signees and Recruits who sign elsewhere.
+
+**Recruiting Class Retrospectives V1 is COMPLETE / ACCEPTED / FROZEN.** League
+History now includes Recruiting beside Yearbooks and Records. Finalized classes
+appear newest first and contain every national signee—never unsigned surplus—
+with target-Season and controlled-Program counts. One lean four-column table
+shows Recruit rank/name/position/stars, signed Program, archived entry OVR/POT,
+and Incoming, active class/current OVR, Former peak OVR, or a neutral
+Unavailable invariant fallback. All Programs is the default; Your Program is a
+local filter. Active/former stable IDs reuse Player Details while incoming and
+unavailable rows remain unlinked, and class/filter context survives Back.
+
+`completedRecruitingHistory` remains canonical. A pure read-model indexes
+active and archived roster snapshots by stable Player ID and derives former
+peak OVR; Zustand owns only transient History selection/filter state. No
+retrospective registry, copied history, persistent cache, canonical Dynasty
+state, Recruiting-mechanic visibility, persistence, or simulation behavior was
+added. The compact table scrolls locally and does not create body overflow at
+the accepted narrow target.
 
 The Tournament non-qualifier Coaching recovery is **FIXED / MANUALLY VERIFIED**.
 Qualified Programs use canonical postseason Coaching context; non-qualifiers

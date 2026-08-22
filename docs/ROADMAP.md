@@ -77,6 +77,16 @@ unscheduled Phase 7 work.
   spotlight without changing Development or rollover mechanics.
 - Returned the Roadmap to an Open Planning Checkpoint with no successor selected.
 
+### Recruiting Class Retrospectives V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added League → History → Recruiting with newest-first finalized national
+  signing classes, a controlled-Program filter, and a lean Recruit/Signed/
+  Entered/Outcome table linked to active and Former Player Details.
+- Derived signees and later outcomes from canonical Recruiting/roster history
+  by stable Player ID without new persistence, duplicated history, simulation
+  behavior, or exposed Recruiting internals.
+- Returned the Roadmap to an Open Planning Checkpoint with no successor selected.
+
 ### Phase 0 — Foundation — COMPLETE
 
 - Established React, TypeScript, Vite, Zustand, Vitest, deterministic RNG, and

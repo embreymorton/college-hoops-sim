@@ -452,7 +452,7 @@ Rounds 1–2. Season Preview is a destination, not a fifth League tab.
 ### Season Archive / Yearbook — accepted (7C.1)
 
 History is League-owned as the fifth first-class League tab, with a second-level
-`Yearbooks | Records` navigation. Its Yearbooks index shows completed Seasons only, newest first;
+`Yearbooks | Records | Recruiting` navigation. Its Yearbooks index shows completed Seasons only, newest first;
 the active Season never appears. A Yearbook should feel like one cohesive recap
 in the established app language, ordered as Champion / Season identity, Your
 Season (summary, Team Leaders, Tournament Run), Season Around the League, and
@@ -486,6 +486,31 @@ while completed Season entries remain unmarked. Panels compare side by side on d
 mobile. Category state survives Player Details round trips. The League strip
 may scroll horizontally on narrow screens rather than forcing five tabs into
 the viewport; neither it nor Records may create body-level overflow.
+
+### Recruiting Class Retrospectives — accepted
+
+Recruiting is the History-owned factual retrospective for finalized national
+signing classes, not an active-Recruiting analytics surface. Its newest-first
+index shows only target Season, national signee count, and controlled-Program
+signee count. Class detail defaults to `All Programs`; the peer `Your Program`
+control locally filters the same projection by signed Program.
+
+The compact table has four semantic columns: Recruit (national rank, linked
+name when enrolled, position, stars), Signed (destination Program), Entered
+(archived Recruit-time OVR/POT), and Outcome (`Incoming`, active class/current
+OVR, `Former · Peak OVR`, or neutral `Unavailable`). Active and former names
+reuse existing Player Details destinations; incoming/unavailable names do not
+create false Player links. Back restores the selected class and scope. The same
+table hierarchy serves desktop and narrow screens, with overflow contained to
+the local table at approximately 390px.
+
+V1 deliberately omits unsigned Recruits; commitment timing and battle/Board/
+Focus/Offer history; relationship, attraction, standing, threshold,
+probability, quality, and readiness internals; class grades, bust/steal/gem
+labels, Program class rankings, and scoring formulas; detailed production,
+development, Tournament, Awards/Honors, or Record Book annotations; search,
+Program selection, Conference/position/star/status filters, and custom sorting;
+transfers, coach attribution, new persistence, and simulation changes.
 
 ### Player Details + Development History — implemented (6E.8)
 

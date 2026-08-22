@@ -11,7 +11,8 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 ## Selected elsewhere
 
 - **History & Recognition:** Awards & Honors remains PLANNED under Phase 7C in
-  `ROADMAP.md`; completed Yearbooks and Records are production capabilities.
+  `ROADMAP.md`; completed Yearbooks, Records, and Recruiting Class
+  Retrospectives are production capabilities.
 
 The Roadmap owns its order and scope. It is not specified again here.
 
@@ -29,7 +30,8 @@ The Roadmap owns its order and scope. It is not specified again here.
   hidden; exact grade thresholds and scouting mechanics remain undecided, and
   current exact-value visibility remains unchanged;
 - decommitments and transfer-portal interactions;
-- recruiting class rankings and retrospective class evaluation; and
+- recruiting class rankings and class grading/evaluation beyond the accepted
+  factual retrospective; and
 - dynamic interest from winning or Tournament success.
 
 ### Recruiting battle feedback and assistance
@@ -45,18 +47,6 @@ other offered, uncommitted targets remain. A user-triggered `Fill Open Focus`, a
 prompt, and automatic reallocation have materially different agency costs; none
 is selected. Any assistant behavior must avoid silently making strategic
 decisions for the user.
-
-### Recruiting class retrospectives / Recruit legacy
-
-Retrospectives could connect a recruiting class's initial evaluation and
-commitments to later active-Player development and completed careers. Manual
-play supplied a useful payoff example when a remembered elite Recruit later
-appeared as a senior national scoring leader. This is evidence for the existing
-retrospective idea, not a selected feature or evaluation formula.
-
-These ideas would require explicit player-facing rules and, where they affect
-attraction/AI/talent movement, fresh calibration. Their existence is not a
-reason to retune accepted Recruiting now.
 
 High-school statistics remain model-undefined because no canonical high-school
 season is simulated. If revisited, decide whether displayed values are scouting

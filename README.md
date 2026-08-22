@@ -12,7 +12,9 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
 - **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details with derived Program Dynasty history, Player Details, cross-Program navigation, and followed Players with a League Following view.
 - **Season history:** a first-class League History destination with completed-
   Season Yearbooks and a Dynasty Record Book covering regular-season Single
-  Game, Single Season, and Career leaders, all derived from canonical facts.
+  Game, Single Season, and Career leaders, plus finalized national Recruiting
+  class retrospectives connecting signees' entry evaluations to later outcomes,
+  all derived from canonical facts.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, unified results-only résumé seeding, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
 - **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, enter Late Recruiting, finalize the class, review departures/development/incoming Players in Offseason, begin the next Season, and repeat.
 - **Recruit inspection:** open stable-ID Recruit Details from Board, Battles, or National Class to review exact ratings and safe Recruiting context, use contextual management actions, and return to the same Recruiting mode.

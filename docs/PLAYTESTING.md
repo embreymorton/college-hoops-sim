@@ -67,8 +67,8 @@ The run also supplied these current product signals:
 - **WORKING:** low-OVR/high-POT projects, contested battles, and eventually
   landing four- and five-star Recruits created attachment. Recognizing an early
   elite Recruit years later as a senior national scoring leader strengthened
-  the Recruit → Player continuity story and provides evidence for unscheduled
-  recruiting-class retrospective ideas.
+  the Recruit → Player continuity story and motivated the now-accepted factual
+  Recruiting Class Retrospectives V1.
 - **WORKING:** Records supplied durable comparison across Seasons, including a
   47-point Single Game mark later broken by a 52-point game and Players reaching
   Season/Career rebounding, scoring, and blocking lists. Record News correctly
@@ -218,6 +218,24 @@ missing completed Tournament Recruiting rounds before entering Late Recruiting.
 Navigation remains read-only, repeated navigation cannot consume the action,
 and the transition cannot advance twice.
 
+### Recruiting Class Retrospectives V1 — ACCEPTED / FROZEN
+
+The user manually accepted League → History → Recruiting: newest-first finalized
+national signing classes, all signed Recruits with unsigned surplus excluded,
+the lean Recruit/Signed/Entered/Outcome table, All Programs default with a Your
+Program filter, and stable-ID active/Former Player detail round trips that retain
+class and filter context. Incoming and unavailable identities remain correctly
+unlinked, while hidden Recruiting mechanics never appear.
+
+Focused projection, Recruiting History, History navigation, lifecycle outcome,
+and return-state coverage passed alongside the full test, lint, typecheck,
+build, and diff-check gates. Browser verification at 390px found no body-level
+horizontal overflow and no console errors. The fresh browser Dynasty had no
+finalized class for a populated live visual pass; populated class-detail states
+were instead exercised through DOM/tests. This acceptance closes the factual
+retrospective only—it does not resolve broader Awards, recognition, or
+Recruiting-analytics questions.
+
 ### Phase 7D.3 — Recruit → Player Continuity — ACCEPTED / FROZEN
 
 Followed Recruit continuity into existing Player Following worked as expected
@@ -282,8 +300,8 @@ archived bracket without active simulation or game-detail affordances. All of
 this remains projection and local presentation state over canonical completed
 archives; 7C.1 did not add copied summaries or a season-specific Player route.
 
-Records, Awards, historical Team/game details, News replay, Recruiting
-retrospectives, combined statistics, compaction, and simulation/calibration
+Records, Awards, historical Team/game details, News replay, combined
+statistics, compaction, and simulation/calibration
 changes remain outside accepted 7C.1 scope.
 
 ### Phase 7B — Player & League Stories — ACCEPTED / FROZEN
