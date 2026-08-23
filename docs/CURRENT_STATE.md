@@ -101,6 +101,9 @@ Frozen means “reopen only with new evidence,” not “never change.” Do not
 refactor these systems during unrelated feature work:
 
 - Recruiting mechanics and accepted Recruiting information architecture;
+- Recruit Talent Profile V2's loose readiness-conditioned raw-ceiling model,
+  with unchanged readiness/current-ability generation and Candidate B POT
+  finalization;
 - Recruiting Board Organization & Cleanup V1, including required Board-entry
   provenance, manual/assistant grouping, authoritative unavailable cleanup,
   preserved relationship history, and no automatic refill;
@@ -133,11 +136,13 @@ refactor these systems during unrelated feature work:
   and accepted Team `Overview | History` / Player `Overview | Career`
   information architecture.
 
-Recruit Talent Distribution V1 remains current production behavior while
-**NEXT — Recruit Talent Profile V2 — Focused Design** evaluates only its
-readiness/current-ability and raw-ceiling model. That selected design milestone
-does not reopen Candidate B, Development, positional attribute generation,
-Recruit positional supply, or unrelated V0 Universe generation by default.
+Recruit Talent Profile V2 is implemented, accepted, and frozen production
+behavior. It supersedes V1's independent raw-ceiling roll with the loose
+readiness-conditioned distribution documented in [SIMULATION.md](SIMULATION.md).
+Readiness/current-ability generation, Candidate B, Development, positional
+attribute generation and supply, ranking and stars, Recruiting mechanics,
+Season 0 generation, and downstream Dynasty systems remain unchanged. No
+Recruit Talent Profile calibration remains open.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -161,26 +166,13 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT: Recruit Talent Profile V2 — Focused Design.**
+**No NEXT selected — Open Planning Checkpoint.**
 
-Two decision-complete diagnostics established that the Recruiting-origin
-95–99 OVR shortage begins upstream of Development. Recruiting supplies far
-fewer elite-POT freshmen, and those high-POT Players enter much lower in OVR;
-matched starting OVR/POT/headroom profiles develop similarly regardless of
-origin. The Recruit decomposition then found only `1.0%` raw ceilings at 95+,
-`0.6%` at 97+, and `0.2%` at 99 before Candidate B. Starting OVR and raw ceiling
-are effectively independent (`0.002` correlation), while Candidate B preserves
-all raw 95+/97+/99 ceilings and slightly enlarges the finalized elite tail.
-
-The next milestone is design first: inspect production generation seams and
-develop a principled Recruit talent-profile direction without selecting a
-formula in advance. Development V1 and Candidate B remain accepted/frozen; no
-additional broad 95+ diagnostic is required. Original V0 generation is a
-comparator, not an automatically selected Recruit model.
-
-Fresh sessions therefore resolve to **Path A**: inspect this authoritative NEXT
-and its production/evidence owners, then conduct focused design rather than an
-open planning pass or implementation.
+Recruit Talent Profile V2 has completed design, calibration, production
+activation, lifecycle validation, and user acceptance. Fresh sessions therefore
+resolve to **Path B**: verify this checkpoint, review current evidence and
+candidate surfaces neutrally, and do not infer a successor from Roadmap order
+or Future Features.
 
 Recruiting Board Organization & Cleanup V1 is **COMPLETE / ACCEPTED / FROZEN**.
 Canonical Board membership records whether it was created manually or by
@@ -233,10 +225,16 @@ uncertainty remain future-only.
 `7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
 work remains parked unless new evidence deliberately reopens it.
 
+S0 Player Talent Profile Continuity is an **unscheduled evidence question, not
+NEXT**. It may later investigate whether the legacy class-year S0 POT headroom
+model creates a visible discontinuity relative to Recruit V2 and subsequent
+Development. This does not reopen Recruit V2, and Season 0 generation remains
+unchanged.
+
 Rare Development Breakouts / Explosive Offseasons is also **PLANNED, not
 NEXT**. It is a separate future question about extremely rare transformational
-offseasons beyond normal `+12/+10/+8` class-year caps while POT stays absolute;
-it must not distract from or compensate for Recruit Talent Profile V2.
+offseasons beyond normal `+12/+10/+8` class-year caps while POT stays absolute.
+It remains separate from the completed Recruit Talent Profile V2.
 
 ## Fresh-session rules
 

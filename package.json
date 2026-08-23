@@ -60,6 +60,7 @@
     "sim:recruit-elite-ceiling-decomp": "node --import tsx scripts/inspectRecruitEliteCeilingDecomp.ts",
     "sim:recruit-talent-profile-v2a": "node --import tsx scripts/recruitTalentProfileV2A.ts",
     "sim:recruit-talent-v2-activation": "node --import tsx scripts/inspectRecruitTalentV2Activation.ts",
+    "sim:s0-talent-continuity": "node --import tsx scripts/inspectS0TalentContinuity.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "tsc -b --pretty false",

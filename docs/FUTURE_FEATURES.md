@@ -13,9 +13,6 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 - **History & Recognition:** Awards & Honors remains PLANNED under Phase 7C in
   `ROADMAP.md`; completed Yearbooks, Records, and Recruiting Class
   Retrospectives are production capabilities.
-- **Recruit Talent Profile V2 — Focused Design:** selected as authoritative
-  NEXT in `ROADMAP.md`; its evidence, boundaries, and sequencing are not
-  duplicated here.
 - **Rare Development Breakouts / Explosive Offseasons:** PLANNED, explicitly
   not NEXT, in `ROADMAP.md`; ordinary Development V1 remains frozen.
 
@@ -60,6 +57,19 @@ context, attribute-derived estimates, competition-adjusted production, or
 intentional uncertainty before treating them as facts.
 
 ## Player and statistical depth
+
+### S0 Player Talent Profile Continuity — unscheduled investigation
+
+Investigate whether the legacy class-year Season 0 POT model creates a visible
+talent-profile discontinuity relative to the accepted Recruit V2 → Development
+ecosystem. A focused comparison could align S0 freshmen with Recruit V2 entry
+and S0 sophomores, juniors, and seniors with one, two, and three Development
+cycles respectively. This is a neutral evidence question, not a conclusion
+that S0 POT generation should change, and it is not NEXT.
+
+Season 0 currently retains its direct class-year headroom model, capped at 99:
+freshmen receive `OVR + 6..15`, sophomores `+4..11`, juniors `+1..7`, and
+seniors `+0..3`. Recruit Talent Profile V2 did not change this behavior.
 
 ### Player Identity / statistical variety — PARKED
 

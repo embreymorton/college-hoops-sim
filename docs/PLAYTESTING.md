@@ -157,22 +157,57 @@ measure how often elite/top-ranked Recruits remain unoffered deep into a cycle
 and under what positional and class-supply conditions. No Recruiting AI or
 supply change is authorized by this example.
 
-### Recruiting-origin very-high-OVR career ceiling — CONFIRMED / DECISION-COMPLETE
+### Recruit Talent Profile V2 — RESOLVED / ACCEPTED / FROZEN
 
-Recruiting-born 95–99 OVR scarcity is confirmed, and its cause is upstream of
-Development. Across 500 fresh V0 Universes and 500 Recruiting classes,
-Recruiting freshmen supplied far fewer POT 95+/97+/99 profiles and entered much
-lower in OVR at equivalent high POT. Matched OVR/POT/headroom cohorts realized
-Development similarly, so Development V1 remains frozen.
+V1's independent readiness and raw-ceiling rolls created too few elite-ceiling
+Recruits and gave those rare ceilings the class-wide readiness mix. Development
+was not the cause: matched OVR/POT/headroom profiles developed similarly across
+origins. V2 therefore adopted a soft joint model in which realized readiness
+selects a loose ceiling distribution; it does not derive POT directly from OVR
+or readiness and adds no persistent archetype.
 
-The follow-up 500-class Recruit decomposition located the primary shortage in
-raw ceiling supply: only `1.0%` were raw 95+, `0.6%` raw 97+, and `0.2%` raw
-99. Starting OVR and raw ceiling were effectively independent (`0.002`
-correlation), so elite ceilings inherited the class-wide readiness distribution
-rather than a special negative readiness penalty. Candidate B preserved `100%`
-of raw 95+/97+/99 cohorts and slightly enlarged the elite finalized tail. The
-diagnostic loop is closed; this evidence supports the selected Recruit Talent
-Profile V2 focused design and does not authorize Development tuning.
+V2A proved the direction but was too aggressive. B1 and B4 located the healthy
+region, and their refined calibration became production. A final
+micro-adjustment that reduced low-readiness `85–94` supply was rejected: it
+modestly harmed project supply with negligible lifecycle improvement. The
+rejected adjustment is not production behavior.
+
+The production activation audit covered approximately `80,204` Recruits in
+`500` classes. OVR mean/median remained `66.40/67`, OVR 80+ was `8.11%`, and
+readiness↔raw-ceiling correlation was a deliberately loose `0.080`. Raw
+90+/95+/97+/99 rates were `8.55%/2.98%/0.66%/0.23%`; final POT rates were
+`9.31%/2.99%/0.66%/0.23%`. Headroom `0–3/4–7/8–12/13–19/20+` was
+`25.40%/14.98%/15.88%/19.91%/23.84%`.
+
+Premium composition remained varied: Top-25 POT95+ was `11.62%`, 5★ POT95+
+was `16.52%`, 4–5★ POT95+ was `8.84%`, 5★ ready/low-headroom was `67.21%`, and
+4–5★ high-headroom projects were `14.24%`. Assignment remained healthy: the
+largest single-Program Top-25 class was `4`; `0/879` Program/classes signed 5+;
+there were zero commitment shortfalls, unsigned compatible 4–5★ Recruits, or
+lifecycle failures. Lower-Prestige Programs still received projects and
+occasional elite-potential Recruits.
+
+Full Dynasty validation established a gradual S0-to-endogenous transition with
+S0 share reaching zero by Season 5. Mature Seasons 5–10 stabilized near `78.07`
+average Team OVR and `3.67` SD, with zero 90+ Teams and approximately
+`37.93/7.63/0.87` Players at 85+/90+/95+. Static Prestige remained meaningful,
+the strongest Programs moved only modestly, and competition outputs remained
+coherent. The stronger junior/senior elite population is accepted as benign and
+desirable at league scale, not a reason for more Recruit calibration.
+
+Readiness/current ability, Candidate B, ranking/stars, Recruiting and roster
+systems, Development, Season 0 generation, and all downstream competition
+systems remain frozen and unchanged. No Recruit Talent Profile calibration is
+open.
+
+### S0 Player Talent Profile Continuity — UNSCHEDULED EVIDENCE QUESTION
+
+Season 0 still creates POT through direct class-year OVR headroom, so an elite
+S0 freshman can imply 99 POT more mechanically than an equivalent Recruit V2
+entrant. A future focused investigation may compare S0 classes with Recruit V2
+Players after zero through three Development cycles. This is not evidence that
+Recruit V2 is incomplete, not a confirmed defect, and not NEXT; S0 generation
+remains unchanged.
 
 ### Concentrated single-attribute Development gains
 

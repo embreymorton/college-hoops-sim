@@ -509,13 +509,23 @@ Strict positional Recruiting remained stable at approximately 76–77 active Pla
 
 ### V0 calibration freeze
 
-The pre-V1 Recruit-generation calibration is superseded by the accepted V1 distribution below. Recruiting mechanics, Player Development, roster rollover, and the remaining Dynasty rules are otherwise frozen. Do not casually retune them. Reopen calibration only when new evidence reveals a genuine problem or a future system materially changes talent flow—for example transfers, early professional departures, redshirts/fifth years, dynamic prestige, roster-size or position-flexibility changes, or staff/Development modifiers. UI and application integration alone do not justify recalibration.
+The pre-V2 Recruit-generation calibration is superseded by the accepted V2
+profile below. Recruiting mechanics, Player Development, roster rollover, and
+the remaining Dynasty rules are otherwise frozen. Do not casually retune them.
+Reopen calibration only when new evidence reveals a genuine problem or a future
+system materially changes talent flow—for example transfers, early professional
+departures, redshirts/fifth years, dynamic prestige, roster-size or
+position-flexibility changes, or staff/Development modifiers. UI and
+application integration alone do not justify recalibration.
 
 The full-snapshot `DynastyState` remained serializable but measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. This approximately linear storage growth is tracked separately as an architecture/scaling watchpoint in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; it does not change the stable talent-economy conclusion.
 
-## Accepted Recruit Talent Distribution V1 + Calibrated POT Finalization
+## Accepted Recruit Talent Profile V2 + Calibrated POT Finalization
 
-This section supersedes the earlier Recruit-generation and long-run talent-density observations above. The earlier V0 figures remain historical calibration evidence only; V1 is the source-of-truth distribution for current Dynasty Recruiting.
+This section supersedes the earlier Recruit-generation and long-run
+talent-density observations above. Recruit Talent Profile V2 is implemented,
+accepted, and frozen production behavior. Earlier V0/V1 figures remain
+historical calibration evidence only.
 
 Recruit generation now samples two separate deterministic qualities before calling the existing position-aware Player generator:
 
@@ -524,7 +534,22 @@ readiness → Player attributes → derived current OVR
 ceiling   → Player Potential
 ```
 
-Readiness is sampled from these organic generation bands: `0.3%` at `86–92`, `8.2%` at `78–86`, `21.5%` at `71–79`, `46.0%` at `60–72`, and `24.0%` at `47–61`. Ceiling is independently sampled: `2.5%` at `88–99`, `15.0%` at `80–90`, `42.5%` at `70–82`, and `40.0%` at `60–74`.
+Readiness is sampled from the unchanged organic generation bands: `0.3%` at
+`86–92`, `8.2%` at `78–86`, `21.5%` at `71–79`, `46.0%` at `60–72`, and
+`24.0%` at `47–61`. The realized readiness then selects a loose conditional
+distribution over these raw-ceiling tiers:
+
+| Realized readiness | Limited `60–74` | Normal `75–84` | High `85–94` | Elite `95–96` | Exceptional `97–99` |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Raw/depth `<60` | `37%` | `50.6%` | `10%` | `1.8%` | `0.6%` |
+| Developmental `60–70` | `34%` | `52.4%` | `11%` | `2%` | `0.6%` |
+| Good `71–77` | `30%` | `56%` | `11%` | `2.5%` | `0.5%` |
+| Ready-now `78–85` | `24%` | `57.5%` | `14%` | `3.5%` | `1%` |
+| Exceptional `86+` | `19%` | `55%` | `19%` | `5%` | `2%` |
+
+Readiness and ceiling are therefore positively related but loose. There is no
+`POT = OVR + X` or `POT = readiness + X` formula, and no persistent Recruit
+archetype was added.
 
 The calibrated Candidate B finalizer supersedes the historical simple
 `max(derived OVR, sampled ceiling)` floor. Natural ceilings above current OVR
@@ -543,9 +568,17 @@ Final POT is capped at 99. The independent
 and stable Recruit ID, so it consumes no readiness, raw-ceiling, Player, or
 subsequent generation RNG. `POT ≥ OVR` and `POT ≤ 99` remain invariant.
 
-National Rank remains meaningful but is not an OVR ladder: its deterministic quality score is `56% derived OVR + 44% Potential`, before stable OVR, Potential, and Player-ID tie-breakers. Stars continue to derive from National Rank percentiles. Position-aware attributes, height, identity, position-based OVR calculation, legal Player bounds, and typed seeded namespaces remain unchanged. Season 1 roster generation is intentionally separate and unchanged.
+National Rank remains meaningful but is not an OVR ladder: its deterministic quality score is `56% derived OVR + 44% Potential`, before stable OVR, Potential, and Player-ID tie-breakers. Stars continue to derive from National Rank percentiles. Position-aware attributes, height, identity, position-based OVR calculation, legal Player bounds, and typed seeded namespaces remain unchanged. Season 0 roster generation is intentionally separate and unchanged.
 
-Across 50 deterministic Recruiting classes of the current V0 supply size (about 161 Recruits per class), V1 observed:
+V2 changed only the raw-ceiling distribution. It did not change Recruit
+readiness bands or probabilities, `generatePlayer()`, positional attributes or
+supply, Overall, class size, Candidate B, ranking or star rules, Recruiting AI
+and decisions, roster assembly, Development, Rotation, Team Strength, game or
+Tournament simulation, Season 0 generation, static Prestige, offseason
+progression, or Dynasty rollover.
+
+For historical context, across 50 deterministic Recruiting classes of the
+current V0 supply size (about 161 Recruits per class), V1 observed:
 
 | Metric | V1 observed per class |
 | --- | ---: |
@@ -576,6 +609,16 @@ rates of `21.68%`, `30.94%`, and `32.75%`, overall POT mean `76.399`, and POT
 90+ rate `4.39%`. Readiness, attributes/OVR, raw ceiling generation, ranking
 weights, star percentiles, and Player Development did not change. Recruit
 Talent POT finalization is accepted and frozen unless new evidence appears.
+
+The V2 production activation audit sampled approximately `80,204` Recruits
+across `500` classes. Mean/median OVR remained `66.40/67`, OVR 80+ was `8.11%`,
+and readiness↔raw-ceiling correlation was `0.080`. Raw ceiling rates at
+90+/95+/97+/99 were `8.55%/2.98%/0.66%/0.23%`; final POT rates were
+`9.31%/2.99%/0.66%/0.23%`. Full lifecycle validation reached zero S0 share by
+Season 5 and stabilized across mature Seasons 5–10 at approximately `78.07`
+Team OVR, `3.67` Team OVR SD, zero 90+ Teams, and `37.93/7.63/0.87` Players at
+85+/90+/95+. This accepted shape increased the upperclassman elite population
+without league-wide Team inflation or structural Recruiting failures.
 
 ## Implemented Player Season Stats V0
 

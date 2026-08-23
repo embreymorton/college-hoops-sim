@@ -15,24 +15,12 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — Recruit Talent Profile V2 — Focused Design
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Design a more coherent Recruit talent-profile model capable of producing a
-believable mix of raw projects, college-ready prospects, limited-upside
-Players, developmental prospects, and rare genuinely elite incoming prospects
-without using Development to compensate for Recruit-generation shortcomings.
-
-This is a focused design milestone, not an implementation or formula
-selection. It may reconsider the current relationship between Recruit
-readiness/current ability and raw ceiling, informed by the completed
-very-high-OVR diagnostics and production generation seams. It does not select
-the previously discussed percentage-only tune, prescribe profile archetypes or
-correlation, or authorize changes to unrelated V0 generation.
-
-Development V1, Development Candidate A, Recruit POT Candidate B, Overall,
-positional attribute generation and supply, enrollment, Recruiting mechanics,
-roster assembly, Team Strength, simulation, and offseason progression remain
-frozen unless the focused design establishes specific new evidence.
+Recruit Talent Profile V2 is complete, accepted, and frozen. No successor was
+selected at closure. Awards & Honors and Rare Development Breakouts remain
+PLANNED, while other unscheduled ideas remain in `FUTURE_FEATURES.md`; none is
+NEXT by order, proximity, or interest.
 
 ### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -91,6 +79,17 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Recruit Talent Profile V2 — COMPLETE / ACCEPTED / FROZEN
+
+- Replaced the independent Recruit raw-ceiling roll with a loose,
+  readiness-conditioned ceiling distribution while leaving readiness/current
+  ability generation and Recruit POT Candidate B unchanged.
+- Validated production activation, assignment, the S0-to-endogenous transition,
+  and the mature Dynasty economy without reopening Development or other frozen
+  downstream systems.
+- Returned the Roadmap to an Open Planning Checkpoint with no successor
+  selected.
 
 ### Recruiting Board Organization & Cleanup V1 — COMPLETE / ACCEPTED / FROZEN
 
