@@ -230,7 +230,17 @@ seeding, Recruiting, and lifecycle semantics are unchanged.
 
 Regular navigation is `SEASON / RECRUITING / LEAGUE`; Tournament navigation is `TOURNAMENT / RECRUITING / LEAGUE`. The Season Hub pairs weekly competition context with Recruiting controls. Recruiting provides a Board and National Class, positional-needs ledger, PRESEASON state, and Generate Draft Board onboarding before the first period can resolve.
 
-After the championship, the player explicitly enters the distinct Late Recruiting mode, may make final legal Board/Offer changes, and finalizes the Recruiting class. One canonical progression action is reconstructed on every render: Tournament, Coaching, Recruiting, and League place the shared compact bar directly below stable primary navigation; the final-Season hub owns its contextual placement; and detail/history routes receive the shell fallback. Every placement uses the same command with no duplicate CTA. At the 560px breakpoint the fallback stacks and its button becomes full-width. A focused Offseason turnover screen presents roster OVR, departures, automatic Player Development, incoming Recruits, and the next roster before the explicit Season N+1 handoff returns to the normal Hub. These screens preserve the established modern-collegiate-athletics, broadcast-graphics, management-simulation visual direction rather than introducing a separate product style.
+After the championship, the player explicitly enters the dedicated Offseason
+shell at Late Recruiting, may make final legal Board/Offer changes, and advances
+through the accepted Hybrid Offseason Timeline. Before that transition, one
+canonical completed-Tournament progression action remains recoverable across
+Tournament, Coaching, Recruiting, League, and detail/history routes. During the
+Offseason, safe exploration retains a route-independent return/progression
+fallback while the dedicated shell owns the primary action in its header.
+Navigation never advances or hides canonical progression. The shell preserves
+the established modern-collegiate-athletics, broadcast-graphics,
+management-simulation visual direction rather than introducing a separate
+product style.
 
 ### Recruiting information architecture — implemented (6E.12C, supersedes 6E.12B)
 
@@ -523,7 +533,7 @@ Player Details now tells a Player's career story without duplicating any canonic
 
 All of this is a pure read-model (`derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts`) over existing archived Dynasty Season snapshots, the active Season, and finalized Recruiting history, connected by stable Player ID. It reuses the existing Player Season Stats projection for every Season, including archived ones, and introduces no new persisted career-history state. Existing current-season stats, shooting splits, game log, and Team ↔ Player navigation are unchanged.
 
-### Dedicated Offseason Experience — accepted
+### Dedicated Offseason Experience — accepted / frozen
 
 From the completed-Tournament handoff through rollover, the normal primary
 section strip gives way to an Offseason identity, Season N → N+1 context, safe
@@ -531,11 +541,27 @@ exploration actions, and a six-stage timeline: Late Recruiting, Recruiting
 Class, Departures, Development, Roster Review, and Ready for Season. Future
 stages are visible but locked; completed factual stages are revisitable; the
 persistent primary CTA always follows the furthest unlocked stage rather than
-the reviewed card.
+the reviewed card. The polished Program-accent header integrates that CTA beside
+secondary exploration; when an older stage is open, a restrained note identifies
+both the reviewed stage and the real progression position.
 
-Late Recruiting retains its existing management controls inside the dedicated
-shell and presents unsigned eligible recruits as the Available Market. The
-finalized class, departures, stored Development results, incoming class, and
-exact assembled roster are read-only reviews. At approximately 390px the stage
+Timeline treatment distinguishes one strong current stage, quieter completed
+stages, a restrained `Reviewing` treatment for the selected completed stage, and
+disabled locked stages. This prevents reviewed content from competing with the
+actual progression state. Stage spacing, cards, and tables use the established
+section hierarchy rather than separate wizard chrome.
+
+Late Recruiting retains its existing Board/Offer/Focus/Recruit Details controls
+and Position Outlook inside a simplified embedded presentation with stable
+Recruiting mode navigation; unsigned eligible recruits form the Available
+Market while committed/unavailable players are appropriately subordinate. The
+finalized class and departures are deliberate read-only reviews. Development
+presents already-computed previous/current OVR, gains, and Biggest Leap facts.
+Roster Review anchors Players/average OVR/incoming count and position balance in
+one bordered summary above the integrated Incoming Class and exact complete
+roster. Ready for Season is a compact Offseason-complete conclusion whose header
+CTA starts the next Season.
+
+At approximately 390px the stage
 rail remains one line with local horizontal scrolling and the document itself
 does not overflow; wide tables keep their existing local containment.

@@ -17,7 +17,7 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT
 
-No successor is selected. Dedicated Offseason Experience V1 is complete; new
+No NEXT is selected. Dedicated Offseason Experience V1 is complete; new
 work requires an explicit selection rather than inheriting priority from the
 remaining planned or unscheduled ideas below.
 
@@ -57,7 +57,7 @@ unscheduled Phase 7 work.
 
 ## Completed Phase Summary
 
-### Dedicated Offseason Experience V1 — COMPLETE / ACCEPTED
+### Dedicated Offseason Experience V1 — COMPLETE / ACCEPTED / FROZEN
 
 - Replaced the fragmented Tournament-to-next-Season handoff with a dedicated
   guided-but-explorable Offseason shell and locally scrolling six-stage timeline.

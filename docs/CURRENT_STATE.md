@@ -16,8 +16,8 @@ College Hoops supports a repeatable multi-season Dynasty:
 
 ```text
 Program selection → Season opening / Regular Season + Recruiting → Tournament
-→ Late Recruiting → Offseason → Development + roster assembly
-→ next Season → repeat
+→ Late Recruiting → Recruiting Class → Departures → Development
+→ Roster Review → Ready for Season → next Season → repeat
 ```
 
 The playable product includes:
@@ -106,6 +106,8 @@ refactor these systems during unrelated feature work:
   projections;
 - Tournament selection/seeding and progression;
 - Dynasty archive, offseason, roster-assembly, and rollover behavior;
+- Dedicated Offseason Experience V1's presentation-staging projection,
+  transient review cursor, six-stage flow, and polished shell hierarchy;
 - Followed Players and Player Legacy resolver semantics; and
 - Phase 7B News, Alumni/Historical Player Details, and Season Preview; and
 - Phase 7C.1 Season Archive / Yearbook presentation and read-model boundaries;
@@ -141,15 +143,19 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**OPEN PLANNING CHECKPOINT — no successor selected.**
+**No NEXT selected — Open Planning Checkpoint.**
 
-Dedicated Offseason Experience V1 is **COMPLETE / ACCEPTED**. The dedicated
+Dedicated Offseason Experience V1 is **COMPLETE / ACCEPTED / FROZEN**. The dedicated
 shell presents the Season N → N+1 identity, a six-stage locally scrolling
 timeline, completed-stage review, exact roster review, and persistent lifecycle
 progression while retaining safe League/History/completed-Tournament
 exploration. A pure projection composes canonical Dynasty facts with a transient
 presentation cursor; existing Recruiting finalization, archive/Development,
 roster assembly, and rollover commands remain the only mutation boundaries.
+Final acceptance included the full 1,211-test suite across 115 files, lint,
+typecheck, production build, focused transition/offseason coverage, a live
+lifecycle walkthrough, and responsive verification at approximately 390px with
+no document overflow or browser console errors.
 The implementation contract lives in
 [DEDICATED_OFFSEASON_EXPERIENCE_V1_DESIGN.md](DEDICATED_OFFSEASON_EXPERIENCE_V1_DESIGN.md).
 

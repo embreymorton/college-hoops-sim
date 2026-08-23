@@ -16,7 +16,7 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
   class retrospectives connecting signees' entry evaluations to later outcomes,
   all derived from canonical facts.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, unified results-only résumé seeding, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
-- **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, enter Late Recruiting, finalize the class, review departures/development/incoming Players in Offseason, begin the next Season, and repeat.
+- **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, then use the dedicated Hybrid Offseason Timeline to progress through Late Recruiting, Recruiting Class, Departures, Development, Roster Review, Ready for Season, and the next Season.
 - **Recruit inspection:** open stable-ID Recruit Details from Board, Battles, or National Class to review exact ratings and safe Recruiting context, use contextual management actions, and return to the same Recruiting mode.
 - **Recruit following and continuity:** follow prospects independently from Board management, track their live status in Recruiting Following, and carry that attachment into existing Player Following after stable-ID enrollment is verified.
 - **Deterministic replayability:** each interactive Dynasty receives one unique creation seed; all rosters, schedules, Recruiting, and simulations remain deterministic from that stored seed. Explicit-seed tests and inspection workflows remain repeatable.

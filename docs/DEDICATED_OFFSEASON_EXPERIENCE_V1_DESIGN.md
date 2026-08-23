@@ -1,6 +1,6 @@
 # Dedicated Offseason Experience V1 — Design and Architecture Contract
 
-Status: **COMPLETE / ACCEPTED.**
+Status: **COMPLETE / ACCEPTED / FROZEN.**
 
 This document records the accepted Hybrid Offseason Timeline contract and its
 production boundaries. Existing lifecycle, Recruiting, Development, archive,
@@ -18,6 +18,7 @@ Tournament complete
 → Development
 → Roster Review
 → Ready for Season
+→ Start Next Season
 ```
 
 The player receives a dedicated offseason identity, Season N → N+1 context, a
@@ -98,9 +99,9 @@ render, timeline navigation, stage revisit, and roster preview consume no RNG.
 The new experience must never call Development, Recruiting finalization,
 roster assembly as a mutation, or rollover from render/effect code.
 
-## Recommended V1 architecture: presentation staging
+## Accepted V1 architecture: presentation staging
 
-Use **Approach A — presentation staging**.
+V1 uses **presentation staging**, not canonical lifecycle decomposition.
 
 The canonical operations already retain everything needed for an honest staged
 reveal: pre-Development Players and seniors in the completed archive,
@@ -121,36 +122,39 @@ The timeline is only partly derivable from `DynastyState` alone:
   Development together. It cannot say whether the player has already viewed
   Departures or advanced the presentation reveal to Development.
 
-Therefore use a small transient **presentation cursor**, not a second lifecycle
-truth. Suggested shape:
+Therefore production uses the transient `OffseasonPresentationCursor`, not a
+second lifecycle truth:
 
 ```ts
-type OffseasonPresentationStage =
-  | 'departures'
-  | 'development'
-  | 'roster-review'
-  | 'ready-for-season'
+interface OffseasonPresentationCursor {
+  readonly offseasonKey: string
+  readonly furthestStage: OffseasonTurnoverStage
+  readonly viewedStage: OffseasonReviewStage
+}
 ```
 
-Zustand may own this cursor as session/UI state. It must never authorize domain
+Zustand owns this cursor as session/UI state. It cannot authorize domain
 mutation, be persisted as canonical Dynasty state, or claim that Departures or
 Development have not happened. Reset/normalize it whenever the canonical
 offseason identity (`completedSeasonNumber` and `targetSeasonNumber`) changes.
 
-Add one pure projection, following existing naming conventions, conceptually:
+The pure application read model is implemented in
+`src/app/offseasonExperience.ts`:
 
 ```text
-deriveOffseasonExperience(dynasty, presentationCursor)
+deriveOffseasonExperience(dynasty, offseasonPresentationCursor)
 → season transition identity
-→ ordered stages with active/completed/upcoming status
-→ active-stage read model
+→ ordered stages with completed/current/locked status
+→ furthest unlocked stage distinct from viewed/reviewed stage
 → safe revisitable stages
-→ canonical progression action
+→ stage facts and appropriate progression action
 ```
 
 The projection clamps stale or impossible cursor values against canonical
-facts. React renders it. Zustand dispatches existing commands. Do not broaden
-`deriveDynastyProgressionAction()` into an intra-offseason wizard: it should
+facts. React renders it and Zustand dispatches the existing commands. The cursor
+cannot rerun Development, regress Recruiting, or recreate an earlier lifecycle
+action. `deriveDynastyProgressionAction()` was not broadened into an
+intra-offseason wizard: it
 remain the authority for the cross-phase Tournament → Late Recruiting recovery.
 The offseason projection composes with it and may translate the existing action
 to the player-facing label `Begin Offseason`; it must not duplicate its
@@ -178,6 +182,29 @@ that existing canonical transition. `Departures`, `Development`, and `Roster
 Review` advance only the transient presentation cursor. `Ready for Season`
 alone exposes the existing rollover command.
 
+The accepted stage behavior is:
+
+- **Late Recruiting:** the first player-facing Offseason stage retains canonical
+  Board, Offer, Focus, Recruit Details, Position Outlook, eligibility,
+  relationship, commitment, and capacity behavior while emphasizing remaining
+  market availability and roster need. Finalization uses the existing command.
+- **Recruiting Class:** finalized signees receive a deliberate factual,
+  stable-identity, read-only review with no class grade or ranking system;
+  continuing invokes the existing canonical Offseason transition.
+- **Departures:** graduating seniors receive read-only career/final-Season
+  context derived from existing history. Review changes no roster state and
+  adds no Alumni or Awards mechanic.
+- **Development:** previous/current OVR, relevant attribute gains, and Biggest
+  Leap reveal already-computed canonical results. Render, navigation, and
+  revisit never rerun Development or consume RNG.
+- **Roster Review:** canonical `assembleNextSeasonRosters()` output presents
+  developed returners and incoming freshmen together. Incoming Class is
+  intentionally integrated here; summaries create no parallel roster state and
+  Recruit-to-Player continuity remains canonical.
+- **Ready for Season:** a concise Offseason-complete summary concludes the
+  timeline. `Start Season N` invokes the existing rollover command, resumes the
+  normal Season experience, and introduces no additional gameplay decision.
+
 ## Late Recruiting presentation
 
 When the completed Tournament makes the canonical progression resolver
@@ -186,30 +213,25 @@ through `enterLateRecruiting()`. That command remains route-independent and
 retains Period 24 recovery, non-qualifier, champion, and already-advanced safety.
 After it succeeds, route to the dedicated shell with Late Recruiting active.
 
-Keep My Board and all existing Recruiting controls. For V1, add a presentation
-filter/grouping over existing safe target status:
-
-- **Available**: unsigned Recruits who can still participate in the market;
-- **My Board**: the existing controlled Program targets, preserving management;
-- **Committed / Unavailable**: collapsed or visually subordinated and strictly
-  non-interactive where existing rules disallow action.
-
-Necessary V1 work is the dedicated context, remaining-market emphasis, existing
-needs/capacity facts, and clear finalization. Board provenance (`My Targets`
-versus assistant-added), broad Board restructuring, and new filters are useful
-follow-ups but are not required and must not expand this milestone.
+My Board and all existing Recruiting controls remain available in a simplified
+embedded Recruiting presentation with stable local mode navigation. The
+National Class view becomes the remaining **Available Market** by excluding
+already-boarded and canonically unavailable Recruits; committed/unavailable
+players remain subordinate and non-interactive wherever existing rules disallow
+action. Current needs, openings, offers, and clear finalization remain visible.
 
 ## Shell, exploration, and navigation
 
-Reuse the existing Program-accent header, section/card/table language, local
-horizontal-scroll conventions, detail routes, and exploration history. Replace
+The final polished shell reuses the existing Program-accent Season-header,
+section/card/table language, local horizontal-scroll conventions, detail routes,
+and exploration history. It replaces
 the normal `Tournament / Coaching / Recruiting / League` primary strip while the
 offseason experience is active with:
 
 1. `OFFSEASON` identity and Season N → N+1 context;
 2. the timeline;
 3. active or reviewed stage content;
-4. a persistent primary progression area; and
+4. the primary progression CTA integrated into the Offseason header; and
 5. visually secondary exploration actions.
 
 Recommended secondary destinations are `League`, `History`, and `Completed
@@ -228,8 +250,11 @@ CTA. Navigation never executes progression.
 
 ## Responsive hierarchy
 
-Desktop uses a single horizontal stage rail below the Offseason header, main
-content beneath it, and a clear footer/sticky-within-content progression area.
+Desktop uses a single horizontal stage rail below the Offseason header and main
+content beneath it. Progression remains anchored in the header instead of a
+detached bottom card. Roster Review uses one bordered, accent-anchored summary
+surface above Incoming Class and the complete roster. Ready for Season is a
+compact, purposeful concluding checkpoint with roster/returning/incoming facts.
 At approximately 390px, keep the rail on one line with **local horizontal
 scroll**, snap active stage into view, use compact label/check/status treatment,
 and provide accessible button names. This matches existing local-overflow
@@ -255,12 +280,31 @@ large enough to use without competing visually with the active stage.
 | Navigation | Intentional extension: preserve offseason origin/cursor through exploration and provide a route-independent shell fallback. |
 | Responsive UI | Moderate complexity: scrollable timeline plus several wide data sets require explicit containment tests. |
 
-The only lasting architecture extension should be the pure offseason experience
+The only lasting architecture extension is the pure offseason experience
 read model and its explicitly transient presentation cursor. Accepted lifecycle,
 Recruiting, Development, roster, Tournament, and archive systems remain
 read-only dependencies.
 
-## Eventual implementation test contract
+V1 did not change Recruiting eligibility, relationship progression, Offers,
+Focus, commitments, or capacity; Development calculations; roster assembly;
+Season archive semantics; Tournament mechanics; Team Strength; Rotation; Game
+Simulation; RNG behavior; rollover semantics; or the canonical `DynastyState`
+schema for stage progression. Transfers, Draft/professional decisions, position
+changes, Awards, staff decisions, and deeper Recruiting or Development mechanics
+remain outside the accepted V1 scope.
+
+## Accepted validation evidence
+
+Final repository validation passed with 1,211 tests across 115 files, ESLint,
+TypeScript, and the production build. The focused transition/offseason suite
+passed 23 tests after the final adjustment. A live browser lifecycle walkthrough
+verified the complete staged flow, completed-stage review without CTA
+regression, the final polished hierarchy, no console errors, and document-width
+containment with locally scrolling timeline/table surfaces at approximately
+390px. Manual play accepted the functionality, dedicated identity, timeline
+flow, stage structure, and final visual polish.
+
+The acceptance contract below remains the regression boundary.
 
 ### Projection and timeline
 

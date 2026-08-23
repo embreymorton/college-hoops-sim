@@ -40,9 +40,9 @@ is no active replacement design and the Roadmap is at an Open Planning Checkpoin
    absent stronger evidence.
 
 The Elite Program Dominance / Competitive Compression investigation is
-**decision-complete**. Ordinary Recruiting micro-rule experiments are closed;
-the remaining question concerns the deeper roster-lifecycle/offseason-management
-design boundary. No implementation or Roadmap successor is selected.
+**decision-complete**. Ordinary Recruiting micro-rule experiments are closed.
+Broader offseason-management mechanics remain optional future work, not an
+active evidence priority, implementation, or Roadmap successor.
 
 This priority list is evidence guidance, not an independent sequencing decision.
 The authoritative milestone selection remains in `ROADMAP.md`.
@@ -86,11 +86,10 @@ The run supplied these additional signals:
   did not recur during the long run. This is meaningful additional manual
   validation of the accepted canonical progression architecture, not proof that
   regression is mathematically impossible.
-- **OBSERVED:** offseason events now carry enough meaning that their fragmented
-  presentation is more noticeable. Late Recruiting still resembles the normal
-  Tournament shell, class completion merely leads to Begin Offseason, and the
-  current one-screen turnover summary does not yet feel like a coherent staged
-  offseason journey.
+- **RESOLVED:** the previously fragmented Offseason presentation supplied the
+  selection evidence for Dedicated Offseason Experience V1. The accepted Hybrid
+  Offseason Timeline now gives Late Recruiting, class review, Departures,
+  Development, Roster Review, and the next-Season handoff one coherent identity.
 - **OBSERVED:** Game Prep's Rotation-centered composition now feels older than
   the richer Team Strength, statistics, leaders, results, and Player/Team detail
   available elsewhere. This supports an informational matchup-scout opportunity,
@@ -203,6 +202,25 @@ Preserve these strengths. A surprising result is evidence to interpret, not an
 automatic defect.
 
 ## Recent Accepted-Phase Evidence
+
+### Dedicated Offseason Experience V1 — ACCEPTED / FROZEN
+
+Manual play accepted the dedicated Offseason identity, six-stage timeline,
+stage structure, and final presentation polish as a substantial improvement to
+the previously fragmented lifecycle. Completed-stage review remained clearly
+separate from the furthest/current progression state, safe League/History/
+completed-Tournament/detail exploration did not hide or corrupt the handoff,
+and the polished integrated header CTA, simplified Late Recruiting composition,
+anchored Roster Review summary, and compact Ready for Season conclusion were
+all accepted. This is strong qualitative UX acceptance, not simulation evidence.
+
+Automated closure passed 1,211 tests across 115 files, ESLint, TypeScript, and
+the production build; the final focused transition/offseason suite passed 23
+tests. A live lifecycle walkthrough covered confirmation and every stage, with
+no browser console errors. At approximately 390px, the document remained within
+the viewport while the timeline and wide tables scrolled locally. Existing
+Recruiting, Development, roster assembly, archive, Tournament, simulation, RNG,
+and rollover behavior remained unchanged.
 
 ### Rotation Assistant V1 — ACCEPTED / FROZEN
 

@@ -207,7 +207,16 @@ This is factual storytelling from stored simulated production, not a separate au
 ## Accepted Dynasty Foundation and Player Development V1
 
 The accepted Dedicated Offseason Experience presents this unchanged lifecycle
-as a guided six-stage journey. Departures and Development still execute
+as a Hybrid Offseason Timeline:
+
+```text
+Tournament Complete → Late Recruiting → Recruiting Class → Departures
+→ Development → Roster Review → Ready for Season → Start Next Season
+```
+
+The furthest/current stage owns progression while eligible completed stages are
+safe factual reviews; future stages remain visible but unavailable. Departures
+and Development still execute
 atomically at `beginOffseason()`; their separate stages are factual presentation
 reveals, not separate turns or decisions. Reviewing a completed stage never
 replays a mechanic or changes the next legal progression action.

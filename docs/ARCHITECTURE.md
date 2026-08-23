@@ -374,14 +374,26 @@ complete, valid SeasonState
 The transition rejects incomplete regular seasons, incomplete Tournaments, missing champions, mismatched or invalid competition state, and duplicate archived season numbers. The returned Dynasty does not intentionally retain the completed competitions in both active and historical slots: active competition becomes `null` after the archive is created.
 
 The Dedicated Offseason Experience does not subdivide this canonical mutation.
-`deriveOffseasonExperience()` is a pure application projection that maps
-Dynasty lifecycle facts plus a transient Zustand presentation cursor into the
-six player-facing stages, their completed/current/locked status, safe revisit
-targets, exact stage facts, and the current progression action. The cursor
-records only the furthest presentation reveal and viewed stage, is normalized
-to the canonical Season transition identity, survives exploration navigation,
-and resets at rollover. It cannot authorize Recruiting finalization,
-Development, archive creation, roster assembly, or Season rollover.
+`deriveOffseasonExperience()` in `src/app/offseasonExperience.ts` is the pure
+application projection that maps Dynasty lifecycle facts plus
+`OffseasonPresentationCursor` into Season transition identity, the six
+player-facing stages, completed/current/locked status, `furthestUnlockedStage`,
+`viewedStage`, safe revisit targets, stage facts, and the appropriate progression
+action. `furthestUnlockedStage` remains the actual progression position while
+`viewedStage` may point to an eligible completed stage; reviewing never regresses
+or recreates an earlier action.
+
+Zustand owns `offseasonPresentationCursor` as transient session state with an
+`offseasonKey`, `furthestStage`, and `viewedStage`. It is normalized against the
+canonical completed/target Season identity, survives exploration navigation,
+and resets at rollover. It is not persisted in `DynastyState`, cannot authorize
+domain mutation, cannot rerun Development or regress Recruiting, and creates no
+parallel lifecycle truth. Canonical mutation remains exclusively in the
+existing `enterLateRecruiting()`, `finalizeRecruitingClass()`,
+`beginDynastyOffseason()`, and `beginNextSeason()` store commands and their
+existing pure Dynasty operations. Exploration and stage review only change
+navigation/presentation state; the route-independent Offseason fallback keeps
+the current action recoverable without executing progression.
 
 `CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, Program Legacy, the Season Yearbook, and the 7C.2 Record Book are pure projections over those facts; awards are not implemented. Program Legacy aggregates any stable Program ID across completed archives for Team Details, reusing canonical regular-season record and Tournament-outcome queries; it stores no Program-history facts and does not infer historical Prestige.
 

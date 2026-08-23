@@ -160,11 +160,11 @@ future Rivalry system deliberately adds canonical state or gameplay effects.
 
 ## Roster and coaching depth
 
-- **Future Offseason Mechanics:** the accepted Dedicated Offseason Experience
-  now provides the durable presentation container. It could later host
-  separately designed transfers,
-  professional departures, position changes, staff changes, or other roster
-  decisions, but none is implied by V1. Rules remain deliberately
+- **Future Offseason Mechanics:** the accepted six-stage experience is complete
+  and is not future work. Its durable presentation container could later host
+  separately designed Transfer Portal, Draft/professional departure decisions,
+  position changes, staff/coaching decisions, or deeper roster-management
+  steps, but none is implied by V1. Rules remain deliberately
   undefined and no direction is selected. Do not build it solely to change
   mature hierarchy; the rejected compression experiments remain conditional-read
   evidence in `DYNASTY_HIERARCHY_RESEARCH.md`.
