@@ -13,6 +13,7 @@ import type {
   DevelopReturningPlayerOptions,
   PlayerAttributeDevelopmentGain,
   PlayerDevelopmentSummary,
+  OffseasonDevelopmentExplosion,
 } from './domain'
 
 type ReturningClass = Exclude<ClassYear, 'SR'>
@@ -54,6 +55,19 @@ const BREAKOUT_CHANCE = {
   JR: 0.01,
 } as const satisfies Readonly<Record<ReturningClass, number>>
 
+export const EXPLOSION_ELIGIBILITY_HEADROOM = 12
+export const EXPLOSION_CHANCE = 0.045
+export const ORDINARY_DEVELOPMENT_CAP = {
+  FR: 12,
+  SO: 10,
+  JR: 8,
+} as const satisfies Readonly<Record<ReturningClass, number>>
+export const EXPLOSION_TOTAL_GAIN_CAP = {
+  FR: 20,
+  SO: 18,
+  JR: 16,
+} as const satisfies Readonly<Record<ReturningClass, number>>
+
 export type DevelopmentTendency = 'weak' | 'steady' | 'strong'
 
 interface TendencyProfile {
@@ -90,6 +104,23 @@ function developmentSeed(
   assertSeed(options.dynastySeed)
   return JSON.stringify({
     namespace: 'college-hoops-sim:player-development:v1',
+    dynastySeed: {
+      type: typeof options.dynastySeed === 'number' ? 'number' : 'string',
+      value: options.dynastySeed,
+    },
+    completedSeasonNumber: options.completedSeasonNumber,
+    programId: options.programId,
+    playerId: options.playerId,
+  })
+}
+
+function explosionSeed(
+  options: Omit<DevelopReturningPlayerOptions, 'player'> & { playerId: string },
+  namespace: 'roll' | 'magnitude' | 'allocation',
+): string {
+  assertSeed(options.dynastySeed)
+  return JSON.stringify({
+    namespace: `college-hoops-sim:player-development-explosion:${namespace}:v1`,
     dynastySeed: {
       type: typeof options.dynastySeed === 'number' ? 'number' : 'string',
       value: options.dynastySeed,
@@ -155,6 +186,118 @@ function weightedAttribute(
   return candidates.at(-1)?.name
 }
 
+function allocateDevelopmentToOverall(
+  source: Player,
+  targetOverall: number,
+  rng: Rng,
+): Player {
+  const developed = clonePlayer(source)
+  const attributeGains = Object.fromEntries(ATTRIBUTE_NAMES.map((name) => [name, 0])) as Record<AttributeName, number>
+  const maximumAttempts = ATTRIBUTE_NAMES.length * MAX_PLAYER_RATING
+  for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
+    const overall = calculateOverall(developed)
+    if (overall >= targetOverall || overall >= source.potential) break
+    const attribute = weightedAttribute(developed.position, developed.attributes, attributeGains, rng)
+    if (!attribute) break
+    const candidate = clonePlayer(developed)
+    candidate.attributes[attribute] += 1
+    if (calculateOverall(candidate) <= source.potential) {
+      developed.attributes[attribute] += 1
+      attributeGains[attribute] += 1
+    }
+  }
+  return developed
+}
+
+/** Pure D3-M2 mapping, exposed so the legendary +20 path can be locked by tests. */
+export function deriveExplosionTargetTotalGain(
+  tierRoll: number,
+  magnitudeRoll: number,
+): number {
+  if (tierRoll < 0 || tierRoll >= 1 || magnitudeRoll < 0 || magnitudeRoll >= 1) {
+    throw new RangeError('Explosion rolls must be in [0, 1).')
+  }
+  const inclusive = (minimum: number, maximum: number) =>
+    minimum + Math.floor(magnitudeRoll * (maximum - minimum + 1))
+  if (tierRoll < 0.58) return inclusive(8, 11)
+  if (tierRoll < 0.92) return inclusive(12, 15)
+  return inclusive(16, 20)
+}
+
+export interface ReturningPlayerExplosionResult {
+  readonly player: Player
+  readonly ordinaryPlayer: Player
+  readonly explosion: OffseasonDevelopmentExplosion | null
+}
+
+export function deriveOffseasonExplosionRoll(options: DevelopReturningPlayerOptions): boolean {
+  return createRng(explosionSeed({ ...options, playerId: options.player.id }, 'roll')).chance(EXPLOSION_CHANCE)
+}
+
+/** Applies an isolated rare event after byte-stable ordinary Development V1. */
+export function developReturningPlayerWithExplosion(
+  options: DevelopReturningPlayerOptions,
+): ReturningPlayerExplosionResult {
+  const ordinaryPlayer = developReturningPlayer(options)
+  const before = options.player
+  const completedClass = before.classYear
+  if (completedClass === 'SR') {
+    // developReturningPlayer owns the canonical error message for this case.
+    return { player: ordinaryPlayer, ordinaryPlayer, explosion: null }
+  }
+  const previousOverall = calculateOverall(before)
+  const ordinaryOverall = calculateOverall(ordinaryPlayer)
+  const headroom = before.potential - previousOverall
+  const ordinaryCap = ORDINARY_DEVELOPMENT_CAP[completedClass]
+  if (headroom < EXPLOSION_ELIGIBILITY_HEADROOM || headroom <= ordinaryCap) {
+    return { player: ordinaryPlayer, ordinaryPlayer, explosion: null }
+  }
+  const seedOptions = { ...options, playerId: before.id }
+  if (!deriveOffseasonExplosionRoll(options)) {
+    return { player: ordinaryPlayer, ordinaryPlayer, explosion: null }
+  }
+  const magnitudeRng = createRng(explosionSeed(seedOptions, 'magnitude'))
+  const targetTotalGain = deriveExplosionTargetTotalGain(magnitudeRng.next(), magnitudeRng.next())
+  const boundedTotalGain = Math.min(
+    targetTotalGain,
+    EXPLOSION_TOTAL_GAIN_CAP[completedClass],
+    headroom,
+  )
+  if (boundedTotalGain <= ordinaryCap || previousOverall + boundedTotalGain <= ordinaryOverall) {
+    return { player: ordinaryPlayer, ordinaryPlayer, explosion: null }
+  }
+  const player = allocateDevelopmentToOverall(
+    ordinaryPlayer,
+    previousOverall + boundedTotalGain,
+    createRng(explosionSeed(seedOptions, 'allocation')),
+  )
+  const currentOverall = calculateOverall(player)
+  const totalGain = currentOverall - previousOverall
+  if (totalGain <= ordinaryCap) {
+    return { player: ordinaryPlayer, ordinaryPlayer, explosion: null }
+  }
+  return {
+    player,
+    ordinaryPlayer,
+    explosion: {
+      completedSeasonNumber: options.completedSeasonNumber,
+      programId: options.programId,
+      playerId: before.id,
+      completedClass,
+      nextClass: player.classYear as 'SO' | 'JR' | 'SR',
+      previousOverall,
+      ordinaryOverall,
+      currentOverall,
+      ordinaryGain: ordinaryOverall - previousOverall,
+      explosionContribution: currentOverall - ordinaryOverall,
+      totalGain,
+      potential: before.potential,
+      targetTotalGain,
+      potentialTruncation: Math.max(0, targetTotalGain - headroom),
+    },
+  }
+}
+
 /** Develops one non-senior through an independent, identity-namespaced RNG. */
 export function developReturningPlayer({
   player,
@@ -213,28 +356,7 @@ export function developReturningPlayer({
       ),
     ),
   )
-  const maximumAttempts = ATTRIBUTE_NAMES.length * MAX_PLAYER_RATING
-  const attributeGains = Object.fromEntries(ATTRIBUTE_NAMES.map((name) => [name, 0])) as Record<AttributeName, number>
-
-  for (let attempt = 0; attempt < maximumAttempts; attempt += 1) {
-    const overall = calculateOverall(developed)
-    if (overall >= targetOverall || overall >= player.potential) break
-    const attribute = weightedAttribute(
-      developed.position,
-      developed.attributes,
-      attributeGains,
-      rng,
-    )
-    if (!attribute) break
-    const candidate = clonePlayer(developed)
-    candidate.attributes[attribute] += 1
-    if (calculateOverall(candidate) <= player.potential) {
-      developed.attributes[attribute] += 1
-      attributeGains[attribute] += 1
-    }
-  }
-
-  return developed
+  return allocateDevelopmentToOverall(developed, targetOverall, rng)
 }
 
 export function deriveDevelopmentSummary(

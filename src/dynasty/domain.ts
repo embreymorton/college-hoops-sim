@@ -25,7 +25,26 @@ export interface OffseasonState {
   readonly completedSeasonNumber: number
   readonly targetSeasonNumber: number
   readonly programs: Record<string, OffseasonProgramState>
+  /** Exceptional development facts retained separately from ordinary summaries. */
+  readonly developmentExplosions: readonly OffseasonDevelopmentExplosion[]
 }
+
+export interface OffseasonDevelopmentExplosion {
+  readonly completedSeasonNumber: number
+  readonly programId: string
+  readonly playerId: string
+  readonly completedClass: 'FR' | 'SO' | 'JR'
+  readonly nextClass: 'SO' | 'JR' | 'SR'
+  readonly previousOverall: number
+  readonly ordinaryOverall: number
+  readonly currentOverall: number
+  readonly ordinaryGain: number
+  readonly explosionContribution: number
+  readonly totalGain: number
+  readonly potential: number
+  readonly targetTotalGain: number
+  readonly potentialTruncation: number
+ }
 
 /** One immutable, roster-only input for the next competitive Season. */
 export interface NextSeasonProgramRoster {

@@ -29,11 +29,18 @@ export {
   YEARBOOK_STATISTICAL_SCOPE,
 } from './seasonYearbook'
 export {
+  EXPLOSION_CHANCE,
+  EXPLOSION_ELIGIBILITY_HEADROOM,
+  EXPLOSION_TOTAL_GAIN_CAP,
+  ORDINARY_DEVELOPMENT_CAP,
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
   deriveDevelopmentTendency,
   deriveHighPotentialDevelopmentOpportunity,
+  deriveExplosionTargetTotalGain,
+  deriveOffseasonExplosionRoll,
   developReturningPlayer,
+  developReturningPlayerWithExplosion,
 } from './development'
 export {
   deriveOffseasonRosterOutlook,
@@ -142,6 +149,7 @@ export type {
   NextSeasonRosterValidationIssueCode,
   NextSeasonRosterValidationResult,
   OffseasonProgramState,
+  OffseasonDevelopmentExplosion,
   OffseasonRosterOutlook,
   OffseasonState,
   PlayerAttributeDevelopmentGain,

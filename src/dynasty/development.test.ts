@@ -12,7 +12,10 @@ import {
   deriveDevelopmentSummary,
   deriveHighPotentialDevelopmentOpportunity,
   developReturningPlayer,
+  developReturningPlayerWithExplosion,
+  deriveExplosionTargetTotalGain,
 } from './index'
+import { EXPLOSION_TOTAL_GAIN_CAP, ORDINARY_DEVELOPMENT_CAP } from './development'
 
 const ATTRIBUTE_NAMES = [
   'finishing',
@@ -219,5 +222,87 @@ describe('Player Development V1', () => {
       { attribute: 'playmaking', change: 2 },
       { attribute: 'finishing', change: 1 },
     ])
+  })
+})
+
+describe('Offseason Development Explosions', () => {
+  function explosionFixture(
+    classYear: Exclude<ClassYear, 'SR'>,
+    test: (result: ReturnType<typeof developReturningPlayerWithExplosion>) => boolean,
+    potential = 99,
+  ) {
+    for (let index = 0; index < 30_000; index += 1) {
+      const source = player(classYear, `explosion-${classYear}-${index}`)
+      source.potential = potential
+      const result = developReturningPlayerWithExplosion({ player: source, dynastySeed: 'explosion-fixtures', completedSeasonNumber: 7, programId: 'charlotte-tech' })
+      if (test(result)) return { source, result }
+    }
+    throw new Error(`Unable to resolve deterministic ${classYear} Explosion fixture.`)
+  }
+
+  it('locks the M2 boundaries and structurally reachable +20 target', () => {
+    expect(deriveExplosionTargetTotalGain(0, 0)).toBe(8)
+    expect(deriveExplosionTargetTotalGain(.579999, .999999)).toBe(11)
+    expect(deriveExplosionTargetTotalGain(.58, 0)).toBe(12)
+    expect(deriveExplosionTargetTotalGain(.919999, .999999)).toBe(15)
+    expect(deriveExplosionTargetTotalGain(.92, 0)).toBe(16)
+    expect(deriveExplosionTargetTotalGain(.999999, .999999)).toBe(20)
+    expect(EXPLOSION_TOTAL_GAIN_CAP).toEqual({ FR: 20, SO: 18, JR: 16 })
+  })
+
+  it.each(['FR', 'SO', 'JR'] as const)('preserves exact ordinary %s results whenever no event is official', (classYear) => {
+    for (let index = 0; index < 120; index += 1) {
+      const source = player(classYear, `preservation-${classYear}-${index}`)
+      source.potential = index % 2 ? 99 : calculateOverall(source) + 5
+      const options = { player: source, dynastySeed: 'preservation', completedSeasonNumber: 3, programId: 'charlotte-tech' }
+      const ordinary = developReturningPlayer(options)
+      const candidate = developReturningPlayerWithExplosion(options)
+      if (!candidate.explosion) {
+        expect(candidate.player).toEqual(ordinary)
+        expect(candidate.ordinaryPlayer).toEqual(ordinary)
+        expect(deriveDevelopmentSummary(options.programId, source, candidate.player)).toEqual(deriveDevelopmentSummary(options.programId, source, ordinary))
+      }
+    }
+  })
+
+  it.each(['weak', 'steady', 'strong'] as const)('does not alter non-event %s-tendency Players', (band) => {
+    const source = Array.from({ length: 200 }, (_, index) => player('FR', `${band}-${index}`))
+      .find(candidate => deriveDevelopmentTendency(candidate, 'tendency-preservation') === band)!
+    source.potential = calculateOverall(source) + 5
+    const options = { player: source, dynastySeed: 'tendency-preservation', completedSeasonNumber: 2, programId: 'charlotte-tech' }
+    const ordinary = developReturningPlayer(options)
+    expect(developReturningPlayerWithExplosion(options)).toEqual({ player: ordinary, ordinaryPlayer: ordinary, explosion: null })
+  })
+
+  it.each(['FR', 'SO', 'JR'] as const)('creates canonical, POT-safe official %s events above the ordinary cap', (classYear) => {
+    const { source, result } = explosionFixture(classYear, candidate => candidate.explosion !== null)
+    const event = result.explosion!
+    expect(calculateOverall(result.player)).toBe(event.currentOverall)
+    expect(event.totalGain).toBeGreaterThan(ORDINARY_DEVELOPMENT_CAP[classYear])
+    expect(event.explosionContribution).toBe(event.currentOverall - event.ordinaryOverall)
+    expect(event.totalGain).toBe(event.currentOverall - event.previousOverall)
+    expect(event.totalGain).toBeLessThanOrEqual(EXPLOSION_TOTAL_GAIN_CAP[classYear])
+    expect(event.currentOverall).toBeLessThanOrEqual(source.potential)
+    expect(result.player.potential).toBe(source.potential)
+    expect(Object.values(result.player.attributes).every(value => value >= 40 && value <= MAX_PLAYER_RATING)).toBe(true)
+  })
+
+  it('records POT truncation only when the truncated result remains exceptional', () => {
+    const base = player('FR', 'pot-template')
+    const potential = calculateOverall(base) + 13
+    const { result } = explosionFixture('FR', candidate => candidate.explosion !== null && candidate.explosion.potentialTruncation > 0, potential)
+    expect(result.explosion!.totalGain).toBe(13)
+    expect(result.explosion!.currentOverall).toBe(potential)
+  })
+
+  it('replays exactly and is independent across Player processing order', () => {
+    const sources = Array.from({ length: 80 }, (_, index) => {
+      const source = player((['FR', 'SO', 'JR'] as const)[index % 3]!, `order-${index}`)
+      source.potential = 99
+      return source
+    })
+    const run = (values: readonly Player[]) => values.map(source => developReturningPlayerWithExplosion({ player: source, dynastySeed: 'order-independence', completedSeasonNumber: 4, programId: 'charlotte-tech' })).sort((a, b) => a.player.id.localeCompare(b.player.id))
+    expect(run(sources)).toEqual(run([...sources].reverse()))
+    expect(run(sources)).toEqual(run(structuredClone(sources)))
   })
 })

@@ -31,6 +31,7 @@ import {
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
   type DynastyState,
+  type OffseasonDevelopmentExplosion,
 } from '../src/dynasty'
 import {
   getGamesForTournamentRound,
@@ -251,6 +252,7 @@ export interface DynastyRunResult {
   readonly seed: string
   readonly seasons: readonly SeasonTalentMetrics[]
   readonly developments: readonly DevelopmentRecord[]
+  readonly developmentExplosions: readonly OffseasonDevelopmentExplosion[]
   readonly signedRecruits: readonly SignedRecruitRecord[]
   readonly recruitingCycles: readonly RecruitingCycleMetric[]
   readonly recruitingCapacity: readonly ProgramRecruitingCapacityTrace[]
@@ -518,10 +520,12 @@ export function runDynastyCalibration(
   seed: string,
   seasonsToComplete: number,
   auditLevel: AuditLevel = 'full',
+  enableDevelopmentExplosions = true,
 ): DynastyRunResult {
   let dynasty = createDynasty(seed)
   const seasons: SeasonTalentMetrics[] = []
   const developments: DevelopmentRecord[] = []
+  const developmentExplosions: OffseasonDevelopmentExplosion[] = []
   const signedRecruits: SignedRecruitRecord[] = []
   const recruitingCycles: RecruitingCycleMetric[] = []
   const recruitingCapacity: ProgramRecruitingCapacityTrace[] = []
@@ -792,7 +796,8 @@ export function runDynastyCalibration(
 
       const priorSeasonSnapshots = archivedSeasonSnapshots
       const priorRecruitingSnapshots = archivedRecruitingSnapshots
-      dynasty = beginOffseason(dynasty)
+      dynasty = beginOffseason(dynasty, { enableDevelopmentExplosions })
+      developmentExplosions.push(...dynasty.offseason!.developmentExplosions)
       if (auditLevel === 'full' && (
         CHECKPOINTS.has(season.seasonNumber) ||
         season.seasonNumber === seasonsToComplete
@@ -868,6 +873,7 @@ export function runDynastyCalibration(
     seed,
     seasons,
     developments,
+    developmentExplosions,
     signedRecruits,
     recruitingCycles,
     recruitingCapacity,
@@ -894,12 +900,13 @@ export function runLongRunCalibration(options: {
   readonly seasonsPerSeed: number
   readonly seeds: readonly string[]
   readonly auditLevel?: AuditLevel
+  readonly enableDevelopmentExplosions?: boolean
 }): LongRunCalibrationResult {
   return {
     seeds: options.seeds,
     seasonsPerSeed: options.seasonsPerSeed,
     runs: options.seeds.map((seed) =>
-      runDynastyCalibration(seed, options.seasonsPerSeed, options.auditLevel),
+      runDynastyCalibration(seed, options.seasonsPerSeed, options.auditLevel, options.enableDevelopmentExplosions),
     ),
   }
 }

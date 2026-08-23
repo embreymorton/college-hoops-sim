@@ -73,6 +73,7 @@ describe('Dynasty long-run calibration metrics', () => {
     const offseason: OffseasonState = {
       completedSeasonNumber: 1,
       targetSeasonNumber: 2,
+      developmentExplosions: [],
       programs: Object.fromEntries(Object.entries(season.programStates).map(
         ([programId, { team }]) => [programId, {
           programId,

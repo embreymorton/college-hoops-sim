@@ -13,7 +13,7 @@ import {
 import { validateUniverseDefinition } from '../universe'
 import type { UniverseDefinition } from '../universe'
 import { clonePostseason, cloneSeason } from './cloning'
-import { developReturningPlayer } from './development'
+import { developReturningPlayer, developReturningPlayerWithExplosion } from './development'
 import type {
   CompletedSeasonArchive,
   DynastyState,
@@ -84,8 +84,10 @@ function createOffseasonState(
   season: SeasonState,
   postseason: PostseasonState,
   programIds: readonly string[],
+  enableDevelopmentExplosions: boolean,
 ): OffseasonState {
   const programs: Record<string, OffseasonProgramState> = {}
+  const developmentExplosions: NonNullable<OffseasonState['developmentExplosions']>[number][] = []
   const returningIds = new Set<string>()
 
   for (const programId of [...programIds].sort()) {
@@ -107,12 +109,17 @@ function createOffseasonState(
           throw new RangeError(`Duplicate returning Player ID "${player.id}".`)
         }
         returningIds.add(player.id)
-        return developReturningPlayer({
+        const result = enableDevelopmentExplosions ? developReturningPlayerWithExplosion({
           player,
           dynastySeed,
           completedSeasonNumber,
           programId,
-        })
+        }) : {
+          player: developReturningPlayer({ player, dynastySeed, completedSeasonNumber, programId }),
+          explosion: null,
+        }
+        if (result.explosion) developmentExplosions.push(result.explosion)
+        return result.player
       })
 
     programs[programId] = {
@@ -126,11 +133,16 @@ function createOffseasonState(
     completedSeasonNumber,
     targetSeasonNumber: completedSeasonNumber + 1,
     programs,
+    developmentExplosions: developmentExplosions.sort((first, second) =>
+      first.programId.localeCompare(second.programId) || first.playerId.localeCompare(second.playerId)),
   }
 }
 
 /** Archives a fully completed year and creates temporary offseason rosters. */
-export function beginOffseason(dynasty: DynastyState): DynastyState {
+export function beginOffseason(
+  dynasty: DynastyState,
+  options: { readonly enableDevelopmentExplosions?: boolean } = {},
+): DynastyState {
   const season = dynasty.activeSeason
   const postseason = dynasty.activePostseason
   if (!season) throw new RangeError('Dynasty has no active Season to archive.')
@@ -178,6 +190,7 @@ export function beginOffseason(dynasty: DynastyState): DynastyState {
     season,
     postseason,
     dynasty.universe.programs.map(({ id }) => id),
+    options.enableDevelopmentExplosions ?? true,
   )
 
   return {
