@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "sim:players": "node --import tsx scripts/inspectPlayerGeneration.ts",
     "sim:player-development": "node --import tsx scripts/playerDevelopmentDiagnostic.ts",
+    "sim:rare-development-breakouts": "node --import tsx scripts/rareDevelopmentBreakoutDiagnostic.ts",
     "sim:development-league": "node --import tsx scripts/inspectDevelopmentLeagueProgression.ts",
     "sim:rosters": "node --import tsx scripts/inspectRosterGeneration.ts",
     "sim:rotations": "node --import tsx scripts/inspectRotationGeneration.ts",
