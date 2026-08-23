@@ -13,6 +13,11 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 - **History & Recognition:** Awards & Honors remains PLANNED under Phase 7C in
   `ROADMAP.md`; completed Yearbooks, Records, and Recruiting Class
   Retrospectives are production capabilities.
+- **Recruit Talent Profile V2 — Focused Design:** selected as authoritative
+  NEXT in `ROADMAP.md`; its evidence, boundaries, and sequencing are not
+  duplicated here.
+- **Rare Development Breakouts / Explosive Offseasons:** PLANNED, explicitly
+  not NEXT, in `ROADMAP.md`; ordinary Development V1 remains frozen.
 
 The Roadmap owns its order and scope. It is not specified again here.
 

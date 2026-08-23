@@ -10,6 +10,7 @@ import {
   deriveRecruitSupplyByPosition,
   generateLegacyRecruitingClass,
   generateRecruitingClass,
+  generateRecruitingClassWithTalentTrace,
 } from './generation'
 import { createRecruitingDynasty } from './testSupport'
 
@@ -176,6 +177,25 @@ describe('national recruiting class generation', () => {
       expect(productionPotential).toBeGreaterThanOrEqual(calculateOverall(recruit.player))
       expect(productionPotential).toBeLessThanOrEqual(MAX_PLAYER_RATING)
       expect(legacyPotential).toBeGreaterThanOrEqual(calculateOverall(old.player))
+    }
+  })
+
+  it('exposes talent diagnostics without changing generated Recruits', () => {
+    const dynasty = createRecruitingDynasty('talent-trace-equivalence')
+    const options = {
+      dynastySeed: dynasty.dynastySeed,
+      targetSeasonNumber: 2,
+      season: dynasty.activeSeason!,
+    }
+    const traced = generateRecruitingClassWithTalentTrace(options)
+
+    expect(traced.recruits).toEqual(generateRecruitingClass(options))
+    expect(traced.traces).toHaveLength(traced.recruits.length)
+    const recruitsById = new Map(traced.recruits.map(({ player }) => [player.id, player]))
+    for (const trace of traced.traces) {
+      const player = recruitsById.get(trace.playerId)!
+      expect(trace.startingOverall).toBe(calculateOverall(player))
+      expect(trace.finalPotential).toBe(player.potential)
     }
   })
 })

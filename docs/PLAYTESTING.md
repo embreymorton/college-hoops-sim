@@ -32,11 +32,14 @@ and validated; **WATCH** is currently acceptable but worth monitoring.
 Production uses static Prestige again. Long-run testing established that the
 implemented V1 and two follow-up model families compressed durable Program
 hierarchy too strongly. Dynamic Prestige remains a possible concept, but there
-is no active replacement design and the Roadmap is at an Open Planning Checkpoint.
+is no active replacement design.
 
 1. Continue observing whether Yearbooks and News → inspect → Follow → Alumni
    create durable Player and Program attachment across normal multi-Season play.
-2. Monitor genuinely live WATCH items below without promoting them into work
+2. Preserve the completed very-high-OVR causal evidence while the selected
+   Roadmap design milestone evaluates Recruit talent-profile coherence rather
+   than repeating the diagnostic or tuning Development.
+3. Monitor genuinely live WATCH items below without promoting them into work
    absent stronger evidence.
 
 The Elite Program Dominance / Competitive Compression investigation is
@@ -154,20 +157,39 @@ measure how often elite/top-ranked Recruits remain unoffered deep into a cycle
 and under what positional and class-supply conditions. No Recruiting AI or
 supply change is authorized by this example.
 
-### Very-high-OVR career ceiling
+### Recruiting-origin very-high-OVR career ceiling — CONFIRMED / DECISION-COMPLETE
 
-**WATCH:** retrospective browsing suggested relatively few developed Players
-reaching approximately 95+ OVR. Liam Hill reaching 99 OVR as a generated Season
-0 Player confirms that the displayed ceiling is reachable, but does not answer
-how often completed Recruiting classes develop into that range. A future
-longitudinal diagnostic could measure peak/career OVR distribution across many
-classes. Development and Player Identity remain accepted/parked.
+Recruiting-born 95–99 OVR scarcity is confirmed, and its cause is upstream of
+Development. Across 500 fresh V0 Universes and 500 Recruiting classes,
+Recruiting freshmen supplied far fewer POT 95+/97+/99 profiles and entered much
+lower in OVR at equivalent high POT. Matched OVR/POT/headroom cohorts realized
+Development similarly, so Development V1 remains frozen.
+
+The follow-up 500-class Recruit decomposition located the primary shortage in
+raw ceiling supply: only `1.0%` were raw 95+, `0.6%` raw 97+, and `0.2%` raw
+99. Starting OVR and raw ceiling were effectively independent (`0.002`
+correlation), so elite ceilings inherited the class-wide readiness distribution
+rather than a special negative readiness penalty. Candidate B preserved `100%`
+of raw 95+/97+/99 cohorts and slightly enlarged the elite finalized tail. The
+diagnostic loop is closed; this evidence supports the selected Recruit Talent
+Profile V2 focused design and does not authorize Development tuning.
 
 ### Concentrated single-attribute Development gains
 
 Development V1 creates varied career outcomes, but rare offseason gains can
 concentrate heavily in one attribute. Monitor whether this produces implausible
 Player identities; do not change Development from isolated examples.
+
+### Rare Development Breakouts / Explosive Offseasons — PLANNED PRODUCT QUESTION
+
+Normal Development V1 annual gains are capped at approximately `+12` FR→SO,
+`+10` SO→JR, and `+8` JR→SR. Future work may investigate whether extremely rare
+transformational offseasons should exceed those normal caps while POT remains
+absolute. This is not a confirmed defect, is not NEXT, does not globally reopen
+or raise ordinary Development caps, and must not compensate for Recruit talent-
+profile shortcomings. If selected later, first measure whether the caps
+actually truncate breakout outcomes before considering at most one isolated
+candidate.
 
 ### Rotation secondary-path edge cases
 

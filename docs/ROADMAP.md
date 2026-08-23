@@ -15,12 +15,24 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT
+### NEXT — Recruit Talent Profile V2 — Focused Design
 
-No NEXT is selected. Matchup Scout V1, Game Prep Rotation Experience V1,
-Player Records Expansion V1, and Recruiting Board Organization & Cleanup V1
-are complete; new work requires an explicit selection rather than inheriting
-priority from the remaining planned or unscheduled ideas below.
+Design a more coherent Recruit talent-profile model capable of producing a
+believable mix of raw projects, college-ready prospects, limited-upside
+Players, developmental prospects, and rare genuinely elite incoming prospects
+without using Development to compensate for Recruit-generation shortcomings.
+
+This is a focused design milestone, not an implementation or formula
+selection. It may reconsider the current relationship between Recruit
+readiness/current ability and raw ceiling, informed by the completed
+very-high-OVR diagnostics and production generation seams. It does not select
+the previously discussed percentage-only tune, prescribe profile archetypes or
+correlation, or authorize changes to unrelated V0 generation.
+
+Development V1, Development Candidate A, Recruit POT Candidate B, Overall,
+positional attribute generation and supply, enrollment, Recruiting mechanics,
+roster assembly, Team Strength, simulation, and offseason progression remain
+frozen unless the focused design establishes specific new evidence.
 
 ### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -46,6 +58,17 @@ silent commit.
 
 1. **7C.3 — Awards & Honors** — remains valid future work whose subjective
    formulas would require separate design and tuning; it is not NEXT.
+
+### PLANNED — Rare Development Breakouts / Explosive Offseasons
+
+Investigate whether extremely rare Development outcomes should be allowed to
+exceed the normal class-year OVR caps while POT remains absolute and ordinary
+Development V1 remains unchanged. This is explicitly **not NEXT**, is not a
+solution to Recruit-generation shortcomings, and does not revive rejected
+Candidate A+ or globally raise normal caps. If deliberately selected later,
+begin with a focused check of whether current caps truncate breakout outcomes;
+PLANNED placement does not establish order relative to Awards & Honors or other
+future work.
 
 ### Future Phase 8 work
 

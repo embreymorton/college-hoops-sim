@@ -81,6 +81,11 @@ export {
   deriveNationalPositionDemand,
   deriveRecruitSupplyByPosition,
   generateRecruitingClass,
+  generateRecruitingClassWithTalentTrace,
+} from './recruiting/generation'
+export type {
+  RecruitingClassTalentTrace,
+  RecruitTalentTrace,
 } from './recruiting/generation'
 export {
   deriveBaseRecruitAttraction,

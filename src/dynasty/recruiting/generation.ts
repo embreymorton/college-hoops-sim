@@ -21,6 +21,7 @@ import type {
   RecruitStarRating,
 } from './domain'
 import { finalizeRecruitPotential } from './potential'
+import type { RecruitPotentialIntervention } from './potential'
 
 function seedNamespace(
   dynastySeed: RngSeed,
@@ -72,6 +73,21 @@ export function deriveRecruitSupplyByPosition(
 interface RecruitTalentProfile {
   readonly readiness: number
   readonly ceiling: number
+}
+
+/** Read-only intermediate facts exposed for deterministic diagnostic tooling. */
+export interface RecruitTalentTrace extends RecruitPotentialIntervention {
+  readonly playerId: string
+  readonly position: Position
+  readonly readiness: number
+  readonly startingOverall: number
+  readonly rawCeiling: number
+  readonly finalPotential: number
+}
+
+export interface RecruitingClassTalentTrace {
+  readonly recruits: readonly Recruit[]
+  readonly traces: readonly RecruitTalentTrace[]
 }
 
 /**
@@ -152,6 +168,45 @@ export function generateRecruitingClass({
   }).potential)
 }
 
+/** Runs the production generator while retaining otherwise-discarded talent intermediates. */
+export function generateRecruitingClassWithTalentTrace(
+  options: GenerateRecruitingClassOptions,
+): RecruitingClassTalentTrace {
+  const traces: RecruitTalentTrace[] = []
+  const recruits = generateRecruitingClassWithPotentialFinalizer(
+    options,
+    ({ overall, rawCeiling, playerId }) => finalizeRecruitPotential({
+      overall,
+      rawCeiling,
+      dynastySeed: options.dynastySeed,
+      targetSeasonNumber: options.targetSeasonNumber,
+      playerId,
+    }).potential,
+    ({ profile, playerId, position, startingOverall, finalPotential }) => {
+      const result = finalizeRecruitPotential({
+        overall: startingOverall,
+        rawCeiling: profile.ceiling,
+        dynastySeed: options.dynastySeed,
+        targetSeasonNumber: options.targetSeasonNumber,
+        playerId,
+      })
+      traces.push({
+        playerId,
+        position,
+        readiness: profile.readiness,
+        startingOverall,
+        rawCeiling: profile.ceiling,
+        finalPotential,
+        eligible: result.eligible,
+        preservedZero: result.preservedZero,
+        grantedRunway: result.grantedRunway,
+        cappedAt99: result.cappedAt99,
+      })
+    },
+  )
+  return { recruits, traces }
+}
+
 interface RecruitPotentialFinalizerInput {
   readonly overall: number
   readonly rawCeiling: number
@@ -159,10 +214,18 @@ interface RecruitPotentialFinalizerInput {
 }
 
 type RecruitPotentialFinalizer = (input: RecruitPotentialFinalizerInput) => number
+type RecruitTalentObserver = (input: {
+  readonly profile: RecruitTalentProfile
+  readonly playerId: string
+  readonly position: Position
+  readonly startingOverall: number
+  readonly finalPotential: number
+}) => void
 
 function generateRecruitingClassWithPotentialFinalizer(
   { dynastySeed, targetSeasonNumber, season }: GenerateRecruitingClassOptions,
   finalizePotential: RecruitPotentialFinalizer,
+  observeTalent?: RecruitTalentObserver,
 ): Recruit[] {
   if (!Number.isSafeInteger(targetSeasonNumber) || targetSeasonNumber < 2) {
     throw new RangeError('Recruiting target season must be at least 2.')
@@ -186,11 +249,13 @@ function generateRecruitingClassWithPotentialFinalizer(
       })
       const currentOverall = calculateOverall(generated)
       const playerId = `recruit-${targetSeasonNumber}-${position.toLowerCase()}-${String(index + 1).padStart(3, '0')}-${generated.id.slice(-8)}`
+      const finalPotential = finalizePotential({ overall: currentOverall, rawCeiling: profile.ceiling, playerId })
       const player = {
         ...generated,
         id: playerId,
-        potential: finalizePotential({ overall: currentOverall, rawCeiling: profile.ceiling, playerId }),
+        potential: finalPotential,
       }
+      observeTalent?.({ profile, playerId, position, startingOverall: currentOverall, finalPotential })
       const overall = calculateOverall(player)
 
       unranked.push({
