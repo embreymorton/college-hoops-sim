@@ -15,20 +15,22 @@ export function DevelopmentTable({ rows, biggestLeap }: DevelopmentTableProps) {
     <>
       {biggestLeap && (
         <div className="biggest-leap" aria-label="Biggest Leap">
-          <div>
-            <span className="biggest-leap__label">Biggest Leap</span>
-            <strong>
+          <div className="biggest-leap__identity">
+            <p className="biggest-leap__eyebrow">Biggest Leap</p>
+            <p className="biggest-leap__name">
               {biggestLeap.player.firstName} {biggestLeap.player.lastName}
-            </strong>
+              <span className="biggest-leap__position">{biggestLeap.player.position}</span>
+            </p>
           </div>
-          <strong className="biggest-leap__ovr">
-            {biggestLeap.summary.previousOverall} →{' '}
-            {biggestLeap.summary.currentOverall} OVR (+
-            {biggestLeap.summary.overallChange})
-          </strong>
-          <span className="development-gains">
+          <div className="biggest-leap__score">
+            <span className="biggest-leap__ovr-prev">{biggestLeap.summary.previousOverall}</span>
+            <span className="biggest-leap__arrow" aria-hidden="true">→</span>
+            <span className="biggest-leap__ovr-curr">{biggestLeap.summary.currentOverall}</span>
+            <span className="biggest-leap__delta">+{biggestLeap.summary.overallChange}</span>
+          </div>
+          <p className="biggest-leap__gains">
             {formatDevelopmentGains(biggestLeap.gains)}
-          </span>
+          </p>
         </div>
       )}
       <div className="table-scroll">

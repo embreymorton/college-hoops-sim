@@ -446,7 +446,7 @@ describe('Offseason', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Continue to Development' }))
     expect(screen.getByRole('heading', { name: 'Development' })).toBeInTheDocument()
-    expect(screen.getByLabelText('Biggest Leap')).toHaveTextContent(/OVR \(\+\d+\)/)
+    expect(screen.getByLabelText('Biggest Leap')).toHaveTextContent(/\+\d+/)
     fireEvent.click(screen.getByRole('button', { name: 'Continue to Roster Review' }))
     expect(screen.getByRole('heading', { name: 'Roster Review' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Incoming Class' })).toBeInTheDocument()

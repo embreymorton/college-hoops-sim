@@ -166,17 +166,22 @@ export function OffseasonScreen() {
     if (experience.viewedStage === 'roster-review') {
       return (
         <>
-          <section className="section offseason-roster-summary" aria-labelledby="roster-review-heading">
-            <p className="eyebrow-tag">Season {experience.targetSeasonNumber}</p>
-            <h2 id="roster-review-heading" className="section-title">Roster Review</h2>
-            <div className="stat-trio offseason-roster-summary__stats">
+          <section className="roster-review-summary" aria-labelledby="roster-review-heading">
+            <div className="roster-review-summary__identity">
+              <p className="eyebrow-tag">Season {experience.targetSeasonNumber}</p>
+              <h2 id="roster-review-heading" className="section-title">Roster Review</h2>
+            </div>
+            <div className="stat-trio roster-review-summary__stats">
               <div className="stat-trio__item"><span className="stat-trio__value">{roster.length}</span><span className="stat-trio__label">Players</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{formatAverage(deriveRosterAverageOverall(roster))}</span><span className="stat-trio__label">Avg Ovr</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{incoming.length}</span><span className="stat-trio__label">Incoming</span></div>
             </div>
-            <p className="offseason-position-balance">
-              {positionCounts.map(({ position, count }) => `${position} ${count}`).join('   ')}
-            </p>
+            <div className="roster-review-summary__balance">
+              <span className="roster-review-summary__balance-label">Position Balance</span>
+              <span className="roster-review-summary__balance-value">
+                {positionCounts.map(({ position, count }) => `${position} ${count}`).join(' · ')}
+              </span>
+            </div>
           </section>
           <section className="section" aria-labelledby="incoming-heading">
             <h3 id="incoming-heading" className="section-title">Incoming Class</h3>
@@ -191,10 +196,11 @@ export function OffseasonScreen() {
     }
 
     return (
-      <section className="section offseason-ready" aria-labelledby="ready-heading">
+      <section className="ready-for-season" aria-labelledby="ready-heading">
+        <span className="ready-for-season__badge" aria-hidden="true">✓</span>
         <p className="eyebrow-tag">Offseason Complete</p>
-        <h2 id="ready-heading" className="section-title">Ready for Season {experience.targetSeasonNumber}</h2>
-        <div className="stat-trio offseason-ready__facts">
+        <h2 id="ready-heading" className="ready-for-season__title">Ready for Season {experience.targetSeasonNumber}</h2>
+        <div className="stat-trio ready-for-season__facts">
           <div className="stat-trio__item"><span className="stat-trio__value">{roster.length}</span><span className="stat-trio__label">Players</span></div>
           <div className="stat-trio__item"><span className="stat-trio__value">{offseasonProgram.returningPlayers.length}</span><span className="stat-trio__label">Returning</span></div>
           <div className="stat-trio__item"><span className="stat-trio__value">{incoming.length}</span><span className="stat-trio__label">Incoming</span></div>

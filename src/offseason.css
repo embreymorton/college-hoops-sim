@@ -199,25 +199,99 @@
 }
 
 /* ==========================================================================
-   Roster Review — one anchored summary surface
+   Roster Review — one anchored summary surface (mirrors .season-header's
+   bordered-card language so the stat block reads as a surface, not loose text)
    ========================================================================== */
 
-.offseason-roster-summary {
+.roster-review-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--team-accent, var(--accent));
+  border-radius: var(--radius-md);
+  padding: var(--space-5) var(--space-6);
+}
+
+.roster-review-summary__identity .eyebrow-tag {
+  margin-bottom: var(--space-1);
+}
+
+.roster-review-summary__stats {
+  padding-top: var(--space-1);
+}
+
+.roster-review-summary__balance {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
   gap: var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
 }
 
-.offseason-roster-summary__stats {
-  margin-top: var(--space-2);
+.roster-review-summary__balance-label {
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
 }
 
-.offseason-ready {
-  padding-block: var(--space-6);
+.roster-review-summary__balance-value {
+  font-family: var(--font-score);
+  font-size: 1.1rem;
+  color: var(--ink-0);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Ready for Season — the lifecycle's closing checkpoint. Anchored like
+   .roster-review-summary (bordered surface, top accent hairline) but
+   centered and self-contained, since there is no table flowing beneath it. */
+.ready-for-season {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-6) var(--space-7);
   text-align: center;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface-1));
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--team-accent, var(--accent));
+  border-radius: var(--radius-md);
 }
 
-.offseason-ready__facts {
+.ready-for-season__badge {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin-bottom: var(--space-2);
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.ready-for-season__title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.01em;
+  color: var(--ink-0);
+}
+
+.ready-for-season__facts {
   justify-content: center;
-  margin-top: var(--space-4);
+  gap: var(--space-6) var(--space-8);
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--line);
+  width: 100%;
 }
 
 
@@ -269,37 +343,111 @@
   color: var(--accent);
 }
 
+/* Biggest Leap — a small sibling of the app's scoreboard signature element:
+   same gradient surface and top accent hairline, sized for a one-row spotlight
+   rather than a full matchup. Identity reads first, the OVR jump reads as a
+   score, gains trail as a quiet caption. */
 .biggest-leap {
+  position: relative;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-4);
-  margin-bottom: var(--space-3);
-  padding: var(--space-3) var(--space-4);
+  justify-content: space-between;
+  column-gap: var(--space-5);
+  row-gap: var(--space-2);
+  margin-bottom: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface-1));
   border: 1px solid var(--line);
-  border-left: 3px solid var(--accent);
-  border-radius: var(--radius-sm);
-  background: var(--surface-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }
 
-.biggest-leap > div {
+.biggest-leap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+.biggest-leap__identity {
   display: grid;
+  gap: 0.2rem;
+  min-width: 0;
 }
 
-.biggest-leap__label {
+.biggest-leap__eyebrow {
   color: var(--accent);
-  font-size: 0.72rem;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.14em;
 }
 
-.biggest-leap__ovr {
+.biggest-leap__name {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--ink-0);
+  letter-spacing: 0.01em;
+}
+
+.biggest-leap__position {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-1);
+}
+
+.biggest-leap__score {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
   font-family: var(--font-score);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
-.biggest-leap > .development-gains {
-  margin-left: var(--space-2);
+.biggest-leap__ovr-prev {
+  font-size: 1.3rem;
+  color: var(--ink-2);
+}
+
+.biggest-leap__arrow {
+  font-size: 1.1rem;
+  color: var(--ink-2);
+}
+
+.biggest-leap__ovr-curr {
+  font-size: 2.1rem;
+  line-height: 1;
+  font-weight: 600;
+  color: var(--ink-0);
+}
+
+.biggest-leap__delta {
+  margin-left: var(--space-1);
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.biggest-leap__gains {
+  flex-basis: 100%;
+  color: var(--ink-1);
+  font-size: 0.78rem;
 }
 
 .development-gains,
@@ -307,18 +455,6 @@
   color: var(--ink-1);
   font-size: 0.78rem;
   white-space: nowrap;
-}
-
-/* ==========================================================================
-   Next-season roster
-   ========================================================================== */
-
-.offseason-position-balance {
-  margin-top: var(--space-2);
-  font-family: var(--font-score);
-  font-size: 1.1rem;
-  color: var(--ink-1);
-  font-variant-numeric: tabular-nums;
 }
 
 .next-season-roster-table__status {
@@ -382,10 +518,18 @@
   .biggest-leap {
     align-items: flex-start;
     flex-direction: column;
-    gap: var(--space-2);
+    padding: var(--space-4);
   }
 
-  .biggest-leap > .development-gains {
-    margin-left: 0;
+  .roster-review-summary {
+    padding: var(--space-4) var(--space-5);
+  }
+
+  .ready-for-season {
+    padding: var(--space-5) var(--space-4) var(--space-6);
+  }
+
+  .ready-for-season__facts {
+    gap: var(--space-4) var(--space-6);
   }
 }
