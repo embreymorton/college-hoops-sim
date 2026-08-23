@@ -39,7 +39,10 @@ The playable product includes:
   Recruiting, class finalization, and Recruit-to-Player identity continuity;
 - departures with graduating-senior career context, Player Development with
   top attribute gains and a Biggest Leap spotlight, incoming classes, exact
-  next-season roster assembly, archived Seasons, and repeatable Dynasty rollover; and
+  next-season roster assembly, archived Seasons, and repeatable Dynasty rollover;
+- a dedicated guided-but-explorable Offseason shell spanning Late Recruiting,
+  Recruiting Class, Departures, Development, Roster Review, and Ready for
+  Season, with completed-stage review and safe Dynasty exploration; and
 - one stored creation seed per normal interactive Dynasty, with explicit-seed
   paths remaining exactly reproducible.
 
@@ -138,7 +141,17 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — Open Planning Checkpoint.**
+**OPEN PLANNING CHECKPOINT — no successor selected.**
+
+Dedicated Offseason Experience V1 is **COMPLETE / ACCEPTED**. The dedicated
+shell presents the Season N → N+1 identity, a six-stage locally scrolling
+timeline, completed-stage review, exact roster review, and persistent lifecycle
+progression while retaining safe League/History/completed-Tournament
+exploration. A pure projection composes canonical Dynasty facts with a transient
+presentation cursor; existing Recruiting finalization, archive/Development,
+roster assembly, and rollover commands remain the only mutation boundaries.
+The implementation contract lives in
+[DEDICATED_OFFSEASON_EXPERIENCE_V1_DESIGN.md](DEDICATED_OFFSEASON_EXPERIENCE_V1_DESIGN.md).
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is

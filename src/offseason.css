@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Offseason turnover report V0 — extends styles.css's tokens and components
+   Dedicated Offseason Experience V1 — extends shared tokens and components
    ========================================================================== */
 
 .offseason-header {
@@ -14,6 +14,155 @@
   display: flex;
   align-items: center;
   gap: var(--space-6);
+}
+
+.offseason-experience {
+  min-width: 0;
+}
+
+.offseason-exploration {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.offseason-timeline {
+  max-width: 100%;
+  margin: var(--space-4) 0;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+}
+
+.offseason-timeline__list {
+  display: flex;
+  min-width: max-content;
+  margin: 0;
+  padding: 0 0 var(--space-2);
+  list-style: none;
+  scroll-snap-type: x proximity;
+}
+
+.offseason-timeline__item {
+  position: relative;
+  width: 10.5rem;
+  scroll-snap-align: center;
+}
+
+.offseason-timeline__item:not(:last-child)::after {
+  position: absolute;
+  z-index: 0;
+  top: 1.25rem;
+  right: -0.5rem;
+  width: 1rem;
+  height: 2px;
+  background: var(--line);
+  content: '';
+}
+
+.offseason-timeline__button {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: calc(100% - var(--space-2));
+  min-height: 5.25rem;
+  justify-items: start;
+  gap: 0.2rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-1);
+  color: var(--ink-0);
+  text-align: left;
+}
+
+.offseason-timeline__button:not(:disabled) {
+  cursor: pointer;
+}
+
+.offseason-timeline__button[data-status='completed'] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+}
+
+.offseason-timeline__button[data-status='active'] {
+  border-color: var(--accent);
+  box-shadow: inset 0 -3px 0 var(--accent);
+}
+
+.offseason-timeline__button[data-viewed='true'] {
+  outline: 2px solid var(--ink-0);
+  outline-offset: -3px;
+}
+
+.offseason-timeline__button:disabled {
+  color: var(--ink-2);
+  opacity: 0.65;
+}
+
+.offseason-timeline__marker {
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--surface-2);
+  color: var(--ink-1);
+  font-family: var(--font-score);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.offseason-timeline__button[data-status='active'] .offseason-timeline__marker,
+.offseason-timeline__button[data-status='completed'] .offseason-timeline__marker {
+  background: var(--accent);
+  color: white;
+}
+
+.offseason-timeline__button small {
+  color: var(--ink-2);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.offseason-progression,
+.offseason-return-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  background: var(--surface-1);
+}
+
+.offseason-return-bar {
+  margin: 0 0 var(--space-4);
+  border-left-color: var(--ink-1);
+}
+
+.offseason-progression .section-hint {
+  margin: var(--space-1) 0 0;
+}
+
+.offseason-roster-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+.offseason-ready {
+  padding-block: var(--space-8);
+  text-align: center;
+}
+
+.offseason-ready__facts {
+  justify-content: center;
+  margin-top: var(--space-5);
 }
 
 
@@ -145,6 +294,36 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-4);
+    width: 100%;
+  }
+
+  .offseason-exploration {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .offseason-exploration .button {
+    flex: 1 1 auto;
+  }
+
+  .offseason-timeline {
+    margin-inline: calc(-1 * var(--space-3));
+    padding-inline: var(--space-3);
+  }
+
+  .offseason-timeline__item {
+    width: 9rem;
+  }
+
+  .offseason-progression,
+  .offseason-return-bar,
+  .offseason-roster-summary {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .offseason-progression__action,
+  .offseason-return-bar .button {
     width: 100%;
   }
 

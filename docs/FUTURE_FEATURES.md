@@ -160,18 +160,11 @@ future Rivalry system deliberately adds canonical state or gameplay effects.
 
 ## Roster and coaching depth
 
-- **Dedicated Offseason Experience / Offseason Lifecycle:** an unscheduled
-  product opportunity to organize existing meaningful events into a coherent,
-  intentional container before adding mechanics. Late Recruiting, Recruiting
-  Class Finalization, Departures, Development, Incoming Class, Roster Review,
-  and next-Season transition are candidate content seams, not an accepted phase
-  order. The first design question is how existing events should feel like one
-  offseason journey rather than the current normal-shell handoff plus one
-  turnover summary screen.
-
-  A durable offseason container could later host separately designed transfers,
+- **Future Offseason Mechanics:** the accepted Dedicated Offseason Experience
+  now provides the durable presentation container. It could later host
+  separately designed transfers,
   professional departures, position changes, staff changes, or other roster
-  decisions, but none is implied for a first version. Rules remain deliberately
+  decisions, but none is implied by V1. Rules remain deliberately
   undefined and no direction is selected. Do not build it solely to change
   mature hierarchy; the rejected compression experiments remain conditional-read
   evidence in `DYNASTY_HIERARCHY_RESEARCH.md`.

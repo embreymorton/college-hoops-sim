@@ -1,152 +1,265 @@
-import type { CSSProperties } from 'react'
+import { useState, type CSSProperties } from 'react'
 import {
   DeparturesTable,
   DevelopmentTable,
   IncomingClassTable,
   NextSeasonRosterTable,
+  OffseasonTimeline,
+  RecruitingClassSummary,
+  RecruitingFinalizationDialog,
   type NextSeasonRosterRow,
 } from '../components'
-import { assembleNextSeasonRosters } from '../dynasty'
+import { assembleNextSeasonRosters, deriveProgramRecruitingBoard } from '../dynasty'
 import { useDynastyStore } from '../store'
 import {
   deriveDepartures,
   deriveBiggestLeap,
+  deriveClassAverages,
   deriveDevelopmentRows,
   deriveIncomingClass,
   derivePositionCounts,
   deriveRosterAverageOverall,
   formatAverage,
 } from './offseasonFormatters'
+import {
+  deriveOffseasonExperience,
+  type OffseasonStageId,
+} from './offseasonExperience'
+import { RecruitingScreen } from './RecruitingScreen'
+import { deriveRecruitingHubTotals } from './recruitingFormatters'
 
-/** The turnover report: who left, who improved, who arrived, what's next. */
+/** Dedicated guided-but-explorable presentation over existing offseason facts. */
 export function OffseasonScreen() {
+  const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false)
   const dynasty = useDynastyStore((state) => state.dynasty)
+  const cursor = useDynastyStore((state) => state.offseasonPresentationCursor)
   const actionError = useDynastyStore((state) => state.recruitingActionError)
+  const finalizeRecruitingClass = useDynastyStore((state) => state.finalizeRecruitingClass)
+  const beginDynastyOffseason = useDynastyStore((state) => state.beginDynastyOffseason)
+  const advancePresentation = useDynastyStore((state) => state.advanceOffseasonPresentation)
+  const viewStage = useDynastyStore((state) => state.viewOffseasonStage)
   const beginNextSeason = useDynastyStore((state) => state.beginNextSeason)
+  const goToLeague = useDynastyStore((state) => state.goToLeague)
+  const openHistory = useDynastyStore((state) => state.openHistory)
+  const openArchivedSeason = useDynastyStore((state) => state.openArchivedSeason)
 
-  if (!dynasty || !dynasty.offseason) return null
+  if (!dynasty) return null
+  const experience = deriveOffseasonExperience(dynasty, cursor)
+  if (!experience) return null
 
-  const offseason = dynasty.offseason
-  const controlledProgramId = dynasty.controlledProgramId
   const controlledProgram = dynasty.universe.programs.find(
-    ({ id }) => id === controlledProgramId,
+    ({ id }) => id === dynasty.controlledProgramId,
   )
-  const archive = dynasty.history.find(
-    ({ seasonNumber }) => seasonNumber === offseason.completedSeasonNumber,
-  )
-  const completedRecruitingClass = dynasty.completedRecruitingHistory.find(
-    ({ targetSeasonNumber }) => targetSeasonNumber === offseason.targetSeasonNumber,
-  )
-  const offseasonProgram = offseason.programs[controlledProgramId]
-
-  if (!controlledProgram || !archive || !completedRecruitingClass || !offseasonProgram) {
-    return null
-  }
-
-  const departures = deriveDepartures(dynasty, archive, controlledProgramId)
-  const developmentRows = deriveDevelopmentRows(archive, controlledProgramId, offseasonProgram)
-  const biggestLeap = deriveBiggestLeap(developmentRows)
-  const incoming = deriveIncomingClass(
-    completedRecruitingClass.recruitingState,
-    controlledProgramId,
-  )
-
-  const assembly = assembleNextSeasonRosters({
-    universe: dynasty.universe,
-    offseason,
-    completedRecruitingClass,
-    completedSeasonArchive: archive,
-  })
-  const nextRosterPlayers = assembly.programs[controlledProgramId]!.players
-  const returningIds = new Set(offseasonProgram.returningPlayers.map(({ id }) => id))
-  const nextRosterRows: NextSeasonRosterRow[] = nextRosterPlayers.map((player) => ({
-    player,
-    status: returningIds.has(player.id) ? 'returning' : 'incoming',
-  }))
-  const positionCounts = derivePositionCounts(nextRosterPlayers)
-  const outlookOverall = deriveRosterAverageOverall(nextRosterPlayers)
+  if (!controlledProgram) return null
 
   const accentStyle = {
     '--team-accent': controlledProgram.branding.primaryColor,
   } as CSSProperties
 
-  return (
-    <>
-      <div className="season-header offseason-header" style={accentStyle}>
-        <div className="season-header__identity">
-          <span
-            className="season-header__dot"
-            style={{ background: controlledProgram.branding.primaryColor }}
-            aria-hidden="true"
+  const handleTimelineSelect = (stage: OffseasonStageId) => {
+    if (stage === 'recruiting-class' || stage === 'departures' || stage === 'development' ||
+      stage === 'roster-review' || stage === 'ready-for-season') {
+      viewStage(stage)
+    }
+  }
+
+  const handleProgression = () => {
+    const action = experience.progressionAction
+    switch (action.kind) {
+      case 'finalize-recruiting-class':
+        setIsFinalizeDialogOpen(true)
+        break
+      case 'begin-dynasty-offseason':
+        beginDynastyOffseason()
+        break
+      case 'advance-presentation':
+        advancePresentation(action.target)
+        break
+      case 'begin-next-season':
+        beginNextSeason()
+        break
+    }
+  }
+
+  const renderStage = () => {
+    if (experience.viewedStage === 'late-recruiting') {
+      return <RecruitingScreen embeddedOffseason />
+    }
+
+    const completedClass = dynasty.completedRecruitingHistory.find(
+      ({ targetSeasonNumber }) => targetSeasonNumber === experience.targetSeasonNumber,
+    )
+    const recruiting = completedClass?.recruitingState ?? dynasty.recruiting
+    const incoming = recruiting
+      ? deriveIncomingClass(recruiting, dynasty.controlledProgramId)
+      : []
+
+    if (experience.viewedStage === 'recruiting-class') {
+      const averages = deriveClassAverages(incoming.map(({ recruit }) => recruit))
+      const positionCounts = derivePositionCounts(incoming.map(({ recruit }) => recruit.player))
+      return (
+        <section className="section" aria-labelledby="offseason-class-heading">
+          <p className="eyebrow-tag">Finalized Class</p>
+          <h2 id="offseason-class-heading" className="section-title">Recruiting Class</h2>
+          <RecruitingClassSummary
+            embedded
+            programName={controlledProgram.name}
+            targetSeasonNumber={experience.targetSeasonNumber}
+            signees={incoming}
+            averages={averages}
+            positionCounts={positionCounts}
+            onBeginOffseason={beginDynastyOffseason}
           />
+        </section>
+      )
+    }
+
+    const offseason = dynasty.offseason
+    const archive = dynasty.history.find(
+      ({ seasonNumber }) => seasonNumber === experience.completedSeasonNumber,
+    )
+    const offseasonProgram = offseason?.programs[dynasty.controlledProgramId]
+    if (!offseason || !archive || !completedClass || !offseasonProgram) return null
+
+    if (experience.viewedStage === 'departures') {
+      const departures = deriveDepartures(dynasty, archive, dynasty.controlledProgramId)
+      return (
+        <section className="section" aria-labelledby="departures-heading">
+          <p className="eyebrow-tag">Who Is Moving On</p>
+          <h2 id="departures-heading" className="section-title">Departures</h2>
+          <p className="section-hint">Recognize the Seniors closing their careers with {controlledProgram.name}.</p>
+          <DeparturesTable programName={controlledProgram.name} departures={departures} />
+        </section>
+      )
+    }
+
+    const developmentRows = deriveDevelopmentRows(
+      archive,
+      dynasty.controlledProgramId,
+      offseasonProgram,
+    )
+    if (experience.viewedStage === 'development') {
+      return (
+        <section className="section" aria-labelledby="development-heading">
+          <p className="eyebrow-tag">Returning Players</p>
+          <h2 id="development-heading" className="section-title">Development</h2>
+          <p className="section-hint">These results were applied once when the Offseason began.</p>
+          <DevelopmentTable rows={developmentRows} biggestLeap={deriveBiggestLeap(developmentRows)} />
+        </section>
+      )
+    }
+
+    const assembly = assembleNextSeasonRosters({
+      universe: dynasty.universe,
+      offseason,
+      completedRecruitingClass: completedClass,
+      completedSeasonArchive: archive,
+    })
+    const roster = assembly.programs[dynasty.controlledProgramId]!.players
+    const returningIds = new Set(offseasonProgram.returningPlayers.map(({ id }) => id))
+    const rosterRows: NextSeasonRosterRow[] = roster.map((player) => ({
+      player,
+      status: returningIds.has(player.id) ? 'returning' : 'incoming',
+    }))
+    const positionCounts = derivePositionCounts(roster)
+
+    if (experience.viewedStage === 'roster-review') {
+      return (
+        <>
+          <section className="section offseason-roster-summary" aria-labelledby="roster-review-heading">
+            <div>
+              <p className="eyebrow-tag">Season {experience.targetSeasonNumber}</p>
+              <h2 id="roster-review-heading" className="section-title">Roster Review</h2>
+              <p className="section-hint">The exact roster that will enter the next Season.</p>
+            </div>
+            <div className="stat-trio">
+              <div className="stat-trio__item"><span className="stat-trio__value">{roster.length}</span><span className="stat-trio__label">Players</span></div>
+              <div className="stat-trio__item"><span className="stat-trio__value">{formatAverage(deriveRosterAverageOverall(roster))}</span><span className="stat-trio__label">Avg Ovr</span></div>
+              <div className="stat-trio__item"><span className="stat-trio__value">{incoming.length}</span><span className="stat-trio__label">Incoming</span></div>
+            </div>
+          </section>
+          <section className="section" aria-labelledby="incoming-heading">
+            <h3 id="incoming-heading" className="section-title">Incoming Class</h3>
+            <IncomingClassTable programName={controlledProgram.name} rows={incoming} />
+          </section>
+          <section className="section" aria-labelledby="next-roster-heading">
+            <div className="section-heading">
+              <h3 id="next-roster-heading" className="section-title">Season {experience.targetSeasonNumber} Roster</h3>
+              <p className="offseason-position-balance">
+                {positionCounts.map(({ position, count }) => `${position} ${count}`).join('   ')}
+              </p>
+            </div>
+            <NextSeasonRosterTable rows={rosterRows} />
+          </section>
+        </>
+      )
+    }
+
+    return (
+      <section className="section offseason-ready" aria-labelledby="ready-heading">
+        <p className="eyebrow-tag">Offseason Complete</p>
+        <h2 id="ready-heading" className="section-title">Ready for Season {experience.targetSeasonNumber}</h2>
+        <p className="section-hint">Your roster is assembled and ready for the new schedule.</p>
+        <div className="stat-trio offseason-ready__facts">
+          <div className="stat-trio__item"><span className="stat-trio__value">{roster.length}</span><span className="stat-trio__label">Players</span></div>
+          <div className="stat-trio__item"><span className="stat-trio__value">{offseasonProgram.returningPlayers.length}</span><span className="stat-trio__label">Returning</span></div>
+          <div className="stat-trio__item"><span className="stat-trio__value">{incoming.length}</span><span className="stat-trio__label">Incoming</span></div>
+        </div>
+      </section>
+    )
+  }
+
+  const isReviewing = experience.viewedStage !== experience.furthestUnlockedStage
+  const remainingOpenings = dynasty.recruiting?.phase === 'late'
+    ? deriveRecruitingHubTotals(
+        deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId),
+      ).remainingTotal
+    : 0
+
+  return (
+    <div className="offseason-experience" style={accentStyle}>
+      <header className="season-header offseason-header">
+        <div className="season-header__identity">
+          <span className="season-header__dot" style={{ background: controlledProgram.branding.primaryColor }} aria-hidden="true" />
           <div>
             <p className="eyebrow-tag">Offseason</p>
             <h1 className="season-header__name">{controlledProgram.name}</h1>
-            <p className="season-header__meta">
-              Season {offseason.completedSeasonNumber} → Season {offseason.targetSeasonNumber}
-            </p>
+            <p className="season-header__meta">Season {experience.completedSeasonNumber} → Season {experience.targetSeasonNumber}</p>
           </div>
         </div>
-        <div className="offseason-header__outcomes">
-          <div className="stat-trio offseason-header__roster-stat">
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">{formatAverage(outlookOverall)}</span>
-              <span className="stat-trio__label">ROSTER AVG OVR</span>
-            </div>
-          </div>
+        <div className="offseason-exploration" aria-label="Offseason exploration">
+          {dynasty.activeSeason && <button type="button" className="button button--ghost" onClick={goToLeague}>View League</button>}
+          <button type="button" className="button button--ghost" onClick={openHistory}>History</button>
+          {dynasty.offseason && <button type="button" className="button button--ghost" onClick={() => openArchivedSeason(experience.completedSeasonNumber)}>Completed Tournament</button>}
         </div>
-      </div>
+      </header>
 
-      {actionError && (
-        <p className="recruiting-action-error" role="alert">
-          {actionError}
-        </p>
+      <OffseasonTimeline stages={experience.stages} onSelectStage={handleTimelineSelect} />
+
+      {actionError && <p className="recruiting-action-error" role="alert">{actionError}</p>}
+      {renderStage()}
+
+      <aside className="offseason-progression" aria-label="Offseason progression">
+        <div>
+          <p className="eyebrow-tag">{isReviewing ? 'Reviewing Completed Stage' : 'Next Step'}</p>
+          {isReviewing && <p className="section-hint">Progress remains at {experience.stages.find(({ id }) => id === experience.furthestUnlockedStage)?.label}.</p>}
+        </div>
+        {experience.progressionAction.kind !== 'none' && (
+          <button type="button" className="button button--primary offseason-progression__action" onClick={handleProgression}>
+            {experience.progressionAction.label}
+          </button>
+        )}
+      </aside>
+      {isFinalizeDialogOpen && (
+        <RecruitingFinalizationDialog
+          remainingOpenings={remainingOpenings}
+          onCancel={() => setIsFinalizeDialogOpen(false)}
+          onConfirm={() => {
+            setIsFinalizeDialogOpen(false)
+            finalizeRecruitingClass()
+          }}
+        />
       )}
-
-      <section className="section" aria-labelledby="departures-heading">
-        <h2 id="departures-heading" className="section-title">
-          Departures
-        </h2>
-        <DeparturesTable programName={controlledProgram.name} departures={departures} />
-      </section>
-
-      <section className="section" aria-labelledby="development-heading">
-        <h2 id="development-heading" className="section-title">
-          Player Development
-        </h2>
-        <DevelopmentTable rows={developmentRows} biggestLeap={biggestLeap} />
-      </section>
-
-      <section className="section" aria-labelledby="incoming-heading">
-        <h2 id="incoming-heading" className="section-title">
-          Incoming Class
-        </h2>
-        <IncomingClassTable programName={controlledProgram.name} rows={incoming} />
-      </section>
-
-      <section className="section" aria-labelledby="next-roster-heading">
-        <div className="section-heading">
-          <h2 id="next-roster-heading" className="section-title">
-            Next Season Roster
-          </h2>
-          <p className="offseason-position-balance">
-            {positionCounts
-              .map(({ position, count }) => `${position} ${count}`)
-              .join('   ')}
-          </p>
-        </div>
-        <NextSeasonRosterTable rows={nextRosterRows} />
-      </section>
-
-      <div className="offseason-footer">
-        <button
-          type="button"
-          className="button button--primary offseason-footer__action"
-          onClick={beginNextSeason}
-        >
-          Begin Season {offseason.targetSeasonNumber}
-        </button>
-      </div>
-    </>
+    </div>
   )
 }

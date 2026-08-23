@@ -21,7 +21,7 @@ export function SeasonCompleteHandoff({ onContinue }: SeasonCompleteHandoffProps
         className="button button--primary season-complete-panel__action"
         onClick={onContinue}
       >
-        Continue to Late Recruiting
+        Begin Offseason
       </button>
     </div>
   )

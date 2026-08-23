@@ -16,6 +16,7 @@ interface RecruitingClassSummaryProps {
   readonly averages: ClassAverages
   readonly positionCounts: readonly PositionCounts[]
   readonly onBeginOffseason: () => void
+  readonly embedded?: boolean
 }
 
 /** The season-long Recruiting payoff: the finalized, archived incoming class. */
@@ -26,10 +27,11 @@ export function RecruitingClassSummary({
   averages,
   positionCounts,
   onBeginOffseason,
+  embedded = false,
 }: RecruitingClassSummaryProps) {
   return (
     <div className="recruiting-class-summary">
-      <div className="season-header recruiting-class-summary__header">
+      {!embedded && <div className="season-header recruiting-class-summary__header">
         <div>
           <p className="eyebrow-tag">Recruiting Class Complete</p>
           <h1 className="season-header__name">{programName}</h1>
@@ -49,7 +51,7 @@ export function RecruitingClassSummary({
             <span className="stat-trio__label">Avg Pot</span>
           </div>
         </div>
-      </div>
+      </div>}
 
       {signees.length === 0 ? (
         <p className="league-empty-state">
@@ -115,11 +117,11 @@ export function RecruitingClassSummary({
         </div>
       </div>
 
-      <div className="recruiting-class-summary__action">
+      {!embedded && <div className="recruiting-class-summary__action">
         <button type="button" className="button button--primary" onClick={onBeginOffseason}>
           Begin Offseason
         </button>
-      </div>
+      </div>}
     </div>
   )
 }

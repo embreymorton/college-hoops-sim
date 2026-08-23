@@ -522,3 +522,20 @@ transfers, coach attribution, new persistence, and simulation changes.
 Player Details now tells a Player's career story without duplicating any canonical facts. Nine current-ability ratings display as a compact three-column grid — deliberately not nine oversized cards — directly below identity/OVR/POT. Career Progression is a dense, prominent table (not a secondary tab) with one row per Season the Player is found on a roster in, current or archived: Season number, class, OVR, offseason development gain (`overall[n] − overall[n-1]`, blank for the earliest known Season), and PPG/RPG/APG. The active partial Season is included as the latest row and stays visibly partial. Recruiting Origin — star rating, national/position rank, entry OVR/POT, and signed Program — appears only for Players resolved from finalized Recruiting history and is omitted entirely, with no placeholder, for original Universe Players.
 
 All of this is a pure read-model (`derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts`) over existing archived Dynasty Season snapshots, the active Season, and finalized Recruiting history, connected by stable Player ID. It reuses the existing Player Season Stats projection for every Season, including archived ones, and introduces no new persisted career-history state. Existing current-season stats, shooting splits, game log, and Team ↔ Player navigation are unchanged.
+
+### Dedicated Offseason Experience — accepted
+
+From the completed-Tournament handoff through rollover, the normal primary
+section strip gives way to an Offseason identity, Season N → N+1 context, safe
+exploration actions, and a six-stage timeline: Late Recruiting, Recruiting
+Class, Departures, Development, Roster Review, and Ready for Season. Future
+stages are visible but locked; completed factual stages are revisitable; the
+persistent primary CTA always follows the furthest unlocked stage rather than
+the reviewed card.
+
+Late Recruiting retains its existing management controls inside the dedicated
+shell and presents unsigned eligible recruits as the Available Market. The
+finalized class, departures, stored Development results, incoming class, and
+exact assembled roster are read-only reviews. At approximately 390px the stage
+rail remains one line with local horizontal scrolling and the document itself
+does not overflow; wide tables keep their existing local containment.

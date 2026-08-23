@@ -13,7 +13,7 @@ export function DynastyProgressionBar({ onContinue }: DynastyProgressionBarProps
         </p>
       </div>
       <button type="button" className="button button--primary" onClick={onContinue}>
-        Continue → Late Recruiting
+        Begin Offseason
       </button>
     </aside>
   )

@@ -1,6 +1,7 @@
 import { selectControlledProgramId, useDynastyStore } from '../store'
 import { DynastyProgressionBar, RecruitingSetupDialog } from '../components'
 import { deriveDynastyProgressionAction } from '../dynasty'
+import { deriveOffseasonExperience } from './offseasonExperience'
 import { CoachingScreen } from './CoachingScreen'
 import { GamePrepScreen } from './GamePrepScreen'
 import { HistoryScreen } from './HistoryScreen'
@@ -25,6 +26,11 @@ export function DynastyApp() {
   const view = useDynastyStore((state) => state.view)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const enterLateRecruiting = useDynastyStore((state) => state.enterLateRecruiting)
+  const offseasonCursor = useDynastyStore((state) => state.offseasonPresentationCursor)
+  const goToOffseason = useDynastyStore((state) => state.goToOffseason)
+  const beginDynastyOffseason = useDynastyStore((state) => state.beginDynastyOffseason)
+  const advanceOffseasonPresentation = useDynastyStore((state) => state.advanceOffseasonPresentation)
+  const beginNextSeason = useDynastyStore((state) => state.beginNextSeason)
   const pendingRecruitingSetupIntent = useDynastyStore(
     (state) => state.pendingRecruitingSetupIntent,
   )
@@ -48,6 +54,21 @@ export function DynastyApp() {
   const progressionBar = progression.kind === 'enter-late-recruiting'
     ? <DynastyProgressionBar onContinue={enterLateRecruiting} />
     : null
+  const offseasonExperience = dynasty
+    ? deriveOffseasonExperience(dynasty, offseasonCursor)
+    : null
+  const runOffseasonProgression = () => {
+    const action = offseasonExperience?.progressionAction
+    if (!action) return
+    // Finalization owns a confirmation dialog inside the dedicated shell.
+    if (action.kind === 'finalize-recruiting-class') {
+      goToOffseason()
+      return
+    }
+    if (action.kind === 'begin-dynasty-offseason') beginDynastyOffseason()
+    if (action.kind === 'advance-presentation') advanceOffseasonPresentation(action.target)
+    if (action.kind === 'begin-next-season') beginNextSeason()
+  }
 
   let screen
   switch (view) {
@@ -113,6 +134,18 @@ export function DynastyApp() {
         view !== 'coaching' &&
         view !== 'recruiting' &&
         view !== 'league' && progressionBar}
+      {offseasonExperience && view !== 'offseason' && view !== 'recruiting' && view !== 'recruitDetails' && (
+        <aside className="offseason-return-bar" aria-label="Offseason progression">
+          <button type="button" className="button button--ghost" onClick={goToOffseason}>
+            Return to Offseason
+          </button>
+          {offseasonExperience.progressionAction.kind !== 'none' && (
+            <button type="button" className="button button--primary" onClick={runOffseasonProgression}>
+              {offseasonExperience.progressionAction.label}
+            </button>
+          )}
+        </aside>
+      )}
       {screen}
       {pendingRecruitingSetupIntent && (
         <RecruitingSetupDialog

@@ -26,7 +26,9 @@ Season Yearbooks, Program Legacy on Team Details, Followed Former Players, Histo
 regular-season career aggregation, and Career Progression. Intentionally
 deferred systems include persistence/save-load, broader historical Team/game
 details, postseason or combined career aggregation, awards, transfers,
-injuries, staff, rankings, and deeper offseason decisions.
+injuries, staff, rankings, and deeper offseason decisions. The existing
+cross-season lifecycle is presented through a dedicated six-stage Offseason
+experience from Late Recruiting through the next-Season handoff.
 
 ## Commands
 

@@ -216,6 +216,18 @@ export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following' | 'history'
 export type HistoryTab = 'yearbooks' | 'records' | 'recruiting'
 export type RecruitingHistoryFilter = 'all' | 'controlled'
 export type RecruitingMode = 'board' | 'battles' | 'national' | 'following' | 'guide'
+export type OffseasonTurnoverStage =
+  | 'departures'
+  | 'development'
+  | 'roster-review'
+  | 'ready-for-season'
+export type OffseasonReviewStage = 'recruiting-class' | OffseasonTurnoverStage
+
+export interface OffseasonPresentationCursor {
+  readonly offseasonKey: string
+  readonly furthestStage: OffseasonTurnoverStage
+  readonly viewedStage: OffseasonReviewStage
+}
 
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
@@ -235,6 +247,8 @@ export interface DynastySessionState {
    */
   readonly draftRotation: RotationV1 | null
   readonly view: SeasonSessionView
+  /** Transient reveal/review intent; never canonical lifecycle state. */
+  readonly offseasonPresentationCursor: OffseasonPresentationCursor | null
   /** The controlled Program's most recently completed ScheduledGame, for inline Hub feedback or postgame. */
   readonly lastPlayedGameId: string | null
   /** The completed ScheduledGame currently open for historical review, if any. */
@@ -454,6 +468,12 @@ export interface DynastySessionState {
   cancelRecruitingSetup(): void
   /** Opens the user-reviewable Late Recruiting phase after the championship boundary. */
   enterLateRecruiting(): void
+  /** Opens the dedicated Offseason shell without changing canonical facts. */
+  goToOffseason(): void
+  /** Reviews an already-unlocked turnover stage without regressing progression. */
+  viewOffseasonStage(stage: OffseasonReviewStage): void
+  /** Unlocks the next presentation-only turnover stage. */
+  advanceOffseasonPresentation(stage: OffseasonTurnoverStage): void
   /** Resolves and archives the active Late Recruiting class without starting Offseason. */
   finalizeRecruitingClass(): void
   /** Archives the completed year and prepares Offseason without rolling over. */
@@ -731,6 +751,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   controlledProgramDefaultRotation: null,
   draftRotation: null,
   view: 'programSelect',
+  offseasonPresentationCursor: null,
   lastPlayedGameId: null,
   viewedGameId: null,
   pendingSuperSim: null,
@@ -798,6 +819,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       controlledProgramDefaultRotation: initializedProgram.rotation,
       draftRotation: initializedProgram.rotation,
       view: 'hub',
+      offseasonPresentationCursor: null,
       lastPlayedGameId: null,
       viewedGameId: null,
       pendingSuperSim: null,
@@ -1823,7 +1845,67 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     })
   },
 
+  goToOffseason() {
+    const { dynasty } = get()
+    if (
+      !dynasty ||
+      (!dynasty.offseason &&
+        dynasty.recruiting?.phase !== 'late' &&
+        dynasty.recruiting?.phase !== 'finalized')
+    ) return
+    set({ view: 'offseason' })
+  },
+
+  viewOffseasonStage(viewedStage) {
+    const { dynasty, offseasonPresentationCursor } = get()
+    const offseason = dynasty?.offseason
+    if (!offseason) return
+    const offseasonKey = `${offseason.completedSeasonNumber}:${offseason.targetSeasonNumber}`
+    const order: readonly OffseasonReviewStage[] = [
+      'recruiting-class', 'departures', 'development', 'roster-review', 'ready-for-season',
+    ]
+    const cursor = offseasonPresentationCursor?.offseasonKey === offseasonKey
+      ? offseasonPresentationCursor
+      : { offseasonKey, furthestStage: 'departures' as const, viewedStage: 'departures' as const }
+    if (order.indexOf(viewedStage) > order.indexOf(cursor.furthestStage)) return
+    set({
+      offseasonPresentationCursor: { ...cursor, viewedStage },
+      view: 'offseason',
+    })
+  },
+
+  advanceOffseasonPresentation(furthestStage) {
+    const { dynasty, offseasonPresentationCursor } = get()
+    const offseason = dynasty?.offseason
+    if (!offseason) return
+    const offseasonKey = `${offseason.completedSeasonNumber}:${offseason.targetSeasonNumber}`
+    const order: readonly OffseasonTurnoverStage[] = [
+      'departures', 'development', 'roster-review', 'ready-for-season',
+    ]
+    const cursor = offseasonPresentationCursor?.offseasonKey === offseasonKey
+      ? offseasonPresentationCursor
+      : { offseasonKey, furthestStage: 'departures' as const, viewedStage: 'departures' as const }
+    const currentIndex = order.indexOf(cursor.furthestStage)
+    const targetIndex = order.indexOf(furthestStage)
+    if (targetIndex !== currentIndex + 1) return
+    set({
+      offseasonPresentationCursor: {
+        offseasonKey,
+        furthestStage,
+        viewedStage: furthestStage,
+      },
+      view: 'offseason',
+    })
+  },
+
   goToRecruiting() {
+    if (
+      get().dynasty?.recruiting?.phase === 'late' ||
+      get().dynasty?.recruiting?.phase === 'finalized'
+    ) {
+      set({ view: 'offseason', selectedRecruitPlayerId: null })
+      return
+    }
     set({
       view: 'recruiting',
       recruitingMode: 'board',
@@ -1840,7 +1922,13 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   returnToRecruiting() {
-    set({ view: 'recruiting', selectedRecruitPlayerId: null })
+    const isOffseasonRecruiting =
+      get().dynasty?.recruiting?.phase === 'late' ||
+      get().dynasty?.recruiting?.phase === 'finalized'
+    set({
+      view: isOffseasonRecruiting ? 'offseason' : 'recruiting',
+      selectedRecruitPlayerId: null,
+    })
   },
 
   addRecruitingTarget(playerId) {
@@ -2014,7 +2102,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextDynasty = prepareLateRecruiting(synchronized)
       set({
         dynasty: nextDynasty,
-        view: 'recruiting',
+        view: 'offseason',
+        offseasonPresentationCursor: null,
         recruitingActionError: null,
       })
     } catch (error) {
@@ -2039,7 +2128,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextDynasty = autoFinalizeRecruiting(dynasty).dynasty
       set({
         dynasty: nextDynasty,
-        view: 'recruiting',
+        view: 'offseason',
         recruitingActionError: null,
       })
     } catch (error) {
@@ -2062,9 +2151,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     try {
       const nextDynasty = beginOffseason(dynasty)
+      const offseason = nextDynasty.offseason!
       set({
         dynasty: nextDynasty,
         view: 'offseason',
+        offseasonPresentationCursor: {
+          offseasonKey: `${offseason.completedSeasonNumber}:${offseason.targetSeasonNumber}`,
+          furthestStage: 'departures',
+          viewedStage: 'departures',
+        },
         recruitingActionError: null,
       })
     } catch (error) {
@@ -2097,6 +2192,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         controlledProgramDefaultRotation: controlledRotation,
         draftRotation: controlledRotation,
         view: 'hub',
+        offseasonPresentationCursor: null,
         lastPlayedGameId: null,
         viewedGameId: null,
         pendingSuperSim: null,

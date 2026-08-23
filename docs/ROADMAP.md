@@ -15,15 +15,11 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### OPEN PLANNING CHECKPOINT
 
-**Phase 8A — Dynamic Program Prestige V1 — REJECTED / ROLLED BACK / DEFERRED.**
-Production uses static Prestige. The subsequent hierarchy/compression
-investigation is decision-complete: mature compression is an accepted/deferred
-limitation for the current scope, and no additional targeted work is
-recommended. Historical evidence lives in the conditional-read
-[Dynasty Hierarchy Research archive](DYNASTY_HIERARCHY_RESEARCH.md). No
-successor milestone has been selected.
+No successor is selected. Dedicated Offseason Experience V1 is complete; new
+work requires an explicit selection rather than inheriting priority from the
+remaining planned or unscheduled ideas below.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -60,6 +56,17 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Dedicated Offseason Experience V1 — COMPLETE / ACCEPTED
+
+- Replaced the fragmented Tournament-to-next-Season handoff with a dedicated
+  guided-but-explorable Offseason shell and locally scrolling six-stage timeline.
+- Added a pure presentation projection and transient review cursor over existing
+  Late Recruiting, finalized class, archive, Development, roster-assembly, and
+  rollover facts; no canonical lifecycle or simulation mechanics changed.
+- Preserved safe exploration, confirmation boundaries, completed-stage review,
+  exact roster assembly, deterministic progression, and narrow-screen overflow
+  containment, then returned the Roadmap to an Open Planning Checkpoint.
 
 ### Next Season Position Outlook V1 — COMPLETE / ACCEPTED
 

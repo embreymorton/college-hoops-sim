@@ -37,7 +37,13 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 )
 
 /** Recruiting: board management and the National Class, reachable through both lifecycle stages. */
-export function RecruitingScreen({ progressionBar }: { readonly progressionBar?: ReactNode }) {
+export function RecruitingScreen({
+  progressionBar,
+  embeddedOffseason = false,
+}: {
+  readonly progressionBar?: ReactNode
+  readonly embeddedOffseason?: boolean
+}) {
   const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false)
   const [boardFillMessage, setBoardFillMessage] = useState<string | null>(null)
   const dynasty = useDynastyStore((state) => state.dynasty)
@@ -96,14 +102,14 @@ export function RecruitingScreen({ progressionBar }: { readonly progressionBar?:
 
     return (
       <div className="recruiting-screen">
-        <DynastySectionNav
+        {!embeddedOffseason && <DynastySectionNav
           competitionLabel={postseason ? 'Tournament' : 'Season'}
           activeSection="recruiting"
           onSelectCompetition={postseason ? goToPostseasonHub : goToHub}
           onSelectCoaching={goToCoaching}
           onSelectRecruiting={goToRecruiting}
           onSelectLeague={goToLeague}
-        />
+        />}
         {progressionBar}
         <RecruitingClassSummary
           programName={controlledProgram.name}
@@ -136,14 +142,14 @@ export function RecruitingScreen({ progressionBar }: { readonly progressionBar?:
 
   return (
     <div className="recruiting-screen">
-      <DynastySectionNav
+      {!embeddedOffseason && <DynastySectionNav
         competitionLabel={postseason ? 'Tournament' : 'Season'}
         activeSection="recruiting"
         onSelectCompetition={postseason ? goToPostseasonHub : goToHub}
         onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
-      />
+      />}
       {progressionBar}
 
       <RecruitingHeader
@@ -166,8 +172,8 @@ export function RecruitingScreen({ progressionBar }: { readonly progressionBar?:
           </p>
           {hasRemainingOpenings ? (
             <p className="section-hint">
-              This is the last recruiting window before the offseason. Remaining
-              openings will be resolved automatically once you finalize the class.
+              Finish filling the incoming class from the remaining offseason market.
+              Remaining openings will be resolved automatically once you finalize the class.
             </p>
           ) : (
             <>
@@ -177,13 +183,13 @@ export function RecruitingScreen({ progressionBar }: { readonly progressionBar?:
               <p className="section-hint">All projected roster openings are filled.</p>
             </>
           )}
-          <button
+          {!embeddedOffseason && <button
             type="button"
             className="button button--primary late-recruiting-banner__action"
             onClick={() => setIsFinalizeDialogOpen(true)}
           >
             Finalize Recruiting Class
-          </button>
+          </button>}
         </section>
       )}
 
@@ -198,8 +204,15 @@ export function RecruitingScreen({ progressionBar }: { readonly progressionBar?:
 
       <section className="section" aria-labelledby="recruiting-mode-heading">
         <div className="section-heading">
-          <h2 id="recruiting-mode-heading" className="visually-hidden">
-            Recruiting mode
+          <h2
+            id="recruiting-mode-heading"
+            className={isLate && (mode === 'board' || mode === 'national') ? 'section-title' : 'visually-hidden'}
+          >
+            {isLate && mode === 'board'
+              ? 'My Board'
+              : isLate && mode === 'national'
+                ? 'Available Market'
+                : 'Recruiting mode'}
           </h2>
           <RecruitingModeTabs mode={mode} onSelectMode={setMode} />
         </div>
@@ -267,6 +280,7 @@ export function RecruitingScreen({ progressionBar }: { readonly progressionBar?:
             programsById={PROGRAMS_BY_ID}
             onAddToBoard={addRecruitingTarget}
             onOpenRecruitDetails={openRecruitDetails}
+            availableMarketOnly={isLate}
           />
         ) : mode === 'following' ? (
           <FollowingRecruitsSection

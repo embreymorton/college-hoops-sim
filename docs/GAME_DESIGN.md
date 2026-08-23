@@ -206,6 +206,12 @@ This is factual storytelling from stored simulated production, not a separate au
 
 ## Accepted Dynasty Foundation and Player Development V1
 
+The accepted Dedicated Offseason Experience presents this unchanged lifecycle
+as a guided six-stage journey. Departures and Development still execute
+atomically at `beginOffseason()`; their separate stages are factual presentation
+reveals, not separate turns or decisions. Reviewing a completed stage never
+replays a mechanic or changes the next legal progression action.
+
 Phase 5A establishes the first implemented cross-season gameplay boundary:
 
 ```text

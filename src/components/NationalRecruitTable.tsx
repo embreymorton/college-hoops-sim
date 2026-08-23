@@ -28,6 +28,7 @@ interface NationalRecruitTableProps {
   readonly programsById: ReadonlyMap<string, ProgramDefinition>
   readonly onAddToBoard: (playerId: string) => void
   readonly onOpenRecruitDetails: (playerId: string) => void
+  readonly availableMarketOnly?: boolean
 }
 
 /** The full national Recruit pool, filterable by position/need, in National Rank order. */
@@ -37,6 +38,7 @@ export function NationalRecruitTable({
   programsById,
   onAddToBoard,
   onOpenRecruitDetails,
+  availableMarketOnly = false,
 }: NationalRecruitTableProps) {
   const [filter, setFilter] = useState<ClassFilter>('all')
   const recruiting = dynasty.recruiting!
@@ -47,6 +49,11 @@ export function NationalRecruitTable({
     (first, second) => first.nationalRank - second.nationalRank,
   )
   const filtered = sorted.filter((recruit) => {
+    if (
+      availableMarketOnly &&
+      (deriveTargetStatus(recruiting, controlledProgramId, recruit.player.id) !== 'active' ||
+        board.targets.some(({ playerId }) => playerId === recruit.player.id))
+    ) return false
     if (filter === 'all') return true
     if (filter === 'needs') {
       return board.remainingOpeningsByPosition[recruit.player.position] > 0
@@ -87,7 +94,11 @@ export function NationalRecruitTable({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="league-empty-state">No Recruits match this filter.</p>
+        <p className="league-empty-state">
+          {availableMarketOnly
+            ? 'No additional available Recruits match this filter.'
+            : 'No Recruits match this filter.'}
+        </p>
       ) : (
         <div className="table-scroll">
           <table className="data-table national-recruit-table__table">
