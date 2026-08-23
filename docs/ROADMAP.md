@@ -17,10 +17,10 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Recruit Talent Profile V2 is complete, accepted, and frozen. No successor was
-selected at closure. Awards & Honors and Rare Development Breakouts remain
-PLANNED, while other unscheduled ideas remain in `FUTURE_FEATURES.md`; none is
-NEXT by order, proximity, or interest.
+S0 Current Ability / Career-Stage Generation is complete, accepted, and frozen.
+No successor was selected at closure. S0 POT / Career-Profile Continuity is an
+unresolved unscheduled design question; Awards & Honors and Rare Development
+Breakouts remain PLANNED. None is NEXT by order, proximity, or interest.
 
 ### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -79,6 +79,18 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### S0 Current Ability / Career-Stage Generation — COMPLETE / ACCEPTED / FROZEN
+
+- Replaced independent S0 class-to-roster-strength assignment with the accepted
+  deterministic noisy career-stage priority while preserving every Program's
+  existing talent opportunities and class counts.
+- Established overlapping `FR < SO < JR/SR` population semantics without hard
+  class OVR caps, preserving elite young Players and 99 OVR possibility for
+  every class.
+- Validated zero Team OVR movement across 32,000 paired Programs and returned
+  the Roadmap to an Open Planning Checkpoint. S0 POT remains a separate
+  unresolved question.
 
 ### Recruit Talent Profile V2 — COMPLETE / ACCEPTED / FROZEN
 

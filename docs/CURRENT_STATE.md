@@ -104,6 +104,8 @@ refactor these systems during unrelated feature work:
 - Recruit Talent Profile V2's loose readiness-conditioned raw-ceiling model,
   with unchanged readiness/current-ability generation and Candidate B POT
   finalization;
+- S0 Current Ability / Career-Stage Generation's budget-preserving noisy
+  class-to-talent-opportunity assignment, with no class-specific OVR caps;
 - Recruiting Board Organization & Cleanup V1, including required Board-entry
   provenance, manual/assistant grouping, authoritative unavailable cleanup,
   preserved relationship history, and no automatic refill;
@@ -139,10 +141,12 @@ refactor these systems during unrelated feature work:
 Recruit Talent Profile V2 is implemented, accepted, and frozen production
 behavior. It supersedes V1's independent raw-ceiling roll with the loose
 readiness-conditioned distribution documented in [SIMULATION.md](SIMULATION.md).
-Readiness/current-ability generation, Candidate B, Development, positional
-attribute generation and supply, ranking and stars, Recruiting mechanics,
-Season 0 generation, and downstream Dynasty systems remain unchanged. No
-Recruit Talent Profile calibration remains open.
+Recruit readiness/current-ability generation, Candidate B, Development,
+positional attribute generation and supply, ranking and stars, Recruiting
+mechanics, and downstream Dynasty systems remain unchanged. S0 current ability
+now uses the separate accepted career-stage assignment documented in
+[SIMULATION.md](SIMULATION.md). No Recruit Talent Profile calibration remains
+open.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -168,11 +172,11 @@ does not itself authorize implementation:
 
 **No NEXT selected — Open Planning Checkpoint.**
 
-Recruit Talent Profile V2 has completed design, calibration, production
-activation, lifecycle validation, and user acceptance. Fresh sessions therefore
-resolve to **Path B**: verify this checkpoint, review current evidence and
-candidate surfaces neutrally, and do not infer a successor from Roadmap order
-or Future Features.
+S0 Current Ability / Career-Stage Generation has completed design, production
+activation, validation, and user acceptance. Fresh sessions therefore resolve
+to **Path B**: verify this checkpoint, review current evidence and candidate
+surfaces neutrally, and do not infer a successor from Roadmap order or Future
+Features.
 
 Recruiting Board Organization & Cleanup V1 is **COMPLETE / ACCEPTED / FROZEN**.
 Canonical Board membership records whether it was created manually or by
@@ -225,11 +229,19 @@ uncertainty remain future-only.
 `7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
 work remains parked unless new evidence deliberately reopens it.
 
-S0 Player Talent Profile Continuity is an **unscheduled evidence question, not
-NEXT**. It may later investigate whether the legacy class-year S0 POT headroom
-model creates a visible discontinuity relative to Recruit V2 and subsequent
-Development. This does not reopen Recruit V2, and Season 0 generation remains
-unchanged.
+S0 Current Ability / Career-Stage Generation is **COMPLETE / ACCEPTED /
+FROZEN**. It preserves each Program's exact talent opportunities while class
+year probabilistically shifts their ownership; live activation produced
+heavily overlapping `68.83/69.95/71.19/71.62` FR/SO/JR/SR mean OVR and zero
+Team OVR movement across 32,000 paired Programs. Elite young Players and the
+full 40–99 OVR range remain possible for every class.
+
+S0 POT / Career-Profile Continuity remains an **unresolved, unscheduled design
+question, not NEXT**. S0 still uses direct class-year headroom (`+6..15`,
+`+4..11`, `+1..7`, `+0..3`) capped at 99. That legacy ceiling model remains
+structurally tighter than Recruit V2 and must be addressed, if selected, as a
+separate focused design without reopening current ability, Recruit V2, or
+Development.
 
 Rare Development Breakouts / Explosive Offseasons is also **PLANNED, not
 NEXT**. It is a separate future question about extremely rare transformational

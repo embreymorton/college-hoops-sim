@@ -520,6 +520,43 @@ application integration alone do not justify recalibration.
 
 The full-snapshot `DynastyState` remained serializable but measured `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. This approximately linear storage growth is tracked separately as an architecture/scaling watchpoint in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`; it does not change the stable talent-economy conclusion.
 
+## Accepted S0 Current Ability / Career-Stage Generation
+
+S0 preserves the existing Prestige-derived Program talent budget, ordered
+roster-slot opportunities, positions, attributes, roster size, and class-token
+counts. Instead of assigning shuffled class tokens independently of strength,
+production gives each token a deterministic noisy priority and maps descending
+priority onto the existing ordered opportunities:
+
+```text
+FR = -0.90
+SO = -0.30
+JR = +0.35
+SR = +0.55
+
+priority = class location + logistic noise × 1.25
+```
+
+The RNG namespace is
+`college-hoops-sim:s0-career-stage-priority:candidate-a:v1`, keyed by typed
+Universe/Dynasty seed, Program ID, class token index, and class year. It is
+independent of the roster-generation RNG. Career stage shifts probability
+rather than setting rank: distributions overlap heavily, weak upperclassmen
+and elite young Players remain possible, and no class-specific OVR cap exists.
+Every class retains mechanical access to the full 40–99 range.
+
+The accepted 1,000-Universe activation produced FR/SO/JR/SR mean OVR of
+`68.83/69.95/71.19/71.62`, median `69/70/71/72`, and P99 `87/88/89/90`.
+Across 32,000 paired Programs, Team OVR mean/median/SD, extrema, roster-depth
+measures, Prestige correlation, and rank order were exact; paired Team OVR MAE
+and maximum movement were both zero. This is the governing invariant: the
+model changes probabilistic class ownership, not the amount of Program talent.
+
+S0 Potential remains temporarily governed by the legacy direct headroom model,
+capped at 99: FR `OVR + 6..15`, SO `+4..11`, JR `+1..7`, and SR `+0..3`.
+That ceiling model is not part of the accepted current-ability milestone and
+remains unresolved pending a separately selected focused design.
+
 ## Accepted Recruit Talent Profile V2 + Calibrated POT Finalization
 
 This section supersedes the earlier Recruit-generation and long-run
@@ -568,13 +605,13 @@ Final POT is capped at 99. The independent
 and stable Recruit ID, so it consumes no readiness, raw-ceiling, Player, or
 subsequent generation RNG. `POT ≥ OVR` and `POT ≤ 99` remain invariant.
 
-National Rank remains meaningful but is not an OVR ladder: its deterministic quality score is `56% derived OVR + 44% Potential`, before stable OVR, Potential, and Player-ID tie-breakers. Stars continue to derive from National Rank percentiles. Position-aware attributes, height, identity, position-based OVR calculation, legal Player bounds, and typed seeded namespaces remain unchanged. Season 0 roster generation is intentionally separate and unchanged.
+National Rank remains meaningful but is not an OVR ladder: its deterministic quality score is `56% derived OVR + 44% Potential`, before stable OVR, Potential, and Player-ID tie-breakers. Stars continue to derive from National Rank percentiles. Position-aware attributes, height, identity, position-based OVR calculation, legal Player bounds, and typed seeded namespaces remain unchanged. Season 0 roster generation remains intentionally separate; its current-ability career-stage assignment is documented above.
 
 V2 changed only the raw-ceiling distribution. It did not change Recruit
 readiness bands or probabilities, `generatePlayer()`, positional attributes or
 supply, Overall, class size, Candidate B, ranking or star rules, Recruiting AI
 and decisions, roster assembly, Development, Rotation, Team Strength, game or
-Tournament simulation, Season 0 generation, static Prestige, offseason
+Tournament simulation, S0 talent opportunities, static Prestige, offseason
 progression, or Dynasty rollover.
 
 For historical context, across 50 deterministic Recruiting classes of the

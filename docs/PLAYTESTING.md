@@ -195,19 +195,56 @@ the strongest Programs moved only modestly, and competition outputs remained
 coherent. The stronger junior/senior elite population is accepted as benign and
 desirable at league scale, not a reason for more Recruit calibration.
 
-Readiness/current ability, Candidate B, ranking/stars, Recruiting and roster
-systems, Development, Season 0 generation, and all downstream competition
-systems remain frozen and unchanged. No Recruit Talent Profile calibration is
-open.
+Recruit readiness/current ability, Candidate B, ranking/stars, Recruiting,
+Development, and downstream competition systems remain frozen and unchanged.
+No Recruit Talent Profile calibration is open.
 
-### S0 Player Talent Profile Continuity — UNSCHEDULED EVIDENCE QUESTION
+### S0 Current Ability / Career-Stage Generation — RESOLVED / ACCEPTED / FROZEN
 
-Season 0 still creates POT through direct class-year OVR headroom, so an elite
-S0 freshman can imply 99 POT more mechanically than an equivalent Recruit V2
-entrant. A future focused investigation may compare S0 classes with Recruit V2
-Players after zero through three Development cycles. This is not evidence that
-Recruit V2 is incomplete, not a confirmed defect, and not NEXT; S0 generation
-remains unchanged.
+The focused continuity audit found that legacy S0 class year was effectively
+independent of roster talent: FR/SO/JR/SR mean OVR all sat near `70.4`, S0
+freshmen produced 90+/93+ current ability materially more often than Recruit V2
+entrants, and older classes did not represent accumulated career development.
+The accepted solution retained each Program's fixed talent-slot budget and
+class counts, then assigned class ownership through deterministic priority:
+
+```text
+FR -0.90 | SO -0.30 | JR +0.35 | SR +0.55
+priority = class location + logistic noise × 1.25
+```
+
+Production uses the versioned
+`college-hoops-sim:s0-career-stage-priority:candidate-a:v1` namespace keyed by
+typed Universe seed, Program ID, class token index, and class year. Wide noise
+keeps every class eligible for every roster opportunity; there are no class OVR
+caps, and 99 OVR remains mechanically possible for FR/SO/JR/SR.
+
+The live audit covered 1,000 Universes, 32,000 paired Programs, and 384,000 S0
+Players. FR/SO/JR/SR mean OVR became `68.83/69.95/71.19/71.62`, with medians
+`69/70/71/72` and P99 `87/88/89/90`. Freshman universe incidence was `29.7%`
+at 90+, `8.7%` at 93+, `3.1%` at 95+, `0.4%` at 97+, and `0.1%` at 98+;
+freshmen were the national best Player in `11.9%` of Universes. Sophomores
+retained `20.92%/21.12%/21.42%` of Top 5/10/25 places and `20.60%` of national
+best-Player outcomes.
+
+National Top-10 class share was `13.49%/21.12%/30.81%/34.58%` for
+FR/SO/JR/SR: accepted older-player advantage without age monopoly. Two 99 OVR
+Players appeared, one SO and one SR; absent FR/JR 99s in a finite sample do not
+change their structural possibility.
+
+Program strength was exact before and after assignment. Mean/median/SD Team
+OVR remained `70.397/70.417/5.989`; paired MAE and maximum movement were zero,
+rank correlation was `1.000`, Prestige↔Team OVR remained `0.9318`, and all
+32,000 Programs retained identical Team OVR. Best/Top-3/Top-5/all-12 depth
+remained `80.10/77.10/75.30/70.40`. The milestone changed who owns talent by
+class, not how much talent a Program receives.
+
+S0 POT remains deliberately unresolved and separate. Direct class-year
+headroom still overlinks OVR and POT, suppresses polished low-headroom freshmen
+and low-OVR/high-POT projects, and forces seniors near their ceiling. If
+selected, S0 POT / Career-Profile Continuity begins with focused design; it is
+not NEXT and does not reopen this accepted current-ability model, Recruit V2,
+or Development.
 
 ### Concentrated single-attribute Development gains
 

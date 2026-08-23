@@ -12,6 +12,8 @@ import {
   type Team,
 } from '../domain'
 import type { Rng } from '../random'
+import type { CareerStageAssignmentContext } from './careerStageAssignment'
+import { assignS0CareerStageClassYears } from './careerStageAssignment'
 import { generatePlayer } from './playerGenerator'
 
 export interface GenerateTeamOptions {
@@ -19,6 +21,8 @@ export interface GenerateTeamOptions {
   abbreviation: string
   prestige: number
   rng: Rng
+  /** Canonical S0 initialization context; omitted by context-free generation callers. */
+  careerStageContext?: CareerStageAssignmentContext
 }
 
 const ROSTER_TALENT_CONFIG = {
@@ -147,9 +151,12 @@ function assertTeamOptions({
 export function generateTeam(options: GenerateTeamOptions): Team {
   assertTeamOptions(options)
 
-  const { name, abbreviation, prestige, rng } = options
+  const { name, abbreviation, prestige, rng, careerStageContext } = options
   const positions = generatePositions(rng)
-  const classYears = generateClassYears(rng)
+  const generatedClassYears = generateClassYears(rng)
+  const classYears = careerStageContext
+    ? assignS0CareerStageClassYears(generatedClassYears, careerStageContext)
+    : generatedClassYears
   const talentLevels = generateTalentLevels(prestige, rng)
   const playerIds = new Set<string>()
   const roster = Array.from({ length: TEAM_ROSTER_SIZE }, (_, index) =>
@@ -170,4 +177,3 @@ export function generateTeam(options: GenerateTeamOptions): Team {
     roster,
   }
 }
-

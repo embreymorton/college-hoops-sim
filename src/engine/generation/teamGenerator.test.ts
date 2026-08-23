@@ -14,6 +14,7 @@ import {
 } from '../domain'
 import { createRng } from '../random'
 import { generateTeam, type GenerateTeamOptions } from './teamGenerator'
+import { mapClassYearsByPriority } from './careerStageAssignment'
 
 const ATTRIBUTE_NAMES = [
   'finishing',
@@ -141,6 +142,34 @@ describe('generateTeam', () => {
     }
 
     expect(classPatterns.size).toBeGreaterThan(5)
+  })
+
+  it('maps career-stage priorities without changing talent opportunities or class counts', () => {
+    const options = {
+      name: 'Career Stage State', abbreviation: 'CSS', prestige: 70,
+    } as const
+    const legacy = generateTeam({ ...options, rng: createRng('career-stage-opportunities') })
+    const staged = generateTeam({
+      ...options,
+      rng: createRng('career-stage-opportunities'),
+      careerStageContext: { universeSeed: 'career-stage-universe', programId: 'career-stage-state' },
+    })
+    expect(staged.roster.map(({ id, position, attributes, height }) => ({ id, position, attributes, height })))
+      .toEqual(legacy.roster.map(({ id, position, attributes, height }) => ({ id, position, attributes, height })))
+    expect(staged.roster.map(({ classYear }) => classYear).sort())
+      .toEqual(legacy.roster.map(({ classYear }) => classYear).sort())
+  })
+
+  it('keeps every class structurally eligible for top, middle, and bottom opportunities', () => {
+    const tokens = ['FR', 'SO', 'JR', 'SR'] as const
+    for (let token = 0; token < tokens.length; token += 1) {
+      for (const rank of [0, 2, 3]) {
+        const order = tokens.map((_, index) => index).filter((index) => index !== token)
+        order.splice(rank, 0, token)
+        const priorities = tokens.map((_, index) => tokens.length - order.indexOf(index))
+        expect(mapClassYearsByPriority(tokens, priorities)[rank]).toBe(tokens[token])
+      }
+    }
   })
 
   it('creates unique player IDs within every roster', () => {

@@ -59,6 +59,7 @@ function initializeProgram(
     abbreviation: program.abbreviation,
     prestige: program.basePrestige,
     rng: createRng(deriveProgramSeed(universe, dynastySeed, program.id)),
+    careerStageContext: { universeSeed: dynastySeed, programId: program.id },
   })
   const team: Team = {
     ...generatedTeam,
