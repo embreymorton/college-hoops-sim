@@ -8,9 +8,12 @@ import {
 import {
   deriveNationalPositionDemand,
   deriveRecruitSupplyByPosition,
+  classifyRecruitReadinessTier,
   generateLegacyRecruitingClass,
   generateRecruitingClass,
   generateRecruitingClassWithTalentTrace,
+  recruitCeilingRange,
+  selectRecruitCeilingTier,
 } from './generation'
 import { createRecruitingDynasty } from './testSupport'
 
@@ -25,6 +28,30 @@ function correlation(first: readonly number[], second: readonly number[]): numbe
 }
 
 describe('national recruiting class generation', () => {
+  it('uses the accepted V2 conditional ceiling thresholds and ranges', () => {
+    const boundaries = {
+      'raw/depth': [0.37, 0.876, 0.976, 0.994],
+      developmental: [0.34, 0.864, 0.974, 0.994],
+      good: [0.30, 0.86, 0.97, 0.995],
+      'ready-now': [0.24, 0.815, 0.955, 0.99],
+      exceptional: [0.19, 0.74, 0.93, 0.98],
+    } as const
+    const tiers = ['limited', 'normal', 'high', 'elite', 'exceptional'] as const
+    for (const [readinessTier, thresholds] of Object.entries(boundaries) as [keyof typeof boundaries, readonly number[]][]) {
+      expect(selectRecruitCeilingTier(readinessTier, 0)).toBe('limited')
+      thresholds.forEach((threshold, index) => {
+        expect(selectRecruitCeilingTier(readinessTier, threshold - Number.EPSILON)).toBe(tiers[index])
+        expect(selectRecruitCeilingTier(readinessTier, threshold)).toBe(tiers[index + 1])
+      })
+      expect(selectRecruitCeilingTier(readinessTier, 1 - Number.EPSILON)).toBe('exceptional')
+    }
+    expect(Object.fromEntries(tiers.map((tier) => [tier, recruitCeilingRange(tier)]))).toEqual({
+      limited: [60, 74], normal: [75, 84], high: [85, 94], elite: [95, 96], exceptional: [97, 99],
+    })
+    expect([59, 60, 71, 78, 86].map(classifyRecruitReadinessTier)).toEqual(['raw/depth', 'developmental', 'good', 'ready-now', 'exceptional'])
+    expect(() => selectRecruitCeilingTier('good', 1)).toThrow(RangeError)
+  })
+
   it('is deterministic, seed-sensitive, serializable, and Program-order independent', () => {
     const first = createRecruitingDynasty('class-determinism')
     const repeat = createRecruitingDynasty('class-determinism')

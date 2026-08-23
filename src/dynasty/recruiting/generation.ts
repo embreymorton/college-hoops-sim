@@ -75,6 +75,47 @@ interface RecruitTalentProfile {
   readonly ceiling: number
 }
 
+export type RecruitReadinessTier = 'raw/depth' | 'developmental' | 'good' | 'ready-now' | 'exceptional'
+export type RecruitCeilingTier = 'limited' | 'normal' | 'high' | 'elite' | 'exceptional'
+
+const RECRUIT_CEILING_WEIGHTS: Readonly<Record<RecruitReadinessTier, readonly number[]>> = {
+  'raw/depth': [370, 506, 100, 18, 6],
+  developmental: [340, 524, 110, 20, 6],
+  good: [300, 560, 110, 25, 5],
+  'ready-now': [240, 575, 140, 35, 10],
+  exceptional: [190, 550, 190, 50, 20],
+}
+
+const RECRUIT_CEILING_RANGES: Readonly<Record<RecruitCeilingTier, readonly [number, number]>> = {
+  limited: [60, 74], normal: [75, 84], high: [85, 94], elite: [95, 96], exceptional: [97, 99],
+}
+const RECRUIT_CEILING_TIERS = ['limited', 'normal', 'high', 'elite', 'exceptional'] as const
+
+export function classifyRecruitReadinessTier(readiness: number): RecruitReadinessTier {
+  if (readiness >= 86) return 'exceptional'
+  if (readiness >= 78) return 'ready-now'
+  if (readiness >= 71) return 'good'
+  if (readiness >= 60) return 'developmental'
+  return 'raw/depth'
+}
+
+/** Pure production V2 threshold selection, exported for exact boundary coverage. */
+export function selectRecruitCeilingTier(readinessTier: RecruitReadinessTier, roll: number): RecruitCeilingTier {
+  if (roll < 0 || roll >= 1) throw new RangeError('Recruit ceiling roll must be in [0, 1).')
+  const weights = RECRUIT_CEILING_WEIGHTS[readinessTier]
+  const scaledRoll = roll * 1000
+  let cumulative = 0
+  for (let index = 0; index < RECRUIT_CEILING_TIERS.length; index += 1) {
+    cumulative += weights[index]!
+    if (scaledRoll < cumulative) return RECRUIT_CEILING_TIERS[index]!
+  }
+  return 'exceptional'
+}
+
+export function recruitCeilingRange(tier: RecruitCeilingTier): readonly [number, number] {
+  return RECRUIT_CEILING_RANGES[tier]
+}
+
 /** Read-only intermediate facts exposed for deterministic diagnostic tooling. */
 export interface RecruitTalentTrace extends RecruitPotentialIntervention {
   readonly playerId: string
@@ -91,9 +132,9 @@ export interface RecruitingClassTalentTrace {
 }
 
 /**
- * Readiness and ceiling are deliberately separate, deterministic qualities.
- * The buckets create a broad freshman population without storing an OVR: the
- * Player generator still creates the positional attributes and derives OVR.
+ * V2 keeps accepted readiness generation and makes raw ceiling softly
+ * conditional on the realized readiness tier. Every tier retains all five
+ * ceiling outcomes, so the relationship stays positive but non-deterministic.
  */
 function generateRecruitTalentProfile(
   rng: ReturnType<typeof createRng>,
@@ -109,14 +150,10 @@ function generateRecruitTalentProfile(
           ? rng.int(60, 72) // normal developmental freshman
           : rng.int(47, 61) // raw project / depth prospect
 
-  const ceilingRoll = rng.next()
-  const ceiling = ceilingRoll < 0.025
-    ? rng.int(88, 99) // high-upside prospect, independent of readiness
-    : ceilingRoll < 0.175
-      ? rng.int(80, 90)
-      : ceilingRoll < 0.60
-        ? rng.int(70, 82)
-        : rng.int(60, 74)
+  const readinessTier = classifyRecruitReadinessTier(readiness)
+  const ceilingTier = selectRecruitCeilingTier(readinessTier, rng.next())
+  const [minimum, maximum] = RECRUIT_CEILING_RANGES[ceilingTier]
+  const ceiling = rng.int(minimum, maximum)
 
   return { readiness, ceiling }
 }
