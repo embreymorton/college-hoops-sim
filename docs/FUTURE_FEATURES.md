@@ -58,24 +58,15 @@ intentional uncertainty before treating them as facts.
 
 ## Player and statistical depth
 
-### S0 POT / Career-Profile Continuity — unresolved focused-design candidate
+### Recruit V2 Six-Tier Semantic Alignment — deferred / unscheduled
 
-S0 current ability now has accepted, frozen career-stage semantics. Potential
-remains the separate unresolved boundary: the legacy class-year model creates a
-much tighter OVR↔POT relationship than the accepted Recruit V2 → Development
-ecosystem. If deliberately selected, begin with focused design; no replacement
-formula is chosen, and this item is not NEXT.
-
-Season 0 currently retains its direct class-year headroom model, capped at 99:
-freshmen receive `OVR + 6..15`, sophomores `+4..11`, juniors `+1..7`, and
-seniors `+0..3`. Recruit Talent Profile V2 did not change this behavior.
-
-Later design should allow polished high-OVR/low-headroom freshmen,
-low-OVR/high-ceiling projects, exceptional young stars, and upperclassmen who
-may be either near their ceiling or retain meaningful runway. Illustrative
-profiles such as `95/96 FR`, `93/99 FR`, `72/96 FR`, `84/98 SO`, `87/97 JR`,
-and `88/96 SR` express desired variety, not quotas or a selected formula. POT
-remains absolute and capped at 99; high OVR should not mechanically imply 99.
+S0 now uses accepted six-tier ceiling semantics that distinguish High `85–89`
+from Very High `90–94`. A future focused question may consider whether Recruit
+Talent Profile V2 should formally adopt that finer semantic hierarchy. This is
+not a finding that current Recruit output is unhealthy, does not reopen its
+probabilities or Candidate B, and is not NEXT. Existing Recruit outputs may
+already be classified into the six tiers for diagnostic comparison without
+changing generation behavior.
 
 ### Player Identity / statistical variety — PARKED
 

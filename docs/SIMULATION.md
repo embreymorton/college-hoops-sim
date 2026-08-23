@@ -552,10 +552,60 @@ measures, Prestige correlation, and rank order were exact; paired Team OVR MAE
 and maximum movement were both zero. This is the governing invariant: the
 model changes probabilistic class ownership, not the amount of Program talent.
 
-S0 Potential remains temporarily governed by the legacy direct headroom model,
-capped at 99: FR `OVR + 6..15`, SO `+4..11`, JR `+1..7`, and SR `+0..3`.
-That ceiling model is not part of the accepted current-ability milestone and
-remains unresolved pending a separately selected focused design.
+## Accepted S0 POT / Career-Profile Continuity
+
+Canonical S0 initialization no longer uses the legacy FR `OVR + 6..15`, SO
+`+4..11`, JR `+1..7`, and SR `+0..3` headroom model. After accepted current OVR
+and class assignment are known, production evaluates a direct conditional
+distribution over six career-ceiling tiers:
+
+```text
+Limited       60–74
+Normal        75–84
+High          85–89
+Very High     90–94
+Elite         95–96
+Exceptional   97–99
+```
+
+For stage `0/1/2/3 = FR/SO/JR/SR`, production derives:
+
+```text
+x = (OVR - 70.55545806532193) / 9.092821578756068
+s = (stage - 1.5) / 1.5
+features = [1, x, x² - 1, s, x × s]
+```
+
+Each tier receives one fitted linear score over those features. Tiers containing
+no legal POT at least as large as current OVR are masked, the remaining scores
+are softmax-normalized, and one tier is drawn. Production then removes illegal
+integers from that tier's single shared within-tier distribution, normalizes
+once, and makes one integer draw. Exact coefficients, weights, and the
+versioned RNG namespace are authoritative in
+[`src/engine/generation/s0Potential.ts`](../src/engine/generation/s0Potential.ts).
+
+The draw is seeded by stable Universe, Program, and Player identity inputs. It
+is Player-local and generation-order independent; there are no rerolls, quotas,
+cohort balancing, runtime fitting, class-specific POT caps, or persistent
+archetypes. POT is a fixed career ceiling and always satisfies
+`OVR ≤ POT ≤ 99`. Projects remain possible in every class but decline with age;
+polished profiles become more common; high OVR informs but does not determine
+95/97/99 eligibility. POT99 represents exceptional possible greatness, not
+guaranteed realized greatness.
+
+The accepted 500-Universe activation covered 192,000 Players and exactly
+reproduced the validated diagnostic. FR/SO/JR/SR mean/median POT was
+`79.49/80`, `79.10/79`, `79.05/79`, and `78.71/79`; mean/median headroom was
+`10.69/9`, `9.19/8`, `7.85/6`, and `7.09/5`; and OVR↔POT correlation was
+`0.381/0.477/0.571/0.629`. POT99 occurred for `363/192,000` Players (`0.19%`),
+with carrier OVR spanning `47–98`. S0 remains modestly more developmental than
+the endogenous Recruit V2 lifecycle, especially among upperclassmen; that
+difference is accepted for specialized initialization.
+
+Recruit Talent Profile V2 remains a separate unchanged generator. Its existing
+outputs can be classified using this vocabulary for comparison, but its raw
+ceiling probabilities, Candidate B finalization, ranking, stars, RNG, and
+Recruiting behavior were not converted to this six-tier S0 model.
 
 ## Accepted Recruit Talent Profile V2 + Calibrated POT Finalization
 

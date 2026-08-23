@@ -106,6 +106,8 @@ refactor these systems during unrelated feature work:
   finalization;
 - S0 Current Ability / Career-Stage Generation's budget-preserving noisy
   class-to-talent-opportunity assignment, with no class-specific OVR caps;
+- S0 POT / Career-Profile Continuity's deterministic direct conditional-tier
+  model, shared six-tier ceiling semantics, and fixed legal career ceilings;
 - Recruiting Board Organization & Cleanup V1, including required Board-entry
   provenance, manual/assistant grouping, authoritative unavailable cleanup,
   preserved relationship history, and no automatic refill;
@@ -172,11 +174,12 @@ does not itself authorize implementation:
 
 **No NEXT selected — Open Planning Checkpoint.**
 
-S0 Current Ability / Career-Stage Generation has completed design, production
-activation, validation, and user acceptance. Fresh sessions therefore resolve
-to **Path B**: verify this checkpoint, review current evidence and candidate
-surfaces neutrally, and do not infer a successor from Roadmap order or Future
-Features.
+S0 Player Talent Profile Continuity, covering both Current Ability / Career-
+Stage Generation and POT / Career-Profile Continuity, has completed design,
+production activation, validation, playtesting, and user acceptance. Fresh
+sessions therefore resolve to **Path B**: verify this checkpoint, review current
+evidence and candidate surfaces neutrally, and do not infer a successor from
+Roadmap order or Future Features.
 
 Recruiting Board Organization & Cleanup V1 is **COMPLETE / ACCEPTED / FROZEN**.
 Canonical Board membership records whether it was created manually or by
@@ -229,19 +232,22 @@ uncertainty remain future-only.
 `7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
 work remains parked unless new evidence deliberately reopens it.
 
-S0 Current Ability / Career-Stage Generation is **COMPLETE / ACCEPTED /
-FROZEN**. It preserves each Program's exact talent opportunities while class
-year probabilistically shifts their ownership; live activation produced
+S0 Player Talent Profile Continuity is **COMPLETE / ACCEPTED / FROZEN**.
+Current ability preserves each Program's exact talent opportunities while
+class year probabilistically shifts their ownership; activation produced
 heavily overlapping `68.83/69.95/71.19/71.62` FR/SO/JR/SR mean OVR and zero
 Team OVR movement across 32,000 paired Programs. Elite young Players and the
 full 40–99 OVR range remain possible for every class.
 
-S0 POT / Career-Profile Continuity remains an **unresolved, unscheduled design
-question, not NEXT**. S0 still uses direct class-year headroom (`+6..15`,
-`+4..11`, `+1..7`, `+0..3`) capped at 99. That legacy ceiling model remains
-structurally tighter than Recruit V2 and must be addressed, if selected, as a
-separate focused design without reopening current ability, Recruit V2, or
-Development.
+S0 POT now draws from the accepted direct conditional ceiling-tier model given
+current OVR and career stage, followed by one deterministic legal integer draw.
+Its shared tiers are Limited `60–74`, Normal `75–84`, High `85–89`, Very High
+`90–94`, Elite `95–96`, and Exceptional `97–99`. POT remains a fixed legal
+career ceiling; projects and polished Players exist in every class, POT99 is
+rare opportunity rather than destiny, and the former class-specific headroom
+model is no longer canonical S0 production behavior. Recruit Talent Profile V2
+and Development remain unchanged and frozen. No S0 talent-profile calibration
+remains open.
 
 Rare Development Breakouts / Explosive Offseasons is also **PLANNED, not
 NEXT**. It is a separate future question about extremely rare transformational

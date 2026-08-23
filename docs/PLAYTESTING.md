@@ -239,12 +239,39 @@ rank correlation was `1.000`, Prestige↔Team OVR remained `0.9318`, and all
 remained `80.10/77.10/75.30/70.40`. The milestone changed who owns talent by
 class, not how much talent a Program receives.
 
-S0 POT remains deliberately unresolved and separate. Direct class-year
-headroom still overlinks OVR and POT, suppresses polished low-headroom freshmen
-and low-OVR/high-POT projects, and forces seniors near their ceiling. If
-selected, S0 POT / Career-Profile Continuity begins with focused design; it is
-not NEXT and does not reopen this accepted current-ability model, Recruit V2,
-or Development.
+### S0 POT / Career-Profile Continuity — RESOLVED / ACCEPTED / FROZEN
+
+The legacy class-specific headroom model overlinked OVR and POT, suppressed
+polished freshmen and projects, and forced seniors near their ceiling. The
+endogenous Recruit V2 → unchanged Development reference instead established a
+fixed broadly stable POT marginal, decreasing-but-persistent project tails, and
+an OVR↔POT relationship that strengthens with career stage.
+
+Diagnostic Candidates A through A4 showed that prior × compatibility ×
+correction models could preserve either ceiling supply or healthy carrier
+composition, but did not naturally preserve both without increasingly large
+corrections. The accepted simplification modeled `P(ceiling tier | OVR, stage)`
+directly across Limited `60–74`, Normal `75–84`, High `85–89`, Very High
+`90–94`, Elite `95–96`, and Exceptional `97–99`, then made one shared legal
+integer draw. The High / Very High split produced materially different and
+useful Player populations.
+
+Production activation covered 500 Universes and 192,000 Players and matched the
+validated diagnostic exactly. FR/SO/JR/SR mean POT was
+`79.49/79.10/79.05/78.71`; mean headroom narrowed
+`10.69/9.19/7.85/7.09`; and OVR↔POT correlation strengthened
+`0.381/0.477/0.571/0.629`, far below legacy near-determinism. Junior and senior
+HR13+ remained `23.2%/19.6%`, with HR20+ at `7.4%/5.6%`. This is modestly more
+developmental than the endogenous lifecycle and was accepted as healthy for
+specialized S0 initialization.
+
+POT99 appeared for `363/192,000` Players (`0.19%`, `0.73` per Universe), across
+OVR `47–98`; carrier mean OVR rose from approximately `70` for freshmen to `80`
+for seniors, and no sampled POT99 Player was already 99 OVR. Season Preview
+showed varied leading-freshman stories rather than automatic POT99 pairings.
+Production was user-playtested and accepted. Recruit V2, Development, S0
+current ability, Program talent budgets, and all downstream systems remained
+unchanged; no S0 talent-profile calibration remains open.
 
 ### Concentrated single-attribute Development gains
 
