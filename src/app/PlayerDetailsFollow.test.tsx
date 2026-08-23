@@ -112,9 +112,6 @@ describe('Player Details — Follow control', () => {
     render(<App />)
 
     expect(
-      screen.getByRole('heading', { name: 'Career Progression' }),
-    ).toBeInTheDocument()
-    expect(
       screen.getByRole('heading', { name: 'Ratings' }),
     ).toBeInTheDocument()
     expect(

@@ -239,6 +239,18 @@
    Team Details
    ========================================================================== */
 
+.details-tabs {
+  width: fit-content;
+  max-width: 100%;
+}
+
+.details-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
 .program-legacy {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.8fr);
@@ -333,6 +345,69 @@
 .program-legacy__season span.program-legacy__champion {
   font-weight: 700;
   color: var(--accent, var(--ink-0));
+}
+
+.program-player-records {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+
+.program-player-records__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.program-player-records__header p {
+  margin: 0;
+}
+
+.program-player-records__tabs {
+  overflow-x: auto;
+}
+
+.program-player-records__row {
+  display: grid;
+  grid-template-columns: 7rem minmax(8rem, 1fr) auto minmax(10rem, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: 0.65rem var(--space-4);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.82rem;
+}
+
+.program-player-records__row:last-child {
+  border-bottom: 0;
+}
+
+.program-player-records__scope {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.program-player-records__row strong {
+  font-family: var(--font-score);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.program-player-records__context,
+.program-player-records__unavailable {
+  color: var(--ink-1);
+}
+
+.program-player-records__context small {
+  margin-left: var(--space-2);
 }
 
 .team-averages {
@@ -492,6 +567,62 @@
   border-top: 1px solid var(--line);
 }
 
+.player-career-highs {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin: 0;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+
+.player-career-highs__item {
+  min-width: 0;
+  padding: var(--space-4);
+  border-right: 1px solid var(--line);
+}
+
+.player-career-highs__item:last-child {
+  border-right: 0;
+}
+
+.player-career-highs__item dt {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--accent);
+}
+
+.player-career-highs__item dd {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 var(--space-2);
+  align-items: baseline;
+  margin: var(--space-1) 0 0;
+}
+
+.player-career-highs__item strong {
+  grid-row: 1 / span 2;
+  font-family: var(--font-score);
+  font-size: 1.7rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.player-career-highs__item span {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink-1);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.player-career-highs__item small {
+  color: var(--accent);
+  font-size: 0.68rem;
+}
+
 .game-log-table tbody tr[data-status='win'] td:nth-child(3) {
   color: var(--ink-0);
 }
@@ -592,9 +723,60 @@
   .program-legacy__resume {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .player-career-highs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .player-career-highs__item:nth-child(3) {
+    border-right: 0;
+  }
+
+  .player-career-highs__item:nth-child(n + 4) {
+    border-top: 1px solid var(--line);
+  }
 }
 
 @media (max-width: 560px) {
+  .program-player-records__header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .program-player-records__tabs {
+    width: 100%;
+  }
+
+  .program-player-records__row {
+    grid-template-columns: minmax(7rem, 1fr) auto;
+    gap: var(--space-1) var(--space-3);
+  }
+
+  .program-player-records__row .text-link-button,
+  .program-player-records__unavailable {
+    justify-self: end;
+  }
+
+  .program-player-records__context {
+    grid-column: 1 / -1;
+  }
+
+  .player-career-highs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .player-career-highs__item:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .player-career-highs__item:nth-child(3) {
+    border-right: 1px solid var(--line);
+  }
+
+  .player-career-highs__item:nth-child(n + 3) {
+    border-top: 1px solid var(--line);
+  }
+
   .program-legacy__resume {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

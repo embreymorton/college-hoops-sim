@@ -1,8 +1,9 @@
-import type { CSSProperties } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import {
   ExplorationBackButton,
   FollowPlayerButton,
   PlayerCareerProgressionTable,
+  PlayerCareerHighs,
   PlayerDetailsHeader,
   PlayerGameLogTable,
   PlayerRatingsGrid,
@@ -10,6 +11,7 @@ import {
 } from '../components'
 import {
   derivePlayerCareerSummary,
+  derivePlayerCareerHighs,
   resolveDynastyPlayer,
 } from '../dynasty'
 import { derivePlayerSeasonStats, getPlayerGameLog } from '../season'
@@ -23,6 +25,10 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 
 /** Player Details: identity/ratings, career progression, Recruiting origin, regular-season stats, and game log, for any Player. */
 export function PlayerDetailsScreen() {
+  const [detailsSelection, setDetailsSelection] = useState<{
+    readonly playerId: string
+    readonly tab: 'overview' | 'career'
+  } | null>(null)
   const season = useDynastyStore(selectActiveSeason)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const selectedPlayerProgramId = useDynastyStore(
@@ -36,8 +42,14 @@ export function PlayerDetailsScreen() {
     (state) => state.goBackFromExploration,
   )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
+  const careerHighs = useMemo(
+    () => dynasty && selectedPlayerId
+      ? derivePlayerCareerHighs(dynasty, selectedPlayerId)
+      : null,
+    [dynasty, selectedPlayerId],
+  )
 
-  if (!dynasty || !selectedPlayerId) {
+  if (!dynasty || !selectedPlayerId || !careerHighs) {
     return null
   }
 
@@ -48,6 +60,9 @@ export function PlayerDetailsScreen() {
   if (!program) return null
 
   const { player, careerHistory } = resolution
+  const detailsTab = detailsSelection?.playerId === selectedPlayerId
+    ? detailsSelection.tab
+    : 'overview'
   const backDestination = explorationViewHistory.at(-1) ?? 'hub'
   const committedProgram = careerHistory.recruitingOrigin?.committedProgramId
     ? (PROGRAMS_BY_ID.get(careerHistory.recruitingOrigin.committedProgramId) ?? null)
@@ -66,8 +81,7 @@ export function PlayerDetailsScreen() {
     return (
       <>
         <ExplorationBackButton destination={backDestination} onClick={goBackFromExploration} />
-        <div className="player-legacy">
-          <div className="season-header" style={accentStyle}>
+        <div className="season-header" style={accentStyle}>
             <div className="season-header__identity">
               <div>
                 <h1 className="season-header__name">{player.firstName} {player.lastName}</h1>
@@ -84,44 +98,59 @@ export function PlayerDetailsScreen() {
               <div className="stat-trio__item"><span className="stat-trio__value">{summary.finalOverall}</span><span className="stat-trio__label">Final Ovr</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{summary.peakOverall}</span><span className="stat-trio__label">Peak Ovr</span></div>
             </div>
-          </div>
-
-          <section className="section" aria-labelledby="player-career-summary-heading">
-            <h2 id="player-career-summary-heading" className="section-title">College Career · Regular Season</h2>
-            <div className="player-stat-block player-stat-block--legacy">
-              <div className="stat-trio player-stat-block__row">
-                <div className="stat-trio__item"><span className="stat-trio__value">{summary.gamesPlayed}</span><span className="stat-trio__label">GP</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.pointsPerGame)}</span><span className="stat-trio__label">PPG</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.reboundsPerGame)}</span><span className="stat-trio__label">RPG</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.assistsPerGame)}</span><span className="stat-trio__label">APG</span></div>
-              </div>
-              <div className="stat-trio player-stat-block__row player-stat-block__row--secondary">
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.stealsPerGame)}</span><span className="stat-trio__label">SPG</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.blocksPerGame)}</span><span className="stat-trio__label">BPG</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.fieldGoalPercentage)}</span><span className="stat-trio__label">FG%</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.threePointPercentage)}</span><span className="stat-trio__label">3P%</span></div>
-                <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.freeThrowPercentage)}</span><span className="stat-trio__label">FT%</span></div>
-              </div>
-            </div>
-          </section>
-
-          <section className="section" aria-labelledby="player-final-ratings-heading">
-            <h2 id="player-final-ratings-heading" className="section-title">Final Ratings</h2>
-            <PlayerRatingsGrid player={player} />
-          </section>
-
-          <section className="section" aria-labelledby="player-career-heading">
-            <h2 id="player-career-heading" className="section-title">Career Progression</h2>
-            <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
-          </section>
-
-          {careerHistory.recruitingOrigin ? (
-            <section className="section" aria-labelledby="player-recruiting-origin-heading">
-              <h2 id="player-recruiting-origin-heading" className="section-title">Recruiting Origin</h2>
-              <PlayerRecruitingOrigin origin={careerHistory.recruitingOrigin} committedProgram={committedProgram} />
-            </section>
-          ) : null}
         </div>
+
+        <div className="details-tabs tab-list" role="group" aria-label="Player details section">
+          <button type="button" className="tab" aria-pressed={detailsTab === 'overview'} onClick={() => setDetailsSelection({ playerId: selectedPlayerId, tab: 'overview' })}>Overview</button>
+          <button type="button" className="tab" aria-pressed={detailsTab === 'career'} onClick={() => setDetailsSelection({ playerId: selectedPlayerId, tab: 'career' })}>Career</button>
+        </div>
+
+        {detailsTab === 'overview' ? (
+          <div className="details-tab-panel player-legacy">
+            <section className="section" aria-labelledby="player-final-ratings-heading">
+              <h2 id="player-final-ratings-heading" className="section-title">Final Ratings</h2>
+              <PlayerRatingsGrid player={player} />
+            </section>
+          </div>
+        ) : (
+          <div className="details-tab-panel player-legacy">
+            <section className="section" aria-labelledby="player-career-summary-heading">
+              <h2 id="player-career-summary-heading" className="section-title">College Career · Regular Season</h2>
+              <div className="player-stat-block player-stat-block--legacy">
+                <div className="stat-trio player-stat-block__row">
+                  <div className="stat-trio__item"><span className="stat-trio__value">{summary.gamesPlayed}</span><span className="stat-trio__label">GP</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.pointsPerGame)}</span><span className="stat-trio__label">PPG</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.reboundsPerGame)}</span><span className="stat-trio__label">RPG</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.assistsPerGame)}</span><span className="stat-trio__label">APG</span></div>
+                </div>
+                <div className="stat-trio player-stat-block__row player-stat-block__row--secondary">
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.stealsPerGame)}</span><span className="stat-trio__label">SPG</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatRating(summary.blocksPerGame)}</span><span className="stat-trio__label">BPG</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.fieldGoalPercentage)}</span><span className="stat-trio__label">FG%</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.threePointPercentage)}</span><span className="stat-trio__label">3P%</span></div>
+                  <div className="stat-trio__item"><span className="stat-trio__value">{formatPercentage(summary.freeThrowPercentage)}</span><span className="stat-trio__label">FT%</span></div>
+                </div>
+              </div>
+            </section>
+
+            <section className="section" aria-labelledby="player-career-heading">
+              <h2 id="player-career-heading" className="section-title">Career Progression</h2>
+              <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
+            </section>
+
+            <section className="section" aria-labelledby="player-career-highs-heading">
+              <div className="section-heading"><h2 id="player-career-highs-heading" className="section-title">Career Highs</h2><p className="eyebrow-tag">Regular Season Only</p></div>
+              <PlayerCareerHighs highs={careerHighs} />
+            </section>
+
+            {careerHistory.recruitingOrigin ? (
+              <section className="section" aria-labelledby="player-recruiting-origin-heading">
+                <h2 id="player-recruiting-origin-heading" className="section-title">Recruiting Origin</h2>
+                <PlayerRecruitingOrigin origin={careerHistory.recruitingOrigin} committedProgram={committedProgram} />
+              </section>
+            ) : null}
+          </div>
+        )}
       </>
     )
   }
@@ -151,33 +180,18 @@ export function PlayerDetailsScreen() {
         onSelectTeam={() => openTeamDetails(resolution.programId)}
       />
 
-      <section className="section" aria-labelledby="player-ratings-heading">
-        <h2 id="player-ratings-heading" className="section-title">
-          Ratings
-        </h2>
-        <PlayerRatingsGrid player={player} />
-      </section>
+      <div className="details-tabs tab-list" role="group" aria-label="Player details section">
+        <button type="button" className="tab" aria-pressed={detailsTab === 'overview'} onClick={() => setDetailsSelection({ playerId: selectedPlayerId, tab: 'overview' })}>Overview</button>
+        <button type="button" className="tab" aria-pressed={detailsTab === 'career'} onClick={() => setDetailsSelection({ playerId: selectedPlayerId, tab: 'career' })}>Career</button>
+      </div>
 
-      {careerHistory.recruitingOrigin ? (
-        <section className="section" aria-labelledby="player-recruiting-origin-heading">
-          <h2 id="player-recruiting-origin-heading" className="section-title">
-            Recruiting Origin
-          </h2>
-          <PlayerRecruitingOrigin
-            origin={careerHistory.recruitingOrigin}
-            committedProgram={committedProgram}
-          />
+      {detailsTab === 'overview' ? <div className="details-tab-panel">
+        <section className="section" aria-labelledby="player-ratings-heading">
+          <h2 id="player-ratings-heading" className="section-title">Ratings</h2>
+          <PlayerRatingsGrid player={player} />
         </section>
-      ) : null}
 
-      <section className="section" aria-labelledby="player-career-heading">
-        <h2 id="player-career-heading" className="section-title">
-          Career Progression
-        </h2>
-        <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
-      </section>
-
-      <section className="section" aria-labelledby="player-stats-heading">
+        <section className="section" aria-labelledby="player-stats-heading">
         <div className="section-heading">
           <p className="eyebrow-tag">Regular Season</p>
         </div>
@@ -240,9 +254,9 @@ export function PlayerDetailsScreen() {
             </div>
           </div>
         </div>
-      </section>
+        </section>
 
-      <section className="section" aria-labelledby="player-game-log-heading">
+        <section className="section" aria-labelledby="player-game-log-heading">
         <h2 id="player-game-log-heading" className="section-title">
           Game Log
         </h2>
@@ -251,7 +265,25 @@ export function PlayerDetailsScreen() {
           programsById={PROGRAMS_BY_ID}
           onSelectProgram={openTeamDetails}
         />
-      </section>
+        </section>
+      </div> : <div className="details-tab-panel">
+        <section className="section" aria-labelledby="player-career-heading">
+          <h2 id="player-career-heading" className="section-title">Career Progression</h2>
+          <PlayerCareerProgressionTable seasons={careerHistory.seasons} />
+        </section>
+
+        <section className="section" aria-labelledby="player-career-highs-heading">
+          <div className="section-heading"><h2 id="player-career-highs-heading" className="section-title">Career Highs</h2><p className="eyebrow-tag">Regular Season Only</p></div>
+          <PlayerCareerHighs highs={careerHighs} />
+        </section>
+
+        {careerHistory.recruitingOrigin ? (
+          <section className="section" aria-labelledby="player-recruiting-origin-heading">
+            <h2 id="player-recruiting-origin-heading" className="section-title">Recruiting Origin</h2>
+            <PlayerRecruitingOrigin origin={careerHistory.recruitingOrigin} committedProgram={committedProgram} />
+          </section>
+        ) : null}
+      </div>}
     </>
   )
 }

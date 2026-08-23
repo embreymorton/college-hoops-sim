@@ -1,14 +1,16 @@
+import { useMemo, useState } from 'react'
 import { calculateTeamStrength } from '../engine'
 import {
   ExplorationBackButton,
   ProgramLegacySection,
+  ProgramPlayerRecordsSection,
   RecentResultsSection,
   TeamAverages,
   TeamDetailsHeader,
   TeamLeadersStrip,
   TeamStatsTable,
 } from '../components'
-import { deriveProgramLegacy } from '../dynasty'
+import { deriveProgramLegacy, deriveProgramPlayerRecords } from '../dynasty'
 import {
   deriveConferenceRecord,
   deriveProgramPlayerSeasonStats,
@@ -32,6 +34,10 @@ const RECENT_RESULTS_COUNT = 5
 
 /** Team Details: works for any of the 32 Programs, controlled or not. */
 export function TeamDetailsScreen() {
+  const [detailsSelection, setDetailsSelection] = useState<{
+    readonly programId: string
+    readonly tab: 'overview' | 'history'
+  } | null>(null)
   const season = useDynastyStore(selectActiveSeason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const selectedTeamProgramId = useDynastyStore(
@@ -45,8 +51,14 @@ export function TeamDetailsScreen() {
   )
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
   const dynasty = useDynastyStore((state) => state.dynasty)
+  const programPlayerRecords = useMemo(
+    () => dynasty && selectedTeamProgramId
+      ? deriveProgramPlayerRecords(dynasty, selectedTeamProgramId)
+      : null,
+    [dynasty, selectedTeamProgramId],
+  )
 
-  if (!dynasty || !season || !selectedTeamProgramId) {
+  if (!dynasty || !season || !selectedTeamProgramId || !programPlayerRecords) {
     return null
   }
 
@@ -56,6 +68,10 @@ export function TeamDetailsScreen() {
   if (!programState || !program) {
     return null
   }
+
+  const detailsTab = detailsSelection?.programId === selectedTeamProgramId
+    ? detailsSelection.tab
+    : 'overview'
 
   const conference = UNIVERSE_V0.conferences.find(
     (candidate) => candidate.id === program.conferenceId,
@@ -104,55 +120,50 @@ export function TeamDetailsScreen() {
         strength={strength}
       />
 
-      <section className="section" aria-labelledby="program-legacy-heading">
-        <h2 id="program-legacy-heading" className="section-title">
-          Dynasty History
-        </h2>
-        <ProgramLegacySection legacy={programLegacy} />
-      </section>
+      <div className="details-tabs tab-list" role="group" aria-label="Team details section">
+        <button type="button" className="tab" aria-pressed={detailsTab === 'overview'} onClick={() => setDetailsSelection({ programId: selectedTeamProgramId, tab: 'overview' })}>Overview</button>
+        <button type="button" className="tab" aria-pressed={detailsTab === 'history'} onClick={() => setDetailsSelection({ programId: selectedTeamProgramId, tab: 'history' })}>History</button>
+      </div>
 
-      <section className="section" aria-labelledby="team-averages-heading">
-        <h2 id="team-averages-heading" className="section-title">
-          Team Averages
-        </h2>
-        <TeamAverages stats={teamStats} />
-      </section>
+      {detailsTab === 'overview' ? (
+        <div className="details-tab-panel">
+          <section className="section" aria-labelledby="team-averages-heading">
+            <h2 id="team-averages-heading" className="section-title">Team Averages</h2>
+            <TeamAverages stats={teamStats} />
+          </section>
 
-      <section
-        className="section team-details-recent-results"
-        aria-labelledby="team-recent-results-heading"
-      >
-        <h2 id="team-recent-results-heading" className="section-title">
-          Recent Results
-        </h2>
-        <RecentResultsSection
-          games={recentGames}
-          programId={selectedTeamProgramId}
-          programsById={PROGRAMS_BY_ID}
-        />
-      </section>
+          <section className="section team-details-recent-results" aria-labelledby="team-recent-results-heading">
+            <h2 id="team-recent-results-heading" className="section-title">Recent Results</h2>
+            <RecentResultsSection games={recentGames} programId={selectedTeamProgramId} programsById={PROGRAMS_BY_ID} />
+          </section>
 
-      <section className="section" aria-labelledby="team-leaders-heading">
-        <h2 id="team-leaders-heading" className="section-title">
-          Team Leaders
-        </h2>
-        <TeamLeadersStrip
-          leaders={teamLeaders}
-          getPlayerName={(playerId) => rosterNamesByPlayerId.get(playerId) ?? playerId}
-          onSelectPlayer={(playerId) => openPlayerDetails(selectedTeamProgramId, playerId)}
-        />
-      </section>
+          <section className="section" aria-labelledby="team-leaders-heading">
+            <h2 id="team-leaders-heading" className="section-title">Team Leaders</h2>
+            <TeamLeadersStrip
+              leaders={teamLeaders}
+              getPlayerName={(playerId) => rosterNamesByPlayerId.get(playerId) ?? playerId}
+              onSelectPlayer={(playerId) => openPlayerDetails(selectedTeamProgramId, playerId)}
+            />
+          </section>
 
-      <section className="section" aria-labelledby="team-roster-heading">
-        <h2 id="team-roster-heading" className="section-title">
-          Roster
-        </h2>
-        <TeamStatsTable
-          team={programState.team}
-          statsByPlayerId={statsByPlayerId}
-          onSelectPlayer={(playerId) => openPlayerDetails(selectedTeamProgramId, playerId)}
-        />
-      </section>
+          <section className="section" aria-labelledby="team-roster-heading">
+            <h2 id="team-roster-heading" className="section-title">Roster</h2>
+            <TeamStatsTable team={programState.team} statsByPlayerId={statsByPlayerId} onSelectPlayer={(playerId) => openPlayerDetails(selectedTeamProgramId, playerId)} />
+          </section>
+        </div>
+      ) : (
+        <div className="details-tab-panel">
+          <section className="section" aria-labelledby="program-legacy-heading">
+            <h2 id="program-legacy-heading" className="section-title">Dynasty History</h2>
+            <ProgramLegacySection legacy={programLegacy} />
+          </section>
+
+          <section className="section" aria-labelledby="program-player-records-heading">
+            <h2 id="program-player-records-heading" className="section-title">Program Player Records</h2>
+            <ProgramPlayerRecordsSection records={programPlayerRecords} onSelectPlayer={(playerId) => openPlayerDetails(selectedTeamProgramId, playerId)} />
+          </section>
+        </div>
+      )}
     </>
   )
 }

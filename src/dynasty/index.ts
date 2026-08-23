@@ -10,7 +10,11 @@ export {
 } from './playerLegacy'
 export { deriveNewsFeed } from './news'
 export { deriveDynastyProgressionAction } from './progression'
-export { deriveDynastyRecordBook } from './seasonRecords'
+export {
+  deriveDynastyRecordBook,
+  derivePlayerCareerHighs,
+  deriveProgramPlayerRecords,
+} from './seasonRecords'
 export {
   deriveProgramLegacy,
   PROGRAM_LEGACY_RECENT_SEASON_LIMIT,
@@ -113,6 +117,11 @@ export type {
   CategoryRecordBook,
   RecordBookEntry,
   RecordCategory,
+  PlayerCareerHighEntry,
+  PlayerCareerHighs,
+  ProgramPlayerRecords,
+  ProgramCategoryRecords,
+  StatisticalGameScope,
 } from './seasonRecords'
 export { RECORD_CATEGORIES } from './seasonRecords'
 export type {

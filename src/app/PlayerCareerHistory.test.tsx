@@ -51,6 +51,11 @@ function openPlayerDetails(dynasty: DynastyState, programId: string, playerId: s
   useDynastyStore.getState().openPlayerDetails(programId, playerId)
 }
 
+function openCareerTab(): void {
+  const tabs = screen.getByRole('group', { name: 'Player details section' })
+  fireEvent.click(within(tabs).getByRole('button', { name: 'Career' }))
+}
+
 beforeEach(resetStore)
 
 describe('Player Details — Ratings', () => {
@@ -90,6 +95,7 @@ describe('Player Details — Career Progression', () => {
     const freshman = roster.find(({ classYear }) => classYear === 'FR')!
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, freshman.id)
     render(<App />)
+    openCareerTab()
 
     const careerSection = screen
       .getByRole('heading', { name: 'Career Progression' })
@@ -119,6 +125,7 @@ describe('Player Details — Career Progression', () => {
 
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, senior.id)
     render(<App />)
+    openCareerTab()
 
     const careerSection = screen
       .getByRole('heading', { name: 'Career Progression' })
@@ -140,6 +147,42 @@ describe('Player Details — Career Progression', () => {
   }, 20000)
 })
 
+describe('Player Details — Career Highs', () => {
+  it('shows one quiet empty state before an active Player appears', () => {
+    const dynasty = createRecruitingDynasty('player-career-highs-empty')
+    const player = dynasty.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!.team.roster[0]!
+    openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, player.id)
+    render(<App />)
+    openCareerTab()
+
+    const section = screen.getByRole('heading', { name: 'Career Highs' }).closest('section')!
+    expect(within(section as HTMLElement).getByText('Regular Season Only')).toBeInTheDocument()
+    expect(within(section as HTMLElement).getByText(/no regular-season appearances yet/i)).toBeInTheDocument()
+  })
+
+  it('shows compact active Player highs with game context', () => {
+    let dynasty = createRecruitingDynasty('player-career-highs-active')
+    dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
+    const program = dynasty.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!
+    const player = program.team.roster.find((candidate) => {
+      const game = dynasty.activeSeason!.schedule.games.find((entry) =>
+        entry.homeProgramId === CONTROLLED_PROGRAM_ID || entry.awayProgramId === CONTROLLED_PROGRAM_ID)
+      const result = game ? dynasty.activeSeason!.resultsByGameId[game.id] : undefined
+      return result && [...result.homePlayerStats, ...result.awayPlayerStats]
+        .some(({ playerId, minutes }) => playerId === candidate.id && minutes > 0)
+    })!
+    openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, player.id)
+    render(<App />)
+    openCareerTab()
+
+    const section = screen.getByRole('heading', { name: 'Career Highs' }).closest('section')!
+    for (const label of ['PTS', 'REB', 'AST', 'STL', 'BLK']) {
+      expect(within(section as HTMLElement).getByText(label)).toBeInTheDocument()
+    }
+    expect(section).toHaveTextContent(/S1 · vs /)
+  })
+})
+
 describe('Player Details — Recruiting Origin', () => {
   it('resolves star rating and rank for a Recruit who entered the roster', () => {
     let dynasty = createRecruitingDynasty('player-details-recruit-origin')
@@ -155,6 +198,7 @@ describe('Player Details — Recruiting Origin', () => {
 
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, recruit.player.id)
     render(<App />)
+    openCareerTab()
 
     const originSection = screen
       .getByRole('heading', { name: 'Recruiting Origin' })
@@ -174,6 +218,7 @@ describe('Player Details — Recruiting Origin', () => {
       dynasty.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!.team.roster[0]!
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, player.id)
     render(<App />)
+    openCareerTab()
 
     expect(
       screen.queryByRole('heading', { name: 'Recruiting Origin' }),
@@ -197,6 +242,9 @@ describe('Player Details — existing navigation preserved', () => {
     expect(
       screen.getByRole('heading', { name: `${player.firstName} ${player.lastName}` }),
     ).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Ratings' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Career Progression' })).not.toBeInTheDocument()
+    openCareerTab()
     expect(screen.getByRole('heading', { name: 'Career Progression' })).toBeInTheDocument()
 
     const program = useDynastyStore.getState().dynasty!.universe.programs.find(
@@ -243,8 +291,12 @@ describe('Player Legacy — Former Player Details', () => {
     }))
 
     expect(screen.getByText('Former Player')).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'College Career · Regular Season' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Final Ratings' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'College Career · Regular Season' })).not.toBeInTheDocument()
+    openCareerTab()
+    expect(screen.getByRole('heading', { name: 'College Career · Regular Season' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Career Highs' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Final Ratings' })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Career Progression' })).toBeInTheDocument()
     expect(screen.queryByText('Pot')).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Game Log' })).not.toBeInTheDocument()

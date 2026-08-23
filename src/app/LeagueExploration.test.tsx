@@ -216,8 +216,16 @@ describe('Team Details', () => {
       ).toBeInTheDocument()
     }
     expect(screen.getAllByText(/no completed games yet/i)).toHaveLength(2)
+    const detailsTabs = screen.getByRole('group', { name: 'Team details section' })
+    expect(within(detailsTabs).getByRole('button', { name: 'Overview' })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.queryByRole('heading', { name: 'Dynasty History' })).not.toBeInTheDocument()
+    fireEvent.click(within(detailsTabs).getByRole('button', { name: 'History' }))
     expect(screen.getByRole('heading', { name: 'Dynasty History' })).toBeInTheDocument()
     expect(screen.getByText(/history will appear after this Season/i)).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Program Player Records' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Roster' })).not.toBeInTheDocument()
+    fireEvent.click(within(detailsTabs).getByRole('button', { name: 'Overview' }))
+    expect(screen.getByRole('heading', { name: 'Roster' })).toBeInTheDocument()
     expect(screen.getByText(/Providence, RI · Prestige 88/)).toBeInTheDocument()
     const averages = screen
       .getByRole('heading', { name: 'Team Averages' })
@@ -270,6 +278,36 @@ describe('Team Details', () => {
     ).toHaveLength(3)
   })
 
+  it('shows live Program Player Records, switches category, and restores Team Details after Player navigation', () => {
+    selectControlledProgram()
+    playRounds(3)
+    useDynastyStore.getState().openTeamDetails(OTHER_PROGRAM_ID)
+    render(<App />)
+
+    const detailsTabs = screen.getByRole('group', { name: 'Team details section' })
+    fireEvent.click(within(detailsTabs).getByRole('button', { name: 'History' }))
+
+    const section = screen
+      .getByRole('heading', { name: 'Program Player Records' })
+      .closest('section') as HTMLElement
+    expect(within(section).getByRole('button', { name: 'PTS' })).toHaveAttribute('aria-pressed', 'true')
+    expect(within(section).getByText('Single Game')).toBeInTheDocument()
+    expect(within(section).getByText('Single Season')).toBeInTheDocument()
+    expect(within(section).getByText('Career')).toBeInTheDocument()
+    expect(within(section).getByText('Live')).toBeInTheDocument()
+
+    fireEvent.click(within(section).getByRole('button', { name: 'REB' }))
+    expect(within(section).getByRole('button', { name: 'REB' })).toHaveAttribute('aria-pressed', 'true')
+
+    const holder = within(section).getAllByRole('button')
+      .find((button) => !['PTS', 'REB', 'AST', 'STL', 'BLK'].includes(button.textContent ?? ''))!
+    fireEvent.click(holder)
+    expect(screen.getByRole('heading', { name: holder.textContent! })).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: /back to team/i }))
+    expect(screen.getByRole('heading', { name: 'Team Averages' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Program Player Records' })).not.toBeInTheDocument()
+  })
+
   it('shows only the five most recent results in order with correct home/away context', () => {
     selectControlledProgram()
     playRounds(7)
@@ -316,9 +354,12 @@ describe('Team Details', () => {
 
     const { activeSeason: season } = useDynastyStore.getState().dynasty!
     const player = season!.programStates[CONTROLLED_PROGRAM_ID]!.team.roster[0]!
+    const rosterSection = screen
+      .getByRole('heading', { name: 'Roster' })
+      .closest('section') as HTMLElement
 
     fireEvent.click(
-      screen.getByRole('button', { name: `${player.firstName} ${player.lastName}` }),
+      within(rosterSection).getByRole('button', { name: `${player.firstName} ${player.lastName}` }),
     )
 
     expect(
