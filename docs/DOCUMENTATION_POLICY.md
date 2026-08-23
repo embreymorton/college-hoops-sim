@@ -192,6 +192,24 @@ architecture in `ARCHITECTURE.md`, proposed UI in `UI_DESIGN.md`, or speculative
 behavior in production owner docs. Update accepted docs only after implementation,
 automated validation, and required manual acceptance.
 
+The implementation completion report still includes `## Documentation` and
+states one of:
+
+- documentation intentionally deferred while required polish/user acceptance
+  remains;
+- exact docs updated and why acceptance was not pending or closure was
+  explicitly authorized; or
+- no accepted source-of-truth fact changed.
+
+The normal implementation wording is:
+
+```text
+## Documentation
+
+Documentation intentionally not updated. The feature is awaiting required user
+acceptance and/or frontend polish before targeted closure.
+```
+
 ### Diagnostic completed; production unchanged
 
 Usually update:
@@ -205,7 +223,8 @@ Do not add candidate formulas to `SIMULATION.md`.
 
 ### Production implementation accepted
 
-After every acceptance gate passes:
+After every required acceptance gate passes, begin with the Documentation
+Decision Checklist rather than a presumed file list:
 
 1. List the durable accepted facts that changed.
 2. Map each fact to its owner in the matrix above.
@@ -259,7 +278,7 @@ Milestone-specific instructions may narrow this further. Typical impact:
 
 Future implementation agents must include a `## Documentation` section in the
 final response. Report either the exact documents updated and why, documents
-intentionally not updated and why, or:
+intentionally deferred and why, or:
 
 ```text
 Documentation: none required.
@@ -311,10 +330,14 @@ reduces duplication.
 
 Fresh planning sessions determine priorities from:
 
-1. `CURRENT_STATE.md`;
-2. selected sequencing in `ROADMAP.md` (the only NEXT/PLANNED authority);
-3. current evidence/priorities in `PLAYTESTING.md`; and
-4. current code inspection.
+1. current truth and the selected/open checkpoint in `CURRENT_STATE.md` and
+   `ROADMAP.md` (Roadmap is the only NEXT/PLANNED authority);
+2. current evidence/priorities in `PLAYTESTING.md`;
+3. actual production code and reusable seams;
+4. relevant owner documentation;
+5. Known Issues as secondary discovery;
+6. Future Features as secondary discovery; and
+7. conditional research only when a specific candidate requires it.
 
 `FUTURE_FEATURES.md` is a parking lot. An idea can remain there indefinitely.
 Repeated evidence plus deliberate selection moves it into Roadmap; reword or
@@ -344,8 +367,9 @@ unresolved defect, debt item, scaling risk, or validated watchpoint.
 
 ## Documentation decision checklist
 
-After validation, answer each question and update the owning document for every
-meaningful **yes**:
+After validation and required user acceptance, answer each question and update
+the owning document for every meaningful **yes**. A closure prompt must not
+assume that README plus six or seven owner docs all need edits:
 
 - Production simulation behavior changed? → `SIMULATION.md`
 - Player-facing rules changed? → `GAME_DESIGN.md`

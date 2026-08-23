@@ -17,6 +17,22 @@ Primary product principles:
 - Preserve working systems unless evidence justifies reopening them.
 - Prefer simple, understandable player-facing mechanics over mathematically clever but annoying ones.
 
+## Non-Negotiable Session Contract
+
+1. Repository truth overrides chat assumptions; establish it before planning or implementation.
+2. Classify the repository as **Path A — authoritative NEXT exists** or **Path B — Open Planning Checkpoint / no NEXT**.
+3. Never infer NEXT from order, phase numbers, Future Features, prior recommendations, or recently completed work; only explicit user selection establishes NEXT.
+4. Start with the small fresh-session checkpoint below. Do not automatically read conditional research or historical archives.
+5. Do not reopen accepted/frozen systems without current evidence.
+6. In Path B, current evidence and production seams lead; Known Issues and Future Features are secondary discovery sources, not priority lists.
+7. Planning/design does not authorize implementation unless the user explicitly asks.
+8. Use the smallest focused design or investigation that resolves meaningful uncertainty.
+9. Do not update accepted source-of-truth docs before required user acceptance.
+10. Every implementation completion report includes `## Documentation`, even when docs were intentionally deferred.
+11. Route work explicitly as **Codex**, **Claude Code**, or **Codex → Claude**; use the repository's frontend/design workflow for meaningful polish.
+12. Validate proportionally, including 390px behavior for relevant UI work, before acceptance.
+13. At a clean checkpoint, evaluate whether continuing or a ready-to-paste fresh-chat handoff gives better context quality.
+
 Do not blindly add features. Help decide what is worth building, what should be investigated first, and what should remain deferred.
 
 Roadmap numbering tracks meaningful player-facing outcomes, architectural
@@ -25,98 +41,118 @@ slice, test pass, or polish task. Keep those implementation steps inside one
 milestone. A phase should usually contain 2–4 milestones around one product
 question; start a new phase letter when the theme changes.
 
-# Fresh Session Quick Start
+# Fresh Session Workflow
 
-Normal feature-planning sessions read only:
+## Stage 1 — Fresh-session checkpoint
+
+The initial read is deliberately small:
 
 1. `CURRENT_STATE.md` in full;
-2. `ROADMAP.md` → **Current Selected Horizon**;
-3. `PLAYTESTING.md` → **Current Playtesting Priorities**, **Live WATCH Items**,
-   and sections directly relevant to the milestone;
-4. owner documentation for the system being changed; and
-5. relevant production code.
+2. `ROADMAP.md` → **Current Selected Horizon** only;
+3. `PLAYTESTING.md` → **Current Playtesting Priorities** and **Live WATCH Items**;
+4. this guide's Fresh Session and Source-of-Truth rules.
 
-Do not automatically read `PLAYTESTING_ARCHIVE.md`,
-`PLAYER_IDENTITY_RESEARCH.md`, `DYNASTY_HIERARCHY_RESEARCH.md`, unrelated
-completed Roadmap sections, or unrelated historical research. Read them only
-when the active problem requires their evidence. Open the hierarchy archive
-only when deliberately reconsidering compression, when a future feature
-materially changes the talent economy, or when its historical evidence is
-specifically needed. The repository remains authoritative over chat memory.
+Do not yet read full Roadmap history, Future Features, old Known Issues history,
+`PLAYTESTING_ARCHIVE.md`, `PLAYER_IDENTITY_RESEARCH.md`,
+`DYNASTY_HIERARCHY_RESEARCH.md`, or other conditional research. Stage 1 exists
+to establish production truth, major frozen boundaries, current WATCH signals,
+authoritative NEXT status (therefore Path A or B), and the owner docs/code to
+inspect next. When the user requests fresh-session initialization, stop after
+this checkpoint; do not immediately turn it into broad planning.
 
-Future prompts should prefer:
+## Path A — authoritative NEXT exists
 
-```text
-Read CURRENT_STATE.md in full; the Current Selected Horizon in ROADMAP.md;
-Current Playtesting Priorities, Live WATCH, and directly relevant Playtesting
-sections; relevant owner docs; and relevant production code.
-Do not read conditional archives unless this task explicitly requires them.
-```
+Treat the explicit Roadmap selection as authoritative. Do not reopen planning,
+substitute another feature, or silently change NEXT. Inspect only the selected
+milestone's owner docs, production seams, relevant WATCH evidence, and any
+conditional research specifically needed for that milestone. Determine whether
+the next useful action is discussion, focused design, focused investigation, or
+implementation. If the contract is safe and the user asks to build, implement;
+otherwise resolve only the smallest remaining uncertainty first.
 
-## Fresh Chat Handoff Prompt
+## Path B — Open Planning Checkpoint / no NEXT
 
-Copy and paste this prompt into a new conversation. It intentionally contains
-no current feature, phase number, or changing project state.
+After Stage 1 confirms Path B, conduct a fresh unbiased planning pass in this
+authority order:
+
+1. Current State and Roadmap checkpoint;
+2. current Playtesting evidence and WATCH items;
+3. actual production code and reusable seams;
+4. relevant owner documentation;
+5. open Known Issues/optimizations as secondary discovery;
+6. Future Features as secondary discovery; and
+7. conditional research only when a specific candidate requires it.
+
+Look for opportunities revealed by current implementation even when they are
+not already documented. Return a short ranked cross-scope set, not a backlog
+dump. For each strong candidate assess player problem, evidence, value, scope,
+architectural/frozen-system risk, reusable seams, canonical-state or lifecycle
+implications, testing burden, size (`polish`, `medium feature`, `major system`,
+or `infrastructure/investigation`), next action (`implementation`, `focused
+design`, or `focused investigation`), and route (`Codex`, `Claude Code`, or
+`Codex → Claude`). End with what deserves discussion first. Recommendation never
+selects NEXT or authorizes a Roadmap edit.
+
+## Canonical handoff templates
+
+### Fresh Session — Stage 1
 
 ```text
 I've attached the latest College Basketball Simulation repository.
+Treat the repository as authoritative and assume no prior-chat context.
+Follow the Fresh Session workflow in docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md.
 
-Treat the current repository as authoritative. Assume prior-chat context is
-unavailable; do not rely on remembered sequencing or decisions. Follow the
-repository's documented Fresh Session workflow.
+FIRST RESPONSE ONLY: read the required fresh-session front doors and establish
+current production truth, frozen boundaries, live WATCH signals, authoritative
+NEXT status, and Path A or Path B. Identify what you would inspect next.
 
-Minimum read set:
-- docs/CURRENT_STATE.md in full;
-- docs/ROADMAP.md — Current Selected Horizon / active planning section;
-- docs/PLAYTESTING.md — Current Playtesting Priorities, Live WATCH Items, and
-  only sections directly relevant to the current decision or milestone;
-- relevant Fresh Session/workflow sections of the Operating Guide; and
-- relevant owner documentation and production code as needed.
-
-Do not automatically read Playtesting Archive, Player Identity Research,
-Dynasty Hierarchy Research, unrelated completed Roadmap history, or unrelated
-historical research. Open a conditional archive only for a specific historical
-question. Preserve accepted and frozen systems; historical experiments alone do
-not justify reopening tuning or calibration.
-
-First confirm current production truth, relevant accepted/frozen systems, live
-Playtesting/WATCH signals, and whether Roadmap has an authoritative NEXT.
-
-Path A — NEXT is selected:
-- state the exact milestone and current checkpoint;
-- inspect the relevant production architecture and focus on that milestone;
-- use discovery/broad planning first if meaningful product, scope, or
-  information-architecture ambiguity remains; and
-- do not change code unless I request implementation.
-
-Path B — no NEXT is selected:
-- do not invent or infer one; treat this as an Open Planning Checkpoint;
-- summarize completed/frozen truth, what normal play says is working, live
-  WATCH items and friction, PLANNED work, and relevant Future Features;
-- propose a small set of realistic directions and compare player value,
-  evidence, scope, readiness, dependencies, frozen-system risk, and whether
-  each is feature, UX, or dedicated tuning work;
-- rank them, recommend one, and identify any evidence needed for a responsible
-  decision; and
-- do not update Roadmap merely because you recommend something.
-
-A new NEXT becomes authoritative only after I explicitly select the direction
-and authorize the Roadmap update. Roadmap alone owns NEXT/PLANNED; Playtesting
-provides evidence; Future Features is unscheduled; historical research is not
-an active queue. Do not calibrate without current evidence. Planning should
-narrow progressively and stop once meaningful uncertainties are resolved.
-
-In your initial response, tell me what the repository says is true, whether we
-are in Path A or Path B, what you recommend doing in this chat, and what areas
-you need to inspect. Do not change code or documentation until requested.
+Do not recommend a feature yet. Do not infer NEXT. Do not implement. Do not edit
+documentation. Stop after the fresh-session checkpoint.
 ```
+
+### Path A continuation
+
+```text
+Stage 1 verified Path A. Inspect the authoritative selected NEXT through its
+relevant owner docs, production seams, WATCH evidence, and only specifically
+needed conditional research. Preserve accepted/frozen boundaries. Determine
+whether discussion, focused design, focused investigation, or implementation is
+the right next action. Do not reopen planning, replace NEXT, implement without
+authorization, or edit documentation prematurely.
+```
+
+### Path B continuation
+
+```text
+Stage 1 verified Path B. Conduct a neutral Open Planning pass using current
+evidence, production seams, and relevant owner docs first; use Known Issues and
+Future Features only as secondary discovery and conditional research only for a
+specific candidate. Return a short ranked cross-scope set, recommend what merits
+discussion first, name the execution route, and do not set NEXT, implement, or
+edit documentation.
+```
+
+## Agent routing at a glance
+
+- **Codex:** repository inspection, architecture/design analysis, domain and
+  read-model logic, state/lifecycle integration, projections, tests, debugging,
+  and implementation structure.
+- **Claude Code / `frontend-design`:** visual hierarchy, layout, responsive
+  polish, styling refinement, accessibility, and presentation consistency after
+  behavior is stable.
+- **Codex → Claude:** milestones with meaningful behavior/architecture and
+  visible UI quality requirements. Codex establishes semantics first; Claude
+  does not invent domain behavior during polish.
+
+Use the detailed routing and Visual Polish Fast Path later in this guide. Do not
+force Claude onto backend-only work.
 
 ---
 
 # Source-of-Truth Discipline
 
 Before making architectural or implementation recommendations, follow the Fresh
-Session Quick Start and inspect the current repository state. `PLAYTESTING.md`
+Session Workflow and inspect the current repository state. `PLAYTESTING.md`
 supplies empirical evidence; only `ROADMAP.md` selects sequencing.
 
 Prefer current code + current docs over assumptions from old chats.
@@ -422,9 +458,20 @@ they materially strengthen causal understanding, and anecdotes do not by
 themselves authorize tuning, defects, or Roadmap changes. See the Documentation
 Policy for the authoritative rules and reusable prompt guidance.
 
-Final implementation responses must include `## Documentation` and identify the
-docs updated, the docs intentionally not updated, or that no accepted
-source-of-truth fact changed.
+During implementation, do not update accepted project docs unless the user
+explicitly requests closure or the documented workflow establishes that no
+manual acceptance is required. Final implementation responses must still
+include `## Documentation`. Normally report:
+
+```text
+## Documentation
+
+Documentation intentionally not updated. The feature is awaiting required user
+acceptance and/or frontend polish before targeted closure.
+```
+
+If docs were legitimately updated, name them and explain why acceptance was not
+pending. If no owned fact changed, say so explicitly.
 
 Completing a milestone does not automatically promote another item to NEXT.
 The final response and documentation may preserve a successor already selected
@@ -484,15 +531,13 @@ targeted tests
 # Documentation
 Follow docs/DOCUMENTATION_POLICY.md.
 Do not edit accepted source-of-truth docs during implementation.
-Only after implementation, automated validation, and required manual acceptance:
-1. list durable accepted facts that changed;
-2. map each fact to its owner under Documentation Policy;
-3. update only those owners;
-4. keep Roadmap to status/sequencing and Current State to current truth/freeze/NEXT;
-5. put empirical acceptance in Playtesting;
-6. update Architecture, Simulation, Game Design, or UI Design only when their
-   owned facts changed; and
-7. do not perform a broad documentation sync.
+In the implementation final response, include ## Documentation and state that
+docs were intentionally deferred pending acceptance/polish, unless closure was
+explicitly authorized or no manual acceptance is required.
+
+Only after implementation, validation, and required manual acceptance, run the
+Documentation Decision Checklist, map each changed fact to its owner, and update
+only those owners. Remove stale conflicts and avoid broad synchronization.
 
 # Do NOT change
 - ...
@@ -514,64 +559,79 @@ When an agent repeatedly times out or stops mid-migration, reduce scope rather t
 
 # Feature Development Workflow
 
-## 1. Establish truth
+## 1. Discussion / planning
 
-Read the minimal fresh-session set, relevant owner docs, and relevant code.
-Confirm production truth, frozen systems, and the exact Roadmap checkpoint.
+After the repository checkpoint, establish product intent, player value,
+boundaries, and what remains uncertain. Planning does not authorize editing.
 
-## 2. Broad planning — only when needed
+## 2. Focused design or investigation — when needed
 
-If product placement or information architecture is genuinely ambiguous,
-inspect realistic options without coding. When placement is open, avoid putting
-the preferred answer into the initial planning prompt; compare destinations
-from their current production responsibilities.
+Use Codex to inspect actual architecture, data, lifecycle, and reusable seams
+when uncertainty is meaningful. Resolve only the smallest useful contract:
+projection/state ownership, ordering, navigation, edge cases, and validation.
+Planning should narrow rather than repeat; once the work is sufficiently safe,
+stop planning.
 
-## 3. User/product decision
+## 3. Codex implementation
 
-Discuss tradeoffs and lock the player-facing direction.
+Codex normally implements domain/read-model behavior, state integration,
+functional composition, tests, and debugging. Prefer one owner for overlapping
+code and do not broaden the selected contract.
 
-## 4. Narrow contract pass — only when needed
+## 4. Green validation
 
-Resolve remaining data/projection contract, lifecycle, ordering, navigation,
-edge cases, and validation. Planning should get narrower, not repeat itself.
-Every additional planning pass must remove a distinct unresolved uncertainty.
+Run focused tests while iterating, then the appropriate full tests, typecheck,
+lint, build, diagnostics, and browser/responsive checks in proportion to risk.
+Report exact results and unresolved warnings.
 
-Once product direction, architecture, lifecycle, navigation, and validation are
-sufficiently resolved, stop planning and implement.
+## 5. Claude frontend/design polish — when appropriate
 
-## 5. Codex implementation
+After behavior is green and stable, use Claude Code with `frontend-design` for
+visual hierarchy, layout, responsive behavior, accessibility, styling, and
+presentation consistency when those materially benefit. This is optional for
+backend-only, invisible, or already-polished work. Claude must not invent domain
+semantics or canonical state merely because the feature has a UI.
 
-Prefer one behavior owner for domain/read model, navigation, functional UI,
-tests, and validation. Do not prematurely split overlapping implementation
-across agents.
+## 6. User manual acceptance
 
-## 6. Manual play and screenshots
+The user reviews actual behavior, screenshots, or normal play. Experiential and
+visual milestones require this judgment before they are documented as accepted
+or frozen. Ask whether the feature created understanding, useful decisions, and
+memorable Players/Programs/Seasons. Synthesize detailed playtest notes under
+`DOCUMENTATION_POLICY.md`; do not copy them or turn one anecdote into a system
+change automatically.
 
-Evaluate the feature in normal gameplay, not only technical checks. Ask whether
-it created understanding, useful decisions, and memorable Players/Programs/
-Seasons—for example, “Did this help me remember Avery?”
+## 7. Documentation closure
 
-When the user provides detailed playtest notes, analyze them before documenting.
-Extract current patterns, behavior changes, and evidence status rather than
-copying the notes wholesale. Preserve named examples selectively, treat one
-anecdote as observation rather than an automatic system change, and remember
-that not every playtest requires docs. Follow `DOCUMENTATION_POLICY.md` →
-**Playtest Note Synthesis** for destination and archive rules.
+Only after required acceptance, run the Documentation Decision Checklist,
+update changed owner facts, remove stale conflicts, and record COMPLETE /
+ACCEPTED / FROZEN where appropriate. Preserve an authoritative successor if one
+already exists; otherwise leave NEXT unset. Never promote PLANNED work from
+order or numbering.
 
-## 7. Optional visual polish
+## 8. Fresh planning or handoff
 
-If behavior is accepted but presentation needs work, freeze functional behavior
-and use a focused presentation pass. Claude/frontend-design is appropriate for
-visual hierarchy, layout, responsive behavior, and accessibility. Do not assume
-every feature needs a separate polish pass or expand scope during polish.
+At closure, decide whether the next action is a direct continuation or whether
+a fresh session would reduce anchoring and improve context quality. Use the
+Handoff Readiness Check below; freshness is useful, not ritual.
 
-## 8. Accept, document, and freeze
+## Handoff Readiness Check
 
-After acceptance, update changed facts in owner docs only, clear/rescope current
-WATCH evidence, freeze the milestone, and inspect authoritative sequencing. If
-Roadmap already selected a successor, preserve it. Otherwise leave NEXT unset
-and establish an Open Planning Checkpoint; never promote PLANNED work merely
-from order or numbering.
+Stay in the current chat when the next action directly continues the work,
+current context remains useful and unbiased, or a small fix/polish/closure task
+remains. Recommend a fresh chat when closure is complete and planning reopens,
+the thread contains a long trail of rejected candidates, a large design or
+investigation has accumulated substantial context, or the next workstream is
+materially different.
+
+A fresh handoff is especially useful after an accepted/frozen milestone and
+documentation closure return Roadmap to Open Planning. It is not required after
+every task. When recommending one, state why and provide the ready-to-paste
+Stage 1 template plus the appropriate Path A or Path B continuation above;
+never merely say “start a new chat.” Path A may name the expected NEXT only as a
+verification hint—“The previous session expected `<milestone>` to be NEXT;
+verify that from the repository.” Path B must minimize anchoring: do not name a
+preferred successor or make recently completed work imply what comes next.
 
 ## Calibration discipline
 
@@ -738,20 +798,23 @@ If uncertain, diagnose the root cause first.
 One agent owns overlapping code surfaces at a time:
 
 ```text
-Agent A implements
-→ validates
-→ updates docs under DOCUMENTATION_POLICY.md
-→ reaches an accepted green checkpoint
-→ Agent B begins
+Codex implements behavior/structure
+→ green validation
+→ Claude frontend/design polish when appropriate
+→ user acceptance
+→ targeted documentation closure
 ```
 
 Do not have Codex and Claude edit overlapping files simultaneously. Do not hand
 Claude a half-complete domain migration or Codex a half-complete visual redesign
 unless the latter has explicitly become a behavior-bug investigation.
 
-Every agent starts from the latest accepted green repository state and reads
-`CURRENT_STATE.md` first. Current repository state beats old chat context; failed
-or reverted work does not exist for the next agent.
+An implementation-green checkpoint may be handed from Codex to Claude before
+the milestone is accepted/frozen, but the handoff must explicitly freeze the
+validated behavior and state what remains unaccepted. Documentation closure
+still waits for required user acceptance. Every agent establishes truth from
+the repository; old chat summaries are hints, and failed/reverted work is not
+current architecture.
 
 ## Planning responsibility and current examples
 
@@ -910,7 +973,8 @@ A believable, understandable, fun system is more important than reproducing NCAA
 For meaningful gameplay/UI work, manual acceptance should also use the
 questions in `PLAYTESTING.md` under **Testing for Fun**. Engineering rigor still
 applies: diagnose → implement → targeted tests → full tests → lint → typecheck →
-build → calibration where relevant → manual play where relevant → freeze.
+build → calibration where relevant → frontend polish when appropriate → manual
+acceptance where relevant → targeted documentation closure → freeze.
 
 ---
 
