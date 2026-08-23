@@ -152,17 +152,19 @@ export function RecruitingScreen({
       />}
       {progressionBar}
 
-      <RecruitingHeader
-        programName={controlledProgram.name}
-        accentColor={controlledProgram.branding.primaryColor}
-        targetSeasonNumber={dynasty.recruiting.targetSeasonNumber}
-        phase={dynasty.recruiting.phase}
-        lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
-        focusCount={focusCount}
-        focusLimit={RECRUITING_FOCUS_LIMIT}
-      />
+      {!embeddedOffseason && (
+        <RecruitingHeader
+          programName={controlledProgram.name}
+          accentColor={controlledProgram.branding.primaryColor}
+          targetSeasonNumber={dynasty.recruiting.targetSeasonNumber}
+          phase={dynasty.recruiting.phase}
+          lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
+          focusCount={focusCount}
+          focusLimit={RECRUITING_FOCUS_LIMIT}
+        />
+      )}
 
-      {isLate && (
+      {isLate && !embeddedOffseason && (
         <section
           className="section late-recruiting-banner"
           aria-labelledby="late-recruiting-heading"
@@ -183,20 +185,31 @@ export function RecruitingScreen({
               <p className="section-hint">All projected roster openings are filled.</p>
             </>
           )}
-          {!embeddedOffseason && <button
+          <button
             type="button"
             className="button button--primary late-recruiting-banner__action"
             onClick={() => setIsFinalizeDialogOpen(true)}
           >
             Finalize Recruiting Class
-          </button>}
+          </button>
         </section>
       )}
 
-      <RecruitingOverview board={board} />
+      {isLate && embeddedOffseason && !hasRemainingOpenings && (
+        <p className="section-hint late-recruiting-embedded__complete" role="status">
+          Recruiting Class Complete — all projected roster openings are filled.
+        </p>
+      )}
+
+      <RecruitingOverview board={board} compact={embeddedOffseason} />
 
       {showZeroOfferWarning && (
-        <p className="recruiting-warning" role="status">
+        <p
+          className={
+            embeddedOffseason ? 'recruiting-warning recruiting-warning--compact' : 'recruiting-warning'
+          }
+          role="status"
+        >
           <span className="recruiting-warning__tag">No Active Offers</span>
           Recruits can only commit to programs that have offered them.
         </p>
@@ -204,15 +217,12 @@ export function RecruitingScreen({
 
       <section className="section" aria-labelledby="recruiting-mode-heading">
         <div className="section-heading">
-          <h2
-            id="recruiting-mode-heading"
-            className={isLate && (mode === 'board' || mode === 'national') ? 'section-title' : 'visually-hidden'}
-          >
+          <h2 id="recruiting-mode-heading" className="section-title">
             {isLate && mode === 'board'
               ? 'My Board'
               : isLate && mode === 'national'
                 ? 'Available Market'
-                : 'Recruiting mode'}
+                : 'Recruiting'}
           </h2>
           <RecruitingModeTabs mode={mode} onSelectMode={setMode} />
         </div>

@@ -3,6 +3,8 @@ import { deriveRecruitingHubTotals } from '../app/recruitingFormatters'
 
 interface RecruitingOverviewProps {
   readonly board: ProgramRecruitingBoard
+  /** Condenses the stat row and Needs line onto one strip — used inside the Offseason shell, which already establishes context. */
+  readonly compact?: boolean
 }
 
 /**
@@ -11,11 +13,11 @@ interface RecruitingOverviewProps {
  * sit beside Fill Remaining Board. Pure arithmetic over the existing
  * `ProgramRecruitingBoard` via `deriveRecruitingHubTotals`; derives nothing new.
  */
-export function RecruitingOverview({ board }: RecruitingOverviewProps) {
+export function RecruitingOverview({ board, compact = false }: RecruitingOverviewProps) {
   const totals = deriveRecruitingHubTotals(board)
 
   return (
-    <div className="recruiting-overview">
+    <div className={compact ? 'recruiting-overview recruiting-overview--compact' : 'recruiting-overview'}>
       <dl className="recruiting-overview__stats">
         <div className="recruiting-overview__stat">
           <dt>Board</dt>

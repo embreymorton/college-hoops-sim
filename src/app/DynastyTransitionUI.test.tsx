@@ -337,14 +337,13 @@ describe('Season-complete handoff', () => {
 })
 
 describe('Late Recruiting presentation', () => {
-  it('shows the Late Recruiting banner with needs, board, and a Finalize CTA', () => {
+  it('shows the compact needs/board snapshot and a Finalize CTA in the Offseason header', () => {
     const boundary = championshipBoundary()
     useDynastyStore.setState({ dynasty: boundary, view: 'postseasonHub' })
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Begin Offseason' }))
 
-    expect(screen.getByText('Late Recruiting — Final Signing Window')).toBeInTheDocument()
     expect(document.querySelector('.recruiting-overview')).toBeInTheDocument()
     expect(
       screen.getByRole('button', { name: 'Finalize Recruiting Class' }),

@@ -118,6 +118,22 @@
   color: var(--ink-2);
 }
 
+/* Condensed onto one line for the Offseason shell, which already carries
+   Program/season identity — see .late-recruiting-embedded__complete for the
+   quiet paired completion note. */
+.recruiting-overview--compact {
+  padding: var(--space-2) var(--space-4);
+  gap: var(--space-2) var(--space-5);
+}
+
+.recruiting-overview--compact .recruiting-overview__stat dd {
+  font-size: 1rem;
+}
+
+.recruiting-warning--compact {
+  padding: var(--space-2) var(--space-4);
+}
+
 /* ==========================================================================
    Priority stepper (compact 1–5 control)
    ========================================================================== */
@@ -651,6 +667,13 @@
 .late-recruiting-banner__action {
   align-self: flex-start;
   margin-top: var(--space-4);
+}
+
+/* Offseason shell's compact stand-in for the full banner: the Offseason
+   header already carries Late Recruiting identity and the Finalize CTA. */
+.late-recruiting-embedded__complete {
+  color: var(--accent);
+  font-weight: 600;
 }
 
 /* ==========================================================================

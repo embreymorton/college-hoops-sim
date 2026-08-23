@@ -17,13 +17,21 @@ export function OffseasonTimeline({ stages, onSelectStage }: OffseasonTimelinePr
     <nav className="offseason-timeline" aria-label="Offseason timeline">
       <ol className="offseason-timeline__list">
         {stages.map((stage, index) => {
-          const statusLabel = stage.isViewed && !stage.isFurthestUnlocked
+          const isReviewing = stage.isViewed && !stage.isFurthestUnlocked
+          const statusLabel = isReviewing
             ? 'reviewing completed stage'
             : stage.status === 'completed'
               ? 'completed'
               : stage.status === 'active'
                 ? 'current stage'
                 : 'locked'
+          const displayLabel = isReviewing
+            ? 'Reviewing'
+            : stage.status === 'completed'
+              ? 'Complete'
+              : stage.status === 'active'
+                ? 'Current'
+                : 'Locked'
           return (
             <li key={stage.id} className="offseason-timeline__item">
               <button
@@ -31,7 +39,7 @@ export function OffseasonTimeline({ stages, onSelectStage }: OffseasonTimelinePr
                 type="button"
                 className="offseason-timeline__button"
                 data-status={stage.status}
-                data-viewed={stage.isViewed}
+                data-reviewing={isReviewing}
                 disabled={!stage.isInteractive}
                 aria-current={stage.isViewed ? 'step' : undefined}
                 aria-label={`${stage.label}, ${statusLabel}`}
@@ -40,8 +48,8 @@ export function OffseasonTimeline({ stages, onSelectStage }: OffseasonTimelinePr
                 <span className="offseason-timeline__marker" aria-hidden="true">
                   {stage.status === 'completed' ? '✓' : index + 1}
                 </span>
-                <span>{stage.label}</span>
-                <small>{statusLabel}</small>
+                <span className="offseason-timeline__label">{stage.label}</span>
+                <small>{displayLabel}</small>
               </button>
             </li>
           )

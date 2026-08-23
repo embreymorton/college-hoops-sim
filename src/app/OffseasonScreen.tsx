@@ -167,28 +167,23 @@ export function OffseasonScreen() {
       return (
         <>
           <section className="section offseason-roster-summary" aria-labelledby="roster-review-heading">
-            <div>
-              <p className="eyebrow-tag">Season {experience.targetSeasonNumber}</p>
-              <h2 id="roster-review-heading" className="section-title">Roster Review</h2>
-              <p className="section-hint">The exact roster that will enter the next Season.</p>
-            </div>
-            <div className="stat-trio">
+            <p className="eyebrow-tag">Season {experience.targetSeasonNumber}</p>
+            <h2 id="roster-review-heading" className="section-title">Roster Review</h2>
+            <div className="stat-trio offseason-roster-summary__stats">
               <div className="stat-trio__item"><span className="stat-trio__value">{roster.length}</span><span className="stat-trio__label">Players</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{formatAverage(deriveRosterAverageOverall(roster))}</span><span className="stat-trio__label">Avg Ovr</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{incoming.length}</span><span className="stat-trio__label">Incoming</span></div>
             </div>
+            <p className="offseason-position-balance">
+              {positionCounts.map(({ position, count }) => `${position} ${count}`).join('   ')}
+            </p>
           </section>
           <section className="section" aria-labelledby="incoming-heading">
             <h3 id="incoming-heading" className="section-title">Incoming Class</h3>
             <IncomingClassTable programName={controlledProgram.name} rows={incoming} />
           </section>
           <section className="section" aria-labelledby="next-roster-heading">
-            <div className="section-heading">
-              <h3 id="next-roster-heading" className="section-title">Season {experience.targetSeasonNumber} Roster</h3>
-              <p className="offseason-position-balance">
-                {positionCounts.map(({ position, count }) => `${position} ${count}`).join('   ')}
-              </p>
-            </div>
+            <h3 id="next-roster-heading" className="section-title">Season {experience.targetSeasonNumber} Roster</h3>
             <NextSeasonRosterTable rows={rosterRows} />
           </section>
         </>
@@ -199,7 +194,6 @@ export function OffseasonScreen() {
       <section className="section offseason-ready" aria-labelledby="ready-heading">
         <p className="eyebrow-tag">Offseason Complete</p>
         <h2 id="ready-heading" className="section-title">Ready for Season {experience.targetSeasonNumber}</h2>
-        <p className="section-hint">Your roster is assembled and ready for the new schedule.</p>
         <div className="stat-trio offseason-ready__facts">
           <div className="stat-trio__item"><span className="stat-trio__value">{roster.length}</span><span className="stat-trio__label">Players</span></div>
           <div className="stat-trio__item"><span className="stat-trio__value">{offseasonProgram.returningPlayers.length}</span><span className="stat-trio__label">Returning</span></div>
@@ -210,6 +204,9 @@ export function OffseasonScreen() {
   }
 
   const isReviewing = experience.viewedStage !== experience.furthestUnlockedStage
+  const furthestLabel = experience.stages.find(
+    ({ id }) => id === experience.furthestUnlockedStage,
+  )?.label
   const remainingOpenings = dynasty.recruiting?.phase === 'late'
     ? deriveRecruitingHubTotals(
         deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId),
@@ -227,10 +224,28 @@ export function OffseasonScreen() {
             <p className="season-header__meta">Season {experience.completedSeasonNumber} → Season {experience.targetSeasonNumber}</p>
           </div>
         </div>
-        <div className="offseason-exploration" aria-label="Offseason exploration">
-          {dynasty.activeSeason && <button type="button" className="button button--ghost" onClick={goToLeague}>View League</button>}
-          <button type="button" className="button button--ghost" onClick={openHistory}>History</button>
-          {dynasty.offseason && <button type="button" className="button button--ghost" onClick={() => openArchivedSeason(experience.completedSeasonNumber)}>Completed Tournament</button>}
+        <div className="offseason-header__actions">
+          <div className="offseason-exploration" aria-label="Offseason exploration">
+            {dynasty.activeSeason && <button type="button" className="button button--tertiary" onClick={goToLeague}>View League</button>}
+            <button type="button" className="button button--tertiary" onClick={openHistory}>History</button>
+            {dynasty.offseason && <button type="button" className="button button--tertiary" onClick={() => openArchivedSeason(experience.completedSeasonNumber)}>Completed Tournament</button>}
+          </div>
+          <div className="offseason-header__cta">
+            {isReviewing && (
+              <p className="offseason-header__reviewing-note">
+                Reviewing {experience.stages.find(({ id }) => id === experience.viewedStage)?.label} · Progress at {furthestLabel}
+              </p>
+            )}
+            {experience.progressionAction.kind !== 'none' && (
+              <button
+                type="button"
+                className="button button--primary offseason-header__cta-button"
+                onClick={handleProgression}
+              >
+                {experience.progressionAction.label}
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
@@ -239,17 +254,6 @@ export function OffseasonScreen() {
       {actionError && <p className="recruiting-action-error" role="alert">{actionError}</p>}
       {renderStage()}
 
-      <aside className="offseason-progression" aria-label="Offseason progression">
-        <div>
-          <p className="eyebrow-tag">{isReviewing ? 'Reviewing Completed Stage' : 'Next Step'}</p>
-          {isReviewing && <p className="section-hint">Progress remains at {experience.stages.find(({ id }) => id === experience.furthestUnlockedStage)?.label}.</p>}
-        </div>
-        {experience.progressionAction.kind !== 'none' && (
-          <button type="button" className="button button--primary offseason-progression__action" onClick={handleProgression}>
-            {experience.progressionAction.label}
-          </button>
-        )}
-      </aside>
       {isFinalizeDialogOpen && (
         <RecruitingFinalizationDialog
           remainingOpenings={remainingOpenings}
