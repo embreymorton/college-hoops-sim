@@ -17,8 +17,8 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT
 
-No NEXT is selected. Matchup Scout V1 and Game Prep Rotation Experience V1 are
-complete; new work requires an explicit selection rather than inheriting
+No NEXT is selected. Matchup Scout V1, Game Prep Rotation Experience V1, and
+Player Records Expansion V1 are complete; new work requires an explicit selection rather than inheriting
 priority from the remaining planned or unscheduled ideas below.
 
 ### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
@@ -67,6 +67,18 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Player Records Expansion V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added regular-season PTS/REB/AST/STL/BLK Career Highs for active and former
+  Players plus Program record holders across Single Game, qualified Single
+  Season, and Program-attributed Career production.
+- Reused one pure shared record projection while preserving League Records,
+  stable tie/qualification/`LIVE` behavior, and rollover deduplication; added no
+  mutable record state, persistence, simulation changes, or Tournament stats.
+- Accepted persistent entity headers with Team `Overview | History` and Player
+  `Overview | Career` organization, then returned to an Open Planning
+  Checkpoint with no successor selected.
 
 ### Dedicated Offseason Experience V1 — COMPLETE / ACCEPTED / FROZEN
 

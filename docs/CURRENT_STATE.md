@@ -30,7 +30,9 @@ The playable product includes:
   Prep with a shared Matchup Scout and Simple/Advanced Rotation preparation,
   Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
-  Details, derived Program Dynasty histories, Following, News, Alumni, Season Preview, and a completed-Season
+  Details with current/history organization, derived Program Dynasty histories
+  and Program Player Records, Player Career Highs, Following, News, Alumni,
+  Season Preview, and a completed-Season
   first-class League History with Yearbooks, a Dynasty Record Book, and
   finalized national Recruiting class retrospectives;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
@@ -121,7 +123,11 @@ refactor these systems during unrelated feature work:
 - Recruiting Class Retrospectives V1's finalized-signee projection and History
   presentation contract; and
 - Program Legacy V1's all-Program historical projection and Team Details
-  presentation contract.
+  presentation contract; and
+- Player Records Expansion V1's shared regular-season record projections,
+  Player Career Highs, Program-attributed Player Records, stable-ID navigation,
+  and accepted Team `Overview | History` / Player `Overview | Career`
+  information architecture.
 
 Recruit POT Candidate B is the accepted production POT finalizer. It must not
 be confused with the rejected historical **OVR Experiment B v1**.
@@ -148,6 +154,11 @@ does not itself authorize implementation:
 ## Current planning checkpoint
 
 **No NEXT selected — Open Planning Checkpoint.**
+
+Player Records Expansion V1 and its Details information-architecture polish are
+**COMPLETE / ACCEPTED / FROZEN**. Career Highs and Program Player Records remain
+pure derived regular-season projections over archived and active results; no
+record state, persistence, or Tournament statistics were added.
 
 Matchup Scout V1 and Game Prep Rotation Experience V1 are **COMPLETE / ACCEPTED /
 FROZEN**. Game Prep now composes the pregame matchup, a pure opponent Scout,

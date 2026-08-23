@@ -81,7 +81,9 @@ The run supplied these additional signals:
 - **WORKING:** Records and News sustained historical exploration many Seasons
   later. A discovered 59-point game and Kobe Russell's Season/Career rebounding
   ranks were memorable, while Darnell Green's 40-point game created an immediate
-  desire for discoverable Player career highs and Program memory.
+  desire for discoverable Player career highs and Program memory; the accepted
+  Player Records Expansion now makes both available from Player and Team
+  Details.
 - **WORKING:** the historical disappearing Tournament → Late Recruiting action
   did not recur during the long run. This is meaningful additional manual
   validation of the accepted canonical progression architecture, not proof that
@@ -297,6 +299,30 @@ new regular-season Dynasty highs qualify, same-game categories combine, generic
 duplicate performance stories are suppressed, and ties, Top-10-only entries,
 and postseason performances do not qualify. Existing News ranking, grouping,
 Following, and entity navigation remain intact.
+
+### Player Records Expansion V1 + Details IA — ACCEPTED / FROZEN
+
+Manual play accepted Career Highs and Program Player Records as useful,
+straightforward Dynasty attachment surfaces. The initial combined Details pages
+also exposed a real information-hierarchy problem: current-season facts and
+long-term history made Team and Player Details feel cluttered when presented in
+one long flow. The accepted follow-up keeps entity headers persistent and uses
+Team `Overview | History` plus Player `Overview | Career`; Former Player Details
+adapts the same organization without inventing current-season content.
+
+The accepted V1 remains regular-season-only and derived from canonical archived
+plus active results. It preserves League Records, qualification, deterministic
+ties, provisional `LIVE` Season rates, rollover deduplication, stable-ID
+active/former navigation, and Back behavior. Program Career totals include only
+production accumulated while representing that Program. No mutable achievement
+state, Tournament statistics, persistence, or simulation behavior was added.
+
+Final post-polish closure passed 1,237 tests across 117 files, ESLint,
+TypeScript, and the production build. Focused IA coverage passed 72 tests across
+five files. Browser inspection at 390×844 found no document-level overflow and
+confirmed compact tabs and clean selected-panel structure; desktop inspection
+confirmed the intended header → tabs → selected-content hierarchy with no
+browser warnings or errors.
 
 The Tournament → League → Tournament progression blocker found during play is
 **RESOLVED / MANUALLY VERIFIED**. Handoff visibility derives from canonical

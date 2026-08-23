@@ -82,33 +82,16 @@ full historical evidence and reopening criteria live in
 - postseason Team statistics; and
 - explicit Tournament résumés and signature games.
 
-Current Former Player career aggregation is regular-season-only. These future
-projections should reuse retained Tournament `PlayerGameStats` without changing
-current regular-season semantics.
+Current Former Player career aggregation, Career Highs, Dynasty Records, and
+Program Player Records are regular-season-only. These future projections should
+reuse retained Tournament `PlayerGameStats` through one coordinated statistical
+scope expansion without changing current regular-season semantics piecemeal.
 
 ### Additional leader views
 
 - shooting percentage with minimum-attempt qualification;
 - three-pointers, minutes, efficiency, and class/position filters;
 - Conference and freshman leaderboards.
-
-### Player personal bests / career highs
-
-Player Details could derive PTS/REB/AST/STL/BLK single-game highs with opponent
-and game context from retained results. This would be historical presentation,
-not mutable achievement or milestone state. Whether the scope is regular-season
-only or includes Tournament games remains deliberately undecided because current
-career-history aggregation is regular-season-only. Long manual play strengthened
-the motivation: a 40-point game felt immediately worth “immortalizing,” while a
-59-point historical Record Book discovery remained enjoyable many Seasons later.
-
-### Program record extensions
-
-Program/Team Details could derive Program-specific single-game, Season, and
-career records from retained history so memorable performances remain attached
-to the school where they happened. This would complement the existing global
-Dynasty Record Book and the separate, deliberately undefined signature-games
-concept; it need not create mutable record or achievement state.
 
 ## History and immersion beyond selected work
 
@@ -139,8 +122,8 @@ Program Legacy could eventually connect memorable graduated Players to the
 Programs where their careers mattered, using notable alumni or Program-specific
 historical recognition. Manual play produced attachment to a developed star, a
 career rebounding/blocking contributor, and the scorer associated with a major
-upset. This does not imply a Hall of Fame, retired numbers, Awards, or separate
-Program Record Books; those remain distinct possible extensions.
+upset. This does not imply a Hall of Fame, retired numbers, Awards, or a broader
+Program alumni-recognition system; those remain distinct possible extensions.
 
 ### Dynasty series history
 

@@ -435,18 +435,24 @@ League
 ├── Team Details
 │   ├── record
 │   ├── OFF / DEF / OVR
-│   ├── Dynasty History / recent completed Seasons
-│   ├── Team averages
-│   ├── Team leaders
-│   ├── recent results
-│   └── roster / Player stats
+│   ├── Overview
+│   │   ├── Team averages
+│   │   ├── recent results
+│   │   ├── Team leaders
+│   │   └── roster / Player stats
+│   └── History
+│       ├── Dynasty History / recent completed Seasons
+│       └── Program Player Records
 └── Player Details
     ├── identity and OVR/POT summary
-    ├── compact nine-attribute ratings grid
-    ├── Recruiting Origin (Recruits only; omitted cleanly otherwise)
-    ├── Career Progression (Season/Class/OVR/Dev/PPG/RPG/APG)
-    ├── regular-season statistics
-    └── chronological game log
+    ├── Overview
+    │   ├── compact nine-attribute ratings grid
+    │   ├── regular-season statistics
+    │   └── chronological game log
+    └── Career
+        ├── Career Progression (Season/Class/OVR/Dev/PPG/RPG/APG)
+        ├── Career Highs
+        └── Recruiting Origin (Recruits only; omitted cleanly otherwise)
 ```
 
 Conference standings, Tournament field rows, Team rosters, national leader rows, Player game-log opponents, and Program links support cross-League Team/Player exploration with context-aware return navigation. These views consume derived regular-season projections and stable Universe identities rather than duplicating statistical state in Zustand.
@@ -530,6 +536,30 @@ mobile. Category state survives Player Details round trips. The League strip
 may scroll horizontally on narrow screens rather than forcing five tabs into
 the viewport; neither it nor Records may create body-level overflow.
 
+### Player Records Expansion V1 + Details organization — accepted / frozen
+
+Player Details `Career` derives compact regular-season PTS/REB/AST/STL/BLK
+single-game highs across archived and active Seasons. Each high shows concise
+Season/opponent context; repeated equal highs use one deterministic canonical
+occurrence plus a quiet repeat count. Active and Former Player Details share
+the stable-ID history boundary and one quiet no-appearance state.
+
+Team Details `History` pairs the existing Dynasty History résumé with compact
+Program Player Records. One local PTS/REB/AST/STL/BLK selector shows exactly one
+record holder for Single Game, qualified Single Season, and Career; active
+Season rates alone carry `LIVE`. Program Career production includes only the
+Seasons in which that stable Player represented the selected Program.
+
+Both Details destinations keep their entity identity/header above an accepted
+two-tab control. Team uses `Overview | History`: current averages, results,
+leaders, and roster remain in Overview, while Dynasty History and Program
+Player Records live in History. Player uses `Overview | Career`: current
+ratings, statistics, and game log remain in Overview, while progression, highs,
+and Recruiting Origin live in Career. Former Player Overview contains Final
+Ratings; its completed college summary, progression, highs, and optional origin
+live in Career. Tabs use local state, default to Overview for a normal entity
+entry, add no route or Zustand state, and preserve existing Back behavior.
+
 ### Recruiting Class Retrospectives — accepted
 
 Recruiting is the History-owned factual retrospective for finalized national
@@ -557,7 +587,7 @@ transfers, coach attribution, new persistence, and simulation changes.
 
 ### Player Details + Development History — implemented (6E.8)
 
-Player Details now tells a Player's career story without duplicating any canonical facts. Nine current-ability ratings display as a compact three-column grid — deliberately not nine oversized cards — directly below identity/OVR/POT. Career Progression is a dense, prominent table (not a secondary tab) with one row per Season the Player is found on a roster in, current or archived: Season number, class, OVR, offseason development gain (`overall[n] − overall[n-1]`, blank for the earliest known Season), and PPG/RPG/APG. The active partial Season is included as the latest row and stays visibly partial. Recruiting Origin — star rating, national/position rank, entry OVR/POT, and signed Program — appears only for Players resolved from finalized Recruiting history and is omitted entirely, with no placeholder, for original Universe Players.
+Player Details tells a Player's career story without duplicating any canonical facts. Nine current-ability ratings display as a compact three-column grid — deliberately not nine oversized cards — in Overview. Career Progression is a dense, prominent Career-tab table with one row per Season the Player is found on a roster in, current or archived: Season number, class, OVR, offseason development gain (`overall[n] − overall[n-1]`, blank for the earliest known Season), and PPG/RPG/APG. The active partial Season is included as the latest row and stays visibly partial. Recruiting Origin — star rating, national/position rank, entry OVR/POT, and signed Program — appears in Career only for Players resolved from finalized Recruiting history and is omitted entirely, with no placeholder, for original Universe Players.
 
 All of this is a pure read-model (`derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts`) over existing archived Dynasty Season snapshots, the active Season, and finalized Recruiting history, connected by stable Player ID. It reuses the existing Player Season Stats projection for every Season, including archived ones, and introduces no new persisted career-history state. Existing current-season stats, shooting splits, game log, and Team ↔ Player navigation are unchanged.
 

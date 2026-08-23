@@ -695,6 +695,25 @@ returns all three scopes for all categories together. React memoizes that pure
 result by stable history, Universe, and active-Season references, making a
 category switch cheap while completed-round state naturally invalidates it.
 
+Player Records Expansion V1 reuses that traversal through one internal,
+explicitly regular-season candidate corpus. The existing Dynasty Record Book
+remains a behavior-preserving consumer. `derivePlayerCareerHighs()` filters
+single-game candidates by stable Player ID and returns one deterministic
+canonical maximum plus its equal-value occurrence count.
+`deriveProgramPlayerRecords()` filters Single Game and qualified Single Season
+candidates by Program and aggregates Career totals by `(programId, playerId)`,
+so only production accumulated while representing that Program contributes.
+Completed active games overlay archives immediately; only active Season rates
+are provisional, and duplicate active/archive Season numbers remain excluded.
+
+Both projections expose a `regular-season` game-scope contract and never read
+Postseason results. They add no record registry, achievement state, cache,
+persistence, RNG, or lifecycle ownership. A future Tournament-stat initiative
+can add coordinated competition-source semantics without silently changing the
+accepted regular-season career boundary. Team and Player Details consume these
+read models behind local two-tab presentation state; that IA adds no route or
+Zustand ownership and leaves stable exploration history unchanged.
+
 ## Team Season Stats and exploration projections
 
 The current regular-season presentation follows one facts-to-projections pipeline:
