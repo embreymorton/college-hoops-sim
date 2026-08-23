@@ -198,8 +198,8 @@ export function PlayerDetailsScreen() {
         {stats.gamesPlayed === 0 ? (
           <p className="section-hint">No regular-season games played yet.</p>
         ) : null}
-        <div className="player-stat-block">
-          <div className="stat-trio player-stat-block__row">
+        <div className="player-stat-block player-stat-block--current">
+          <div className="stat-trio player-stat-block__production">
             <div className="stat-trio__item">
               <span className="stat-trio__value">
                 {formatRating(stats.pointsPerGame)}
@@ -218,8 +218,6 @@ export function PlayerDetailsScreen() {
               </span>
               <span className="stat-trio__label">APG</span>
             </div>
-          </div>
-          <div className="stat-trio player-stat-block__row player-stat-block__row--secondary">
             <div className="stat-trio__item">
               <span className="stat-trio__value">
                 {formatRating(stats.stealsPerGame)}
@@ -233,24 +231,27 @@ export function PlayerDetailsScreen() {
               <span className="stat-trio__label">BPG</span>
             </div>
           </div>
-          <div className="stat-trio player-stat-block__row player-stat-block__row--secondary">
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">
-                {formatPercentage(stats.fieldGoalPercentage)}
-              </span>
-              <span className="stat-trio__label">FG%</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">
-                {formatPercentage(stats.threePointPercentage)}
-              </span>
-              <span className="stat-trio__label">3P%</span>
-            </div>
-            <div className="stat-trio__item">
-              <span className="stat-trio__value">
-                {formatPercentage(stats.freeThrowPercentage)}
-              </span>
-              <span className="stat-trio__label">FT%</span>
+          <div className="player-stat-block__shooting">
+            <span className="player-stat-block__shooting-label">Shooting</span>
+            <div className="stat-trio player-stat-block__shooting-values">
+              <div className="stat-trio__item">
+                <span className="stat-trio__value">
+                  {formatPercentage(stats.fieldGoalPercentage)}
+                </span>
+                <span className="stat-trio__label">FG%</span>
+              </div>
+              <div className="stat-trio__item">
+                <span className="stat-trio__value">
+                  {formatPercentage(stats.threePointPercentage)}
+                </span>
+                <span className="stat-trio__label">3P%</span>
+              </div>
+              <div className="stat-trio__item">
+                <span className="stat-trio__value">
+                  {formatPercentage(stats.freeThrowPercentage)}
+                </span>
+                <span className="stat-trio__label">FT%</span>
+              </div>
             </div>
           </div>
         </div>

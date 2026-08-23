@@ -511,6 +511,61 @@
   font-size: 1.9rem;
 }
 
+/* Active Player Details: the season line reads as one anchored card instead
+   of a loose cluster of numbers floating on the left edge of the page.
+   Per-game production stays as one tightly grouped row; shooting splits get
+   their own labeled, visually distinct sub-panel so the two stat families
+   read as separate ideas rather than one long evenly-spaced strip. */
+
+.player-stat-block--current {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  gap: var(--space-5);
+}
+
+.player-stat-block--current .player-stat-block__production {
+  gap: var(--space-6);
+}
+
+.player-stat-block--current .stat-trio__item {
+  min-width: 3rem;
+}
+
+.player-stat-block--current .player-stat-block__shooting {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3) var(--space-4);
+}
+
+.player-stat-block--current .player-stat-block__shooting-label {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+  white-space: nowrap;
+}
+
+.player-stat-block--current .player-stat-block__shooting-values {
+  gap: var(--space-5);
+}
+
+.player-stat-block--current .player-stat-block__shooting-values .stat-trio__value {
+  font-size: 1.6rem;
+  color: var(--ink-0);
+}
+
+.player-stat-block--current .player-stat-block__shooting-values .stat-trio__item {
+  min-width: 0;
+}
+
 /* Former Player Details: tightened local vertical rhythm so the completed
    career reads as one cohesive summary instead of loosely spaced blocks.
    Scoped to the historical page only — active Player Details keeps
