@@ -40,6 +40,8 @@ interface PregameScoreboardProps {
    */
   readonly homeLabel?: string
   readonly awayLabel?: string
+  /** Optional context chip above the matchup (e.g. "Round 4"), for callers that fold their heading into the hero. */
+  readonly contextTag?: string
 }
 
 export function PregameScoreboard({
@@ -51,12 +53,18 @@ export function PregameScoreboard({
   actionDisabledReason = null,
   homeLabel = 'Home',
   awayLabel = 'Away',
+  contextTag,
 }: PregameScoreboardProps) {
   const showReason = actionDisabled && Boolean(actionDisabledReason)
 
   return (
     <div className="scoreboard scoreboard--pregame">
       <ScoreboardCorners />
+      {contextTag && (
+        <div className="scoreboard-tag-row">
+          <span className="scoreboard-tag">{contextTag}</span>
+        </div>
+      )}
       <div className="scoreboard-grid">
         <StrengthSide side="home" label={homeLabel} team={home} />
         <div className="scoreboard-divider">

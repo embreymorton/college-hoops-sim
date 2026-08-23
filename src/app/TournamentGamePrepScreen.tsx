@@ -163,12 +163,12 @@ export function TournamentGamePrepScreen() {
 
   return (
     <>
-      <section className="section" aria-labelledby="tournament-game-prep-heading">
-        <div className="section-heading">
-          <h2 id="tournament-game-prep-heading" className="section-title">
-            {formatTournamentRoundName(game.round)} · Neutral Site vs{' '}
-            {opponentTeam.name}
-          </h2>
+      <section className="section game-prep-hero" aria-labelledby="tournament-game-prep-heading">
+        <h2 id="tournament-game-prep-heading" className="visually-hidden">
+          {formatTournamentRoundName(game.round)} · Neutral Site vs{' '}
+          {opponentTeam.name}
+        </h2>
+        <div className="game-prep-hero__nav">
           <button
             type="button"
             className="button button--ghost"
@@ -189,6 +189,7 @@ export function TournamentGamePrepScreen() {
           onAction={playPostseasonScheduledGame}
           actionDisabled={!isValid || simpleIsDirty}
           actionDisabledReason={simulationBlockingReason}
+          contextTag={`${formatTournamentRoundName(game.round)} · Neutral Site`}
         />
       </section>
       <TournamentScout

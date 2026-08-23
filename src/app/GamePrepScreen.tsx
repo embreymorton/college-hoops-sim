@@ -142,12 +142,12 @@ export function GamePrepScreen() {
 
   return (
     <>
-      <section className="section" aria-labelledby="game-prep-heading">
-        <div className="section-heading">
-          <h2 id="game-prep-heading" className="section-title">
-            Round {game.round} · {isControlledHome ? 'Home' : 'Away'} vs{' '}
-            {opponentTeam.name}
-          </h2>
+      <section className="section game-prep-hero" aria-labelledby="game-prep-heading">
+        <h2 id="game-prep-heading" className="visually-hidden">
+          Round {game.round} · {isControlledHome ? 'Home' : 'Away'} vs{' '}
+          {opponentTeam.name}
+        </h2>
+        <div className="game-prep-hero__nav">
           <button
             type="button"
             className="button button--ghost"
@@ -162,6 +162,7 @@ export function GamePrepScreen() {
           onAction={playScheduledGame}
           actionDisabled={!isValid || simpleIsDirty}
           actionDisabledReason={simulationBlockingReason}
+          contextTag={`Round ${game.round} · ${isControlledHome ? 'Home' : 'Away'}`}
         />
       </section>
       <RegularSeasonScout

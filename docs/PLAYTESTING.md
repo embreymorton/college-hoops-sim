@@ -90,10 +90,11 @@ The run supplied these additional signals:
   selection evidence for Dedicated Offseason Experience V1. The accepted Hybrid
   Offseason Timeline now gives Late Recruiting, class review, Departures,
   Development, Roster Review, and the next-Season handoff one coherent identity.
-- **OBSERVED:** Game Prep's Rotation-centered composition now feels older than
-  the richer Team Strength, statistics, leaders, results, and Player/Team detail
-  available elsewhere. This supports an informational matchup-scout opportunity,
-  separate from tactics or schemes that could affect simulation.
+- **RESOLVED:** Matchup Scout V1 and Game Prep Rotation Experience V1 replaced
+  the older Rotation-centered composition with an accepted pregame hierarchy,
+  restrained opponent context, default Simple Rotation, guarded Advanced
+  access, and a compact Expected Rotation without changing simulation or
+  Rotation mechanics.
 - **OBSERVED:** qualitative Recruiting uncertainty remains valuable. While
   second for PG Tyler Allen, the user wanted to know whether the gap was truly
   competitive or a long shot without seeing exact hidden relationship scores.
@@ -233,6 +234,32 @@ disabled Apply, showed the existing minute-total feedback, and left canonical
 state unchanged. Desktop presentation remained clear, and a small acceptance
 fix made the three actions fully reachable without horizontal overflow at
 390px.
+
+### Matchup Scout V1 + Game Prep Rotation Experience V1 — ACCEPTED / FROZEN
+
+The finalized regular-season and Tournament Game Prep surfaces were visually
+accepted with the same hierarchy: matchup/pregame hero, contained Matchup Scout,
+then Rotation Preparation. The Scout keeps early samples restrained, surfaces
+distinctive league-relative opponent observations only when earned, selects
+production-first Players to Watch with compact Top-10 PPG/RPG/APG distinctions,
+and adds recent form, meaningful streaks, and the latest regular-season prior
+meeting where available. Tournament form can lead the recent-results sequence
+without entering the regular-season statistical profile.
+
+Simple is accepted as the default controlled Rotation presentation, with
+Advanced progressively disclosed. Manual and automated checks confirmed that
+dirty Simple work must be Applied or Discarded before switching, invalid
+Advanced work remains visible until completed or reset, and simulation stays
+blocked while unresolved draft state differs from canonical Rotation. The
+opponent Expected Rotation focuses on the projected PG–C five and positive-
+minute bench, with compact reserves and deeper Player/Team navigation.
+
+Closure verification included focused projection, navigation, draft-safety,
+synchronization, simulation-gating, and shared-surface coverage; the full suite
+passed 1,226 tests across 117 files. ESLint, TypeScript, production build, and
+`git diff --check` passed. Desktop and 390px browser checks found no body-level
+overflow or console warnings/errors; Simple and Advanced retained local table
+overflow where needed.
 
 ### Program Legacy V1 — ACCEPTED / FROZEN
 

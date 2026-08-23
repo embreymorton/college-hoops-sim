@@ -184,15 +184,15 @@ export function MatchupScoutSection({
         </div>
       </div>
       <div className="matchup-scout__grid">
-        <div className="matchup-scout__column">
+        <div className="matchup-scout__column matchup-scout__column--profile">
           <h3 className="matchup-scout__subheading">Opponent Profile</h3>
           <OpponentProfile report={report} />
         </div>
-        <div className="matchup-scout__column">
-          <h3 className="matchup-scout__subheading">Players to Watch</h3>
+        <div className="matchup-scout__column matchup-scout__column--players">
+          <h3 className="matchup-scout__subheading matchup-scout__subheading--anchor">Players to Watch</h3>
           <PlayersToWatch report={report} onSelectPlayer={onSelectPlayer} />
         </div>
-        <div className="matchup-scout__column">
+        <div className="matchup-scout__column matchup-scout__column--context">
           <h3 className="matchup-scout__subheading">Game Context</h3>
           <GameContext report={report} programsById={programsById} />
         </div>

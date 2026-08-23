@@ -137,6 +137,15 @@ remain discovery/management entry surfaces rather than parallel Follow controls.
 
 Rotation edits may be temporarily invalid in the Game Prep draft. Only a legal draft is committed through `updateProgramRotation()` to the controlled Program's current `SeasonProgramState.rotation`. That committed Rotation persists across games and is the only Rotation used by Hub Quick Sim and Super Sim; neither operation reads a stale invalid draft.
 
+Game Prep reuses the Coaching Simple transient fields and competition-aware
+Advanced actions without adding canonical state. Entry initializes aggregate
+Simple and positional drafts from the controlled Program's current Season or
+Postseason Rotation and clears transient preservation/issues. Simple intent
+remains draft-only until Apply; a dirty Simple draft cannot be hidden behind
+Advanced or used for simulation. Invalid positional intent cannot be hidden
+behind Simple. Successful commits refresh the other presentation, and
+Tournament Game Prep writes only through the accepted Postseason boundary.
+
 Permanent Coaching navigation uses the same session drafts and validated write
 boundaries rather than owning another Rotation. `goToCoaching()` performs no
 catch-up, simulation, Recruiting setup, or lifecycle transition: it only selects
@@ -202,12 +211,44 @@ structured failure. Uncommitted Simple MPG intent is deliberately excluded:
 Starting Five changes only after Simple Apply or an Advanced edit successfully
 changes canonical Rotation V1.
 
+Matchup Scout V1 is a pure read-model boundary shared by regular-season and
+Tournament Game Prep:
+
+```text
+canonical Season/Postseason facts
+→ deriveMatchupScout()
+→ shared MatchupScoutSection
+```
+
+The projection ranks existing regular-season Team and Player statistics
+deterministically to select zero to three nonredundant league-relative opponent
+observations. Zero games yields no statistical profile; one or two games yields
+limited-data presentation without rankings; three to five allows a restrained
+early-Season profile; six or more uses normal selection. Players to Watch are
+production-first across qualified PPG/RPG/APG leaders, deduplicated by stable
+Player ID, with committed-Rotation fallback and compact Top-10 distinctions.
+Observation families cover scoring offense/defense, shooting, assists,
+turnovers and turnover forcing, rebounding differential, rim protection, and a
+point-differential fallback; rank-relative extremity, family suppression, and
+stable tie-breaks avoid redundant or forced copy.
+Game Context derives recent form, streaks of at least two games, and the latest
+regular-season prior meeting. During Tournament Game Prep, Tournament results
+may precede regular-season results in recent form, but never enter the league
+rankings or opponent statistical profile.
+
+The Scout stores no report, scouting accuracy, fog of war, tactical advice, or
+persistent assignment. It introduces no RNG and changes no simulation, AI,
+ratings, Recruiting, or competition lifecycle behavior. Broader rankings,
+prior-meeting box-score navigation/notable-performer copy, opponent archetypes,
+schemes, assignments, tempo controls, and matchup-specific AI remain outside
+the accepted V1 boundary.
+
 ```text
 Game Prep
-→ Zustand draft
-→ validateRotationV1()
-→ updateProgramRotation()
-→ canonical Season Rotation
+→ Simple aggregate draft or Advanced positional draft
+→ accepted compiler / validateRotationV1()
+→ competition-aware Season or Postseason Rotation update
+→ one canonical competition RotationV1
 → scheduled-game simulation
 ```
 

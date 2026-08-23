@@ -78,7 +78,7 @@ export function GamePrepRotationSection(props: GamePrepRotationSectionProps) {
   }
 
   return (
-    <section className="section" aria-labelledby={props.headingId}>
+    <section className="section game-prep-rotation-section" aria-labelledby={props.headingId}>
       <div className="section-heading">
         <div>
           <h2 id={props.headingId} className="section-title">Rotation Preparation</h2>

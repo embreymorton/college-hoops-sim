@@ -179,18 +179,6 @@ future Rivalry system deliberately adds canonical state or gameplay effects.
 These systems would materially change simulation or lifecycle behavior and need
 their own selected phases and validation.
 
-### Matchup scout
-
-Game Prep could derive a compact opponent summary from existing Team Strength,
-Team Season Stats, opponent record, Player leaders, recent results/form,
-Rotation or major-contributor facts, and prior matchup/series context where
-canonical history supports it. A roughly 14-Season playthrough reinforced that
-the current Rotation-centered Game Prep surface now lags the information
-richness elsewhere in the product. A first redesign would remain pregame
-presentation/scouting only. Offensive options, defensive tactics, schemes,
-pace, and Player-role instructions are separate Coaching-system questions that
-could affect Game Sim and require their own design.
-
 ### Position changes and positional roster flexibility
 
 Future roster/coaching depth could explore position changes or broader rules

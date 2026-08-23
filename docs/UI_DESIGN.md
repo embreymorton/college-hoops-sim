@@ -26,8 +26,9 @@ Season Hub
 │   │   → optional VIEW BOX SCORE
 │   │
 │   └── GAME PREP
-│       → detailed matchup
-│       → Rotation editing
+│       → pregame matchup hero + integrated Simulate Game action
+│       → Matchup Scout
+│       → Simple-default Rotation Preparation
 │       → simulate
 │       → Box Score
 │
@@ -40,21 +41,49 @@ Season Hub
 └── League navigation
 ```
 
-**SIMULATE GAME is the fast path. GAME PREP is the detailed path.** This distinction is intentional and should remain consistent. Quick Sim resolves the controlled game only, keeps the user on the Hub, and presents the stored final compactly. Game Prep exposes the current legal Season Rotation and deliberately opens the full Box Score after simulation.
+**SIMULATE GAME is the fast path. GAME PREP is the detailed path.** This distinction is intentional and should remain consistent. Quick Sim resolves the controlled game only, keeps the user on the Hub, and presents the stored final compactly. Game Prep composes a stronger pregame hero, Matchup Scout, and Rotation Preparation, then deliberately opens the full Box Score after simulation.
 
 Completed Quick Sim cards preserve HOME/AWAY and overtime context, show WIN/LOSS plus a restrained margin, and derive whole-game statistical leaders from the canonical result. Leaders may represent either Program and display their Program identity. View Box Score remains optional detail; advancement remains in the separate Round Progression card. Historical Schedule/Recent Results views never re-simulate.
 
 Super Sim remains a confirmed secondary pacing control for Midseason (through Round 12) or End of Regular Season (through Round 24). It uses the same simulation pipeline and never enters Postseason automatically.
 
-## Rotation and Box Score presentation
+## Game Prep presentation — accepted
 
-Game Prep reuses the accepted Rotation V1 Editor: five floor-position sections,
-only legally eligible Players in each section, compact minute steppers, floor
-and Team budgets, derived aggregate Player totals, engine-authored legality,
-default/current OFF/DEF/OVR comparison, reset, and disabled simulation while
-invalid. Legal secondary assignments may be made manually. A legal draft
-commits to current competition state; temporary invalid drafts do not affect
-Quick Sim.
+Regular-season and Tournament Game Prep share one cohesive pregame hierarchy:
+
+```text
+matchup hero / integrated Simulate Game action
+→ Matchup Scout
+   ├── Opponent Profile
+   ├── Players to Watch
+   └── Game Context
+→ Rotation Preparation
+   ├── Your Rotation — Simple | Advanced
+   └── Opponent Rotation — Expected Starting Five / Bench / reserves
+```
+
+The hero makes Program identity, location/round context, Team Strength, and the
+primary action one clear matchup rather than a detached heading and dashboard.
+The Scout is a contained secondary section with stronger internal hierarchy;
+restrained Program accents unify the matchup without changing the app's dark,
+broadcast-influenced sports-simulation language.
+
+Simple is the default Game Prep Rotation presentation: aggregate Player-minute
+decisions, 200-minute budget, Fill Remaining, Apply, Discard, and Player Details.
+Advanced progressively reveals the accepted five-position Rotation V1 editor
+for exact positional accounting. The local distinction is presentation only:
+both operate over the same canonical `RotationV1`. Dirty Simple changes must be
+Applied or Discarded before Advanced can open; invalid Advanced changes cannot
+be hidden behind Simple; simulation is disabled until the visible/unresolved
+draft is synchronized and legal.
+
+The opponent side is read-only and compact. Expected Starting Five remains a
+PG–C projection, never canonical starter state; Bench contains positive-minute
+non-starters, and zero-minute Players collapse into a reserve count. Rows retain
+role/position, Player, class, OVR, and planned `MIN`—not observed Season MPG.
+Height, POT, and full reserve metadata remain in Team Details through View Full
+Roster. At 390px the sections stack in reading order, the opponent card wraps
+without becoming a wide table, and Simple/Advanced tables keep overflow local.
 
 Postgame and historical views use the accepted final-score and full Player box-score presentation. Historical results are read-only. Exhibition retains home-Team editing and deterministic re-simulation for isolated development testing, but it does not define the permanent Season workflow.
 
@@ -93,8 +122,7 @@ conveyed by recoloring the existing single-line Total cell
 (`.rotation-total-cell[data-invalid]`, plus a `title` and visually-hidden
 explanation) instead of a second block-level line under the minute stepper,
 so an invalid row no longer renders taller than its neighbors. The 0–40
-validation rule itself, `RotationEditorPanel`'s other markup, and Game Prep /
-Tournament Game Prep are unchanged.
+validation rule itself and `RotationEditorPanel`'s other markup are unchanged.
 
 ## Following and Player Legacy — accepted current pattern
 

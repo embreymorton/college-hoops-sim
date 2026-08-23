@@ -17,9 +17,20 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT
 
-No NEXT is selected. Dedicated Offseason Experience V1 is complete; new
-work requires an explicit selection rather than inheriting priority from the
-remaining planned or unscheduled ideas below.
+No NEXT is selected. Matchup Scout V1 and Game Prep Rotation Experience V1 are
+complete; new work requires an explicit selection rather than inheriting
+priority from the remaining planned or unscheduled ideas below.
+
+### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added one shared regular-season/Tournament pregame composition with a pure
+  opponent Scout, restrained sample-aware profile, Players to Watch, recent
+  context, and no canonical scouting state or simulation changes.
+- Made Simple the default Game Prep Rotation presentation while retaining
+  guarded Advanced access over the same canonical `RotationV1`; unresolved
+  drafts cannot be hidden or simulated.
+- Replaced the duplicated opponent roster with a compact Expected Rotation and
+  returned the Roadmap to an Open Planning Checkpoint with no successor selected.
 
 ### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
 

@@ -27,7 +27,8 @@ The playable product includes:
 - Rotation V1 with legal secondary floor-position assignments, Simple and
   Advanced Coaching editors, and a derived Starting Five presentation;
 - a stable 32-Program Universe, 24-round schedules, standings, Quick Sim, Game
-  Prep, Super Sim, completed-game history, and League exploration;
+  Prep with a shared Matchup Scout and Simple/Advanced Rotation preparation,
+  Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
   Details, derived Program Dynasty histories, Following, News, Alumni, Season Preview, and a completed-Season
   first-class League History with Yearbooks, a Dynasty Record Book, and
@@ -102,6 +103,9 @@ refactor these systems during unrelated feature work:
   realization opportunity;
 - Rotation V1, role-aware defaults, Simple Rotation, Rotation Assistant V1 —
   Preserve & Fill, and Starting Five projection/presentation;
+- Matchup Scout V1 and Game Prep Rotation Experience V1, including their pure
+  read-model, single-canonical-Rotation, competition-aware draft, and shared
+  regular-season/Tournament presentation boundaries;
 - Team Strength, Game Simulation, Player box scores, and current statistical
   projections;
 - Tournament selection/seeding and progression;
@@ -144,6 +148,16 @@ does not itself authorize implementation:
 ## Current planning checkpoint
 
 **No NEXT selected — Open Planning Checkpoint.**
+
+Matchup Scout V1 and Game Prep Rotation Experience V1 are **COMPLETE / ACCEPTED /
+FROZEN**. Game Prep now composes the pregame matchup, a pure opponent Scout,
+and Rotation Preparation; Simple is the default controlled presentation,
+Advanced remains available with safe draft transitions, and both use the same
+canonical competition `RotationV1`. The opponent Expected Rotation is derived
+from planned minutes and projected Starting Five facts rather than introducing
+scouting, starter, or Rotation state. Regular-season and Tournament surfaces
+share the presentation while preserving their existing Season/Postseason
+ownership and simulation boundaries.
 
 Dedicated Offseason Experience V1 is **COMPLETE / ACCEPTED / FROZEN**. The dedicated
 shell presents the Season N → N+1 identity, a six-stage locally scrolling
