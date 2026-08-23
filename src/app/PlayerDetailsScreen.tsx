@@ -12,6 +12,7 @@ import {
 import {
   derivePlayerCareerSummary,
   derivePlayerCareerHighs,
+  derivePlayerWorkEthic,
   resolveDynastyPlayer,
 } from '../dynasty'
 import { derivePlayerSeasonStats, getPlayerGameLog } from '../season'
@@ -60,6 +61,13 @@ export function PlayerDetailsScreen() {
   if (!program) return null
 
   const { player, careerHistory } = resolution
+  const workEthic = derivePlayerWorkEthic(
+    player,
+    dynasty.dynastySeed,
+    resolution.status === 'former'
+      ? careerHistory.seasons.length >= 2
+      : player.classYear !== 'FR',
+  )
   const detailsTab = detailsSelection?.playerId === selectedPlayerId
     ? detailsSelection.tab
     : 'overview'
@@ -97,6 +105,7 @@ export function PlayerDetailsScreen() {
             <div className="stat-trio season-header__stats season-header__stats--legacy">
               <div className="stat-trio__item"><span className="stat-trio__value">{summary.finalOverall}</span><span className="stat-trio__label">Final Ovr</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{summary.peakOverall}</span><span className="stat-trio__label">Peak Ovr</span></div>
+              <div className="stat-trio__item player-work-ethic"><span className="stat-trio__value">{workEthic.label}</span><span className="stat-trio__label">Work Ethic</span></div>
             </div>
         </div>
 
@@ -178,6 +187,7 @@ export function PlayerDetailsScreen() {
         programName={program.name}
         accentColor={program.branding.primaryColor}
         onSelectTeam={() => openTeamDetails(resolution.programId)}
+        workEthic={workEthic}
       />
 
       <div className="details-tabs tab-list" role="group" aria-label="Player details section">

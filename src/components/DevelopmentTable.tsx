@@ -49,10 +49,12 @@ export function DevelopmentTable({ rows, biggestLeap }: DevelopmentTableProps) {
           </tr>
         </thead>
         <tbody>
-          {rows.map(({ player, summary, gains }) => (
-            <tr key={player.id}>
+          {rows.map(({ player, summary, gains, explosion, workEthicReveal }) => (
+            <tr key={player.id} data-explosive={explosion !== null}>
               <td className="player-name-cell">
                 {player.firstName} {player.lastName}
+                {explosion ? <span className="development-table__explosion">Explosive Offseason</span> : null}
+                {workEthicReveal ? <span className="development-table__work-ethic">Work Ethic Revealed: {workEthicReveal}</span> : null}
               </td>
               <td>{player.position}</td>
               <td>{summary.nextClass}</td>

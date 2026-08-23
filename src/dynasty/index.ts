@@ -1,4 +1,6 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
+export { derivePlayerWorkEthic } from './workEthic'
+export type { PlayerWorkEthic, PlayerWorkEthicLabel } from './workEthic'
 export { derivePlayerCareerHistory } from './careerHistory'
 export {
   deriveRecruitingClassIndex,

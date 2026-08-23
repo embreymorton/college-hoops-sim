@@ -2,6 +2,7 @@ import { calculateOverall, POSITIONS, type Player, type Position } from '../engi
 import {
   deriveAttributeDevelopmentGains,
   deriveDevelopmentSummary,
+  derivePlayerWorkEthic,
   derivePlayerCareerHistory,
   derivePlayerCareerSummary,
   deriveProgramCommitments,
@@ -9,6 +10,8 @@ import {
   type CompletedSeasonArchive,
   type DynastyState,
   type OffseasonProgramState,
+  type OffseasonDevelopmentExplosion,
+  type PlayerWorkEthicLabel,
   type PlayerDevelopmentSummary,
   type PlayerAttributeDevelopmentGain,
   type Recruit,
@@ -81,6 +84,8 @@ export interface DevelopmentRow {
   readonly player: Player
   readonly summary: PlayerDevelopmentSummary
   readonly gains: readonly PlayerAttributeDevelopmentGain[]
+  readonly explosion: OffseasonDevelopmentExplosion | null
+  readonly workEthicReveal: PlayerWorkEthicLabel | null
 }
 
 export function deriveVisibleDevelopmentGains(
@@ -95,9 +100,14 @@ export function deriveDevelopmentRows(
   archive: CompletedSeasonArchive,
   programId: string,
   offseasonProgram: OffseasonProgramState,
+  dynastySeed: DynastyState['dynastySeed'],
+  explosions: readonly OffseasonDevelopmentExplosion[],
 ): readonly DevelopmentRow[] {
   const archivedById = new Map(
     latestArchivedRoster(archive, programId).map((player) => [player.id, player]),
+  )
+  const explosionByPlayerId = new Map(
+    explosions.filter((event) => event.programId === programId).map((event) => [event.playerId, event]),
   )
   return offseasonProgram.returningPlayers
     .map((after): DevelopmentRow | undefined => {
@@ -107,6 +117,10 @@ export function deriveDevelopmentRows(
         player: after,
         summary: deriveDevelopmentSummary(programId, before, after),
         gains: deriveVisibleDevelopmentGains(before, after),
+        explosion: explosionByPlayerId.get(after.id) ?? null,
+        workEthicReveal: before.classYear === 'FR'
+          ? derivePlayerWorkEthic(after, dynastySeed, true).label as PlayerWorkEthicLabel
+          : null,
       }
     })
     .filter((row): row is DevelopmentRow => row !== undefined)

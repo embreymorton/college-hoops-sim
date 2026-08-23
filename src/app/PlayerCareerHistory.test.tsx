@@ -59,6 +59,23 @@ function openCareerTab(): void {
 beforeEach(resetStore)
 
 describe('Player Details — Ratings', () => {
+  it('shows Unknown for freshmen and reveals the stable qualitative Work Ethic for upperclassmen', () => {
+    const dynasty = createRecruitingDynasty('player-details-work-ethic')
+    const roster = dynasty.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!.team.roster
+    const freshman = roster.find(({ classYear }) => classYear === 'FR')!
+    openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, freshman.id)
+    const view = render(<App />)
+    const header = document.querySelector('.season-header__stats') as HTMLElement
+    expect(within(header).getByText('Work Ethic')).toBeInTheDocument()
+    expect(within(header).getByText('Unknown')).toBeInTheDocument()
+
+    const upperclassman = roster.find(({ classYear }) => classYear !== 'FR')!
+    openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, upperclassman.id)
+    view.rerender(<App />)
+    expect(within(document.querySelector('.season-header__stats') as HTMLElement).queryByText('Unknown')).not.toBeInTheDocument()
+    expect(within(document.querySelector('.season-header__stats') as HTMLElement).getByText(/Inconsistent|Steady|Strong/)).toBeInTheDocument()
+  })
+
   it('shows all nine attribute ratings compactly, without regressing OVR/POT', () => {
     const dynasty = createRecruitingDynasty('player-details-ratings')
     const player =

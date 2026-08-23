@@ -71,6 +71,8 @@ describe('Offseason Development storytelling projections', () => {
     ): DevelopmentRow => ({
       player: { ...player(id, baseAttributes), lastName: id },
       gains: [],
+      explosion: null,
+      workEthicReveal: null,
       summary: {
         programId: 'program',
         playerId: id,

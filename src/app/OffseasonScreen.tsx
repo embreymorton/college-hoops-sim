@@ -137,6 +137,8 @@ export function OffseasonScreen() {
       archive,
       dynasty.controlledProgramId,
       offseasonProgram,
+      dynasty.dynastySeed,
+      offseason.developmentExplosions,
     )
     if (experience.viewedStage === 'development') {
       return (

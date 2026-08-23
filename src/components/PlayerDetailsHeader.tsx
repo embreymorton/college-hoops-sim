@@ -2,12 +2,14 @@ import type { CSSProperties } from 'react'
 import { calculateOverall, type Player } from '../engine'
 import { formatHeight } from '../app/formatters'
 import { FollowPlayerButton } from './FollowPlayerButton'
+import type { PlayerWorkEthic } from '../dynasty'
 
 interface PlayerDetailsHeaderProps {
   readonly player: Player
   readonly programName: string
   readonly accentColor: string
   readonly onSelectTeam: () => void
+  readonly workEthic: PlayerWorkEthic
 }
 
 /** A Player's identity, Program, and ratings — works for any current-roster Player. */
@@ -16,6 +18,7 @@ export function PlayerDetailsHeader({
   programName,
   accentColor,
   onSelectTeam,
+  workEthic,
 }: PlayerDetailsHeaderProps) {
   const accentStyle = { '--team-accent': accentColor } as CSSProperties
 
@@ -49,6 +52,11 @@ export function PlayerDetailsHeader({
         <div className="stat-trio__item">
           <span className="stat-trio__value">{calculateOverall(player)}</span>
           <span className="stat-trio__label">Ovr</span>
+        </div>
+        <div className="stat-trio__item player-work-ethic">
+          <span className="stat-trio__value">{workEthic.label}</span>
+          <span className="stat-trio__label">Work Ethic</span>
+          {workEthic.status === 'unknown' ? <span className="player-work-ethic__hint">Evaluated after first offseason</span> : null}
         </div>
         <div className="stat-trio__item">
           <span className="stat-trio__value">{player.potential}</span>

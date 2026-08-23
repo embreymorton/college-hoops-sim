@@ -220,6 +220,8 @@ export function deriveOffseasonExperience(
           archive,
           dynasty.controlledProgramId,
           program,
+          dynasty.dynastySeed,
+          dynasty.offseason.developmentExplosions,
         ).length,
         rosterCount: roster.length,
         rosterAverageOverall: deriveRosterAverageOverall(roster),

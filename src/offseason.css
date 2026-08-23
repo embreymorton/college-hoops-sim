@@ -343,6 +343,30 @@
   color: var(--accent);
 }
 
+.development-table tbody tr[data-explosive='true'] {
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+}
+
+.development-table__explosion,
+.development-table__work-ethic {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.68rem;
+  line-height: 1.25;
+}
+
+.development-table__explosion {
+  color: var(--accent-strong);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.development-table__work-ethic {
+  color: var(--ink-1);
+  font-weight: 600;
+}
+
 /* Biggest Leap — a small sibling of the app's scoreboard signature element:
    same gradient surface and top accent hairline, sized for a one-row spotlight
    rather than a full matchup. Identity reads first, the OVR jump reads as a

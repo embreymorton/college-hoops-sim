@@ -82,6 +82,7 @@ describe('Recruit Details screen', () => {
     expect(screen.getByText(formatReadinessLabel(
       dynasty.recruiting!.commitmentsByPlayerId[playerId] ? 'committed' : 'not-deciding',
     ))).toBeInTheDocument()
+    expect(screen.queryByText('Work Ethic')).not.toBeInTheDocument()
     const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
       (entry) => entry.playerId === playerId,
     )!

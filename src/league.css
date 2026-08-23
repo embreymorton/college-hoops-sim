@@ -726,6 +726,19 @@
   font-variant-numeric: tabular-nums;
 }
 
+.player-work-ethic .stat-trio__value {
+  font-size: 1.05rem;
+}
+
+.player-work-ethic__hint {
+  display: block;
+  max-width: 9rem;
+  margin-top: 0.2rem;
+  color: var(--ink-2);
+  font-size: 0.65rem;
+  line-height: 1.25;
+}
+
 /* Career Progression — the milestone's primary section. */
 
 .career-progression-table tbody tr[data-active='true'] {
