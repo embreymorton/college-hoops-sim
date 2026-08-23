@@ -15,6 +15,7 @@ import {
 import { createRng } from '../random'
 import { generateTeam, type GenerateTeamOptions } from './teamGenerator'
 import { mapClassYearsByPriority } from './careerStageAssignment'
+import { generateS0Potential } from './s0Potential'
 
 const ATTRIBUTE_NAMES = [
   'finishing',
@@ -158,6 +159,21 @@ describe('generateTeam', () => {
       .toEqual(legacy.roster.map(({ id, position, attributes, height }) => ({ id, position, attributes, height })))
     expect(staged.roster.map(({ classYear }) => classYear).sort())
       .toEqual(legacy.roster.map(({ classYear }) => classYear).sort())
+  })
+
+  it('activates Player-local conditional-tier POT only for canonical S0 generation', () => {
+    const context = { universeSeed: 's0-pot-production-team', programId: 'production-state' } as const
+    const team = generateTeam({ name: 'Production State', abbreviation: 'PST', prestige: 70, rng: createRng('s0-pot-production-roster'), careerStageContext: context })
+
+    for (const player of team.roster) {
+      expect(player.potential).toBe(generateS0Potential({
+        overall: calculateOverall(player),
+        classYear: player.classYear,
+        universeSeed: context.universeSeed,
+        programId: context.programId,
+        playerId: player.id,
+      }))
+    }
   })
 
   it('keeps every class structurally eligible for top, middle, and bottom opportunities', () => {

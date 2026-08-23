@@ -73,8 +73,15 @@ export {
   generatePlayer,
   generateTeam,
   PLAYER_NAME_POOL_COUNTS,
+  classifyS0CeilingTier,
+  deriveLegalWithinTierProbabilities,
+  deriveS0PotentialFeatures,
+  deriveS0TierProbabilities,
+  generateS0Potential,
+  S0_CEILING_TIERS,
+  S0_POTENTIAL_MODEL,
 } from './generation'
-export type { GeneratePlayerOptions, GenerateTeamOptions } from './generation'
+export type { GeneratePlayerOptions, GenerateTeamOptions, S0CeilingTierName } from './generation'
 export { createRng } from './random'
 export type { Rng, RngSeed } from './random'
 export { simulateGame } from './simulation'

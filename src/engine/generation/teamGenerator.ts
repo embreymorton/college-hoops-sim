@@ -15,6 +15,7 @@ import type { Rng } from '../random'
 import type { CareerStageAssignmentContext } from './careerStageAssignment'
 import { assignS0CareerStageClassYears } from './careerStageAssignment'
 import { generatePlayer } from './playerGenerator'
+import { applyS0Potential } from './s0Potential'
 
 export interface GenerateTeamOptions {
   name: string
@@ -159,7 +160,7 @@ export function generateTeam(options: GenerateTeamOptions): Team {
     : generatedClassYears
   const talentLevels = generateTalentLevels(prestige, rng)
   const playerIds = new Set<string>()
-  const roster = Array.from({ length: TEAM_ROSTER_SIZE }, (_, index) =>
+  const generatedRoster = Array.from({ length: TEAM_ROSTER_SIZE }, (_, index) =>
     generateUniquePlayer(
       positions[index] as Position,
       classYears[index] as ClassYear,
@@ -168,6 +169,9 @@ export function generateTeam(options: GenerateTeamOptions): Team {
       rng,
     ),
   )
+  const roster = careerStageContext
+    ? generatedRoster.map((player) => applyS0Potential(player, careerStageContext.universeSeed, careerStageContext.programId))
+    : generatedRoster
 
   return {
     id: generateTeamId(rng),
