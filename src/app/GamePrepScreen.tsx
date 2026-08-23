@@ -1,21 +1,54 @@
+import { useMemo } from 'react'
 import { calculateTeamStrength, validateRotationV1 } from '../engine'
 import {
+  MatchupScoutSection,
   PregameScoreboard,
   RotationEditorPanel,
   TeamRosterPanel,
 } from '../components'
+import { deriveMatchupScout } from '../matchupScout'
 import {
   selectActiveSeason,
   selectControlledProgramId,
   useDynastyStore,
 } from '../store'
-import { getNextGameForProgram } from '../season'
+import { getNextGameForProgram, type SeasonState } from '../season'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { describeRotationBlockingReason } from './formatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
+
+function RegularSeasonScout({
+  season,
+  controlledProgramId,
+  opponentProgram,
+  onSelectPlayer,
+}: {
+  readonly season: SeasonState
+  readonly controlledProgramId: string
+  readonly opponentProgram: ProgramDefinition
+  readonly onSelectPlayer: (playerId: string) => void
+}) {
+  const report = useMemo(
+    () => deriveMatchupScout({
+      season,
+      controlledProgramId,
+      opponentProgramId: opponentProgram.id,
+    }),
+    [season, controlledProgramId, opponentProgram.id],
+  )
+
+  return (
+    <MatchupScoutSection
+      report={report}
+      opponentAccentColor={opponentProgram.branding.primaryColor}
+      programsById={PROGRAMS_BY_ID}
+      onSelectPlayer={onSelectPlayer}
+    />
+  )
+}
 
 /** The Season equivalent of Pregame: manage the controlled Rotation, then play. */
 export function GamePrepScreen() {
@@ -33,6 +66,7 @@ export function GamePrepScreen() {
   )
   const playScheduledGame = useDynastyStore((state) => state.playScheduledGame)
   const goToHub = useDynastyStore((state) => state.goToHub)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
   if (
     !season ||
@@ -114,6 +148,12 @@ export function GamePrepScreen() {
           actionDisabledReason={blockingReason}
         />
       </section>
+      <RegularSeasonScout
+        season={season}
+        controlledProgramId={controlledProgramId}
+        opponentProgram={opponentProgram}
+        onSelectPlayer={(playerId) => openPlayerDetails(opponentId, playerId)}
+      />
       <section className="section" aria-labelledby="rotations-heading">
         <div className="section-heading">
           <h2 id="rotations-heading" className="section-title">

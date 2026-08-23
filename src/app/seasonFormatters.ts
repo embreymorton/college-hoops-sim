@@ -64,6 +64,10 @@ export function describeRoundProgress(
 /** "Season" / "Tournament" / "League" / "Team" / "Player" — the screen one exploration back-step returns to. */
 export function formatBackDestinationLabel(view: SeasonSessionView): string {
   switch (view) {
+    case 'gamePrep':
+      return 'Game Prep'
+    case 'postseasonGamePrep':
+      return 'Tournament Game Prep'
     case 'postseasonHub':
       return 'Tournament'
     case 'coaching':

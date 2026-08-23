@@ -1,16 +1,22 @@
+import { useMemo } from 'react'
 import { calculateTeamStrength, validateRotationV1 } from '../engine'
 import {
+  MatchupScoutSection,
   PregameScoreboard,
   RotationEditorPanel,
   TeamRosterPanel,
 } from '../components'
+import { deriveMatchupScout } from '../matchupScout'
 import {
   getCurrentTournamentRound,
   getTournamentGameForProgram,
   resolveTournamentGameParticipants,
+  type PostseasonState,
 } from '../postseason'
+import type { SeasonState } from '../season'
 import {
   selectActivePostseason,
+  selectActiveSeason,
   selectControlledProgramId,
   useDynastyStore,
 } from '../store'
@@ -22,9 +28,43 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
 
+function TournamentScout({
+  season,
+  postseason,
+  controlledProgramId,
+  opponentProgram,
+  onSelectPlayer,
+}: {
+  readonly season: SeasonState
+  readonly postseason: PostseasonState
+  readonly controlledProgramId: string
+  readonly opponentProgram: ProgramDefinition
+  readonly onSelectPlayer: (playerId: string) => void
+}) {
+  const report = useMemo(
+    () => deriveMatchupScout({
+      season,
+      postseason,
+      controlledProgramId,
+      opponentProgramId: opponentProgram.id,
+    }),
+    [season, postseason, controlledProgramId, opponentProgram.id],
+  )
+
+  return (
+    <MatchupScoutSection
+      report={report}
+      opponentAccentColor={opponentProgram.branding.primaryColor}
+      programsById={PROGRAMS_BY_ID}
+      onSelectPlayer={onSelectPlayer}
+    />
+  )
+}
+
 /** The Tournament equivalent of Game Prep: manage the Postseason Rotation, then play — always neutral site. */
 export function TournamentGamePrepScreen() {
   const postseason = useDynastyStore(selectActivePostseason)
+  const season = useDynastyStore(selectActiveSeason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const draftRotation = useDynastyStore((state) => state.postseasonDraftRotation)
   const controlledDefaultRotation = useDynastyStore(
@@ -40,8 +80,9 @@ export function TournamentGamePrepScreen() {
     (state) => state.playPostseasonScheduledGame,
   )
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
-  if (!postseason || !controlledProgramId || !draftRotation || !controlledDefaultRotation) {
+  if (!postseason || !season || !controlledProgramId || !draftRotation || !controlledDefaultRotation) {
     return null
   }
 
@@ -135,6 +176,13 @@ export function TournamentGamePrepScreen() {
           actionDisabledReason={blockingReason}
         />
       </section>
+      <TournamentScout
+        season={season}
+        postseason={postseason}
+        controlledProgramId={controlledProgramId}
+        opponentProgram={opponentProgram}
+        onSelectPlayer={(playerId) => openPlayerDetails(opponentId, playerId)}
+      />
       <section className="section" aria-labelledby="tournament-rotations-heading">
         <div className="section-heading">
           <h2 id="tournament-rotations-heading" className="section-title">

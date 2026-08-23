@@ -279,6 +279,17 @@ describe('Season Presentation', () => {
       screen.getByRole('heading', { name: /your rotation/i }),
     ).toBeInTheDocument()
     expect(document.querySelector('.rotation-table')).not.toBeNull()
+    expect(
+      screen.getByRole('heading', { name: 'Matchup Scout' }),
+    ).toBeInTheDocument()
+    expect(screen.getByText(/no season results yet/i)).toBeInTheDocument()
+
+    const scout = document.querySelector('.matchup-scout') as HTMLElement
+    fireEvent.click(within(scout).getAllByRole('button')[0]!)
+    expect(useDynastyStore.getState().view).toBe('playerDetails')
+    clickButtonByText(/back to game prep/i)
+    expect(useDynastyStore.getState().view).toBe('gamePrep')
+    expect(document.querySelector('.rotation-table')).not.toBeNull()
   })
 
   it('gates simulation on a legal draft Rotation in Game Prep', () => {

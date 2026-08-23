@@ -291,6 +291,15 @@ describe('Postseason — qualified and alive', () => {
     expect(
       screen.getByRole('heading', { name: /your rotation/i }),
     ).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Matchup Scout' }),
+    ).toBeInTheDocument()
+
+    const scout = document.querySelector('.matchup-scout') as HTMLElement
+    fireEvent.click(within(scout).getAllByRole('button')[0]!)
+    expect(useDynastyStore.getState().view).toBe('playerDetails')
+    clickButtonByText(/back to tournament game prep/i)
+    expect(useDynastyStore.getState().view).toBe('postseasonGamePrep')
 
     const homePanel = document.querySelectorAll('.team-panel')[0] as HTMLElement
     const row = homePanel.querySelector('tr[data-player-id]') as HTMLElement
