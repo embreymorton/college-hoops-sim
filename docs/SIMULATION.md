@@ -258,6 +258,22 @@ existing order and appends recommendations with `isFocused = false` and
 `hasActiveOffer = false` until capacity or legal supply is exhausted. It does
 not invoke offer management, Focus alignment, AI refreshes, or randomness.
 
+Every canonical `RecruitingBoardTarget` also requires `origin: 'manual' |
+'assistant'`. Origin describes how the current Board membership was created:
+National Class additions are manual, while generated/default Boards, `Fill
+Remaining Board`, AI premium discovery, and Late Recruiting/finalization
+additions are assistant-created. Focus, Offer, withdrawal, commitment, and
+Recruiting progression preserve origin. Removing a target ends that membership;
+a later manual re-add creates a new manual membership, while restoration through
+assistant tooling creates a new assistant membership. Relationship progress is
+canonical history independent of Board membership and survives removal.
+
+The controlled Program's atomic `Clear Unavailable` domain operation filters
+the current Board using authoritative target status. It removes only
+`committed-elsewhere` and `position-filled`, retains `active` and commitments to
+the controlled Program, preserves retained order and relationship history, and
+does not generate replacements or invoke `Fill Remaining Board`.
+
 AI offer evaluation uses the next planning period, capped at 28:
 
 ```text

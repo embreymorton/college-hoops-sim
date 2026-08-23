@@ -42,17 +42,6 @@ prompt, and automatic reallocation have materially different agency costs; none
 is selected. Any assistant behavior must avoid silently making strategic
 decisions for the user.
 
-`Fill Remaining Board` is useful, but a large assistant-added group can obscure
-the targets the player chose manually. A future Board organization pass could
-distinguish target provenance through grouping, tags, or filtering—conceptually
-`My Targets` and `Assistant Suggestions`—without changing capacity, eligibility,
-or Fill Remaining selection behavior. The exact presentation is undecided.
-
-Board cleanup could also offer a deliberate way to remove or hide Recruits who
-committed elsewhere. Manual bulk `Clear Unavailable`, filtering, and a grouped
-unavailable section preserve different amounts of history and agency; none is
-selected, and automatic removal is not assumed preferable.
-
 Recruiting battle feedback could communicate qualitative closeness—whether a
 target is genuinely competitive, plausibly within reach, or a substantial
 long shot—without exposing exact hidden relationship scores or reducing

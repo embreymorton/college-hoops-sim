@@ -97,6 +97,7 @@ describe('Generate Draft Board', () => {
     const board = controlledBoard()
 
     expect(board.length).toBeGreaterThan(0)
+    expect(board.every(({ origin }) => origin === 'assistant')).toBe(true)
     expect(board.length).toBeLessThanOrEqual(RECRUITING_BOARD_LIMIT)
     expect(new Set(board.map(({ playerId }) => playerId)).size).toBe(board.length)
     expect(board.filter(({ isFocused }) => isFocused).length).toBeLessThanOrEqual(RECRUITING_FOCUS_LIMIT)
@@ -141,6 +142,8 @@ describe('Generate Draft Board', () => {
   it('does not overwrite or fill a non-empty manual board', () => {
     useDynastyStore.getState().addRecruitingTarget(firstEligibleRecruitId())
     const manualBoard = controlledBoard()
+    expect(manualBoard).toHaveLength(1)
+    expect(manualBoard[0]!.origin).toBe('manual')
 
     useDynastyStore.getState().generateControlledDraftBoard()
 

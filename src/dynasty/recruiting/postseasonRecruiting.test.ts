@@ -72,7 +72,7 @@ function decisionFixture(
     {
       programId,
       projectedOpeningsByPosition: openings,
-      board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }],
+      board: [{ playerId: recruit.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true }],
     },
   ]))
   const recruiting: RecruitingState = {

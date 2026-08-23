@@ -9,6 +9,7 @@ import type {
   RecruitingCommitment,
   RecruitingState,
   RecruitStarRating,
+  RecruitingBoardTargetOrigin,
 } from '../dynasty'
 import { useDynastyStore } from '../store'
 import { App } from './App'
@@ -70,8 +71,9 @@ function boardTarget(
   playerId: string,
   priority: number,
   hasActiveOffer: boolean,
+  origin: RecruitingBoardTargetOrigin = 'assistant',
 ): RecruitingBoardTarget {
-  return { playerId, isFocused: priority >= 4, hasActiveOffer }
+  return { playerId, origin, isFocused: priority >= 4, hasActiveOffer }
 }
 
 /**
@@ -104,9 +106,9 @@ function buildFixtureDynasty(): DynastyState {
 
   const controlledBoard: RecruitingBoardTarget[] = [
     boardTarget('fx-signed-sg', 3, false),
-    boardTarget('fx-active-sg', 3, false),
+    boardTarget('fx-active-sg', 3, false, 'manual'),
     boardTarget('fx-offered-pf', 4, true),
-    boardTarget('fx-capacity-pf', 2, false),
+    boardTarget('fx-capacity-pf', 2, false, 'manual'),
     boardTarget('fx-elsewhere-c', 2, false),
     boardTarget('fx-filled-c', 1, false),
     boardTarget('fx-filler-sg-1', 1, false),
@@ -282,10 +284,10 @@ describe('Recruiting Overview', () => {
     expect(document.querySelector('.recruiting-needs__table')).toBeNull()
   })
 
-  it('hides the Fill Remaining Board action area entirely once the Board is full', () => {
+  it('hides Fill Remaining Board once full while retaining other applicable management actions', () => {
     renderRecruitingScreen()
 
-    expect(document.querySelector('.recruiting-board-management')).toBeNull()
+    expect(document.querySelector('.recruiting-board-management')).not.toBeNull()
     expect(
       screen.queryByRole('button', { name: 'Fill Remaining Board' }),
     ).not.toBeInTheDocument()
@@ -319,6 +321,79 @@ describe('Recruiting Overview', () => {
 })
 
 describe('Recruiting Board', () => {
+  it('renders canonical origin groups with counts and the correct rows', () => {
+    renderRecruitingScreen()
+    const manual = screen.getByRole('rowgroup', { name: 'Manually Added (2)' })
+    const assistant = screen.getByRole('rowgroup', { name: 'Assistant Added (8)' })
+    expect(within(manual).getByText('Active Fixture')).toBeInTheDocument()
+    expect(within(manual).getByText('Capacity Fixture')).toBeInTheDocument()
+    expect(within(assistant).getByText('Signed Fixture')).toBeInTheDocument()
+    expect(within(assistant).queryByText('Active Fixture')).not.toBeInTheDocument()
+  })
+
+  it.each([
+    ['manual', 'Manually Added (10)', 'Assistant Added (0)', 'No assistant-added recruits.'],
+    ['assistant', 'Assistant Added (10)', 'Manually Added (0)', 'No manually added recruits.'],
+  ] as const)('keeps both groups visible for an %s-only Board', (origin, populated, empty, emptyCopy) => {
+    const source = buildFixtureDynasty()
+    const program = source.recruiting!.programs[CONTROLLED_PROGRAM_ID]!
+    useDynastyStore.setState({
+      dynasty: {
+        ...source,
+        recruiting: {
+          ...source.recruiting!,
+          programs: {
+            ...source.recruiting!.programs,
+            [CONTROLLED_PROGRAM_ID]: {
+              ...program,
+              board: program.board.map((target) => ({ ...target, origin })),
+            },
+          },
+        },
+      },
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+    expect(screen.getByRole('rowgroup', { name: populated })).toBeInTheDocument()
+    expect(within(screen.getByRole('rowgroup', { name: empty })).getByText(emptyCopy))
+      .toBeInTheDocument()
+  })
+
+  it('clears only unavailable targets, reports the count, and leaves Fill separate', () => {
+    renderRecruitingScreen()
+    expect(screen.getByRole('button', { name: 'Clear Unavailable (2)' })).toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear Unavailable (2)' }))
+
+    const board = useDynastyStore.getState().dynasty!.recruiting!
+      .programs[CONTROLLED_PROGRAM_ID]!.board
+    expect(board).toHaveLength(8)
+    expect(board.some(({ playerId }) => playerId === 'fx-elsewhere-c')).toBe(false)
+    expect(board.some(({ playerId }) => playerId === 'fx-filled-c')).toBe(false)
+    expect(board.some(({ playerId }) => playerId === 'fx-signed-sg')).toBe(true)
+    expect(board.some(({ playerId }) => playerId === 'fx-active-sg')).toBe(true)
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Removed 2 unavailable recruits from your Board.',
+    )
+    expect(screen.getByRole('button', { name: 'Fill Remaining Board' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Clear Unavailable/ })).not.toBeInTheDocument()
+  })
+
+  it('store cleanup returns the exact count and returns zero on the resulting no-op', () => {
+    const dynasty = buildFixtureDynasty()
+    const aiProgramsBefore = Object.fromEntries(Object.entries(dynasty.recruiting!.programs)
+      .filter(([programId]) => programId !== CONTROLLED_PROGRAM_ID))
+    useDynastyStore.setState({ dynasty })
+
+    expect(useDynastyStore.getState().clearUnavailableRecruitingTargets()).toBe(2)
+    expect(useDynastyStore.getState().clearUnavailableRecruitingTargets()).toBe(0)
+    const after = useDynastyStore.getState().dynasty!
+    expect(Object.fromEntries(Object.entries(after.recruiting!.programs)
+      .filter(([programId]) => programId !== CONTROLLED_PROGRAM_ID))).toEqual(aiProgramsBefore)
+    expect(after.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board).toHaveLength(8)
+  })
+
   it('fills only unused capacity and preserves the existing manual plan', () => {
     const source = buildFixtureDynasty()
     const original = source.recruiting!.programs[CONTROLLED_PROGRAM_ID]!.board.slice(0, 3)
@@ -446,31 +521,52 @@ describe('Recruiting Board', () => {
     ).toBe(true)
   })
 
-  it('sorts strictly by National Rank ascending, and focus changes never move rows', () => {
+  it('sorts each origin group by National Rank, and focus changes never move rows', () => {
     renderRecruitingScreen()
 
     const table = document.querySelector('.recruiting-board-table') as HTMLElement
-    const rankCells = within(table)
-      .getAllByRole('row')
-      .slice(1) // drop the header row
+    const dataRows = (groupName: RegExp) => within(
+      within(table).getByRole('rowgroup', { name: groupName }),
+    ).getAllByRole('row').filter((row) => within(row).queryAllByRole('cell').length > 1)
+    const ranks = (groupName: RegExp) => dataRows(groupName)
       .map((row) => Number(within(row).getAllByRole('cell')[0]!.textContent))
-    expect(rankCells).toEqual([...rankCells].sort((first, second) => first - second))
+    expect(ranks(/Manually Added/)).toEqual([2, 4])
+    expect(ranks(/Assistant Added/)).toEqual([1, 3, 5, 6, 7, 8, 9, 10])
 
     // Focus "Active Fixture" (rank 2) and confirm fixed rank ordering.
     // (by rank) is unaffected.
     const activeRow = screen.getByText('Active Fixture').closest('tr')!
     fireEvent.click(within(activeRow).getByRole('button', { name: /Focus Active Fixture/ }))
 
-    const rowsAfter = within(table).getAllByRole('row').slice(1)
-    const namesAfter = rowsAfter.map(
-      (row) => within(row).getAllByRole('cell')[1]!.textContent,
-    )
-    expect(namesAfter[0]).toContain('Signed Fixture')
-    expect(namesAfter[1]).toContain('Active Fixture')
-    const rankCellsAfter = rowsAfter.map((row) =>
-      Number(within(row).getAllByRole('cell')[0]!.textContent),
-    )
-    expect(rankCellsAfter).toEqual([...rankCellsAfter].sort((first, second) => first - second))
+    expect(ranks(/Manually Added/)).toEqual([2, 4])
+    expect(ranks(/Assistant Added/)).toEqual([1, 3, 5, 6, 7, 8, 9, 10])
+  })
+
+  it('uses Player ID as the deterministic tie-breaker within an origin group', () => {
+    const source = buildFixtureDynasty()
+    useDynastyStore.setState({
+      dynasty: {
+        ...source,
+        recruiting: {
+          ...source.recruiting!,
+          recruits: source.recruiting!.recruits.map((recruit) =>
+            recruit.player.id === 'fx-capacity-pf'
+              ? { ...recruit, nationalRank: 2 }
+              : recruit,
+          ),
+        },
+      },
+      view: 'recruiting',
+      explorationViewHistory: [],
+    })
+    render(<App />)
+
+    const manual = screen.getByRole('rowgroup', { name: 'Manually Added (2)' })
+    const names = within(manual).getAllByRole('row')
+      .filter((row) => within(row).queryAllByRole('cell').length > 1)
+      .map((row) => within(row).getAllByRole('cell')[1]!.textContent)
+    expect(names[0]).toContain('Active Fixture')
+    expect(names[1]).toContain('Capacity Fixture')
   })
 
   it('removes an eligible target from the board', () => {

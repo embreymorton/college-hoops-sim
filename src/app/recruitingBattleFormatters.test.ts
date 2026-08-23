@@ -49,7 +49,7 @@ function battleFixture(seed: string): {
     const program = programs[programId]!
     programs[programId] = {
       ...program,
-      board: [{ playerId, isFocused: programId === controlledId, hasActiveOffer: true }],
+      board: [{ playerId, origin: 'assistant', isFocused: programId === controlledId, hasActiveOffer: true }],
     }
   }
 

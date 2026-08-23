@@ -69,9 +69,9 @@ The run supplied these additional signals:
 - **WORKING:** Next Season Position Outlook materially improved live Recruit
   evaluation by placing exact OVR/POT beside projected roster competition. This
   validates the accepted V1 without automatically expanding it.
-- **WORKING:** `Fill Remaining Board` remained useful, while also exposing a
-  separate organization problem when assistant-added targets visually
-  overwhelmed manually chosen targets.
+- **RESOLVED:** `Fill Remaining Board` remains useful, while accepted Recruiting
+  Board Organization & Cleanup V1 now separates assistant-added targets from
+  manually chosen targets without changing Fill selection behavior.
 - **WORKING:** Rotation Assistant `Fill Remaining` made it substantially easier
   to preserve a deliberate minutes increase for one Player and build a legal
   Rotation around that choice.
@@ -100,10 +100,18 @@ The run supplied these additional signals:
 - **OBSERVED:** qualitative Recruiting uncertainty remains valuable. While
   second for PG Tyler Allen, the user wanted to know whether the gap was truly
   competitive or a long shot without seeing exact hidden relationship scores.
-- **OBSERVED:** Board cleanup and provenance became workflow friction: many
-  assistant-added targets obscured manual choices, and committed-elsewhere
-  Recruits lacked an easy bulk cleanup/filter path. These are organization
-  issues, not evidence against current Board capacity or selection mechanics.
+- **RESOLVED:** canonical manual/assistant provenance and counted Board groups
+  keep player choices visible, while atomic `Clear Unavailable` removes
+  committed-elsewhere and position-filled targets without deleting relationship
+  history or refilling opened slots. The accepted desktop and approximately
+  390px presentation closes this workflow friction without changing Board
+  capacity or Recruiting selection mechanics.
+- **RESOLVED:** focused Recruiting/store/UI validation passed (including the
+  recorded 122-test and 77-test runs), TypeScript, ESLint, production build, and
+  visual/browser-console checks passed. The full parallel run recorded 1204
+  passes and 41 load-related five-second timeouts; representative affected
+  Postseason and Dynasty-transition suites passed independently 23/23, so this
+  is not evidence of a Recruiting regression.
 - **OBSERVED:** exact-position capacity made the Russell/Nichols choice engaging
   while also raising neutral interest in future position changes or broader
   roster flexibility. One decision does not establish a Recruiting defect.

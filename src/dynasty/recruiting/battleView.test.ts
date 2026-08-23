@@ -36,6 +36,7 @@ function battleFixture(seed = 'battle-view'): {
       board: [
         {
           playerId,
+          origin: 'assistant' as const,
           isFocused: programId === controlledId,
           hasActiveOffer: true,
         },

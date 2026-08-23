@@ -2,10 +2,13 @@ import { describe, expect, it } from 'vitest'
 import { UNIVERSE_V0 } from '../../universe'
 import {
   addRecruitingBoardTarget,
+  clearUnavailableRecruitingBoardTargets,
   fillRemainingRecruitingBoard,
+  offerRecruit,
   refreshAiRecruitingBoards,
   removeRecruitingBoardTarget,
   setRecruitingFocus,
+  withdrawRecruitOffer,
 } from './boards'
 import { RECRUITING_BOARD_LIMIT } from './constants'
 import type { RecruitingBoardTarget } from './domain'
@@ -28,6 +31,7 @@ describe('Program recruiting boards', () => {
       expect(program.board.length).toBeLessThanOrEqual(RECRUITING_BOARD_LIMIT)
       expect(new Set(program.board.map(({ playerId }) => playerId)).size).toBe(program.board.length)
       for (const target of program.board) {
+        expect(target.origin).toBe('assistant')
         expect(target.isFocused).toBeTypeOf('boolean')
         const recruit = getRecruit(recruiting, target.playerId)!
         expect(program.projectedOpeningsByPosition[recruit.player.position]).toBeGreaterThan(0)
@@ -63,9 +67,40 @@ describe('Program recruiting boards', () => {
     dynasty = removeRecruitingBoardTarget({ dynasty, playerId: removed.playerId })
     expect(dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId]).toBe(progress)
     dynasty = addRecruitingBoardTarget({ dynasty, playerId: removed.playerId })
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+      .find(({ playerId }) => playerId === removed.playerId)?.origin).toBe('manual')
     dynasty = setRecruitingFocus({ dynasty, playerId: removed.playerId, isFocused: true })
     expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
       .find(({ playerId }) => playerId === removed.playerId)?.isFocused).toBe(true)
+  })
+
+  it('preserves provenance through focus, offer, withdraw, and assistant restoration', () => {
+    let dynasty = createRecruitingDynasty('board-origin-lifecycle')
+    const programId = dynasty.controlledProgramId
+    const original = dynasty.recruiting!.programs[programId]!.board.find(
+      ({ hasActiveOffer }) => hasActiveOffer,
+    )!
+    expect(original.origin).toBe('assistant')
+    dynasty = withdrawRecruitOffer({ dynasty, playerId: original.playerId })
+    dynasty = offerRecruit({ dynasty, playerId: original.playerId })
+    dynasty = setRecruitingFocus({ dynasty, playerId: original.playerId, isFocused: false })
+    dynasty = setRecruitingFocus({ dynasty, playerId: original.playerId, isFocused: true })
+    expect(dynasty.recruiting!.programs[programId]!.board
+      .find(({ playerId }) => playerId === original.playerId)!.origin).toBe('assistant')
+
+    const empty = {
+      ...dynasty,
+      recruiting: {
+        ...dynasty.recruiting!,
+        programs: {
+          ...dynasty.recruiting!.programs,
+          [programId]: { ...dynasty.recruiting!.programs[programId]!, board: [] },
+        },
+      },
+    }
+    const restored = fillRemainingRecruitingBoard(empty).recruiting!.programs[programId]!.board
+    expect(restored.length).toBeGreaterThan(0)
+    expect(restored.every(({ origin }) => origin === 'assistant')).toBe(true)
   })
 
   it('fills only remaining capacity while preserving the exact manual plan and order', () => {
@@ -94,9 +129,58 @@ describe('Program recruiting boards', () => {
     expect(board).toHaveLength(RECRUITING_BOARD_LIMIT)
     expect(board.slice(0, original.length)).toEqual(original)
     expect(board.slice(original.length).every(
-      ({ isFocused, hasActiveOffer }) => !isFocused && !hasActiveOffer,
+      ({ origin, isFocused, hasActiveOffer }) => origin === 'assistant' && !isFocused && !hasActiveOffer,
     )).toBe(true)
     expect(new Set(board.map(({ playerId }) => playerId)).size).toBe(board.length)
+  })
+
+  it('atomically clears unavailable targets while retaining commitments, order, and history', () => {
+    const source = createRecruitingDynasty('clear-unavailable')
+    const programId = source.controlledProgramId
+    const atPosition = (position: 'PG' | 'SG' | 'PF' | 'C') =>
+      source.recruiting!.recruits.filter(({ player }) => player.position === position)
+    const elsewhere = atPosition('PG')[0]!
+    const committed = atPosition('SG')[0]!
+    const filled = atPosition('C')[0]!
+    const fillingCommitment = atPosition('C')[1]!
+    const active = atPosition('PF')[0]!
+    const board: RecruitingBoardTarget[] = [
+      { playerId: active.player.id, origin: 'manual', isFocused: false, hasActiveOffer: false },
+      { playerId: elsewhere.player.id, origin: 'assistant', isFocused: false, hasActiveOffer: false },
+      { playerId: committed.player.id, origin: 'manual', isFocused: false, hasActiveOffer: false },
+      { playerId: filled.player.id, origin: 'assistant', isFocused: false, hasActiveOffer: false },
+    ]
+    const relationshipProgressByPlayerId = {
+      [elsewhere.player.id]: { [programId]: 12 },
+      [filled.player.id]: { [programId]: 8 },
+    }
+    const dynasty = {
+      ...source,
+      recruiting: {
+        ...source.recruiting!,
+        programs: {
+          ...source.recruiting!.programs,
+          [programId]: {
+            ...source.recruiting!.programs[programId]!,
+            projectedOpeningsByPosition: { PG: 1, SG: 1, SF: 0, PF: 1, C: 1 },
+            board,
+          },
+        },
+        relationshipProgressByPlayerId,
+        commitmentsByPlayerId: {
+          [elsewhere.player.id]: { playerId: elsewhere.player.id, programId: 'northbridge', timing: { kind: 'period' as const, period: 1 }, targetSeasonNumber: 2 },
+          [committed.player.id]: { playerId: committed.player.id, programId, timing: { kind: 'period' as const, period: 1 }, targetSeasonNumber: 2 },
+          [fillingCommitment.player.id]: { playerId: fillingCommitment.player.id, programId, timing: { kind: 'period' as const, period: 1 }, targetSeasonNumber: 2 },
+        },
+      },
+    }
+
+    const cleared = clearUnavailableRecruitingBoardTargets(dynasty)
+    expect(cleared.recruiting!.programs[programId]!.board.map(({ playerId }) => playerId))
+      .toEqual([active.player.id, committed.player.id])
+    expect(cleared.recruiting!.relationshipProgressByPlayerId).toBe(relationshipProgressByPlayerId)
+    expect(cleared.recruiting!.programs[programId]!.board).toHaveLength(2)
+    expect(clearUnavailableRecruitingBoardTargets(cleared)).toBe(cleared)
   })
 
   it('fills empty and nearly-full Boards deterministically without changing AI plans', () => {
@@ -130,6 +214,7 @@ describe('Program recruiting boards', () => {
 
     const manualTargets = source.recruiting!.recruits.slice(0, 10).map(({ player }, index) => ({
       playerId: player.id,
+      origin: 'assistant' as const,
       isFocused: index === 0,
       hasActiveOffer: index === 1,
     }))

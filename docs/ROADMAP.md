@@ -17,8 +17,9 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT
 
-No NEXT is selected. Matchup Scout V1, Game Prep Rotation Experience V1, and
-Player Records Expansion V1 are complete; new work requires an explicit selection rather than inheriting
+No NEXT is selected. Matchup Scout V1, Game Prep Rotation Experience V1,
+Player Records Expansion V1, and Recruiting Board Organization & Cleanup V1
+are complete; new work requires an explicit selection rather than inheriting
 priority from the remaining planned or unscheduled ideas below.
 
 ### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
@@ -67,6 +68,17 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Recruiting Board Organization & Cleanup V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added required manual/assistant provenance to canonical Recruiting Board
+  membership and organized the controlled Board into counted provenance groups.
+- Added atomic `Clear Unavailable` for committed-elsewhere and position-filled
+  targets while preserving relationships, controlled commitments, retained
+  order, and player control of newly opened slots.
+- Changed no Recruiting capacity, selection, battle, Focus, Offer, commitment,
+  or AI strategy mechanics, and returned the Roadmap to an Open Planning
+  Checkpoint with no successor selected.
 
 ### Player Records Expansion V1 — COMPLETE / ACCEPTED / FROZEN
 

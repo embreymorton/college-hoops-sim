@@ -99,6 +99,7 @@ function addTarget(
     ...program,
     board: [...board, {
       playerId,
+      origin: 'assistant',
       isFocused: false,
       hasActiveOffer: false,
     }],

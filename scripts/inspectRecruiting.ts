@@ -277,9 +277,10 @@ function runStrategicScenario(
             programId: underdogId,
             projectedOpeningsByPosition: underdogOpenings,
             board: [
-              { playerId: recruit.player.id, priority: 5, hasActiveOffer: true },
+              { playerId: recruit.player.id, origin: 'assistant' as const, priority: 5, hasActiveOffer: true },
               ...fillers.map((filler) => ({
                 playerId: filler.player.id,
+                origin: 'assistant' as const,
                 priority: stars === 5 ? 3 : 5,
                 hasActiveOffer: false,
               })),
@@ -309,7 +310,7 @@ function runStrategicScenario(
             [favoriteId]: {
               ...favorite,
               projectedOpeningsByPosition: underdogOpenings,
-              board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }],
+              board: [{ playerId: recruit.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true }],
             },
           },
         },
@@ -332,7 +333,7 @@ function runStrategicScenario(
           [favoriteId]: {
             ...favorite,
             projectedOpeningsByPosition: underdogOpenings,
-            board: [{ playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }],
+            board: [{ playerId: recruit.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true }],
           },
         },
       },
@@ -423,8 +424,8 @@ function printProtectedOfferScenario(complete: SeasonState): void {
           programId,
           projectedOpeningsByPosition: openings,
           board: [
-            { playerId: premium.player.id, isFocused: true, hasActiveOffer: true },
-            { playerId: backup.player.id, isFocused: true, hasActiveOffer: false },
+            { playerId: premium.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true },
+            { playerId: backup.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: false },
           ],
         },
         [spectatorId]: {
@@ -551,6 +552,7 @@ function printAiReachSafetySample(complete: SeasonState): void {
       playerId: recruits.find(
         (recruit) => recruit.player.position === position && recruit.stars === stars,
       )!.player.id,
+      origin: 'assistant' as const,
       priority: 3,
       hasActiveOffer: false,
     }))

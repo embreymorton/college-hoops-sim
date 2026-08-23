@@ -39,7 +39,9 @@ The playable product includes:
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
   Recruit Details with factual next-Season natural-position outlook, Late
-  Recruiting, class finalization, and Recruit-to-Player identity continuity;
+  Recruiting, class finalization, Recruit-to-Player identity continuity, and an
+  accepted controlled-Program Board organized by canonical manual/assistant
+  entry provenance with atomic unavailable-target cleanup;
 - departures with graduating-senior career context, Player Development with
   top attribute gains and a Biggest Leap spotlight, incoming classes, exact
   next-season roster assembly, archived Seasons, and repeatable Dynasty rollover;
@@ -99,6 +101,9 @@ Frozen means “reopen only with new evidence,” not “never change.” Do not
 refactor these systems during unrelated feature work:
 
 - Recruiting mechanics and accepted Recruiting information architecture;
+- Recruiting Board Organization & Cleanup V1, including required Board-entry
+  provenance, manual/assistant grouping, authoritative unavailable cleanup,
+  preserved relationship history, and no automatic refill;
 - Recruit Talent Distribution V1 and the production Recruit POT Candidate B
   finalizer;
 - Player Development V1, including the accepted high-POT/high-headroom
@@ -154,6 +159,15 @@ does not itself authorize implementation:
 ## Current planning checkpoint
 
 **No NEXT selected — Open Planning Checkpoint.**
+
+Recruiting Board Organization & Cleanup V1 is **COMPLETE / ACCEPTED / FROZEN**.
+Canonical Board membership records whether it was created manually or by
+assistant/system tooling; the controlled Board presents those entries in two
+counted groups. `Clear Unavailable` atomically removes committed-elsewhere and
+position-filled targets while retaining controlled commitments, relationships,
+and retained order. It leaves opened slots empty until the player explicitly
+adds a Recruit or uses `Fill Remaining Board`; Recruiting mechanics and
+assistant selection behavior are unchanged.
 
 Player Records Expansion V1 and its Details information-architecture polish are
 **COMPLETE / ACCEPTED / FROZEN**. Career Highs and Program Player Records remain

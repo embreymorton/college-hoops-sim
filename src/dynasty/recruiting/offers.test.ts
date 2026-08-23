@@ -167,8 +167,8 @@ describe('active recruiting offers', () => {
       board: [],
     }
     dynasty = setControlledBoard(dynasty, [
-      { playerId: premium.player.id, isFocused: true, hasActiveOffer: true },
-      { playerId: backup.player.id, isFocused: true, hasActiveOffer: false },
+      { playerId: premium.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true },
+      { playerId: backup.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: false },
     ], openings)
     dynasty = {
       ...dynasty,
@@ -261,6 +261,7 @@ describe('active recruiting offers', () => {
       playerId: recruits.find(
         (recruit) => recruit.player.position === position && recruit.stars === stars,
       )!.player.id,
+      origin: 'assistant' as const,
       isFocused: false,
       hasActiveOffer: false,
     }))
@@ -309,9 +310,9 @@ describe('active recruiting offers', () => {
     const otherProgramId = Object.keys(initial.recruiting!.programs).sort()
       .find((id) => id !== programId)!
     const board: RecruitingBoardTarget[] = [
-      { playerId: recruits[0]!.player.id, isFocused: true, hasActiveOffer: true },
-      { playerId: recruits[1]!.player.id, isFocused: true, hasActiveOffer: false },
-      { playerId: recruits[2]!.player.id, isFocused: false, hasActiveOffer: false },
+      { playerId: recruits[0]!.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true },
+      { playerId: recruits[1]!.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: false },
+      { playerId: recruits[2]!.player.id, origin: 'assistant' as const, isFocused: false, hasActiveOffer: false },
     ]
     const prepared: DynastyState = {
       ...setControlledBoard(initial, board, openings),
@@ -376,8 +377,8 @@ describe('active recruiting offers', () => {
     const openings = zeroCounts()
     openings[recruit.player.position] = 1
     dynasty = setControlledBoard(dynasty, [
-      { playerId: recruit.player.id, isFocused: true, hasActiveOffer: true },
-      { playerId: backup.player.id, isFocused: true, hasActiveOffer: false },
+      { playerId: recruit.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true },
+      { playerId: backup.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: false },
     ], openings)
     dynasty = {
       ...dynasty,
@@ -421,7 +422,7 @@ describe('active recruiting offers', () => {
           [programId]: {
             programId,
             projectedOpeningsByPosition: openings,
-            board: [{ playerId: fallback.player.id, isFocused: false, hasActiveOffer: true }],
+            board: [{ playerId: fallback.player.id, origin: 'assistant' as const, isFocused: false, hasActiveOffer: true }],
           },
         },
       },
@@ -449,12 +450,12 @@ describe('active recruiting offers', () => {
       [programId]: {
         programId,
         projectedOpeningsByPosition: openings,
-        board: [{ playerId: elite.player.id, isFocused: true, hasActiveOffer: true }],
+        board: [{ playerId: elite.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true }],
       },
       [otherProgramId]: {
         programId: otherProgramId,
         projectedOpeningsByPosition: openings,
-        board: [{ playerId: elite.player.id, isFocused: true, hasActiveOffer: true }],
+        board: [{ playerId: elite.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true }],
       },
     }
     const base = {

@@ -337,6 +337,21 @@ capacity. Added targets receive normal Board membership only. Removing or
 losing a target, advancing a period, or simulating never triggers an automatic
 refill.
 
+Board-entry provenance keeps player-selected targets distinguishable from
+assistant/system additions without changing how either target recruits. A
+manually added Recruit remains in the manual group; generated and Fill-added
+Recruits enter the assistant group. Focus, Offers, and later player management
+do not relabel that entry—a useful assistant suggestion can become a meaningful
+player-managed pursuit while retaining the history of how it entered the Board.
+
+`Clear Unavailable` reduces repetitive Board maintenance by removing targets
+who committed elsewhere or whose exact position is already filled. It never
+removes a Recruit committed to the controlled Program, preserves relationship
+history, and deliberately leaves the resulting Board slots open. The player may
+then add targets manually or make the separate explicit choice to use `Fill
+Remaining Board`; cleanup introduces no new Recruiting mechanic or automatic
+strategy decision.
+
 When an offered Recruit becomes unavailable while a controlled Program still has positional need, autonomous progression may promote an eligible same-position backup already on that user's board. Selection is deterministic: Focus status, current standing descending, National Rank ascending, then Player ID. This preserves the user's Board and relationship history, adds no new target, and does not invent a new Focus strategy. Explicit user offer withdrawals are not treated as losses to replace, and AI management does not casually overwrite a controlled Program's otherwise valid offers.
 
 ### Competition, commitments, and calendar

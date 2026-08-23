@@ -217,7 +217,7 @@ function configureControlled(dynasty: DynastyState, programId: string, recruit: 
 
 function configureElitePriority(dynasty: DynastyState, eliteId: string, recruit: Recruit): DynastyState {
   const program = dynasty.recruiting!.programs[eliteId]!
-  const replacement = { playerId: recruit.player.id, isFocused: true, hasActiveOffer: true }
+  const replacement = { playerId: recruit.player.id, origin: 'assistant' as const, isFocused: true, hasActiveOffer: true }
   return {
     ...dynasty,
     recruiting: { ...dynasty.recruiting!, programs: { ...dynasty.recruiting!.programs, [eliteId]: { ...program, board: [replacement] } } },

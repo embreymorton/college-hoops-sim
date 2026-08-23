@@ -3,6 +3,7 @@ import type { SeasonState } from '../../season'
 
 export type RecruitStarRating = 2 | 3 | 4 | 5
 export type PositionCounts = Readonly<Record<Position, number>>
+export type RecruitingBoardTargetOrigin = 'manual' | 'assistant'
 
 /** One future Player plus immutable facts from his national recruiting class. */
 export interface Recruit {
@@ -18,6 +19,7 @@ export interface Recruit {
 
 export interface RecruitingBoardTarget {
   readonly playerId: string
+  readonly origin: RecruitingBoardTargetOrigin
   /** One of at most three active targets receiving extra relationship effort. */
   readonly isFocused?: boolean
   /** Canonical Program intent to accept this Recruit into positional capacity. */
@@ -97,6 +99,7 @@ export type RecruitingTargetStatus =
 
 export interface ProgramRecruitingBoardEntry {
   readonly playerId: string
+  readonly origin: RecruitingBoardTargetOrigin
   readonly isFocused: boolean
   readonly hasActiveOffer: boolean
   readonly status: RecruitingTargetStatus

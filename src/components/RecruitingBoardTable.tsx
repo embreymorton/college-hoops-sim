@@ -70,7 +70,22 @@ export function RecruitingBoardTable({
   // Recruit focus never moves their row.
   const rows = board.targets
     .map((target) => ({ target, recruit: getRecruit(recruiting, target.playerId)! }))
-    .sort((first, second) => first.recruit.nationalRank - second.recruit.nationalRank)
+    .sort((first, second) =>
+      first.recruit.nationalRank - second.recruit.nationalRank ||
+      first.target.playerId.localeCompare(second.target.playerId),
+    )
+  const groups = [
+    {
+      origin: 'manual' as const,
+      label: 'Manually Added',
+      emptyLabel: 'No manually added recruits.',
+    },
+    {
+      origin: 'assistant' as const,
+      label: 'Assistant Added',
+      emptyLabel: 'No assistant-added recruits.',
+    },
+  ]
 
   return (
     <div className="table-scroll">
@@ -89,8 +104,18 @@ export function RecruitingBoardTable({
             <th scope="col">Action</th>
           </tr>
         </thead>
-        <tbody>
-          {rows.map(({ target, recruit }) => {
+        {groups.map((group) => {
+          const groupRows = rows.filter(({ target }) => target.origin === group.origin)
+          return <tbody key={group.origin} aria-label={`${group.label} (${groupRows.length})`}>
+            <tr className="recruiting-board-table__group-heading">
+              <th scope="rowgroup" colSpan={9}>{group.label} ({groupRows.length})</th>
+            </tr>
+            {groupRows.length === 0 && (
+              <tr className="recruiting-board-table__group-empty">
+                <td colSpan={9}>{group.emptyLabel}</td>
+              </tr>
+            )}
+          {groupRows.map(({ target, recruit }) => {
             const position = recruit.player.position
             const isActive = target.status === 'active'
             const canRemove = target.status !== 'committed'
@@ -188,7 +213,8 @@ export function RecruitingBoardTable({
               </tr>
             )
           })}
-        </tbody>
+          </tbody>
+        })}
       </table>
     </div>
   )

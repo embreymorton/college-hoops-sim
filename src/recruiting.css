@@ -181,6 +181,25 @@
   margin-bottom: 0.75rem;
 }
 
+.recruiting-board-table__group-heading th {
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-top: 1px solid var(--line-strong);
+  color: var(--ink-0);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.recruiting-board-table__group-empty td {
+  padding: var(--space-4);
+  color: var(--ink-2);
+  font-style: italic;
+  text-align: left;
+}
+
 .recruiting-status-cell {
   color: var(--ink-1);
   font-size: 0.76rem;
@@ -1308,3 +1327,11 @@
   max-width: 100%;
   overflow-x: auto;
 }
+  .recruiting-board-management {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .recruiting-board-management .button {
+    width: 100%;
+  }

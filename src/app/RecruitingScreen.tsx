@@ -45,7 +45,7 @@ export function RecruitingScreen({
   readonly embeddedOffseason?: boolean
 }) {
   const [isFinalizeDialogOpen, setIsFinalizeDialogOpen] = useState(false)
-  const [boardFillMessage, setBoardFillMessage] = useState<string | null>(null)
+  const [boardActionMessage, setBoardActionMessage] = useState<string | null>(null)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const postseason = useDynastyStore(selectActivePostseason)
   const actionError = useDynastyStore((state) => state.recruitingActionError)
@@ -63,6 +63,9 @@ export function RecruitingScreen({
   const addRecruitingTarget = useDynastyStore((state) => state.addRecruitingTarget)
   const openRecruitDetails = useDynastyStore((state) => state.openRecruitDetails)
   const removeRecruitingTarget = useDynastyStore((state) => state.removeRecruitingTarget)
+  const clearUnavailableRecruitingTargets = useDynastyStore(
+    (state) => state.clearUnavailableRecruitingTargets,
+  )
   const setRecruitingFocus = useDynastyStore((state) => state.setRecruitingFocus)
   const offerRecruitingTarget = useDynastyStore((state) => state.offerRecruitingTarget)
   const withdrawRecruitingOffer = useDynastyStore((state) => state.withdrawRecruitingOffer)
@@ -131,11 +134,22 @@ export function RecruitingScreen({
   const isLate = dynasty.recruiting.phase === 'late'
   const fillBoard = () => {
     const added = fillRemainingRecruitingBoard()
-    setBoardFillMessage(
+    setBoardActionMessage(
       added > 0
         ? `Added ${added} ${added === 1 ? 'recruit' : 'recruits'} to your Board.`
         : 'No additional eligible recruits were available.',
     )
+  }
+  const unavailableCount = board.targets.filter(
+    ({ status }) => status === 'committed-elsewhere' || status === 'position-filled',
+  ).length
+  const clearUnavailable = () => {
+    const removed = clearUnavailableRecruitingTargets()
+    if (removed > 0) {
+      setBoardActionMessage(
+        `Removed ${removed} unavailable ${removed === 1 ? 'recruit' : 'recruits'} from your Board.`,
+      )
+    }
   }
 
   const hasRemainingOpenings = totals.remainingTotal > 0
@@ -252,8 +266,18 @@ export function RecruitingScreen({
             />
           ) : (
             <>
-              {board.targets.length < RECRUITING_BOARD_LIMIT && (
+              {(unavailableCount > 0 || board.targets.length < RECRUITING_BOARD_LIMIT) && (
                 <div className="recruiting-board-management">
+                  {unavailableCount > 0 && (
+                    <button
+                      type="button"
+                      className="button button--ghost"
+                      onClick={clearUnavailable}
+                    >
+                      Clear Unavailable ({unavailableCount})
+                    </button>
+                  )}
+                  {board.targets.length < RECRUITING_BOARD_LIMIT && (
                   <button
                     type="button"
                     className="button button--ghost"
@@ -261,9 +285,10 @@ export function RecruitingScreen({
                   >
                     Fill Remaining Board
                   </button>
+                  )}
                 </div>
               )}
-              {boardFillMessage && <p className="section-hint" role="status">{boardFillMessage}</p>}
+              {boardActionMessage && <p className="section-hint" role="status">{boardActionMessage}</p>}
               <RecruitingBoardTable
                 dynasty={dynasty}
                 board={board}

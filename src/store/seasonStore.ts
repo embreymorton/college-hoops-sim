@@ -19,6 +19,7 @@ import {
   autoFinalizeRecruiting,
   beginOffseason,
   buildDefaultRecruitingBoard,
+  clearUnavailableRecruitingBoardTargets,
   deriveDynastyProgressionAction,
   fillRemainingRecruitingBoard,
   initializeDynastyState,
@@ -448,6 +449,8 @@ export interface DynastySessionState {
   addRecruitingTarget(playerId: string): void
   /** Removes a target from the controlled Program's board. */
   removeRecruitingTarget(playerId: string): void
+  /** Removes every currently unavailable target from the controlled Program's board. */
+  clearUnavailableRecruitingTargets(): number
   /** Focuses or unfocuses one board target through the canonical Recruiting API. */
   setRecruitingFocus(playerId: string, isFocused: boolean): void
   /** Places a controlled-Program offer on a board target. */
@@ -1980,6 +1983,17 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
           error instanceof Error ? error.message : 'Could not remove that Recruit from the board.',
       })
     }
+  },
+
+  clearUnavailableRecruitingTargets() {
+    const { dynasty } = get()
+    if (!dynasty?.recruiting) return 0
+    const before = dynasty.recruiting.programs[dynasty.controlledProgramId]!.board.length
+    const nextDynasty = clearUnavailableRecruitingBoardTargets(dynasty)
+    if (nextDynasty === dynasty) return 0
+    const after = nextDynasty.recruiting!.programs[nextDynasty.controlledProgramId]!.board.length
+    set({ dynasty: nextDynasty, recruitingActionError: null })
+    return before - after
   },
 
   setRecruitingFocus(playerId, isFocused) {

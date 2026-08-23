@@ -75,7 +75,7 @@ export function addRecruitingBoardTarget({
   }
   return withProgramBoard(dynasty, program.programId, [
     ...program.board,
-    { playerId, isFocused: false, hasActiveOffer: false },
+    { playerId, origin: 'manual', isFocused: false, hasActiveOffer: false },
   ])
 }
 
@@ -130,6 +130,21 @@ export function removeRecruitingBoardTarget({
     program.programId,
     program.board.filter((target) => target.playerId !== playerId),
   )
+}
+
+/** Removes every currently unavailable controlled-Program target atomically. */
+export function clearUnavailableRecruitingBoardTargets(
+  dynasty: DynastyState,
+): DynastyState {
+  const program = controlledProgram(dynasty)
+  const recruiting = dynasty.recruiting!
+  const retained = program.board.filter((target) => {
+    const status = deriveTargetStatus(recruiting, program.programId, target.playerId)
+    return status !== 'committed-elsewhere' && status !== 'position-filled'
+  })
+  return retained.length === program.board.length
+    ? dynasty
+    : withProgramBoard(dynasty, program.programId, retained)
 }
 
 export function setRecruitingFocus({
@@ -209,6 +224,7 @@ function positionCandidates(
     )
     .map(({ recruit }, index) => ({
       playerId: recruit.player.id,
+      origin: 'assistant',
       isFocused: index < RECRUITING_FOCUS_LIMIT,
       hasActiveOffer: false,
     }))
@@ -282,6 +298,7 @@ function addPremiumDiscoveryTarget(
       recruit,
       target: {
         playerId: recruit.player.id,
+        origin: 'assistant',
         isFocused: false,
         hasActiveOffer: false,
       } satisfies RecruitingBoardTarget,

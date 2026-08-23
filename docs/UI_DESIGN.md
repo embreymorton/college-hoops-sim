@@ -405,6 +405,24 @@ Late Recruiting's zero-openings state no longer warns that "remaining openings w
 
 As a small adjacent cleanup, `RecruitingScreen`'s Board action row now hides `Fill Remaining Board` outright (not merely disables it) once the Board is already at capacity — the control has no purpose with zero empty slots, and `Fill Remaining Board` itself is unchanged for a partial Board.
 
+### Recruiting Board Organization & Cleanup V1 — accepted / frozen
+
+`RecruitingBoardTable` remains one shared table and column header, with canonical
+membership divided into semantic `Manually Added (N)` and `Assistant Added (N)`
+row groups. Both headings remain visible when one group is empty, with concise
+empty-group copy. Rows sort within each group by National Rank and then Player
+ID; the resulting change to global Board order is intentional. Existing Focus,
+Offer, Withdraw, Remove, and Recruit Details actions remain on the shared rows.
+
+The existing Board-management row places `Clear Unavailable (N)` before `Fill
+Remaining Board`, showing cleanup only when at least one projected Board status
+qualifies. Cleanup and Fill remain independent actions, and concise results use
+the generalized Board-action feedback area. Desktop controls retain the
+existing alignment. At approximately 390px they stack as full-width controls;
+the table keeps all columns inside one shared horizontal-scroll region, and the
+group headings communicate meaning through text rather than color alone. This
+is a Board organization pass, not a broader Recruiting-screen redesign.
+
 ### Season Hub + League Information Hierarchy Polish — implemented (6E.16B)
 
 Manual playtesting after 6E.16A found the same category of friction one level up: excess vertical space below the Dynasty nav before primary Hub content; a Quick Sim result card that visibly resized the Hub and pushed `Advance to Next Round`/`Super Sim` down after every game; oversized, awkward completed-game stat presentation; an unresolved-Focus-target list mixed with signed commitments; a Recruiting Update recap that read as a detached top-level alert; Hub Conference standings exposing a league-wide switcher the controlled coach rarely needs; and redundant root League chrome (a Back button and a duplicate `League` heading) on top of primary Dynasty navigation that already establishes location. Phase 6E.16B is presentation/information-architecture only, landed in two manual-play passes; no simulation, Recruiting, League, or Postseason mechanic changed.
