@@ -1265,6 +1265,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       dynasty: withActiveSeason(dynasty, caughtUpSeason),
       draftRotation: canonicalRotation,
+      coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+        caughtUpSeason.programStates[controlledProgramId]!.team,
+        canonicalRotation,
+      ),
+      coachingSimplePreservedPlayerIds: [],
+      coachingSimpleRotationIssues: [],
       view: 'gamePrep',
     })
   },
@@ -1558,6 +1564,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     set({
       postseasonDraftRotation: controlledState.rotation,
+      coachingSimpleMinutesByPlayerId: deriveSimpleRotationMinutes(
+        controlledState.team,
+        controlledState.rotation,
+      ),
+      coachingSimplePreservedPlayerIds: [],
+      coachingSimpleRotationIssues: [],
       view: 'postseasonGamePrep',
     })
   },

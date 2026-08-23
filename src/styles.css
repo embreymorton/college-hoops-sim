@@ -715,6 +715,106 @@ p {
   align-items: start;
 }
 
+.game-prep-rotation-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(19rem, 0.78fr);
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.game-prep-rotation-side {
+  min-width: 0;
+}
+
+.game-prep-rotation-side > h3,
+.game-prep-rotation-side__heading h3 {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.game-prep-rotation-side__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.rotation-mode-feedback {
+  margin: 0 0 var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+}
+
+.opponent-rotation-group {
+  padding: var(--space-4) var(--space-5) 0;
+}
+
+.opponent-rotation-group__heading {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.opponent-rotation-list {
+  border-top: 1px solid var(--line);
+}
+
+.opponent-rotation-row {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) 2.1rem 3.6rem 3.6rem;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 2.55rem;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.82rem;
+}
+
+.opponent-rotation-row__role,
+.opponent-rotation-row__metric-label {
+  color: var(--ink-2);
+  font-family: var(--font-display);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.opponent-rotation-row__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: left;
+}
+
+.opponent-rotation-row__class,
+.opponent-rotation-row__metric {
+  white-space: nowrap;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.opponent-rotation-panel__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+}
+
+.opponent-rotation-panel__footer p {
+  margin: 0;
+}
+
 .team-panel {
   background: var(--surface-1);
   border: 1px solid var(--line);
@@ -2875,6 +2975,10 @@ p {
     grid-template-columns: 1fr;
   }
 
+  .game-prep-rotation-grid {
+    grid-template-columns: 1fr;
+  }
+
   .matchup-scout__grid {
     grid-template-columns: 1fr;
   }
@@ -2973,6 +3077,28 @@ p {
 }
 
 @media (max-width: 560px) {
+  .game-prep-rotation-side__heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .opponent-rotation-row {
+    grid-template-columns: 2rem minmax(0, 1fr) auto auto;
+  }
+
+  .opponent-rotation-row__class {
+    display: none;
+  }
+
+  .opponent-rotation-row__metric-label {
+    display: block;
+    text-align: right;
+  }
+
+  .opponent-rotation-panel__footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
   .app-header {
     padding: var(--space-4);
   }

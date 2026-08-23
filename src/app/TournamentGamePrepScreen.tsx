@@ -1,10 +1,9 @@
 import { useMemo } from 'react'
 import { calculateTeamStrength, validateRotationV1 } from '../engine'
 import {
+  GamePrepRotationSection,
   MatchupScoutSection,
   PregameScoreboard,
-  RotationEditorPanel,
-  TeamRosterPanel,
 } from '../components'
 import { deriveMatchupScout } from '../matchupScout'
 import {
@@ -21,7 +20,7 @@ import {
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
-import { describeRotationBlockingReason } from './formatters'
+import { deriveSimplePlayerMinutes, describeRotationBlockingReason } from './formatters'
 import { formatSeedLabel, formatTournamentRoundName } from './postseasonFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -71,18 +70,26 @@ export function TournamentGamePrepScreen() {
     (state) => state.postseasonControlledDefaultRotation,
   )
   const setDraftPlayerPositionMinutes = useDynastyStore(
-    (state) => state.setPostseasonDraftPlayerPositionMinutes,
+    (state) => state.setCoachingDraftPlayerPositionMinutes,
   )
   const resetDraftRotation = useDynastyStore(
-    (state) => state.resetPostseasonDraftRotation,
+    (state) => state.resetCoachingDraftRotation,
   )
+  const simpleMinutes = useDynastyStore((state) => state.coachingSimpleMinutesByPlayerId)
+  const simplePreservedPlayerIds = useDynastyStore((state) => state.coachingSimplePreservedPlayerIds)
+  const simpleIssues = useDynastyStore((state) => state.coachingSimpleRotationIssues)
+  const setSimplePlayerMinutes = useDynastyStore((state) => state.setCoachingSimplePlayerMinutes)
+  const fillSimpleRotation = useDynastyStore((state) => state.fillCoachingSimpleRotation)
+  const applySimpleRotation = useDynastyStore((state) => state.applyCoachingSimpleRotation)
+  const discardSimpleRotation = useDynastyStore((state) => state.resetCoachingSimpleRotation)
   const playPostseasonScheduledGame = useDynastyStore(
     (state) => state.playPostseasonScheduledGame,
   )
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
+  const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
 
-  if (!postseason || !season || !controlledProgramId || !draftRotation || !controlledDefaultRotation) {
+  if (!postseason || !season || !controlledProgramId || !draftRotation || !controlledDefaultRotation || !simpleMinutes) {
     return null
   }
 
@@ -119,6 +126,7 @@ export function TournamentGamePrepScreen() {
   const controlledTeam = postseason.programStates[controlledProgramId]!.team
   const opponentTeam = postseason.programStates[opponentId]!.team
   const opponentRotation = postseason.programStates[opponentId]!.rotation
+  const canonicalRotation = postseason.programStates[controlledProgramId]!.rotation
 
   const validation = validateRotationV1(controlledTeam, draftRotation)
   const isValid = validation.valid
@@ -133,6 +141,13 @@ export function TournamentGamePrepScreen() {
   const blockingReason = isValid
     ? null
     : describeRotationBlockingReason(validation)
+  const committedSimpleMinutes = deriveSimplePlayerMinutes(controlledTeam, canonicalRotation)
+  const simpleIsDirty = controlledTeam.roster.some(
+    (player) => (simpleMinutes[player.id] ?? 0) !== (committedSimpleMinutes[player.id] ?? 0),
+  )
+  const simulationBlockingReason = simpleIsDirty
+    ? 'Apply or discard your Rotation changes before simulating.'
+    : blockingReason
 
   const controlledStrengthInfo = {
     name: controlledTeam.name,
@@ -172,8 +187,8 @@ export function TournamentGamePrepScreen() {
             isControlledHome ? opponentEntry.seed : controlledEntry.seed,
           )}
           onAction={playPostseasonScheduledGame}
-          actionDisabled={!isValid}
-          actionDisabledReason={blockingReason}
+          actionDisabled={!isValid || simpleIsDirty}
+          actionDisabledReason={simulationBlockingReason}
         />
       </section>
       <TournamentScout
@@ -183,35 +198,33 @@ export function TournamentGamePrepScreen() {
         opponentProgram={opponentProgram}
         onSelectPlayer={(playerId) => openPlayerDetails(opponentId, playerId)}
       />
-      <section className="section" aria-labelledby="tournament-rotations-heading">
-        <div className="section-heading">
-          <h2 id="tournament-rotations-heading" className="section-title">
-            Your Rotation &amp; Opponent Roster
-          </h2>
-          <p className="section-hint">Set your rotation, then simulate.</p>
-        </div>
-        <div className="matchup-panels">
-          <RotationEditorPanel
-            team={controlledTeam}
-            defaultRotation={controlledDefaultRotation}
-            currentRotation={draftRotation}
-            program={{ primaryColor: controlledProgram.branding.primaryColor }}
-            validation={validation}
-            defaultStrength={controlledDefaultStrength}
-            currentStrength={controlledCurrentStrength}
-            pendingStrengthReason={blockingReason}
-            onSetPlayerPositionMinutes={setDraftPlayerPositionMinutes}
-            onReset={resetDraftRotation}
-            headingId="tournament-controlled-team-heading"
-          />
-          <TeamRosterPanel
-            team={opponentTeam}
-            rotation={opponentRotation}
-            program={{ primaryColor: opponentProgram.branding.primaryColor }}
-            headingId="tournament-opponent-team-heading"
-          />
-        </div>
-      </section>
+      <GamePrepRotationSection
+        headingId="tournament-rotations-heading"
+        controlledTeam={controlledTeam}
+        controlledProgram={{ primaryColor: controlledProgram.branding.primaryColor }}
+        canonicalRotation={canonicalRotation}
+        defaultRotation={controlledDefaultRotation}
+        draftRotation={draftRotation}
+        validation={validation}
+        defaultStrength={controlledDefaultStrength}
+        currentStrength={controlledCurrentStrength}
+        pendingStrengthReason={blockingReason}
+        simpleMinutesByPlayerId={simpleMinutes}
+        simplePreservedPlayerIds={simplePreservedPlayerIds}
+        simpleIssues={simpleIssues}
+        opponentTeam={opponentTeam}
+        opponentRotation={opponentRotation}
+        opponentProgram={{ primaryColor: opponentProgram.branding.primaryColor }}
+        onSetSimplePlayerMinutes={setSimplePlayerMinutes}
+        onFillSimple={() => { fillSimpleRotation() }}
+        onApplySimple={() => { applySimpleRotation() }}
+        onDiscardSimple={discardSimpleRotation}
+        onSetAdvancedPlayerPositionMinutes={setDraftPlayerPositionMinutes}
+        onResetAdvanced={resetDraftRotation}
+        onSelectControlledPlayer={(playerId) => openPlayerDetails(controlledProgramId, playerId)}
+        onSelectOpponentPlayer={(playerId) => openPlayerDetails(opponentId, playerId)}
+        onViewOpponentRoster={() => openTeamDetails(opponentId)}
+      />
     </>
   )
 }

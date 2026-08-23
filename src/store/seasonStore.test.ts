@@ -681,6 +681,16 @@ describe('seasonStore Dashboard Quick Sim', () => {
       true,
     )
     expect(state.draftRotation).toEqual(canonicalRotation)
+    expect(state.coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        controlledTeam.roster.map((player) => [
+          player.id,
+          derivePlayerMinutesV1(canonicalRotation)[player.id] ?? 0,
+        ]),
+      ),
+    )
+    expect(state.coachingSimplePreservedPlayerIds).toEqual([])
+    expect(state.coachingSimpleRotationIssues).toEqual([])
   })
 })
 

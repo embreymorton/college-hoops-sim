@@ -291,6 +291,8 @@ describe('Postseason — qualified and alive', () => {
     expect(
       screen.getByRole('heading', { name: /your rotation/i }),
     ).toBeInTheDocument()
+    expect(document.querySelector('.simple-rotation-table')).not.toBeNull()
+    expect(document.querySelector('.rotation-table')).toBeNull()
     expect(
       screen.getByRole('heading', { name: 'Matchup Scout' }),
     ).toBeInTheDocument()

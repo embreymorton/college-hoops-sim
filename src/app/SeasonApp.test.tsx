@@ -270,7 +270,7 @@ describe('Season Presentation', () => {
     )
   })
 
-  it('Game Prep still opens the existing Rotation Editor workflow', () => {
+  it('Game Prep defaults to Simple Rotation and preserves Advanced access across exploration', () => {
     render(<App />)
     selectProgramViaUI('Charlotte Tech')
     clickButtonByText(/game prep/i)
@@ -278,7 +278,8 @@ describe('Season Presentation', () => {
     expect(
       screen.getByRole('heading', { name: /your rotation/i }),
     ).toBeInTheDocument()
-    expect(document.querySelector('.rotation-table')).not.toBeNull()
+    expect(document.querySelector('.simple-rotation-table')).not.toBeNull()
+    expect(document.querySelector('.rotation-table')).toBeNull()
     expect(
       screen.getByRole('heading', { name: 'Matchup Scout' }),
     ).toBeInTheDocument()
@@ -289,7 +290,48 @@ describe('Season Presentation', () => {
     expect(useDynastyStore.getState().view).toBe('playerDetails')
     clickButtonByText(/back to game prep/i)
     expect(useDynastyStore.getState().view).toBe('gamePrep')
+    expect(document.querySelector('.simple-rotation-table')).not.toBeNull()
+
+    clickButtonByText(/^advanced$/i)
     expect(document.querySelector('.rotation-table')).not.toBeNull()
+    clickButtonByText(/back to season hub/i)
+    clickButtonByText(/game prep/i)
+    expect(document.querySelector('.simple-rotation-table')).not.toBeNull()
+  })
+
+  it('blocks hiding unapplied Simple edits until they are discarded', () => {
+    render(<App />)
+    selectProgramViaUI('Charlotte Tech')
+    clickButtonByText(/game prep/i)
+
+    const row = document.querySelector('.simple-rotation-table tr[data-player-id]') as HTMLElement
+    const input = within(row).getByRole('spinbutton') as HTMLInputElement
+    fireEvent.change(input, { target: { value: String(Number(input.value) + 1) } })
+    clickButtonByText(/^advanced$/i)
+
+    expect(document.querySelector('.simple-rotation-table')).not.toBeNull()
+    expect(screen.getByText(/apply or discard your rotation changes before switching/i)).toBeInTheDocument()
+    clickButtonByText(/discard changes/i)
+    clickButtonByText(/^advanced$/i)
+    expect(document.querySelector('.rotation-table')).not.toBeNull()
+  })
+
+  it('keeps an invalid Advanced draft visible until it is reset', () => {
+    render(<App />)
+    selectProgramViaUI('Charlotte Tech')
+    clickButtonByText(/game prep/i)
+    clickButtonByText(/^advanced$/i)
+
+    const row = document.querySelector('.rotation-table tr[data-player-id]') as HTMLElement
+    const input = within(row).getByRole('spinbutton') as HTMLInputElement
+    fireEvent.change(input, { target: { value: String(Number(input.value) + 5) } })
+    clickButtonByText(/^simple$/i)
+
+    expect(document.querySelector('.rotation-table')).not.toBeNull()
+    expect(screen.getByText(/finish or reset the current advanced rotation/i)).toBeInTheDocument()
+    clickButtonByText(/reset to default/i)
+    clickButtonByText(/^simple$/i)
+    expect(document.querySelector('.simple-rotation-table')).not.toBeNull()
   })
 
   it('gates simulation on a legal draft Rotation in Game Prep', () => {

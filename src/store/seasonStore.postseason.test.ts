@@ -417,6 +417,35 @@ describe('seasonStore postseason — qualified and alive', () => {
     expect(useDynastyStore.getState().lastPlayedTournamentGameId).not.toBeNull()
   })
 
+  it('initializes Tournament Game Prep Simple state from Postseason and clears stale transient feedback', () => {
+    const { postseason } = primeStore('game-prep-simple-initialization')
+    const controlledProgramId = postseason.field[0]!.programId
+    assignControlledProgram(postseason, controlledProgramId)
+    const controlledState = postseason.programStates[controlledProgramId]!
+    const aggregate = derivePlayerMinutesV1(controlledState.rotation)
+    useDynastyStore.setState({
+      coachingSimpleMinutesByPlayerId: { stale: 200 },
+      coachingSimplePreservedPlayerIds: ['stale'],
+      coachingSimpleRotationIssues: [{
+        code: 'UNKNOWN_PLAYER',
+        message: 'stale',
+        playerId: 'stale',
+      }],
+    })
+
+    useDynastyStore.getState().goToPostseasonGamePrep()
+
+    const state = useDynastyStore.getState()
+    expect(state.postseasonDraftRotation).toEqual(controlledState.rotation)
+    expect(state.coachingSimpleMinutesByPlayerId).toEqual(
+      Object.fromEntries(
+        controlledState.team.roster.map(({ id }) => [id, aggregate[id] ?? 0]),
+      ),
+    )
+    expect(state.coachingSimplePreservedPlayerIds).toEqual([])
+    expect(state.coachingSimpleRotationIssues).toEqual([])
+  })
+
   it('commits Rotation edits to Postseason only, leaving the completed Season Rotation untouched', () => {
     const { postseason, season } = primeStore('alive-rotation-isolation')
     const controlledProgramId = postseason.field[0]!.programId
