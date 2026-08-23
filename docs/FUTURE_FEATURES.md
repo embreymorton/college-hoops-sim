@@ -13,8 +13,6 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 - **History & Recognition:** Awards & Honors remains PLANNED under Phase 7C in
   `ROADMAP.md`; completed Yearbooks, Records, and Recruiting Class
   Retrospectives are production capabilities.
-- **Rare Development Breakouts / Explosive Offseasons:** PLANNED, explicitly
-  not NEXT, in `ROADMAP.md`; ordinary Development V1 remains frozen.
 
 The Roadmap owns its order and scope. It is not specified again here.
 
@@ -95,6 +93,15 @@ scope expansion without changing current regular-season semantics piecemeal.
 - Conference and freshman leaderboards.
 
 ## History and immersion beyond selected work
+
+### Historical Explosive Offseason recognition
+
+Current V1 retains official Explosion facts only during the active offseason.
+If durable lifecycle-event history is deliberately added later, Career
+Progression, Player history, Yearbooks, News, or records could recognize those
+events. Until then, historical recognition must not be inferred from raw OVR
+deltas. Work Ethic remains stable; progression or regression of that trait is
+not part of this idea.
 
 - broad Program Alumni browser and global historical Player search;
 - Program rivalries, banners, and history beyond the accepted compact Dynasty

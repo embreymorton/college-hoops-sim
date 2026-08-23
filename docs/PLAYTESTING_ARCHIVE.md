@@ -60,6 +60,40 @@ produced materially different equal-OVR outcomes by POT while preserving busts,
 modest careers, hits, and rare stars. Concentrated single-attribute gains remain
 a live WATCH item in current Playtesting.
 
+## Recruit Talent Profile V2 — accepted / frozen
+
+The investigation traced elite-ceiling compression to the original independent
+readiness and raw-ceiling model. Production adopted a deliberately loose
+readiness-conditioned ceiling distribution while preserving readiness/current
+ability, Candidate B, ranking/stars, Recruiting, Development, and downstream
+competition behavior.
+
+Activation sampled about 80,204 Recruits across 500 classes. Mean/median OVR
+remained `66.40/67`, OVR 80+ was `8.11%`, readiness↔raw-ceiling correlation was
+`0.080`, and raw 90+/95+/97+/99 rates were
+`8.55%/2.98%/0.66%/0.23%`. Assignment completed without commitment shortfall or
+lifecycle failure. Mature Seasons 5–10 remained near `78.07` mean Team OVR,
+`3.67` SD, and zero 90+ Teams. No Recruit Talent Profile calibration remains
+open.
+
+## S0 Player Talent Profile Continuity — accepted / frozen
+
+The Current Ability / Career-Stage investigation found legacy class assignment
+nearly independent of roster talent. The accepted deterministic noisy class
+priority preserved every Program's talent opportunities and class counts while
+producing overlapping FR/SO/JR/SR mean OVR of
+`68.83/69.95/71.19/71.62`. Across 32,000 paired Programs, Team OVR movement was
+exactly zero; elite young Players and the full legal OVR range remained possible
+for every class.
+
+The POT / Career-Profile investigation replaced class-specific headroom with a
+direct conditional six-tier ceiling model. Activation across 192,000 Players
+produced FR/SO/JR/SR mean POT of `79.49/79.10/79.05/78.71`, mean headroom of
+`10.69/9.19/7.85/7.09`, and progressively stronger OVR↔POT correlation. POT99
+remained rare (`0.19%`) across a wide OVR carrier range. Recruit V2, ordinary
+Development, Program talent budgets, and downstream systems were unchanged; no
+S0 talent-profile calibration remains open.
+
 ## Mature league and rebuild observations
 
 Pine Valley established that a low-Prestige rebuild can remain a genuine

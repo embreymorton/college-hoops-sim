@@ -17,47 +17,17 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-S0 Player Talent Profile Continuity—including Current Ability / Career-Stage
-Generation and POT / Career-Profile Continuity—is complete, accepted, and
-frozen. No successor was selected at closure. Awards & Honors and Rare
-Development Breakouts remain PLANNED; Recruit V2 six-tier semantic alignment
-remains deferred and unscheduled. None is NEXT by order, proximity, or interest.
+Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 is
+complete, accepted, and frozen. No successor was selected at closure. Awards &
+Honors remains PLANNED, while Recruit V2 six-tier semantic alignment remains
+deferred and unscheduled. Neither is NEXT by order, proximity, or interest.
 
-### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
-
-- Added one shared regular-season/Tournament pregame composition with a pure
-  opponent Scout, restrained sample-aware profile, Players to Watch, recent
-  context, and no canonical scouting state or simulation changes.
-- Made Simple the default Game Prep Rotation presentation while retaining
-  guarded Advanced access over the same canonical `RotationV1`; unresolved
-  drafts cannot be hidden or simulated.
-- Replaced the duplicated opponent roster with a compact Expected Rotation and
-  returned the Roadmap to an Open Planning Checkpoint with no successor selected.
-
-### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
-
-The Preserve & Fill domain operation, Simple Rotation draft integration, player
-feedback, and automated coverage are accepted. It preserves edited MPG,
-deterministically fills a legal reviewable draft, and leaves Apply as the sole
-commit boundary. Apply and Discard clear transient locked state; impossible
-constraints retain the draft and surface existing issue feedback without a
-silent commit.
+## Planned and unscheduled
 
 ### PLANNED — remainder of Phase 7C
 
 1. **7C.3 — Awards & Honors** — remains valid future work whose subjective
    formulas would require separate design and tuning; it is not NEXT.
-
-### PLANNED — Rare Development Breakouts / Explosive Offseasons
-
-Investigate whether extremely rare Development outcomes should be allowed to
-exceed the normal class-year OVR caps while POT remains absolute and ordinary
-Development V1 remains unchanged. This is explicitly **not NEXT**, is not a
-solution to Recruit-generation shortcomings, and does not revive rejected
-Candidate A+ or globally raise normal caps. If deliberately selected later,
-begin with a focused check of whether current caps truncate breakout outcomes;
-PLANNED placement does not establish order relative to Awards & Honors or other
-future work.
 
 ### Future Phase 8 work
 
@@ -80,6 +50,30 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added an isolated deterministic exceptional layer above byte-stable ordinary
+  Development V1, with POT absolute and no Explosion probability dependency on
+  Work Ethic, Prestige, performance, or ownership.
+- Validated 53 official events across 2,227 eligible mature opportunities
+  (`1.77` per league offseason) with negligible mature Player/Team mean movement
+  and no elite-Program amplification.
+- Accepted Work Ethic's Recruit-hidden → FR Unknown → SO+ stable reveal,
+  Player-identity placement, event-backed Development rows, and conditional
+  `EXPLOSIVE OFFSEASON` hero treatment.
+
+### Matchup Scout V1 + Game Prep Rotation Experience V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added one shared regular-season/Tournament pregame composition with a pure
+  opponent Scout and Expected Rotation over the same canonical `RotationV1`.
+- Made Simple the default preparation view while preserving guarded Advanced
+  access and unchanged simulation/state ownership.
+
+### Rotation Assistant V1 — COMPLETE / ACCEPTED / FROZEN
+
+The accepted Preserve & Fill operation preserves edited MPG, deterministically
+fills a legal reviewable draft, and leaves Apply as the only commit boundary.
 
 ### S0 Player Talent Profile Continuity — COMPLETE / ACCEPTED / FROZEN
 

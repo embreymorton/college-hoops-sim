@@ -95,7 +95,7 @@ Development V1 remains a pure Dynasty-layer operation over one returning Player.
 
 The completed class provides a baseline, not an absolute gain ceiling:
 
-| Completed class | Next class | Baseline range | Headroom multiplier | Per-offseason cap |
+| Completed class | Next class | Baseline range | Headroom multiplier | Ordinary Development V1 cap |
 | --- | --- | ---: |
 | FR | SO | 1–4 | 1.20 | 12 |
 | SO | JR | 1–3 | 0.90 | 10 |
@@ -114,7 +114,7 @@ target increment = min(class cap, max(0, baseline + tendency adjustment + opport
 target OVR = min(POT, current OVR + target increment)
 ```
 
-Tendencies are deterministic but not stored Player attributes: `30%` weak (`0.40×` opportunity, `−1` baseline, `0.30×` breakout chance), `50%` steady (`1.00×`, `0`, `1.00×`), and `20%` strong (`2.10×`, `+2`, `2.00×`). Annual variance remains independent, so a strong developer can disappoint and a weaker developer can still have a good year. Breakout chance is `6% / 3.5% / 1.5%` for FR/SO/JR, multiplied by `min(2, headroom / 20)` and the tendency breakout multiplier.
+Tendencies are deterministic but not stored Player attributes: `30%` weak (`0.40×` opportunity, `−1` baseline, `0.30×` breakout chance), `50%` steady (`1.00×`, `0`, `1.00×`), and `20%` strong (`2.10×`, `+2`, `2.00×`). Annual variance remains independent, so a strong developer can disappoint and a weaker developer can still have a good year. Ordinary breakout chance is `5% / 3% / 1%` for FR/SO/JR, multiplied by `min(2, headroom / 20)` and the tendency breakout multiplier.
 
 These are target opportunities, not guaranteed derived gains. Attribute caps, position weights, and the Potential ceiling govern whether allocation reaches the target. A Player at POT receives no attribute changes but still advances class; seniors graduate before Development.
 
@@ -159,6 +159,67 @@ well spread (`76.97` mean, `4.06` SD, `63.40–84.07`); the full sample produced
 opportunity rather than destiny: a representative 96-POT Player still finished
 at 69 OVR. This narrow revision is accepted and frozen; all other Development
 V1 behavior and dependencies remain unchanged.
+
+## Accepted Rare Development Breakouts / Explosive Offseasons
+
+Explosive Offseasons are an isolated exceptional layer applied after exact
+ordinary Development V1. Eligible returning FR/SO/JR Players must have at least
+12 points of pre-offseason POT headroom, and POT must permit a realized gain
+above the ordinary class cap. Each eligible Player receives one deterministic
+`4.5%` roll. That probability is independent of Work Ethic/development
+tendency, Prestige, conference, roster quality, statistics, playing time, and
+controlled/AI ownership.
+
+The accepted M2 draw selects a **target total offseason gain**, not a bonus on
+top of ordinary Development:
+
+| Share | Target total gain |
+| ---: | ---: |
+| 58% | +8 to +11 |
+| 34% | +12 to +15 |
+| 8% | +16 to +20 |
+
+Pre-offseason class bounds the exceptional result:
+
+| Transition | Ordinary V1 cap | Exceptional ceiling | Minimum official Explosion |
+| --- | ---: | ---: | ---: |
+| FR → SO | +12 | +20 | +13 |
+| SO → JR | +10 | +18 | +11 |
+| JR → SR | +8 | +16 | +9 |
+
+POT remains an absolute fixed ceiling: an Explosion never raises, rerolls,
+temporarily replaces, or exceeds POT. A successful roll that is truncated or
+otherwise fails to realize a gain above the ordinary class cap produces no
+official event. Official outcomes create an immutable
+`OffseasonDevelopmentExplosion` fact containing the realized before/ordinary/
+final development facts.
+
+Exceptional allocation starts from the ordinary developed Player and reuses
+the accepted position-aware attribute weights, repeat-attribute damping, legal
+40–99 bounds, and derived `calculateOverall()` path. The Player is developed,
+not regenerated. Separate versioned deterministic namespaces own the event
+`roll`, `magnitude`, and exceptional `allocation`; none consumes or changes the
+ordinary Development V1 RNG stream.
+
+> **No Explosion → exact accepted Development V1 result.**
+
+Work Ethic is the player-facing projection of the existing stable tendency:
+weak → **Inconsistent**, steady → **Steady**, strong → **Strong**. It is derived
+from typed Dynasty seed plus Player ID, is fixed for life, and informs ordinary
+Development only. Recruit reveal and UI timing are owned by `GAME_DESIGN.md`
+and `UI_DESIGN.md`; Work Ethic never modifies Explosion probability.
+
+The accepted production-faithful paired validation used 10 deterministic
+Dynasty seeds and 10 complete Seasons per seed, comparing mature Seasons 7–10.
+Across 2,227 eligible opportunities, the observed roll was `4.45%`; 53 official
+events produced `1.77` official Explosions per league offseason (`2.38%` of
+eligible opportunities), distributed `20/17/16` across FR→SO/SO→JR/JR→SR.
+The mature mean Player OVR moved only `75.11 → 75.19`; mean Team OVR moved
+`78.22 → 78.31`; 98+/99 counts and the strongest Team (`86.33`) were unchanged,
+and no 90+ Program appeared. The deterministic +20 path is test-reachable even
+though the finite sample produced no +20 event. These results and manual
+acceptance freeze the exceptional layer without reopening ordinary Development
+or hierarchy/compression tuning.
 
 ## Implemented Recruiting V0
 

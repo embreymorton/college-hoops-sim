@@ -19,17 +19,6 @@ only under the conditions in the conditional-read
 
 ## Open items
 
-### P1 — Tournament Complete → Late Recruiting handoff could disappear — RESOLVED
-
-The UI previously required Recruiting to already be in its postseason phase
-before showing Continue, while the transition command itself could recover a
-canonically completed Tournament still at regular-season Period 24. That split
-truth stranded valid Dynasties after navigation. One pure progression resolver
-now recognizes both valid boundaries, all placements share it, and every CTA
-dispatches the same idempotent command. Regression coverage includes the genuine
-Period 24 state, navigation across ordinary routes, repeated invocation, and
-commitment preservation.
-
 ### P1 — Correct Super Sim completion-summary wording
 
 The current summary derives “games simulated” from the controlled Program's record delta. If its target-round game was already complete but Super Sim resolves only remaining AI games, the UI can misleadingly show `0 games simulated` and a `0-0` segment.
@@ -64,7 +53,11 @@ Exhibition remains useful for isolated simulation, Rotation, and presentation te
 The `INT D +8` and `ATH +7` examples came from the superseded Development V0
 checkpoint and are historical, not confirmed descriptions of Development V1.
 Development V1 still allocates attribute-level growth unevenly and may warrant a
-future population-shape diagnostic only if new play exposes a problem.
+future population-shape diagnostic only if new play exposes a problem. Accepted
+official Explosive Offseasons intentionally create rare large, position-aware,
+multi-attribute outcomes; magnitude alone is not evidence of a defect. Any
+future diagnostic must distinguish ordinary anomalies from an official event
+and focus on implausible identity concentration.
 
 This is a non-blocking micro-level calibration watchpoint, not a bug or a reason to smooth Player-specific profiles prematurely. Dynasty Long-Run Calibration V0 validated League-wide OVR equilibrium and class progression, but it did not deeply evaluate the basketball flavor of individual attribute shapes. Revisit only with attribute-level population evidence; do not conflate it with the now-resolved talent-inflation question.
 
@@ -89,17 +82,8 @@ Current active Dynasty state is session/in-memory limited. One browser-Back
 incident lost unsaved progress, strengthening the future need to restore an
 active Dynasty and validate navigation/reload behavior. This is not yet evidence
 of an intended in-app navigation regression and is not an active blocker or a
-reason to displace Phase 6E.10. Do not prescribe storage, save-slot, backend, or
-routing architecture before that work is selected.
-
-### P3 — Rotation Editor stable validation layout
-
-Repeated play confirmed that the `Player total must remain within 0–40`
-validation message dynamically changes row/table height and causes distracting
-layout resizing. Preserve invalid-state feedback, but a future presentation fix
-should keep row height stable and surface the reason in a fixed validation area
-or summary. Validation logic itself is not at issue. Player reordering and
-live-region announcements remain lower-priority watchpoints.
+reason to alter unrelated work. Do not prescribe storage, save-slot, backend,
+or routing architecture before that work is selected.
 
 ### P3 — Cross-team box-score reconciliation
 
@@ -126,6 +110,20 @@ Some regular-season and Postseason screens defensively handle stale or invalid p
 Do not refactor this during Postseason polish. Future cleanup should prevent invalid views at the action/store boundary and/or use effect-based redirects. Revisit if React warnings, Strict Mode behavior, or Dynasty navigation complexity make the pattern observable. This is not an MVP blocker.
 
 ## Resolved / monitor-only
+
+### P1 — Tournament Complete → Late Recruiting handoff — RESOLVED
+
+One pure progression resolver recognizes both valid Recruiting boundaries, all
+placements share it, and every CTA dispatches the same idempotent transition.
+Coverage includes genuine Period 24 recovery, navigation, repeated invocation,
+and commitment preservation.
+
+### P3 — Rotation Editor stable validation layout — RESOLVED
+
+The accepted fixed single-line Total cell reserves stable geometry while
+visually hidden and title feedback preserve the validation reason. Invalid
+edits no longer resize the table. Validation behavior is unchanged; reordering
+and richer live-region announcements remain separate low-priority possibilities.
 
 ### P3 — Recruit commitment News rank wording — RESOLVED
 

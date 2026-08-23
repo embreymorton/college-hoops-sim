@@ -383,6 +383,7 @@ DynastyState
 ├── history: CompletedSeasonArchive[]
 ├── completedRecruitingHistory: CompletedRecruitingClass[]
 └── offseason: OffseasonState | null
+    └── developmentExplosions: OffseasonDevelopmentExplosion[]
 ```
 
 The dependency direction is:
@@ -442,7 +443,14 @@ Stable identity does not mean shared mutable state. A returning Player may appea
 
 For each Program, offseason construction uses the latest competitive Team snapshot: the Postseason Team for a qualified Program, otherwise its regular-season Team. `Team.prestige` is copied unchanged. Seniors are omitted; non-seniors are developed and advanced. The implementation guarantees returning Player IDs remain unique across the Universe.
 
-`OffseasonState` contains completed and target season numbers plus one `OffseasonProgramState` per Program. Each Program state contains `programId`, the unchanged static Prestige, and returning Players. `beginOffseason()` copies Prestige from the latest completed competitive Team snapshot; rollover copies it into the next Team. It deliberately contains no Rotation and is not a `Team`:
+`OffseasonState` contains completed and target season numbers, one
+`OffseasonProgramState` per Program, and immutable
+`OffseasonDevelopmentExplosion` facts created after ordinary Development for
+official exceptional outcomes. Each Program state contains `programId`, the
+unchanged static Prestige, and returning Players. `beginOffseason()` copies
+Prestige from the latest completed competitive Team snapshot; rollover copies
+it into the next Team. It deliberately contains no Rotation and is not a
+`Team`:
 
 ```text
 12 current Players − 3 seniors
@@ -451,6 +459,24 @@ For each Program, offseason construction uses the latest competitive Team snapsh
 ```
 
 Incomplete offseason rosters are valid while the existing `Team` invariant remains exactly 12 Players. `deriveOffseasonRosterOutlook()` calculates open spots from `12 - returningPlayers.length`; open spots are not stored as duplicate state.
+
+Explosion resolution preserves ordinary Development as the first authoritative
+result, then uses separate deterministic event-roll, magnitude, and exceptional-
+allocation namespaces. React consumes the immutable event fact and never
+reconstructs an Explosion from a development delta.
+
+Work Ethic is likewise not stored on `Player`. The domain derives the stable
+ordinary-development tendency from typed Dynasty seed plus Player ID, and a
+pure application projection combines that identity with lifecycle/class facts
+to return `Unknown` or the revealed label. React contains no duplicated RNG
+logic, and no mutable `workEthicRevealed` flag is necessary.
+
+`OffseasonDevelopmentExplosion` currently belongs only to the active/current
+offseason. Rollover clears `OffseasonState`; no durable historical Explosion
+archive exists. Career Progression therefore cannot reliably label prior
+Explosions, and a large historical DEV delta must not be used as a substitute
+for the missing event fact. Any future historical recognition requires a
+deliberate durable lifecycle-event design.
 
 `deriveProjectedRosterOutlook(team)` is an in-season pure projection over current roster facts:
 

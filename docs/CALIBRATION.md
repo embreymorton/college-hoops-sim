@@ -97,6 +97,21 @@ Stop tuning when:
 
 Do not keep adjusting merely because a metric could be made more realistic. Reopen a frozen system only with new evidence or a new talent-flow/system design.
 
+## Rare deterministic event validation
+
+Measure configured roll probability, eligibility share, realized official rate
+among eligible opportunities, and all-population official rate separately.
+League frequency is not player encounterability: estimate one controlled
+Program's chance of seeing the event over useful 5-, 10-, 15-, and 20-Season
+horizons.
+
+Do not inflate a deliberately rare production frequency merely so manual
+testing can see it. Quantify the natural rate, preserve the intended rarity,
+and use deterministic seeds or fixtures for focused UX/manual acceptance. When
+the product goal is emergent narrative, validate trajectory/archetype and
+roster-impact outcomes as well as league aggregate means. This method is
+reusable for future rare deterministic systems without selecting any of them.
+
 ## Recommended calibration report
 
 ```text

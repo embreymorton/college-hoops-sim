@@ -93,6 +93,20 @@ design`, or `focused investigation`), and route (`Codex`, `Claude Code`, or
 `Codex → Claude`). End with what deserves discussion first. Recommendation never
 selects NEXT or authorizes a Roadmap edit.
 
+### Path B → Path A after explicit user selection
+
+When the user clearly says “I choose this,” “let's do this next,” or equivalent,
+the current session has a **session-selected workstream** and planning is
+complete. That does not make a fresh chat Path A until repository sequencing
+authority is synchronized.
+
+Normally, explicit selection triggers a small planning-authority update: set
+the selected NEXT in `ROADMAP.md` and mirror it in `CURRENT_STATE.md`. This
+records sequencing, not accepted production behavior. If the user says not to
+edit docs yet, continue the selected workstream in the current chat but do not
+claim that repository-authoritative NEXT changed. A future fresh chat remains
+Path B until those front doors are synchronized.
+
 ## Canonical handoff templates
 
 ### Fresh Session — Stage 1
@@ -572,6 +586,19 @@ projection/state ownership, ordering, navigation, edge cases, and validation.
 Planning should narrow rather than repeat; once the work is sufficiently safe,
 stop planning.
 
+For a noteworthy lifecycle event, ask: **Does this event need to remain
+discoverable after the transient lifecycle state is discarded?** This applies
+neutrally to an Explosive Offseason, award, injury, transfer, draft decision,
+or similar event. If yes, design durable persistence deliberately. If no, do
+not later infer the event from downstream numerical outcomes.
+
+For a selected numerical simulation concept whose constants remain unknown, a
+useful proportional lifecycle is: concept contract → production-truth
+inspection → production-faithful diagnostic candidates → numerical selection →
+production prototype → equilibrium/propagation validation → UI/manual
+acceptance → documentation closure. Do not turn this into bureaucracy for
+trivial changes.
+
 ## 3. Codex implementation
 
 Codex normally implements domain/read-model behavior, state integration,
@@ -609,6 +636,18 @@ ACCEPTED / FROZEN where appropriate. Preserve an authoritative successor if one
 already exists; otherwise leave NEXT unset. Never promote PLANNED work from
 order or numbering.
 
+Normal closure remains targeted. When an accepted milestone changes status,
+supersedes a constant, changes a cross-owner semantic, or explicitly requests
+repository-wide synchronization, search for the milestone name, old status
+words, changed constants, and superseded terminology. Classify each occurrence
+as current, historical, or stale; update stale current truth while preserving
+legitimate chronology.
+
+Keep front doors operational rather than chronological: Current State stays
+concise, Roadmap's Current Selected Horizon contains only active sequencing
+truth, Live WATCH contains unresolved items only, and closed investigation bulk
+belongs in archives or owner docs.
+
 ## 8. Fresh planning or handoff
 
 At closure, decide whether the next action is a direct continuation or whether
@@ -640,6 +679,13 @@ a current gameplay problem and evidence that simulation behavior needs changing.
 Historical experimental momentum is not evidence. Normal feature work should
 not run calibration unless it changes simulation/balance or current evidence
 specifically requires a diagnostic.
+
+For intentionally rare deterministic mechanics, do not inflate production
+frequency solely for manual visibility. Quantify natural opportunity,
+eligibility, official-event, and controlled-Program encounter rates; then use
+deterministic seeds or fixtures for targeted UI/manual acceptance. Difficulty
+seeing a deliberately rare event in ordinary play is not itself evidence that
+its probability is too low.
 
 ---
 

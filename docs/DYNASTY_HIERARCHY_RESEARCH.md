@@ -270,6 +270,14 @@ management, coaching systems, or universe expansion solely to solve it. Those
 features may alter the distribution later if selected for their own player
 value.
 
+## Explosive Offseason compatibility postscript
+
+The accepted rare-event layer changed mature mean Player OVR by only `+0.08`
+and mean Team OVR by `+0.09`. The strongest Team remained `86.33`, 90+ Programs
+remained at zero, and no meaningful elite-Program amplification appeared.
+Accepted Explosive Offseasons therefore do **not** reopen this decision-complete
+hierarchy/compression investigation.
+
 ## Reopening conditions
 
 Reopen only when at least one condition is met:

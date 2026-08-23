@@ -42,8 +42,9 @@ The playable product includes:
   Recruiting, class finalization, Recruit-to-Player identity continuity, and an
   accepted controlled-Program Board organized by canonical manual/assistant
   entry provenance with atomic unavailable-target cleanup;
-- departures with graduating-senior career context, Player Development with
-  top attribute gains and a Biggest Leap spotlight, incoming classes, exact
+- departures with graduating-senior career context, ordinary Player Development
+  plus rare Explosive Offseasons, Work Ethic reveal, top attribute gains and an
+  event-aware Biggest Leap spotlight, incoming classes, exact
   next-season roster assembly, archived Seasons, and repeatable Dynasty rollover;
 - a dedicated guided-but-explorable Offseason shell spanning Late Recruiting,
   Recruiting Class, Departures, Development, Roster Review, and Ready for
@@ -114,6 +115,9 @@ refactor these systems during unrelated feature work:
 - the production Recruit POT Candidate B finalizer;
 - Player Development V1, including the accepted high-POT/high-headroom
   realization opportunity;
+- Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1,
+  including isolated deterministic event resolution, POT as an absolute
+  ceiling, and exact ordinary-Development preservation when no event occurs;
 - Rotation V1, role-aware defaults, Simple Rotation, Rotation Assistant V1 —
   Preserve & Fill, and Starting Five projection/presentation;
 - Matchup Scout V1 and Game Prep Rotation Experience V1, including their pure
@@ -172,38 +176,25 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — Open Planning Checkpoint.**
+**OPEN PLANNING CHECKPOINT — no NEXT selected.**
 
-S0 Player Talent Profile Continuity, covering both Current Ability / Career-
-Stage Generation and POT / Career-Profile Continuity, has completed design,
-production activation, validation, playtesting, and user acceptance. Fresh
-sessions therefore resolve to **Path B**: verify this checkpoint, review current
+Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 is
+**COMPLETE / ACCEPTED / FROZEN**. The exceptional layer runs after exact
+ordinary Development V1 for eligible high-headroom returners, uses isolated
+deterministic RNG, and never raises or exceeds POT. No Explosion produces the
+exact accepted ordinary result.
+
+Work Ethic is the stable player-facing projection of ordinary development
+tendency and is independent of Explosion odds. It is hidden for Recruits,
+`Unknown` for freshmen, and revealed as `Inconsistent`, `Steady`, or `Strong`
+after the first offseason. Player Details treats it as identity metadata while
+OVR/POT remain paired; official event facts—not raw gain thresholds—drive
+Offseason Explosion presentation. Active-offseason event facts do not survive
+rollover into durable historical Explosion records.
+
+Fresh sessions resolve to **Path B**: verify this checkpoint, review current
 evidence and candidate surfaces neutrally, and do not infer a successor from
-Roadmap order or Future Features.
-
-Recruiting Board Organization & Cleanup V1 is **COMPLETE / ACCEPTED / FROZEN**.
-Canonical Board membership records whether it was created manually or by
-assistant/system tooling; the controlled Board presents those entries in two
-counted groups. `Clear Unavailable` atomically removes committed-elsewhere and
-position-filled targets while retaining controlled commitments, relationships,
-and retained order. It leaves opened slots empty until the player explicitly
-adds a Recruit or uses `Fill Remaining Board`; Recruiting mechanics and
-assistant selection behavior are unchanged.
-
-Player Records Expansion V1 and its Details information-architecture polish are
-**COMPLETE / ACCEPTED / FROZEN**. Career Highs and Program Player Records remain
-pure derived regular-season projections over archived and active results; no
-record state, persistence, or Tournament statistics were added.
-
-Matchup Scout V1 and Game Prep Rotation Experience V1 are **COMPLETE / ACCEPTED /
-FROZEN**. Game Prep now composes the pregame matchup, a pure opponent Scout,
-and Rotation Preparation; Simple is the default controlled presentation,
-Advanced remains available with safe draft transitions, and both use the same
-canonical competition `RotationV1`. The opponent Expected Rotation is derived
-from planned minutes and projected Starting Five facts rather than introducing
-scouting, starter, or Rotation state. Regular-season and Tournament surfaces
-share the presentation while preserving their existing Season/Postseason
-ownership and simulation boundaries.
+Roadmap order, Awards & Honors, Known Issues, or Future Features.
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is
@@ -230,29 +221,9 @@ visibility. Scouting grades, ranges, estimates, hidden information, and other
 uncertainty remain future-only.
 
 `7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
-work remains parked unless new evidence deliberately reopens it.
-
-S0 Player Talent Profile Continuity is **COMPLETE / ACCEPTED / FROZEN**.
-Current ability preserves each Program's exact talent opportunities while
-class year probabilistically shifts their ownership; activation produced
-heavily overlapping `68.83/69.95/71.19/71.62` FR/SO/JR/SR mean OVR and zero
-Team OVR movement across 32,000 paired Programs. Elite young Players and the
-full 40–99 OVR range remain possible for every class.
-
-S0 POT now draws from the accepted direct conditional ceiling-tier model given
-current OVR and career stage, followed by one deterministic legal integer draw.
-Its shared tiers are Limited `60–74`, Normal `75–84`, High `85–89`, Very High
-`90–94`, Elite `95–96`, and Exceptional `97–99`. POT remains a fixed legal
-career ceiling; projects and polished Players exist in every class, POT99 is
-rare opportunity rather than destiny, and the former class-specific headroom
-model is no longer canonical S0 production behavior. Recruit Talent Profile V2
-and Development remain unchanged and frozen. No S0 talent-profile calibration
-remains open.
-
-Rare Development Breakouts / Explosive Offseasons is also **PLANNED, not
-NEXT**. It is a separate future question about extremely rare transformational
-offseasons beyond normal `+12/+10/+8` class-year caps while POT stays absolute.
-It remains separate from the completed Recruit Talent Profile V2.
+work remains parked unless new evidence deliberately reopens it. Dynamic
+Prestige remains rejected; the hierarchy/compression investigation remains
+decision-complete.
 
 ## Fresh-session rules
 

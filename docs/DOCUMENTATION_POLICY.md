@@ -67,6 +67,19 @@ interest, document order, phase number, the nearest PLANNED item, Playtesting
 priority, Future Features, and historical experimental momentum do not select
 work. If the user's intent is ambiguous, leave NEXT unchanged or unset.
 
+Explicit selection and production acceptance are different documentation
+moments. After the user selects a candidate, `ROADMAP.md` and the matching
+planning mirror in `CURRENT_STATE.md` may update immediately because they record
+**sequencing authority**, not accepted production semantics. This normally
+converts future fresh sessions from Path B to Path A. If the user explicitly
+defers documentation, the workstream is selected only in the current session;
+a fresh chat remains Path B until those front doors are synchronized. See the
+Operating Guide's **Path B → Path A after explicit user selection**.
+
+Production owner docs still wait for implementation, validation, and required
+user acceptance. A NEXT-selection update must not pre-document proposed
+simulation, architecture, UI, or game-design semantics as current truth.
+
 The supported selection flow is:
 
 ```text

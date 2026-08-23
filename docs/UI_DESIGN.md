@@ -609,6 +609,19 @@ Player Details tells a Player's career story without duplicating any canonical f
 
 All of this is a pure read-model (`derivePlayerCareerHistory` in `src/dynasty/careerHistory.ts`) over existing archived Dynasty Season snapshots, the active Season, and finalized Recruiting history, connected by stable Player ID. It reuses the existing Player Season Stats projection for every Season, including archived ones, and introduces no new persisted career-history state. Existing current-season stats, shooting splits, game log, and Team ↔ Player navigation are unchanged.
 
+Work Ethic is accepted Player identity metadata, not a third numeric rating.
+Player Details groups identity, Program, position/class/height, Work Ethic, and
+Follow/Following on the left while OVR and POT remain a paired numeric group.
+Recruits never expose Work Ethic; freshmen show `Unknown` with the concise
+first-offseason evaluation hint; SO/JR/SR show `Inconsistent`, `Steady`, or
+`Strong`. Former Players reveal it when their career history establishes at
+least one completed offseason (two or more Season rows); otherwise it remains
+`Unknown`.
+
+Career Progression does not mark historical Explosive Offseasons in V1. Current
+Explosion facts are not durably retained after rollover, and the UI must not
+infer an event from a large historical development delta.
+
 ### Dedicated Offseason Experience — accepted / frozen
 
 From the completed-Tournament handoff through rollover, the normal primary
@@ -633,6 +646,13 @@ Recruiting mode navigation; unsigned eligible recruits form the Available
 Market while committed/unavailable players are appropriately subordinate. The
 finalized class and departures are deliberate read-only reviews. Development
 presents already-computed previous/current OVR, gains, and Biggest Leap facts.
+An official immutable Explosion fact highlights the Player row and adds the
+literal `EXPLOSIVE OFFSEASON` label; it can coexist with the FR→SO Work Ethic
+reveal. The hero eyebrow changes from `BIGGEST LEAP` to `EXPLOSIVE OFFSEASON`
+only when the featured Player has that official event. A large ordinary gain
+remains `BIGGEST LEAP`; React never infers Explosion status from DEV magnitude.
+Diagnostic tier, eligibility, probability, target, RNG, truncation, and
+ordinary-versus-exceptional contribution remain intentionally hidden.
 Roster Review anchors Players/average OVR/incoming count and position balance in
 one bordered summary above the integrated Incoming Class and exact complete
 roster. Ready for Season is a compact Offseason-complete conclusion whose header

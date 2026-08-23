@@ -17,6 +17,10 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
   all derived from canonical facts.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, unified results-only résumé seeding, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
 - **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, then use the dedicated Hybrid Offseason Timeline to progress through Late Recruiting, Recruiting Class, Departures, Development, Roster Review, Ready for Season, and the next Season.
+- **Player development stories:** ordinary Development V1 is supplemented by
+  rare Explosive Offseasons, while a Player's stable Work Ethic is hidden as a
+  Recruit, shown as Unknown as a freshman, and revealed after his first
+  offseason.
 - **Recruit inspection and Board management:** open stable-ID Recruit Details
   from Board, Battles, or National Class, organize canonical manual and
   assistant Board entries in counted groups, clear unavailable targets without
@@ -55,11 +59,14 @@ experience from Late Recruiting through the next-Season handoff.
 - `npm run sim:recruiting`
 - `npm run sim:roster-rollover` and `sim:season-rollover`
 - `npm run sim:dynasty-long-run`
+- `npm run sim:rare-development-breakouts`
 
-Project constraints live in [`docs/`](docs/). For ongoing work, start with
-[current state](docs/CURRENT_STATE.md), then [playtesting](docs/PLAYTESTING.md),
-the Roadmap's [Current Selected Horizon](docs/ROADMAP.md#current-selected-horizon), and the
-[assistant operating guide](docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md).
+Project constraints live in [`docs/`](docs/). For ongoing work, read
+[current state](docs/CURRENT_STATE.md), the Roadmap's
+[Current Selected Horizon](docs/ROADMAP.md#current-selected-horizon),
+[Current Playtesting Priorities and Live WATCH](docs/PLAYTESTING.md), and the
+[assistant operating guide](docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md), in
+that order.
 Read [calibration](docs/CALIBRATION.md) when changing simulation/balance and the
 [documentation policy](docs/DOCUMENTATION_POLICY.md) when updating docs.
 Optional ideas belong in

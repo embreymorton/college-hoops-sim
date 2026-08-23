@@ -264,6 +264,28 @@ recruit
 
 Recruiting through a finalized incoming class and freshman enrollment during rollover are accepted.
 
+### Accepted Player-development information model
+
+Player development now communicates three distinct ideas:
+
+- **POT** is visible and represents the Player's theoretical development
+  capacity. It remains an absolute ceiling, not a promise of reaching it.
+- **Work Ethic** represents the stable underlying ordinary-development profile.
+  It is already determined while the Player is a Recruit but remains hidden
+  then; Player Details shows **Unknown** for freshmen and reveals
+  **Inconsistent**, **Steady**, or **Strong** after the first offseason. The
+  value is fixed for the Player's life and does not guarantee an annual gain.
+- An **Explosive Offseason** is a separate, exceptionally rare annual event:
+  something extraordinary happened that summer. Its probability is independent
+  of Work Ethic, so an Inconsistent Player may explode and a Strong Player may
+  never do so.
+
+Work Ethic does not mean game effort, personality, morale, coachability,
+performance, POT, an exact annual outcome, or Explosion likelihood.
+
+> POT tells possibility. Work Ethic informs ordinary trajectory. Explosive
+> Offseasons preserve surprise.
+
 ## Accepted In-Season Recruiting V0
 
 Recruiting is an ongoing Dynasty layer that runs alongside current-season basketball while targeting Season N+1. One shared national class exposes exact Player attributes, OVR, POT, National Rank, Position Rank, and 2–5-star classification. V0 has no scouting uncertainty or hidden Potential; Recruit rankings are immutable class-history facts and do not change when the future Player develops.
