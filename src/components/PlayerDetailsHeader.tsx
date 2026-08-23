@@ -45,18 +45,18 @@ export function PlayerDetailsHeader({
             {' · '}
             {player.position} · {player.classYear} · {formatHeight(player.height)}
           </p>
+          <p className="player-work-ethic">
+            <span className="player-work-ethic__label">Work Ethic:</span>{' '}
+            <span className="player-work-ethic__value">{workEthic.label}</span>
+            {workEthic.status === 'unknown' ? <span className="player-work-ethic__hint">Evaluated after first offseason</span> : null}
+          </p>
           <FollowPlayerButton playerId={player.id} />
         </div>
       </div>
-      <div className="stat-trio season-header__stats">
+      <div className="stat-trio season-header__stats season-header__stats--ratings">
         <div className="stat-trio__item">
           <span className="stat-trio__value">{calculateOverall(player)}</span>
           <span className="stat-trio__label">Ovr</span>
-        </div>
-        <div className="stat-trio__item player-work-ethic">
-          <span className="stat-trio__value">{workEthic.label}</span>
-          <span className="stat-trio__label">Work Ethic</span>
-          {workEthic.status === 'unknown' ? <span className="player-work-ethic__hint">Evaluated after first offseason</span> : null}
         </div>
         <div className="stat-trio__item">
           <span className="stat-trio__value">{player.potential}</span>

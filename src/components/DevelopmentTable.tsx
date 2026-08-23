@@ -11,12 +11,16 @@ export function DevelopmentTable({ rows, biggestLeap }: DevelopmentTableProps) {
     return <p className="league-empty-state">No returning Players to develop.</p>
   }
 
+  const biggestLeapLabel = biggestLeap?.explosion
+    ? 'Explosive Offseason'
+    : 'Biggest Leap'
+
   return (
     <>
       {biggestLeap && (
         <div className="biggest-leap" aria-label="Biggest Leap">
           <div className="biggest-leap__identity">
-            <p className="biggest-leap__eyebrow">Biggest Leap</p>
+            <p className="biggest-leap__eyebrow">{biggestLeapLabel}</p>
             <p className="biggest-leap__name">
               {biggestLeap.player.firstName} {biggestLeap.player.lastName}
               <span className="biggest-leap__position">{biggestLeap.player.position}</span>

@@ -726,14 +726,25 @@
   font-variant-numeric: tabular-nums;
 }
 
-.player-work-ethic .stat-trio__value {
-  font-size: 1.05rem;
+.player-work-ethic {
+  margin-top: var(--space-2);
+  color: var(--ink-1);
+  font-size: 0.76rem;
+  line-height: 1.35;
+}
+
+.player-work-ethic__label {
+  color: var(--ink-2);
+}
+
+.player-work-ethic__value {
+  font-weight: 600;
+  color: var(--ink-0);
 }
 
 .player-work-ethic__hint {
   display: block;
-  max-width: 9rem;
-  margin-top: 0.2rem;
+  margin-top: 0.1rem;
   color: var(--ink-2);
   font-size: 0.65rem;
   line-height: 1.25;

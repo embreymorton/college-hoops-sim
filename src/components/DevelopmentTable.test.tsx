@@ -18,6 +18,27 @@ function row(id: string, options: { explosion?: boolean; completedClass?: 'FR'|'
 }
 
 describe('DevelopmentTable explosion and reveal presentation',()=>{
+  it('uses the immutable event fact, not the gain size, for the hero label',()=>{
+    const ordinary = row('Ordinary')
+    const ordinaryLargeGain: DevelopmentRow = {
+      ...ordinary,
+      summary: {
+        ...ordinary.summary,
+        currentOverall: ordinary.summary.previousOverall + 15,
+        overallChange: 15,
+      },
+    }
+
+    const {rerender}=render(<DevelopmentTable rows={[ordinaryLargeGain]} biggestLeap={ordinaryLargeGain}/>)
+    const hero=screen.getByLabelText('Biggest Leap')
+    expect(within(hero).getByText('Biggest Leap')).toBeInTheDocument()
+    expect(within(hero).queryByText('Explosive Offseason')).not.toBeInTheDocument()
+
+    const officialExplosion=row('Official',{explosion:true})
+    rerender(<DevelopmentTable rows={[officialExplosion]} biggestLeap={officialExplosion}/>)
+    expect(within(screen.getByLabelText('Biggest Leap')).getByText('Explosive Offseason')).toBeInTheDocument()
+  })
+
   it('leaves ordinary rows free of explosion labels',()=>{
     render(<DevelopmentTable rows={[row('Ordinary')]} biggestLeap={null}/>)
     expect(screen.queryByText('Explosive Offseason')).not.toBeInTheDocument()
@@ -26,12 +47,12 @@ describe('DevelopmentTable explosion and reveal presentation',()=>{
   it('renders multiple official facts, senior transitions, and a freshman Work Ethic reveal',()=>{
     const rows=[row('Marcus',{explosion:true,reveal:'Inconsistent'}),row('Senior',{explosion:true,completedClass:'JR'})]
     const {rerender}=render(<DevelopmentTable rows={rows} biggestLeap={rows[0]!}/>)
-    expect(screen.getAllByText('Explosive Offseason')).toHaveLength(2)
+    expect(screen.getAllByText('Explosive Offseason')).toHaveLength(3)
     expect(screen.getByText('Work Ethic Revealed: Inconsistent')).toBeInTheDocument()
     const seniorRow=screen.getByText('Senior Player').closest('tr')!
     expect(within(seniorRow).getByText('SR')).toBeInTheDocument()
     expect(within(seniorRow).getByText('+12')).toBeInTheDocument()
     rerender(<DevelopmentTable rows={rows} biggestLeap={rows[0]!}/>)
-    expect(screen.getAllByText('Explosive Offseason')).toHaveLength(2)
+    expect(screen.getAllByText('Explosive Offseason')).toHaveLength(3)
   })
 })

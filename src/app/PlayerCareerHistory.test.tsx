@@ -65,15 +65,25 @@ describe('Player Details — Ratings', () => {
     const freshman = roster.find(({ classYear }) => classYear === 'FR')!
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, freshman.id)
     const view = render(<App />)
-    const header = document.querySelector('.season-header__stats') as HTMLElement
-    expect(within(header).getByText('Work Ethic')).toBeInTheDocument()
-    expect(within(header).getByText('Unknown')).toBeInTheDocument()
+    const identity = document.querySelector('.season-header__identity') as HTMLElement
+    const ratings = document.querySelector('.season-header__stats') as HTMLElement
+    expect(within(identity).getByText(/Work Ethic:/)).toBeInTheDocument()
+    expect(within(identity).getByText('Unknown')).toBeInTheDocument()
+    expect(within(identity).getByText('Evaluated after first offseason')).toBeInTheDocument()
+    expect(within(ratings).queryByText('Work Ethic')).not.toBeInTheDocument()
+    expect(within(ratings).getByText('Ovr')).toBeInTheDocument()
+    expect(within(ratings).getByText('Pot')).toBeInTheDocument()
+    expect(ratings.children).toHaveLength(2)
+    expect(screen.getByRole('button', { name: 'Follow' })).toHaveAttribute('aria-pressed', 'false')
 
     const upperclassman = roster.find(({ classYear }) => classYear !== 'FR')!
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, upperclassman.id)
     view.rerender(<App />)
-    expect(within(document.querySelector('.season-header__stats') as HTMLElement).queryByText('Unknown')).not.toBeInTheDocument()
-    expect(within(document.querySelector('.season-header__stats') as HTMLElement).getByText(/Inconsistent|Steady|Strong/)).toBeInTheDocument()
+    const revealedIdentity = document.querySelector('.season-header__identity') as HTMLElement
+    expect(within(revealedIdentity).queryByText('Unknown')).not.toBeInTheDocument()
+    expect(within(revealedIdentity).getByText(/Inconsistent|Steady|Strong/)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Follow' }))
+    expect(screen.getByRole('button', { name: 'Following' })).toHaveAttribute('aria-pressed', 'true')
   })
 
   it('shows all nine attribute ratings compactly, without regressing OVR/POT', () => {

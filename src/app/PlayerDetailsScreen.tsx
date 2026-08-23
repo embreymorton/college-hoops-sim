@@ -99,13 +99,16 @@ export function PlayerDetailsScreen() {
                   <button type="button" className="text-link-button" onClick={() => openTeamDetails(resolution.programId)}>{program.name}</button>
                   {' · '}{player.position} · {formatHeight(player.height)} · {careerRange}
                 </p>
+                <p className="player-work-ethic">
+                  <span className="player-work-ethic__label">Work Ethic:</span>{' '}
+                  <span className="player-work-ethic__value">{workEthic.label}</span>
+                </p>
                 <FollowPlayerButton playerId={player.id} />
               </div>
             </div>
             <div className="stat-trio season-header__stats season-header__stats--legacy">
               <div className="stat-trio__item"><span className="stat-trio__value">{summary.finalOverall}</span><span className="stat-trio__label">Final Ovr</span></div>
               <div className="stat-trio__item"><span className="stat-trio__value">{summary.peakOverall}</span><span className="stat-trio__label">Peak Ovr</span></div>
-              <div className="stat-trio__item player-work-ethic"><span className="stat-trio__value">{workEthic.label}</span><span className="stat-trio__label">Work Ethic</span></div>
             </div>
         </div>
 
