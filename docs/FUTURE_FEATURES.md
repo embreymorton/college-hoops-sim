@@ -19,17 +19,13 @@ The Roadmap owns its order and scope. It is not specified again here.
 ## Recruiting depth
 
 - campus visits and signing-day presentation;
-- geography, home-state preference, and pipelines;
+- geography, home-state preference, and pipelines, as expanded below;
 - facilities, NIL, staff/recruiting bonuses, and program resources;
 - playing-time promises and depth-chart opportunity;
 - deeper Recruit-specific preferences, as framed under Program Reputation and
   Recruit preferences below;
-- a future, unscheduled scouting/uncertainty system that could replace exact
-  numeric Recruit attributes, OVR/current ability, and/or Potential/upside with
-  player-facing grades, bands, ranges, or similar estimates. Before any design
-  or implementation, explicitly define what is known versus estimated or
-  hidden; exact grade thresholds and scouting mechanics remain undecided, and
-  current exact-value visibility remains unchanged;
+- scouting uncertainty, as expanded below; current exact-value visibility
+  remains unchanged;
 - decommitments and transfer-portal interactions;
 - recruiting class rankings and class grading/evaluation beyond the accepted
   factual retrospective; and
@@ -55,6 +51,41 @@ define a Program's natural recruiting neighborhood while Reputation and fit
 could expand credible access, initial interest, or continued viability. The
 product goal is upward mobility without league-wide flattening—not guaranteed
 5-star access or a new balance fix.
+
+### Recruiting geography and pipelines
+
+Recruits could eventually have hometown/state/region identity so Program
+involvement reflects natural geographic relationships as well as national
+appeal. Nearby Programs might gain credible local advantages and recognizable
+territories without hard-locking Recruits or eliminating elite Programs'
+national mobility. This could give low-Prestige Programs differentiated paths to
+compete locally before they can recruit broadly.
+
+Pipelines could represent sustained Program connections to an area through
+repeated signees, successful Players from that region, Program location,
+Coach/Staff ties, recent success, or Reputation. Possible value includes better
+initial visibility or interest and stronger regional relationship footing, but
+no region model, distance formula, threshold, expansion rule, or bonus is
+selected. Geography/Pipelines could later interact with Institutional Prestige,
+Program Reputation, Recruit Preferences, opportunity, development history, and
+Staff while preserving national recruiting movement.
+
+### Scouting uncertainty
+
+A major future Recruiting evolution could replace automatic exact Recruit
+knowledge with OVR/POT ranges or grades, incomplete attributes, and scouting
+confidence that improves through evaluation. Sleepers, misses, and discovery
+could make talent evaluation meaningful, but this has a large blast radius
+across accepted Recruiting and Recruit Details assumptions. No scouting
+resources, reveal rules, range semantics, or AI information asymmetry is
+selected.
+
+### Recruiting promises and pitches
+
+Programs could someday pitch opportunity, starting roles, development,
+contender status, or positional fit in ways that connect Recruit Preferences to
+future Player Roles. Promises should matter only if canonical facts can determine
+whether they were honored; no promises, penalties, or mechanics are defined.
 
 ### Recruiting assistance
 
@@ -236,12 +267,55 @@ series record, useful home/away splits, latest result, and Tournament meetings.
 This should remain a pure historical projection unless a separately designed
 future Rivalry system deliberately adds canonical state or gameplay effects.
 
+### Dynamic rivalries and world memory
+
+A pure future projection could recognize when repeated close games, Tournament
+meetings, upsets, title races, recruiting battles, streaks, game-winners, or
+Coach movement form an emergent rivalry. Rivalry records, current streaks, and
+notable meetings should recognize history the simulation created rather than
+depend on an arbitrary rivalry score.
+
+The same factual World Memory lens could identify a giant killer, surprise
+contender, revenge meeting, historic streak, struggling champion, or former
+bottom-feeder becoming relevant for News, Yearbooks, Matchup Scout, Program
+History, and Tournament presentation. It should derive drama rather than invent
+it; no permanent importance state or recognition formula is selected.
+
+### Historical League Explorer and derived recognition
+
+A future discovery surface could answer questions across accumulated canonical
+history: greatest Teams and individual Seasons, biggest upsets, strongest
+classes, longest streaks, best Tournament runs, dominant eras, and historical
+head-to-head results. Derived recognitions such as Cinderella Run, First
+Tournament Win, Undefeated Conference Season, Upset of the Decade, or Historic
+Rebuild could feed News, Yearbooks, Program Legacy, and Coach Career without
+becoming ratings or Program-power modifiers. No query engine or storage redesign
+is implied.
+
 ## Tournament depth
 
 - bracket-pool or spectator tools;
 - richer neutral-site presentation;
 - Conference Tournament systems; and
 - expanded fields or alternate formats only after deliberate product design.
+
+### Conference Tournaments and Championship Week
+
+Conference tournaments could create champions, automatic-bid drama, bid
+stealers, Cinderella runs, and a distinct Championship Week before the National
+Tournament, enriching future Bracketology. A 9–15 Program winning three games
+for an automatic bid captures the college-basketball fantasy. This would touch
+lifecycle, scheduling, selection, history, statistics, and postseason
+presentation, so bracket sizes, seeding, bid rules, and timing require a
+separately selected design/investigation.
+
+### National rankings and polls
+
+A narrative ranking layer could make progress, ranked matchups, weekly movement,
+ranked wins, and rising Programs visible before Tournament selection. Preseason
+or Top 10/25-style polls and ranked streaks are possible outputs, but rankings
+must remain distinct from the authoritative Tournament selector unless a later
+design explicitly changes that relationship. No poll formula is selected.
 
 ### Bracketology and Bubble Watch
 
@@ -283,6 +357,13 @@ that current construction is defective. Any flexibility design must consider
 Recruiting capacity, Rotation positional eligibility, roster lifecycle, and
 Team Strength/lineup semantics together rather than loosening only one boundary.
 
+### Redshirts
+
+Redshirting could trade immediate availability for preserved eligibility and
+time to develop a raw high-POT Player. It would require coordinated class-year,
+roster-limit, Development, statistics/history, and UI semantics; no eligibility
+rules are defined.
+
 ### Next Season roster planner
 
 A Program-level planning view could connect returning Players, departing
@@ -292,6 +373,45 @@ Position Outlook, canonical roster/commitment facts, OVR/POT, Rotation concepts,
 and roster-size constraints. A first version should favor factual construction
 context—and at most a clearly factual projected lineup—over hidden recommendation
 scores, automatic roster decisions, or Recruiting-mechanics changes.
+
+### Player roles and expectations
+
+Future Star/Starter/Rotation/Bench/Prospect roles could reflect class, OVR,
+Recruiting status, minutes, starting status, and prior usage, creating context
+for Playing Opportunity and Recruiting promises. Satisfaction, morale, and the
+Transfer Portal are possible later connections, not implied mechanics.
+
+### Practice and Development focus
+
+A limited coaching choice could influence a Player's developmental direction—
+for example Shooting, Playmaking, Defense, Finishing, or Athleticism—without
+direct rating-point allocation or guaranteed gains. Existing Development stays
+frozen; any future version must preserve identity and uncertainty and avoid
+deterministic min-maxing.
+
+### Team continuity and chemistry
+
+Returning minutes/starters, experienced backcourts, lineup continuity, and
+roster turnover could make veteran cores feel different from newly assembled
+talent. This should not begin as an unexplained hidden bonus; no Chemistry rating
+or gameplay modifier is defined.
+
+### Assistant coaches and Staff
+
+Recruiting, Development, offensive, or defensive assistants could create Staff
+identity, movement, Program differentiation, pipelines, and tactical/development
+specialties. This is a large management system, not a collection of generic
+percentage buffs; hiring markets, ratings, salaries, contracts, and effects are
+undefined.
+
+### Program basketball style and identity
+
+Programs could become recognizable as fast, defensive, perimeter/interior,
+rebounding, guard-development, or Player-development Programs. Prefer identity
+emerging from roster construction, tactics, Player profiles, and coaching
+behavior rather than a permanent RPG perk. It could later inform Recruit
+Preferences and Reputation and complement Game Plan, Player Identity V2, and
+Game Simulation V2 without bundling those systems.
 
 ### Game Plan V1 / tactical coaching
 
@@ -388,16 +508,42 @@ remain separate design questions rather than requirements for identity V1.
 
 ### Coach Career / Job Market
 
-A larger career system could build on—but need not ship with—Create a Coach:
-job offers and a job market, accepting or rejecting opportunities, movement
-between Programs, career progression from lower- to higher-prestige jobs,
-school-by-school coaching history, and Coach legacy. Hot-seat and firing systems
-would be later extensions.
+A larger career system could let a Dynasty follow the Coach across Programs:
+begin at a low-Prestige job, build success, receive offers, choose loyalty or
+movement, inherit a new roster/Recruiting situation, and eventually face a
+former Program. Success would create career choices rather than only strengthen
+the current Program. Program Legacy and Coach history remain separate persistent
+stories rather than replacements for one another.
+
+Coach history could eventually include Programs and Seasons coached, record,
+Conference success, Tournament appearances/Final Fours/championships, major
+classes, notable Players, and records against former Programs or rival Coaches.
+Hiring formulas, firing rules, contracts, salaries, Coach ratings, and exact
+job-market logic remain undefined.
 
 This is substantially larger than Create a Coach because the user-controlled
 Program would need to become mutable across a Dynasty career. Hiring AI,
 offer probabilities, firing rules, Coach attributes, and progression mechanics
 all require separate design before implementation.
+
+### Program expectations, Hot Seat, and contextual goals
+
+Results could eventually be evaluated against Program circumstances: 15–9 at
+Pine Valley may be exceptional while the same record disappoints Great Lakes.
+Expectations might consider institutional Prestige, recent Reputation, roster
+quality, prior finishes, Tournament context, or rebuild stage, connecting later
+to Coach reputation, job security/offers, News, and goals. Contextual challenges
+such as a first winning Season, first Tournament appearance, defending a title,
+or reaching a Program milestone should reinforce the existing Dynasty story
+rather than manufacture chores. No expectation formula, firing threshold,
+reward, or goal-generation rule is selected.
+
+### Coach-vs-Coach history
+
+If persistent Coaches and Staff exist, head-to-head records, Tournament
+meetings, rivalry history, former-assistant relationships, and recruiting
+competition could become durable career context. This depends on those larger
+identity systems and is not standalone near-term work.
 
 ## Custom Universe & Replayability
 
@@ -469,6 +615,14 @@ Prestige or Recruiting behavior.
 - optional presentation themes; and
 - export/share tools for Seasons, brackets, and careers.
 
+### Home-court and arena identity
+
+Arena names, home records, notable winning streaks, difficult road environments,
+and crowd/reputation presentation could give Programs stronger venue identity.
+An initial version could remain factual presentation. Any gameplay effect should
+not automatically equal Prestige or become a large hidden bonus without focused
+investigation.
+
 ### Nonconference showcase choices
 
 Instead of a large manual schedule editor, a future preseason decision could let
@@ -493,6 +647,12 @@ visibly: results into postseason stakes, Recruiting into roster planning and
 Player identity, statistics into Record chases, scouting into tactical choices,
 careers into sendoffs, and scheduling into Season stakes. This is a design lens,
 not a Roadmap commitment, required bundle, or implied sequence.
+
+Other possible links include geography → recruiting relationships, continuity →
+Team identity, results → Reputation/expectations/job markets, history →
+rivalries/storylines/recognition, Coach success → career opportunities, and
+tactics + Player profiles → Program style. These remain independent future
+questions rather than an implementation bundle.
 
 ## Rough scope character — non-authoritative
 
