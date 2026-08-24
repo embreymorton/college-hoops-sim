@@ -97,13 +97,59 @@ probabilities or Candidate B, and is not NEXT. Existing Recruit outputs may
 already be classified into the six tiers for diagnostic comparison without
 changing generation behavior.
 
-### Player Identity / statistical variety — PARKED
+### Player Identity V2 — Profiles, Tendencies & Cross-Position Variety — FUTURE / UNSCHEDULED
 
-Rare cross-position identities, Development identity retention, Passing/Steals
-translation, and profile labels remain ideas rather than selected work. No
-Player Identity phase is scheduled. Canonical generation and OVR remain active;
-full historical evidence and reopening criteria live in
-`PLAYER_IDENTITY_RESEARCH.md`.
+Current Player generation, positional OVR, Development, statistical
+translation, and Game Simulation remain authoritative and frozen. Prior profile-
+redistribution experiments remain historical evidence rather than production,
+and the rejected OVR-weighting candidate remains rejected—not a design awaiting
+another tuning pass. Full evidence and reopening criteria live in
+`PLAYER_IDENTITY_RESEARCH.md`; recording this restructured direction does not
+reopen that parked boundary.
+
+Future investigation could treat Player identity as modular layers—generation →
+attribute profile → positional valuation → statistical translation →
+Development—rather than changing them together. **Position should describe what
+is common, not what is possible:** conventional PG, wing, forward, and Center
+populations should remain dominant, while rare believable exceptions such as a
+6'9" jumbo creator, rebounding PG, passing Center, point forward, stretch big,
+or elite specialist with meaningful weaknesses can occasionally emerge. These
+are north-star cases, not quotas or guaranteed archetypes.
+
+A profile-first generation experiment could combine talent, listed position,
+and rare profile variation to create stronger internal shape and clearer
+strengths/weaknesses. Possible families include distributors, scoring/two-way or
+jumbo guards; shooters, slashers, point forwards, and defensive wings; and
+interior scorers, stretch bigs, rebounders, rim protectors, or passing bigs.
+Listed-position size distributions should remain strongly correlated while
+allowing rare physical exceptions. No profile templates, probabilities, height
+ranges, stored archetype labels, or Player-schema changes are approved.
+
+A later investigation could distinguish ability from behavior: ratings describe
+what a Player can do, while possible tendencies describe how he chooses to play.
+Usage/scoring aggression, passing, perimeter/rim preference, rebounding, or
+defensive aggression are conceptual examples only. Statistical translation
+could then combine positional/role priors with ability, behavior, and usage so
+exceptional Players can occasionally overcome positional ceilings—a Center can
+lead in assists or a guard in rebounds—without erasing normal basketball
+distributions. Derived role descriptors such as Point Forward, Passing Big, or
+3&D Wing are optional presentation possibilities, not assumed canonical state.
+
+SF versatility remains a focused question: broad all-around profiles may be
+valid, but future generation could test whether creator, scorer, 3&D, stopper,
+point-forward, and combo-forward shapes produce more distinct identity. Work
+should begin with profiles and resulting behavior, then ask whether Development
+preserves relative strengths and weaknesses. Only after that evidence should it
+ask whether OVR materially misvalues unusual Players; a broad OVR rewrite is not
+the starting point and may be unnecessary.
+
+Player Identity V2 could define **who Players are**, while the independent Game
+Simulation V2 concept could someday let them **play like who they are** through
+possession-level actions and usage. Neither requires or schedules the other.
+Any future experiment must preserve rare-profile rarity, healthy elite-OVR and
+Team-strength distributions, Recruiting interpretation, accepted statistical
+balance, and downstream OVR meaning. Population-level effects—not only handmade
+unicorn cases—would be required evidence before acceptance.
 
 ### Postseason and combined statistics
 
@@ -256,7 +302,9 @@ Choices should make Matchup Scout information actionable through real
 roster-dependent tradeoffs rather than simple buffs. This is a major gameplay-
 system extension that deliberately touches frozen Game Simulation semantics and
 therefore requires a separately selected focused design and simulation
-investigation; formulas remain undefined here.
+investigation; formulas remain undefined here. The possession-based Game
+Simulation V2 concept below is one possible deeper foundation, not a prerequisite
+or selected dependency.
 
 ### Playing time influencing Development
 
@@ -275,6 +323,57 @@ not a small Alumni enhancement: one-and-done careers, early entry, eligibility,
 AI roster consequences, recruiting and roster turnover, prospect evaluation,
 and league balance all become design and simulation concerns. No version of
 that lifecycle is selected.
+
+## Game Simulation V2 — Possession-Based Simulation — FUTURE / UNSCHEDULED
+
+The accepted and frozen aggregate Game Simulation V1 remains authoritative
+production behavior and appropriate for the current product. A possible
+long-term V2 could explore an abstract possession/event-driven engine in which
+shots, turnovers, fouls, rebounds, and continuations create the final score and
+Player box score rather than Player statistics being allocated after an
+aggregate result. This is an architectural ceiling for deeper interaction and
+immersion, not evidence that V1 is broken or a decision to replace it.
+
+A possession foundation could allow FGA/FGM, three-pointers, free throws,
+points, assists, turnovers, steals, blocks, and offensive/defensive rebounds to
+emerge from simulated events. It could make Player attributes produce more
+recognizable styles and eventually connect Matchup Scout → Game Plan → actual
+possessions through scoring options, pace, offensive emphasis, and defensive
+focus. Exact possession, usage, attribute, tactic, lineup, and AI formulas are
+deliberately undefined.
+
+Canonical game events could support trustworthy play-by-play, Watch Game and
+partial-sim experiences, plus factual game-winning shots, buzzer beaters,
+comebacks, largest leads, and decisive defensive plays. Those moments could
+later feed News, Yearbooks, careers, Program history, Records/Milestones, Senior
+Sendoff, and Tournament recaps because presentation would describe what the
+simulation actually generated rather than reconstruct a story afterward. No
+event schema, live-game interface, wording, or persistence policy is selected.
+
+The accepted Rotation could potentially supply deterministic lineup windows
+without requiring an initial substitution-management rewrite. Overtime, foul
+trouble, fatigue, tactical substitutions, and literal playbooks remain optional
+later complexity rather than first-version assumptions. AI Programs would need
+deterministic plans derived from their roster and matchup so user tactics do not
+create a structural advantage.
+
+V2 would be high-risk/high-reward calibration work: possession count, shot and
+usage distributions, shooting, free throws, turnovers, steals, blocks,
+rebounds, assists, scoring, favorite/upset rates, and Tournament behavior all
+interact. It must preserve game-scoped deterministic replay—identical canonical
+inputs and seed produce the same result and event sequence—and remain performant
+at league scale. Architecture would also need to distinguish internal simulation
+events from persisted history; selectively retaining controlled, Tournament, or
+notable-game logs is one possibility, not an approved storage policy.
+
+A safe future investigation could keep V1 in production while running an
+experimental V2 beside it on identical Team/Rotation inputs, comparing scores,
+variance, home advantage, favorite/upset rates, Player statistics, shooting
+splits, and Tournament behavior. A conceptual progression could examine a
+possession skeleton, then Player attribution, Rotation/lineup integration,
+coaching tactics, and finally play-by-play/Watch Game. These are investigation
+stages, not Roadmap phases, gates, or a commitment to a monolithic rewrite; V2
+would need to earn acceptance before any production migration.
 
 ## Coach Career & Dynasty Identity
 
@@ -402,7 +501,10 @@ not a Roadmap commitment, required bundle, or implied sequence.
   Program metadata import.
 - **Major future systems:** Coach Career/job market, changing controlled
   Programs, hot-seat/firing behavior, variable-size custom universes, and a
-  Program Reputation + Recruit-preferences evolution.
+  Program Reputation + Recruit-preferences evolution; Game Simulation V2 is a
+  separate high-risk architectural exploration beyond ordinary feature scope.
+  Player Identity V2 is likewise a parked, cross-system investigation rather
+  than an ordinary ratings tweak.
 
 These labels describe likely implementation risk only. They do not assign
 priority, phase numbers, deadlines, or Roadmap sequence.
