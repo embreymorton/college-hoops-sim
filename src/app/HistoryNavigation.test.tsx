@@ -416,8 +416,8 @@ describe('Core Yearbook UI', () => {
     expect(renderedProgramNames()).toEqual(defaultConference.rows.map((row) => row.program.name))
     expect(rendered.container.querySelectorAll('tr[data-controlled="true"]')).toHaveLength(1)
     expect(within(standingsCard).getByText(/· You/)).toBeInTheDocument()
-    // Only one standings table (plus one leaderboard table) is presented at a time.
-    expect(screen.getAllByRole('table')).toHaveLength(2)
+    // One standings table, one leaderboard, and the condensed All-America table.
+    expect(screen.getAllByRole('table')).toHaveLength(3)
 
     for (const { conference, rows } of expected.conferenceStandings) {
       fireEvent.click(within(standingsCard).getByRole('button', {
@@ -432,6 +432,18 @@ describe('Core Yearbook UI', () => {
         isControlledHere ? 1 : 0,
       )
     }
+  })
+
+  it('keeps Yearbook Awards to national majors and a compact All-America summary', () => {
+    renderYearbook(CONTROLLED_PROGRAM_ID)
+    const awardsSection = screen.getByRole('heading', { name: 'Awards & Honors' }).closest('section')!
+
+    expect(within(awardsSection).getByText('National Player of the Year')).toBeInTheDocument()
+    expect(within(awardsSection).getByText('National Freshman of the Year')).toBeInTheDocument()
+    expect(within(awardsSection).getByText('Tournament Most Outstanding Player')).toBeInTheDocument()
+    expect(within(awardsSection).getByRole('table', { name: 'First Team All-America' }).querySelectorAll('tbody tr')).toHaveLength(5)
+    expect(within(awardsSection).queryByRole('heading', { name: 'Conference Honors' })).not.toBeInTheDocument()
+    expect(within(awardsSection).queryByRole('group', { name: 'Conference' })).not.toBeInTheDocument()
   })
 
   it('defaults leaders to Scoring/PPG, switches categories via tabs, and preserves national and controlled Player IDs', () => {

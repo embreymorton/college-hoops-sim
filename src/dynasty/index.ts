@@ -13,6 +13,7 @@ export {
   deriveRegularSeasonAwards,
   deriveTournamentMostOutstandingPlayer,
   deriveTournamentMopSummary,
+  deriveTournamentMopSummaryFromSources,
   projectTournamentMostOutstandingPlayer,
   validateCompletedSeasonAwards,
 } from './awards'

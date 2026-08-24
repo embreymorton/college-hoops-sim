@@ -14,7 +14,9 @@ import {
   type PostseasonState,
 } from '../postseason'
 import { DEFAULT_INTERACTIVE_TEST_SEED, useDynastyStore } from '../store'
-import { deriveRegularSeasonAwards } from '../dynasty'
+import { deriveAnnouncedSeasonHonors, deriveRegularSeasonAwards } from '../dynasty'
+import { derivePlayerSeasonStats } from '../season'
+import { formatRating } from './formatters'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
 import { deriveGameLeaders } from './gameLeaders'
@@ -126,6 +128,27 @@ describe('Postseason transition', () => {
     expect(screen.getByRole('heading', { name: 'Awards & Honors' })).toBeInTheDocument()
     expect(screen.getByText('Awarded after the National Championship')).toBeInTheDocument()
     expect(screen.getAllByText(`${player.firstName} ${player.lastName}`).length).toBeGreaterThan(0)
+    const awards = screen.getByRole('heading', { name: 'Awards & Honors' }).closest('main')!
+    const allAmerica = within(awards).getByRole('table', { name: 'First Team All-America' })
+    expect(allAmerica.querySelectorAll('tbody tr')).toHaveLength(5)
+    expect(within(awards).queryByRole('heading', { name: /Your Program Honors/ })).not.toBeInTheDocument()
+    const stats = derivePlayerSeasonStats(dynasty.activeSeason!, poy.programId, poy.playerId)
+    expect(within(awards).getAllByText(`${formatRating(stats.pointsPerGame)} PPG · ${formatRating(stats.reboundsPerGame)} RPG · ${formatRating(stats.assistsPerGame)} APG`).length).toBeGreaterThan(0)
+
+    const announced = deriveAnnouncedSeasonHonors(dynasty)
+    const controlledHonor = announced.find(({ program }) => program.id === dynasty.controlledProgramId)
+    if (controlledHonor) {
+      const controlledName = `${controlledHonor.player.firstName} ${controlledHonor.player.lastName}`
+      expect(within(awards).getAllByRole('button', { name: controlledName })[0]!.parentElement).toHaveTextContent(/You/i)
+    }
+
+    const conferenceTabs = within(awards).getByRole('group', { name: 'Conference' })
+    const controlledConference = dynasty.universe.conferences.find(({ id }) => id === dynasty.universe.programs.find(({ id }) => id === dynasty.controlledProgramId)!.conferenceId)!
+    expect(within(conferenceTabs).getByRole('button', { name: controlledConference.name.replace(/ Conference$/, '') })).toHaveAttribute('aria-pressed', 'true')
+    const otherConference = dynasty.universe.conferences.find(({ id }) => id !== controlledConference.id)!
+    fireEvent.click(within(conferenceTabs).getByRole('button', { name: otherConference.name.replace(/ Conference$/, '') }))
+    expect(within(conferenceTabs).getByRole('button', { name: otherConference.name.replace(/ Conference$/, '') })).toHaveAttribute('aria-pressed', 'true')
+    expect(within(awards).getByRole('table', { name: 'First Team All-Conference' }).querySelectorAll('tbody tr')).toHaveLength(5)
     fireEvent.click(screen.getByRole('button', { name: /back to tournament/i }))
     expect(useDynastyStore.getState().view).toBe('postseasonHub')
   })

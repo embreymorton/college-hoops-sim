@@ -8,6 +8,7 @@ import {
 import {
   deriveCompletedSeasonYearbook,
   deriveCompletedSeasonHonors,
+  deriveTournamentMopSummaryFromSources,
   type CompletedSeasonYearbook,
   type HistoricalConferenceStandings,
   type HistoricalLeaderRow,
@@ -282,6 +283,11 @@ export function SeasonYearbookScreen() {
   const champion = yearbook.championship.nationalChampion
   const archive = dynasty.history.find(({ seasonNumber }) => seasonNumber === yearbook.seasonNumber)!
   const awards = deriveCompletedSeasonHonors(archive, dynasty.universe)
+  const awardsMop = deriveTournamentMopSummaryFromSources(
+    archive.season,
+    archive.postseason,
+    dynasty.universe,
+  )
   const runnerUp = yearbook.championship.runnerUp
   const titleGame = yearbook.championship.game
   const controlled = yearbook.controlledProgramSeason
@@ -418,10 +424,11 @@ export function SeasonYearbookScreen() {
           honors={awards}
           conferences={dynasty.universe.conferences}
           controlledProgramId={controlled.program.programId}
-          controlledProgramName={controlled.program.name}
           controlledConferenceId={controlled.program.conferenceId}
           showMopPending={false}
+          mopSummary={awardsMop}
           archival
+          summary
           onSelectPlayer={openPlayerDetails}
         />
       </section>

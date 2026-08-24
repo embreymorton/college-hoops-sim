@@ -636,10 +636,10 @@ export function PostseasonHubScreen({
       </div>
 
       {awardsRevealed && (
-        <section className="section tournament-awards-announcement" aria-labelledby="tournament-awards-heading">
+        <section className="season-preview-promotion tournament-awards-announcement" aria-labelledby="tournament-awards-heading">
           <div>
             <p className="eyebrow-tag">Season Awards Announced</p>
-            <h2 id="tournament-awards-heading" className="section-title">Awards &amp; Honors</h2>
+            <h2 id="tournament-awards-heading" className="visually-hidden">Awards &amp; Honors</h2>
             <p className="section-hint">National and conference honors are now available.</p>
             {controlledRegularHonorCount > 0 && (
               <p className="tournament-awards-announcement__program">Your Program earned {controlledRegularHonorCount} {controlledRegularHonorCount === 1 ? 'honor' : 'honors'}.</p>

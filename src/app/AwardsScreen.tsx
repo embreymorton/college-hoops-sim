@@ -1,5 +1,5 @@
 import { AwardsHonors, ExplorationBackButton } from '../components'
-import { areRegularSeasonAwardsRevealed, deriveAnnouncedSeasonHonors } from '../dynasty'
+import { areRegularSeasonAwardsRevealed, deriveAnnouncedSeasonHonors, deriveTournamentMopSummary } from '../dynasty'
 import { useDynastyStore } from '../store'
 
 export function AwardsScreen() {
@@ -13,6 +13,7 @@ export function AwardsScreen() {
     ({ id }) => id === dynasty.controlledProgramId,
   )!
   const honors = deriveAnnouncedSeasonHonors(dynasty)
+  const mopSummary = deriveTournamentMopSummary(dynasty)
 
   return (
     <main className="awards-screen">
@@ -20,22 +21,18 @@ export function AwardsScreen() {
         destination={explorationHistory.at(-1) ?? 'postseasonHub'}
         onClick={goBack}
       />
-      <header className="season-header">
-        <div className="season-header__identity">
-          <div>
-            <p className="eyebrow-tag">Season {dynasty.activeSeason.seasonNumber}</p>
-            <h1 className="season-header__name">Awards &amp; Honors</h1>
-            <p className="season-header__meta">The season’s national and conference honorees.</p>
-          </div>
-        </div>
+      <header className="awards-page-heading">
+        <p className="eyebrow-tag">Season {dynasty.activeSeason.seasonNumber}</p>
+        <h1 className="section-title awards-page-heading__title">Awards &amp; Honors</h1>
+        <p className="section-hint">The season’s national and conference honorees.</p>
       </header>
       <AwardsHonors
         honors={honors}
         conferences={dynasty.universe.conferences}
         controlledProgramId={controlledProgram.id}
-        controlledProgramName={controlledProgram.name}
         controlledConferenceId={controlledProgram.conferenceId}
         showMopPending
+        mopSummary={mopSummary}
         onSelectPlayer={openPlayerDetails}
       />
     </main>

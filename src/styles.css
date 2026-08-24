@@ -1165,32 +1165,33 @@ p {
 }
 
 /* Awards & Honors V1 — compact identity-first lists shared by live and archive surfaces. */
-.awards-screen,
+.awards-screen { display: flex; flex-direction: column; gap: var(--space-4); }
 .awards-content { display: flex; flex-direction: column; gap: var(--space-5); }
+.awards-page-heading { display: grid; gap: var(--space-1); }
+.awards-page-heading__title { font-size: 1.35rem; }
 .awards-headliners { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: var(--space-3); }
-.award-headliner { min-width: 0; padding: var(--space-4); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius-md); }
+.award-headliner { min-width: 0; padding: var(--space-3); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius-sm); }
 .award-headliner--primary { border-color: var(--line-strong); background: var(--surface-2); }
 .award-headliner--primary .award-recipient__player { font-size: 1.15rem; }
 .award-headliner__pending { color: var(--ink-1); margin: var(--space-2) 0 0; }
 .award-recipient { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; }
 .award-recipient__player { font-weight: 700; white-space: normal; text-align: left; overflow-wrap: anywhere; }
 .award-recipient__context { color: var(--ink-1); font-size: 0.78rem; overflow-wrap: anywhere; }
+.award-stat-line { color: var(--ink-1); font-family: var(--font-score); font-size: 0.78rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .awards-section { display: grid; gap: var(--space-3); }
-.award-team-list { list-style-position: inside; display: grid; gap: 0; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; }
-.award-team-list li { padding: var(--space-3); background: var(--surface-1); border-bottom: 1px solid var(--line); }
-.award-team-list li:last-child { border-bottom: 0; }
-.your-program-honors { display: grid; gap: var(--space-2); }
-.your-program-honors__player { padding: var(--space-3); border-left: 3px solid var(--accent); background: var(--surface-1); }
-.your-program-honors__player ul { margin: var(--space-2) 0 0; padding-left: 1.2rem; color: var(--ink-1); }
-.awards-conference-heading { display: flex; align-items: end; justify-content: space-between; gap: var(--space-4); }
-.awards-conference-select { display: grid; gap: var(--space-1); color: var(--ink-1); font-family: var(--font-display); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
-.awards-conference-select select { min-width: 16rem; padding: 0.65rem; color: var(--ink-0); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius-sm); font: inherit; text-transform: none; }
+.award-team-table { min-width: 39rem; }
+.award-team-table td:last-child { white-space: nowrap; }
+.award-team-table tr[data-controlled='true'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+.awards-conference-tabs { justify-self: start; max-width: 100%; overflow-x: auto; }
 .awards-conference-winners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
 .awards-conference-winners article { padding: var(--space-3); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius-sm); }
 .yearbook-awards { display: grid; gap: var(--space-3); }
+.yearbook-awards .awards-content { gap: var(--space-3); }
+.yearbook-awards .award-headliner { padding: var(--space-2) var(--space-3); }
 .career-honors__seasons { display: grid; gap: var(--space-3); }
 .career-honors__season { padding: var(--space-3); background: var(--surface-1); border-left: 3px solid var(--line-strong); }
-.career-honors__season ul { margin: var(--space-2) 0 0; padding-left: 1.2rem; }
+.career-honors__list { display: grid; gap: var(--space-1); margin-top: var(--space-2); }
+.career-honors__item { color: var(--ink-1); font-size: 0.86rem; }
 
 .league-news {
   display: flex;
@@ -1321,10 +1322,8 @@ p {
   .news-story__meta { align-items: flex-start; }
   .awards-headliners,
   .awards-conference-winners { grid-template-columns: 1fr; }
-  .awards-conference-heading { align-items: stretch; flex-direction: column; }
-  .awards-conference-select,
-  .awards-conference-select select { width: 100%; min-width: 0; }
-  .award-team-list li { padding-inline: var(--space-2); }
+  .awards-conference-tabs { display: flex; width: 100%; }
+  .awards-conference-tabs .tab { flex: 0 0 auto; padding-inline: 0.8rem; }
 }
 
 .box-score-panel {

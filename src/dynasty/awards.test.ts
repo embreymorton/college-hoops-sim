@@ -344,6 +344,11 @@ describe('Awards V1 read models and lifecycle durability', () => {
       seasonNumber: 1,
       player: { id: archive.awards.honors[0]!.playerId },
       program: { id: archive.awards.honors[0]!.programId },
+      seasonStats: derivePlayerSeasonStats(
+        archive.season,
+        archive.awards.honors[0]!.programId,
+        archive.awards.honors[0]!.playerId,
+      ),
     })
     expect(archive.awards.honors[0]).not.toHaveProperty('player')
     expect(archive.awards.honors[0]).not.toHaveProperty('playerName')

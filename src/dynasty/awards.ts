@@ -66,6 +66,8 @@ export interface ResolvedSeasonHonor {
   readonly program: ProgramDefinition
   readonly conference?: ConferenceDefinition
   readonly rank?: number
+  /** Canonical regular-season production, derived for presentation only. */
+  readonly seasonStats: PlayerSeasonStats
 }
 
 export interface TournamentMopSummary {
@@ -424,6 +426,7 @@ function resolveHonor(
     program,
     conference,
     rank: stored.rank,
+    seasonStats: derivePlayerSeasonStats(season, stored.programId, stored.playerId),
   }
 }
 
@@ -499,17 +502,16 @@ export function derivePlayerCareerHonorsIncludingAnnounced(
 }
 
 /** Compact champion-run production for the resolved Tournament MOP. */
-export function deriveTournamentMopSummary(
-  dynasty: Pick<DynastyState, 'activeSeason' | 'activePostseason' | 'universe'>,
+export function deriveTournamentMopSummaryFromSources(
+  season: SeasonState,
+  postseason: PostseasonState,
+  universe: UniverseDefinition,
 ): TournamentMopSummary | null {
-  const season = dynasty.activeSeason
-  const postseason = dynasty.activePostseason
-  if (!season || !postseason) return null
   const stored = projectTournamentMostOutstandingPlayer(postseason)
   if (!stored) return null
   let honor: ResolvedSeasonHonor
   try {
-    honor = resolveProjectedHonor(season, dynasty.universe, stored)
+    honor = resolveProjectedHonor(season, universe, stored)
   } catch {
     return null
   }
@@ -539,4 +541,14 @@ export function deriveTournamentMopSummary(
     reboundsPerGame: gamesPlayed ? rebounds / gamesPlayed : 0,
     assistsPerGame: gamesPlayed ? assists / gamesPlayed : 0,
   }
+}
+
+/** Compact champion-run production for the active resolved Tournament MOP. */
+export function deriveTournamentMopSummary(
+  dynasty: Pick<DynastyState, 'activeSeason' | 'activePostseason' | 'universe'>,
+): TournamentMopSummary | null {
+  const season = dynasty.activeSeason
+  const postseason = dynasty.activePostseason
+  if (!season || !postseason) return null
+  return deriveTournamentMopSummaryFromSources(season, postseason, dynasty.universe)
 }

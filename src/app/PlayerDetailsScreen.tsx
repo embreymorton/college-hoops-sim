@@ -42,13 +42,13 @@ function CareerHonors({ honors }: { readonly honors: readonly ResolvedSeasonHono
         {[...bySeason.entries()].sort((a, b) => b[0] - a[0]).map(([seasonNumber, seasonHonors]) => (
           <div className="career-honors__season" key={seasonNumber}>
             <h3 className="section-subtitle">Season {seasonNumber}</h3>
-            <ul>
+            <div className="career-honors__list">
               {seasonHonors.map((honor) => (
-                <li key={`${honor.type}:${honor.conference?.id ?? ''}:${honor.rank ?? ''}`}>
+                <div className="career-honors__item" key={`${honor.type}:${honor.conference?.id ?? ''}:${honor.rank ?? ''}`}>
                   {AWARD_LABELS[honor.type]}{honor.conference ? ` · ${honor.conference.name}` : ''}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         ))}
       </div>
