@@ -75,8 +75,11 @@ Functional and structural UI validation covered the Final Four announcement,
 pending/resolved MOP, dedicated Awards navigation, Conference switching,
 condensed Yearbooks, and active/former Player Career Honors. Desktop and 390px
 responsive review, bounded visual polish, and final user review completed the
-acceptance sequence. Existing unrelated suite failures were not classified as
-Awards defects. Awards opened no new WATCH item.
+acceptance sequence. The seven previously outstanding Player Career History and
+Recruiting failures were subsequently corrected as stale/ambiguous test
+assumptions or fixtures, with no production-logic changes. Final validation is
+fully green: focused corrective tests `84/84`, full suite `1328/1328`, ESLint,
+typecheck, and `git diff --check` all passed. Awards opened no new WATCH item.
 
 ### Program Trajectory V1 — ACCEPTED / FROZEN
 

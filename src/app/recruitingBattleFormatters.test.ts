@@ -43,7 +43,12 @@ function battleFixture(seed: string): {
     )
     .slice(0, 2)
   const programIds = [controlledId, otherIds[0]!, otherIds[1]!] as const
-  const programs = { ...recruiting.programs }
+  const programs = Object.fromEntries(Object.entries(recruiting.programs).map(
+    ([programId, program]) => [
+      programId,
+      { ...program, board: program.board.filter((target) => target.playerId !== playerId) },
+    ],
+  ))
 
   for (const programId of programIds) {
     const program = programs[programId]!

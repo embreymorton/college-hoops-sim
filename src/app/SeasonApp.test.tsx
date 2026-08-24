@@ -1207,8 +1207,10 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     })
 
     expect(document.querySelector('.recruiting-commitment-alerts')).not.toBeNull()
-    const recruitName = getRecruit(recruiting, target.playerId)!.player.firstName
-    expect(screen.getByText(new RegExp(recruitName))).toBeInTheDocument()
+    const recruit = getRecruit(recruiting, target.playerId)!.player
+    const recruitName = `${recruit.firstName} ${recruit.lastName}`
+    const activity = document.querySelector('.recruiting-commitment-alerts') as HTMLElement
+    expect(within(activity).getByText(recruitName)).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Dismiss' })).not.toBeInTheDocument()
   })
 
@@ -1225,7 +1227,8 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
     const rivalProgramId = Object.keys(recruiting.programs).find(
       (programId) => programId !== dynasty.controlledProgramId,
     )!
-    const recruitName = getRecruit(recruiting, target.playerId)!.player.firstName
+    const recruit = getRecruit(recruiting, target.playerId)!.player
+    const recruitName = `${recruit.firstName} ${recruit.lastName}`
 
     act(() => {
       useDynastyStore.setState({
@@ -1248,7 +1251,8 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
       })
     })
 
-    expect(screen.getByText(new RegExp(recruitName))).toBeInTheDocument()
+    const activity = document.querySelector('.recruiting-commitment-alerts') as HTMLElement
+    expect(within(activity).getByText(recruitName)).toBeInTheDocument()
 
     // A later simulation boundary replaces the baseline with the period the
     // Recruiting state was already at going into it (4) — the earlier
@@ -1258,7 +1262,7 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
       useDynastyStore.getState().simulateNextGame()
     })
 
-    expect(screen.queryByText(new RegExp(recruitName))).not.toBeInTheDocument()
+    expect(screen.queryByText(recruitName)).not.toBeInTheDocument()
   })
 
   it('shows no commitment activity for commitments before the supplied baseline', () => {

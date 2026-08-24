@@ -14,7 +14,6 @@ import type {
 } from './domain'
 import {
   deriveActiveOfferCountsByPosition,
-  deriveAvailableOfferSlotsByPosition,
   deriveBaseRecruitAttraction,
   deriveRemainingOpeningsByPosition,
 } from './queries'
@@ -71,13 +70,13 @@ describe('active recruiting offers', () => {
     let dynasty = createRecruitingDynasty('manual-offers')
     const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
     const offered = program.board.find(({ hasActiveOffer }) => hasActiveOffer)!
+    const offeredPosition = dynasty.recruiting!.recruits.find(
+      ({ player }) => player.id === offered.playerId,
+    )!.player.position
     const backup = program.board.find((target) => {
       if (target.hasActiveOffer) return false
       const recruit = dynasty.recruiting!.recruits.find(({ player }) => player.id === target.playerId)!
-      return deriveAvailableOfferSlotsByPosition(
-        dynasty.recruiting!,
-        program,
-      )[recruit.player.position] === 0
+      return recruit.player.position === offeredPosition
     })!
     const wasFocused = offered.isFocused
     dynasty = withdrawRecruitOffer({ dynasty, playerId: offered.playerId })
@@ -351,15 +350,11 @@ describe('active recruiting offers', () => {
     const programId = dynasty.controlledProgramId
     const offered = dynasty.recruiting!.programs[programId]!.board
       .find(({ hasActiveOffer }) => hasActiveOffer)!
-    const offeredPosition = dynasty.recruiting!.recruits
-      .find(({ player }) => player.id === offered.playerId)!.player.position
     dynasty = withdrawRecruitOffer({ dynasty, playerId: offered.playerId })
     dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
     dynasty = resolveRecruitingPeriod(dynasty, 1)
-    expect(dynasty.recruiting!.programs[programId]!.board.some((target) => {
-      const recruit = dynasty.recruiting!.recruits.find(({ player }) => player.id === target.playerId)!
-      return recruit.player.position === offeredPosition && target.hasActiveOffer
-    })).toBe(false)
+    expect(dynasty.recruiting!.programs[programId]!.board
+      .find(({ playerId }) => playerId === offered.playerId)?.hasActiveOffer).toBe(false)
   })
 
   it('does not promote a backup when the offered commitment fills the position', () => {

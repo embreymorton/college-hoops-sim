@@ -93,15 +93,16 @@ describe('Player Details — Ratings', () => {
     openPlayerDetails(dynasty, CONTROLLED_PROGRAM_ID, player.id)
     render(<App />)
 
-    expect(screen.getByText('Finishing')).toBeInTheDocument()
-    expect(screen.getByText('Shooting')).toBeInTheDocument()
-    expect(screen.getByText('Playmaking')).toBeInTheDocument()
-    expect(screen.getByText('Ball Handling')).toBeInTheDocument()
-    expect(screen.getByText('Perimeter Def')).toBeInTheDocument()
-    expect(screen.getByText('Interior Def')).toBeInTheDocument()
-    expect(screen.getByText('Rebounding')).toBeInTheDocument()
-    expect(screen.getByText('Athleticism')).toBeInTheDocument()
-    expect(screen.getByText('Stamina')).toBeInTheDocument()
+    const ratingsSection = screen.getByRole('heading', { name: 'Ratings' }).closest('section')!
+    expect(within(ratingsSection).getByText('Finishing')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Shooting')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Playmaking')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Ball Handling')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Perimeter Def')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Interior Def')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Rebounding')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Athleticism')).toBeInTheDocument()
+    expect(within(ratingsSection).getByText('Stamina')).toBeInTheDocument()
     const headerStats = document.querySelector(
       '.season-header__stats',
     ) as HTMLElement

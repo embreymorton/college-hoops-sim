@@ -84,6 +84,16 @@ describe('Program recruiting boards', () => {
     dynasty = withdrawRecruitOffer({ dynasty, playerId: original.playerId })
     dynasty = offerRecruit({ dynasty, playerId: original.playerId })
     dynasty = setRecruitingFocus({ dynasty, playerId: original.playerId, isFocused: false })
+    const focusedElsewhere = dynasty.recruiting!.programs[programId]!.board.find(
+      (target) => target.isFocused && target.playerId !== original.playerId,
+    )
+    if (focusedElsewhere) {
+      dynasty = setRecruitingFocus({
+        dynasty,
+        playerId: focusedElsewhere.playerId,
+        isFocused: false,
+      })
+    }
     dynasty = setRecruitingFocus({ dynasty, playerId: original.playerId, isFocused: true })
     expect(dynasty.recruiting!.programs[programId]!.board
       .find(({ playerId }) => playerId === original.playerId)!.origin).toBe('assistant')
