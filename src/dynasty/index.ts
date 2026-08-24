@@ -1,4 +1,31 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
+export {
+  AWARDS_MINIMUM_MINUTES_PER_GAME,
+  AWARDS_RULES_VERSION,
+  FIRST_TEAM_SIZE,
+  areRegularSeasonAwardsRevealed,
+  calculateRegularSeasonAwardScore,
+  deriveAnnouncedSeasonHonors,
+  deriveCompletedSeasonAwards,
+  deriveCompletedSeasonHonors,
+  derivePlayerCareerHonors,
+  derivePlayerCareerHonorsIncludingAnnounced,
+  deriveRegularSeasonAwards,
+  deriveTournamentMostOutstandingPlayer,
+  deriveTournamentMopSummary,
+  projectTournamentMostOutstandingPlayer,
+  validateCompletedSeasonAwards,
+} from './awards'
+export type {
+  AwardHonorType,
+  AwardsValidationIssue,
+  AwardsValidationResult,
+  CompletedSeasonAwards,
+  CompletedSeasonHonor,
+  RegularSeasonAwardScore,
+  ResolvedSeasonHonor,
+  TournamentMopSummary,
+} from './awards'
 export { derivePlayerWorkEthic } from './workEthic'
 export type { PlayerWorkEthic, PlayerWorkEthicLabel } from './workEthic'
 export { derivePlayerCareerHistory } from './careerHistory'
@@ -205,6 +232,8 @@ export type {
   PlayerPerformanceVariant,
   SingleGameRecordNewsStory,
   RecruitCommitmentNewsStory,
+  SeasonAwardsNewsStory,
+  TournamentMopNewsStory,
   TournamentUpsetNewsStory,
   UndefeatedRunEndedNewsStory,
   WinningStreakNewsStory,

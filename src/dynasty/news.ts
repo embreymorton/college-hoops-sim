@@ -1,6 +1,11 @@
 import type { PlayerGameStats, Position } from '../engine'
 import { TOURNAMENT_ROUNDS, type TournamentRound } from '../postseason'
 import type { DynastyState } from './domain'
+import {
+  areRegularSeasonAwardsRevealed,
+  deriveRegularSeasonAwards,
+  deriveTournamentMopSummary,
+} from './awards'
 import { RECORD_CATEGORIES, type RecordCategory } from './seasonRecords'
 
 export type NewsImportance = 'standard' | 'notable' | 'major'
@@ -42,7 +47,21 @@ export interface WinningStreakNewsStory extends NewsStoryBase {
   readonly kind: 'winning-streak'; readonly gameId: string; readonly programId: string; readonly opponentProgramId: string
   readonly streakWins: 10; readonly programScore: number; readonly opponentScore: number
 }
-export type NewsStory = PlayerPerformanceNewsStory | SingleGameRecordNewsStory | RecruitCommitmentNewsStory | TournamentUpsetNewsStory | UndefeatedRunEndedNewsStory | WinningStreakNewsStory
+export interface SeasonAwardsNewsStory extends NewsStoryBase {
+  readonly kind: 'season-awards'
+  readonly playerOfYear: { readonly playerId: string; readonly programId: string }
+  readonly freshmanOfYear: { readonly playerId: string; readonly programId: string }
+  readonly allAmerica: readonly { readonly playerId: string; readonly programId: string }[]
+}
+export interface TournamentMopNewsStory extends NewsStoryBase {
+  readonly kind: 'tournament-mop'
+  readonly playerId: string
+  readonly programId: string
+  readonly pointsPerGame: number
+  readonly reboundsPerGame: number
+  readonly assistsPerGame: number
+}
+export type NewsStory = PlayerPerformanceNewsStory | SingleGameRecordNewsStory | RecruitCommitmentNewsStory | TournamentUpsetNewsStory | UndefeatedRunEndedNewsStory | WinningStreakNewsStory | SeasonAwardsNewsStory | TournamentMopNewsStory
 export interface NewsFeedGroup { readonly id: string; readonly checkpoint: NewsCheckpoint; readonly stories: readonly NewsStory[] }
 export interface NewsFeed {
   readonly seasonId: string
@@ -53,7 +72,7 @@ export interface NewsFeed {
 }
 
 const IMPORTANCE_ORDER: Readonly<Record<NewsImportance, number>> = { major: 0, notable: 1, standard: 2 }
-const FAMILY_ORDER: Readonly<Record<NewsStory['kind'], number>> = { 'tournament-upset': 0, 'single-game-record': 1, 'player-performance': 2, 'undefeated-run-ended': 3, 'winning-streak': 4, 'recruit-commitment': 5 }
+const FAMILY_ORDER: Readonly<Record<NewsStory['kind'], number>> = { 'tournament-mop': 0, 'season-awards': 1, 'tournament-upset': 2, 'single-game-record': 3, 'player-performance': 4, 'undefeated-run-ended': 5, 'winning-streak': 6, 'recruit-commitment': 7 }
 
 function groupId(checkpoint: NewsCheckpoint): string {
   if (checkpoint.kind === 'regular-season-round') return `news:v1:group:${checkpoint.seasonId}:regular:${checkpoint.round}`
@@ -219,6 +238,39 @@ export function deriveNewsFeed(dynasty: DynastyState, followedPlayerIds: readonl
         const seedGap = winnerSeed - loserSeed
         if (seedGap >= 4) add({ kind: 'tournament-upset', id: `news:v1:tournament-upset:${game.id}`, checkpoint, sourceOrder: game.index, importance: seedGap >= 8 || loserSeed <= 2 ? 'major' : 'notable', gameId: game.id, winnerProgramId: result.winnerId, loserProgramId: loserId, winnerSeed, loserSeed, seedGap, ...winnerAndLoserScore(result) })
       }
+    }
+
+    if (areRegularSeasonAwardsRevealed(postseason)) {
+      const awards = deriveRegularSeasonAwards(dynasty.universe, season).honors
+      const playerOfYear = awards.find(({ type }) => type === 'national-player-of-the-year')!
+      const freshmanOfYear = awards.find(({ type }) => type === 'national-freshman-of-the-year')!
+      add({
+        kind: 'season-awards',
+        id: `news:v1:season-awards:${season.id}`,
+        checkpoint: { kind: 'tournament-round', seasonId: season.id, round: 'semifinals' },
+        sourceOrder: -2,
+        importance: 'major',
+        playerOfYear: { playerId: playerOfYear.playerId, programId: playerOfYear.programId },
+        freshmanOfYear: { playerId: freshmanOfYear.playerId, programId: freshmanOfYear.programId },
+        allAmerica: awards.filter(({ type }) => type === 'all-america-first-team').map(
+          ({ playerId, programId }) => ({ playerId, programId }),
+        ),
+      })
+    }
+    const mop = deriveTournamentMopSummary(dynasty)
+    if (mop) {
+      add({
+        kind: 'tournament-mop',
+        id: `news:v1:tournament-mop:${season.id}`,
+        checkpoint: { kind: 'tournament-round', seasonId: season.id, round: 'championship' },
+        sourceOrder: -1,
+        importance: 'major',
+        playerId: mop.honor.player.id,
+        programId: mop.honor.program.id,
+        pointsPerGame: mop.pointsPerGame,
+        reboundsPerGame: mop.reboundsPerGame,
+        assistsPerGame: mop.assistsPerGame,
+      })
     }
   }
 

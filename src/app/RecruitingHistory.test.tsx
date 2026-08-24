@@ -104,6 +104,7 @@ function installHistoryFixture(): {
         seasonNumber: 1,
         season: archivedSeason,
         postseason: {} as never,
+        awards: { rulesVersion: 'awards-v1', honors: [] },
       }],
       completedRecruitingHistory: [enrolledClass, incomingClass],
     },

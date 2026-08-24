@@ -6,12 +6,14 @@ import type {
   CompletedRecruitingClass,
   RecruitingState,
 } from './recruiting/domain'
+import type { CompletedSeasonAwards } from './awards'
 
 /** Canonical source facts for one fully completed competitive year. */
 export interface CompletedSeasonArchive {
   readonly seasonNumber: number
   readonly season: SeasonState
   readonly postseason: PostseasonState
+  readonly awards: CompletedSeasonAwards
 }
 
 /** Temporary, intentionally incomplete roster state between competitive years. */

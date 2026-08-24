@@ -65,7 +65,7 @@ function withHistoricalBaseline(seed: string, activeRounds: number) {
   const activeResults = Object.fromEntries(Object.entries(active.resultsByGameId).map(([id, result]) => [id, { ...result, homePlayerStats: quietStats(result.homePlayerStats), awayPlayerStats: quietStats(result.awayPlayerStats) }]))
   return {
     ...initial,
-    history: [{ seasonNumber: 1, season: { ...historical, resultsByGameId: historicalResults }, postseason: {} as never }],
+    history: [{ seasonNumber: 1, season: { ...historical, resultsByGameId: historicalResults }, postseason: {} as never, awards: { rulesVersion: 'awards-v1' as const, honors: [] } }],
     activeSeason: { ...active, id: `${active.id}:season-2`, seasonNumber: 2, resultsByGameId: activeResults },
   }
 }
@@ -271,6 +271,29 @@ describe('Around the Country V1 projection', () => {
     expect(feed.latestCompletedCompetitionCheckpoint).toMatchObject({ kind: 'tournament-round', round: 'round-of-16' })
     expect(feed.latestCompletedCompetitionCheckpointHasNews).toBe(false)
     expect(feed.groups.some(({ checkpoint }) => checkpoint.kind === 'tournament-round')).toBe(false)
+  })
+
+  it('publishes one Awards story at the Final Four and one distinct MOP story after the title', () => {
+    const dynasty = withCompletedRounds('news-awards', 24)
+    let postseason = initializePostseason({ universe: dynasty.universe, season: dynasty.activeSeason! })
+    const feed = () => deriveNewsFeed({ ...dynasty, activePostseason: postseason }, [])
+    expect(feed().groups.flatMap(({ stories }) => stories).filter(({ kind }) => kind === 'season-awards')).toHaveLength(0)
+
+    for (const round of ['round-of-16', 'quarterfinals'] as const) {
+      postseason = simulatePendingGamesInTournamentRound({ postseason, round, simulationSeed: 'news-awards-games' })
+    }
+    const revealed = feed().groups.flatMap(({ stories }) => stories)
+    expect(revealed.filter(({ kind }) => kind === 'season-awards')).toHaveLength(1)
+    expect(revealed.filter(({ kind }) => kind === 'tournament-mop')).toHaveLength(0)
+
+    for (const round of ['semifinals', 'championship'] as const) {
+      postseason = simulatePendingGamesInTournamentRound({ postseason, round, simulationSeed: 'news-awards-games' })
+    }
+    const completed = feed().groups.flatMap(({ stories }) => stories)
+    expect(completed.filter(({ kind }) => kind === 'season-awards')).toHaveLength(1)
+    expect(completed.filter(({ kind }) => kind === 'tournament-mop')).toHaveLength(1)
+    expect(new Set(completed.filter(({ kind }) => kind === 'season-awards' || kind === 'tournament-mop').map(({ id }) => id)).size).toBe(2)
+    expect(feed()).toEqual(feed())
   })
 
   it('emits the 10th straight once and an undefeated first loss only after 8–0', () => {

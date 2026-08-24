@@ -10,19 +10,51 @@ import {
   PlayerRecruitingOrigin,
 } from '../components'
 import {
+  derivePlayerCareerHonorsIncludingAnnounced,
   derivePlayerCareerSummary,
   derivePlayerCareerHighs,
   derivePlayerWorkEthic,
   resolveDynastyPlayer,
+  type ResolvedSeasonHonor,
 } from '../dynasty'
 import { derivePlayerSeasonStats, getPlayerGameLog } from '../season'
 import { selectActiveSeason, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatHeight, formatPercentage, formatRating } from './formatters'
+import { AWARD_LABELS } from './awardFormatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
   UNIVERSE_V0.programs.map((program) => [program.id, program] as const),
 )
+
+function CareerHonors({ honors }: { readonly honors: readonly ResolvedSeasonHonor[] }) {
+  if (honors.length === 0) return null
+  const bySeason = new Map<number, ResolvedSeasonHonor[]>()
+  for (const honor of honors) {
+    const seasonHonors = bySeason.get(honor.seasonNumber) ?? []
+    seasonHonors.push(honor)
+    bySeason.set(honor.seasonNumber, seasonHonors)
+  }
+  return (
+    <section className="section career-honors" aria-labelledby="player-career-honors-heading">
+      <h2 id="player-career-honors-heading" className="section-title">Career Honors</h2>
+      <div className="career-honors__seasons">
+        {[...bySeason.entries()].sort((a, b) => b[0] - a[0]).map(([seasonNumber, seasonHonors]) => (
+          <div className="career-honors__season" key={seasonNumber}>
+            <h3 className="section-subtitle">Season {seasonNumber}</h3>
+            <ul>
+              {seasonHonors.map((honor) => (
+                <li key={`${honor.type}:${honor.conference?.id ?? ''}:${honor.rank ?? ''}`}>
+                  {AWARD_LABELS[honor.type]}{honor.conference ? ` · ${honor.conference.name}` : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
 
 /** Player Details: identity/ratings, career progression, Recruiting origin, regular-season stats, and game log, for any Player. */
 export function PlayerDetailsScreen() {
@@ -47,6 +79,17 @@ export function PlayerDetailsScreen() {
     () => dynasty && selectedPlayerId
       ? derivePlayerCareerHighs(dynasty, selectedPlayerId)
       : null,
+    [dynasty, selectedPlayerId],
+  )
+  const careerHonors = useMemo(
+    () => {
+      if (!dynasty || !selectedPlayerId) return []
+      try {
+        return derivePlayerCareerHonorsIncludingAnnounced(dynasty, selectedPlayerId)
+      } catch {
+        return []
+      }
+    },
     [dynasty, selectedPlayerId],
   )
 
@@ -126,6 +169,7 @@ export function PlayerDetailsScreen() {
           </div>
         ) : (
           <div className="details-tab-panel player-legacy">
+            <CareerHonors honors={careerHonors} />
             <section className="section" aria-labelledby="player-career-summary-heading">
               <h2 id="player-career-summary-heading" className="section-title">College Career · Regular Season</h2>
               <div className="player-stat-block player-stat-block--legacy">
@@ -281,6 +325,7 @@ export function PlayerDetailsScreen() {
         />
         </section>
       </div> : <div className="details-tab-panel">
+        <CareerHonors honors={careerHonors} />
         <section className="section" aria-labelledby="player-career-heading">
           <h2 id="player-career-heading" className="section-title">Career Progression</h2>
           <PlayerCareerProgressionTable seasons={careerHistory.seasons} />

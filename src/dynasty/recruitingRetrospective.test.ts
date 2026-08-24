@@ -175,8 +175,8 @@ describe('Recruiting Class Retrospective projection', () => {
       ...dynasty,
       activeSeason: seasonTwo,
       history: [
-        { seasonNumber: 3, season: seasonThree, postseason: {} as PostseasonState },
-        { seasonNumber: 4, season: seasonFour, postseason: {} as PostseasonState },
+        { seasonNumber: 3, season: seasonThree, postseason: {} as PostseasonState, awards: { rulesVersion: 'awards-v1' as const, honors: [] } },
+        { seasonNumber: 4, season: seasonFour, postseason: {} as PostseasonState, awards: { rulesVersion: 'awards-v1' as const, honors: [] } },
       ],
     }
     const projection = deriveRecruitingClassRetrospective(resolved, 2)

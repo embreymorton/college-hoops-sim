@@ -3,6 +3,7 @@ import { DynastyProgressionBar, RecruitingSetupDialog } from '../components'
 import { deriveDynastyProgressionAction } from '../dynasty'
 import { deriveOffseasonExperience } from './offseasonExperience'
 import { CoachingScreen } from './CoachingScreen'
+import { AwardsScreen } from './AwardsScreen'
 import { GamePrepScreen } from './GamePrepScreen'
 import { HistoryScreen } from './HistoryScreen'
 import { LeagueScreen } from './LeagueScreen'
@@ -84,6 +85,9 @@ export function DynastyApp() {
       break
     case 'postseasonHub':
       screen = <PostseasonHubScreen progressionBar={progressionBar} />
+      break
+    case 'awards':
+      screen = <AwardsScreen />
       break
     case 'postseasonGamePrep':
       screen = <TournamentGamePrepScreen />

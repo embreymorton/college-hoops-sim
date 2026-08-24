@@ -16,7 +16,13 @@ import {
   type BracketSlotParticipant,
   type TournamentFieldRow,
 } from '../components'
-import { deriveDynastyProgressionAction, deriveProgramRecruitingBoard } from '../dynasty'
+import {
+  areRegularSeasonAwardsRevealed,
+  deriveAnnouncedSeasonHonors,
+  deriveDynastyProgressionAction,
+  deriveProgramRecruitingBoard,
+  deriveTournamentMopSummary,
+} from '../dynasty'
 import {
   getCurrentTournamentRound,
   getGamesForTournamentRound,
@@ -178,6 +184,8 @@ export function PostseasonHubScreen({
     (state) => state.generateControlledDraftBoard,
   )
   const openTeamDetails = useDynastyStore((state) => state.openTeamDetails)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
+  const openAwards = useDynastyStore((state) => state.openAwards)
   const pendingSuperSim = useDynastyStore((state) => state.pendingSuperSim)
   const pendingRecruitingSetupIntent = useDynastyStore(
     (state) => state.pendingRecruitingSetupIntent,
@@ -230,6 +238,15 @@ export function PostseasonHubScreen({
         programs: UNIVERSE_V0.programs,
       })
     : undefined
+  const awardsRevealed = areRegularSeasonAwardsRevealed(postseason)
+  const announcedHonors = awardsRevealed && dynasty
+    ? deriveAnnouncedSeasonHonors(dynasty)
+    : []
+  const controlledRegularHonorCount = announcedHonors.filter(
+    ({ program, type }) =>
+      program.id === controlledProgramId && type !== 'tournament-most-outstanding-player',
+  ).length
+  const mopSummary = dynasty ? deriveTournamentMopSummary(dynasty) : null
 
   const controlledGame =
     currentRound !== undefined && controlledEntry
@@ -376,6 +393,12 @@ export function PostseasonHubScreen({
         onViewBoxScore={() =>
           viewCompletedTournamentGame(completedRecap.championshipGameId)
         }
+        mop={mopSummary ? {
+          playerName: `${mopSummary.honor.player.firstName} ${mopSummary.honor.player.lastName}`,
+          programName: mopSummary.honor.program.name,
+          summary: `${mopSummary.pointsPerGame.toFixed(1)} PPG · ${mopSummary.reboundsPerGame.toFixed(1)} RPG · ${mopSummary.assistsPerGame.toFixed(1)} APG`,
+          onSelect: () => openPlayerDetails(mopSummary.honor.program.id, mopSummary.honor.player.id),
+        } : undefined}
       />
     )
   } else if (!controlledEntry) {
@@ -611,6 +634,20 @@ export function PostseasonHubScreen({
           </section>
         )}
       </div>
+
+      {awardsRevealed && (
+        <section className="section tournament-awards-announcement" aria-labelledby="tournament-awards-heading">
+          <div>
+            <p className="eyebrow-tag">Season Awards Announced</p>
+            <h2 id="tournament-awards-heading" className="section-title">Awards &amp; Honors</h2>
+            <p className="section-hint">National and conference honors are now available.</p>
+            {controlledRegularHonorCount > 0 && (
+              <p className="tournament-awards-announcement__program">Your Program earned {controlledRegularHonorCount} {controlledRegularHonorCount === 1 ? 'honor' : 'honors'}.</p>
+            )}
+          </div>
+          <button type="button" className="button button--ghost" onClick={openAwards}>View Awards &amp; Honors</button>
+        </section>
+      )}
 
       <section className="section" aria-labelledby="bracket-heading">
         <h2 id="bracket-heading" className="section-title">

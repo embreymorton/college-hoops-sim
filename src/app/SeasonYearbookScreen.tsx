@@ -1,11 +1,13 @@
 import { useState, type CSSProperties } from 'react'
 import {
+  AwardsHonors,
   ExplorationBackButton,
   TournamentBracket,
   type BracketSlot,
 } from '../components'
 import {
   deriveCompletedSeasonYearbook,
+  deriveCompletedSeasonHonors,
   type CompletedSeasonYearbook,
   type HistoricalConferenceStandings,
   type HistoricalLeaderRow,
@@ -278,6 +280,8 @@ export function SeasonYearbookScreen() {
   }
 
   const champion = yearbook.championship.nationalChampion
+  const archive = dynasty.history.find(({ seasonNumber }) => seasonNumber === yearbook.seasonNumber)!
+  const awards = deriveCompletedSeasonHonors(archive, dynasty.universe)
   const runnerUp = yearbook.championship.runnerUp
   const titleGame = yearbook.championship.game
   const controlled = yearbook.controlledProgramSeason
@@ -406,6 +410,20 @@ export function SeasonYearbookScreen() {
             </div>
           )}
         </div>
+      </section>
+
+      <section className="yearbook-awards" aria-labelledby="yearbook-awards-heading">
+        <h2 id="yearbook-awards-heading" className="section-title">Awards &amp; Honors</h2>
+        <AwardsHonors
+          honors={awards}
+          conferences={dynasty.universe.conferences}
+          controlledProgramId={controlled.program.programId}
+          controlledProgramName={controlled.program.name}
+          controlledConferenceId={controlled.program.conferenceId}
+          showMopPending={false}
+          archival
+          onSelectPlayer={openPlayerDetails}
+        />
       </section>
 
       <section className="section" aria-labelledby="season-around-league-heading">

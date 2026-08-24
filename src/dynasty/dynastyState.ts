@@ -13,6 +13,10 @@ import {
 import { validateUniverseDefinition } from '../universe'
 import type { UniverseDefinition } from '../universe'
 import { clonePostseason, cloneSeason } from './cloning'
+import {
+  deriveCompletedSeasonAwards,
+  validateCompletedSeasonAwards,
+} from './awards'
 import { developReturningPlayer, developReturningPlayerWithExplosion } from './development'
 import type {
   CompletedSeasonArchive,
@@ -182,6 +186,11 @@ export function beginOffseason(
     seasonNumber: season.seasonNumber,
     season: cloneSeason(season),
     postseason: clonePostseason(postseason),
+    awards: deriveCompletedSeasonAwards(dynasty.universe, season, postseason),
+  }
+  const awardsValidation = validateCompletedSeasonAwards(dynasty.universe, archive)
+  if (!awardsValidation.valid) {
+    throw new RangeError(`Cannot archive invalid Awards: ${awardsValidation.issues[0]!.message}`)
   }
   const offseason = createOffseasonState(
     dynasty.universe,

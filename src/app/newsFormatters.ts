@@ -112,6 +112,32 @@ export function formatNewsCheckpoint(checkpoint: NewsCheckpoint): string {
 
 /** Deterministic factual copy assembled from projected facts and current identities. */
 export function presentNewsStory(story: NewsStory, dynasty: DynastyState): NewsStoryPresentation {
+  if (story.kind === 'season-awards') {
+    return {
+      label: 'SEASON AWARDS ANNOUNCED',
+      headline: [
+        playerPart(dynasty, story.playerOfYear.programId, story.playerOfYear.playerId),
+        text(' is National Player of the Year; '),
+        playerPart(dynasty, story.freshmanOfYear.programId, story.freshmanOfYear.playerId),
+        text(' earns National Freshman of the Year.'),
+      ],
+      support: `First Team All-America announced · ${story.allAmerica.length} players honored`,
+    }
+  }
+
+  if (story.kind === 'tournament-mop') {
+    return {
+      label: 'TOURNAMENT MOP',
+      headline: [
+        playerPart(dynasty, story.programId, story.playerId),
+        text(' is Tournament Most Outstanding Player after leading '),
+        programPart(dynasty, story.programId),
+        text(' to the national championship.'),
+      ],
+      support: `${story.pointsPerGame.toFixed(1)} PPG · ${story.reboundsPerGame.toFixed(1)} RPG · ${story.assistsPerGame.toFixed(1)} APG`,
+    }
+  }
+
   if (story.kind === 'single-game-record') {
     const outcome = story.won ? ' defeats ' : ' falls to '
     return {

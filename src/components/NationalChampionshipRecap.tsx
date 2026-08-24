@@ -9,6 +9,12 @@ interface NationalChampionshipRecapProps {
   }
   readonly overtimeTag: string | null
   readonly onViewBoxScore: () => void
+  readonly mop?: {
+    readonly playerName: string
+    readonly programName: string
+    readonly summary: string
+    readonly onSelect: () => void
+  }
 }
 
 /** Canonical completed-Tournament result, independent of session game history. */
@@ -17,6 +23,7 @@ export function NationalChampionshipRecap({
   runnerUp,
   overtimeTag,
   onViewBoxScore,
+  mop,
 }: NationalChampionshipRecapProps) {
   return (
     <div className="national-championship-recap">
@@ -39,6 +46,13 @@ export function NationalChampionshipRecap({
       <p className="national-championship-recap__champion">
         {champion.name} is your National Champion.
       </p>
+      {mop && (
+        <div className="national-championship-recap__mop">
+          <p className="eyebrow-tag">Tournament Most Outstanding Player</p>
+          <button type="button" className="text-link-button" onClick={mop.onSelect}>{mop.playerName}</button>
+          <span>{mop.programName} · {mop.summary}</span>
+        </div>
+      )}
       <button
         type="button"
         className="button button--ghost national-championship-recap__action"

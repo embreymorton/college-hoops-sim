@@ -186,6 +186,7 @@ describe('Dynasty offseason transition', () => {
         seasonNumber: 1,
         season: completeSeason,
         postseason: completePostseason,
+        awards: { rulesVersion: 'awards-v1', honors: [] },
       }],
     }
     expect(() => beginOffseason(malformed)).toThrow(/already archived/)

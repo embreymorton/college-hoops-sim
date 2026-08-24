@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, within } from '@testing-library/react'
+import { act, fireEvent, render, screen, within } from '@testing-library/react'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { GameResult, PlayerGameStats } from '../engine'
 import {
@@ -14,6 +14,7 @@ import {
   type PostseasonState,
 } from '../postseason'
 import { DEFAULT_INTERACTIVE_TEST_SEED, useDynastyStore } from '../store'
+import { deriveRegularSeasonAwards } from '../dynasty'
 import { UNIVERSE_V0 } from '../universe'
 import { App } from './App'
 import { deriveGameLeaders } from './gameLeaders'
@@ -105,6 +106,30 @@ beforeEach(() => {
 })
 
 describe('Postseason transition', () => {
+  it('reveals a non-spoiler Awards route at the Final Four and preserves Back navigation', () => {
+    selectProgram('pine-valley')
+    completeRegularSeasonAndEnterPostseason()
+    render(<App />)
+
+    expect(screen.queryByRole('button', { name: 'View Awards & Honors' })).not.toBeInTheDocument()
+    act(() => useDynastyStore.getState().simulateRestOfCurrentTournamentRound())
+    expect(screen.queryByRole('button', { name: 'View Awards & Honors' })).not.toBeInTheDocument()
+    act(() => useDynastyStore.getState().simulateRestOfCurrentTournamentRound())
+
+    const dynasty = useDynastyStore.getState().dynasty!
+    const poy = deriveRegularSeasonAwards(dynasty.universe, dynasty.activeSeason!).honors[0]!
+    const player = dynasty.activeSeason!.programStates[poy.programId]!.team.roster.find(({ id }) => id === poy.playerId)!
+    expect(screen.getByText('Season Awards Announced')).toBeInTheDocument()
+    expect(screen.queryByText(`${player.firstName} ${player.lastName}`)).not.toBeInTheDocument()
+
+    fireEvent.click(screen.getByRole('button', { name: 'View Awards & Honors' }))
+    expect(screen.getByRole('heading', { name: 'Awards & Honors' })).toBeInTheDocument()
+    expect(screen.getByText('Awarded after the National Championship')).toBeInTheDocument()
+    expect(screen.getAllByText(`${player.firstName} ${player.lastName}`).length).toBeGreaterThan(0)
+    fireEvent.click(screen.getByRole('button', { name: /back to tournament/i }))
+    expect(useDynastyStore.getState().view).toBe('postseasonHub')
+  })
+
   it('shows the National Tournament entry point once the regular season completes, and enters it', () => {
     selectProgram()
     useDynastyStore.getState().generateControlledDraftBoard()

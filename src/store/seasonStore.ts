@@ -17,6 +17,7 @@ import {
   addRecruitingBoardTarget,
   alignGeneratedRecruitingFocus,
   autoFinalizeRecruiting,
+  areRegularSeasonAwardsRevealed,
   beginOffseason,
   buildDefaultRecruitingBoard,
   clearUnavailableRecruitingBoardTargets,
@@ -200,6 +201,7 @@ export type SeasonSessionView =
   | 'postgame'
   | 'gameHistory'
   | 'postseasonHub'
+  | 'awards'
   | 'postseasonGamePrep'
   | 'postseasonPostgame'
   | 'postseasonGameHistory'
@@ -413,6 +415,8 @@ export interface DynastySessionState {
   simulateRestOfCurrentTournamentRound(): void
   /** Opens a historical read of an already-completed Tournament game's result. */
   viewCompletedTournamentGame(tournamentGameId: string): void
+  /** Opens announced current-season Awards without owning reveal state. */
+  openAwards(): void
   /** Opens the League destination (National Leaders / Teams) from the current Hub. */
   goToLeague(): void
   /** Opens the active Season Preview as an exploration destination. */
@@ -1745,6 +1749,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
 
     set({ viewedTournamentGameId: tournamentGameId, view: 'postseasonGameHistory' })
+  },
+
+  openAwards() {
+    const { dynasty, view, explorationViewHistory } = get()
+    if (!dynasty?.activePostseason || !areRegularSeasonAwardsRevealed(dynasty.activePostseason)) return
+    set({ view: 'awards', explorationViewHistory: [...explorationViewHistory, view] })
   },
 
   goToLeague() {
