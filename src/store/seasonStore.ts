@@ -218,7 +218,7 @@ export type SeasonSessionView =
 export type LeagueTab = 'news' | 'leaders' | 'teams' | 'following' | 'history'
 export type HistoryTab = 'yearbooks' | 'records' | 'recruiting'
 export type RecruitingHistoryFilter = 'all' | 'controlled'
-export type RecruitingMode = 'board' | 'battles' | 'national' | 'following' | 'guide'
+export type RecruitingMode = 'board' | 'roster-outlook' | 'battles' | 'national' | 'following' | 'guide'
 export type OffseasonTurnoverStage =
   | 'departures'
   | 'development'

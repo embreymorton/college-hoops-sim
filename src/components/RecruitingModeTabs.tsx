@@ -26,6 +26,14 @@ export function RecruitingModeTabs({ mode, onSelectMode }: RecruitingModeTabsPro
       <button
         type="button"
         className="tab"
+        aria-pressed={mode === 'roster-outlook'}
+        onClick={() => onSelectMode('roster-outlook')}
+      >
+        Roster Outlook
+      </button>
+      <button
+        type="button"
+        className="tab"
         aria-pressed={mode === 'battles'}
         onClick={() => onSelectMode('battles')}
       >

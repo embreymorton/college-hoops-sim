@@ -11,8 +11,10 @@ import type {
   RecruitStarRating,
   RecruitingBoardTargetOrigin,
 } from '../dynasty'
+import { deriveNextSeasonRosterOutlook } from '../dynasty'
 import { useDynastyStore } from '../store'
 import { App } from './App'
+import { RecruitingScreen } from './RecruitingScreen'
 
 const CONTROLLED_PROGRAM_ID = 'charlotte-tech'
 const OTHER_PROGRAM_ID = 'northbridge'
@@ -74,6 +76,25 @@ function boardTarget(
   origin: RecruitingBoardTargetOrigin = 'assistant',
 ): RecruitingBoardTarget {
   return { playerId, origin, isFocused: priority >= 4, hasActiveOffer }
+}
+
+function withCommitment(dynasty: DynastyState, playerId: string, programId: string): DynastyState {
+  const commitment: RecruitingCommitment = {
+    playerId,
+    programId,
+    timing: { kind: 'period', period: 1 },
+    targetSeasonNumber: dynasty.recruiting!.targetSeasonNumber,
+  }
+  return {
+    ...dynasty,
+    recruiting: {
+      ...dynasty.recruiting!,
+      commitmentsByPlayerId: {
+        ...dynasty.recruiting!.commitmentsByPlayerId,
+        [playerId]: commitment,
+      },
+    },
+  }
 }
 
 /**
@@ -221,6 +242,53 @@ describe('Recruiting mode session context', () => {
       'aria-pressed',
       'true',
     )
+  })
+})
+
+describe('Roster Outlook mode', () => {
+  it('renders factual returners, openings, and separate departures without forecast language', () => {
+    const dynasty = createRecruitingDynasty('roster-outlook-ui')
+    useDynastyStore.setState({ dynasty, view: 'recruiting', recruitingMode: 'roster-outlook' })
+    render(<App />)
+
+    const outlook = deriveNextSeasonRosterOutlook(dynasty)
+    const returner = outlook.positionGroups.flatMap(({ players }) => players)
+      .find(({ status }) => status === 'returning')!
+    expect(screen.getByRole('button', { name: `${returner.firstName} ${returner.lastName}` })).toBeInTheDocument()
+    expect(screen.getAllByText(/^Open (PG|SG|SF|PF|C) Spot$/).length).toBe(outlook.remainingOpeningCount)
+    expect(screen.getByRole('heading', { name: 'Departing Seniors' })).toBeInTheDocument()
+    expect(screen.queryByText(/projected starter|starter|bench|minutes|MPG|playing time|projected OVR|expected Development/i)).not.toBeInTheDocument()
+  })
+
+  it('opens Player and Recruit Details and preserves the parent mode on return', () => {
+    let dynasty = createRecruitingDynasty('roster-outlook-navigation')
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const recruit = dynasty.recruiting!.recruits.find(({ player }) =>
+      program.projectedOpeningsByPosition[player.position] > 0)!
+    dynasty = withCommitment(dynasty, recruit.player.id, dynasty.controlledProgramId)
+    useDynastyStore.setState({ dynasty, view: 'recruiting', recruitingMode: 'roster-outlook' })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: `${recruit.player.firstName} ${recruit.player.lastName}` }))
+    expect(useDynastyStore.getState()).toMatchObject({ view: 'recruitDetails', recruitingMode: 'roster-outlook' })
+    fireEvent.click(screen.getByRole('button', { name: /Back to Recruiting/ }))
+    expect(useDynastyStore.getState()).toMatchObject({ view: 'recruiting', recruitingMode: 'roster-outlook' })
+
+    const returner = deriveNextSeasonRosterOutlook(dynasty).positionGroups.flatMap(({ players }) => players)
+      .find(({ status }) => status === 'returning')!
+    fireEvent.click(screen.getByRole('button', { name: `${returner.firstName} ${returner.lastName}` }))
+    expect(useDynastyStore.getState()).toMatchObject({ view: 'playerDetails', recruitingMode: 'roster-outlook' })
+    useDynastyStore.getState().goBackFromExploration()
+    expect(useDynastyStore.getState()).toMatchObject({ view: 'recruiting', recruitingMode: 'roster-outlook' })
+  })
+
+  it.each(['regular-season', 'postseason', 'late'] as const)('uses the same projection during %s Recruiting', (phase) => {
+    const dynasty = createRecruitingDynasty(`roster-outlook-ui-${phase}`)
+    const phased = { ...dynasty, recruiting: { ...dynasty.recruiting!, phase } }
+    useDynastyStore.setState({ dynasty: phased, recruitingMode: 'roster-outlook' })
+    const { unmount } = render(<RecruitingScreen embeddedOffseason={phase === 'late'} />)
+    expect(screen.getByText(`Season ${phased.recruiting.targetSeasonNumber} · Current ratings, before offseason Development`)).toBeInTheDocument()
+    unmount()
   })
 })
 

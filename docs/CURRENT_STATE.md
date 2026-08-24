@@ -184,7 +184,22 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**OPEN PLANNING CHECKPOINT — no NEXT selected.**
+**NEXT: Next Season Roster Planner — Focused Design.**
+
+The Open Planning Checkpoint is closed and fresh sessions resolve to **Path A**.
+This is a design milestone, not an implementation milestone; no implementation
+contract has yet been selected.
+
+The selected candidate boundary is a factual, read-only Season N+1 roster
+outlook composed from returning Players, committed Recruits, exact positional
+openings, and departing seniors. Current ratings may be shown. Development
+forecasting and future Rotation, starter, minutes, role, or playing-time
+projection are excluded. Unsigned targets and offers are not future-roster
+facts. Recruiting remains the likely primary home, but exact UX and ownership
+remain for focused design.
+
+This planning-authority update changes no production behavior. No feature is
+accepted, complete, or frozen by it.
 
 Awards & Honors V1 is **COMPLETE / ACCEPTED / FROZEN**. It includes the accepted
 national, Conference, and Tournament honors, deterministic `awards-v1`
@@ -202,9 +217,6 @@ career highs, and game history. The Dynasty Record Book likewise exposes a
 separate Tournament scope. These are derived from active/archived Postseason
 facts without changing regular-season statistical semantics or adding
 canonical historical summaries.
-
-No successor milestone has been explicitly selected. Fresh sessions resolve to
-**Path B** and must perform a neutral Open Planning pass rather than infer NEXT.
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is

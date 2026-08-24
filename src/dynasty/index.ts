@@ -169,6 +169,7 @@ export {
 } from './recruiting/battleView'
 export { deriveRecruitDetailsView } from './recruiting/detailsView'
 export { deriveRecruitPositionOutlook } from './recruiting/positionOutlook'
+export { deriveNextSeasonRosterOutlook } from './recruiting/rosterOutlook'
 export { deriveFollowingRecruitsView } from './recruiting/followingView'
 export type {
   DynastyRecordBook,
@@ -226,6 +227,12 @@ export type {
   RecruitPositionOutlookRow,
   RecruitPositionOutlookRowKind,
 } from './recruiting/positionOutlook'
+export type {
+  NextSeasonRosterOutlook,
+  NextSeasonRosterOutlookDeparture,
+  NextSeasonRosterOutlookPlayer,
+  NextSeasonRosterOutlookPositionGroup,
+} from './recruiting/rosterOutlook'
 export type {
   CompletedSeasonIndexSummary,
   CompletedSeasonYearbook,

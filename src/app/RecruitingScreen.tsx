@@ -11,10 +11,12 @@ import {
   RecruitingGuide,
   RecruitingHeader,
   RecruitingModeTabs,
+  NextSeasonRosterOutlook,
   RecruitingOverview,
 } from '../components'
 import {
   deriveFollowingRecruitsView,
+  deriveNextSeasonRosterOutlook,
   deriveProgramRecruitingBoard,
   RECRUITING_BOARD_LIMIT,
   RECRUITING_FOCUS_LIMIT,
@@ -62,6 +64,7 @@ export function RecruitingScreen({
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const addRecruitingTarget = useDynastyStore((state) => state.addRecruitingTarget)
   const openRecruitDetails = useDynastyStore((state) => state.openRecruitDetails)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
   const removeRecruitingTarget = useDynastyStore((state) => state.removeRecruitingTarget)
   const clearUnavailableRecruitingTargets = useDynastyStore(
     (state) => state.clearUnavailableRecruitingTargets,
@@ -301,6 +304,12 @@ export function RecruitingScreen({
               />
             </>
           )
+        ) : mode === 'roster-outlook' ? (
+          <NextSeasonRosterOutlook
+            outlook={deriveNextSeasonRosterOutlook(dynasty)}
+            onSelectPlayer={(playerId) => openPlayerDetails(dynasty.controlledProgramId, playerId)}
+            onSelectRecruit={openRecruitDetails}
+          />
         ) : mode === 'battles' ? (
           <RecruitingBattlesGrid
             cards={deriveBattleCardSummaries(dynasty, board)}

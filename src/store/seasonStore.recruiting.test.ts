@@ -24,7 +24,7 @@ beforeEach(() => {
 })
 
 describe('Dynasty section navigation', () => {
-  it.each(['board', 'battles', 'national'] as const)(
+  it.each(['board', 'roster-outlook', 'battles', 'national'] as const)(
     'opens Recruit Details from %s and returns without resetting its parent mode',
     (mode) => {
       const dynasty = seedRecruitingSession()
@@ -57,7 +57,7 @@ describe('Dynasty section navigation', () => {
     expect(useDynastyStore.getState().recruitingMode).toBe('board')
   })
 
-  it.each(['battles', 'national', 'guide'] as const)(
+  it.each(['roster-outlook', 'battles', 'national', 'guide'] as const)(
     'persists the %s Recruiting mode in transient session state',
     (mode) => {
       seedRecruitingSession()

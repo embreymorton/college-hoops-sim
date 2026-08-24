@@ -15,11 +15,23 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### Next Season Roster Planner — Focused Design — NEXT
 
-Postseason Player Legacy / Tournament Records V1 is complete, user-accepted,
-and frozen. No successor has been explicitly selected; future fresh sessions
-therefore resolve to Path B.
+The Open Planning Checkpoint is closed. **Next Season Roster Planner — Focused
+Design** is the authoritative NEXT, so fresh sessions resolve to Path A. This is
+a design milestone, not an implementation milestone; no implementation contract
+has yet been selected.
+
+Focused design must preserve the selected candidate boundary: a factual,
+read-only Season N+1 roster outlook composed from returning Players, committed
+Recruits, exact positional openings, and departing seniors. Current ratings may
+be shown. It must not forecast Development or project future Rotation, starters,
+minutes, roles, or playing time. Unsigned targets and offers are not future-roster
+facts. Recruiting remains the likely primary home, while exact UX and ownership
+remain unresolved for focused design.
+
+This sequencing update changes no production behavior and does not accept,
+complete, or freeze any feature.
 
 ## Planned and unscheduled
 
