@@ -468,9 +468,14 @@ League
     │   ├── regular-season statistics
     │   └── chronological game log
     └── Career
-        ├── Career Progression (Season/Class/OVR/Dev/PPG/RPG/APG)
-        ├── Career Highs
-        └── Recruiting Origin (Recruits only; omitted cleanly otherwise)
+        ├── Career Honors (shared)
+        ├── Regular Season
+        │   ├── College Career / Career Progression / Career Highs
+        │   └── Recruiting Origin (Recruits only; omitted cleanly otherwise)
+        └── Tournament
+            ├── career performance and achievements
+            ├── Tournament Runs / Career Highs
+            └── collapsed Tournament Game History
 ```
 
 Conference standings, Tournament field rows, Team rosters, national leader rows, Player game-log opponents, and Program links support cross-League Team/Player exploration with context-aware return navigation. These views consume derived regular-season projections and stable Universe identities rather than duplicating statistical state in Zustand.
@@ -575,14 +580,18 @@ overflow local, and no Awards surface creates body-level overflow.
 
 ### Dynasty Record Book — accepted (7C.2)
 
-Records presents one PTS/REB/AST/STL/BLK category control followed by three
-simultaneous leader-style panels: Single Game, Single Season, and Career. Each
+Records presents a stable `Regular Season | Tournament` competition selector
+and one PTS/REB/AST/STL/BLK category control followed by three simultaneous
+leader-style panels. Regular Season uses Single Game, Single Season, and Career;
+Tournament uses Single Game, Tournament Run, and Career. Each
 panel owns a compact Top 10 table with Player, value, Program, and only
 canonically available Season/game/career context; the Season panel uses the
 matching per-game label. Active regular-season Single Game and Career facts
 rank normally; provisional active Season rates carry a concise `LIVE` marker,
 while completed Season entries remain unmarked. Panels compare side by side on desktop and stack on
-mobile. Category state survives Player Details round trips. The League strip
+mobile. The desktop header keeps competition scope centered and the category
+control anchored consistently, so switching scopes does not shift the selector;
+controls stack predictably at narrow width. Category state survives Player Details round trips. The League strip
 may scroll horizontally on narrow screens rather than forcing five tabs into
 the viewport; neither it nor Records may create body-level overflow.
 
@@ -609,6 +618,22 @@ and Recruiting Origin live in Career. Former Player Overview contains Final
 Ratings; its completed college summary, progression, highs, and optional origin
 live in Career. Tabs use local state, default to Overview for a normal entity
 entry, add no route or Zustand state, and preserve existing Back behavior.
+
+### Postseason Player Legacy / Tournament Records V1 — accepted / frozen
+
+Player Details keeps `Overview | Career`; inside Career, Honors remain shared
+above a secondary `Regular Season | Tournament` selector. Regular Season keeps
+the existing college summary, progression, highs, and Recruiting Origin.
+Tournament separates performance from achievement in its career summary,
+emphasizes championship context proportionally, and presents season runs with
+seed, finish, and MOP storytelling. Tournament Career Highs mirror the accepted
+regular-season high treatment. Tournament Game History is secondary detail and
+is collapsed by default.
+
+Active and former Players consume the same stable-ID projection. At desktop and
+approximately 390px, the competition selector and summary remain legible,
+wide run/high/game tables contain their own overflow, and expanding game history
+does not disturb the primary career hierarchy.
 
 ### Recruiting Class Retrospectives — accepted
 

@@ -178,17 +178,17 @@ Team-strength distributions, Recruiting interpretation, accepted statistical
 balance, and downstream OVR meaning. Population-level effects—not only handmade
 unicorn cases—would be required evidence before acceptance.
 
-### Postseason and combined statistics
+### Remaining combined and postseason statistics
 
-- postseason Player totals, averages, leaders, and game logs;
 - combined regular-season + Tournament statistics;
 - postseason Team statistics; and
-- explicit Tournament résumés and signature games.
+- additional postseason Player leader views beyond the accepted Tournament
+  Record Book.
 
-Current Former Player career aggregation, Career Highs, Dynasty Records, and
-Program Player Records are regular-season-only. These future projections should
-reuse retained Tournament `PlayerGameStats` through one coordinated statistical
-scope expansion without changing current regular-season semantics piecemeal.
+Player Tournament careers, game history, career highs, achievements, and the
+Tournament Record Book are implemented. Any remaining expansion should reuse
+retained Tournament `PlayerGameStats` without changing the accepted separation
+between regular-season and Tournament semantics.
 
 ### Additional leader views
 
@@ -219,10 +219,12 @@ not part of this idea.
 - broad Program Alumni browser and global historical Player search;
 - Program rivalries, banners, and history beyond the accepted compact Dynasty
   résumé;
-- signature games and player-facing Tournament career summaries;
+- curated signature-game recognition beyond the accepted Player Tournament
+  career and game-history presentation;
 - polls/rankings and richer résumé context;
 - richer broadcast-style story packages beyond the accepted Yearbooks; and
-- Conference history and Tournament records.
+- Conference history, Program-specific postseason records, and broader
+  historical Tournament exploration.
 
 Season Archive, Records, and Awards & Honors V1 are complete. Defensive awards,
 coach awards, additional All-America/All-Conference teams, specialty awards,
@@ -436,39 +438,61 @@ accepted and frozen and should not be reopened from this single playthrough.
 ## Draft + Professional Outcomes — MAJOR FUTURE SYSTEM / UNSCHEDULED
 
 This is a strongly valued long-term opportunity for extending Player identity
-from **Recruit → college career → Draft prospect → professional outcome**. A
-memorable Player could commit to Pine Valley, develop into a star, set records,
-lead a Tournament run, declare, and become a canonical professional selection.
-Draft history could connect Recruitment, Development, production, Records,
-Tournament moments, and career legacy into one emotional payoff. It is much
-larger than an Alumni presentation enhancement and should receive serious
-neutral consideration when product and architecture make it feasible; that
-interest does not select or schedule it.
+through a broader story chain:
+
+```text
+Recruit → develop → college production/legacy → in-season prospect attention
+→ final projection → departure/declaration → Draft/professional outcome
+→ Alumni/history
+```
+
+A memorable Player could commit to Pine Valley, develop into a star, set
+records, lead a Tournament run, attract professional attention, and receive a
+believable permanent destination. Draft history could connect Recruitment,
+Development, production, Records, Honors, Tournament legacy, and career memory
+into one emotional payoff. This is a product-story direction, not a required
+screen sequence. It is much larger than an Alumni presentation enhancement and
+should receive serious neutral consideration only after a future session
+inspects then-current production code and lifecycle boundaries; that interest
+does not select or schedule it.
 
 The professional world can remain intentionally shallow. Fictional professional
-teams, draft order, selections, destinations, and explicit undrafted outcomes
-could matter without professional Seasons, box scores, roster simulation,
-contracts, salaries, trades, free agency, or user control. The professional
-world evaluates college Players while the user continues coaching college
-basketball.
+teams, Draft order, selections, destinations, explicit undrafted outcomes, and
+perhaps lightweight team preferences could be enough. Professional Seasons,
+box scores, full rosters, contracts, salaries, trades, free agency, and
+professional-team user control are not implied. The value is believable closure
+for college Players while the user continues coaching college basketball, not a
+second full sports simulation.
 
-Future design should separate distinct questions: **eligibility** asks who may
-enter; **declaration/return** asks whether an eligible Player leaves; a **prospect
-profile and professional evaluation** asks how the professional world values the
-same stable Player; and the deterministic **Draft event** creates selection or
-undrafted history. Evaluation should consume Player identity, ability/upside,
-physical profile, production, role, and résumé rather than merely sort college
-OVR. No eligibility, one-and-done, declaration, evaluation, rounds, picks,
-lottery, team-count, or seeded-RNG rules are selected.
+Future design should keep distinct concerns distinct: **eligibility** asks who
+may enter; **declaration/return** asks whether an eligible Player leaves;
+**Professional / Prospect Evaluation** asks how the professional world currently
+values the Player; **Draft Projection / Mock Draft** is an uncertain, changing
+estimate of where that Player may be selected; and the **Completed Draft /
+Professional Outcome** is immutable historical truth once the event occurs.
+Evaluation and projection logic may evolve without rewriting completed Draft
+history. No eligibility, declaration, evaluation, projection, Draft-event, or
+randomness rules are selected.
 
 Stable Player identity is essential: the existing Player ID should connect
 Recruiting origin, college Seasons and statistics, Records/Honors when present,
 declaration, selection, and professional destination rather than creating a
-replacement person. Draft grades, projected ranges, Big Boards, or declaration
+replacement person. Current grades, ranges, Big Boards, or declaration
 likelihood could remain derived projections; completed declaration/return and
-selection outcomes could become canonical historical facts. Exact state
-ownership is deliberately open, but changing projections must remain distinct
-from completed history.
+Draft outcomes may need to become durable historical facts. If Alumni/history
+should later show `Early Mock → Midseason Mock → Final Mock → Actual Draft`, the
+past projection snapshots may also require durable history rather than a single
+current projection. Whether those snapshots deserve canonical ownership is an
+open architecture question, not a selected persistence contract.
+
+A possible first version could limit the professional-outcome process to
+Players whose college eligibility is naturally ending. That would provide
+Draft closure without letting the Draft system itself create roster departures.
+It should be designed as a scalable restriction on the eligible pool, not a
+disposable simplified architecture: later underclass declaration/return could
+expand that pool while retaining the core professional-evaluation, completed-
+outcome, stable-identity, and Draft-history boundaries. Exact eligibility rules
+remain deliberately undefined.
 
 Draft architecture would need to integrate with the accepted Offseason without
 silently restructuring it. Conceptually, eligibility/declaration and a Draft
@@ -477,7 +501,36 @@ lifecycle remains authoritative for roster removal and rollover. Early entry is
 where this becomes a consequential college system: unexpected openings,
 returning-talent loss, late Recruiting needs, continuity, powerhouse turnover,
 low-Prestige rebuild difficulty, league balance, and Next Season roster planning
-all change. A first future version need not include underclass declarations.
+all change. Underclass declaration, withdrawal, and return therefore remain a
+later high-impact lifecycle question rather than a requirement for a first
+graduating-only boundary.
+
+Professional interest could become a Season-long Player storyline rather than
+only an offseason reveal. Possible presentation includes Prospect Watch, a Big
+Board, periodic Mock Drafts, understandable stock movement, a final pre-Draft
+projection, and Draft Night/completed results. Discrete projection updates may
+create more meaningful story beats than a ranking that changes constantly, but
+no cadence is selected. Until early entry actually exists, an official Mock
+Draft must not imply that an underclass Player will depart when the college
+lifecycle cannot execute that outcome. A broader prospect-watch concept could
+remain distinct from a graduating/expected-entrant Mock, or the initial Mock
+could simply be explicitly graduating-only; terminology and UI remain open.
+
+Draft-stock movement should generally respond to changing Player evidence
+rather than arbitrary visible randomness. Candidate evidence includes current
+ability, production, career trajectory, Awards/Honors, physical/profile traits,
+résumé, upside/projection, and the now-accepted Tournament facts—Tournament
+production and runs, MOP, Final Four/championship context, and Tournament career
+history. None is selected as mandatory or assigned a weight. The goal is for
+meaningful movement to be understandable from the college story while retaining
+uncertainty.
+
+Professional evaluation must also avoid becoming a perfect reveal of hidden
+Player truth, especially exact hidden POT or other information the college user
+is not meant to know. Future design must decide what professional evaluators
+conceptually know, what the user can infer, how uncertainty is communicated,
+and how projections remain imperfect without feeling arbitrary. This concern
+must be resolved through code-informed design rather than assumed away.
 
 Possible player-facing surfaces include Declarations, a Draft Big Board, Draft
 Night, complete results, Program Draft History, permanent Player Details history,
@@ -498,12 +551,16 @@ planning are complementary surfaces rather than bundled prerequisites.
 Any investigation must guard the college ecosystem: early-entry frequency,
 elite retention, senior talent, roster and Team OVR distributions, Recruiting
 demand, Program stability, Tournament competitiveness, rebuild difficulty, and
-career length. One safe conceptual progression is professional outcomes for
-completed senior careers, then prospect projections/Big Board, then underclass
-declaration/return, and only later optional Recruiting/Program-world effects.
-These are risk-control stages, not Roadmap phases or an implementation sequence.
-The system succeeds only if Draft outcomes extend believable Player and Program
-stories while the product remains recognizably a college basketball simulation.
+career length. Graduating-only outcomes, in-season prospect presentation,
+underclass declaration/return, and optional Recruiting/Program-world effects
+are separable risk boundaries, not Roadmap phases or a committed implementation
+sequence. Exact eligibility and one-and-done rules, declaration/withdrawal
+behavior, evaluation inputs and weights, Mock cadence and range semantics,
+professional-team count/preferences/AI, Draft order/rounds/picks/lottery,
+historical snapshot ownership, UI IA, Offseason placement, and downstream
+Reputation/Recruiting effects all remain unresolved. The system succeeds only
+if Draft outcomes extend believable Player and Program stories while the
+product remains recognizably a college basketball simulation.
 
 ## Game Simulation V2 — Possession-Based Simulation — FUTURE / UNSCHEDULED
 

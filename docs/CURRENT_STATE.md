@@ -35,7 +35,9 @@ The playable product includes:
   Alumni, Season Preview, and a completed-Season
   first-class League History with Yearbooks, a Dynasty Record Book, and
   finalized national Recruiting class retrospectives, plus deterministic
-  Awards & Honors with archived outcomes and Player Career Honors;
+  Awards & Honors with archived outcomes and Player Career Honors; Player
+  Career now separates regular-season and Tournament history, while the Record
+  Book has an explicitly separate Tournament scope;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
@@ -145,6 +147,10 @@ refactor these systems during unrelated feature work:
   Player Career Highs, Program-attributed Player Records, stable-ID navigation,
   and accepted Team `Overview | History` / Player `Overview | Career`
   information architecture.
+- Postseason Player Legacy / Tournament Records V1's Tournament GP and
+  appearance semantics, stable-ID active/former continuity, active/archive
+  deduplication, separate Career competition contexts, Tournament record
+  definitions, and strict regular-season statistical isolation.
 
 Recruit Talent Profile V2 is implemented, accepted, and frozen production
 behavior. It supersedes V1's independent raw-ceiling roll with the loose
@@ -178,7 +184,7 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT = Postseason Player Legacy / Tournament Records V1.**
+**OPEN PLANNING CHECKPOINT — no NEXT selected.**
 
 Awards & Honors V1 is **COMPLETE / ACCEPTED / FROZEN**. It includes the accepted
 national, Conference, and Tournament honors, deterministic `awards-v1`
@@ -188,18 +194,17 @@ bounded Awards News. It evaluates canonical production with no gameplay effects
 and does not alter any frozen simulation, Recruiting, Tournament, roster,
 Prestige, or Offseason behavior.
 
-The prior Open Planning Checkpoint is resolved by explicit user selection. The
-accepted, implementation-ready design derives sibling Tournament Player-career
-history, game logs, career highs, achievements, and a separate counting-stat
-Tournament Record Book from active/archived Postseason facts and stable Player
-IDs. Existing regular-season Player statistics, Career History, Career Highs,
-and Records semantics remain unchanged; no combined user-facing scope or new
-canonical state is planned. Implementation has not started.
+Postseason Player Legacy / Tournament Records V1 is **COMPLETE / ACCEPTED /
+FROZEN**. Tournament performance now follows stable Player identity across
+active and former Player Details: Career separates Regular Season and
+Tournament contexts, with Tournament production, achievements, season runs,
+career highs, and game history. The Dynasty Record Book likewise exposes a
+separate Tournament scope. These are derived from active/archived Postseason
+facts without changing regular-season statistical semantics or adding
+canonical historical summaries.
 
-Fresh sessions resolve to **Path A — authoritative NEXT selected**. The route
-begins with Codex projection/contracts, lifecycle deduplication, and regression
-tests, followed by Claude Code presentation polish and user validation before
-documentation closure.
+No successor milestone has been explicitly selected. Fresh sessions resolve to
+**Path B** and must perform a neutral Open Planning pass rather than infer NEXT.
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is

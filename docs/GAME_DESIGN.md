@@ -472,10 +472,12 @@ Stable Player identity now extends this regular-season truth across completed
 Dynasty Seasons. A Followed Player resolves as active, former, or unknown.
 Former Player Details aggregates archived regular-season career production and
 shows Final/Peak OVR, Final Ratings, Career Progression, and Recruiting Origin
-when canonical. Postseason/combined career totals, Tournament résumés,
-signature games, broad Alumni browsing, and global historical search remain
-outside the accepted system. Records and Season-grouped Career Honors are
-accepted derived surfaces.
+when canonical. Player Career keeps that Regular Season context intact and adds
+a separate Tournament context for postseason career production, achievements,
+season runs, career highs, game history, and existing MOP association. Combined
+regular-season/Tournament totals, broad Alumni browsing, and global historical
+search remain outside the accepted system. Records and Season-grouped Career
+Honors are accepted derived surfaces.
 
 Season Preview introduces the active Season's cast from existing facts before
 current results create News. It does not change progression, Player ratings,
@@ -538,7 +540,18 @@ Every tournament game is neutral-site. The lower numerical seed is designated ho
 
 Tournament results are final canonical facts and retain both Teams' complete Player box scores. The current round, resolved future participants, remaining or eliminated Programs, tournament completion, and National Champion are derived from the fixed bracket and completed results rather than stored as mutable summaries.
 
-Player Season Stats V0 remains regular-season-only. Postseason `GameResult` values preserve the full `PlayerGameStats` needed for future postseason, combined-season, career, or tournament-record projections, but none of those aggregate systems exists yet.
+Player Season Stats V0 remains regular-season-only. Tournament Player history
+is a sibling derived context over Postseason `GameResult` values: GP and an
+individual Tournament appearance require positive minutes, while a zero-minute
+qualified-roster Player may retain the Program's finish or championship
+association. Starts are not tracked. No combined public statistical scope is
+defined.
+
+The Tournament Record Book covers PTS, REB, AST, STL, and BLK counting totals
+for Single Game, one cumulative Tournament Run, and Tournament Career. It is
+explicitly separate from regular-season Single Game, qualified Single Season,
+and Career records; deeper runs naturally provide more opportunity in the
+Tournament Run grouping.
 
 Postseason Presentation V0 exposes the accepted single-season lifecycle from the completed regular season through National Champion. The Tournament Hub presents the selected field and canonical bracket, focuses the controlled Program's next neutral-site matchup while it is qualified and alive, supports Tournament Quick Sim and legal Rotation changes, and retains completed results for historical box-score inspection.
 

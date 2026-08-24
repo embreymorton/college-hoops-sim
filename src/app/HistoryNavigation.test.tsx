@@ -183,6 +183,7 @@ describe('League History entry and index', () => {
     fireEvent.click(within(table).getAllByRole('button')[0]!)
     expect(screen.getByText(/former player/i)).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: 'Career' }))
+    fireEvent.click(within(screen.getByRole('group', { name: 'Career statistical context' })).getByRole('button', { name: 'Tournament' }))
     expect(screen.getByRole('heading', { name: 'Tournament Legacy' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
 

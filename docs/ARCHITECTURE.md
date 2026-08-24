@@ -342,11 +342,10 @@ The complete 15-game bracket is fixed when Postseason begins. Round-of-16 slots 
 
 Each completed tournament result is canonical and preserves the existing full
 home/away `PlayerGameStats` arrays. Postseason Quick Sim derives the same compact
-whole-game leader projection from that stored result. Regular-season Former
-Player career aggregation is implemented from completed Season archives;
-Postseason Player aggregates, combined regular/postseason career statistics,
-Tournament résumés, and Tournament records are not. Future projections should
-derive them from retained results rather than introduce competing truth.
+whole-game leader projection from that stored result. Dynasty-owned Tournament
+Player-history and Record Book projections derive cross-season production from
+these retained results; no aggregate is copied into canonical state. Combined
+regular/postseason career statistics remain absent.
 
 The application session retains the completed `SeasonState` alongside the active `PostseasonState`; Tournament initialization and progression do not replace or mutate regular-season facts. Zustand coordinates Postseason navigation, Rotation drafts, controlled-game actions, AI round progression, and historical-result context, but delegates bracket participant resolution, ready-game semantics, result recording, elimination, and champion derivation to the public Postseason API. Bracket presentation may query each canonical participant source independently, while simulation continues to require both resolved Programs in designated-home orientation.
 
@@ -734,11 +733,31 @@ are provisional, and duplicate active/archive Season numbers remain excluded.
 
 Both projections expose a `regular-season` game-scope contract and never read
 Postseason results. They add no record registry, achievement state, cache,
-persistence, RNG, or lifecycle ownership. A future Tournament-stat initiative
-can add coordinated competition-source semantics without silently changing the
-accepted regular-season career boundary. Team and Player Details consume these
-read models behind local two-tab presentation state; that IA adds no route or
-Zustand ownership and leaves stable exploration history unchanged.
+persistence, RNG, or lifecycle ownership. Tournament-stat projections remain
+sibling consumers rather than silently changing this accepted regular-season
+career boundary. Team and Player Details consume these read models behind local
+presentation state; that IA adds no route or Zustand ownership and leaves
+stable exploration history unchanged.
+
+Postseason Player Legacy / Tournament Records V1 adds sibling Dynasty read
+models over `PostseasonState` rather than extending those regular-season
+collectors:
+
+```text
+active PostseasonState + CompletedSeasonArchive[].postseason
+  → season-deduplicated Tournament sources
+  → stable-ID Player runs / career summary / game log / career highs
+  → Tournament Single Game / Tournament Run / Career Record Book
+  → Player Details / Records presentation
+```
+
+Completed games alone contribute statistics. Positive minutes define Player GP
+and individual Tournament appearances; a rostered zero-minute Player may still
+retain the Program's finish or championship association. The active source is
+omitted when its Season is already archived, so pre-rollover and archived
+history remain equivalent. Existing stored Awards/Honors supply MOP context.
+No Tournament-history summary, cache, Zustand state, RNG, or persistence layer
+is added, and regular-season and Tournament public scopes remain separate.
 
 ## Awards & Honors ownership
 

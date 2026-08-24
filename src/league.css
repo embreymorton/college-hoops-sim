@@ -697,6 +697,104 @@
   font-size: 0.68rem;
 }
 
+/* Tournament Legacy summary: groups per-game Performance and career
+   Achievement into two visually distinct halves instead of one loose row
+   of numbers, so the card reads as "how he played" vs "what he won". */
+
+.tournament-legacy__summary {
+  display: grid;
+  grid-template-columns: 1.1fr auto 1fr;
+  align-items: center;
+  gap: var(--space-5);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+}
+
+.tournament-legacy__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.tournament-legacy__group .stat-trio__value {
+  font-size: 1.9rem;
+}
+
+.tournament-legacy__group .stat-trio__item {
+  min-width: 2.6rem;
+}
+
+.tournament-legacy__group-label {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.tournament-legacy__divider {
+  align-self: stretch;
+  width: 1px;
+  background: var(--line);
+}
+
+.tournament-legacy__championships .stat-trio__value {
+  color: var(--accent);
+}
+
+.tournament-runs-table tbody tr[data-champion] td:first-child {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.tournament-runs-table__finish {
+  white-space: nowrap;
+}
+
+.tournament-runs-table__mop {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Tournament Game History is the least important layer of the hierarchy
+   (legacy summary -> runs -> highs -> full log), so it collapses by default
+   behind a plain disclosure rather than competing for space up front. */
+
+.tournament-game-history summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.tournament-game-history summary::-webkit-details-marker {
+  display: none;
+}
+
+.tournament-game-history summary::before {
+  content: '▸';
+  display: inline-block;
+  margin-right: var(--space-2);
+  color: var(--ink-1);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.tournament-game-history[open] summary::before {
+  transform: rotate(90deg);
+}
+
+.tournament-game-history .table-scroll {
+  margin-top: var(--space-3);
+}
+
+.game-log-table--dense td,
+.game-log-table--dense th {
+  padding-block: 0.4rem;
+  font-size: 0.82rem;
+}
+
 .game-log-table tbody tr[data-status='win'] td:nth-child(3) {
   color: var(--ink-0);
 }
@@ -858,6 +956,20 @@
 }
 
 @media (max-width: 560px) {
+  .tournament-legacy__summary {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .tournament-legacy__divider {
+    width: auto;
+    height: 1px;
+  }
+
+  .tournament-legacy__group .stat-trio {
+    gap: var(--space-3);
+  }
+
   .program-player-records__header {
     align-items: flex-start;
     flex-direction: column;

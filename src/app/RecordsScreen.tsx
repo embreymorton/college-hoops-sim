@@ -77,8 +77,8 @@ export function RecordsScreen() {
 
   return <section className="records-screen" aria-labelledby="records-heading">
     <header className="records-screen__header">
-      <div><h2 id="records-heading" className="section-title">Dynasty Record Book</h2><p className="section-hint">{scope === 'regular-season' ? 'Regular-season records across your Dynasty, including the current Season.' : 'Tournament records across completed games in your Dynasty.'}</p></div>
-      <div role="group" aria-label="Record scope" className="tab-list">
+      <div className="records-screen__title"><h2 id="records-heading" className="section-title">Dynasty Record Book</h2><p className="section-hint">{scope === 'regular-season' ? 'Regular-season records across your Dynasty, including the current Season.' : 'Tournament records across completed games in your Dynasty.'}</p></div>
+      <div role="group" aria-label="Record scope" className="tab-list records-screen__scope-tabs">
         <button type="button" className="tab" aria-pressed={scope === 'regular-season'} onClick={() => setScope('regular-season')}>Regular Season</button>
         <button type="button" className="tab" aria-pressed={scope === 'tournament'} onClick={() => setScope('tournament')}>Tournament</button>
       </div>

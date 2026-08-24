@@ -184,7 +184,6 @@ describe('Player Details — Career Highs', () => {
     openCareerTab()
 
     const section = screen.getByRole('heading', { name: 'Career Highs' }).closest('section')!
-    expect(within(section as HTMLElement).getByText('Regular Season Only')).toBeInTheDocument()
     expect(within(section as HTMLElement).getByText(/no regular-season appearances yet/i)).toBeInTheDocument()
   })
 
@@ -320,9 +319,9 @@ describe('Player Legacy — Former Player Details', () => {
 
     expect(screen.getByText('Former Player')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Final Ratings' })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'College Career · Regular Season' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'College Career' })).not.toBeInTheDocument()
     openCareerTab()
-    expect(screen.getByRole('heading', { name: 'College Career · Regular Season' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'College Career' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Career Highs' })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Final Ratings' })).not.toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Career Progression' })).toBeInTheDocument()

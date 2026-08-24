@@ -62,6 +62,24 @@ each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
 
+### Postseason Player Legacy / Tournament Records V1 — ACCEPTED / FROZEN
+
+The underlying Tournament history and records data looked correct in review.
+The initial Player Career composition felt too busy, so the accepted polish
+introduced a clean `Regular Season | Tournament` split while leaving Career
+Honors shared. The Tournament summary now distinguishes performance from
+achievement, Tournament Game History is collapsed by default, and championship
+context reads with appropriate emphasis. Records was already effective aside
+from its competition selector shifting horizontally; the accepted layout fixes
+that movement.
+
+Desktop and approximately 390px browser review covered Player Career in both
+contexts, representative Tournament summary/run/high/game data, and Records in
+both Regular Season and Tournament scopes. Final validation passed all 131 test
+files / 1,341 tests, TypeScript, changed-file ESLint, production build, and
+`git diff --check`. The user explicitly accepted the polished result. No new
+WATCH item was opened.
+
 ### Awards & Honors V1 — ACCEPTED / FROZEN
 
 Focused formula investigation and mature-Dynasty validation across Recruiting,
