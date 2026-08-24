@@ -36,8 +36,8 @@ The repository is at an **OPEN PLANNING CHECKPOINT — no NEXT selected**.
    static Prestige, Rotation, Team Strength, and Game Simulation are not active
    calibration projects.
 
-Awards & Honors and other planned/optional ideas are not NEXT. This priority
-list guides evidence gathering; it does not select a successor.
+Awards & Honors is accepted/frozen; other optional ideas are not NEXT. This
+priority list guides evidence gathering; it does not select a successor.
 
 ## Current Multi-Season Gameplay Evidence
 
@@ -61,6 +61,22 @@ completed Seasons. Continue observing this compound loop rather than treating
 each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
+
+### Awards & Honors V1 — ACCEPTED / FROZEN
+
+Focused formula investigation and mature-Dynasty validation across Recruiting,
+Development, rollover, and historical Player lifecycles supported the accepted
+Candidate C production model and removal of the unnecessary Availability
+Multiplier. Deterministic replay, iteration-order independence, archive
+durability, live-projection-to-persistence equality, reveal timing, and News
+deduplication were verified.
+
+Functional and structural UI validation covered the Final Four announcement,
+pending/resolved MOP, dedicated Awards navigation, Conference switching,
+condensed Yearbooks, and active/former Player Career Honors. Desktop and 390px
+responsive review, bounded visual polish, and final user review completed the
+acceptance sequence. Existing unrelated suite failures were not classified as
+Awards defects. Awards opened no new WATCH item.
 
 ### Program Trajectory V1 — ACCEPTED / FROZEN
 

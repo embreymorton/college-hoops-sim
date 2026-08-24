@@ -14,7 +14,8 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
   Season Yearbooks and a Dynasty Record Book covering regular-season Single
   Game, Single Season, and Career leaders, plus finalized national Recruiting
   class retrospectives connecting signees' entry evaluations to later outcomes,
-  all derived from canonical facts.
+  deterministic national/Conference/Tournament Awards, and Season-grouped
+  Player Career Honors, all derived from canonical facts.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, unified results-only résumé seeding, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
 - **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, then use the dedicated Hybrid Offseason Timeline to progress through Late Recruiting, Recruiting Class, Departures, Development, Roster Review, Ready for Season, and the next Season.
 - **Player development stories:** ordinary Development V1 is supplemented by
@@ -33,8 +34,8 @@ Season Yearbooks, Program Legacy and Program Player Records on Team Details,
 Followed Former Players, Historical Player Details, regular-season career
 aggregation, Career Progression, and Career Highs. Intentionally
 deferred systems include persistence/save-load, broader historical Team/game
-details, postseason or combined career aggregation, awards, transfers,
-injuries, staff, rankings, and deeper offseason decisions. The existing
+details, postseason or combined career aggregation, additional award families,
+transfers, injuries, staff, rankings, and deeper offseason decisions. The existing
 cross-season lifecycle is presented through a dedicated six-stage Offseason
 experience from Late Recruiting through the next-Season handoff.
 

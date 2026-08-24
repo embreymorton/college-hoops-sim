@@ -543,6 +543,36 @@ navigation through the existing exploration stack, not a season-specific
 historical Player route. The archived Tournament shows the complete bracket but
 offers no active simulation or game-detail controls.
 
+Completed Yearbooks include a deliberately condensed Awards summary: the three
+national major honors and compact First Team All-America. Full Conference
+Awards remain on the dedicated live Awards surface rather than dominating the
+historical Season recap.
+
+### Awards & Honors — accepted / frozen (7C.3)
+
+At the Final Four / semifinal reveal boundary, the Tournament Hub adds one
+compact non-spoiler announcement with an optional controlled-Program honor
+count and `View Awards & Honors` action. Opening Awards is optional and never
+gates Tournament progression. The destination remains revisitable through the
+championship; Tournament MOP intentionally reads `Awarded after the National
+Championship` until the title game is complete. The championship recap then
+shows the resolved MOP with compact Tournament-only production.
+
+The dedicated Awards surface uses a compact Season/page heading, three national
+major-honor cards with relevant PPG/RPG/APG context, Stat-Leaders-style ranked
+tables for First Team All-America and First Team All-Conference, and the
+established four-Conference tab pattern defaulting to the controlled Program's
+Conference. Major Conference recipients also show concise Season production.
+Controlled-Program recipients carry the existing textual `You` marker in their
+natural honor location; there is no duplicate Your Program section.
+
+Player Details `Career` includes every earned honor grouped newest-first by
+Season with Conference context where relevant, for active and former Players.
+Awards News is bounded to one non-spoiler Season Awards family at the Final Four
+checkpoint and one Tournament MOP family after championship completion. At
+approximately 390px cards stack, Conference tabs and wide ranked tables keep
+overflow local, and no Awards surface creates body-level overflow.
+
 ### Dynasty Record Book — accepted (7C.2)
 
 Records presents one PTS/REB/AST/STL/BLK category control followed by three

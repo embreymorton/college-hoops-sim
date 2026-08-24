@@ -437,7 +437,7 @@ existing pure Dynasty operations. Exploration and stage review only change
 navigation/presentation state; the route-independent Offseason fallback keeps
 the current action recoverable without executing progression.
 
-`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, Program Legacy/Trajectory, the Season Yearbook, and the 7C.2 Record Book are pure projections over canonical history; awards are not implemented. Program Trajectory aggregates any stable Program ID across completed archives for Team Details, deriving archived Team OVR from the archived Team + Rotation through existing Team Strength and reusing canonical record, Conference-standings, and Tournament-outcome projections. It joins only the finalized class with the displayed Season's target number from `completedRecruitingHistory`. It stores no Program-history facts or trajectory cache, mutates no archive, and does not infer historical Prestige.
+`CompletedSeasonArchive` stores the season number plus complete cloned `SeasonState` and `PostseasonState` values. Their schedules, fields, bracket sources, Teams, Rotations, `GameResult` values, and complete home/away `PlayerGameStats` rows remain canonical historical source facts. Player career presentation, Program Legacy/Trajectory, the Season Yearbook, and the Record Book are pure projections over canonical history; Awards additionally persist only their judged semantic outcomes under a rules version, as defined below. Program Trajectory aggregates any stable Program ID across completed archives for Team Details, deriving archived Team OVR from the archived Team + Rotation through existing Team Strength and reusing canonical record, Conference-standings, and Tournament-outcome projections. It joins only the finalized class with the displayed Season's target number from `completedRecruitingHistory`. It stores no Program-history facts or trajectory cache, mutates no archive, and does not infer historical Prestige.
 
 Stable identity does not mean shared mutable state. A returning Player may appear as `playerId X`, JR, 84 OVR in the archived Season and as the same `playerId X`, SR, 87 OVR in offseason. Development creates a new Player and attributes object, so the archived version remains JR and 84 OVR. Returning identity preserves ID, first and last name, height, position, and Potential; class and attributes may change, and OVR changes only through the existing derived calculation.
 
@@ -739,6 +739,29 @@ can add coordinated competition-source semantics without silently changing the
 accepted regular-season career boundary. Team and Player Details consume these
 read models behind local two-tab presentation state; that IA adds no route or
 Zustand ownership and leaves stable exploration history unchanged.
+
+## Awards & Honors ownership
+
+Awards are deterministic judged Season outcomes owned by `src/dynasty`. The
+accepted `awards-v1` evaluator consumes canonical regular-season `GameResult`
+history and Program records; Tournament MOP consumes canonical Tournament
+results. Live projections and archive creation call the same evaluator, so the
+announced outcome cannot drift from eventual persistence.
+
+`CompletedSeasonArchive.awards` stores the rules version and semantic honor
+records keyed by stable Player, Program, and optional Conference identity. It
+does not duplicate Player snapshots, statistics, names, or display copy.
+`beginOffseason()` remains the single canonical persistence boundary. Nothing
+is persisted at the Final Four reveal or championship completion; those live
+surfaces remain pure projections. Historical resolution composes stored honor
+identity with the archived Season and Universe, allowing honors to survive
+graduation and later Seasons.
+
+Awards presentation statistics are derived from the same canonical Season or
+Tournament aggregation used elsewhere. Awards add no state to Season,
+Postseason, or Zustand and have no dependency back into simulation, Team
+Strength, Recruiting, Development, roster lifecycle, Prestige, Tournament
+progression, or Offseason behavior.
 
 ## Team Season Stats and exploration projections
 

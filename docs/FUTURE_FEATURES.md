@@ -10,11 +10,7 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 ## Selected elsewhere
 
-- **History & Recognition:** Awards & Honors remains PLANNED under Phase 7C in
-  `ROADMAP.md`; completed Yearbooks, Records, and Recruiting Class
-  Retrospectives are production capabilities.
-
-The Roadmap owns its order and scope. It is not specified again here.
+No future feature is currently selected. The Roadmap owns order and scope.
 
 ## Recruiting depth
 
@@ -228,8 +224,10 @@ not part of this idea.
 - richer broadcast-style story packages beyond the accepted Yearbooks; and
 - Conference history and Tournament records.
 
-The initial Season Archive and Records are complete; Awards remains PLANNED in
-Phase 7C. The ideas above are extensions, not expanded 7C scope by default.
+Season Archive, Records, and Awards & Honors V1 are complete. Defensive awards,
+coach awards, additional All-America/All-Conference teams, specialty awards,
+and the ideas above remain optional extensions, not expanded 7C scope or an
+implied NEXT.
 
 ### Program signature games and memorable moments
 

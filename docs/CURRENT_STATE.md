@@ -34,7 +34,8 @@ The playable product includes:
   Trajectories and Program Player Records, Player Career Highs, Following, News,
   Alumni, Season Preview, and a completed-Season
   first-class League History with Yearbooks, a Dynasty Record Book, and
-  finalized national Recruiting class retrospectives;
+  finalized national Recruiting class retrospectives, plus deterministic
+  Awards & Honors with archived outcomes and Player Career Honors;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
@@ -177,22 +178,19 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT — 7C.3 Awards & Honors V1.**
+**OPEN PLANNING CHECKPOINT — no NEXT selected.**
 
-Program Trajectory V1 is **COMPLETE / ACCEPTED / FROZEN**. Team Details retains
-the Program Legacy résumé and Program Player Records while showing every
-completed Season newest-first with archived Team OVR, record, Conference place,
-Tournament seed/finish, and incoming-class signee count/average OVR. Missing
-incoming-class history remains distinct from a finalized zero-signee class.
-Trajectory is a pure projection over canonical completed Season and Recruiting
-history; it adds no mutable state, infers no historical Prestige, and changes no
-Recruiting, Team Strength, competition, or lifecycle semantics.
+Awards & Honors V1 is **COMPLETE / ACCEPTED / FROZEN**. It includes the accepted
+national, Conference, and Tournament honors, deterministic `awards-v1`
+evaluation, archive persistence, Final Four reveal, dedicated Awards surface,
+championship MOP context, condensed Yearbook summary, Player Career Honors, and
+bounded Awards News. It evaluates canonical production with no gameplay effects
+and does not alter any frozen simulation, Recruiting, Tournament, roster,
+Prestige, or Offseason behavior.
 
-Fresh sessions resolve to **Path A**: proceed with Awards & Honors V1 as the
-explicitly selected milestone. The immediate next action is a focused
-design/tuning pass before implementation. No award formula, weighting model,
-optional honor, UI contract, or implementation detail is selected yet. Existing
-frozen simulation and gameplay boundaries remain unchanged.
+No successor milestone has been explicitly selected. Fresh sessions resolve to
+**Path B** and must perform a neutral Open Planning pass rather than infer NEXT
+from Roadmap order, Future Features, or recently completed work.
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is
@@ -218,10 +216,9 @@ Exact Recruit OVR, POT, and individual ratings remain current production
 visibility. Scouting grades, ranges, estimates, hidden information, and other
 uncertainty remain future-only.
 
-`7C.3 Awards & Honors V1` is authoritative **NEXT**, but its focused
-design/tuning pass has not begun and implementation is not authorized yet.
-Player Identity work remains parked unless new evidence deliberately reopens
-it. Dynamic Prestige remains rejected; the hierarchy/compression investigation
+Awards & Honors V1 is accepted production behavior, not open work. Player
+Identity work remains parked unless new evidence deliberately reopens it.
+Dynamic Prestige remains rejected; the hierarchy/compression investigation
 remains decision-complete.
 
 ## Fresh-session rules

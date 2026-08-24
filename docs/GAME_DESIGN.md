@@ -464,7 +464,7 @@ gamesPlayed = completed games where Player minutes > 0
 
 Game logs retain Schedule chronology, opponent, home/away context, final score, W/L result, and the stored traditional box-score line. This supports performance history without inventing Season-level events or new randomness.
 
-Current outputs are limited to the traditional facts already produced by Player Box Scores V0: games played; minutes; points; rebounds; assists; steals; blocks; turnovers; field goals, three-pointers, and free throws made/attempted; per-game versions of minutes and the counting stats; and aggregate shooting percentages. These facts now power national Player leaders, Team/Player Details, Team leaders, and Player game logs. Optional awards, rankings, advanced metrics, and historical depth belong in `FUTURE_FEATURES.md` rather than accepted game rules.
+Current outputs are limited to the traditional facts already produced by Player Box Scores V0: games played; minutes; points; rebounds; assists; steals; blocks; turnovers; field goals, three-pointers, and free throws made/attempted; per-game versions of minutes and the counting stats; and aggregate shooting percentages. These facts now power national Player leaders, Team/Player Details, Team leaders, Player game logs, and the separately accepted Awards model. Rankings, advanced metrics, and additional statistical depth belong in `FUTURE_FEATURES.md` rather than accepted game rules.
 
 Acceptance inspection produced a plausible scoring hierarchy and believable game-to-game variance. Those observations are not calibration targets and require no simulation tuning.
 
@@ -472,13 +472,46 @@ Stable Player identity now extends this regular-season truth across completed
 Dynasty Seasons. A Followed Player resolves as active, former, or unknown.
 Former Player Details aggregates archived regular-season career production and
 shows Final/Peak OVR, Final Ratings, Career Progression, and Recruiting Origin
-when canonical. Postseason/combined career totals, Tournament résumés, records,
-Awards, signature games, broad Alumni browsing, and global historical search
-remain outside the accepted system.
+when canonical. Postseason/combined career totals, Tournament résumés,
+signature games, broad Alumni browsing, and global historical search remain
+outside the accepted system. Records and Season-grouped Career Honors are
+accepted derived surfaces.
 
 Season Preview introduces the active Season's cast from existing facts before
 current results create News. It does not change progression, Player ratings,
 Recruiting, or simulation and stores no Preview history.
+
+## Accepted Awards & Honors V1
+
+Awards & Honors V1 recognizes National Player of the Year, National Freshman
+of the Year, a five-Player First Team All-America, Conference Player and
+Freshman of the Year, a five-Player First Team All-Conference in each
+Conference, and Tournament Most Outstanding Player. Honor teams have no
+positional quotas. Defensive awards, coach awards, additional honor teams, and
+specialty awards remain deferred.
+
+Regular-season honors use deterministic `awards-v1` evaluation:
+
+```text
+ProductionScorePerGame =
+  (PTS + 0.70×REB + 0.70×AST + 1.50×STL + 1.50×BLK
+   - 0.70×TOV - 0.70×missedFG - 0.30×missedFT) / GP
+
+TeamBonus = 2.00 × ProgramWinPercentage
+AwardScore = ProductionScorePerGame + TeamBonus
+```
+
+Eligibility requires positive-minute appearances in at least half of the
+Program's regular-season games and at least 12.0 MPG; freshman honors also
+require `classYear === 'FR'`. National, Conference, and freshman honors use the
+same absolute model. OVR, POT, ratings, Prestige, Recruiting status, and
+Tournament performance do not influence regular-season Awards.
+
+Tournament MOP is Champion-only and uses Tournament performance only. An
+eligible Player must record positive minutes in at least three Tournament games
+including the championship. Selection uses the same individual production
+coefficients without Team Bonus and deterministic tie-breaking. Awards evaluate
+existing outcomes and have no gameplay effects.
 
 ## Accepted Postseason V0
 

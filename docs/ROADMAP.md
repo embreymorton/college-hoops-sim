@@ -15,21 +15,12 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### NEXT — 7C.3 Awards & Honors V1
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Awards & Honors V1 is the explicitly selected next milestone. Its immediate
-next action is a focused design/tuning pass before implementation. No award
-formula, weighting model, optional honor, UI contract, or implementation detail
-is selected yet. Existing frozen simulation and gameplay boundaries remain
-unchanged.
+Awards & Honors V1 is complete, user-accepted, and frozen. No successor has
+been explicitly selected; future fresh sessions therefore resolve to Path B.
 
 ## Planned and unscheduled
-
-### NEXT — remainder of Phase 7C
-
-1. **7C.3 — Awards & Honors V1** — begin with a focused design/tuning pass
-   before implementation; no formula, weighting model, optional honor, UI
-   contract, or implementation detail is selected yet.
 
 ### Future Phase 8 work
 
@@ -52,6 +43,18 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Awards & Honors V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added deterministic national Player/Freshman of the Year, five-Player First
+  Team All-America, Conference Player/Freshman of the Year, five-Player First
+  Team All-Conference per Conference, and Champion-only Tournament MOP.
+- Added a non-spoiler Final Four announcement, optional dedicated Awards
+  experience, championship MOP context, condensed Yearbook summary, Player
+  Career Honors, and two bounded News story families.
+- Reused canonical regular-season/Tournament production, persisted only judged
+  semantic outcomes at the existing archive boundary, added no gameplay
+  effects, and returned the Roadmap to an Open Planning Checkpoint.
 
 ### Program Trajectory V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -260,7 +263,7 @@ fills a legal reviewable draft, and leaves Apply as the only commit boundary.
 Phase 7B added visibility/read models only: no parallel history, Preview/News
 persistence, RNG, or simulation changes.
 
-### Phase 7C — History & Recognition V1 — IN PROGRESS
+### Phase 7C — History & Recognition V1 — COMPLETE / ACCEPTED / FROZEN
 
 - **7C.1 Season Archive / Yearbook — COMPLETE / ACCEPTED / FROZEN:** added a
   League-owned, completed-Seasons-only History destination with newest-first
@@ -270,11 +273,12 @@ persistence, RNG, or simulation changes.
   completed-regular-season Single Game, Season, and Career Top 10 records under
   the first-class League History tab, plus strict new Single Game record stories
   in active-Season News after completed history exists.
-- **7C.3 Awards & Honors V1 — NEXT:** focused design/tuning pass before
-  implementation; design and implementation details remain unselected.
+- **7C.3 Awards & Honors V1 — COMPLETE / ACCEPTED / FROZEN:** added the accepted
+  bounded national, Conference, and Tournament honors; deterministic evaluation;
+  archive durability; optional Tournament-era reveal; and historical surfaces.
 
-7C.1 and 7C.2 derive their presentation from `CompletedSeasonArchive` through
-pure projections and transient/local UI state. They add no copied historical
+Phase 7C derives its historical presentation from `CompletedSeasonArchive` through
+pure projections and transient/local UI state. It adds no copied historical
 summaries or records, canonical mutation, RNG, or simulation behavior.
 
 ### Phase 7D — Recruit Attachment V1 — COMPLETE / ACCEPTED / FROZEN
