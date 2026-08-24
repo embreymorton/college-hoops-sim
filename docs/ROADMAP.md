@@ -17,10 +17,10 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 is
-complete, accepted, and frozen. No successor was selected at closure. Awards &
-Honors remains PLANNED, while Recruit V2 six-tier semantic alignment remains
-deferred and unscheduled. Neither is NEXT by order, proximity, or interest.
+Program Trajectory V1 is complete, accepted, and frozen. No successor was
+selected at closure. Awards & Honors remains PLANNED, while Recruit V2 six-tier
+semantic alignment remains deferred and unscheduled. Neither is NEXT by order,
+proximity, or interest.
 
 ## Planned and unscheduled
 
@@ -50,6 +50,16 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Program Trajectory V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Replaced Team Details' five-Season trail with a newest-first trajectory across
+  every completed Season, connecting archived Team strength, record, Conference
+  place, Tournament seed/finish, and incoming-class ability.
+- Preserved the Program Legacy résumé and Program Player Records while keeping
+  the presentation compact across desktop and narrow screens.
+- Added no mutable Program history or trajectory state and changed no Prestige,
+  Recruiting, Team Strength, competition, or Dynasty lifecycle mechanics.
 
 ### Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 — COMPLETE / ACCEPTED / FROZEN
 
@@ -145,8 +155,9 @@ fills a legal reviewable draft, and leaves Apply as the only commit boundary.
 
 ### Program Legacy V1 — COMPLETE / ACCEPTED / FROZEN
 
-- Team Details now gives every Program a compact Dynasty résumé and five-Season
-  recent trail derived from completed regular-season and Tournament archives.
+- Team Details gives every Program a compact Dynasty résumé derived from
+  completed regular-season and Tournament archives; Program Trajectory V1 later
+  expanded its Season trail to full history.
 - Programs without a Tournament appearance receive an aggregate empty-state
   label while individual missed Seasons retain their canonical outcome.
 - Added no mutable Program history, simulation behavior, or Prestige mechanics,

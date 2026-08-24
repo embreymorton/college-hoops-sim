@@ -62,72 +62,28 @@ each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
 
-### Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 — ACCEPTED / FROZEN
+### Program Trajectory V1 — ACCEPTED / FROZEN
 
-Production-faithful paired validation used 10 deterministic Dynasty seeds, 10
-complete Seasons per seed, and mature Seasons 7–10.
-
-#### Frequency and class representation
-
-- 2,227 eligible mature opportunities;
-- `4.45%` observed roll against the configured `4.5%`;
-- 53 official events, or `1.77` per league offseason;
-- `2.38%` official rate among eligible opportunities; and
-- `20/17/16` events across FR→SO/SO→JR/JR→SR.
-
-The finite sample's freak tail contained one +17, two +18, and two +19 events;
-the deterministic +20 path remains test-reachable. No sampled +20 is consistent
-with “possible but legendary,” not evidence that the path is absent.
-
-#### Player stories and roster impact
-
-Accepted event stories distributed as:
-
-- late bloomer `24.53%`;
-- project → contributor `45.28%`;
-- project → star `22.64%`; and
-- star → superstar `7.55%`.
-
-Average roster-rank improvement was `5.92`; `64.15%` moved from outside the
-rotation to the top eight and top five, `58.49%` reached the top three, and
-`22.64%` became their Program's #1 Player. These measures established narrative
-consequence beyond aggregate OVR movement.
-
-#### Ecosystem safety
-
-| Metric | Baseline | Explosions |
-| --- | ---: | ---: |
-| Mature mean Player OVR | 75.11 | 75.19 |
-| Mature Player OVR SD | 7.47 | 7.48 |
-| Players 95+ | 25 | 31 |
-| Players 98+ / 99 | 2 / 2 | 2 / 2 |
-| Mean Team OVR | 78.22 | 78.31 |
-| Team OVR SD | 3.90 | 3.87 |
-| 90+ Program-seasons | 0 | 0 |
-| Strongest Program | 86.33 | 86.33 |
-
-There was no broad inflation, stronger maximum Team, additional 98/99 Player,
-or meaningful elite-Program amplification. The closed hierarchy/compression
-investigation remains closed.
-
-#### Manual acceptance
-
-The user response was strongly positive: the Development presentation and
-career stories felt fun; Work Ethic and Explosion independence produced clear
-stories; and the final Player Details placement and event-backed hero treatment
-were accepted. A deterministic seed made targeted UI reproduction practical.
-Naturally failing to encounter a controlled-Program Explosion over several
-Seasons felt appropriate because the event is meant to remain rare. Production
-frequency was not inflated for manual visibility.
+The user manually reviewed and accepted the full-history Program Trajectory on
+Team Details for desktop and narrow presentation. The factual Season rows made
+long-term Program movement legible while preserving the existing résumé,
+Program Player Records, and restrained Team Details hierarchy. Acceptance covers
+the distinction between unavailable incoming-class history and a genuine
+zero-signee class. No subjective progress grade or change to Prestige,
+Recruiting, Team Strength, competition, or Dynasty lifecycle behavior was
+needed.
 
 ## Live WATCH Items
 
 ### Low-Prestige rebuild and structural progress
 
 Pine Valley suggests that the long rebuild can be engaging, but continue
-observing whether structural progress feels legible and whether low-Prestige
-Programs can build satisfying arcs without making static Prestige irrelevant.
-This does not reopen the decision-complete hierarchy investigation by itself.
+observing whether low-Prestige Programs can build satisfying arcs without making
+static Prestige irrelevant. Program Trajectory now provides a better factual
+cross-Season view of Team strength, results, and incoming classes, resolving the
+immediate visibility gap; it does not prove that the underlying rebuild curve is
+perfect. This WATCH remains live and does not reopen the decision-complete
+hierarchy investigation by itself.
 
 ### Elite Recruit Offer coverage
 

@@ -6,6 +6,8 @@ import {
   TOURNAMENT_ROUNDS,
 } from '../postseason'
 import { deriveProgramRecord } from '../season'
+import { calculateOverall, calculateTeamStrength } from '../engine'
+import { deriveConferenceStandings } from '../season'
 import {
   autoFinalizeRecruiting,
   beginOffseason,
@@ -61,7 +63,7 @@ describe('deriveProgramLegacy', () => {
       runnerUpFinishes: 0,
       bestTournamentOutcome: null,
       bestRegularSeason: null,
-      recentSeasons: [],
+      trajectorySeasons: [],
     })
   })
 
@@ -73,12 +75,12 @@ describe('deriveProgramLegacy', () => {
     const other = deriveProgramLegacy(canonical, otherId)
 
     expect(controlled.completedSeasons).toBe(1)
-    expect(controlled.recentSeasons[0]!.record).toEqual(
+    expect(controlled.trajectorySeasons[0]!.record).toEqual(
       deriveProgramRecord(canonical.history[0]!.season, canonical.controlledProgramId),
     )
     expect(other.completedSeasons).toBe(1)
     expect(other.programId).toBe(otherId)
-    expect(other.recentSeasons[0]!.record).toEqual(
+    expect(other.trajectorySeasons[0]!.record).toEqual(
       deriveProgramRecord(canonical.history[0]!.season, otherId),
     )
   })
@@ -115,7 +117,7 @@ describe('deriveProgramLegacy', () => {
     })
   })
 
-  it('aggregates records and caps recent Seasons newest-first', () => {
+  it('aggregates records and returns every Season newest-first', () => {
     const source = canonical.history[0]!
     const history = Array.from({ length: 7 }, (_, index) => ({
       ...structuredClone(source),
@@ -128,7 +130,7 @@ describe('deriveProgramLegacy', () => {
     expect(legacy.completedSeasons).toBe(7)
     expect(legacy.wins).toBe(record.wins * 7)
     expect(legacy.losses).toBe(record.losses * 7)
-    expect(legacy.recentSeasons.map(({ seasonNumber }) => seasonNumber)).toEqual([7, 6, 5, 4, 3])
+    expect(legacy.trajectorySeasons.map(({ seasonNumber }) => seasonNumber)).toEqual([7, 6, 5, 4, 3, 2, 1])
     expect(legacy.bestRegularSeason?.seasonNumber).toBe(7)
   })
 
@@ -140,7 +142,81 @@ describe('deriveProgramLegacy', () => {
 
     const legacy = deriveProgramLegacy(dynasty, dynasty.controlledProgramId)
     expect(legacy.completedSeasons).toBe(2)
-    expect(legacy.recentSeasons.map(({ seasonNumber }) => seasonNumber)).toEqual([2, 1])
+    expect(legacy.trajectorySeasons.map(({ seasonNumber }) => seasonNumber)).toEqual([2, 1])
     expect(legacy.wins + legacy.losses).toBe(48)
+    expect(legacy.trajectorySeasons[1]!.incomingClass).toBeNull()
+    const incoming = legacy.trajectorySeasons[0]!.incomingClass
+    expect(incoming).not.toBeNull()
+    const completedClass = dynasty.completedRecruitingHistory.find(
+      ({ targetSeasonNumber }) => targetSeasonNumber === 2,
+    )!
+    const signedRecruits = Object.values(completedClass.recruitingState.commitmentsByPlayerId)
+      .filter(({ programId }) => programId === dynasty.controlledProgramId)
+      .map(({ playerId }) => completedClass.recruitingState.recruits.find(
+        ({ player }) => player.id === playerId,
+      )!)
+    expect(incoming).toEqual({
+      signeeCount: signedRecruits.length,
+      averageOverall: signedRecruits.reduce(
+        (total, recruit) => total + calculateOverall(recruit.player),
+        0,
+      ) / signedRecruits.length,
+    })
   }, 30000)
+
+  it('uses canonical archived Team Strength, Conference standings, and Tournament seed', () => {
+    const programId = canonical.controlledProgramId
+    const archive = canonical.history[0]!
+    const trajectory = deriveProgramLegacy(canonical, programId).trajectorySeasons[0]!
+    const programState = archive.season.programStates[programId]!
+    const conferenceId = canonical.universe.programs.find(({ id }) => id === programId)!.conferenceId
+
+    expect(trajectory.teamOverall).toBe(
+      calculateTeamStrength(programState.team, programState.rotation).overall,
+    )
+    expect(trajectory.conferencePlace).toBe(
+      deriveConferenceStandings(canonical.universe, archive.season, conferenceId)
+        .findIndex(({ programId: candidateId }) => candidateId === programId) + 1,
+    )
+    if (trajectory.tournamentOutcome.status !== 'did-not-qualify') {
+      expect(trajectory.tournamentOutcome.seed).toBe(
+        archive.postseason.field.find(({ programId: candidateId }) => candidateId === programId)!.seed,
+      )
+    }
+  })
+
+  it('distinguishes unavailable incoming history from a finalized zero-signee class', () => {
+    const programId = canonical.controlledProgramId
+    const targetSeasonNumber = canonical.history[0]!.seasonNumber
+    const sourceClass = canonical.completedRecruitingHistory[0]!
+    const completedClass = {
+      ...structuredClone(sourceClass),
+      targetSeasonNumber,
+      recruitingState: {
+        ...structuredClone(sourceClass.recruitingState),
+        targetSeasonNumber,
+        commitmentsByPlayerId: Object.fromEntries(
+          Object.entries(sourceClass.recruitingState.commitmentsByPlayerId)
+        .filter(([, commitment]) => commitment.programId !== programId),
+        ),
+      },
+    }
+
+    expect(deriveProgramLegacy(canonical, programId).trajectorySeasons[0]!.incomingClass).toBeNull()
+    expect(deriveProgramLegacy({
+      ...canonical,
+      completedRecruitingHistory: [completedClass],
+    }, programId).trajectorySeasons[0]!.incomingClass).toEqual({
+      signeeCount: 0,
+      averageOverall: null,
+    })
+  })
+
+  it('fails when finalized Recruiting history ambiguously targets one Season', () => {
+    const completedClass = canonical.completedRecruitingHistory[0]!
+    expect(() => deriveProgramLegacy({
+      ...canonical,
+      completedRecruitingHistory: [completedClass, structuredClone(completedClass)],
+    }, canonical.controlledProgramId)).toThrow(/Multiple finalized Recruiting classes/)
+  })
 })

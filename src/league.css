@@ -279,7 +279,8 @@
 
 .program-legacy__resume dt,
 .program-legacy__highlights span,
-.program-legacy__recent h3 {
+.program-legacy__trajectory h3,
+.program-legacy__trajectory-header {
   font-family: var(--font-display);
   font-size: 0.64rem;
   font-weight: 600;
@@ -296,7 +297,7 @@
 }
 
 .program-legacy__highlights,
-.program-legacy__recent {
+.program-legacy__trajectory {
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
   background: var(--surface-1);
@@ -305,6 +306,10 @@
 .program-legacy__highlights {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.program-legacy__trajectory {
+  grid-column: 1 / -1;
 }
 
 .program-legacy__highlights p {
@@ -318,16 +323,25 @@
   border-left: 1px solid var(--line);
 }
 
-.program-legacy__recent h3 {
+.program-legacy__trajectory h3 {
   margin: 0;
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--line);
 }
 
+.program-legacy__trajectory-header,
 .program-legacy__season {
   display: grid;
-  grid-template-columns: 5.5rem 3.5rem minmax(0, 1fr);
+  grid-template-columns: 4.5rem 5rem 4rem 5.5rem minmax(10rem, 1fr) minmax(8.5rem, 1fr);
   gap: var(--space-3);
+}
+
+.program-legacy__trajectory-header {
+  padding: 0.45rem var(--space-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.program-legacy__season {
   padding: 0.5rem var(--space-4);
   border-bottom: 1px solid var(--line);
   font-size: 0.78rem;
@@ -337,8 +351,13 @@
   border-bottom: 0;
 }
 
-.program-legacy__season span:last-child {
+.program-legacy__season > span:nth-child(5),
+.program-legacy__season > span:nth-child(6) {
   color: var(--ink-1);
+}
+
+.program-legacy__mobile-label {
+  display: none;
 }
 
 .program-legacy__champion,
@@ -803,6 +822,28 @@
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  .program-legacy__trajectory-header {
+    display: none;
+  }
+
+  .program-legacy__season {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.35rem var(--space-2);
+    padding-block: var(--space-3);
+  }
+
+  .program-legacy__season > span:nth-child(5),
+  .program-legacy__season > span:nth-child(6) {
+    grid-column: span 3;
+  }
+
+  .program-legacy__mobile-label {
+    display: inline;
+    color: var(--ink-1);
+    font-size: 0.68rem;
+    font-weight: 500;
+  }
+
   .player-career-highs {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -871,11 +912,6 @@
   .program-legacy__highlights p + p {
     border-top: 1px solid var(--line);
     border-left: 0;
-  }
-
-  .program-legacy__season {
-    grid-template-columns: 5.25rem 3rem minmax(0, 1fr);
-    gap: var(--space-2);
   }
 
   .league-teams-directory__row {

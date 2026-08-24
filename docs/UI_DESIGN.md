@@ -459,7 +459,7 @@ League
 │   │   ├── Team leaders
 │   │   └── roster / Player stats
 │   └── History
-│       ├── Dynasty History / recent completed Seasons
+│       ├── Dynasty History / full Program Trajectory
 │       └── Program Player Records
 └── Player Details
     ├── identity and OVR/POT summary
@@ -475,18 +475,20 @@ League
 
 Conference standings, Tournament field rows, Team rosters, national leader rows, Player game-log opponents, and Program links support cross-League Team/Player exploration with context-aware return navigation. These views consume derived regular-season projections and stable Universe identities rather than duplicating statistical state in Zustand.
 
-Program Legacy V1 extends Team Details for every Program with one compact
-`Dynasty History` section. A five-metric résumé, best Tournament and regular-
-season results, and the five newest completed Seasons derive entirely from the
-current Dynasty's archives. Before any completed Season, the section uses one
-quiet empty state. Current city/state and Prestige appear only as header context.
-The summary remains subordinate to current Team information and stacks without
-body overflow at the narrow target; it is not a Program Records or trophy-room
-destination. When a Program has never qualified, Best Tournament Finish reads
-`No Tournament Appearances`; Recent Seasons still use the canonical `Did Not
-Qualify` outcome for each missed Season. `National Champion` alone receives a
-restrained accent-color and weight treatment, with no badge or structural
-decoration.
+Program Legacy and Program Trajectory extend Team Details for every Program
+with one compact `Dynasty History` section. The existing five-metric résumé and
+best Tournament/regular-season highlights sit above a newest-first row for every
+completed Season: Season number, archived Team OVR, record, Conference place,
+Tournament seed/finish, and incoming-class signee count/average OVR. Before any
+completed Season, the section uses one quiet empty state. Missing incoming-class
+history displays as unavailable rather than as a zero-signee class. Current
+city/state and Prestige remain header context only. The presentation stays
+subordinate to current Team information, uses compact desktop rows and labeled
+stacked rows without body overflow at the narrow target, and is not a standalone
+analytics, Program Records, or trophy-room destination. When a Program has never
+qualified, Best Tournament Finish reads `No Tournament Appearances`; individual
+missed Seasons retain canonical `Did Not Qualify`. `National Champion` alone
+receives restrained accent-color and weight emphasis.
 
 Around the Country is a compact vertical feed grouped by newest fully completed
 round. Each story has a restrained type label, linked entity headline, and one

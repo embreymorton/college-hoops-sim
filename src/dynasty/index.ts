@@ -17,10 +17,7 @@ export {
   derivePlayerCareerHighs,
   deriveProgramPlayerRecords,
 } from './seasonRecords'
-export {
-  deriveProgramLegacy,
-  PROGRAM_LEGACY_RECENT_SEASON_LIMIT,
-} from './programLegacy'
+export { deriveProgramLegacy } from './programLegacy'
 export {
   deriveSeasonPreview,
   shouldPromoteSeasonPreview,
@@ -196,7 +193,7 @@ export type {
   HistoricalTournamentGame,
   HistoricalTournamentOutcome,
 } from './seasonYearbook'
-export type { ProgramLegacy, ProgramLegacySeason } from './programLegacy'
+export type { ProgramLegacy, ProgramTrajectorySeason } from './programLegacy'
 export type {
   NewsCheckpoint,
   NewsFeed,

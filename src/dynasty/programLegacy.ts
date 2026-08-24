@@ -1,17 +1,27 @@
+import { calculateOverall, calculateTeamStrength } from '../engine'
 import { TOURNAMENT_ROUNDS } from '../postseason'
-import { deriveProgramRecord, type ProgramRecord } from '../season'
+import {
+  deriveConferenceStandings,
+  deriveProgramRecord,
+  type ProgramRecord,
+} from '../season'
 import type { DynastyState } from './domain'
+import { deriveProgramCommitments, getRecruit } from './recruiting/queries'
 import {
   deriveHistoricalTournamentOutcome,
   type HistoricalTournamentOutcome,
 } from './seasonYearbook'
 
-export const PROGRAM_LEGACY_RECENT_SEASON_LIMIT = 5
-
-export interface ProgramLegacySeason {
+export interface ProgramTrajectorySeason {
   readonly seasonNumber: number
+  readonly teamOverall: number
   readonly record: ProgramRecord
+  readonly conferencePlace: number
   readonly tournamentOutcome: HistoricalTournamentOutcome
+  readonly incomingClass: {
+    readonly signeeCount: number
+    readonly averageOverall: number | null
+  } | null
 }
 
 export interface ProgramLegacy {
@@ -23,8 +33,8 @@ export interface ProgramLegacy {
   readonly championships: number
   readonly runnerUpFinishes: number
   readonly bestTournamentOutcome: HistoricalTournamentOutcome | null
-  readonly bestRegularSeason: ProgramLegacySeason | null
-  readonly recentSeasons: readonly ProgramLegacySeason[]
+  readonly bestRegularSeason: ProgramTrajectorySeason | null
+  readonly trajectorySeasons: readonly ProgramTrajectorySeason[]
 }
 
 function tournamentFinishRank(outcome: HistoricalTournamentOutcome): number {
@@ -41,8 +51,8 @@ function tournamentFinishRank(outcome: HistoricalTournamentOutcome): number {
 }
 
 function compareBestRegularSeason(
-  first: ProgramLegacySeason,
-  second: ProgramLegacySeason,
+  first: ProgramTrajectorySeason,
+  second: ProgramTrajectorySeason,
 ): number {
   return (
     second.record.wins - first.record.wins ||
@@ -53,24 +63,71 @@ function compareBestRegularSeason(
 
 /** Pure Program résumé derived only from canonical completed Dynasty archives. */
 export function deriveProgramLegacy(
-  dynasty: Pick<DynastyState, 'history' | 'universe'>,
+  dynasty: Pick<DynastyState, 'history' | 'universe' | 'completedRecruitingHistory'>,
   programId: string,
 ): ProgramLegacy {
   if (!dynasty.universe.programs.some(({ id }) => id === programId)) {
     throw new RangeError(`Unknown Program ID "${programId}" for Program Legacy.`)
   }
 
+  const program = dynasty.universe.programs.find(({ id }) => id === programId)!
+  const recruitingClassesBySeason = new Map<number, DynastyState['completedRecruitingHistory'][number]>()
+  for (const completedClass of dynasty.completedRecruitingHistory) {
+    if (recruitingClassesBySeason.has(completedClass.targetSeasonNumber)) {
+      throw new RangeError(
+        `Multiple finalized Recruiting classes target Season ${completedClass.targetSeasonNumber}.`,
+      )
+    }
+    recruitingClassesBySeason.set(completedClass.targetSeasonNumber, completedClass)
+  }
+
   const seasons = dynasty.history
-    .map((archive): ProgramLegacySeason => {
-      if (!archive.season.programStates[programId]) {
+    .map((archive): ProgramTrajectorySeason => {
+      const programState = archive.season.programStates[programId]
+      if (!programState) {
         throw new RangeError(
           `Completed Season ${archive.seasonNumber} is missing Program "${programId}".`,
         )
       }
+      const conferencePlace = deriveConferenceStandings(
+        dynasty.universe,
+        archive.season,
+        program.conferenceId,
+      ).findIndex(({ programId: standingProgramId }) => standingProgramId === programId) + 1
+      if (conferencePlace === 0) {
+        throw new RangeError(
+          `Completed Season ${archive.seasonNumber} Conference standings are missing Program "${programId}".`,
+        )
+      }
+      const completedClass = recruitingClassesBySeason.get(archive.seasonNumber)
+      const incomingRecruits = completedClass
+        ? deriveProgramCommitments(completedClass.recruitingState, programId).map(({ playerId }) => {
+            const recruit = getRecruit(completedClass.recruitingState, playerId)
+            if (!recruit) {
+              throw new RangeError(
+                `Finalized Recruiting class for Season ${archive.seasonNumber} is missing committed Recruit "${playerId}".`,
+              )
+            }
+            return recruit
+          })
+        : null
       return {
         seasonNumber: archive.seasonNumber,
+        teamOverall: calculateTeamStrength(programState.team, programState.rotation).overall,
         record: deriveProgramRecord(archive.season, programId),
+        conferencePlace,
         tournamentOutcome: deriveHistoricalTournamentOutcome(archive, programId),
+        incomingClass: incomingRecruits === null
+          ? null
+          : {
+              signeeCount: incomingRecruits.length,
+              averageOverall: incomingRecruits.length === 0
+                ? null
+                : incomingRecruits.reduce(
+                    (total, recruit) => total + calculateOverall(recruit.player),
+                    0,
+                  ) / incomingRecruits.length,
+            },
       }
     })
     .sort((first, second) => second.seasonNumber - first.seasonNumber)
@@ -96,6 +153,6 @@ export function deriveProgramLegacy(
     ).length,
     bestTournamentOutcome,
     bestRegularSeason: seasons.slice().sort(compareBestRegularSeason)[0] ?? null,
-    recentSeasons: seasons.slice(0, PROGRAM_LEGACY_RECENT_SEASON_LIMIT),
+    trajectorySeasons: seasons,
   }
 }

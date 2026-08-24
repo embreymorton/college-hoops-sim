@@ -30,9 +30,9 @@ The playable product includes:
   Prep with a shared Matchup Scout and Simple/Advanced Rotation preparation,
   Super Sim, completed-game history, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
-  Details with current/history organization, derived Program Dynasty histories
-  and Program Player Records, Player Career Highs, Following, News, Alumni,
-  Season Preview, and a completed-Season
+  Details with current/history organization, full completed-Season Program
+  Trajectories and Program Player Records, Player Career Highs, Following, News,
+  Alumni, Season Preview, and a completed-Season
   first-class League History with Yearbooks, a Dynasty Record Book, and
   finalized national Recruiting class retrospectives;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
@@ -137,8 +137,9 @@ refactor these systems during unrelated feature work:
   Single Game News behavior and read-model boundaries; and
 - Recruiting Class Retrospectives V1's finalized-signee projection and History
   presentation contract; and
-- Program Legacy V1's all-Program historical projection and Team Details
-  presentation contract; and
+- Program Legacy / Program Trajectory V1's all-Program full-history projection,
+  canonical historical-source semantics, and Team Details presentation contract;
+  and
 - Player Records Expansion V1's shared regular-season record projections,
   Player Career Highs, Program-attributed Player Records, stable-ID navigation,
   and accepted Team `Overview | History` / Player `Overview | Career`
@@ -178,19 +179,14 @@ does not itself authorize implementation:
 
 **OPEN PLANNING CHECKPOINT — no NEXT selected.**
 
-Rare Development Breakouts / Explosive Offseasons + Work Ethic Reveal V1 is
-**COMPLETE / ACCEPTED / FROZEN**. The exceptional layer runs after exact
-ordinary Development V1 for eligible high-headroom returners, uses isolated
-deterministic RNG, and never raises or exceeds POT. No Explosion produces the
-exact accepted ordinary result.
-
-Work Ethic is the stable player-facing projection of ordinary development
-tendency and is independent of Explosion odds. It is hidden for Recruits,
-`Unknown` for freshmen, and revealed as `Inconsistent`, `Steady`, or `Strong`
-after the first offseason. Player Details treats it as identity metadata while
-OVR/POT remain paired; official event facts—not raw gain thresholds—drive
-Offseason Explosion presentation. Active-offseason event facts do not survive
-rollover into durable historical Explosion records.
+Program Trajectory V1 is **COMPLETE / ACCEPTED / FROZEN**. Team Details retains
+the Program Legacy résumé and Program Player Records while showing every
+completed Season newest-first with archived Team OVR, record, Conference place,
+Tournament seed/finish, and incoming-class signee count/average OVR. Missing
+incoming-class history remains distinct from a finalized zero-signee class.
+Trajectory is a pure projection over canonical completed Season and Recruiting
+history; it adds no mutable state, infers no historical Prestige, and changes no
+Recruiting, Team Strength, competition, or lifecycle semantics.
 
 Fresh sessions resolve to **Path B**: verify this checkpoint, review current
 evidence and candidate surfaces neutrally, and do not infer a successor from
