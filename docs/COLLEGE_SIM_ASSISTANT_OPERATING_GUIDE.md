@@ -116,7 +116,7 @@ I've attached the latest College Basketball Simulation repository.
 Treat the repository as authoritative and assume no prior-chat context.
 Follow the Fresh Session workflow in docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md.
 
-FIRST RESPONSE ONLY: read the required fresh-session front doors and establish
+FIRST RESPONSE ONLY: read only the required fresh-session front doors and establish
 current production truth, frozen boundaries, live WATCH signals, authoritative
 NEXT status, and Path A or Path B. Identify what you would inspect next.
 
@@ -128,22 +128,30 @@ documentation. Stop after the fresh-session checkpoint.
 
 ```text
 Stage 1 verified Path A. Inspect the authoritative selected NEXT through its
-relevant owner docs, production seams, WATCH evidence, and only specifically
-needed conditional research. Preserve accepted/frozen boundaries. Determine
-whether discussion, focused design, focused investigation, or implementation is
-the right next action. Do not reopen planning, replace NEXT, implement without
-authorization, or edit documentation prematurely.
+relevant owner docs, production code/seams, WATCH evidence, and only specifically
+needed conditional research. Preserve accepted/frozen boundaries.
+
+Establish the key questions or constraints and determine whether discussion,
+focused design, focused investigation, or implementation is the right next action.
+
+Do not reopen planning, replace NEXT, implement without authorization, or edit
+documentation prematurely.
 ```
 
 ### Path B continuation
 
 ```text
 Stage 1 verified Path B. Conduct a neutral Open Planning pass using current
-evidence, production seams, and relevant owner docs first; use Known Issues and
-Future Features only as secondary discovery and conditional research only for a
-specific candidate. Return a short ranked cross-scope set, recommend what merits
-discussion first, name the execution route, and do not set NEXT, implement, or
-edit documentation.
+evidence, production code/seams, and relevant owner docs first.
+
+Actively surface fresh code-grounded opportunities, missing experiences, natural
+extensions, and cross-system ideas; candidates do not need to already exist in
+Known Issues, Future Features, Roadmap history, or prior planning docs. Use those
+sources only as secondary discovery, and conditional research only for a specific
+candidate that needs it.
+
+Return a short ranked cross-scope set, recommend what merits discussion first,
+and name the execution route. Do not set NEXT, implement, or edit documentation.
 ```
 
 ## Agent routing at a glance
