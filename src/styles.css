@@ -1164,34 +1164,112 @@ p {
   min-width: 20rem;
 }
 
-/* Awards & Honors V1 — compact identity-first lists shared by live and archive surfaces. */
-.awards-screen { display: flex; flex-direction: column; gap: var(--space-4); }
-.awards-content { display: flex; flex-direction: column; gap: var(--space-5); }
-.awards-page-heading { display: grid; gap: var(--space-1); }
-.awards-page-heading__title { font-size: 1.35rem; }
-.awards-headliners { display: grid; grid-template-columns: 1.35fr 1fr 1fr; gap: var(--space-3); }
-.award-headliner { min-width: 0; padding: var(--space-3); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius-sm); }
-.award-headliner--primary { border-color: var(--line-strong); background: var(--surface-2); }
-.award-headliner--primary .award-recipient__player { font-size: 1.15rem; }
-.award-headliner__pending { color: var(--ink-1); margin: var(--space-2) 0 0; }
-.award-recipient { min-width: 0; display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; }
-.award-recipient__player { font-weight: 700; white-space: normal; text-align: left; overflow-wrap: anywhere; }
-.award-recipient__context { color: var(--ink-1); font-size: 0.78rem; overflow-wrap: anywhere; }
-.award-stat-line { color: var(--ink-1); font-family: var(--font-score); font-size: 0.78rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+/* ==========================================================================
+   Awards & Honors V1 — restyled. National awards read as a hierarchy, not
+   three identical cards: POY is a wide marquee (name + stat-trio at scale),
+   FOY/MOP stack beside it at a visibly subordinate size. Honor teams reuse
+   the app's .data-table language rather than inventing a new grid.
+   ========================================================================== */
+.awards-screen { display: flex; flex-direction: column; gap: var(--space-5); }
+.awards-content { display: flex; flex-direction: column; gap: var(--space-6); }
+.awards-page-heading { display: grid; gap: 0.2rem; padding-bottom: var(--space-1); border-bottom: 1px solid var(--line); }
+.awards-page-heading__title { font-size: 1.5rem; margin: 0; }
+
+.awards-marquee {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: var(--space-3);
+  align-items: stretch;
+}
+.awards-marquee__secondary { display: grid; gap: var(--space-3); }
+
+.award-card {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+.award-card__eyebrow { margin: 0; }
+.award-card__row { display: flex; flex-direction: column; gap: var(--space-3); }
+.award-card__identity { display: grid; gap: 0.2rem; min-width: 0; }
+.award-card__name { font-weight: 700; white-space: normal; overflow-wrap: anywhere; }
+.award-card__context { color: var(--ink-1); font-size: 0.78rem; overflow-wrap: anywhere; }
+.award-card__pending { color: var(--ink-2); font-style: italic; margin: 0; font-size: 0.85rem; }
+
+.award-card--poy {
+  grid-row: span 2;
+  border-color: var(--accent);
+  background: linear-gradient(155deg, var(--surface-2), var(--surface-1) 65%);
+  padding: var(--space-5);
+  justify-content: center;
+  box-shadow: inset 4px 0 0 var(--accent);
+}
+.award-card--poy .award-card__eyebrow { font-size: 1rem; }
+.award-card--poy .award-card__row { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-5); }
+.award-card--poy .award-card__name { font-family: var(--font-display); font-size: 2.4rem; letter-spacing: 0.01em; }
+.award-card--poy .award-card__context { font-size: 1.05rem; }
+.award-card--poy .stat-trio { gap: var(--space-5); }
+.award-card--poy .stat-trio__value { font-size: 3.6rem; }
+.award-card--poy .stat-trio__label { font-size: 0.85rem; }
+
+.award-card--foy,
+.award-card--mop { padding: var(--space-3); gap: var(--space-2); }
+.award-card--foy .award-card__name,
+.award-card--mop .award-card__name { font-size: 1rem; }
+.award-card--foy .stat-trio__value,
+.award-card--mop .stat-trio__value { font-size: 1.5rem; }
+.award-card--mop { border-style: dashed; }
+.award-card--mop:has(.award-card__pending) { align-items: flex-start; justify-content: center; min-height: 5.5rem; background: var(--surface-1); }
+
+.award-stat-trio { gap: var(--space-3) var(--space-4); }
+.award-stat-trio .stat-trio__item { min-width: 2.6rem; align-items: flex-start; }
+
+.award-stat-line { color: var(--ink-1); font-family: var(--font-score); font-size: 0.85rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
 .awards-section { display: grid; gap: var(--space-3); }
-.award-team-table { min-width: 39rem; }
+.award-team-table { min-width: 34rem; }
+.award-team-table__rank { font-family: var(--font-score); font-size: 1.05rem; color: var(--ink-1); text-align: center !important; width: 2rem; }
+.award-team-table tr[data-controlled='true'] .award-team-table__rank { color: var(--accent); }
+.award-team-table__meta { display: block; color: var(--ink-1); font-size: 0.74rem; margin-top: 0.1rem; }
 .award-team-table td:last-child { white-space: nowrap; }
 .award-team-table tr[data-controlled='true'] { background: var(--surface-2); box-shadow: inset 3px 0 0 var(--accent); }
+
+/* Conference sub-section: same design family as the national marquee but
+   visibly lighter — a single bordered panel instead of a floating stack,
+   so tabs, winners, and the honor table read as one continuous unit. */
+.awards-conference-panel {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
 .awards-conference-tabs { justify-self: start; max-width: 100%; overflow-x: auto; }
 .awards-conference-winners { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
-.awards-conference-winners article { padding: var(--space-3); background: var(--surface-1); border: 1px solid var(--line); border-radius: var(--radius-sm); }
-.yearbook-awards { display: grid; gap: var(--space-3); }
-.yearbook-awards .awards-content { gap: var(--space-3); }
-.yearbook-awards .award-headliner { padding: var(--space-2) var(--space-3); }
-.career-honors__seasons { display: grid; gap: var(--space-3); }
-.career-honors__season { padding: var(--space-3); background: var(--surface-1); border-left: 3px solid var(--line-strong); }
-.career-honors__list { display: grid; gap: var(--space-1); margin-top: var(--space-2); }
-.career-honors__item { color: var(--ink-1); font-size: 0.86rem; }
+.award-row { min-width: 0; padding: var(--space-3); background: var(--surface-2); border-radius: var(--radius-sm); display: grid; gap: 0.25rem; }
+.award-row__eyebrow { font-size: 0.68rem; margin: 0; }
+.award-row__identity { display: grid; gap: 0.1rem; min-width: 0; }
+.awards-conference-panel__subtitle { margin-top: var(--space-1); }
+
+/* Yearbook summary — condensed, archival, no card chrome. Mirrors the Awards
+   screen's left (POY) / right (FOY + MOP stacked) marquee at a smaller scale
+   rather than inventing a separate strip layout. */
+.yearbook-awards { display: grid; }
+.yearbook-awards .award-team-table { min-width: 26rem; }
+
+/* Player Career Honors — a compact résumé: Season is the anchor, honors are
+   dense readable rows beneath it, not badges or cards. */
+.career-honors__seasons { display: grid; gap: 0; border-top: 1px solid var(--line); }
+.career-honors__season { display: grid; grid-template-columns: 5.5rem 1fr; gap: var(--space-3); padding: var(--space-3) 0; border-bottom: 1px solid var(--line); }
+.career-honors__season-label { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; color: var(--ink-0); letter-spacing: 0.02em; }
+.career-honors__list { display: grid; gap: 0.3rem; min-width: 0; }
+.career-honors__item { position: relative; padding-left: var(--space-3); color: var(--ink-1); font-size: 0.86rem; overflow-wrap: anywhere; }
+.career-honors__item::before { content: ''; position: absolute; left: 0; top: 0.55em; width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
 
 .league-news {
   display: flex;
@@ -1320,10 +1398,21 @@ p {
   .records-panel-grid { grid-template-columns: 1fr; }
   .news-story { padding-inline: var(--space-3); }
   .news-story__meta { align-items: flex-start; }
-  .awards-headliners,
+  .awards-marquee,
+  .awards-marquee__secondary,
   .awards-conference-winners { grid-template-columns: 1fr; }
+  .award-card--poy { grid-row: auto; padding: var(--space-4); }
+  .award-card--poy .award-card__row { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .award-card--poy .award-card__name { font-size: 1.3rem; }
+  .award-card--poy .stat-trio__value { font-size: 2rem; }
   .awards-conference-tabs { display: flex; width: 100%; }
   .awards-conference-tabs .tab { flex: 0 0 auto; padding-inline: 0.8rem; }
+  .career-honors__season { grid-template-columns: 1fr; gap: 0.2rem; }
+}
+
+@media (max-width: 860px) {
+  .awards-marquee { grid-template-columns: 1fr; }
+  .award-card--poy { grid-row: auto; }
 }
 
 .box-score-panel {

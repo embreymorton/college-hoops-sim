@@ -41,7 +41,7 @@ function CareerHonors({ honors }: { readonly honors: readonly ResolvedSeasonHono
       <div className="career-honors__seasons">
         {[...bySeason.entries()].sort((a, b) => b[0] - a[0]).map(([seasonNumber, seasonHonors]) => (
           <div className="career-honors__season" key={seasonNumber}>
-            <h3 className="section-subtitle">Season {seasonNumber}</h3>
+            <h3 className="career-honors__season-label">Season {seasonNumber}</h3>
             <div className="career-honors__list">
               {seasonHonors.map((honor) => (
                 <div className="career-honors__item" key={`${honor.type}:${honor.conference?.id ?? ''}:${honor.rank ?? ''}`}>

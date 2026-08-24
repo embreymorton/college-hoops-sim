@@ -396,7 +396,9 @@ export function PostseasonHubScreen({
         mop={mopSummary ? {
           playerName: `${mopSummary.honor.player.firstName} ${mopSummary.honor.player.lastName}`,
           programName: mopSummary.honor.program.name,
-          summary: `${mopSummary.pointsPerGame.toFixed(1)} PPG · ${mopSummary.reboundsPerGame.toFixed(1)} RPG · ${mopSummary.assistsPerGame.toFixed(1)} APG`,
+          pointsPerGame: mopSummary.pointsPerGame,
+          reboundsPerGame: mopSummary.reboundsPerGame,
+          assistsPerGame: mopSummary.assistsPerGame,
           onSelect: () => openPlayerDetails(mopSummary.honor.program.id, mopSummary.honor.player.id),
         } : undefined}
       />
@@ -637,12 +639,14 @@ export function PostseasonHubScreen({
 
       {awardsRevealed && (
         <section className="season-preview-promotion tournament-awards-announcement" aria-labelledby="tournament-awards-heading">
-          <div>
-            <p className="eyebrow-tag">Season Awards Announced</p>
-            <h2 id="tournament-awards-heading" className="visually-hidden">Awards &amp; Honors</h2>
-            <p className="section-hint">National and conference honors are now available.</p>
+          <div className="tournament-awards-announcement__copy">
+            <div>
+              <p className="eyebrow-tag">Season Awards Announced</p>
+              <h2 id="tournament-awards-heading" className="visually-hidden">Awards &amp; Honors</h2>
+              <p className="section-hint">National and conference honors are now available.</p>
+            </div>
             {controlledRegularHonorCount > 0 && (
-              <p className="tournament-awards-announcement__program">Your Program earned {controlledRegularHonorCount} {controlledRegularHonorCount === 1 ? 'honor' : 'honors'}.</p>
+              <p className="tournament-awards-announcement__program"><span>{controlledRegularHonorCount}</span><span className="tournament-awards-announcement__program-label">{controlledRegularHonorCount === 1 ? 'honor for your program' : 'honors for your program'}</span></p>
             )}
           </div>
           <button type="button" className="button button--ghost" onClick={openAwards}>View Awards &amp; Honors</button>

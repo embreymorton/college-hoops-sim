@@ -12,9 +12,15 @@ interface NationalChampionshipRecapProps {
   readonly mop?: {
     readonly playerName: string
     readonly programName: string
-    readonly summary: string
+    readonly pointsPerGame: number
+    readonly reboundsPerGame: number
+    readonly assistsPerGame: number
     readonly onSelect: () => void
   }
+}
+
+function formatStat(value: number): string {
+  return value.toFixed(1)
 }
 
 /** Canonical completed-Tournament result, independent of session game history. */
@@ -49,8 +55,15 @@ export function NationalChampionshipRecap({
       {mop && (
         <div className="national-championship-recap__mop">
           <p className="eyebrow-tag">Tournament Most Outstanding Player</p>
-          <button type="button" className="text-link-button" onClick={mop.onSelect}>{mop.playerName}</button>
-          <span>{mop.programName} · {mop.summary}</span>
+          <div className="national-championship-recap__mop-identity">
+            <button type="button" className="text-link-button" onClick={mop.onSelect}>{mop.playerName}</button>
+            <span>{mop.programName}</span>
+          </div>
+          <div className="stat-trio">
+            <div className="stat-trio__item"><span className="stat-trio__value">{formatStat(mop.pointsPerGame)}</span><span className="stat-trio__label">PPG</span></div>
+            <div className="stat-trio__item"><span className="stat-trio__value">{formatStat(mop.reboundsPerGame)}</span><span className="stat-trio__label">RPG</span></div>
+            <div className="stat-trio__item"><span className="stat-trio__value">{formatStat(mop.assistsPerGame)}</span><span className="stat-trio__label">APG</span></div>
+          </div>
         </div>
       )}
       <button

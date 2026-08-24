@@ -147,9 +147,39 @@
 }
 .tournament-awards-announcement .eyebrow-tag,
 .tournament-awards-announcement .section-hint { margin: 0; }
-.tournament-awards-announcement__program { margin: var(--space-1) 0 0; font-size: 0.82rem; font-weight: 700; }
-.national-championship-recap__mop { display: flex; flex-direction: column; align-items: flex-start; gap: 0.2rem; padding: var(--space-3); background: var(--surface-2); border-radius: var(--radius-sm); }
-.national-championship-recap__mop span { color: var(--ink-1); font-size: 0.78rem; }
+.tournament-awards-announcement__copy { display: flex; align-items: center; gap: var(--space-3); flex-wrap: wrap; }
+.tournament-awards-announcement__program {
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  font-family: var(--font-score);
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--accent-strong);
+}
+.tournament-awards-announcement__program-label {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--ink-1);
+}
+
+/* Championship recap — MOP reads as a supporting distinction beneath the
+   champion result, not a separate pasted card: a quiet accent rule instead
+   of a boxed panel, with stat-trio for tournament-run production. */
+.national-championship-recap__mop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 0;
+  border-top: 1px solid var(--line);
+}
+.national-championship-recap__mop-identity { display: flex; align-items: baseline; gap: 0.5em; flex-wrap: wrap; }
+.national-championship-recap__mop-identity span { color: var(--ink-1); font-size: 0.82rem; }
+.national-championship-recap__mop .stat-trio { gap: var(--space-3) var(--space-4); }
+.national-championship-recap__mop .stat-trio__value { font-size: 1.6rem; }
 
 /* ==========================================================================
    Tournament field table
