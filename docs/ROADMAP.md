@@ -15,10 +15,36 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### Postseason Player Legacy / Tournament Records V1 — NEXT
 
-Awards & Honors V1 is complete, user-accepted, and frozen. No successor has
-been explicitly selected; future fresh sessions therefore resolve to Path B.
+The prior Open Planning Checkpoint is resolved by explicit user selection. This
+implementation-ready milestone will make existing Tournament performance part
+of durable Player career presentation through sibling postseason projections,
+without changing regular-season statistical contracts or adding canonical
+historical state. Implementation has not started; fresh sessions resolve to
+Path A and begin with Codex.
+
+Accepted scope:
+
+- Add active/former Player Tournament career summaries, season-by-season runs,
+  game logs, PTS/REB/AST/STL/BLK career highs, appearances, Final Fours,
+  championship-game appearances, championships, and existing MOP context.
+- Add an explicitly separate Tournament Record Book for PTS/REB/AST/STL/BLK
+  across Single Game, Tournament Run totals, and Career totals.
+- Derive all results from active/archived Postseason facts and stable Player
+  IDs, with positive minutes required for individual GP/appearance credit and
+  active/archive deduplication at rollover.
+
+V1 excludes Tournament starts, new awards or MOP changes, combined
+regular-season/Tournament presentation, Tournament rate or Player-win records,
+subjective run scoring, Program-specific Tournament Records, new persistence or
+canonical state, and changes to basketball, Tournament, Recruiting,
+Development, or Prestige mechanics.
+
+Execution route: Codex establishes projections, contracts, lifecycle behavior,
+and tests while preserving regular-season isolation; Claude Code then polishes
+Player Details and Tournament Records presentation; user validation and
+acceptance precede documentation closure.
 
 ## Planned and unscheduled
 

@@ -178,7 +178,7 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**OPEN PLANNING CHECKPOINT — no NEXT selected.**
+**NEXT = Postseason Player Legacy / Tournament Records V1.**
 
 Awards & Honors V1 is **COMPLETE / ACCEPTED / FROZEN**. It includes the accepted
 national, Conference, and Tournament honors, deterministic `awards-v1`
@@ -188,9 +188,18 @@ bounded Awards News. It evaluates canonical production with no gameplay effects
 and does not alter any frozen simulation, Recruiting, Tournament, roster,
 Prestige, or Offseason behavior.
 
-No successor milestone has been explicitly selected. Fresh sessions resolve to
-**Path B** and must perform a neutral Open Planning pass rather than infer NEXT
-from Roadmap order, Future Features, or recently completed work.
+The prior Open Planning Checkpoint is resolved by explicit user selection. The
+accepted, implementation-ready design derives sibling Tournament Player-career
+history, game logs, career highs, achievements, and a separate counting-stat
+Tournament Record Book from active/archived Postseason facts and stable Player
+IDs. Existing regular-season Player statistics, Career History, Career Highs,
+and Records semantics remain unchanged; no combined user-facing scope or new
+canonical state is planned. Implementation has not started.
+
+Fresh sessions resolve to **Path A — authoritative NEXT selected**. The route
+begins with Codex projection/contracts, lifecycle deduplication, and regression
+tests, followed by Claude Code presentation polish and user validation before
+documentation closure.
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is
