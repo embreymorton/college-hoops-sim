@@ -435,14 +435,77 @@ obviously optimal, bench-development tradeoffs would need careful design, and
 injuries, fatigue, or other counterweights might matter. Development V1 is
 accepted and frozen and should not be reopened from this single playthrough.
 
-### Draft and professional outcomes
+## Draft + Professional Outcomes — MAJOR FUTURE SYSTEM / UNSCHEDULED
 
-Graduating Players could receive draft or professional destination/history
-outcomes that extend their legacy beyond college. This is a major future system,
-not a small Alumni enhancement: one-and-done careers, early entry, eligibility,
-AI roster consequences, recruiting and roster turnover, prospect evaluation,
-and league balance all become design and simulation concerns. No version of
-that lifecycle is selected.
+This is a strongly valued long-term opportunity for extending Player identity
+from **Recruit → college career → Draft prospect → professional outcome**. A
+memorable Player could commit to Pine Valley, develop into a star, set records,
+lead a Tournament run, declare, and become a canonical professional selection.
+Draft history could connect Recruitment, Development, production, Records,
+Tournament moments, and career legacy into one emotional payoff. It is much
+larger than an Alumni presentation enhancement and should receive serious
+neutral consideration when product and architecture make it feasible; that
+interest does not select or schedule it.
+
+The professional world can remain intentionally shallow. Fictional professional
+teams, draft order, selections, destinations, and explicit undrafted outcomes
+could matter without professional Seasons, box scores, roster simulation,
+contracts, salaries, trades, free agency, or user control. The professional
+world evaluates college Players while the user continues coaching college
+basketball.
+
+Future design should separate distinct questions: **eligibility** asks who may
+enter; **declaration/return** asks whether an eligible Player leaves; a **prospect
+profile and professional evaluation** asks how the professional world values the
+same stable Player; and the deterministic **Draft event** creates selection or
+undrafted history. Evaluation should consume Player identity, ability/upside,
+physical profile, production, role, and résumé rather than merely sort college
+OVR. No eligibility, one-and-done, declaration, evaluation, rounds, picks,
+lottery, team-count, or seeded-RNG rules are selected.
+
+Stable Player identity is essential: the existing Player ID should connect
+Recruiting origin, college Seasons and statistics, Records/Honors when present,
+declaration, selection, and professional destination rather than creating a
+replacement person. Draft grades, projected ranges, Big Boards, or declaration
+likelihood could remain derived projections; completed declaration/return and
+selection outcomes could become canonical historical facts. Exact state
+ownership is deliberately open, but changing projections must remain distinct
+from completed history.
+
+Draft architecture would need to integrate with the accepted Offseason without
+silently restructuring it. Conceptually, eligibility/declaration and a Draft
+event occur around completed competition and departures, while the college
+lifecycle remains authoritative for roster removal and rollover. Early entry is
+where this becomes a consequential college system: unexpected openings,
+returning-talent loss, late Recruiting needs, continuity, powerhouse turnover,
+low-Prestige rebuild difficulty, league balance, and Next Season roster planning
+all change. A first future version need not include underclass declarations.
+
+Possible player-facing surfaces include Declarations, a Draft Big Board, Draft
+Night, complete results, Program Draft History, permanent Player Details history,
+and Yearbook association. Derived Program/Coach records could include total or
+first-round picks, highest selection, picks by Season, and picks under a Coach.
+Draft success could later inform Program Legacy, Coach Career, News/World Memory,
+Program Reputation, development reputation, and Recruit Preferences—for example,
+a modest Program becoming attractive after repeatedly producing professionals.
+No screen IA, Recruiting modifier, or dependency is selected.
+
+Player Identity V2 could someday distinguish young upside, specialists, jumbo
+creators, passing bigs, productive undersized guards, or accomplished seniors in
+professional evaluation. Game Simulation V2 could provide richer behavior and
+statistics, but current canonical college production may be sufficient; Draft
+depends on neither future V2. Senior Sendoff, historical exploration, and roster
+planning are complementary surfaces rather than bundled prerequisites.
+
+Any investigation must guard the college ecosystem: early-entry frequency,
+elite retention, senior talent, roster and Team OVR distributions, Recruiting
+demand, Program stability, Tournament competitiveness, rebuild difficulty, and
+career length. One safe conceptual progression is professional outcomes for
+completed senior careers, then prospect projections/Big Board, then underclass
+declaration/return, and only later optional Recruiting/Program-world effects.
+These are risk-control stages, not Roadmap phases or an implementation sequence.
+The system succeeds only if Draft outcomes extend believable Player and Program
+stories while the product remains recognizably a college basketball simulation.
 
 ## Game Simulation V2 — Possession-Based Simulation — FUTURE / UNSCHEDULED
 
@@ -664,7 +727,9 @@ questions rather than an implementation bundle.
   Program Reputation + Recruit-preferences evolution; Game Simulation V2 is a
   separate high-risk architectural exploration beyond ordinary feature scope.
   Player Identity V2 is likewise a parked, cross-system investigation rather
-  than an ordinary ratings tweak.
+  than an ordinary ratings tweak. Draft + Professional Outcomes is a major
+  lifecycle/Player-legacy candidate whose early-entry form would carry broad
+  college-ecosystem risk.
 
 These labels describe likely implementation risk only. They do not assign
 priority, phase numbers, deadlines, or Roadmap sequence.
