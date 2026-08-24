@@ -19,10 +19,16 @@ Primary product principles:
 
 ## Non-Negotiable Session Contract
 
-1. Repository truth overrides chat assumptions; establish it before planning or implementation.
+1. At the beginning of every fresh repository session, read this guide in full
+   once and treat the entire guide as authoritative throughout the conversation.
+   Repository truth overrides chat assumptions; establish it before planning or
+   implementation.
 2. Classify the repository as **Path A — authoritative NEXT exists** or **Path B — Open Planning Checkpoint / no NEXT**.
 3. Never infer NEXT from order, phase numbers, Future Features, prior recommendations, or recently completed work; only explicit user selection establishes NEXT.
-4. Start with the small fresh-session checkpoint below. Do not automatically read conditional research or historical archives.
+4. After reading this guide, start with the small fresh-session repository
+   checkpoint below. Reading the guide in full does not authorize broad
+   repository inspection; do not automatically read conditional research or
+   historical archives.
 5. Do not reopen accepted/frozen systems without current evidence.
 6. In Path B, current evidence and production seams lead; Known Issues and Future Features are secondary discovery sources, not priority lists.
 7. Planning/design does not authorize implementation unless the user explicitly asks.
@@ -32,9 +38,11 @@ Primary product principles:
 11. Route work explicitly as **Codex**, **Claude Code**, or **Codex → Claude**; use the repository's frontend/design workflow for meaningful polish.
 12. Validate proportionally, including 390px behavior for relevant UI work, before acceptance.
 13. At a clean checkpoint, evaluate whether continuing or a ready-to-paste fresh-chat handoff gives better context quality.
-14. Path A / Path B determines what type of work is authorized next; its Fresh
-    Session continuation template does not replace the full downstream
-    feature-development and prompt-writing workflow.
+14. Path A / Path B determines what type of work is authorized next. Its Fresh
+    Session continuation templates are routing tools only: they do not supersede
+    any part of this guide, including prompt construction, agent selection,
+    feature workflow, validation, documentation, acceptance, closure, or stop
+    conditions.
 
 Do not blindly add features. Help decide what is worth building, what should be investigated first, and what should remain deferred.
 
@@ -48,12 +56,13 @@ question; start a new phase letter when the theme changes.
 
 ## Stage 1 — Fresh-session checkpoint
 
-The initial read is deliberately small:
+Before Stage 1 repository inspection, read this guide in full once. This reads
+the operating contract, not the full repository. The initial repository read
+remains deliberately small:
 
 1. `CURRENT_STATE.md` in full;
 2. `ROADMAP.md` → **Current Selected Horizon** only;
-3. `PLAYTESTING.md` → **Current Playtesting Priorities** and **Live WATCH Items**;
-4. this guide's Fresh Session and Source-of-Truth rules.
+3. `PLAYTESTING.md` → **Current Playtesting Priorities** and **Live WATCH Items**.
 
 Do not yet read full Roadmap history, Future Features, old Known Issues history,
 `PLAYTESTING_ARCHIVE.md`, `PLAYER_IDENTITY_RESEARCH.md`,
@@ -117,15 +126,26 @@ Path B until those front doors are synchronized.
 ```text
 I've attached the latest College Basketball Simulation repository.
 Treat the repository as authoritative and assume no prior-chat context.
-Follow the Fresh Session workflow in docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md.
+Read docs/COLLEGE_SIM_ASSISTANT_OPERATING_GUIDE.md in full first. Treat the
+entire guide as authoritative for this conversation, including its Fresh
+Session workflow, Path A / Path B rules, prompt-writing rules, feature workflow,
+agent-routing rules, validation requirements, documentation rules, acceptance
+rules, closure rules, and stop conditions.
 
-FIRST RESPONSE ONLY: read only the required fresh-session front doors and establish
-current production truth, frozen boundaries, live WATCH signals, authoritative
-NEXT status, and Path A or Path B. Identify what you would inspect next.
+FIRST RESPONSE ONLY: after reading the guide, perform only Stage 1 repository
+inspection. Read only the required fresh-session front doors named by the guide
+and establish current production truth, frozen boundaries, live WATCH signals,
+authoritative NEXT status, and Path A or Path B. Identify what you would inspect
+next.
 
-Do not recommend a feature yet. Do not infer NEXT. Do not implement. Do not edit
-documentation. Stop after the fresh-session checkpoint.
+Do not broaden repository inspection beyond Stage 1. Do not recommend a feature
+yet. Do not infer NEXT. Do not implement. Do not edit documentation. Stop after
+the fresh-session checkpoint.
 ```
+
+The Path A / Path B continuation templates below route the next phase; they are
+not complete downstream work orders. Construct every later prompt under the
+full **Prompt-Writing Style** and **Feature Development Workflow** requirements.
 
 ### Path A continuation
 
