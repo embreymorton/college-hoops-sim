@@ -15,19 +15,21 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### NEXT — 7C.3 Awards & Honors V1
 
-Program Trajectory V1 is complete, accepted, and frozen. No successor was
-selected at closure. Awards & Honors remains PLANNED, while Recruit V2 six-tier
-semantic alignment remains deferred and unscheduled. Neither is NEXT by order,
-proximity, or interest.
+Awards & Honors V1 is the explicitly selected next milestone. Its immediate
+next action is a focused design/tuning pass before implementation. No award
+formula, weighting model, optional honor, UI contract, or implementation detail
+is selected yet. Existing frozen simulation and gameplay boundaries remain
+unchanged.
 
 ## Planned and unscheduled
 
-### PLANNED — remainder of Phase 7C
+### NEXT — remainder of Phase 7C
 
-1. **7C.3 — Awards & Honors** — remains valid future work whose subjective
-   formulas would require separate design and tuning; it is not NEXT.
+1. **7C.3 — Awards & Honors V1** — begin with a focused design/tuning pass
+   before implementation; no formula, weighting model, optional honor, UI
+   contract, or implementation detail is selected yet.
 
 ### Future Phase 8 work
 
@@ -268,7 +270,8 @@ persistence, RNG, or simulation changes.
   completed-regular-season Single Game, Season, and Career Top 10 records under
   the first-class League History tab, plus strict new Single Game record stories
   in active-Season News after completed history exists.
-- **7C.3 Awards & Honors** remains PLANNED.
+- **7C.3 Awards & Honors V1 — NEXT:** focused design/tuning pass before
+  implementation; design and implementation details remain unselected.
 
 7C.1 and 7C.2 derive their presentation from `CompletedSeasonArchive` through
 pure projections and transient/local UI state. They add no copied historical

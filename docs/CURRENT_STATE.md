@@ -177,7 +177,7 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**OPEN PLANNING CHECKPOINT — no NEXT selected.**
+**NEXT — 7C.3 Awards & Honors V1.**
 
 Program Trajectory V1 is **COMPLETE / ACCEPTED / FROZEN**. Team Details retains
 the Program Legacy résumé and Program Player Records while showing every
@@ -188,9 +188,11 @@ Trajectory is a pure projection over canonical completed Season and Recruiting
 history; it adds no mutable state, infers no historical Prestige, and changes no
 Recruiting, Team Strength, competition, or lifecycle semantics.
 
-Fresh sessions resolve to **Path B**: verify this checkpoint, review current
-evidence and candidate surfaces neutrally, and do not infer a successor from
-Roadmap order, Awards & Honors, Known Issues, or Future Features.
+Fresh sessions resolve to **Path A**: proceed with Awards & Honors V1 as the
+explicitly selected milestone. The immediate next action is a focused
+design/tuning pass before implementation. No award formula, weighting model,
+optional honor, UI contract, or implementation detail is selected yet. Existing
+frozen simulation and gameplay boundaries remain unchanged.
 
 Dynamic Prestige was rejected and rolled back; production uses immutable static
 Program Prestige. The subsequent hierarchy/compression investigation is
@@ -216,10 +218,11 @@ Exact Recruit OVR, POT, and individual ratings remain current production
 visibility. Scouting grades, ranges, estimates, hidden information, and other
 uncertainty remain future-only.
 
-`7C.3 Awards & Honors` remains **PLANNED** and has not begun. Player Identity
-work remains parked unless new evidence deliberately reopens it. Dynamic
-Prestige remains rejected; the hierarchy/compression investigation remains
-decision-complete.
+`7C.3 Awards & Honors V1` is authoritative **NEXT**, but its focused
+design/tuning pass has not begun and implementation is not authorized yet.
+Player Identity work remains parked unless new evidence deliberately reopens
+it. Dynamic Prestige remains rejected; the hierarchy/compression investigation
+remains decision-complete.
 
 ## Fresh-session rules
 
