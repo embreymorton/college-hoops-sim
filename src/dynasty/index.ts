@@ -28,6 +28,24 @@ export type {
   TournamentMopSummary,
 } from './awards'
 export { derivePlayerWorkEthic } from './workEthic'
+export { derivePlayerTournamentCareer } from './tournamentLegacy'
+export type {
+  PlayerTournamentCareer,
+  PlayerTournamentGameLogEntry,
+  PlayerTournamentRun,
+  TournamentPlayerStats,
+  TournamentRunFinish,
+} from './tournamentLegacy'
+export {
+  derivePlayerTournamentCareerHighs,
+  deriveTournamentRecordBook,
+} from './tournamentRecords'
+export type {
+  PlayerTournamentCareerHighEntry,
+  PlayerTournamentCareerHighs,
+  TournamentCategoryRecordBook,
+  TournamentRecordBook,
+} from './tournamentRecords'
 export type { PlayerWorkEthic, PlayerWorkEthicLabel } from './workEthic'
 export { derivePlayerCareerHistory } from './careerHistory'
 export {

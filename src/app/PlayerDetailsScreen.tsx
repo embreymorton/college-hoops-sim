@@ -6,6 +6,7 @@ import {
   PlayerCareerHighs,
   PlayerDetailsHeader,
   PlayerGameLogTable,
+  PlayerTournamentLegacy,
   PlayerRatingsGrid,
   PlayerRecruitingOrigin,
 } from '../components'
@@ -13,6 +14,8 @@ import {
   derivePlayerCareerHonorsIncludingAnnounced,
   derivePlayerCareerSummary,
   derivePlayerCareerHighs,
+  derivePlayerTournamentCareer,
+  derivePlayerTournamentCareerHighs,
   derivePlayerWorkEthic,
   resolveDynastyPlayer,
   type ResolvedSeasonHonor,
@@ -92,8 +95,20 @@ export function PlayerDetailsScreen() {
     },
     [dynasty, selectedPlayerId],
   )
+  const tournamentCareer = useMemo(
+    () => dynasty && selectedPlayerId
+      ? derivePlayerTournamentCareer(dynasty, selectedPlayerId)
+      : null,
+    [dynasty, selectedPlayerId],
+  )
+  const tournamentHighs = useMemo(
+    () => dynasty && selectedPlayerId
+      ? derivePlayerTournamentCareerHighs(dynasty, selectedPlayerId)
+      : null,
+    [dynasty, selectedPlayerId],
+  )
 
-  if (!dynasty || !selectedPlayerId || !careerHighs) {
+  if (!dynasty || !selectedPlayerId || !careerHighs || !tournamentCareer || !tournamentHighs) {
     return null
   }
 
@@ -170,6 +185,7 @@ export function PlayerDetailsScreen() {
         ) : (
           <div className="details-tab-panel player-legacy">
             <CareerHonors honors={careerHonors} />
+            <PlayerTournamentLegacy career={tournamentCareer} highs={tournamentHighs} programsById={PROGRAMS_BY_ID} onSelectProgram={openTeamDetails} />
             <section className="section" aria-labelledby="player-career-summary-heading">
               <h2 id="player-career-summary-heading" className="section-title">College Career · Regular Season</h2>
               <div className="player-stat-block player-stat-block--legacy">
@@ -326,6 +342,7 @@ export function PlayerDetailsScreen() {
         </section>
       </div> : <div className="details-tab-panel">
         <CareerHonors honors={careerHonors} />
+        <PlayerTournamentLegacy career={tournamentCareer} highs={tournamentHighs} programsById={PROGRAMS_BY_ID} onSelectProgram={openTeamDetails} />
         <section className="section" aria-labelledby="player-career-heading">
           <h2 id="player-career-heading" className="section-title">Career Progression</h2>
           <PlayerCareerProgressionTable seasons={careerHistory.seasons} />

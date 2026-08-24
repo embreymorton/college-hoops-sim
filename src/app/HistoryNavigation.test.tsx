@@ -182,6 +182,8 @@ describe('League History entry and index', () => {
     const table = screen.getByRole('table', { name: /top ten career ast records/i })
     fireEvent.click(within(table).getAllByRole('button')[0]!)
     expect(screen.getByText(/former player/i)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: 'Career' }))
+    expect(screen.getByRole('heading', { name: 'Tournament Legacy' })).toBeInTheDocument()
     fireEvent.click(screen.getByRole('button', { name: '← Back to League' }))
 
     expect(screen.getByRole('button', { name: 'History' })).toHaveAttribute('aria-pressed', 'true')
@@ -211,7 +213,7 @@ describe('League History entry and index', () => {
     useDynastyStore.getState().setHistoryTab('records')
     render(<App />)
 
-    expect(screen.queryByLabelText('Record scope')).not.toBeInTheDocument()
+    expect(screen.getByRole('group', { name: 'Record scope' })).toBeInTheDocument()
     expect(screen.getByRole('table', { name: /top ten single game pts records/i })).toBeInTheDocument()
     expect(screen.getByRole('table', { name: /top ten single season ppg records/i })).toBeInTheDocument()
     expect(screen.getByRole('table', { name: /top ten career pts records/i })).toBeInTheDocument()
@@ -219,6 +221,11 @@ describe('League History entry and index', () => {
     fireEvent.click(within(screen.getByRole('group', { name: 'Statistical category' })).getByRole('button', { name: 'BLK' }))
     expect(screen.getByRole('table', { name: /top ten single game blk records/i })).toBeInTheDocument()
     expect(screen.getByRole('table', { name: /top ten single season bpg records/i })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten career blk records/i })).toBeInTheDocument()
+
+    fireEvent.click(within(screen.getByRole('group', { name: 'Record scope' })).getByRole('button', { name: 'Tournament' }))
+    expect(screen.getByRole('table', { name: /top ten single game blk records/i })).toBeInTheDocument()
+    expect(screen.getByRole('table', { name: /top ten tournament run blk records/i })).toBeInTheDocument()
     expect(screen.getByRole('table', { name: /top ten career blk records/i })).toBeInTheDocument()
   })
 
