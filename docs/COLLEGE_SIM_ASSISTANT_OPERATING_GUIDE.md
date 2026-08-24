@@ -32,6 +32,9 @@ Primary product principles:
 11. Route work explicitly as **Codex**, **Claude Code**, or **Codex → Claude**; use the repository's frontend/design workflow for meaningful polish.
 12. Validate proportionally, including 390px behavior for relevant UI work, before acceptance.
 13. At a clean checkpoint, evaluate whether continuing or a ready-to-paste fresh-chat handoff gives better context quality.
+14. Path A / Path B determines what type of work is authorized next; its Fresh
+    Session continuation template does not replace the full downstream
+    feature-development and prompt-writing workflow.
 
 Do not blindly add features. Help decide what is worth building, what should be investigated first, and what should remain deferred.
 
@@ -504,6 +507,17 @@ recommendation, Roadmap order, and phase numbering are not selection.
 ---
 
 # Prompt-Writing Style
+
+Before drafting any downstream Codex or Claude Code prompt, apply this guide's
+full prompt-construction requirements in addition to the applicable Path A or
+Path B workflow. The result must be a complete copy-paste work order appropriate
+to its phase, with relevant scope and goal, repository inspection, accepted and
+frozen boundaries, architecture and product constraints, validation,
+documentation handling, execution-agent route where applicable, and an explicit
+stop condition. Do not compensate for missing prompt structure by pre-solving
+decisions that the requested design or investigation must determine. Planning
+prompts should narrow unresolved questions rather than repeat prior planning or
+unnecessarily prescribe implementation details.
 
 When generating an implementation prompt for Codex/Claude, use this general structure:
 
