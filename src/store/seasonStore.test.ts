@@ -897,6 +897,11 @@ describe('seasonStore Super Sim', () => {
       expect(getPendingGamesForRound(state.dynasty!.activeSeason!, round)).toHaveLength(0)
     }
     expect(state.pendingSuperSim).toBeNull()
+    expect(state.recruitingPulseBaseline?.baselinePeriod).toBe(0)
+    expect(state.recruitingPulseBaseline?.recruits.length).toBeGreaterThan(0)
+    expect(state.recruitingPulseBaseline?.recruits.every((row) =>
+      !('relationshipProgress' in row) && !('offerUtility' in row)
+    )).toBe(true)
 
     const finalRecord = deriveProgramRecord(state.dynasty!.activeSeason!, 'charlotte-tech')
     // A fresh Season starts 0-0, so the segment record equals the final record.

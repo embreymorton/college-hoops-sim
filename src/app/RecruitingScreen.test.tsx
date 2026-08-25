@@ -847,29 +847,41 @@ describe('Guide', () => {
 })
 
 describe('National Class', () => {
-  it('shows each Recruit current offer count immediately after Standing', () => {
+  it('shows a forming market and conceals external Offer totals at P0', () => {
+    renderRecruitingScreen()
+    fireEvent.click(screen.getByRole('button', { name: 'National Class' }))
+    expect(screen.getByText(/Preseason Evaluation — national market information becomes available/)).toBeInTheDocument()
+    const row = screen.getByText('Offered Fixture').closest('tr')!
+    expect(within(row).getAllByRole('cell')[6]).toHaveTextContent('Forming')
+    expect(within(row).getAllByRole('cell')[7]).toHaveTextContent('—')
+    expect(within(row).getAllByRole('cell')[8]).toHaveTextContent('Offered')
+  })
+
+  it('shows Market and each Recruit current offer count after Standing', () => {
     const dynasty = buildFixtureDynasty()
     dynasty.recruiting!.programs[OTHER_PROGRAM_ID] = {
       ...dynasty.recruiting!.programs[OTHER_PROGRAM_ID]!,
       board: [boardTarget('fx-offered-pf', 1, true)],
     }
-    useDynastyStore.setState({ dynasty, view: 'recruiting', explorationViewHistory: [] })
+    const revealed = { ...dynasty, recruiting: { ...dynasty.recruiting!, lastResolvedPeriod: 1 } }
+    useDynastyStore.setState({ dynasty: revealed, view: 'recruiting', explorationViewHistory: [] })
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'National Class' }))
 
     const table = screen.getByRole('table', { name: 'National recruiting class' })
     const headers = within(table).getAllByRole('columnheader').map((header) => header.textContent)
-    expect(headers.slice(headers.indexOf('Standing'), headers.indexOf('Standing') + 2)).toEqual([
+    expect(headers.slice(headers.indexOf('Standing'), headers.indexOf('Standing') + 3)).toEqual([
       'Standing',
+      'Market',
       'Offers',
     ])
     const offeredRow = screen.getByText('Offered Fixture').closest('tr')!
-    expect(within(offeredRow).getAllByRole('cell')[6]).toHaveTextContent('2')
+    expect(within(offeredRow).getAllByRole('cell')[7]).toHaveTextContent('2')
     const signedRow = screen.getByText('Signed Fixture').closest('tr')!
-    expect(within(signedRow).getAllByRole('cell')[6]).toHaveTextContent('-')
+    expect(within(signedRow).getAllByRole('cell')[7]).toHaveTextContent('-')
     const committedElsewhereRow = screen.getByText('Elsewhere Fixture').closest('tr')!
-    expect(within(committedElsewhereRow).getAllByRole('cell')[6]).toHaveTextContent('-')
+    expect(within(committedElsewhereRow).getAllByRole('cell')[7]).toHaveTextContent('-')
   })
 
   it('lists Recruits by National Rank and allows adding an eligible target', () => {
@@ -945,7 +957,7 @@ describe('Season Hub Recruiting module', () => {
     // composes onto one condensed title line with the Class label.
     expect(
       within(summary).getByText(
-        `Class of Season ${dynasty.recruiting!.targetSeasonNumber} · Preseason`,
+        `Class of Season ${dynasty.recruiting!.targetSeasonNumber} · Preseason Evaluation`,
       ),
     ).toBeInTheDocument()
     expect(within(summary).getByText(/SG 1 · PF 1/)).toBeInTheDocument()
@@ -1143,12 +1155,12 @@ describe('Full Recruiting Board empty state', () => {
 })
 
 describe('PRESEASON presentation', () => {
-  it('shows PRESEASON at period 0', () => {
+  it('shows PRESEASON EVALUATION at period 0', () => {
     const dynasty = buildFixtureDynasty()
     useDynastyStore.setState({ dynasty, view: 'recruiting', explorationViewHistory: [] })
     render(<App />)
 
-    expect(screen.getByText('REGULAR SEASON · PRESEASON')).toBeInTheDocument()
+    expect(screen.getByText('REGULAR SEASON · PRESEASON EVALUATION')).toBeInTheDocument()
   })
 
   it('shows PERIOD 1 / 24 once period 1 resolves', () => {

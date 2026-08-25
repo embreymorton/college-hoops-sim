@@ -47,7 +47,7 @@ export function formatRecruitingPeriodLabel(
   lastResolvedPeriod: number,
 ): string {
   if (lastResolvedPeriod === 0) {
-    return 'Preseason'
+    return 'Preseason Evaluation'
   }
   return `Period ${lastResolvedPeriod} / ${getRecruitingPeriodDenominator(phase)}`
 }

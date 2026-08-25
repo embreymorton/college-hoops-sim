@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import type { DynastyState, RecruitingCommitment } from '../dynasty'
 import {
   deriveProgramRecruitingBoard,
+  deriveRecruitMarketView,
   deriveTargetStatus,
   getRecruit,
   RECRUITING_BOARD_LIMIT,
@@ -54,6 +55,44 @@ function withCommitment(
 beforeEach(resetStore)
 
 describe('Recruit Details screen', () => {
+  it('treats P0 as Market Forming without exposing external Program details', () => {
+    const dynasty = createRecruitingDynasty('recruit-details-forming')
+    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+    renderDetails(dynasty, playerId)
+
+    expect(screen.getByText('Market Forming')).toBeInTheDocument()
+    expect(screen.getByText(/National competition becomes visible after the first Recruiting period/)).toBeInTheDocument()
+    expect(document.querySelector('.recruit-details-battle__group')).toBeNull()
+    expect(screen.getByText(/On your Board/)).toBeInTheDocument()
+  })
+
+  it('reveals exact Recruiting Programs without Board or Focus gating after Period 1', () => {
+    const dynasty = createRecruitingDynasty('recruit-details-reveal')
+    const controlledIds = new Set(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId))
+    const program = Object.values(dynasty.recruiting!.programs).find(({ programId, board }) =>
+      programId !== dynasty.controlledProgramId && board.some(({ playerId }) => !controlledIds.has(playerId)))!
+    const playerId = program.board.find(({ playerId }) => !controlledIds.has(playerId))!.playerId
+    const revealed = { ...dynasty, recruiting: { ...dynasty.recruiting!, lastResolvedPeriod: 1 } }
+    renderDetails(revealed, playerId)
+
+    expect(screen.getByRole('heading', { name: 'Recruiting Programs' })).toBeInTheDocument()
+    expect(screen.getByText(UNIVERSE_V0.programs.find(({ id }) => id === program.programId)!.name)).toBeInTheDocument()
+    expect(screen.getByText('Not on your Board')).toBeInTheDocument()
+  })
+
+  it('shows restrained Open Recruitment context only for an eligible premium Recruit', () => {
+    let match: { dynasty: DynastyState; playerId: string } | undefined
+    for (let index = 0; index < 20 && !match; index += 1) {
+      const dynasty = createRecruitingDynasty(`open-recruitment-${index}`)
+      const revealed = { ...dynasty, recruiting: { ...dynasty.recruiting!, lastResolvedPeriod: 1 } }
+      const recruit = revealed.recruiting!.recruits.find(({ player }) => deriveRecruitMarketView(revealed, player.id).isOpenRecruitmentOpportunity)
+      if (recruit) match = { dynasty: revealed, playerId: recruit.player.id }
+    }
+    expect(match).toBeDefined()
+    renderDetails(match!.dynasty, match!.playerId)
+    expect(screen.getByText('Light competition for a Recruit of this caliber.')).toBeInTheDocument()
+  })
+
   it.each([
     ['required', (board: ReturnType<typeof deriveProgramRecruitingBoard>, position: keyof typeof board.activeOfferCountsByPosition) =>
       (board.mandatoryNeedsByPosition?.[position] ?? 0) > 0],

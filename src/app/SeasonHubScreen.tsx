@@ -47,6 +47,7 @@ import {
   deriveFocusTargetSummaries,
   deriveHubCommitSummaries,
   deriveRecruitingActivityDescriptions,
+  deriveRecruitingPulseDescriptions,
 } from './recruitingBattleFormatters'
 import { describeRoundProgress, formatRecord } from './seasonFormatters'
 
@@ -109,6 +110,7 @@ export function SeasonHubScreen() {
   const recruitingActivityBaselinePeriod = useDynastyStore(
     (state) => state.recruitingActivityBaselinePeriod,
   )
+  const recruitingPulseBaseline = useDynastyStore((state) => state.recruitingPulseBaseline)
 
   if (!season || !controlledProgramId) {
     return null
@@ -135,11 +137,9 @@ export function SeasonHubScreen() {
     dynasty && recruitingBoard ? deriveHubCommitSummaries(dynasty, recruitingBoard) : []
   const recruitingActivity =
     dynasty && recruiting && recruitingActivityBaselinePeriod !== null
-      ? deriveRecruitingActivityDescriptions(
-          dynasty,
-          recruitingActivityBaselinePeriod,
-          PROGRAMS_BY_ID,
-        )
+      ? recruitingPulseBaseline
+        ? deriveRecruitingPulseDescriptions(dynasty, recruitingPulseBaseline, PROGRAMS_BY_ID)
+        : deriveRecruitingActivityDescriptions(dynasty, recruitingActivityBaselinePeriod, PROGRAMS_BY_ID)
       : []
 
   const overallRecord = deriveProgramRecord(season, controlledProgramId)

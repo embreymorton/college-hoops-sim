@@ -56,6 +56,7 @@
     "sim:elite-pursuit-funnel": "node --import tsx scripts/inspectElitePursuitFunnel.ts",
     "sim:offer-selection-margins": "node --import tsx scripts/inspectOfferSelectionMargins.ts",
     "sim:recruiting-capacity-structure": "node --import tsx scripts/inspectRecruitingCapacityStructure.ts",
+    "sim:recruit-market-coverage": "node --import tsx scripts/inspectRecruitMarketCoverage.ts",
     "sim:roster-flexibility": "node --import tsx scripts/inspectRosterFlexibility.ts",
     "sim:player-talent-amplitude": "node --import tsx scripts/inspectPlayerTalentAmplitude.ts",
     "sim:very-high-ovr-ceiling": "node --import tsx scripts/inspectVeryHighOvrCeiling.ts",

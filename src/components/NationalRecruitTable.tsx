@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { calculateOverall, POSITIONS, type Position } from '../engine'
 import {
   deriveRecruitActiveOfferCount,
+  deriveRecruitMarketView,
   deriveRecruitProgramStandings,
   deriveTargetStatus,
   RECRUITING_BOARD_LIMIT,
@@ -45,6 +46,7 @@ export function NationalRecruitTable({
   const recruiting = dynasty.recruiting!
   const controlledProgramId = dynasty.controlledProgramId
   const boardIsFull = board.targets.length >= RECRUITING_BOARD_LIMIT
+  const marketIsForming = recruiting.lastResolvedPeriod === 0
 
   const sorted = [...recruiting.recruits].sort(
     (first, second) => first.nationalRank - second.nationalRank,
@@ -101,6 +103,12 @@ export function NationalRecruitTable({
             : 'No Recruits match this filter.'}
         </p>
       ) : (
+        <>
+        {marketIsForming && (
+          <p className="section-hint national-recruit-table__market-note">
+            Preseason Evaluation — national market information becomes available after the first Recruiting period.
+          </p>
+        )}
         <div className="table-scroll">
           <table className="data-table national-recruit-table__table">
             <caption className="visually-hidden">National recruiting class</caption>
@@ -112,6 +120,7 @@ export function NationalRecruitTable({
                 <th scope="col">Ovr</th>
                 <th scope="col">Pot</th>
                 <th scope="col">Standing</th>
+                <th scope="col">Market</th>
                 <th scope="col">Offers</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
@@ -128,6 +137,7 @@ export function NationalRecruitTable({
                   (target) => target.playerId === recruit.player.id,
                 )
                 const isOnBoard = Boolean(boardTarget)
+                const market = deriveRecruitMarketView(dynasty, recruit.player.id)
                 const committedProgramName =
                   status === 'committed-elsewhere'
                     ? programsById.get(
@@ -159,9 +169,18 @@ export function NationalRecruitTable({
                       )}
                     </td>
                     <td>
+                      <span aria-label={market.isForming
+                        ? 'Market forming'
+                        : `${market.tier} market, ${market.activeProgramCount} recruiting programs`}>
+                        {market.tier === 'forming'
+                          ? 'Forming'
+                          : market.tier[0]!.toUpperCase() + market.tier.slice(1)}
+                      </span>
+                    </td>
+                    <td>
                       {status === 'committed' || status === 'committed-elsewhere'
                         ? '-'
-                        : deriveRecruitActiveOfferCount(recruiting, recruit.player.id)}
+                        : market.isForming ? '—' : deriveRecruitActiveOfferCount(recruiting, recruit.player.id)}
                     </td>
                     <td className="recruiting-status-cell">
                       {formatRecruitStatusLabel({
@@ -196,6 +215,7 @@ export function NationalRecruitTable({
             </tbody>
           </table>
         </div>
+        </>
       )}
     </div>
   )

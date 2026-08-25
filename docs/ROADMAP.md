@@ -15,11 +15,13 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### Recruiting Market Visibility V1 — NEXT / IN PROGRESS
 
-Postgame Meaning V1 is complete, accepted, and frozen. No successor has been
-selected. Fresh sessions resolve to Path B and must conduct a neutral Open
-Planning pass before recommending work.
+The user explicitly selected Recruiting Market Visibility V1. The Codex → Claude
+route is in progress: Codex owns player-safe market projections, transient
+Recruiting Pulse behavior, functional wiring, and tests; Claude Code owns the
+subsequent focused frontend-design polish. Existing Recruiting mechanics remain
+frozen. Acceptance and documentation closure remain pending.
 
 ## Planned and unscheduled
 

@@ -340,6 +340,24 @@ export function RecruitDetailsScreen() {
           </div>
         ) : (
           <>
+            <div className="recruit-details-market">
+              <p className="eyebrow-tag">National Market</p>
+              <p className="recruit-details-market__status">
+                {details.market.isForming
+                  ? 'Market Forming'
+                  : `${details.market.tier[0]!.toUpperCase()}${details.market.tier.slice(1)}`}
+              </p>
+              <p className="section-hint">
+                {details.market.isForming
+                  ? 'Programs are evaluating the class. National competition becomes visible after the first Recruiting period.'
+                  : `${details.market.activeProgramCount} recruiting ${details.market.activeProgramCount === 1 ? 'Program' : 'Programs'} · ${details.market.activeOfferCount} formal ${details.market.activeOfferCount === 1 ? 'Offer' : 'Offers'}`}
+              </p>
+              {details.market.isOpenRecruitmentOpportunity && (
+                <p className="recruit-details-market__opportunity">
+                  Light competition for a Recruit of this caliber.
+                </p>
+              )}
+            </div>
             <div className="recruit-details-readiness-row">
               <span className="recruit-details-readiness-row__label">Readiness</span>
               <RecruitingReadinessBadge readiness={battle.readiness} />
@@ -367,9 +385,9 @@ export function RecruitDetailsScreen() {
             </div>
 
             <div className="recruit-details-battle">
-              <h3 className="section-subtitle">Pursuing Programs</h3>
-              {groups.length === 0 ? (
-                <p className="section-hint">No Programs are currently pursuing this Recruit.</p>
+              <h3 className="section-subtitle">Recruiting Programs</h3>
+              {details.market.isForming ? null : groups.length === 0 ? (
+                <p className="section-hint">No Programs are currently active in this recruitment.</p>
               ) : groups.map((group) => (
                 <div key={group.position} className="recruit-details-battle__group">
                   <p className="recruiting-battle-card__group-heading">

@@ -2,6 +2,7 @@ import { calculateOverall, type Position } from '../engine'
 import {
   deriveRecruitingBattleView,
   deriveRecruitingCommitmentActivity,
+  deriveRecruitingPulse,
   getRecruit,
   type ControlledRecruitingPosition,
   type DynastyState,
@@ -11,6 +12,8 @@ import {
   type RecruitingCommitmentActivity,
   type RecruitingCommitmentActivityKind,
   type RecruitingReadiness,
+  type RecruitingPulseFact,
+  type RecruitingPulseSnapshot,
   type RecruitingTargetStatus,
   type RecruitStarRating,
 } from '../dynasty'
@@ -350,4 +353,32 @@ export function deriveRecruitingActivityDescriptions(
   if (!dynasty.recruiting) return []
   const activity = deriveRecruitingCommitmentActivity(dynasty, sincePeriodExclusive)
   return describeRecruitingCommitmentActivity(dynasty, activity, programsById)
+}
+
+export interface RecruitingPulseDescription {
+  readonly kind: RecruitingPulseFact['kind']
+  readonly playerId: string
+  readonly playerName: string
+  readonly programName?: string
+  readonly from?: string
+  readonly to?: string
+}
+
+export function deriveRecruitingPulseDescriptions(
+  dynasty: DynastyState,
+  baseline: RecruitingPulseSnapshot | null,
+  programsById: ReadonlyMap<string, ProgramDefinition>,
+): RecruitingPulseDescription[] {
+  return deriveRecruitingPulse(baseline, dynasty).flatMap((fact) => {
+    const recruit = dynasty.recruiting ? getRecruit(dynasty.recruiting, fact.playerId) : undefined
+    if (!recruit) return []
+    return [{
+      kind: fact.kind,
+      playerId: fact.playerId,
+      playerName: `${recruit.player.firstName} ${recruit.player.lastName}`,
+      programName: fact.programId ? programsById.get(fact.programId)?.name ?? fact.programId : undefined,
+      from: fact.from,
+      to: fact.to,
+    }]
+  })
 }

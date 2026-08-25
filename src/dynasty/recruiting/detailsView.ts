@@ -6,6 +6,7 @@ import {
 } from './battleView'
 import type { RecruitStarRating } from './domain'
 import { getRecruit } from './queries'
+import { deriveRecruitMarketView, type RecruitMarketView } from './marketView'
 import {
   deriveRecruitPositionOutlook,
   type RecruitPositionOutlook,
@@ -29,6 +30,7 @@ export interface RecruitDetailsView {
   readonly stars: RecruitStarRating
   /** Existing player-safe readiness, commitment, controlled, and pursuer projection. */
   readonly battle: RecruitingBattleView
+  readonly market: RecruitMarketView
   readonly positionOutlook: RecruitPositionOutlook
 }
 
@@ -62,6 +64,7 @@ export function deriveRecruitDetailsView(
     positionRank: recruit.positionRank,
     stars: recruit.stars,
     battle: deriveRecruitingBattleView(dynasty, playerId),
+    market: deriveRecruitMarketView(dynasty, playerId),
     positionOutlook: deriveRecruitPositionOutlook(dynasty, playerId),
   }
 }

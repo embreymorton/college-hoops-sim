@@ -204,9 +204,16 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — OPEN PLANNING CHECKPOINT.**
+**NEXT selected — Recruiting Market Visibility V1 is IN PROGRESS.**
 
-Fresh sessions resolve to **Path B**. Postgame Meaning V1 is **COMPLETE /
+The user explicitly selected this presentation/read-model milestone following a
+diagnostic verdict of mostly healthy, presentation-sensitive Recruiting market
+behavior. The planned Codex → Claude route preserves all Recruiting mechanics:
+Codex is implementing player-safe market visibility and a transient Recruiting
+Pulse, followed by focused frontend-design polish and user acceptance. No
+production behavior is accepted or frozen yet.
+
+Postgame Meaning V1 is **COMPLETE /
 ACCEPTED / FROZEN**. Dynasty regular-season and Tournament full postgames now
 derive at most three ranked consequences between the final scoreboard and
 Player Box Score, with accepted competition-specific Records, Career Highs,

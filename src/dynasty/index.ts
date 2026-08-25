@@ -188,6 +188,18 @@ export {
   deriveRecruitingCommitmentActivity,
 } from './recruiting/battleView'
 export { deriveRecruitDetailsView } from './recruiting/detailsView'
+export {
+  deriveRecruitMarketView,
+  deriveRecruitingMarketTier,
+  deriveRecruitingPulse,
+  deriveRecruitingPulseSnapshot,
+} from './recruiting/marketView'
+export type {
+  RecruitMarketView,
+  RecruitingMarketTier,
+  RecruitingPulseFact,
+  RecruitingPulseSnapshot,
+} from './recruiting/marketView'
 export { deriveRecruitPositionOutlook } from './recruiting/positionOutlook'
 export { deriveNextSeasonRosterOutlook } from './recruiting/rosterOutlook'
 export { deriveFollowingRecruitsView } from './recruiting/followingView'

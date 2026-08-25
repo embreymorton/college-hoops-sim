@@ -23,6 +23,7 @@ import {
   deriveBaseRecruitAttraction,
   deriveRecruitProgramStandings,
   deriveTargetStatus,
+  getRecruit,
   initializeDynastyState,
   initializeRecruiting,
   MIN_MEANINGFUL_RELATIONSHIP,
@@ -228,6 +229,42 @@ export interface RecruitingOpportunityTrace {
   readonly competingOffers: number
 }
 
+export interface RecruitingMarketRecruitTrace {
+  readonly targetSeasonNumber: number
+  readonly period: number
+  readonly playerId: string
+  readonly playerName: string
+  readonly nationalRank: number
+  readonly stars: number
+  readonly overall: number
+  readonly potential: number
+  readonly position: string
+  readonly pursuerProgramIds: readonly string[]
+  readonly offerProgramIds: readonly string[]
+  readonly committedProgramId: string | null
+  readonly commitmentPeriod: number | 'late' | null
+}
+
+export interface RecruitingMarketOpportunityTrace {
+  readonly targetSeasonNumber: number
+  readonly period: number
+  readonly playerId: string
+  readonly nationalRank: number
+  readonly position: string
+  readonly programId: string
+  readonly prestige: number
+  readonly projectedOpening: boolean
+  readonly remainingOpening: boolean
+  readonly onBoard: boolean
+  readonly offered: boolean
+  readonly boardFree: boolean
+  readonly offerFreeAtPosition: boolean
+  readonly positionUtility: number
+  readonly bestBoardPositionUtility: number | null
+  readonly offerUtility: number | null
+  readonly bestOfferedUtilityAtPosition: number | null
+}
+
 interface StructuralHealth {
   invalidRosters: number
   invalidRotations: number
@@ -271,8 +308,62 @@ export interface DynastyRunResult {
   readonly programSeasonOutcomes: readonly ProgramSeasonOutcomeTrace[]
   readonly recruitingBattles: readonly RecruitingBattleTrace[]
   readonly recruitingOpportunities: readonly RecruitingOpportunityTrace[]
+  readonly recruitingMarket: readonly RecruitingMarketRecruitTrace[]
+  readonly recruitingMarketOpportunities: readonly RecruitingMarketOpportunityTrace[]
   readonly health: StructuralHealth
   readonly rollovers: number
+}
+
+const MARKET_CHECKPOINTS = new Set([0, 4, 8, 12, 20, 24, 28])
+
+function observeRecruitingMarket(dynasty: DynastyState): {
+  recruits: RecruitingMarketRecruitTrace[]
+  opportunities: RecruitingMarketOpportunityTrace[]
+} {
+  if (process.env.RECRUIT_MARKET_COVERAGE_CAPTURE !== '1') return { recruits: [], opportunities: [] }
+  const recruiting = dynasty.recruiting!
+  if (!MARKET_CHECKPOINTS.has(recruiting.lastResolvedPeriod)) return { recruits: [], opportunities: [] }
+  const programIds = Object.keys(recruiting.programs).sort()
+  const recruits: RecruitingMarketRecruitTrace[] = recruiting.recruits.map((recruit) => {
+    const pursuerProgramIds = programIds.filter((programId) =>
+      recruiting.programs[programId]!.board.some((target) => target.playerId === recruit.player.id && deriveTargetStatus(recruiting, programId, recruit.player.id) === 'active'))
+    const offerProgramIds = programIds.filter((programId) =>
+      recruiting.programs[programId]!.board.some((target) => target.playerId === recruit.player.id && target.hasActiveOffer && deriveTargetStatus(recruiting, programId, recruit.player.id) === 'active'))
+    const commitment = recruiting.commitmentsByPlayerId[recruit.player.id]
+    return {
+      targetSeasonNumber: recruiting.targetSeasonNumber, period: recruiting.lastResolvedPeriod,
+      playerId: recruit.player.id, playerName: `${recruit.player.firstName} ${recruit.player.lastName}`, nationalRank: recruit.nationalRank, stars: recruit.stars,
+      overall: calculateOverall(recruit.player), potential: recruit.player.potential, position: recruit.player.position,
+      pursuerProgramIds, offerProgramIds, committedProgramId: commitment?.programId ?? null,
+      commitmentPeriod: commitment?.timing.kind === 'period' ? commitment.timing.period : commitment?.timing.kind === 'late' ? 'late' as const : null,
+    }
+  })
+  const opportunities = recruiting.recruits.filter((recruit) => recruit.nationalRank <= 25).flatMap((recruit) =>
+    programIds.map((programId) => {
+      const program = recruiting.programs[programId]!
+      const target = program.board.find((entry) => entry.playerId === recruit.player.id)
+      const samePosition = program.board.flatMap((entry) => {
+        const candidate = recruiting.recruits.find((row) => row.player.id === entry.playerId)
+        return candidate?.player.position === recruit.player.position ? [{ entry, candidate }] : []
+      })
+      const utilities = samePosition.map(({ entry }) => deriveAiPositionCandidateUtility(dynasty, recruiting, programId, getRecruit(recruiting, entry.playerId)!))
+      const offeredUtilities = samePosition.filter(({ entry }) => entry.hasActiveOffer).map(({ entry }) => deriveAiOfferUtility(dynasty, recruiting, programId, entry))
+      return {
+        targetSeasonNumber: recruiting.targetSeasonNumber, period: recruiting.lastResolvedPeriod,
+        playerId: recruit.player.id, nationalRank: recruit.nationalRank, position: recruit.player.position,
+        programId, prestige: dynasty.activeSeason!.programStates[programId]!.team.prestige,
+        projectedOpening: canRecruitUseProjectedOpening(recruiting, program, recruit),
+        remainingOpening: deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position] > 0,
+        onBoard: target !== undefined, offered: target?.hasActiveOffer === true,
+        boardFree: program.board.length < RECRUITING_BOARD_LIMIT,
+        offerFreeAtPosition: deriveAvailableOfferSlotsByPosition(recruiting, program)[recruit.player.position] > 0,
+        positionUtility: deriveAiPositionCandidateUtility(dynasty, recruiting, programId, recruit),
+        bestBoardPositionUtility: utilities.length ? Math.max(...utilities) : null,
+        offerUtility: target ? deriveAiOfferUtility(dynasty, recruiting, programId, target) : null,
+        bestOfferedUtilityAtPosition: offeredUtilities.length ? Math.max(...offeredUtilities) : null,
+      }
+    }))
+  return { recruits, opportunities }
 }
 
 function observeRecruitingOpportunities(dynasty: DynastyState): RecruitingOpportunityTrace[] {
@@ -544,6 +635,8 @@ export function runDynastyCalibration(
   const programSeasonOutcomes: ProgramSeasonOutcomeTrace[] = []
   const recruitingBattles: RecruitingBattleTrace[] = []
   const recruitingOpportunities: RecruitingOpportunityTrace[] = []
+  const recruitingMarket: RecruitingMarketRecruitTrace[] = []
+  const recruitingMarketOpportunities: RecruitingMarketOpportunityTrace[] = []
   const health = emptyHealth()
   const historicalGameIds = new Set<string>()
   const knownPersonIds = new Set<string>()
@@ -565,6 +658,7 @@ export function runDynastyCalibration(
         potential: recruit.player.potential,
       })))
       recruitingOpportunities.push(...observeRecruitingOpportunities(dynasty))
+      { const market = observeRecruitingMarket(dynasty); recruitingMarket.push(...market.recruits); recruitingMarketOpportunities.push(...market.opportunities) }
       for (const [programId, { team, rotation }] of Object.entries(season.programStates)) {
         const minutes = derivePlayerMinutesV1(rotation)
         const strength = calculateTeamStrength(team, rotation)
@@ -610,6 +704,7 @@ export function runDynastyCalibration(
         })
         recruitingBattles.push(...newCommitmentBattles(beforeRecruiting, dynasty, 'period'))
         recruitingOpportunities.push(...observeRecruitingOpportunities(dynasty))
+        { const market = observeRecruitingMarket(dynasty); recruitingMarket.push(...market.recruits); recruitingMarketOpportunities.push(...market.opportunities) }
       }
       const seasonMetrics = extractSeasonTalentMetrics(season)
       seasons.push(seasonMetrics)
@@ -693,6 +788,7 @@ export function runDynastyCalibration(
         })
         recruitingBattles.push(...newCommitmentBattles(beforeRecruiting, dynasty, 'period'))
         recruitingOpportunities.push(...observeRecruitingOpportunities(dynasty))
+        { const market = observeRecruitingMarket(dynasty); recruitingMarket.push(...market.recruits); recruitingMarketOpportunities.push(...market.opportunities) }
       }
       tournamentBalance.push(
         extractTournamentBalanceObservation(season, baselinePostseason),
@@ -899,6 +995,8 @@ export function runDynastyCalibration(
     programSeasonOutcomes,
     recruitingBattles,
     recruitingOpportunities,
+    recruitingMarket,
+    recruitingMarketOpportunities,
     health,
     rollovers,
   }

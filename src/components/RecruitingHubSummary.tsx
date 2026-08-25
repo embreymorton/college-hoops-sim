@@ -2,7 +2,7 @@ import { RECRUITING_BOARD_LIMIT, type ProgramRecruitingBoard, type RecruitingPha
 import {
   formatControlledPositionLabel,
   formatReadinessLabel,
-  type CommitmentActivityDescription,
+  type RecruitingPulseDescription,
   type FocusTargetSummary,
   type RecruitingHubCommitSummary,
 } from '../app/recruitingBattleFormatters'
@@ -22,8 +22,8 @@ interface RecruitingHubSummaryProps {
   readonly focusTargets: readonly FocusTargetSummary[]
   /** Signed Board targets — the Hub's stable status home for commitments, distinct from still-unresolved Focus Targets. */
   readonly commits?: readonly RecruitingHubCommitSummary[]
-  /** Commitment activity since the last simulation/progression boundary — composes inside this module rather than as a separate top-level Hub surface. */
-  readonly activity?: readonly CommitmentActivityDescription[]
+  /** Ranked Recruiting Pulse since the last simulation/progression boundary. */
+  readonly activity?: readonly RecruitingPulseDescription[]
   readonly onGenerateDraftBoard: () => void
   readonly onBuildManually: () => void
   /** True once the Tournament has concluded — reframes this module as the Late Recruiting lead-in rather than mid-Season status. */

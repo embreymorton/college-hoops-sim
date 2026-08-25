@@ -22,6 +22,7 @@ import {
   buildDefaultRecruitingBoard,
   clearUnavailableRecruitingBoardTargets,
   deriveDynastyProgressionAction,
+  deriveRecruitingPulseSnapshot,
   fillRemainingRecruitingBoard,
   initializeDynastyState,
   initializeRecruiting,
@@ -38,6 +39,7 @@ import {
   type DynastyState,
   type RecordCategory,
   type RecruitingState,
+  type RecruitingPulseSnapshot,
 } from '../dynasty'
 import {
   getCurrentTournamentRound,
@@ -320,6 +322,8 @@ export interface DynastySessionState {
    * earlier unseen commitment rather than preserving it indefinitely.
    */
   readonly recruitingActivityBaselinePeriod: number | null
+  /** Player-safe, session-only pre-progression market comparison. Replaced on each progression action. */
+  readonly recruitingPulseBaseline: RecruitingPulseSnapshot | null
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string, dynastySeed?: RngSeed): void
   followPlayer(playerId: string): void
@@ -594,6 +598,13 @@ function nextRecruitingActivityBaseline(dynasty: DynastyState): number | null {
   return dynasty.recruiting?.lastResolvedPeriod ?? null
 }
 
+function nextRecruitingPulseBaseline(
+  dynasty: DynastyState,
+  followedRecruitIds: readonly string[],
+): RecruitingPulseSnapshot | null {
+  return deriveRecruitingPulseSnapshot(dynasty, followedRecruitIds)
+}
+
 function withActiveSeason(
   dynasty: DynastyState,
   activeSeason: SeasonState,
@@ -785,6 +796,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   recruitingActionError: null,
   pendingRecruitingSetupIntent: null,
   recruitingActivityBaselinePeriod: null,
+  recruitingPulseBaseline: null,
   selectProgram(programId, explicitDynastySeed) {
     const dynastySeed = explicitDynastySeed ?? createInteractiveDynastySeed()
     const initializedUniverse = initializeUniverse(
@@ -853,6 +865,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       recruitingActionError: null,
       pendingRecruitingSetupIntent: null,
       recruitingActivityBaselinePeriod: null,
+      recruitingPulseBaseline: null,
     })
   },
 
@@ -1326,6 +1339,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty: withActiveSeason(dynasty, outcome.season),
       lastPlayedGameId: outcome.playedGameId,
       view: 'postgame',
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+      recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
     })
   },
 
@@ -1358,6 +1373,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       lastPlayedGameId: outcome.playedGameId,
       view: 'hub',
       recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+      recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
     })
   },
 
@@ -1387,6 +1403,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       dynasty: withActiveSeason(dynasty, nextSeason),
       recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+      recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
     })
   },
 
@@ -1471,6 +1488,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
 
     const recruitingActivityBaselinePeriod = nextRecruitingActivityBaseline(dynasty)
+    const recruitingPulseBaseline = nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds)
 
     if (pendingSuperSim.kind === 'seasonComplete') {
       const nextDynasty = simulateDynastyToSeasonComplete(dynasty)
@@ -1488,6 +1506,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         viewedTournamentGameId: null,
         view: 'postseasonHub',
         recruitingActivityBaselinePeriod,
+        recruitingPulseBaseline,
       })
       return
     }
@@ -1506,6 +1525,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         segmentLosses: after.losses - before.losses,
       },
       recruitingActivityBaselinePeriod,
+      recruitingPulseBaseline,
     })
   },
 
@@ -1682,6 +1702,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       dynasty: withActivePostseason(dynasty, nextPostseason),
       lastPlayedTournamentGameId: game.id,
       view: 'postseasonPostgame',
+      recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+      recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
     })
   },
 
@@ -1714,6 +1736,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       lastPlayedTournamentGameId: game.id,
       view: 'postseasonHub',
       recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+      recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
     })
   },
 
@@ -1738,6 +1761,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({
       dynasty: withActivePostseason(dynasty, nextPostseason),
       recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+      recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
     })
   },
 
@@ -1939,6 +1963,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       selectedArchivedSeasonNumber: null,
       recruitingActionError: null,
       recruitingActivityBaselinePeriod: null,
+      recruitingPulseBaseline: null,
     })
   },
 
@@ -2141,6 +2166,8 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         view: 'offseason',
         offseasonPresentationCursor: null,
         recruitingActionError: null,
+        recruitingActivityBaselinePeriod: nextRecruitingActivityBaseline(dynasty),
+        recruitingPulseBaseline: nextRecruitingPulseBaseline(dynasty, get().followedRecruitIds),
       })
     } catch (error) {
       set({
@@ -2253,6 +2280,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         recruitingActionError: null,
         pendingRecruitingSetupIntent: null,
         recruitingActivityBaselinePeriod: null,
+        recruitingPulseBaseline: null,
       })
     } catch (error) {
       set({

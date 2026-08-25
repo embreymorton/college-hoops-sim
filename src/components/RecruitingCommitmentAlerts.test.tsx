@@ -57,7 +57,7 @@ describe('RecruitingCommitmentAlerts', () => {
         activity={[activity(), activity({ playerId: 'recruit-2', playerName: 'Other Player' })]}
       />,
     )
-    expect(screen.getByText('Recruiting Update · 2 Decisions')).toBeInTheDocument()
+    expect(screen.getByText('Recruiting Update · 2 Changes')).toBeInTheDocument()
   })
 
   it('never fabricates standing-movement language', () => {
