@@ -340,7 +340,7 @@ export function RecruitDetailsScreen() {
           </div>
         ) : (
           <>
-            <div className="recruit-details-market">
+            <div className="recruit-details-market" data-forming={details.market.isForming || undefined}>
               <p className="eyebrow-tag">National Market</p>
               <p className="recruit-details-market__status">
                 {details.market.isForming
@@ -384,12 +384,13 @@ export function RecruitDetailsScreen() {
               {managementActions}
             </div>
 
+            {!details.market.isForming && (
             <div className="recruit-details-battle">
               <h3 className="section-subtitle">Recruiting Programs</h3>
-              {details.market.isForming ? null : groups.length === 0 ? (
+              {groups.length === 0 ? (
                 <p className="section-hint">No Programs are currently active in this recruitment.</p>
               ) : groups.map((group) => (
-                <div key={group.position} className="recruit-details-battle__group">
+                <div key={group.position} className="recruit-details-battle__group" data-position={group.position}>
                   <p className="recruiting-battle-card__group-heading">
                     {formatBattlePositionLabel(group.position)}
                   </p>
@@ -415,6 +416,7 @@ export function RecruitDetailsScreen() {
                 </div>
               ))}
             </div>
+            )}
           </>
         )}
       </section>

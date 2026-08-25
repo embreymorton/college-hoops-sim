@@ -1,4 +1,4 @@
-import { formatControlledPositionLabel, formatReadinessLabel, type RecruitingPulseDescription } from '../app/recruitingBattleFormatters'
+import { formatReadinessLabel, type RecruitingPulseDescription } from '../app/recruitingBattleFormatters'
 
 interface RecruitingCommitmentAlertsProps {
   readonly activity: readonly RecruitingPulseDescription[]
@@ -39,24 +39,47 @@ export function RecruitingCommitmentAlerts({ activity }: RecruitingCommitmentAle
             {entry.kind === 'committed-to-controlled' ? (
               <>
                 <span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' '}
-                committed to us
+                committed to us.
               </>
             ) : entry.kind === 'focused-committed-elsewhere' || entry.kind === 'tracked-committed-elsewhere' ? (
               <>
-                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>
-                {' → '}
-                {entry.programName}
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' '}
+                committed to {entry.programName}.
               </>
             ) : entry.kind === 'readiness-escalated' ? (
-              <><span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' · '}{formatReadinessLabel(entry.to as Parameters<typeof formatReadinessLabel>[0])}</>
-            ) : entry.kind === 'position-fell' || entry.kind === 'position-improved' ? (
-              <><span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' · '}{formatControlledPositionLabel(entry.from as Parameters<typeof formatControlledPositionLabel>[0])} → {formatControlledPositionLabel(entry.to as Parameters<typeof formatControlledPositionLabel>[0])}</>
+              <>
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' '}
+                {entry.to === 'decision-imminent'
+                  ? 'is nearing a decision.'
+                  : entry.to === 'decision-soon'
+                    ? 'will decide soon.'
+                    : `is now a ${formatReadinessLabel(entry.to as Parameters<typeof formatReadinessLabel>[0]).toLowerCase()}.`}
+              </>
+            ) : entry.kind === 'position-improved' ? (
+              <>
+                You moved into {entry.to === 'leading' ? 'the lead' : 'contention'} for{' '}
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>.
+              </>
+            ) : entry.kind === 'position-fell' ? (
+              <>
+                You {entry.to === 'trailing' ? 'fell behind' : 'slipped to competitive'} for{' '}
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>.
+              </>
             ) : entry.kind === 'new-offer' ? (
-              <><span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' · '}{entry.programName} made an Offer</>
+              <>
+                {entry.programName} offered{' '}
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>.
+              </>
             ) : entry.kind === 'major-competitor-entered' ? (
-              <><span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' · '}{entry.programName} entered the recruitment</>
+              <>
+                {entry.programName} entered the race for{' '}
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>.
+              </>
             ) : (
-              <><span className="recruiting-commitment-alert__name">{entry.playerName}</span>{' · '}{entry.from} → {entry.to} market</>
+              <>
+                <span className="recruiting-commitment-alert__name">{entry.playerName}</span>
+                {"'s recruitment is now "}{entry.to}.
+              </>
             )}
           </li>
         ))}

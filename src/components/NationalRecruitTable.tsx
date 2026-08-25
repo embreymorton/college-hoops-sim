@@ -168,7 +168,7 @@ export function NationalRecruitTable({
                         standingByPlayerId.get(recruit.player.id) ?? 0,
                       )}
                     </td>
-                    <td>
+                    <td className="national-recruit-table__market-cell" data-market={market.tier}>
                       <span aria-label={market.isForming
                         ? 'Market forming'
                         : `${market.tier} market, ${market.activeProgramCount} recruiting programs`}>
@@ -177,7 +177,7 @@ export function NationalRecruitTable({
                           : market.tier[0]!.toUpperCase() + market.tier.slice(1)}
                       </span>
                     </td>
-                    <td>
+                    <td className="national-recruit-table__offers-cell" data-forming={market.isForming || undefined}>
                       {status === 'committed' || status === 'committed-elsewhere'
                         ? '-'
                         : market.isForming ? '—' : deriveRecruitActiveOfferCount(recruiting, recruit.player.id)}

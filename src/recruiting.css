@@ -218,6 +218,35 @@
   font-size: 0.76rem;
 }
 
+/* Market: restrained text treatment, not a badge system. Crowded recedes
+   (noise, low individual leverage); Open gets a light accent nudge (the
+   Recruit Details page carries the actual opportunity framing — this is
+   just a scan cue). Forming reads as an in-progress state, not empty data. */
+.national-recruit-table__market-cell {
+  font-size: 0.8rem;
+}
+
+.national-recruit-table__market-cell[data-market='forming'] {
+  color: var(--ink-2);
+  font-style: italic;
+}
+
+.national-recruit-table__market-cell[data-market='open'] {
+  color: var(--accent-strong);
+}
+
+.national-recruit-table__market-cell[data-market='active'] {
+  color: var(--ink-1);
+}
+
+.national-recruit-table__market-cell[data-market='crowded'] {
+  color: var(--ink-2);
+}
+
+.national-recruit-table__offers-cell[data-forming] {
+  color: var(--ink-2);
+}
+
 .recruiting-board-table tbody tr[data-status='committed'] .recruiting-status-cell {
   color: var(--accent);
   font-weight: 600;
@@ -1121,6 +1150,33 @@
   margin-top: var(--space-3);
 }
 
+/* National Market: the page's first fact, so it opens Current Recruitment
+   at a slightly larger weight than the section-hint copy beneath it — but
+   still quiet enough not to compete with the Recruit Profile header above.
+   Forming reads as an active, in-progress state (italic, muted) rather
+   than a missing value. */
+.recruit-details-market {
+  margin-bottom: var(--space-4);
+}
+
+.recruit-details-market__status {
+  margin: 0.15rem 0 0.2rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-0);
+}
+
+.recruit-details-market[data-forming] .recruit-details-market__status {
+  font-style: italic;
+  color: var(--ink-1);
+}
+
+.recruit-details-market__opportunity {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  color: var(--accent-strong);
+}
+
 /* Readiness leads Current Recruitment — "how close is he to deciding?" is
    the first question this section answers, so it gets its own line above
    the quieter Your Program / Pursuing Programs detail. */
@@ -1189,6 +1245,35 @@
 
 .recruit-details-battle__group + .recruit-details-battle__group {
   margin-top: 0.5rem;
+}
+
+/* Trailing can legitimately hold a dozen+ Programs in a Crowded market — a
+   stacked one-per-row list turns into dense scrolling metadata at that
+   count. Wrapped compact chips keep every identity and Offer marker
+   scannable at a glance instead. Leading/Competitive stay full rows: those
+   groups are small and the extra row width earns its keep there. */
+.recruit-details-battle__group[data-position='trailing'] .recruiting-battle-card__group-list {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.recruit-details-battle__group[data-position='trailing'] .recruiting-battle-card__row {
+  flex: 0 0 auto;
+  padding: 0.2rem 0.6rem;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  gap: 0.35rem;
+}
+
+.recruit-details-battle__group[data-position='trailing'] .recruiting-battle-card__row-name {
+  flex: 0 0 auto;
+  max-width: 10rem;
+}
+
+.recruit-details-battle__group[data-position='trailing'] .recruiting-battle-card__row[data-controlled='true'] {
+  border-color: var(--accent);
 }
 
 /* Committed: a resolved recruitment reads as one anchored fact, not an
