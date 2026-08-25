@@ -15,13 +15,7 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### Recruiting Market Visibility V1 — NEXT / IN PROGRESS
-
-The user explicitly selected Recruiting Market Visibility V1. The Codex → Claude
-route is in progress: Codex owns player-safe market projections, transient
-Recruiting Pulse behavior, functional wiring, and tests; Claude Code owns the
-subsequent focused frontend-design polish. Existing Recruiting mechanics remain
-frozen. Acceptance and documentation closure remain pending.
+**OPEN PLANNING CHECKPOINT — no NEXT selected.**
 
 ## Planned and unscheduled
 
@@ -46,6 +40,17 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Recruiting Market Visibility V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added Preseason Evaluation / Market Forming concealment, then a player-safe
+  reveal of derived Open/Active/Crowded market activity and exact formal Offers
+  across National Class and Recruit Details.
+- Added a transient deterministic maximum-three Recruiting Pulse over supported
+  tracked Recruits without durable market-event history or Recruiting-mechanics
+  changes.
+- Accepted restrained desktop and approximately 390px presentation, then
+  returned to an Open Planning Checkpoint with no successor selected.
 
 ### Postgame Meaning V1 — COMPLETE / ACCEPTED / FROZEN
 

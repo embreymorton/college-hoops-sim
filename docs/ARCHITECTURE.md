@@ -564,6 +564,26 @@ counts, position-full state, jointly feasible Offer capacity, current standings,
 target status, and Focus counts are pure projections. No stored mandatory-slot
 or flexible-position assignment object exists.
 
+Recruiting Market Visibility V1 follows this ownership path:
+
+```text
+canonical RecruitingState facts
+→ pure player-safe market projections
+→ optional transient session snapshot
+→ pure Recruiting Pulse comparison
+→ React presentation
+```
+
+Market tiers (`Open` / `Active` / `Crowded`) and high-caliber open-recruitment
+context are derived, not canonical Recruiting state. The Pulse baseline is
+transient Zustand/session context over supported Board and followed Recruit
+snapshots; its comparison is pure, deterministic, ranked, suppressed, and
+bounded to three facts. It stores no durable Dynasty event or market history,
+and reload may safely lose non-durable movement context. Canonical commitments
+remain durable Recruiting facts and survive independently of Pulse. These
+projection and snapshot layers change no Board, Focus, Offer, attraction,
+relationship, commitment, premium-discovery, or late-Recruiting mechanics.
+
 Recruiting advancement attaches to fully completed basketball rounds rather than individual controlled-game completion:
 
 ```text

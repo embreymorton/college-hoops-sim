@@ -110,6 +110,11 @@ Frozen means “reopen only with new evidence,” not “never change.” Do not
 refactor these systems during unrelated feature work:
 
 - Recruiting mechanics and accepted Recruiting information architecture;
+- Recruiting Market Visibility V1's Preseason Evaluation / Market Forming
+  concealment, derived Open/Active/Crowded tiers, separate exact Offer
+  visibility after reveal, Recruit Details national-market hierarchy,
+  Recruiting Programs terminology, informational open-recruitment context,
+  transient maximum-three Recruiting Pulse, and non-durable history boundary;
 - Recruit Talent Profile V2's loose readiness-conditioned raw-ceiling model,
   with unchanged readiness/current-ability generation and Candidate B POT
   finalization;
@@ -188,7 +193,9 @@ be confused with the rejected historical **OVR Experiment B v1**.
 does not itself authorize implementation:
 
 - low-prestige rebuild feel;
-- elite Recruit offer coverage deep into a cycle;
+- elite Recruit early-market coverage deep into a cycle, especially top-10 and
+  top-25 Recruits with only 0–1 active Recruiting Programs despite compatible
+  Programs choosing weaker same-position alternatives;
 - concentrated single-attribute offseason gains;
 - interior/forward-heavy Rotation secondary paths and rare incumbent
   displacement;
@@ -204,14 +211,17 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT selected — Recruiting Market Visibility V1 is IN PROGRESS.**
+**No NEXT selected — Open Planning Checkpoint.**
 
-The user explicitly selected this presentation/read-model milestone following a
-diagnostic verdict of mostly healthy, presentation-sensitive Recruiting market
-behavior. The planned Codex → Claude route preserves all Recruiting mechanics:
-Codex is implementing player-safe market visibility and a transient Recruiting
-Pulse, followed by focused frontend-design polish and user acceptance. No
-production behavior is accepted or frozen yet.
+Recruiting Market Visibility V1 is **COMPLETE / ACCEPTED / FROZEN**. Recruiting
+now presents P0 as Preseason Evaluation with external national information
+Market Forming, then reveals derived Open/Active/Crowded market activity and
+exact formal Offers after the first Recruiting period. Recruit Details exposes
+the player-safe national market independent of Board membership, while the
+existing Recruiting Update surface owns a transient, deterministic,
+maximum-three Recruiting Pulse. No Recruiting mechanics or durable Dynasty
+event history changed. The separate elite early-market WATCH remains active and
+did not justify production tuning.
 
 Postgame Meaning V1 is **COMPLETE /
 ACCEPTED / FROZEN**. Dynasty regular-season and Tournament full postgames now

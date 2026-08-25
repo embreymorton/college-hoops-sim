@@ -18,4 +18,10 @@ if (audit !== 'light' && audit !== 'full') {
   throw new RangeError('--audit must be light or full.')
 }
 
-process.stdout.write(JSON.stringify(runDynastyCalibration(seed, seasons, audit as AuditLevel)))
+const result = runDynastyCalibration(seed, seasons, audit as AuditLevel)
+process.stdout.write(JSON.stringify(process.env.RECRUIT_MARKET_COMPACT === '1' ? {
+  seed: result.seed,
+  recruitingMarket: result.recruitingMarket,
+  recruitingMarketOpportunities: result.recruitingMarketOpportunities,
+  signedRecruits: result.signedRecruits,
+} : result))

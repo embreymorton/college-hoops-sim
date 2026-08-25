@@ -27,6 +27,10 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
   assistant Board entries in counted groups, clear unavailable targets without
   automatic refill, manage jointly feasible Active Offers against Required and
   shared Flexible scholarship capacity, and return to the same Recruiting mode.
+  Preseason Evaluation keeps the national market in a truthful `Forming` state;
+  after reveal, National Class and Recruit Details separate derived
+  Open/Active/Crowded activity from exact formal Offers, while restrained
+  Recruiting Pulse updates surface only meaningful movement.
 - **Next-season roster planning:** inspect a factual read-only Recruiting Roster
   Outlook with promoted returners, committed incoming freshmen, Required needs,
   Flexible openings, Full positions, departing seniors, and current ratings

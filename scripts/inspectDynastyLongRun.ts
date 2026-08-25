@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto'
 import { pathToFileURL } from 'node:url'
+import { applyEarlyMarketCandidate } from './recruitingEarlyMarketCandidates'
 import {
   CLASS_YEARS,
   POSITIONS,
@@ -314,7 +315,7 @@ export interface DynastyRunResult {
   readonly rollovers: number
 }
 
-const MARKET_CHECKPOINTS = new Set([0, 4, 8, 12, 20, 24, 28])
+const MARKET_CHECKPOINTS = new Set([0, 4, 8, 12, 16, 20, 24, 28])
 
 function observeRecruitingMarket(dynasty: DynastyState): {
   recruits: RecruitingMarketRecruitTrace[]
@@ -698,10 +699,10 @@ export function runDynastyCalibration(
           simulationSeed: `${seed}:season-${season.seasonNumber}:games`,
         })
         const beforeRecruiting = dynasty
-        dynasty = syncRecruitingThroughCompletedRounds({
+        dynasty = syncRecruitingThroughCompletedRounds(applyEarlyMarketCandidate({
           ...dynasty,
           activeSeason: season,
-        })
+        }))
         recruitingBattles.push(...newCommitmentBattles(beforeRecruiting, dynasty, 'period'))
         recruitingOpportunities.push(...observeRecruitingOpportunities(dynasty))
         { const market = observeRecruitingMarket(dynasty); recruitingMarket.push(...market.recruits); recruitingMarketOpportunities.push(...market.opportunities) }
@@ -782,10 +783,10 @@ export function runDynastyCalibration(
           simulationSeed: `${seed}:season-${season.seasonNumber}:postseason`,
         })
         const beforeRecruiting = dynasty
-        dynasty = syncRecruitingThroughCompletedPostseasonRounds({
+        dynasty = syncRecruitingThroughCompletedPostseasonRounds(applyEarlyMarketCandidate({
           ...dynasty,
           activePostseason: postseason,
-        })
+        }))
         recruitingBattles.push(...newCommitmentBattles(beforeRecruiting, dynasty, 'period'))
         recruitingOpportunities.push(...observeRecruitingOpportunities(dynasty))
         { const market = observeRecruitingMarket(dynasty); recruitingMarket.push(...market.recruits); recruitingMarketOpportunities.push(...market.opportunities) }

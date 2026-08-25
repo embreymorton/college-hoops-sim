@@ -311,6 +311,31 @@ Preseason
 → Next Season
 ```
 
+Recruiting's accepted market-information cadence is:
+
+```text
+Preseason Evaluation / Market Forming
+→ set controlled Board, Focus, and formal Offers
+→ first Recruiting period reveals the national market
+→ inspect meaningful Recruiting movement
+→ react when strategically useful, or safely continue when quiet
+```
+
+Market activity and Offers are distinct. Market activity describes current
+Recruiting Program involvement: `Open` means 0–1 active Programs, `Active`
+means 2–4, and `Crowded` means 5+. An Offer is a formal scholarship Offer and
+remains an exact separate fact after reveal. During P0, external market detail
+and national Offer totals are intentionally unrevealed while the controlled
+Program's own Board, Focus, and Offer actions remain exact. Board membership is
+not presented as a literal real-world claim that every Program has identical
+interest; the player-facing term is **Recruiting Programs**.
+
+Recruiting Pulse compares a transient before/after view of supported tracked
+Recruits and surfaces at most three meaningful commitments, pressure changes,
+controlled competitive movement, external Offers, important competitor entry,
+or Market-tier changes. It creates no durable event history, changes no
+Recruiting outcome, and remains quiet when movement is not strategically useful.
+
 ```text
 maintain Board, Focus, and Active Offers
 → complete basketball rounds

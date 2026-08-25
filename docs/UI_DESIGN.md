@@ -268,7 +268,7 @@ seeding, Recruiting, and lifecycle semantics are unchanged.
 
 ## Dynasty lifecycle and Recruiting — implemented
 
-Regular navigation is `SEASON / RECRUITING / LEAGUE`; Tournament navigation is `TOURNAMENT / RECRUITING / LEAGUE`. The Season Hub pairs weekly competition context with Recruiting controls. Recruiting provides a Board and National Class, positional-needs ledger, PRESEASON state, and Generate Draft Board onboarding before the first period can resolve.
+Regular navigation is `SEASON / RECRUITING / LEAGUE`; Tournament navigation is `TOURNAMENT / RECRUITING / LEAGUE`. The Season Hub pairs weekly competition context with Recruiting controls. Recruiting provides a Board and National Class, positional-needs ledger, Preseason Evaluation state, and Generate Draft Board onboarding before the first period can resolve.
 
 After the championship, the player explicitly enters the dedicated Offseason
 shell at Late Recruiting, may make final legal Board/Offer changes, and advances
@@ -283,6 +283,27 @@ management-simulation visual direction rather than introducing a separate
 product style.
 
 ### Recruiting information architecture — implemented (6E.12C, supersedes 6E.12B)
+
+Recruiting Market Visibility V1 adds one accepted presentation layer without
+changing this information architecture. At P0, Preseason Evaluation presents
+external national-market information as `Market Forming`; National Class uses a
+restrained `Forming` treatment and intentionally unrevealed external Offers,
+while the controlled Program's exact Board, Focus, and Offer actions remain
+visible. After the first Recruiting period, National Class separates a compact
+Market column—`Open` for 0–1 active Recruiting Programs, `Active` for 2–4, and
+`Crowded` for 5+—from exact formal Offer count. No exact Program-count column,
+market sorting, filtering, or recommendation system is introduced.
+
+Recruit Details uses a National Market hierarchy independent of controlled
+Board membership: Market tier, active Recruiting Program count, exact Offers,
+and identities grouped as Leading / Competitive / Trailing with Offer markers.
+The player-facing term is `Recruiting Programs`; P0 suppresses the empty
+external heading, and crowded trailing groups use compact chips. Derived open-
+recruitment context remains informational. The existing Recruiting Update
+surface owns Recruiting Pulse: full-sentence, maximum-three ranked facts with
+quiet-state restraint and deterministic suppression. Desktop and approximately
+390px layouts are accepted; further crowded-detail simplification is future
+polish, not an open V1 requirement.
 
 6E.12B (accepted) first exposed the domain's player-safe `deriveRecruitingBattleView` / `deriveRecruitingCommitmentActivity` projections (`src/dynasty/recruiting/battleView.ts`), but manual playtesting found the result shown in too many places at too much visual weight: a standalone Hub Focus module, a Board table carrying full battle detail, and an Alerts banner requiring explicit dismissal. 6E.12C keeps the same accepted domain projection and re-shapes only where and how much of it appears, establishing the current canonical separation of concerns:
 

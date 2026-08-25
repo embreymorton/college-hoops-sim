@@ -64,6 +64,27 @@ each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
 
+### Recruiting Market Visibility V1 — ACCEPTED / FROZEN
+
+The user manually reviewed and accepted Preseason Evaluation / Market Forming,
+the first-period national-market reveal, National Class Market + Offers,
+Recruit Details national-market presentation, and the restrained Recruiting
+Pulse. Focused polish established understated Forming and market-tier
+treatments, compact crowded-program presentation, full-sentence Pulse copy, and
+usable desktop and approximately 390px behavior. Dense Recruit Details markets
+remain acceptable current presentation rather than an open V1 blocker. The
+feature changes no Recruiting mechanics and stores no durable market-event
+history.
+
+The visibility feature also exposed a separate mechanical tail: some top-10 or
+top-25 Recruits can remain at 0–1 active Recruiting Programs unusually deep
+into the regular-season cycle. A focused deterministic comparison found Board
+construction remains the first bottleneck, but earlier discovery, bounded
+market-opportunity/reach targeting, and broad Prestige weakening mainly changed
+Board attention rather than formal Offer timing; some also weakened ranks
+51–75. No production change was justified. This evidence remains WATCH and does
+not qualify Market Visibility acceptance.
+
 ### Postgame Meaning V1 — ACCEPTED / FROZEN
 
 The user accepted the polished compact consequence layer after implementation,
@@ -192,12 +213,16 @@ Current diagnostics show no directional concern; observe rather than tune Team
 Strength, Game Simulation, Prestige, Recruit Talent, or hierarchy from this
 linkage alone.
 
-### Elite Recruit Offer coverage
+### Elite Recruit early-market coverage
 
-Premium Recruits may occasionally lack an elite Offer deep into a cycle.
-Observed scarcity can reflect positional capacity or alternative-target choice,
-not necessarily AI failure. Reopen only with cohort evidence that compatible
-elite Programs systematically leave viable premium targets uncovered.
+Continue observing whether top-10/top-25 Recruits remain at 0–1 active
+Recruiting Programs unusually deep into the cycle, especially where multiple
+structurally compatible Programs pursue materially weaker same-position
+alternatives. A focused narrow-mechanism diagnostic confirmed a bounded tail
+but did not justify changing AI Boards, Offers, Prestige targeting, premium
+discovery, or commitments; attention gains did not materially improve formal
+Offer timing and some candidates weakened ranks 51–75. This is a WATCH/future-
+design question, not a confirmed Known Issue or implied Roadmap selection.
 
 ### Concentrated ordinary Development gains
 
