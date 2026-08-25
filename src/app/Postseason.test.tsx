@@ -317,6 +317,12 @@ describe('Postseason — qualified and alive', () => {
     )[0]!
 
     expect(screen.getByText(/neutral site/i)).toBeInTheDocument()
+    const meaningHeading = screen.getByRole('heading', { name: 'What Changed' })
+    const boxScoreHeading = screen.getByRole('heading', { name: 'Player Box Score' })
+    expect(meaningHeading.compareDocumentPosition(boxScoreHeading) & Node.DOCUMENT_POSITION_FOLLOWING)
+      .toBeTruthy()
+    expect(screen.getByText('Tournament')).toBeInTheDocument()
+    expect(screen.getByText(/advanced to the Quarterfinals/)).toBeInTheDocument()
     const row = document.querySelector(
       `tr[data-player-id="${topScorer.playerId}"]`,
     )

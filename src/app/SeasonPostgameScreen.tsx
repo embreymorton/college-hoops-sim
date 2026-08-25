@@ -1,4 +1,5 @@
-import { BoxScorePanel, FinalScoreboard } from '../components'
+import { BoxScorePanel, FinalScoreboard, PostgameMeaningSection } from '../components'
+import { derivePostgameMeaning } from '../dynasty'
 import {
   selectActiveSeason,
   selectControlledProgramId,
@@ -23,6 +24,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  *   Recent Results. Read-only — no continuation or resimulation action.
  */
 export function SeasonPostgameScreen() {
+  const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
   const view = useDynastyStore((state) => state.view)
@@ -32,11 +34,12 @@ export function SeasonPostgameScreen() {
     (state) => state.simulateRestOfRound,
   )
   const goToHub = useDynastyStore((state) => state.goToHub)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
   const isHistorical = view === 'gameHistory'
   const scheduledGameId = isHistorical ? viewedGameId : lastPlayedGameId
 
-  if (!season || !controlledProgramId || !scheduledGameId) {
+  if (!dynasty || !season || !controlledProgramId || !scheduledGameId) {
     return null
   }
 
@@ -60,6 +63,13 @@ export function SeasonPostgameScreen() {
 
   const homeIsWinner = result.winnerId === homeTeam.id
   const winnerName = homeIsWinner ? homeTeam.name : awayTeam.name
+  const meaning = derivePostgameMeaning({
+    dynasty,
+    competition: 'regular-season',
+    gameId: scheduledGameId,
+    perspectiveProgramId: controlledProgramId,
+    presentation: isHistorical ? 'historical' : 'live',
+  })
 
   // Pinned to the round this specific result belongs to, not the live
   // "current round" — otherwise this action would silently drift onto the
@@ -117,6 +127,7 @@ export function SeasonPostgameScreen() {
           }}
         />
       </section>
+      <PostgameMeaningSection meaning={meaning} onSelectPlayer={openPlayerDetails} />
       <section className="section" aria-labelledby="season-box-score-heading">
         <div className="section-heading">
           <h2 id="season-box-score-heading" className="section-title">

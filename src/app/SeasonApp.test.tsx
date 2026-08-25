@@ -370,6 +370,11 @@ describe('Season Presentation', () => {
     expect(useDynastyStore.getState().view).toBe('postgame')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
+    const meaningHeading = screen.getByRole('heading', { name: 'What Changed' })
+    const boxScoreHeading = screen.getByRole('heading', { name: 'Player Box Score' })
+    expect(meaningHeading.compareDocumentPosition(boxScoreHeading) & Node.DOCUMENT_POSITION_FOLLOWING)
+      .toBeTruthy()
+    expect(screen.getByText('Updated Records')).toBeInTheDocument()
 
     clickButtonByText(/return to season hub/i)
     expect(useDynastyStore.getState().view).toBe('hub')
@@ -538,6 +543,8 @@ describe('Season Presentation', () => {
     expect(useDynastyStore.getState().view).toBe('gameHistory')
     expect(screen.getByText(String(result.homeScore))).toBeInTheDocument()
     expect(screen.getByText(String(result.awayScore))).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'What Changed' })).toBeInTheDocument()
+    expect(screen.getByText(/After the game:/)).toBeInTheDocument()
 
     const topScorer = [...result.homePlayerStats].sort(
       (first, second) => second.points - first.points,

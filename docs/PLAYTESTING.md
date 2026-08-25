@@ -64,6 +64,26 @@ each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
 
+### Postgame Meaning V1 — ACCEPTED / FROZEN
+
+The user accepted the polished compact consequence layer after implementation,
+structural validation, desktop and approximately 390px inspection, and manual
+review. Regular-season and Tournament full postgames now answer what changed
+because the game happened with at most three derived facts while ordinary games
+remain quiet and the final scoreboard remains visually dominant. Historical
+views reconstruct canonical as-of-game context rather than drifting with later
+results.
+
+Structural implementation validation passed focused unit/RTL tests, the full
+suite, lint, typecheck, production build, and diff checking. Polish validation
+passed the relevant Postgame Meaning, Season, Postseason, and Exhibition tests,
+lint, typecheck, and build; its full-suite run reported `1378/1379` with one
+unrelated pre-existing Recruiting copy-text failure. Desktop/approximately
+390px DOM and computed-style inspection found no horizontal overflow. Screenshot
+and zoom tooling was unavailable, so acceptance does not claim screenshot-based
+validation. A Player-link CSS specificity defect found during polish was fixed
+without changing read-model or simulation behavior.
+
 ### Roster Positional Flexibility / B2 Live Flexible Capacity — ACCEPTED / FROZEN
 
 The user accepted flexible roster construction after production implementation,

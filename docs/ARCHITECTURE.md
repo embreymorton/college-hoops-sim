@@ -309,6 +309,16 @@ Game Prep is optional. Hub Quick Sim runs the controlled Program's next Schedule
 
 Completed games are final. The postgame and historical-result screens read the already-recorded `GameResult`; opening a Schedule or Recent Results entry never re-simulates it. Recent Results is likewise derived from completed Schedule/results facts.
 
+`derivePostgameMeaning()` is a framework-independent deterministic projection
+over one completed game, its competition state, and existing Dynasty/archive
+facts. It owns canonical as-of-game cutoffs, before/after comparisons,
+qualification, priority, suppression, deduplication, ordering, and the
+maximum-three-fact cap. Regular-season ordering uses Schedule round then game
+index; Tournament ordering uses round order then bracket game index. React owns
+only live/retrospective wording and the accepted quiet/notable/headline
+presentation. No consequence fact is persisted in `GameResult`, Dynasty state,
+News, or an event log.
+
 Hub Quick Sim adds no alternate result state. Its compact whole-game PTS/REB/AST leaders are pure presentation projections over the controlled game's canonical home and away `PlayerGameStats`. A leader may represent either Program; Player identity and Program identity are resolved from the participating Teams, and deterministic ties use minutes then stable Player ID. The result card does not store leader summaries in Zustand.
 
 ## Postseason State and progression

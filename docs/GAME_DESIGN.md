@@ -184,6 +184,15 @@ The permanent Season flow is the primary playable experience. Game Prep is optio
 - **Fast:** Quick Sim from the Season Hub, remain on the Hub for the inline result and whole-game leaders, then advance explicitly.
 - **Bulk:** Super Sim to Midseason, End of Regular Season, or Season Complete.
 
+Dynasty regular-season and Tournament full postgames add a compact Postgame
+Meaning layer between the final scoreboard and Player Box Score. At most three
+facts communicate competitive consequences, newly broken accepted Records,
+threshold-qualified Career Highs, accepted notable streaks, Tournament upsets,
+or updated regular-season records. Tournament and regular-season statistical
+scopes remain isolated; record ties and first appearances do not create new
+milestone claims. Historical views reconstruct the canonical game checkpoint
+and remain read-only.
+
 Hub Quick Sim uses the controlled Program's last committed legal current Season Rotation. A legal change made in Game Prep persists into future games; a temporary invalid draft does not replace that canonical Rotation. Super Sim also uses every Program's current Team and Rotation and changes only pacing, not basketball rules, randomness, or result detail.
 
 Midseason means all pending regular-season games through Round 12. End of Regular Season means all pending games through Round 24. Season Complete finishes the remaining regular season, initializes and completes the Tournament through the canonical Postseason path, synchronizes Recruiting through Period 28, and stops at the existing Season Complete inspection checkpoint. It never enters Late Recruiting or the offseason. Already-completed games are preserved, and every newly completed game records its full `GameResult` and Player box scores.

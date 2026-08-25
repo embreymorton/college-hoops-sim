@@ -199,11 +199,13 @@ between regular-season and Tournament semantics.
 ### Record chase and milestone watch
 
 Existing current and historical statistics could make Records active in-season
-stories: distance from a Program career or single-season mark, movement into a
-top group, and newly broken milestones surfaced through News or another quiet
-narrative surface. Any projection must reuse accepted record definitions and
-statistical scopes rather than introduce parallel counters or silently combine
-regular-season and Tournament production.
+stories. Postgame Meaning V1 now surfaces newly broken accepted regular-season
+and Tournament Records plus threshold-qualified Career Highs directly after the
+game, using the existing definitions and isolated statistical scopes. Remaining
+future ideas are forward-looking record chases—distance from a Program career
+or single-season mark and movement into a top group—not another postgame
+milestone system. Any expansion must continue to avoid parallel counters or
+silently combined regular-season/Tournament production.
 
 ## History and immersion beyond selected work
 

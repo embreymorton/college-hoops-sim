@@ -17,9 +17,9 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Roster Positional Flexibility / B2 Live Flexible Capacity is complete,
-accepted, and frozen. No successor has been selected. Fresh sessions resolve to
-Path B and must conduct a neutral Open Planning pass before recommending work.
+Postgame Meaning V1 is complete, accepted, and frozen. No successor has been
+selected. Fresh sessions resolve to Path B and must conduct a neutral Open
+Planning pass before recommending work.
 
 ## Planned and unscheduled
 
@@ -44,6 +44,19 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Postgame Meaning V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added a compact maximum-three-fact consequence layer between the final
+  scoreboard and Player Box Score on Dynasty regular-season and Tournament full
+  postgames.
+- Derived updated records, accepted statistical Records/Career Highs and streak
+  events, Tournament advancement/elimination, championships, and worse-seeded
+  upsets from canonical game, Dynasty, and archive facts with deterministic
+  priority, suppression, and historical as-of-game semantics.
+- Added no persisted event state and changed no Game Simulation, box-score,
+  Tournament, Records, identity, News, archive, or rollover behavior, then
+  returned the Roadmap to an Open Planning Checkpoint.
 
 ### Roster Positional Flexibility / B2 Live Flexible Capacity — COMPLETE / ACCEPTED / FROZEN
 

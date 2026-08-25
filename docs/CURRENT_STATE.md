@@ -28,7 +28,8 @@ The playable product includes:
   Advanced Coaching editors, and a derived Starting Five presentation;
 - a stable 32-Program Universe, 24-round schedules, standings, Quick Sim, Game
   Prep with a shared Matchup Scout and Simple/Advanced Rotation preparation,
-  Super Sim, completed-game history, and League exploration;
+  Super Sim, completed-game history, compact regular-season/Tournament
+  Postgame Meaning consequences, and League exploration;
 - regular-season Player and Team statistics, national leaders, Team and Player
   Details with current/history organization, full completed-Season Program
   Trajectories and Program Player Records, Player Career Highs, Following, News,
@@ -163,6 +164,10 @@ refactor these systems during unrelated feature work:
   appearance semantics, stable-ID active/former continuity, active/archive
   deduplication, separate Career competition contexts, Tournament record
   definitions, and strict regular-season statistical isolation.
+- Postgame Meaning V1's pure maximum-three-fact projection, accepted priority
+  and suppression rules, regular-season/Tournament fact scopes, canonical
+  as-of-game historical reconstruction, stable Player navigation, and quiet /
+  notable / championship-headline presentation tiers.
 
 Recruit Talent Profile V2 is implemented, accepted, and frozen production
 behavior. It supersedes V1's independent raw-ceiling roll with the loose
@@ -201,9 +206,14 @@ does not itself authorize implementation:
 
 **No NEXT selected — OPEN PLANNING CHECKPOINT.**
 
-Fresh sessions resolve to **Path B**. Roster Positional Flexibility / B2 Live
-Flexible Capacity is **COMPLETE / ACCEPTED / FROZEN**. No successor may be
-inferred from Roadmap order, WATCH items, Future Features, or recent work.
+Fresh sessions resolve to **Path B**. Postgame Meaning V1 is **COMPLETE /
+ACCEPTED / FROZEN**. Dynasty regular-season and Tournament full postgames now
+derive at most three ranked consequences between the final scoreboard and
+Player Box Score, with accepted competition-specific Records, Career Highs,
+streak/outcome context, worse-seeded Tournament upsets, and canonical
+historical as-of-game wording. The feature adds no persisted event history and
+changes no frozen simulation, statistical, Tournament, identity, News, archive,
+or rollover semantics. No successor may be inferred from recent work.
 
 Next Season Roster Planner / Roster Outlook V1 is **COMPLETE / ACCEPTED /
 FROZEN**. Recruiting now includes a factual read-only Season N+1 outlook over

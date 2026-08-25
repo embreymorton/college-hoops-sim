@@ -8,7 +8,7 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
 
 - **Basketball engine:** deterministic Player and 12-Player roster generation, floor-position-aware Rotation V1 with legal secondary-position flexibility, derived Player/Team ratings, game simulation, overtime, and complete Player box scores.
 - **Fictional Universe V0:** 32 stable Programs across four Conferences with a deterministic 24-round regular-season Schedule.
-- **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed regular-season/Tournament Game Prep with Matchup Scout and Simple/Advanced Rotation preparation, Super Sim, historical results, and full box-score inspection.
+- **Season experience:** canonical Season progression, AI simulation, Conference standings, Quick Sim, detailed regular-season/Tournament Game Prep with Matchup Scout and Simple/Advanced Rotation preparation, Super Sim, historical results, compact Postgame Meaning consequences, and full box-score inspection.
 - **Statistics and exploration:** regular-season Player and Team Season Stats, Player game logs, Team averages, national PPG/RPG/APG/SPG/BPG leaders, Teams directory, Team Details with derived Program Dynasty history and Program Player Records, and active/former Player Details with separate Regular Season and Tournament career history, achievements, game logs, and Career Highs. Cross-Program navigation and followed Players retain stable identity across the Dynasty.
 - **Season history:** a first-class League History destination with completed-
   Season Yearbooks and a Dynasty Record Book with separate regular-season and

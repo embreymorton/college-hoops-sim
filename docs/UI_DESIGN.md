@@ -85,7 +85,19 @@ Height, POT, and full reserve metadata remain in Team Details through View Full
 Roster. At 390px the sections stack in reading order, the opponent card wraps
 without becoming a wide table, and Simple/Advanced tables keep overflow local.
 
-Postgame and historical views use the accepted final-score and full Player box-score presentation. Historical results are read-only. Exhibition retains home-Team editing and deterministic re-simulation for isolated development testing, but it does not define the permanent Season workflow.
+Dynasty regular-season and Tournament full postgames place the accepted
+Postgame Meaning layer between the final scoreboard and Player Box Score. Its
+maximum three already-ranked facts use quiet presentation for routine updated
+records, notable accent treatment for meaningful consequences, and a reserved
+headline tier for the National Championship. Player-linked Records/Career Highs
+remain visibly interactive with accessible focus behavior. The scoreboard stays
+visually dominant, and the compact layout introduces no horizontal overflow at
+approximately 390px.
+
+Historical results are read-only and use retrospective Postgame Meaning wording.
+Exhibition retains the accepted final-score/full-box-score presentation, home-
+Team editing, and deterministic re-simulation for isolated development testing;
+it does not receive Postgame Meaning or define the permanent Season workflow.
 
 ## Coaching experience — implemented (6E.17B)
 

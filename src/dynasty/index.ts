@@ -64,6 +64,18 @@ export {
   deriveProgramPlayerRecords,
 } from './seasonRecords'
 export { deriveProgramLegacy } from './programLegacy'
+export { derivePostgameMeaning } from './postgameMeaning'
+export type {
+  DerivePostgameMeaningOptions,
+  PostgameCompetition,
+  PostgameMeaning,
+  PostgameMeaningFact,
+  PostgamePlayerIdentity,
+  PostgamePresentation,
+  PostgameProgramIdentity,
+  PostgameRecordScope,
+  PostgameRecordValue,
+} from './postgameMeaning'
 export {
   deriveSeasonPreview,
   shouldPromoteSeasonPreview,

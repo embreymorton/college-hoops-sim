@@ -132,6 +132,7 @@ describe('ExhibitionApp', () => {
 
     const state = useGamePresentationStore.getState()
     expect(state.phase).toBe('postgame')
+    expect(screen.queryByRole('heading', { name: 'What Changed' })).not.toBeInTheDocument()
     expect(state.result).not.toBeNull()
     expect(screen.getAllByText('Final').length).toBeGreaterThan(0)
   })

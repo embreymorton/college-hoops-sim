@@ -246,6 +246,99 @@ p {
   color: var(--ink-1);
 }
 
+/* Connective tissue between the scoreboard and the box score: "What
+   changed because this game happened?" Facts are pre-ranked and capped
+   upstream, so this only varies visual weight by tier — it never reorders
+   or reinterprets the facts it's given. */
+
+.postgame-meaning {
+  gap: var(--space-3);
+}
+
+.postgame-meaning__list {
+  display: grid;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.postgame-meaning__fact {
+  display: grid;
+  grid-template-columns: minmax(8.5rem, auto) 1fr;
+  align-items: baseline;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  border-left: 2px solid color-mix(in srgb, var(--accent) 65%, transparent);
+  background: var(--surface-1);
+}
+
+.postgame-meaning__label {
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.postgame-meaning__fact p {
+  color: var(--ink-0);
+  line-height: 1.45;
+}
+
+.text-link-button.postgame-meaning__player-link {
+  color: var(--accent-strong);
+  font-weight: 600;
+}
+
+/* Headline tier: reserved for a National Championship — the one result
+   this section should ever outweight the box score's neighbors for. */
+.postgame-meaning__fact--headline {
+  border-left-color: var(--accent-strong);
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface-1) 65%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.postgame-meaning__fact--headline .postgame-meaning__label {
+  color: var(--accent-strong);
+}
+
+.postgame-meaning__fact--headline p {
+  font-size: 1.02rem;
+  font-weight: 500;
+}
+
+/* Quiet tier: the routine "record improves to X-Y" fact. No card chrome —
+   it should read as a footnote, not another dashboard tile, and must still
+   look intentional when it's the only fact that qualified. */
+.postgame-meaning__fact--quiet {
+  border-left: none;
+  background: none;
+  padding: 0 var(--space-1);
+}
+
+.postgame-meaning__fact--quiet .postgame-meaning__label {
+  color: var(--ink-2);
+}
+
+.postgame-meaning__fact--quiet p {
+  color: var(--ink-1);
+}
+
+.postgame-meaning--compact {
+  gap: var(--space-2);
+}
+
+.postgame-meaning--compact .postgame-meaning__list {
+  gap: 0;
+}
+
+@media (max-width: 480px) {
+  .postgame-meaning__fact {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+}
+
 /* ==========================================================================
    Matchup select row
    ========================================================================== */

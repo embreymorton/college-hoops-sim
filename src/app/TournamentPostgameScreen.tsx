@@ -1,4 +1,5 @@
-import { BoxScorePanel, FinalScoreboard } from '../components'
+import { BoxScorePanel, FinalScoreboard, PostgameMeaningSection } from '../components'
+import { derivePostgameMeaning } from '../dynasty'
 import { getPendingGamesForTournamentRound } from '../postseason'
 import { selectActivePostseason, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -20,6 +21,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
  *   Read-only — no continuation or resimulation action.
  */
 export function TournamentPostgameScreen() {
+  const dynasty = useDynastyStore((state) => state.dynasty)
   const postseason = useDynastyStore(selectActivePostseason)
   const view = useDynastyStore((state) => state.view)
   const lastPlayedTournamentGameId = useDynastyStore(
@@ -32,13 +34,14 @@ export function TournamentPostgameScreen() {
     (state) => state.simulateRestOfCurrentTournamentRound,
   )
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
+  const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
 
   const isHistorical = view === 'postseasonGameHistory'
   const tournamentGameId = isHistorical
     ? viewedTournamentGameId
     : lastPlayedTournamentGameId
 
-  if (!postseason || !tournamentGameId) {
+  if (!dynasty || !postseason || !tournamentGameId) {
     return null
   }
 
@@ -68,6 +71,13 @@ export function TournamentPostgameScreen() {
 
   const homeIsWinner = result.winnerId === homeTeam.id
   const winnerName = homeIsWinner ? homeTeam.name : awayTeam.name
+  const meaning = derivePostgameMeaning({
+    dynasty,
+    competition: 'tournament',
+    gameId: tournamentGameId,
+    perspectiveProgramId: dynasty.controlledProgramId,
+    presentation: isHistorical ? 'historical' : 'live',
+  })
 
   const pendingRoundGames = getPendingGamesForTournamentRound(
     postseason,
@@ -123,6 +133,7 @@ export function TournamentPostgameScreen() {
           }}
         />
       </section>
+      <PostgameMeaningSection meaning={meaning} onSelectPlayer={openPlayerDetails} />
       <section className="section" aria-labelledby="tournament-box-score-heading">
         <div className="section-heading">
           <h2 id="tournament-box-score-heading" className="section-title">
