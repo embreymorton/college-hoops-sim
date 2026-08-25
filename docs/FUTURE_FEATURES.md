@@ -332,10 +332,10 @@ probabilities.
 - **Future Offseason Mechanics:** the accepted six-stage experience is complete
   and is not future work. Its durable presentation container could later host
   separately designed Transfer Portal, Draft/professional departure decisions,
-  position changes, staff/coaching decisions, or deeper roster-management
-  steps, but none is implied by V1. Rules remain deliberately
-  undefined and no direction is selected. Do not build it solely to change
-  mature hierarchy; the rejected compression experiments remain conditional-read
+  staff/coaching decisions, or deeper roster-management steps, but none is
+  implied by V1. The user-controlled position-change direction is framed below;
+  its rules remain unresolved. Do not build the container solely to change mature
+  hierarchy; the rejected compression experiments remain conditional-read
   evidence in `DYNASTY_HIERARCHY_RESEARCH.md`.
 - manual canonical starters or role definitions with simulation meaning;
 - redshirts, medical redshirts, and eligibility exceptions;
@@ -347,6 +347,133 @@ probabilities.
 
 These systems would materially change simulation or lifecycle behavior and need
 their own selected phases and validation.
+
+### Offseason position changes — user-controlled roster management — FUTURE / UNSCHEDULED
+
+Inclusion here does not select, prioritize, plan, or make this concept
+implementation-ready. A future feature could let the user-controlled Program
+permanently change a Player's canonical natural position as an offseason
+roster-management decision. AI Programs would continue normal roster
+construction unless a separate future design decides otherwise; that intentional
+candidate asymmetry would still need validation for unhealthy competitive
+advantage, and no AI position-change logic is implied here.
+
+The strongest current conceptual home is the existing **Offseason Roster
+Review**, after Recruiting has finished, the next roster has been assembled, and
+offseason Development has occurred, but before the upcoming Season begins:
+
+```text
+Recruiting finalizes
+→ roster assembly
+→ Development
+→ Roster Review
+→ optional user position changes
+→ Ready for Season
+```
+
+This is a future direction, not an approved lifecycle contract. The timing would
+let the coach evaluate a newly developed Player profile while keeping Player and
+roster management separate from manipulation of an active Recruiting market. A
+change would not rewrite the completed Recruiting cycle, Offers, commitments, or
+Recruit class. It would become canonical Player/roster truth for the upcoming
+Season, and a later Recruiting cycle could naturally derive Required and shared
+Flexible capacity from the updated natural positions.
+
+Position changes would extend the accepted B2 Live Flexible Capacity outcome
+after Recruiting, not replace or reopen it. Production truth remains a completed
+12-Player roster with 2–3 Players at every natural position, Required needs below
+the minimum, shared Flexible capacity, and commitment-driven final positional
+shape. A future design must decide whether every completed change must preserve
+that legal envelope. For example, `PG 2 / SG 3` could plausibly become
+`PG 3 / SG 2` through an SG → PG change; a result outside the accepted envelope
+requires deliberate design rather than assumed legality.
+
+Offseason-only timing is an important exploit boundary. A coach should not be
+able to relabel an SG as a PG during Recruiting merely to manufacture SG
+capacity for a newly available elite Recruit. Deferring the decision until after
+Recruiting substantially separates roster management from Recruiting-capacity
+manipulation. Future design must still investigate whether repeated offseason
+changes could be gamed to shape the following cycle. No cooldown, usage limit,
+or eligibility restriction is selected.
+
+Eligibility must be meaningfully constrained rather than make every Player
+freely convertible to every position. Open questions include:
+
+- whether only adjacent moves are plausible, conceptually PG ↔ SG, SG ↔ SF,
+  SF ↔ PF, and PF ↔ C;
+- whether height, physical profile, attributes, or future profile/archetype
+  concepts constrain eligibility, including Players with no plausible alternate;
+- whether a Player can change more than once in a career and whether an
+  offseason permits a limited number of changes; and
+- whether the user can preview and undo changes before leaving Roster Review.
+
+No adjacency rule, threshold, formula, repeat rule, or limit is approved.
+
+Changing natural position may affect substantially more than roster counts. A
+future code-informed investigation must determine whether it participates in
+OVR valuation, Rotation eligibility and default generation, statistical
+translation or positional priors, Player usage and role assumptions, or other
+downstream simulation semantics. It should distinguish changing how a Player is
+classified from changing his underlying basketball ability. No arbitrary fixed
+`-N OVR` penalty, attribute change, Development bonus, Work Ethic change, or
+playing-time-to-Development relationship is implied.
+
+Rotation and Development remain frozen. Any future position-change design must
+verify that the canonical result supports legal Rotation eligibility and default
+Rotation generation without reopening Rotation formulas merely to support the
+feature. Preserving the accepted 2–3 natural-position envelope may be a safe
+structural guardrail, but that rule is not selected. Post-Development timing only
+lets the coach assess the developed profile; the position change itself grants
+no Development and changes no Development formula.
+
+A canonical change must not rewrite prior Season history or create a replacement
+Player identity. The stable Player ID should support a career such as:
+
+```text
+FR — SG
+SO — SG
+JR — PG
+SR — PG
+```
+
+A selected design would need to inspect historical-position preservation across
+Player Details career history, Yearbooks, archived roster snapshots,
+Awards/Honors, statistics and leader views, Program history, Alumni, and future
+Draft/professional outcomes. No new historical schema is selected here.
+
+The feature's product value is believable Player-career evolution: a scoring
+guard becoming a lead guard, a wing growing into a forward, or a forward
+becoming a Center. Those stories could deepen offseason attachment and Player
+identity without requiring Player Identity V2. They do not guarantee archetypes,
+News events, or special narrative treatment.
+
+True position changes and secondary positions are separate possible systems:
+
+- **True position change:** the Player's canonical natural position changes.
+- **Secondary position:** the Player retains his canonical natural position but
+  may function elsewhere in Rotation.
+
+A position-change V1 would not require stored secondary positions,
+combo-position labels, expanded Rotation eligibility, or Player Identity V2;
+likewise, secondary positions would not automatically imply canonical changes.
+
+Roster Review is a natural candidate surface because the user already reviews
+the completed, developed roster there. A future design could consider an action
+on an eligible Player, an old → new position preview, factual resulting roster
+counts, and undo before leaving Roster Review. Drag-and-drop, a mandatory
+standalone Position Changes stage, a large management screen, and direct
+Recruiting actions are not implied; exact UX and confirmation semantics remain
+unresolved.
+
+If selected later, investigation should validate resulting-roster legality,
+Rotation/default-Rotation validity, statistical-output distortion, OVR meaning,
+historical-position preservation, next-cycle Required/Flexible effects, user
+change frequency, capacity exploits, and competitive advantage from user-only
+access. Pass thresholds are not established. Exact eligibility, adjacency,
+height/attribute thresholds, limits and cooldowns, confirmation/undo behavior,
+OVR semantics, historical storage, UI, mandatory preservation of the 2–3
+envelope, user-only health, and interaction with Player Identity V2, secondary
+positions, Draft, or Player Roles all remain explicitly unresolved.
 
 ### Redshirts
 
@@ -757,7 +884,8 @@ questions rather than an implementation bundle.
 
 - **Lower-risk / incremental:** Create a Coach identity-only V1.
 - **Medium-scope:** Create/Customize School within the fixed structure; CSV
-  Program metadata import.
+  Program metadata import; user-only offseason position changes as a
+  cross-system lifecycle feature.
 - **Major future systems:** Coach Career/job market, changing controlled
   Programs, hot-seat/firing behavior, variable-size custom universes, and a
   Program Reputation + Recruit-preferences evolution; Game Simulation V2 is a
