@@ -258,6 +258,18 @@ export function deriveActiveOfferCountsByPosition(
   return counts
 }
 
+export function deriveRecruitActiveOfferCount(
+  recruiting: RecruitingState,
+  playerId: string,
+): number {
+  return Object.values(recruiting.programs).reduce(
+    (count, program) => count + Number(program.board.some(
+      (target) => target.playerId === playerId && target.hasActiveOffer,
+    )),
+    0,
+  )
+}
+
 export function deriveAvailableOfferSlotsByPosition(
   recruiting: RecruitingState,
   program: RecruitingProgramState,

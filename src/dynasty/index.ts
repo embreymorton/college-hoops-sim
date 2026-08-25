@@ -165,6 +165,7 @@ export {
   deriveProgramRecruitingBoard,
   deriveRecruitNationalRank,
   deriveRecruitPositionRank,
+  deriveRecruitActiveOfferCount,
   deriveRecruitProgramStandings,
   deriveRecruitStarRating,
   deriveRemainingOpeningsByPosition,

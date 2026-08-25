@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { calculateOverall, POSITIONS, type Position } from '../engine'
 import {
+  deriveRecruitActiveOfferCount,
   deriveRecruitProgramStandings,
   deriveTargetStatus,
   RECRUITING_BOARD_LIMIT,
@@ -111,6 +112,7 @@ export function NationalRecruitTable({
                 <th scope="col">Ovr</th>
                 <th scope="col">Pot</th>
                 <th scope="col">Standing</th>
+                <th scope="col">Offers</th>
                 <th scope="col">Status</th>
                 <th scope="col">Action</th>
               </tr>
@@ -155,6 +157,11 @@ export function NationalRecruitTable({
                       {formatRankLabel(
                         standingByPlayerId.get(recruit.player.id) ?? 0,
                       )}
+                    </td>
+                    <td>
+                      {status === 'committed' || status === 'committed-elsewhere'
+                        ? '-'
+                        : deriveRecruitActiveOfferCount(recruiting, recruit.player.id)}
                     </td>
                     <td className="recruiting-status-cell">
                       {formatRecruitStatusLabel({

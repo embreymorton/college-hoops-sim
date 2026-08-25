@@ -848,6 +848,31 @@ describe('Guide', () => {
 })
 
 describe('National Class', () => {
+  it('shows each Recruit current offer count immediately after Standing', () => {
+    const dynasty = buildFixtureDynasty()
+    dynasty.recruiting!.programs[OTHER_PROGRAM_ID] = {
+      ...dynasty.recruiting!.programs[OTHER_PROGRAM_ID]!,
+      board: [boardTarget('fx-offered-pf', 1, true)],
+    }
+    useDynastyStore.setState({ dynasty, view: 'recruiting', explorationViewHistory: [] })
+    render(<App />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'National Class' }))
+
+    const table = screen.getByRole('table', { name: 'National recruiting class' })
+    const headers = within(table).getAllByRole('columnheader').map((header) => header.textContent)
+    expect(headers.slice(headers.indexOf('Standing'), headers.indexOf('Standing') + 2)).toEqual([
+      'Standing',
+      'Offers',
+    ])
+    const offeredRow = screen.getByText('Offered Fixture').closest('tr')!
+    expect(within(offeredRow).getAllByRole('cell')[6]).toHaveTextContent('2')
+    const signedRow = screen.getByText('Signed Fixture').closest('tr')!
+    expect(within(signedRow).getAllByRole('cell')[6]).toHaveTextContent('-')
+    const committedElsewhereRow = screen.getByText('Elsewhere Fixture').closest('tr')!
+    expect(within(committedElsewhereRow).getAllByRole('cell')[6]).toHaveTextContent('-')
+  })
+
   it('lists Recruits by National Rank and allows adding an eligible target', () => {
     renderRecruitingScreen()
     // The fixture board starts full; free a slot via Remove before adding.
