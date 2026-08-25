@@ -3,7 +3,7 @@ import type { Player, PlayerAttributes, Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import type { RecruitingCommitment } from './domain'
 import { deriveRecruitPositionOutlook } from './positionOutlook'
-import { createRecruitingDynasty } from './testSupport'
+import { createLegacyRecruitingDynasty as createRecruitingDynasty } from './testSupport'
 
 const ratings = (value: number): PlayerAttributes => ({
   finishing: value,

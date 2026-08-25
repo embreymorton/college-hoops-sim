@@ -4,7 +4,7 @@ import type { DynastyState } from '../domain'
 import { deriveProjectedRosterOutlook } from '../rosterOutlook'
 import type { RecruitingCommitment } from './domain'
 import { deriveNextSeasonRosterOutlook } from './rosterOutlook'
-import { createRecruitingDynasty } from './testSupport'
+import { createLegacyRecruitingDynasty as createRecruitingDynasty } from './testSupport'
 
 function commit(dynasty: DynastyState, playerId: string, programId = dynasty.controlledProgramId) {
   const commitment: RecruitingCommitment = {

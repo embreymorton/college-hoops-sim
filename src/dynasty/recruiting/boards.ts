@@ -1,4 +1,4 @@
-import type { Position } from '../../engine'
+import { POSITIONS, type Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import {
   FINAL_RECRUITING_PERIOD,
@@ -23,6 +23,8 @@ import {
   getRecruit,
   canProgramOfferRecruit,
   canRecruitUseProjectedOpening,
+  deriveMandatoryNeedsByPosition,
+  isProgramOfferSetFeasible,
 } from './queries'
 
 function withProgramBoard(
@@ -371,7 +373,7 @@ function discoverAiPremiumTargets(
   programId: string,
 ): RecruitingProgramState {
   let program = recruiting.programs[programId]!
-  for (const position of Object.keys(program.projectedOpeningsByPosition) as Position[]) {
+  for (const position of POSITIONS) {
     program = addPremiumDiscoveryTarget(
       dynasty,
       { ...recruiting, programs: { ...recruiting.programs, [programId]: program } },
@@ -388,6 +390,28 @@ export function cleanupInvalidRecruitingOffers(
 ): RecruitingState {
   const programs = Object.fromEntries(Object.keys(recruiting.programs).sort().map((programId) => {
     const program = recruiting.programs[programId]!
+    if ('capacityModel' in program) {
+      const retained: Record<Position, number> = { PG: 0, SG: 0, SF: 0, PF: 0, C: 0 }
+      const board = program.board.map((target) => {
+        const isActive = deriveTargetStatus(recruiting, programId, target.playerId) === 'active'
+        if (!target.hasActiveOffer && (!target.isFocused || isActive)) return target
+        const recruit = getRecruit(recruiting, target.playerId)
+        if (!recruit || recruiting.commitmentsByPlayerId[target.playerId] || !isActive) {
+          return { ...target, hasActiveOffer: false, isFocused: false }
+        }
+        if (!target.hasActiveOffer) return target
+        const proposed: Record<Position, number> = {
+          ...retained,
+          [recruit.player.position]: retained[recruit.player.position] + 1,
+        }
+        if (!isProgramOfferSetFeasible(recruiting, program, proposed)) {
+          return { ...target, hasActiveOffer: false }
+        }
+        retained[recruit.player.position] = retained[recruit.player.position] + 1
+        return target
+      })
+      return [programId, { ...program, board }]
+    }
     const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
     const retainedByPosition: Partial<Record<Position, number>> = {}
     const board = program.board.map((target) => {
@@ -418,6 +442,34 @@ export function manageProgramRecruitingOffers(
   programId: string,
 ): RecruitingProgramState {
   const program = recruiting.programs[programId]!
+  if ('capacityModel' in program) {
+    const mandatory = deriveMandatoryNeedsByPosition(recruiting, program)
+    const candidates = program.board.filter((target) =>
+      deriveTargetStatus(recruiting, programId, target.playerId) === 'active',
+    ).sort((first, second) => {
+      const firstRecruit = getRecruit(recruiting, first.playerId)!
+      const secondRecruit = getRecruit(recruiting, second.playerId)!
+      return Number(mandatory[secondRecruit.player.position] > 0) - Number(mandatory[firstRecruit.player.position] > 0) ||
+        Number(second.hasActiveOffer) - Number(first.hasActiveOffer) ||
+        deriveAiOfferUtility(dynasty, recruiting, programId, second) - deriveAiOfferUtility(dynasty, recruiting, programId, first) ||
+        first.playerId.localeCompare(second.playerId)
+    })
+    let planned: RecruitingProgramState = {
+      ...program,
+      board: program.board.map((target) => ({ ...target, hasActiveOffer: false })),
+    }
+    for (const candidate of candidates) {
+      const currentRecruiting = { ...recruiting, programs: { ...recruiting.programs, [programId]: planned } }
+      if (!canProgramOfferRecruit(currentRecruiting, planned, candidate.playerId)) continue
+      planned = {
+        ...planned,
+        board: planned.board.map((target) => target.playerId === candidate.playerId
+          ? { ...target, hasActiveOffer: true }
+          : target),
+      }
+    }
+    return planned
+  }
   const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
   let board = [...program.board]
   for (const position of Object.keys(remaining) as Position[]) {

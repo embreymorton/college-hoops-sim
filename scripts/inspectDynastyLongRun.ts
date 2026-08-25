@@ -15,6 +15,7 @@ import {
 import {
   autoFinalizeRecruiting,
   beginOffseason,
+  canRecruitUseProjectedOpening,
   deriveRemainingOpeningsByPosition,
   deriveAvailableOfferSlotsByPosition,
   deriveAiOfferUtility,
@@ -318,7 +319,7 @@ function observeRecruitingOpportunities(dynasty: DynastyState): RecruitingOpport
         overall: calculateOverall(recruit.player),
         potential: recruit.player.potential,
         position: recruit.player.position,
-        projectedOpening: program.projectedOpeningsByPosition[recruit.player.position] > 0,
+        projectedOpening: canRecruitUseProjectedOpening(recruiting, program, recruit),
         remainingOpening: deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position] > 0,
         onBoard: target !== undefined,
         focused,
@@ -750,9 +751,10 @@ export function runDynastyCalibration(
         countCompatibleUnsignedPremium(dynasty, 4)
       const finalized = dynasty.completedRecruitingHistory.at(-1)!
       const projectedOpenings = Object.values(finalized.recruitingState.programs)
-        .reduce((total, program) => total + Object.values(
-          program.projectedOpeningsByPosition,
-        ).reduce((sum, count) => sum + count, 0), 0)
+        .reduce((total, program) => total + ('capacityModel' in program
+          ? TEAM_ROSTER_SIZE - program.projectedReturningPlayerCount
+          : Object.values(program.projectedOpeningsByPosition)
+            .reduce((sum, count) => sum + count, 0)), 0)
       const commitments = Object.keys(
         finalized.recruitingState.commitmentsByPlayerId,
       ).length
@@ -777,16 +779,22 @@ export function runDynastyCalibration(
       recruitingCapacity.push(...Object.keys(finalized.recruitingState.programs)
         .sort()
         .map((programId) => {
-          const openings = finalized.recruitingState.programs[programId]!
-            .projectedOpeningsByPosition
+          const program = finalized.recruitingState.programs[programId]!
+          const commitments = Object.values(finalized.recruitingState.commitmentsByPlayerId)
+            .filter((commitment) => commitment.programId === programId)
+          const openings = 'capacityModel' in program
+            ? Object.fromEntries(POSITIONS.map((position) => [position,
+              commitments.filter((commitment) => finalized.recruitingState.recruits.find(
+                ({ player }) => player.id === commitment.playerId,
+              )?.player.position === position).length]))
+            : program.projectedOpeningsByPosition
           return {
             targetSeasonNumber: finalized.targetSeasonNumber,
             programId,
             prestige: prestigeByProgramId[programId]!,
             projectedOpeningsByPosition: { ...openings },
             projectedOpenings: Object.values(openings).reduce((sum, count) => sum + count, 0),
-            actualSignees: Object.values(finalized.recruitingState.commitmentsByPlayerId)
-              .filter((commitment) => commitment.programId === programId).length,
+            actualSignees: commitments.length,
           }
         }))
       signedRecruits.push(...extractSignedRecruitRecords(

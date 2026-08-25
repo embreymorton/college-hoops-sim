@@ -102,11 +102,74 @@ export function deriveProgramCommitments(
 }
 
 export function canRecruitUseProjectedOpening(
-  _recruiting: RecruitingState,
+  recruiting: RecruitingState,
   program: RecruitingProgramState,
   recruit: Recruit,
 ): boolean {
-  return program.projectedOpeningsByPosition[recruit.player.position] > 0
+  if (!('capacityModel' in program)) {
+    return program.projectedOpeningsByPosition[recruit.player.position] > 0
+  }
+  return deriveRemainingScholarships(recruiting, program) > 0 &&
+    program.projectedReturnerCountsByPosition[recruit.player.position] < 3
+}
+
+export function deriveCommittedCountsByPosition(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): PositionCounts {
+  const counts = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
+  for (const commitment of deriveProgramCommitments(recruiting, program.programId)) {
+    const recruit = getRecruit(recruiting, commitment.playerId)
+    if (recruit) counts[recruit.player.position] += 1
+  }
+  return counts
+}
+
+export function deriveProjectedCountsByPosition(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): PositionCounts {
+  const committed = deriveCommittedCountsByPosition(recruiting, program)
+  if (!('capacityModel' in program)) {
+    return Object.fromEntries(POSITIONS.map((position) => [
+      position,
+      program.projectedOpeningsByPosition[position] -
+        Math.max(0, program.projectedOpeningsByPosition[position] - committed[position]),
+    ])) as PositionCounts
+  }
+  return Object.fromEntries(POSITIONS.map((position) => [
+    position,
+    program.projectedReturnerCountsByPosition[position] + committed[position],
+  ])) as PositionCounts
+}
+
+export function deriveRemainingScholarships(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): number {
+  if (!('capacityModel' in program)) {
+    return POSITIONS.reduce((sum, position) =>
+      sum + Math.max(0, program.projectedOpeningsByPosition[position] - deriveCommittedCountsByPosition(recruiting, program)[position]), 0)
+  }
+  return Math.max(0, 12 - program.projectedReturningPlayerCount - deriveProgramCommitments(recruiting, program.programId).length)
+}
+
+export function deriveMandatoryNeedsByPosition(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): PositionCounts {
+  if (!('capacityModel' in program)) return deriveRemainingOpeningsByPosition(recruiting, program)
+  const projected = deriveProjectedCountsByPosition(recruiting, program)
+  return Object.fromEntries(POSITIONS.map((position) => [position, Math.max(0, 2 - projected[position])])) as PositionCounts
+}
+
+export function deriveFlexibleOpenings(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+): number {
+  if (!('capacityModel' in program)) return 0
+  return Math.max(0, deriveRemainingScholarships(recruiting, program) -
+    POSITIONS.reduce((sum, position) => sum + deriveMandatoryNeedsByPosition(recruiting, program)[position], 0))
 }
 
 export function canRecruitUseRemainingOpening(
@@ -128,23 +191,53 @@ export function canProgramOfferRecruit(
 ): boolean {
   const recruit = getRecruit(recruiting, playerId)
   if (!recruit) return false
-  const remaining = deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position]
-  const offered = program.board.filter((target) =>
-    target.hasActiveOffer && target.playerId !== playerId &&
-    getRecruit(recruiting, target.playerId)?.player.position === recruit.player.position &&
-    !recruiting.commitmentsByPlayerId[target.playerId],
-  ).length
-  return offered < remaining
+  if (!('capacityModel' in program)) {
+    const remaining = deriveRemainingOpeningsByPosition(recruiting, program)[recruit.player.position]
+    const offered = program.board.filter((target) =>
+      target.hasActiveOffer && target.playerId !== playerId &&
+      getRecruit(recruiting, target.playerId)?.player.position === recruit.player.position &&
+      !recruiting.commitmentsByPlayerId[target.playerId],
+    ).length
+    return offered < remaining
+  }
+  const offers = { ...deriveActiveOfferCountsByPosition(recruiting, program) }
+  offers[recruit.player.position] += 1
+  return isProgramOfferSetFeasible(recruiting, program, offers)
+}
+
+export function isProgramOfferSetFeasible(
+  recruiting: RecruitingState,
+  program: RecruitingProgramState,
+  offers: PositionCounts,
+): boolean {
+  if (!('capacityModel' in program)) {
+    const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
+    return POSITIONS.every((position) => offers[position] <= remaining[position])
+  }
+  const projected = deriveProjectedCountsByPosition(recruiting, program)
+  const remainingScholarships = deriveRemainingScholarships(recruiting, program)
+  const offerTotal = POSITIONS.reduce((sum, position) => sum + offers[position], 0)
+  if (offerTotal > remainingScholarships) return false
+  if (POSITIONS.some((position) => projected[position] + offers[position] > 3)) return false
+  const mandatoryAfterOffers = POSITIONS.reduce((sum, position) =>
+    sum + Math.max(0, 2 - projected[position] - offers[position]), 0)
+  return remainingScholarships - offerTotal >= mandatoryAfterOffers
 }
 
 export function deriveRemainingOpeningsByPosition(
   recruiting: RecruitingState,
   program: RecruitingProgramState,
 ): PositionCounts {
-  const committedCounts = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
-  for (const commitment of deriveProgramCommitments(recruiting, program.programId)) {
-    const recruit = getRecruit(recruiting, commitment.playerId)
-    if (recruit) committedCounts[recruit.player.position] += 1
+  const committedCounts = deriveCommittedCountsByPosition(recruiting, program)
+  if ('capacityModel' in program) {
+    const projected = deriveProjectedCountsByPosition(recruiting, program)
+    const remainingScholarships = deriveRemainingScholarships(recruiting, program)
+    const mandatory = deriveMandatoryNeedsByPosition(recruiting, program)
+    return Object.fromEntries(POSITIONS.map((position) => {
+      const mandatoryElsewhere = POSITIONS.reduce((sum, other) =>
+        sum + (other === position ? 0 : mandatory[other]), 0)
+      return [position, Math.max(0, Math.min(3 - projected[position], remainingScholarships - mandatoryElsewhere))]
+    })) as PositionCounts
   }
   return Object.fromEntries(POSITIONS.map((position) => [
     position,
@@ -169,12 +262,21 @@ export function deriveAvailableOfferSlotsByPosition(
   recruiting: RecruitingState,
   program: RecruitingProgramState,
 ): PositionCounts {
-  const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
   const activeOffers = deriveActiveOfferCountsByPosition(recruiting, program)
-  return Object.fromEntries(POSITIONS.map((position) => [
-    position,
-    Math.max(0, remaining[position] - activeOffers[position]),
-  ])) as PositionCounts
+  if (!('capacityModel' in program)) {
+    const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
+    return Object.fromEntries(POSITIONS.map((position) => [position, Math.max(0, remaining[position] - activeOffers[position])])) as PositionCounts
+  }
+  return Object.fromEntries(POSITIONS.map((position) => {
+    let available = 0
+    const candidate = { ...activeOffers }
+    while (true) {
+      candidate[position] += 1
+      if (!isProgramOfferSetFeasible(recruiting, program, candidate)) break
+      available += 1
+    }
+    return [position, available]
+  })) as PositionCounts
 }
 
 export function deriveTargetStatus(
@@ -207,8 +309,16 @@ export function deriveProgramRecruitingBoard(
   )
   return {
     programId,
-    projectedOpeningsByPosition: program.projectedOpeningsByPosition,
+    capacityModel: 'capacityModel' in program ? 'flexible-v1' : 'exact-v0',
+    projectedOpeningsByPosition: 'capacityModel' in program
+      ? deriveRemainingOpeningsByPosition({ ...recruiting, commitmentsByPlayerId: {} }, program)
+      : program.projectedOpeningsByPosition,
     remainingOpeningsByPosition: deriveRemainingOpeningsByPosition(recruiting, program),
+    projectedCountsByPosition: deriveProjectedCountsByPosition(recruiting, program),
+    mandatoryNeedsByPosition: deriveMandatoryNeedsByPosition(recruiting, program),
+    remainingScholarships: deriveRemainingScholarships(recruiting, program),
+    flexibleOpenings: deriveFlexibleOpenings(recruiting, program),
+    signedCommitmentCount: deriveProgramCommitments(recruiting, programId).length,
     activeOfferCountsByPosition: deriveActiveOfferCountsByPosition(recruiting, program),
     availableOfferSlotsByPosition: deriveAvailableOfferSlotsByPosition(recruiting, program),
     targets: program.board.map((target) => ({

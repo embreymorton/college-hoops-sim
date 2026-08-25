@@ -118,6 +118,19 @@
   color: var(--ink-2);
 }
 
+.recruiting-overview__capacity-divider {
+  align-self: stretch;
+  width: 1px;
+  min-height: 1.1rem;
+  background: var(--line-strong);
+}
+
+.recruiting-overview__capacity-value {
+  font-family: var(--font-score);
+  font-size: 0.95rem;
+  color: var(--ink-0);
+}
+
 /* Condensed onto one line for the Offseason shell, which already carries
    Program/season identity — see .late-recruiting-embedded__complete for the
    quiet paired completion note. */
@@ -1162,6 +1175,14 @@
   max-width: none;
 }
 
+.recruiting-capacity-context {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 .recruit-details-battle {
   margin-top: var(--space-5);
 }
@@ -1327,6 +1348,22 @@
   max-width: 100%;
   overflow-x: auto;
 }
+
+@media (max-width: 560px) {
+  .recruiting-mode-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    overflow-x: visible;
+  }
+
+  .recruiting-mode-tabs .tab {
+    justify-content: center;
+    padding-inline: 0.4rem;
+    text-align: center;
+  }
+}
+
   .recruiting-board-management {
     align-items: stretch;
     flex-direction: column;

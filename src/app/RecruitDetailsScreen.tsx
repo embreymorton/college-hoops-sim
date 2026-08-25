@@ -20,7 +20,7 @@ import {
   formatBattlePositionLabel,
   formatControlledPositionLabel,
 } from './recruitingBattleFormatters'
-import { formatOfferCapacityMessage } from './recruitingFormatters'
+import { formatOfferCapacityMessage, formatRecruitCapacityContext } from './recruitingFormatters'
 import { formatHeight } from './formatters'
 
 const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
@@ -122,6 +122,11 @@ export function RecruitDetailsScreen() {
       : deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, details.playerId)
     const canAddToBoard = !isOnBoard && nationalStatus === 'active'
     const fullName = `${details.firstName} ${details.lastName}`
+    const capacityContext = isActive
+      ? formatRecruitCapacityContext(board, details.position, hasActiveOffer)
+      : targetStatus === 'position-filled'
+        ? 'Position is full'
+        : null
 
     managementActions = (
       <div className="recruit-details-actions">
@@ -158,13 +163,15 @@ export function RecruitDetailsScreen() {
                 {!canOffer && (
                   <p className="recruiting-capacity-note">
                     {formatOfferCapacityMessage(
+                      board,
                       details.position,
-                      board.activeOfferCountsByPosition[details.position],
-                      board.remainingOpeningsByPosition[details.position],
                     )}
                   </p>
                 )}
               </>
+            )}
+            {capacityContext && (
+              <p className="recruiting-capacity-context">{capacityContext}</p>
             )}
             {canRemove && (
               <button

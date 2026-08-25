@@ -22,14 +22,37 @@ export function initializeRecruiting(
     dynastySeed: dynasty.dynastySeed,
     targetSeasonNumber,
     season,
+    capacityModel: 'flexible-v1',
   })
   const programs: Record<string, RecruitingProgramState> = {}
   for (const programId of Object.keys(season.programStates).sort()) {
+    const outlook = deriveProjectedRosterOutlook(season.programStates[programId]!.team)
+    const returnerCounts = Object.fromEntries(
+      (['PG', 'SG', 'SF', 'PF', 'C'] as const).map((position) => [
+        position,
+        season.programStates[programId]!.team.roster.filter(
+          (player) => player.classYear !== 'SR' && player.position === position,
+        ).length,
+      ]),
+    ) as Record<'PG' | 'SG' | 'SF' | 'PF' | 'C', number>
+    const remainingScholarships = 12 - outlook.projectedReturningPlayerIds.length
+    const mandatory = Object.fromEntries((['PG', 'SG', 'SF', 'PF', 'C'] as const).map(
+      (position) => [position, Math.max(0, 2 - returnerCounts[position])],
+    )) as Record<'PG' | 'SG' | 'SF' | 'PF' | 'C', number>
+    const compatibilityOpenings = Object.fromEntries((['PG', 'SG', 'SF', 'PF', 'C'] as const).map(
+      (position) => [position, Math.max(0, Math.min(
+        3 - returnerCounts[position],
+        remainingScholarships - (['PG', 'SG', 'SF', 'PF', 'C'] as const).reduce(
+          (sum, other) => sum + (other === position ? 0 : mandatory[other]), 0,
+        ),
+      ))],
+    )) as Record<'PG' | 'SG' | 'SF' | 'PF' | 'C', number>
     programs[programId] = {
       programId,
-      projectedOpeningsByPosition: deriveProjectedRosterOutlook(
-        season.programStates[programId]!.team,
-      ).projectedOpeningsByPosition,
+      capacityModel: 'flexible-v1',
+      projectedReturnerCountsByPosition: returnerCounts,
+      projectedReturningPlayerCount: outlook.projectedReturningPlayerIds.length,
+      projectedOpeningsByPosition: compatibilityOpenings,
       board: [],
     }
   }

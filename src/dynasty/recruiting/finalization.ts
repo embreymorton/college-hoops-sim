@@ -2,6 +2,7 @@ import { POSITIONS, type Position } from '../../engine'
 import type { DynastyState } from '../domain'
 import {
   cleanupInvalidRecruitingOffers,
+  manageProgramRecruitingOffers,
 } from './boards'
 import {
   FINAL_RECRUITING_PERIOD,
@@ -9,6 +10,7 @@ import {
 } from './constants'
 import type {
   RecruitingCommitment,
+  RecruitingBoardTarget,
   RecruitingFinalizationResult,
   RecruitingProgramState,
   RecruitingState,
@@ -17,7 +19,11 @@ import {
   deriveActiveOfferCountsByPosition,
   deriveBaseRecruitAttraction,
   deriveRecruitProgramStandings,
+  deriveFlexibleOpenings,
+  deriveMandatoryNeedsByPosition,
+  deriveProjectedCountsByPosition,
   deriveRemainingOpeningsByPosition,
+  deriveRemainingScholarships,
   deriveTargetStatus,
   getRecruit,
   canRecruitUseRemainingOpening,
@@ -39,9 +45,7 @@ function standing(
 
 function openCount(recruiting: RecruitingState): number {
   return Object.values(recruiting.programs).reduce(
-    (total, program) => total + Object.values(
-      deriveRemainingOpeningsByPosition(recruiting, program),
-    ).reduce((sum, count) => sum + count, 0),
+    (total, program) => total + deriveRemainingScholarships(recruiting, program),
     0,
   )
 }
@@ -174,17 +178,25 @@ function fillOfferVacancies(
   let current = cleanupInvalidRecruitingOffers(recruiting)
   for (const programId of Object.keys(current.programs).sort()) {
     let program = current.programs[programId]!
+    if ('capacityModel' in program) {
+      program = manageProgramRecruitingOffers(dynasty, current, programId)
+      current = {
+        ...current,
+        programs: { ...current.programs, [programId]: program },
+      }
+      continue
+    }
     for (const position of POSITIONS) {
       const remaining = deriveRemainingOpeningsByPosition(current, program)[position]
       let offered = deriveActiveOfferCountsByPosition(current, program)[position]
       while (offered < remaining) {
-        const boardChoice = boardCandidates(
+        const boardChoice: RecruitingBoardTarget | undefined = boardCandidates(
           dynasty,
           current,
           program,
           position,
         )[0]?.target
-        let playerId = boardChoice?.playerId
+        let playerId: string | undefined = boardChoice?.playerId
         if (!playerId && (programId !== dynasty.controlledProgramId || expandControlledPool)) {
           const nationalChoice = nationalCandidates(
             dynasty,
@@ -222,7 +234,7 @@ function fillOfferVacancies(
       programs: { ...current.programs, [programId]: program },
     }
   }
-  return current
+  return cleanupInvalidRecruitingOffers(current)
 }
 
 /** Prepares AI premium options in rank order without replacing controlled offers. */
@@ -310,7 +322,7 @@ export function preparePremiumLateMarket(
       }
     }
   }
-  return current
+  return cleanupInvalidRecruitingOffers(current)
 }
 
 /** Opens the user-reviewable Late Recruiting phase without finalizing the class. */
@@ -378,7 +390,130 @@ export function deriveLateRecruitResolutionOrder(
     .map(({ player }) => player.id)
 }
 
-function fallbackMatch(
+interface FlowEdge { to: number; reverse: number; capacity: number; recruitId?: string; programId?: string }
+
+class FlowNetwork {
+  readonly graph: FlowEdge[][]
+  constructor(size: number) { this.graph = Array.from({ length: size }, () => []) }
+  add(from: number, to: number, capacity: number, metadata: Partial<FlowEdge> = {}): void {
+    const forward: FlowEdge = { to, reverse: this.graph[to]!.length, capacity, ...metadata }
+    const reverse: FlowEdge = { to: from, reverse: this.graph[from]!.length, capacity: 0 }
+    this.graph[from]!.push(forward)
+    this.graph[to]!.push(reverse)
+  }
+  resolve(source: number, sink: number): number {
+    let total = 0
+    while (true) {
+      const parent = Array.from({ length: this.graph.length }, () => null as { node: number; edge: number } | null)
+      const queue = [source]
+      parent[source] = { node: source, edge: -1 }
+      for (let cursor = 0; cursor < queue.length && !parent[sink]; cursor += 1) {
+        const node = queue[cursor]!
+        for (let edgeIndex = 0; edgeIndex < this.graph[node]!.length; edgeIndex += 1) {
+          const edge = this.graph[node]![edgeIndex]!
+          if (edge.capacity <= 0 || parent[edge.to]) continue
+          parent[edge.to] = { node, edge: edgeIndex }
+          queue.push(edge.to)
+          if (edge.to === sink) break
+        }
+      }
+      if (!parent[sink]) return total
+      for (let node = sink; node !== source;) {
+        const step = parent[node]!
+        const edge = this.graph[step.node]![step.edge]!
+        edge.capacity -= 1
+        this.graph[node]![edge.reverse]!.capacity += 1
+        node = step.node
+      }
+      total += 1
+    }
+  }
+}
+
+function matchCapacity(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+  capacities: readonly { programId: string; position: Position; capacity: number }[],
+  programCaps?: Readonly<Record<string, number>>,
+): { pairs: readonly { programId: string; playerId: string }[]; requested: number; matched: number } {
+  const recruits = recruiting.recruits.filter(({ player }) => !recruiting.commitmentsByPlayerId[player.id])
+  const programIds = [...new Set(capacities.map(({ programId }) => programId))].sort()
+  const source = 0
+  const programOffset = 1
+  const capacityOffset = programOffset + programIds.length
+  const recruitOffset = capacityOffset + capacities.length
+  const sink = recruitOffset + recruits.length
+  const flow = new FlowNetwork(sink + 1)
+  const programNodes = new Map(programIds.map((programId, index) => [programId, programOffset + index]))
+  for (const programId of programIds) {
+    const capacity = programCaps?.[programId] ?? capacities.filter((entry) => entry.programId === programId).reduce((sum, entry) => sum + entry.capacity, 0)
+    flow.add(source, programNodes.get(programId)!, capacity)
+  }
+  capacities.forEach((entry, index) => {
+    const node = capacityOffset + index
+    flow.add(programNodes.get(entry.programId)!, node, entry.capacity)
+    const compatible = recruits.filter(({ player }) => player.position === entry.position).sort((first, second) =>
+      standing(dynasty, recruiting, second.player.id, entry.programId) - standing(dynasty, recruiting, first.player.id, entry.programId) ||
+      first.nationalRank - second.nationalRank || first.player.id.localeCompare(second.player.id))
+    for (const recruit of compatible) {
+      const recruitIndex = recruits.findIndex(({ player }) => player.id === recruit.player.id)
+      flow.add(node, recruitOffset + recruitIndex, 1, { recruitId: recruit.player.id, programId: entry.programId })
+    }
+  })
+  recruits.forEach((_, index) => flow.add(recruitOffset + index, sink, 1))
+  const matched = flow.resolve(source, sink)
+  const pairs: { programId: string; playerId: string }[] = []
+  for (let index = 0; index < capacities.length; index += 1) {
+    for (const edge of flow.graph[capacityOffset + index]!) {
+      if (edge.recruitId && edge.capacity === 0) pairs.push({ programId: edge.programId!, playerId: edge.recruitId })
+    }
+  }
+  const requested = programCaps
+    ? Object.values(programCaps).reduce((sum, count) => sum + count, 0)
+    : capacities.reduce((sum, entry) => sum + entry.capacity, 0)
+  return { pairs, requested, matched }
+}
+
+function commitPairs(recruiting: RecruitingState, pairs: readonly { programId: string; playerId: string }[]): RecruitingState {
+  return {
+    ...recruiting,
+    commitmentsByPlayerId: {
+      ...recruiting.commitmentsByPlayerId,
+      ...Object.fromEntries(pairs.map(({ programId, playerId }) => [playerId, {
+        playerId, programId, timing: { kind: 'late' as const }, targetSeasonNumber: recruiting.targetSeasonNumber,
+      }])),
+    },
+  }
+}
+
+function flexibleFallbackMatch(
+  dynasty: DynastyState,
+  recruiting: RecruitingState,
+): RecruitingState {
+  const mandatoryCapacities = Object.keys(recruiting.programs).sort().flatMap((programId) => {
+    const program = recruiting.programs[programId]!
+    const mandatory = deriveMandatoryNeedsByPosition(recruiting, program)
+    return POSITIONS.filter((position) => mandatory[position] > 0).map((position) => ({ programId, position, capacity: mandatory[position] }))
+  })
+  const mandatory = matchCapacity(dynasty, recruiting, mandatoryCapacities)
+  if (mandatory.matched !== mandatory.requested) throw new RangeError('B2 finalization could not match every mandatory positional need.')
+  const current = commitPairs(recruiting, mandatory.pairs)
+  const programCaps = Object.fromEntries(Object.keys(current.programs).sort().map((programId) => [
+    programId,
+    deriveFlexibleOpenings(current, current.programs[programId]!),
+  ]))
+  const flexibleCapacities = Object.keys(current.programs).sort().flatMap((programId) => {
+    const projected = deriveProjectedCountsByPosition(current, current.programs[programId]!)
+    return POSITIONS.filter((position) => projected[position] < 3).map((position) => ({
+      programId, position, capacity: 3 - projected[position],
+    }))
+  })
+  const flexible = matchCapacity(dynasty, current, flexibleCapacities, programCaps)
+  if (flexible.matched !== flexible.requested) throw new RangeError('B2 finalization could not match every flexible scholarship.')
+  return cleanupInvalidRecruitingOffers(commitPairs(current, flexible.pairs))
+}
+
+function legacyFallbackMatch(
   dynasty: DynastyState,
   recruiting: RecruitingState,
 ): RecruitingState {
@@ -437,7 +572,23 @@ function fallbackMatch(
   return current
 }
 
+function fallbackMatch(dynasty: DynastyState, recruiting: RecruitingState): RecruitingState {
+  return Object.values(recruiting.programs).some((program) => 'capacityModel' in program)
+    ? flexibleFallbackMatch(dynasty, recruiting)
+    : legacyFallbackMatch(dynasty, recruiting)
+}
+
 function assertSufficientSupply(recruiting: RecruitingState): void {
+  if (Object.values(recruiting.programs).some((program) => 'capacityModel' in program)) {
+    for (const position of POSITIONS) {
+      const demand = Object.values(recruiting.programs).reduce(
+        (sum, program) => sum + deriveMandatoryNeedsByPosition(recruiting, program)[position], 0)
+      if (unsignedAtPosition(recruiting, position).length < demand) {
+        throw new RangeError(`Insufficient unsigned ${position} supply for mandatory B2 needs.`)
+      }
+    }
+    return
+  }
   for (const position of POSITIONS) {
     const demand = Object.values(recruiting.programs).reduce(
       (sum, program) => sum + deriveRemainingOpeningsByPosition(

@@ -191,9 +191,8 @@ export function RecruitingBoardTable({
                         {!canOffer && (
                           <p className="recruiting-capacity-note">
                             {formatOfferCapacityMessage(
+                              board,
                               position,
-                              board.activeOfferCountsByPosition[position],
-                              board.remainingOpeningsByPosition[position],
                             )}
                           </p>
                         )}

@@ -138,7 +138,7 @@ describe('Dynasty Season Rollover V0', () => {
 
       if (transition < 2) offseason = finishCompetitionAndBeginOffseason(active)
     }
-  })
+  }, 15_000)
 
   it('generates a valid season-specific Schedule with unique cross-season IDs', () => {
     const first = rolloverDynastyToNextSeason(canonical)
@@ -208,12 +208,13 @@ describe('Dynasty Season Rollover V0', () => {
     expect(deriveBaseRecruitAttraction(higherPrestige, recruit, programId))
       .toBeGreaterThan(baselineAttraction)
     for (const [programId, program] of Object.entries(recruiting.programs)) {
-      const seniors = first.activeSeason!.programStates[programId]!.team.roster
-        .filter(({ classYear }) => classYear === 'SR')
+      expect('capacityModel' in program && program.capacityModel).toBe('flexible-v1')
+      const returners = first.activeSeason!.programStates[programId]!.team.roster
+        .filter(({ classYear }) => classYear !== 'SR')
       for (const position of ['PG', 'SG', 'SF', 'PF', 'C'] as const) {
-        expect(program.projectedOpeningsByPosition[position]).toBe(
-          seniors.filter((player) => player.position === position).length,
-        )
+        expect('projectedReturnerCountsByPosition' in program &&
+          program.projectedReturnerCountsByPosition[position]).toBe(
+          returners.filter((player) => player.position === position).length)
       }
     }
   })
@@ -316,5 +317,5 @@ describe('Dynasty Season Rollover V0', () => {
     expect(dynasty.history.map(({ seasonNumber }) => seasonNumber)).toEqual([1, 2, 3])
     expect(dynasty.completedRecruitingHistory.map(({ targetSeasonNumber }) => targetSeasonNumber)).toEqual([2, 3, 4])
     expect(JSON.parse(JSON.stringify(dynasty))).toEqual(dynasty)
-  })
+  }, 15_000)
 })

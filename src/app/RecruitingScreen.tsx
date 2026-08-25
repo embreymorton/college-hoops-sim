@@ -263,6 +263,8 @@ export function RecruitingScreen({
               lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
               needsByPosition={totals.needsByPosition}
               remainingTotal={totals.remainingTotal}
+              mandatoryTotal={totals.mandatoryTotal}
+              flexibleTotal={totals.flexibleTotal}
               onGenerateDraftBoard={generateControlledDraftBoard}
               onFillRemainingBoard={fillBoard}
               onBrowseNationalClass={() => setMode('national')}

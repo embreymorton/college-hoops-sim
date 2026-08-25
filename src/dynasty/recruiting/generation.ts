@@ -70,6 +70,42 @@ export function deriveRecruitSupplyByPosition(
   ) as PositionCounts
 }
 
+export function deriveMandatoryPositionDemand(
+  season: GenerateRecruitingClassOptions['season'],
+): PositionCounts {
+  return Object.fromEntries(POSITIONS.map((position) => [position,
+    Object.keys(season.programStates).sort().reduce((total, programId) => {
+      const returners = season.programStates[programId]!.team.roster.filter(
+        (player) => player.classYear !== 'SR' && player.position === position,
+      ).length
+      return total + Math.max(0, 2 - returners)
+    }, 0),
+  ])) as PositionCounts
+}
+
+/** Keeps V0's exact total class size while balancing B2's flexible market. */
+export function deriveFlexibleRecruitSupplyByPosition(
+  season: GenerateRecruitingClassOptions['season'],
+): PositionCounts {
+  const legacySupply = deriveRecruitSupplyByPosition(deriveNationalPositionDemand(season))
+  const totalClassSize = POSITIONS.reduce((sum, position) => sum + legacySupply[position], 0)
+  const mandatory = deriveMandatoryPositionDemand(season)
+  const supply = Object.fromEntries(POSITIONS.map((position) => [
+    position,
+    Math.max(MIN_RECRUITS_PER_POSITION, mandatory[position]),
+  ])) as Record<Position, number>
+  let remaining = totalClassSize - POSITIONS.reduce((sum, position) => sum + supply[position], 0)
+  if (remaining < 0) throw new RangeError('B2 mandatory supply exceeds the preserved Recruit class size.')
+  while (remaining > 0) {
+    const position = [...POSITIONS].sort((first, second) =>
+      supply[first] - supply[second] || POSITIONS.indexOf(first) - POSITIONS.indexOf(second),
+    )[0]!
+    supply[position] += 1
+    remaining -= 1
+  }
+  return supply
+}
+
 interface RecruitTalentProfile {
   readonly readiness: number
   readonly ceiling: number
@@ -260,7 +296,7 @@ type RecruitTalentObserver = (input: {
 }) => void
 
 function generateRecruitingClassWithPotentialFinalizer(
-  { dynastySeed, targetSeasonNumber, season }: GenerateRecruitingClassOptions,
+  { dynastySeed, targetSeasonNumber, season, capacityModel = 'flexible-v1' }: GenerateRecruitingClassOptions,
   finalizePotential: RecruitPotentialFinalizer,
   observeTalent?: RecruitTalentObserver,
 ): Recruit[] {
@@ -268,8 +304,9 @@ function generateRecruitingClassWithPotentialFinalizer(
     throw new RangeError('Recruiting target season must be at least 2.')
   }
 
-  const demand = deriveNationalPositionDemand(season)
-  const supply = deriveRecruitSupplyByPosition(demand)
+  const supply = capacityModel === 'exact-v0'
+    ? deriveRecruitSupplyByPosition(deriveNationalPositionDemand(season))
+    : deriveFlexibleRecruitSupplyByPosition(season)
   const unranked: UnrankedRecruit[] = []
 
   for (const position of POSITIONS) {

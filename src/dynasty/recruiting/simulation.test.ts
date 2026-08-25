@@ -5,6 +5,7 @@ import { removeRecruitingBoardTarget } from './boards'
 import {
   deriveBaseRecruitAttraction,
   deriveProgramCommitments,
+  deriveProjectedCountsByPosition,
   deriveRecruitProgramStandings,
   getRecruit,
 } from './queries'
@@ -256,12 +257,11 @@ describe('Recruiting strategy model', () => {
       .map(({ playerId, programId }) => [playerId, programId]))).toEqual(destinations)
 
     for (const program of Object.values(dynasty.recruiting!.programs)) {
-      const positionCounts: Record<string, number> = {}
       for (const commitment of deriveProgramCommitments(dynasty.recruiting!, program.programId)) {
-        const position = getRecruit(dynasty.recruiting!, commitment.playerId)!.player.position
-        positionCounts[position] = (positionCounts[position] ?? 0) + 1
-        expect(positionCounts[position]).toBeLessThanOrEqual(program.projectedOpeningsByPosition[position])
+        expect(getRecruit(dynasty.recruiting!, commitment.playerId)).toBeDefined()
       }
+      expect(Object.values(deriveProjectedCountsByPosition(dynasty.recruiting!, program))
+        .every((count) => count <= 3)).toBe(true)
     }
   })
 

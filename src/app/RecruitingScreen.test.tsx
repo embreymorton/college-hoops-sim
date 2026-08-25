@@ -11,7 +11,7 @@ import type {
   RecruitStarRating,
   RecruitingBoardTargetOrigin,
 } from '../dynasty'
-import { deriveNextSeasonRosterOutlook } from '../dynasty'
+import { deriveNextSeasonRosterOutlook, deriveRemainingOpeningsByPosition } from '../dynasty'
 import { useDynastyStore } from '../store'
 import { App } from './App'
 import { RecruitingScreen } from './RecruitingScreen'
@@ -255,7 +255,18 @@ describe('Roster Outlook mode', () => {
     const returner = outlook.positionGroups.flatMap(({ players }) => players)
       .find(({ status }) => status === 'returning')!
     expect(screen.getByRole('button', { name: `${returner.firstName} ${returner.lastName}` })).toBeInTheDocument()
-    expect(screen.getAllByText(/^Open (PG|SG|SF|PF|C) Spot$/).length).toBe(outlook.remainingOpeningCount)
+    for (const group of outlook.positionGroups) {
+      const module = screen.getByRole('region', { name: group.position })
+      if (group.mandatoryNeed > 0) {
+        expect(within(module).getByText(`Required ${group.mandatoryNeed}`)).toBeInTheDocument()
+        expect(within(module).getByText('Flex +1')).toBeInTheDocument()
+      } else if (group.projectedCount === 2) {
+        expect(within(module).getByText('Flex +1')).toBeInTheDocument()
+      } else if (group.projectedCount === 3) {
+        expect(within(module).getByText('Full')).toBeInTheDocument()
+      }
+    }
+    expect(document.querySelector('.next-season-outlook__row--open')).toBeNull()
     expect(screen.getByRole('heading', { name: 'Departing Seniors' })).toBeInTheDocument()
     expect(screen.queryByText(/projected starter|starter|bench|minutes|MPG|playing time|projected OVR|expected Development/i)).not.toBeInTheDocument()
   })
@@ -263,8 +274,9 @@ describe('Roster Outlook mode', () => {
   it('opens Player and Recruit Details and preserves the parent mode on return', () => {
     let dynasty = createRecruitingDynasty('roster-outlook-navigation')
     const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const remaining = deriveRemainingOpeningsByPosition(dynasty.recruiting!, program)
     const recruit = dynasty.recruiting!.recruits.find(({ player }) =>
-      program.projectedOpeningsByPosition[player.position] > 0)!
+      remaining[player.position] > 0)!
     dynasty = withCommitment(dynasty, recruit.player.id, dynasty.controlledProgramId)
     useDynastyStore.setState({ dynasty, view: 'recruiting', recruitingMode: 'roster-outlook' })
     render(<App />)
@@ -349,6 +361,8 @@ describe('Recruiting Overview', () => {
 
     const overview = document.querySelector('.recruiting-overview') as HTMLElement
     expect(within(overview).getByText(/SG 1 · PF 1/)).toBeInTheDocument()
+    expect(within(overview).getByText('Required')).toBeInTheDocument()
+    expect(within(overview).getByText('Flexible')).toBeInTheDocument()
     expect(document.querySelector('.recruiting-needs__table')).toBeNull()
   })
 
@@ -777,6 +791,10 @@ describe('Guide', () => {
     expect(
       within(guide).getByText(/Only recruits with an active Offer can commit/),
     ).toBeInTheDocument()
+    expect(within(guide).getByText('Scholarships')).toBeInTheDocument()
+    expect(within(guide).getByText(/12 Players and 2–3 at every natural position/)).toBeInTheDocument()
+    expect(within(guide).getByText(/Positions projected below 2 create Required needs/)).toBeInTheDocument()
+    expect(within(guide).getByText(/no preseason roster plan is required/)).toBeInTheDocument()
   })
 
   it('explains all six Readiness states', () => {
@@ -1014,8 +1032,9 @@ describe('Full Recruiting Board empty state', () => {
     render(<App />)
 
     expect(screen.getByText('Your Recruiting Board')).toBeInTheDocument()
+    expect(screen.getByText(/2 scholarships available · 2 required · 0 flexible/)).toBeInTheDocument()
     // getByText normalizes whitespace; the DOM itself keeps the wider gap.
-    expect(screen.getByText('SG 1 PF 1')).toBeInTheDocument()
+    expect(document.querySelector('.recruiting-board-empty__needs')).toHaveTextContent('Required: SG 1 PF 1')
     expect(
       screen.getByRole('button', { name: 'Generate Draft Board' }),
     ).toBeInTheDocument()

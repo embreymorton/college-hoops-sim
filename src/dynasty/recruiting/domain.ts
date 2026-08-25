@@ -26,11 +26,23 @@ export interface RecruitingBoardTarget {
   readonly hasActiveOffer: boolean
 }
 
-export interface RecruitingProgramState {
+export interface LegacyRecruitingProgramState {
   readonly programId: string
   readonly projectedOpeningsByPosition: PositionCounts
   readonly board: readonly RecruitingBoardTarget[]
 }
+
+export interface FlexibleRecruitingProgramState {
+  readonly programId: string
+  readonly capacityModel: 'flexible-v1'
+  readonly projectedReturnerCountsByPosition: PositionCounts
+  readonly projectedReturningPlayerCount: number
+  /** Derived compatibility view for diagnostics; legality and capacity never read this field. */
+  readonly projectedOpeningsByPosition: PositionCounts
+  readonly board: readonly RecruitingBoardTarget[]
+}
+
+export type RecruitingProgramState = LegacyRecruitingProgramState | FlexibleRecruitingProgramState
 
 export type CommitmentTiming =
   | { readonly kind: 'period'; readonly period: number }
@@ -81,6 +93,7 @@ export interface GenerateRecruitingClassOptions {
   readonly dynastySeed: RngSeed
   readonly targetSeasonNumber: number
   readonly season: SeasonState
+  readonly capacityModel?: 'exact-v0' | 'flexible-v1'
 }
 
 export interface RecruitProgramStanding {
@@ -109,8 +122,15 @@ export interface ProgramRecruitingBoardEntry {
 
 export interface ProgramRecruitingBoard {
   readonly programId: string
+  readonly capacityModel?: 'exact-v0' | 'flexible-v1'
+  /** Compatibility projection only; B2 consumers must not sum these overlapping ceilings. */
   readonly projectedOpeningsByPosition: PositionCounts
   readonly remainingOpeningsByPosition: PositionCounts
+  readonly projectedCountsByPosition?: PositionCounts
+  readonly mandatoryNeedsByPosition?: PositionCounts
+  readonly remainingScholarships?: number
+  readonly flexibleOpenings?: number
+  readonly signedCommitmentCount?: number
   readonly activeOfferCountsByPosition: PositionCounts
   readonly availableOfferSlotsByPosition: PositionCounts
   readonly targets: readonly ProgramRecruitingBoardEntry[]

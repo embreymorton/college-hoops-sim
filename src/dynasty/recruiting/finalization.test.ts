@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { POSITIONS, type Position } from '../../engine'
+import { POSITIONS, TEAM_ROSTER_SIZE, type Position } from '../../engine'
 import {
   initializePostseason,
   simulatePendingGamesInTournamentRound,
@@ -48,8 +48,9 @@ function readyForLate(seed: string): DynastyState {
 
 function totalProjected(recruiting: RecruitingState): number {
   return Object.values(recruiting.programs).reduce(
-    (total, program) => total + Object.values(program.projectedOpeningsByPosition)
-      .reduce((sum, count) => sum + count, 0),
+    (total, program) => total + ('capacityModel' in program
+      ? TEAM_ROSTER_SIZE - program.projectedReturningPlayerCount
+      : Object.values(program.projectedOpeningsByPosition).reduce((sum, count) => sum + count, 0)),
     0,
   )
 }

@@ -54,6 +54,39 @@ function withCommitment(
 beforeEach(resetStore)
 
 describe('Recruit Details screen', () => {
+  it.each([
+    ['required', (board: ReturnType<typeof deriveProgramRecruitingBoard>, position: keyof typeof board.activeOfferCountsByPosition) =>
+      (board.mandatoryNeedsByPosition?.[position] ?? 0) > 0],
+    ['flexible', (board: ReturnType<typeof deriveProgramRecruitingBoard>, position: keyof typeof board.activeOfferCountsByPosition) =>
+      (board.mandatoryNeedsByPosition?.[position] ?? 0) === 0
+      && (board.projectedCountsByPosition?.[position] ?? 3) < 3
+      && (board.flexibleOpenings ?? 0) > 0],
+  ] as const)('shows %s scholarship context beside the Offer decision', (kind, matches) => {
+    let match: { dynasty: DynastyState; playerId: string } | null = null
+    for (let index = 0; index < 40 && !match; index += 1) {
+      const dynasty = createRecruitingDynasty(`recruit-details-${kind}-capacity-${index}`)
+      const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+      const recruit = dynasty.recruiting!.recruits.find(({ player }) => {
+        const target = board.targets.find(({ playerId }) => playerId === player.id)
+        if (!target || target.status !== 'active' || !matches(board, player.position)) return false
+        const mandatoryNeed = board.mandatoryNeedsByPosition?.[player.position] ?? 0
+        const activeOffers = board.activeOfferCountsByPosition[player.position]
+        const usesRequiredCapacity = target.hasActiveOffer
+          ? activeOffers <= mandatoryNeed
+          : activeOffers < mandatoryNeed
+        return kind === 'required' ? usesRequiredCapacity : !usesRequiredCapacity
+      })
+      if (recruit) match = { dynasty, playerId: recruit.player.id }
+    }
+    expect(match).not.toBeNull()
+    renderDetails(match!.dynasty, match!.playerId)
+
+    expect(screen.getByText(kind === 'required'
+      ? /Fills required|reserves capacity for a required|Would use shared flexible capacity/i
+      : /Flexible scholarship available|reserves 1 flexible scholarship|Would use shared flexible capacity/i,
+    )).toBeInTheDocument()
+  })
+
   it('renders canonical identity, class, ability, ratings, readiness, and controlled status', () => {
     const dynasty = createRecruitingDynasty('recruit-details-screen')
     const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
@@ -159,10 +192,12 @@ describe('Recruit Details screen', () => {
           ...dynasty.recruiting!.programs,
           [dynasty.controlledProgramId]: {
             ...program,
-            projectedOpeningsByPosition: {
-              ...program.projectedOpeningsByPosition,
-              [recruit.player.position]: 0,
-            },
+            ...('projectedReturnerCountsByPosition' in program ? {
+              projectedReturnerCountsByPosition: {
+                ...program.projectedReturnerCountsByPosition,
+                [recruit.player.position]: 3,
+              },
+            } : {}),
           },
         },
       },

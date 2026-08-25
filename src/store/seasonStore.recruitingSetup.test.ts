@@ -8,6 +8,11 @@ import {
 } from '../dynasty'
 import { createRecruitingDynasty } from '../dynasty/recruiting/testSupport'
 import {
+  deriveActiveOfferCountsByPosition,
+  deriveRemainingOpeningsByPosition,
+  isProgramOfferSetFeasible,
+} from '../dynasty/recruiting/queries'
+import {
   getNextGameForProgram,
   isRoundComplete,
   simulateScheduledGame,
@@ -36,8 +41,9 @@ function firstEligibleRecruitId(): string {
   const dynasty = useDynastyStore.getState().dynasty!
   const recruiting = dynasty.recruiting!
   const program = recruiting.programs[dynasty.controlledProgramId]!
+  const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
   return recruiting.recruits.find(
-    ({ player }) => program.projectedOpeningsByPosition[player.position] > 0,
+    ({ player }) => remaining[player.position] > 0,
   )!.player.id
 }
 
@@ -119,10 +125,10 @@ describe('Generate Draft Board', () => {
         )
         return hasActiveOffer && recruit?.player.position === position
       }).length
-      expect(activeOffers).toBeLessThanOrEqual(
-        program.projectedOpeningsByPosition[position],
-      )
+      expect(activeOffers).toBeLessThanOrEqual(3)
     }
+    expect(isProgramOfferSetFeasible(generated.recruiting!, program,
+      deriveActiveOfferCountsByPosition(generated.recruiting!, program))).toBe(true)
     expect(generated.recruiting!.recruits).toEqual(recruitsBefore)
     expect(generated.recruiting!.relationshipProgressByPlayerId).toEqual(
       relationshipsBefore,

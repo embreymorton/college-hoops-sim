@@ -325,6 +325,22 @@ floor minutes only: a natural PG who may play SG floor minutes does not satisfy
 an SG Recruiting opening. Stored multi-position identity, position changes,
 generic scholarships, cuts, and transfers remain separate future systems.
 
+Under the current accepted lifecycle, S0 establishes each Program's exact
+natural-position counts. Senior departures create openings at those same
+positions, exact-position Recruiting replaces them, and roster assembly
+validates the result. Without another future mechanic, the initial composition
+therefore persists across Seasons. This is a current constraint, not a judgment
+that the model is broken.
+
+Recruiting's accepted **Roster Outlook** sibling mode presents the controlled
+Program's factual Season N+1 roster: non-senior returners with next-class labels,
+controlled commitments as incoming freshmen, current OVR/POT, each remaining
+exact-position opening, and separate departing seniors. It is available through
+regular-season, postseason, and Late Recruiting, including embedded Late
+Recruiting, then yields to the finalized Recruiting Class flow. It does not
+include unsigned targets or forecast Development, future OVR, Rotation, depth,
+minutes, roles, Team Strength, or subjective roster quality.
+
 Recruit Details gives factual next-Season context for that same natural
 position. It shows projected returners with next-Season class and current
 OVR/POT, controlled incoming commitments, the viewed Recruit when still legal,

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { createRecruitingDynasty } from '../dynasty/recruiting/testSupport'
+import { deriveRemainingOpeningsByPosition } from '../dynasty/recruiting/queries'
 import { useDynastyStore } from './seasonStore'
 
 const CONTROLLED_PROGRAM_ID = 'charlotte-tech'
@@ -152,11 +153,12 @@ describe('Recruiting board actions', () => {
       useDynastyStore.getState().dynasty!.recruiting!.programs[CONTROLLED_PROGRAM_ID]!
     const onBoard = new Set(boardAfterRemoval.board.map((target) => target.playerId))
     const recruiting = useDynastyStore.getState().dynasty!.recruiting!
+    const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
     const addable = recruiting.recruits.find(
       (recruit) =>
         !onBoard.has(recruit.player.id) &&
         !recruiting.commitmentsByPlayerId[recruit.player.id] &&
-        program.projectedOpeningsByPosition[recruit.player.position] > 0,
+        remaining[recruit.player.position] > 0,
     )!
 
     useDynastyStore.getState().addRecruitingTarget(addable.player.id)

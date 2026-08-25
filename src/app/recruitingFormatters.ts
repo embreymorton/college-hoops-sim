@@ -106,13 +106,55 @@ export function formatRecruitStatusLabel({
   }
 }
 
-/** "1 / 1 SG offers currently active" — the concrete reason an Offer is unavailable. */
+/** Concise player-facing reason an Offer is unavailable. */
 export function formatOfferCapacityMessage(
-  position: string,
-  activeOfferCount: number,
-  remainingOpenings: number,
+  board: ProgramRecruitingBoard,
+  position: Position,
 ): string {
-  return `${activeOfferCount} / ${remainingOpenings} ${position} offers currently active`
+  if (board.capacityModel !== 'flexible-v1') {
+    return `${board.activeOfferCountsByPosition[position]} / ${board.remainingOpeningsByPosition[position]} ${position} offers currently active`
+  }
+  const projectedCount = board.projectedCountsByPosition?.[position]
+  if (projectedCount !== undefined && projectedCount >= 3) return 'Position is full'
+
+  const activeOfferTotal = POSITIONS.reduce(
+    (sum, current) => sum + board.activeOfferCountsByPosition[current],
+    0,
+  )
+  const remainingScholarships = board.remainingScholarships ?? 0
+  if (activeOfferTotal >= remainingScholarships) {
+    return (board.flexibleOpenings ?? 0) > 0
+      ? 'All flexible scholarships are currently reserved'
+      : 'All remaining scholarships are currently reserved'
+  }
+  if ((board.flexibleOpenings ?? 0) <= 0) return 'No flexible scholarships remain'
+  return 'Required capacity must remain available'
+}
+
+export function formatRecruitCapacityContext(
+  board: ProgramRecruitingBoard,
+  position: Position,
+  hasActiveOffer: boolean,
+): string {
+  if (board.capacityModel !== 'flexible-v1') {
+    return hasActiveOffer
+      ? `This offer reserves 1 ${position} opening.`
+      : `Projected ${position} opening available`
+  }
+  const mandatoryNeed = board.mandatoryNeedsByPosition?.[position] ?? 0
+  const activeOffersAtPosition = board.activeOfferCountsByPosition[position]
+  const usesRequiredCapacity = hasActiveOffer
+    ? activeOffersAtPosition <= mandatoryNeed
+    : activeOffersAtPosition < mandatoryNeed
+  if (usesRequiredCapacity) {
+    return hasActiveOffer
+      ? `This offer reserves capacity for a required ${position} need.`
+      : `Fills required ${position} need`
+  }
+  if (hasActiveOffer) return 'This offer reserves 1 flexible scholarship.'
+  return board.availableOfferSlotsByPosition[position] > 0
+    ? 'Flexible scholarship available'
+    : 'Would use shared flexible capacity'
 }
 
 export interface RecruitingPositionNeed {
@@ -126,6 +168,8 @@ export interface RecruitingHubTotals {
   readonly remainingTotal: number
   readonly signedTotal: number
   readonly offersTotal: number
+  readonly mandatoryTotal: number
+  readonly flexibleTotal: number
   /** Only positions with a remaining opening, in roster-position order. */
   readonly needsByPosition: readonly RecruitingPositionNeed[]
 }
@@ -138,31 +182,38 @@ export interface RecruitingHubTotals {
 export function deriveRecruitingHubTotals(
   board: ProgramRecruitingBoard,
 ): RecruitingHubTotals {
-  const projectedTotal = POSITIONS.reduce(
+  const legacyProjectedTotal = POSITIONS.reduce(
     (sum, position) => sum + board.projectedOpeningsByPosition[position],
     0,
   )
-  const remainingTotal = POSITIONS.reduce(
+  const legacyRemainingTotal = POSITIONS.reduce(
     (sum, position) => sum + board.remainingOpeningsByPosition[position],
     0,
   )
+  const signedTotal = board.signedCommitmentCount ?? legacyProjectedTotal - legacyRemainingTotal
+  const remainingTotal = board.remainingScholarships ?? legacyRemainingTotal
+  const projectedTotal = signedTotal + remainingTotal
   const offersTotal = POSITIONS.reduce(
     (sum, position) => sum + board.activeOfferCountsByPosition[position],
     0,
   )
+  const needs = board.mandatoryNeedsByPosition ?? board.remainingOpeningsByPosition
   const needsByPosition = POSITIONS.filter(
-    (position) => board.remainingOpeningsByPosition[position] > 0,
+    (position) => needs[position] > 0,
   ).map((position) => ({
     position,
-    remaining: board.remainingOpeningsByPosition[position],
+    remaining: needs[position],
   }))
+  const mandatoryTotal = needsByPosition.reduce((sum, need) => sum + need.remaining, 0)
+  const flexibleTotal = board.flexibleOpenings ?? Math.max(0, remainingTotal - mandatoryTotal)
 
   return {
     projectedTotal,
     remainingTotal,
-    signedTotal: projectedTotal - remainingTotal,
+    signedTotal,
     offersTotal,
+    mandatoryTotal,
+    flexibleTotal,
     needsByPosition,
   }
 }
-

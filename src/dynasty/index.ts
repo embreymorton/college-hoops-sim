@@ -131,6 +131,7 @@ export {
 } from './recruiting/finalization'
 export {
   deriveNationalPositionDemand,
+  deriveFlexibleRecruitSupplyByPosition,
   deriveRecruitSupplyByPosition,
   generateRecruitingClass,
   generateRecruitingClassWithTalentTrace,
@@ -141,8 +142,13 @@ export type {
 } from './recruiting/generation'
 export {
   deriveBaseRecruitAttraction,
+  canRecruitUseProjectedOpening,
   deriveActiveOfferCountsByPosition,
   deriveAvailableOfferSlotsByPosition,
+  deriveCommittedCountsByPosition,
+  deriveFlexibleOpenings,
+  deriveMandatoryNeedsByPosition,
+  deriveProjectedCountsByPosition,
   deriveProgramCommitments,
   deriveProgramRecruitingBoard,
   deriveRecruitNationalRank,
@@ -150,6 +156,7 @@ export {
   deriveRecruitProgramStandings,
   deriveRecruitStarRating,
   deriveRemainingOpeningsByPosition,
+  deriveRemainingScholarships,
   deriveTargetStatus,
   getRecruit,
 } from './recruiting/queries'

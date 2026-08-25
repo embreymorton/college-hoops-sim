@@ -15,23 +15,17 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### Next Season Roster Planner — Focused Design — NEXT
+### Roster Positional Flexibility — Focused Design — NEXT
 
-The Open Planning Checkpoint is closed. **Next Season Roster Planner — Focused
-Design** is the authoritative NEXT, so fresh sessions resolve to Path A. This is
-a design milestone, not an implementation milestone; no implementation contract
-has yet been selected.
+**Roster Positional Flexibility — Focused Design** is the authoritative NEXT,
+so fresh sessions resolve to Path A. This is a design milestone only; no
+implementation contract or replacement Recruiting model has been selected.
 
-Focused design must preserve the selected candidate boundary: a factual,
-read-only Season N+1 roster outlook composed from returning Players, committed
-Recruits, exact positional openings, and departing seniors. Current ratings may
-be shown. It must not forecast Development or project future Rotation, starters,
-minutes, roles, or playing time. Unsigned targets and offers are not future-roster
-facts. Recruiting remains the likely primary home, while exact UX and ownership
-remain unresolved for focused design.
-
-This sequencing update changes no production behavior and does not accept,
-complete, or freeze any feature.
+Focused design will determine whether and how Programs may reshape their
+12-Player natural-position composition over time while preserving useful
+position-based Recruiting constraints. Timing, healthy flexibility, positional
+bounds, Recruiting/AI/assembly behavior, Roster Outlook adaptation, migration,
+and balance implications remain unresolved.
 
 ## Planned and unscheduled
 
@@ -56,6 +50,16 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Next Season Roster Planner / Roster Outlook V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added a factual read-only Recruiting sibling mode for Season N+1 returners,
+  controlled commitments, exact-position openings, and departing seniors using
+  current pre-Development ratings.
+- Derived the outlook from existing canonical Team and Recruiting facts without
+  new state, persistence, RNG, mechanics, or speculative future-role projections.
+- Accepted the compact position-group dashboard, identity navigation, and
+  responsive presentation across regular-season, postseason, and Late Recruiting.
 
 ### Postseason Player Legacy / Tournament Records V1 — COMPLETE / ACCEPTED / FROZEN
 

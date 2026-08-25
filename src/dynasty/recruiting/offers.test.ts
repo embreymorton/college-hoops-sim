@@ -21,7 +21,7 @@ import {
   resolveRecruitingPeriod,
   syncRecruitingThroughCompletedRounds,
 } from './simulation'
-import { completeRounds, createRecruitingDynasty } from './testSupport'
+import { completeRounds, createLegacyRecruitingDynasty as createRecruitingDynasty } from './testSupport'
 
 function zeroCounts(): Record<Position, number> {
   return Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>

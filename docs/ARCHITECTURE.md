@@ -487,6 +487,21 @@ FR / SO / JR → projected returner
 
 It returns current roster size plus departing and returning Player IDs and projected openings by natural position. It does not require Season completion, Postseason, OffseasonState, graduation, or RNG. Recruiting V0 consumes this projection rather than reimplementing graduation rules; board capacity remains distinct from offer/signing capacity.
 
+Next Season Roster Planner composes a dedicated pure
+`deriveNextSeasonRosterOutlook(dynasty)` read model from that generic Team
+projection plus `deriveProgramCommitments()`,
+`deriveRemainingOpeningsByPosition()`, and `getRecruit()`. It exposes factual
+returners with promoted class labels, controlled incoming commitments,
+remaining exact-position openings, and departing seniors. It is recomputed on
+demand with no canonical Dynasty/Recruiting field, persistence, cache, RNG, or
+roster-assembly mutation.
+
+The current lifecycle preserves each Program's S0 natural-position counts:
+senior natural positions establish stored Recruiting openings, exact-position
+commitments consume them, and offseason assembly validates that positional
+composition. Roster Outlook reveals this chain but does not create or alter it.
+Any future flexibility requires a separate accepted mechanics contract.
+
 Recruit Details composes a separate pure `deriveRecruitPositionOutlook()` read
 model rather than expanding generic `ProjectedRosterOutlook` with hypothetical
 Recruit facts. It reads the controlled active Team, canonical Recruit identities

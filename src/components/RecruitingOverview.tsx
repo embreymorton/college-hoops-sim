@@ -43,14 +43,17 @@ export function RecruitingOverview({ board, compact = false }: RecruitingOvervie
         </div>
       </dl>
       <p className="recruiting-overview__needs">
-        <span className="recruiting-overview__needs-label">Needs</span>
+        <span className="recruiting-overview__needs-label">Required</span>
         {totals.needsByPosition.length > 0 ? (
           totals.needsByPosition
             .map(({ position, remaining }) => `${position} ${remaining}`)
             .join(' · ')
         ) : (
-          <span className="recruiting-overview__needs-empty">All positions filled</span>
+          <span className="recruiting-overview__needs-empty">None</span>
         )}
+        <span className="recruiting-overview__capacity-divider" aria-hidden="true" />
+        <span className="recruiting-overview__needs-label">Flexible</span>
+        <strong className="recruiting-overview__capacity-value">{totals.flexibleTotal}</strong>
       </p>
     </div>
   )

@@ -282,6 +282,16 @@ National = discovery     (unchanged)
 Details  = inspection / attachment
 ```
 
+Roster Outlook is the accepted factual roster-planning sibling mode within
+Recruiting. Its compact dashboard summarizes Returning, Incoming, and Openings,
+then uses natural-position modules with capacity context, strong Player identity,
+next-class/status metadata, compact current OVR/POT, subtly distinguished
+incoming commitments, and clear non-interactive Recruiting Need rows. Departing
+Seniors remain a compact secondary section. Existing Player and Recruit Details
+navigation is reused. At narrow widths, modules stack, Recruiting mode tabs
+scroll within their container, and the page introduces no body-level horizontal
+overflow. The surface is not a future depth chart or Development forecast.
+
 Recruit identity links on Board, Battles, and National Class open the functional
 Recruit Details child destination. It presents canonical profile, exact OVR/POT
 and nine ratings, class context, a compact next-Season natural-position outlook,

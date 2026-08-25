@@ -1868,26 +1868,283 @@ p {
   align-items: start;
 }
 
-.next-season-outlook { display: grid; gap: var(--space-5); }
-.next-season-outlook__summary { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); }
-.next-season-outlook__groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
-.next-season-outlook__group,
-.next-season-outlook__departures { border: 1px solid var(--border-subtle); background: var(--surface-1); }
-.next-season-outlook__position,
-.next-season-outlook__departures .section-title { margin: 0; padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); }
-.next-season-outlook__rows { margin: 0; padding: 0; list-style: none; }
-.next-season-outlook__row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border-subtle); }
-.next-season-outlook__row:last-child { border-bottom: 0; }
-.next-season-outlook__identity { min-width: 0; overflow-wrap: anywhere; text-align: left; }
-.next-season-outlook__row--open { color: var(--ink-2); border-style: dashed; }
+/* ==========================================================================
+   Next Season Roster Outlook — Recruiting's roster-planning dashboard.
+   Reuses .recruiting-overview's summary-stat vocabulary and the accepted
+   Recruit Position Outlook row language rather than inventing a new system.
+   ========================================================================== */
+
+.next-season-outlook {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.next-season-outlook__summary {
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.next-season-outlook__hint {
+  margin: 0;
+}
+
+/* Position-group modules: auto-fit so five natural positions balance across
+   the available width instead of stranding a lone fifth card in its own row. */
+.next-season-outlook__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--space-4);
+  align-items: start;
+}
+
+.next-season-outlook__group {
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.next-season-outlook__group-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.next-season-outlook__position {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-0);
+}
+
+.next-season-outlook__group-count {
+  font-family: var(--font-score);
+  font-size: 0.9rem;
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.next-season-outlook__group-capacity {
+  display: flex;
+  align-items: flex-end;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.next-season-outlook__capacity-status {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.3rem;
+}
+
+.next-season-outlook__capacity-status span {
+  padding: 0.15rem 0.38rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.next-season-outlook__capacity-status [data-capacity='required'] {
+  border-color: color-mix(in srgb, var(--warning) 45%, var(--line));
+  color: var(--warning);
+}
+
+.next-season-outlook__capacity-status [data-capacity='flexible'] {
+  border-color: var(--accent-soft);
+  color: var(--accent);
+}
+
+.next-season-outlook__rows {
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.next-season-outlook__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface-0);
+}
+
+/* Incoming commits read as a lightly accented variant of the same row —
+   noticeably different at a glance without a second competing surface. */
+.next-season-outlook__row[data-status='incoming'] {
+  border-color: var(--accent-soft);
+  background: color-mix(in srgb, var(--accent-soft) 55%, var(--surface-0));
+}
+
+.next-season-outlook__identity-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.next-season-outlook__identity {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  text-align: left;
+  font-weight: 700;
+  color: var(--ink-0);
+}
+
+.next-season-outlook__meta {
+  font-size: 0.7rem;
+  color: var(--ink-2);
+}
+
+.next-season-outlook__row[data-status='incoming'] .next-season-outlook__meta {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.next-season-outlook__ratings {
+  display: flex;
+  gap: var(--space-3);
+  flex-shrink: 0;
+}
+
+.next-season-outlook__rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+
+.next-season-outlook__rating strong {
+  font-family: var(--font-score);
+  font-size: 1.05rem;
+  color: var(--ink-0);
+  font-variant-numeric: tabular-nums;
+}
+
+.next-season-outlook__rating em {
+  font-style: normal;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* Open spots read as a quiet factual recruiting need, not a placeholder or
+   an actionable control — no dashed "unfinished" styling, no button. */
+.next-season-outlook__row--open {
+  background: transparent;
+  border-style: solid;
+  border-color: var(--line);
+}
+
+.next-season-outlook__open-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-1);
+}
+
+.next-season-outlook__open-note {
+  font-family: var(--font-display);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+/* Departing Seniors: a compact secondary strip of chips, deliberately
+   smaller and quieter than the projected roster above it. */
+.next-season-outlook__departures {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.next-season-outlook__departures-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  flex: 0 0 auto;
+}
+
+.next-season-outlook__departures-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.next-season-outlook__departure-chip {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-1);
+  font-size: 0.76rem;
+}
+
+.next-season-outlook__departure-chip .text-link-button {
+  font-weight: 600;
+}
+
+.next-season-outlook__departure-chip span {
+  color: var(--ink-2);
+  font-size: 0.7rem;
+}
 
 @media (max-width: 900px) {
-  .next-season-outlook__groups { grid-template-columns: 1fr; }
-  .next-season-outlook__summary { align-items: flex-start; flex-direction: column; gap: var(--space-2); }
-  .next-season-outlook__row { grid-template-columns: minmax(0, 1fr) auto; }
-  .next-season-outlook__row > :last-child { grid-column: 1 / -1; }
+  .next-season-outlook__groups {
+    grid-template-columns: 1fr;
+  }
+
   .hub-secondary-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .next-season-outlook__summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .next-season-outlook__row {
+    flex-wrap: wrap;
+  }
+
+  .next-season-outlook__ratings {
+    margin-left: auto;
   }
 }
 

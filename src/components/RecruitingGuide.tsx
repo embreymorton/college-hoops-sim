@@ -60,8 +60,19 @@ export function RecruitingGuide() {
           Offers
         </h3>
         <p className="recruiting-guide__body">
-          Only recruits with an active Offer can commit to your Program. Offer capacity follows
-          your projected roster openings at each position.
+          Only recruits with an active Offer can commit to your Program. Active Offers reserve
+          real scholarship capacity; withdrawing an Offer or losing a recruiting battle releases it.
+        </p>
+      </section>
+
+      <section className="recruiting-guide__section" aria-labelledby="guide-scholarships-heading">
+        <h3 id="guide-scholarships-heading" className="recruiting-guide__heading">
+          Scholarships
+        </h3>
+        <p className="recruiting-guide__body">
+          Next season's roster finishes with 12 Players and 2–3 at every natural position.
+          Positions projected below 2 create Required needs. Remaining scholarships are Flexible
+          and may be used at any position that has not reached the maximum of 3.
         </p>
       </section>
 

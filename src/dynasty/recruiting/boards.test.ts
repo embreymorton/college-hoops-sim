@@ -19,7 +19,7 @@ import {
   getRecruit,
 } from './queries'
 import { resolveRecruitingPeriod } from './simulation'
-import { completeRounds, createRecruitingDynasty } from './testSupport'
+import { completeRounds, createLegacyRecruitingDynasty as createRecruitingDynasty } from './testSupport'
 
 describe('Program recruiting boards', () => {
   it('gives all Programs valid need-aware default plans with no hidden controlled advantage', () => {

@@ -42,7 +42,8 @@ The playable product includes:
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
   Recruit Details with factual next-Season natural-position outlook, Late
-  Recruiting, class finalization, Recruit-to-Player identity continuity, and an
+  Recruiting, a factual whole-roster Season N+1 Roster Outlook, class
+  finalization, Recruit-to-Player identity continuity, and an
   accepted controlled-Program Board organized by canonical manual/assistant
   entry provenance with atomic unavailable-target cleanup;
 - departures with graduating-senior career context, ordinary Player Development
@@ -115,6 +116,9 @@ refactor these systems during unrelated feature work:
 - Recruiting Board Organization & Cleanup V1, including required Board-entry
   provenance, manual/assistant grouping, authoritative unavailable cleanup,
   preserved relationship history, and no automatic refill;
+- Next Season Roster Planner / Roster Outlook V1's pure factual projection,
+  position-group/opening presentation, current-rating semantics, and existing
+  Player/Recruit Details navigation;
 - the production Recruit POT Candidate B finalizer;
 - Player Development V1, including the accepted high-POT/high-headroom
   realization opportunity;
@@ -184,22 +188,20 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT: Next Season Roster Planner — Focused Design.**
+**NEXT: Roster Positional Flexibility — Focused Design.**
 
-The Open Planning Checkpoint is closed and fresh sessions resolve to **Path A**.
-This is a design milestone, not an implementation milestone; no implementation
-contract has yet been selected.
+Fresh sessions resolve to **Path A**. This is a design milestone only; no
+implementation contract or replacement Recruiting model has been selected.
+The design pass will investigate whether Programs should be able to reshape
+their inherited natural-position counts and the resulting Recruiting, AI,
+assembly, migration, Rotation, and balance implications.
 
-The selected candidate boundary is a factual, read-only Season N+1 roster
-outlook composed from returning Players, committed Recruits, exact positional
-openings, and departing seniors. Current ratings may be shown. Development
-forecasting and future Rotation, starter, minutes, role, or playing-time
-projection are excluded. Unsigned targets and offers are not future-roster
-facts. Recruiting remains the likely primary home, but exact UX and ownership
-remain for focused design.
-
-This planning-authority update changes no production behavior. No feature is
-accepted, complete, or frozen by it.
+Next Season Roster Planner / Roster Outlook V1 is **COMPLETE / ACCEPTED /
+FROZEN**. Recruiting now includes a factual read-only Season N+1 outlook over
+returners, controlled commitments, exact-position openings, and departing
+seniors. It uses current pre-Development OVR/POT, adds no canonical state or
+mechanics, and yields to the actual assembled Roster Review after Recruiting
+finalization and Offseason Development.
 
 Awards & Honors V1 is **COMPLETE / ACCEPTED / FROZEN**. It includes the accepted
 national, Conference, and Tournament honors, deterministic `awards-v1`

@@ -9,8 +9,12 @@ import {
 import type { DynastyState } from '../domain'
 import { deriveProjectedRosterOutlook } from '../rosterOutlook'
 import {
+  deriveFlexibleOpenings,
+  deriveMandatoryNeedsByPosition,
   deriveProgramCommitments,
+  deriveProjectedCountsByPosition,
   deriveRemainingOpeningsByPosition,
+  deriveRemainingScholarships,
   getRecruit,
 } from './queries'
 
@@ -29,6 +33,9 @@ export interface NextSeasonRosterOutlookPositionGroup {
   readonly position: Position
   readonly players: readonly NextSeasonRosterOutlookPlayer[]
   readonly remainingOpenings: number
+  readonly projectedCount: number
+  readonly mandatoryNeed: number
+  readonly flexibleEligible: boolean
 }
 
 export interface NextSeasonRosterOutlookDeparture {
@@ -44,6 +51,8 @@ export interface NextSeasonRosterOutlook {
   readonly targetSeasonNumber: number
   readonly projectedPlayerCount: number
   readonly remainingOpeningCount: number
+  readonly mandatoryNeedCount: number
+  readonly flexibleOpeningCount: number
   readonly positionGroups: readonly NextSeasonRosterOutlookPositionGroup[]
   readonly departures: readonly NextSeasonRosterOutlookDeparture[]
 }
@@ -100,11 +109,23 @@ export function deriveNextSeasonRosterOutlook(
   if (!team || !program) {
     throw new RangeError(`Unknown controlled Recruiting Program "${programId}".`)
   }
-
-  const genericOutlook = deriveProjectedRosterOutlook(team)
-  for (const position of POSITIONS) {
-    if (genericOutlook.projectedOpeningsByPosition[position] !== program.projectedOpeningsByPosition[position]) {
-      throw new RangeError(`Recruiting opening facts do not match current ${position} senior departures.`)
+  if (!('capacityModel' in program)) {
+    const expected = deriveProjectedRosterOutlook(team).projectedOpeningsByPosition
+    for (const position of POSITIONS) {
+      if (expected[position] !== program.projectedOpeningsByPosition[position]) {
+        throw new RangeError(`Recruiting opening facts do not match current ${position} senior departures.`)
+      }
+    }
+  } else {
+    const actualReturners = team.roster.filter((player) => player.classYear !== 'SR')
+    if (actualReturners.length !== program.projectedReturningPlayerCount) {
+      throw new RangeError('Recruiting returner facts do not match the current roster.')
+    }
+    for (const position of POSITIONS) {
+      if (actualReturners.filter((player) => player.position === position).length !==
+        program.projectedReturnerCountsByPosition[position]) {
+        throw new RangeError(`Recruiting returner facts do not match current ${position} players.`)
+      }
     }
   }
 
@@ -130,7 +151,6 @@ export function deriveNextSeasonRosterOutlook(
   }
 
   const incoming: NextSeasonRosterOutlookPlayer[] = []
-  const committedByPosition = Object.fromEntries(POSITIONS.map((position) => [position, 0])) as Record<Position, number>
   for (const commitment of deriveProgramCommitments(recruiting, programId)) {
     if (
       commitment.targetSeasonNumber !== recruiting.targetSeasonNumber ||
@@ -146,14 +166,19 @@ export function deriveNextSeasonRosterOutlook(
       throw new RangeError(`Projected roster contains duplicate Player ID "${recruit.player.id}".`)
     }
     seenPlayerIds.add(recruit.player.id)
-    committedByPosition[recruit.player.position] += 1
-    if (committedByPosition[recruit.player.position] > program.projectedOpeningsByPosition[recruit.player.position]) {
-      throw new RangeError(`Controlled commitments exceed projected ${recruit.player.position} capacity.`)
-    }
     incoming.push(rowFromPlayer(recruit.player, 'incoming', 'FR'))
+  }
+  if (!('capacityModel' in program)) {
+    for (const position of POSITIONS) {
+      if (incoming.filter((player) => player.position === position).length > program.projectedOpeningsByPosition[position]) {
+        throw new RangeError(`Controlled commitments exceed projected ${position} capacity.`)
+      }
+    }
   }
 
   const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
+  const projected = deriveProjectedCountsByPosition(recruiting, program)
+  const mandatory = deriveMandatoryNeedsByPosition(recruiting, program)
   const positionGroups = POSITIONS.map((position) => ({
     position,
     players: [
@@ -161,9 +186,14 @@ export function deriveNextSeasonRosterOutlook(
       ...incoming.filter((player) => player.position === position).sort(compareIdentity),
     ],
     remainingOpenings: remaining[position],
+    projectedCount: projected[position],
+    mandatoryNeed: mandatory[position],
+    flexibleEligible: projected[position] < 3,
   }))
   const projectedPlayerCount = returning.length + incoming.length
-  const remainingOpeningCount = POSITIONS.reduce((sum, position) => sum + remaining[position], 0)
+  const remainingOpeningCount = deriveRemainingScholarships(recruiting, program)
+  const mandatoryNeedCount = POSITIONS.reduce((sum, position) => sum + mandatory[position], 0)
+  const flexibleOpeningCount = deriveFlexibleOpenings(recruiting, program)
   if (projectedPlayerCount + remainingOpeningCount !== TEAM_ROSTER_SIZE) {
     throw new RangeError('Projected roster membership and openings do not equal roster capacity.')
   }
@@ -176,6 +206,8 @@ export function deriveNextSeasonRosterOutlook(
     targetSeasonNumber: recruiting.targetSeasonNumber,
     projectedPlayerCount,
     remainingOpeningCount,
+    mandatoryNeedCount,
+    flexibleOpeningCount,
     positionGroups,
     departures,
   }

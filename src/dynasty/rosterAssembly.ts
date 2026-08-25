@@ -304,12 +304,17 @@ function validateAssemblyFacts(
       }
     }
 
-    const expectedPositions = positionCounts(archivedRoster)
     const actualPositions = positionCounts(roster.players)
-    if (
-      POSITIONS.some((position) => actualPositions[position] !== expectedPositions[position])
-    ) {
-      addIssue(issues, 'INVALID_POSITIONAL_COMPOSITION', `Program "${programId}" does not preserve its accepted positional composition.`, { programId })
+    const recruitingProgram = recruiting.programs[programId]
+    if (recruitingProgram && 'capacityModel' in recruitingProgram) {
+      if (POSITIONS.some((position) => actualPositions[position] < 2 || actualPositions[position] > 3)) {
+        addIssue(issues, 'INVALID_POSITIONAL_COMPOSITION', `Program "${programId}" must assemble 2–3 Players at every natural position.`, { programId })
+      }
+    } else {
+      const expectedPositions = positionCounts(archivedRoster)
+      if (POSITIONS.some((position) => actualPositions[position] !== expectedPositions[position])) {
+        addIssue(issues, 'INVALID_POSITIONAL_COMPOSITION', `Program "${programId}" does not preserve its accepted positional composition.`, { programId })
+      }
     }
   }
 

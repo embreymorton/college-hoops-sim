@@ -23,7 +23,8 @@ but worth monitoring.
 
 ## Current Playtesting Priorities
 
-The repository is at an **OPEN PLANNING CHECKPOINT — no NEXT selected**.
+Roadmap currently selects **Roster Positional Flexibility — Focused Design**.
+This evidence file does not select or define that milestone.
 
 1. Continue normal multi-Season play and observe whether the accepted attachment
    loop—Recruit decisions, News, Following, Player careers, Alumni, Records,
@@ -36,8 +37,8 @@ The repository is at an **OPEN PLANNING CHECKPOINT — no NEXT selected**.
    static Prestige, Rotation, Team Strength, and Game Simulation are not active
    calibration projects.
 
-Awards & Honors is accepted/frozen; other optional ideas are not NEXT. This
-priority list guides evidence gathering; it does not select a successor.
+Roster Outlook is accepted/frozen. This priority list guides evidence gathering;
+it does not select or define a successor.
 
 ## Current Multi-Season Gameplay Evidence
 
@@ -61,6 +62,27 @@ completed Seasons. Continue observing this compound loop rather than treating
 each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
+
+### Next Season Roster Planner / Roster Outlook V1 — ACCEPTED / FROZEN
+
+The user accepted the polished factual Season N+1 roster dashboard after
+desktop and narrow-screen review. Returning, Incoming, and Opening counts plus
+natural-position capacity made roster construction legible without implying
+Development, future OVR, Rotation, depth, minutes, or role. Structural
+validation covered focused tests (`98` passed), the full suite (`1353` passed
+before one final focused edge-case test also passed), lint, typecheck, build,
+diff checking, and desktop/approximately 390px browser review. Final visual
+validation covered `RecruitingScreen.test.tsx` (`71/71`), lint, typecheck,
+build, diff checking, and desktop/approximately 375px inspection without
+body-level horizontal overflow or domain-contract changes.
+
+Roster Outlook also made an existing production constraint substantially more
+visible: S0 establishes each Program's natural-position counts, senior
+departures create openings at those same positions, exact-position Recruiting
+fills them, and roster assembly validates the resulting composition. Absent a
+separate future mechanic, the initial position-count distribution therefore
+perpetuates across Seasons. This is neutral design evidence, not a claim that
+Roster Outlook caused a defect.
 
 ### Postseason Player Legacy / Tournament Records V1 — ACCEPTED / FROZEN
 
@@ -148,6 +170,11 @@ Exact-position vacancies can make desirable Recruits unavailable. Preserve this
 player-facing friction as evidence for a future deliberately selected roster or
 Recruiting design; Rotation flexibility does not silently change natural-
 position scholarship capacity.
+
+Roster Outlook clarified the broader lifecycle consequence: S0 position counts
+are inherited through departure-based openings and exact-position replacement.
+Whether Programs should be able to reshape those counts is now a selected
+focused-design question, not a decided replacement mechanic or current defect.
 
 ### Shot selection and single-game Steals upper tail
 

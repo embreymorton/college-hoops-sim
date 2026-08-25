@@ -7,6 +7,7 @@ import {
 } from '../../engine'
 import {
   deriveNationalPositionDemand,
+  deriveFlexibleRecruitSupplyByPosition,
   deriveRecruitSupplyByPosition,
   classifyRecruitReadinessTier,
   generateLegacyRecruitingClass,
@@ -101,13 +102,16 @@ describe('national recruiting class generation', () => {
   it('provides a healthy demand-aware surplus at every position', () => {
     const dynasty = createRecruitingDynasty('class-supply')
     const demand = deriveNationalPositionDemand(dynasty.activeSeason!)
-    const supply = deriveRecruitSupplyByPosition(demand)
+    const supply = deriveFlexibleRecruitSupplyByPosition(dynasty.activeSeason!)
     for (const position of POSITIONS) {
-      expect(supply[position]).toBeGreaterThan(demand[position])
+      expect(supply[position]).toBeGreaterThanOrEqual(18)
       expect(dynasty.recruiting!.recruits.filter(
         ({ player }) => player.position === position,
       )).toHaveLength(supply[position])
     }
+    expect(Object.values(supply).reduce((sum, count) => sum + count, 0)).toBe(
+      Object.values(deriveRecruitSupplyByPosition(demand)).reduce((sum, count) => sum + count, 0),
+    )
   })
 
   it('stores unique stable national/position ranks and distribution-derived stars', () => {

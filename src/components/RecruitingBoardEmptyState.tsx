@@ -4,6 +4,8 @@ interface RecruitingBoardEmptyStateProps {
   readonly lastResolvedPeriod: number
   readonly needsByPosition: readonly RecruitingPositionNeed[]
   readonly remainingTotal: number
+  readonly mandatoryTotal: number
+  readonly flexibleTotal: number
   readonly onGenerateDraftBoard: () => void
   readonly onFillRemainingBoard: () => void
   readonly onBrowseNationalClass: () => void
@@ -23,6 +25,8 @@ export function RecruitingBoardEmptyState({
   lastResolvedPeriod,
   needsByPosition,
   remainingTotal,
+  mandatoryTotal,
+  flexibleTotal,
   onGenerateDraftBoard,
   onFillRemainingBoard,
   onBrowseNationalClass,
@@ -59,13 +63,16 @@ export function RecruitingBoardEmptyState({
     <div className="recruiting-board-empty">
       <p className="recruiting-board-empty__title">Your Recruiting Board</p>
       <p className="recruiting-board-empty__body">
-        You have {remainingTotal} projected roster {remainingTotal === 1 ? 'opening' : 'openings'}.
+        {remainingTotal} {remainingTotal === 1 ? 'scholarship' : 'scholarships'} available ·{' '}
+        {mandatoryTotal} required · {flexibleTotal} flexible
       </p>
       {needsByPosition.length > 0 && (
-        <p className="recruiting-board-empty__needs">{formatNeedsList(needsByPosition)}</p>
+        <p className="recruiting-board-empty__needs">
+          <span>Required:</span> {formatNeedsList(needsByPosition)}
+        </p>
       )}
       <p className="recruiting-board-empty__body">
-        Build your board from the national class, or generate a suggested starting plan.
+        Build your board from the national class, or generate a suggested one.
       </p>
       <div className="recruiting-board-empty__actions">
         <button
