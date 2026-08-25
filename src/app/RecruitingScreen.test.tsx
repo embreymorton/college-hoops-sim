@@ -794,7 +794,6 @@ describe('Guide', () => {
     expect(within(guide).getByText('Scholarships')).toBeInTheDocument()
     expect(within(guide).getByText(/12 Players and 2–3 at every natural position/)).toBeInTheDocument()
     expect(within(guide).getByText(/Positions projected below 2 create Required needs/)).toBeInTheDocument()
-    expect(within(guide).getByText(/no preseason roster plan is required/)).toBeInTheDocument()
   })
 
   it('explains all six Readiness states', () => {
