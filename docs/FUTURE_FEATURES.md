@@ -48,6 +48,97 @@ could expand credible access, initial interest, or continued viability. The
 product goal is upward mobility without league-wide flattening—not guaranteed
 5-star access or a new balance fix.
 
+#### Recruit–Program Fit — focused design checkpoint
+
+Recruit–Program Fit remains **FUTURE / UNSCHEDULED**. Its product purpose would
+be more individualized, explainable, and strategically interesting Recruiting:
+credible aspirational pursuits and stories beyond National Rank plus Prestige,
+while overall outcomes remain strongly Prestige-stratified. Better elite-market
+behavior may emerge, but is not the feature's sole acceptance target. Recent
+diagnostics found a bounded tail of unusually under-pursued elite Recruits, yet
+earlier discovery, market-opportunity/reach bonuses, and broad Prestige
+weakening mainly changed Board attention rather than formal Offer timing and
+sometimes weakened the middle market. Production Recruiting therefore stayed
+unchanged; the durable lesson is that future improvement may need richer
+Program–Recruit reasons rather than stronger generic targeting pressure.
+
+A plausible small first candidate could generate a deterministic immutable
+priority profile with the Recruit class, perhaps two ordered High / Medium
+priorities drawn from **Institutional Prestige**, **Winning**, and **Playing
+Opportunity**:
+
+```text
+Priorities
+Playing Opportunity — High
+Winning — Medium
+```
+
+This is not a selected V1 contract: no count, distribution, weights, formulas,
+schema, or implementation is approved. Program-specific fit would remain
+derived from the immutable Recruit profile plus current canonical Program facts,
+not stored independently. One shared fit concept should be considered
+consistently across AI target selection, AI Offer intent, Recruit Program
+standing/commitment comparison, and player-facing Recruit Details explanation.
+Applying fit only to Boards would recreate the diagnosed disconnect if Offer or
+standing logic could not see why the Program considered the Recruit a good fit.
+
+The explored dimensions retain these boundaries:
+
+- **Institutional Prestige** may use existing static Program Prestige as an
+  additional preference signal, but must not double-count established Prestige
+  attraction strongly enough to collapse segmentation. A Recruit without this
+  priority would not dislike prestigious Programs; the extra reward would
+  simply matter less.
+- **Playing Opportunity** is the strongest currently grounded dimension. Its
+  likely factual basis is the shared domain truth beneath next-season position
+  outlook: natural-position returners and their current strength, committed
+  incoming Players at that position, and the Recruit inserted hypothetically—
+  with no Development forecast, promised minutes, or speculative future
+  Rotation. It could distinguish a path to first at the position, a clear top-
+  two opening, ordinary competition, or several stronger Players without
+  freezing exact categories. Opportunity may legitimately change as
+  commitments change during the cycle.
+- **Winning** has no approved source. Live record, editable Rotation, current
+  Team Strength, prior results, Tournament outcomes, and other proxies remain
+  unresolved. The separate [Program Reputation](#program-reputation--distinct-future-reframing)
+  concept may eventually own the recent earned competitive standing consumed
+  by this priority, avoiding a hidden Recruiting-only success score:
+
+  ```text
+  Prestige = who the Program is historically
+  Reputation = what the Program has earned recently
+  Team Strength = how good the current roster is
+  ```
+
+Fit and market opportunity also remain separate. Fit explains why a Recruit and
+Program make sense together; market opportunity explains why a Program believes
+the pursuit may be viable. An Open market should not make a Recruit like a
+Program more, though future AI intent could conceptually combine strong fit,
+legal roster/Board capacity, and an unusually open market into one credible
+aspirational pursuit. No scarcity bonus is selected.
+
+Any future candidate must establish whether priorities predict destination,
+Playing Opportunity affects outcomes, Winning adds information beyond Prestige,
+and Institutional Prestige avoids double-counting. It must also preserve top-25
+Board/Offer coherence, ranks 26–75 competition, realistic low-Prestige Boards,
+stable Offers, non-dogpiled markets, positional completion, meaningful player
+strategy, determinism, and Program-order independence. Success is not equal
+destination distribution: priorities should matter without overwhelming
+Prestige, relationship investment, roster legality/capacity, or the existing
+commitment structure.
+
+Primary risks remain Prestige double-counting; Winning correlation with
+Prestige or Team Strength; legitimate opportunity changes producing excessive
+switching; Offer churn; human manipulation through cheaply editable state; and
+architecture drift if UI-specific Roster Outlook composition becomes simulation
+authority instead of sharing underlying domain facts. The smallest unresolved
+question is what stable canonical fact `Winning` should evaluate and whether it
+adds enough differentiation beyond static Prestige. If it proves redundant or
+lifecycle-heavy, an Institutional Prestige + Playing Opportunity candidate may
+be smaller, but that alternative also requires design and diagnostic evidence
+before selection. Recruit–Program Fit is promising and architecturally
+plausible, not implementation-ready.
+
 ### Recruiting geography and pipelines
 
 Recruits could eventually have hometown/state/region identity so Program
@@ -833,6 +924,12 @@ identity, competitive eras emerge, and league differentiation remains healthy.
 That last concern is a guardrail, not a hierarchy-compression justification.
 This is neither restored Dynamic Prestige nor permission to reopen frozen
 Prestige or Recruiting behavior.
+
+A future Recruit `Winning` preference could consume Program Reputation if both
+systems are eventually accepted, but Recruit fit would not be Reputation's sole
+purpose. Reputation remains a broader reusable concept that could inform
+Recruiting, expectations, coach/job-market context, News/world recognition, or
+other future Program-identity systems without expanding any of them here.
 
 ## Presentation and broader modes
 
