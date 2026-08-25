@@ -23,8 +23,8 @@ but worth monitoring.
 
 ## Current Playtesting Priorities
 
-Roadmap currently selects **Roster Positional Flexibility — Focused Design**.
-This evidence file does not select or define that milestone.
+Roadmap is at an **Open Planning Checkpoint with no NEXT selected**. This
+evidence file informs later planning but does not select a successor.
 
 1. Continue normal multi-Season play and observe whether the accepted attachment
    loop—Recruit decisions, News, Following, Player careers, Alumni, Records,
@@ -37,8 +37,9 @@ This evidence file does not select or define that milestone.
    static Prestige, Rotation, Team Strength, and Game Simulation are not active
    calibration projects.
 
-Roster Outlook is accepted/frozen. This priority list guides evidence gathering;
-it does not select or define a successor.
+Roster Positional Flexibility and its Required/Flexible Roster Outlook clarity
+are accepted/frozen. This priority list guides evidence gathering; it does not
+select or define a successor.
 
 ## Current Multi-Season Gameplay Evidence
 
@@ -62,6 +63,27 @@ completed Seasons. Continue observing this compound loop rather than treating
 each surface as an isolated feature.
 
 ## Latest Accepted Milestone Evidence
+
+### Roster Positional Flexibility / B2 Live Flexible Capacity — ACCEPTED / FROZEN
+
+The user accepted flexible roster construction after production implementation,
+diagnostics, verification, UI clarity cleanup, desktop/approximately 390px
+inspection, and normal play. Completed rosters remain exactly 12 Players with
+2–3 at each natural position, while Required needs and shared Flexible
+scholarships let commitments determine which two positions carry the extra
+depth. Recruiting overview, Board, Roster Outlook, Recruit Details, and the
+in-game Guide made the model understandable without a separate roster-plan
+decision.
+
+The paired diagnostic covered 1,200 model-cycles with zero finalization,
+envelope, matching, joint-feasibility, emergency-generation, determinism, or
+Program-order failures and no material talent inflation. Production verification
+found matcher use in 89/100 cycles but only 271 of 9,585 incoming assignments
+(`2.83%`): a routine defensive late tail while normal Recruiting constructed
+`97.17%`. Production class size remained exactly baseline-equal on paired
+samples. Final UI cleanup passed 164 focused tests, lint, typecheck, build, diff
+checking, and desktop/narrow inspection; one aggregate-load calibration timeout
+passed independently (`9/9`).
 
 ### Next Season Roster Planner / Roster Outlook V1 — ACCEPTED / FROZEN
 
@@ -144,6 +166,12 @@ immediate visibility gap; it does not prove that the underlying rebuild curve is
 perfect. This WATCH remains live and does not reopen the decision-complete
 hierarchy investigation by itself.
 
+Roster Positional Flexibility may indirectly affect long-run roster-strength
+hierarchy by helping Programs convert recruiting opportunity into roster talent.
+Current diagnostics show no directional concern; observe rather than tune Team
+Strength, Game Simulation, Prestige, Recruit Talent, or hierarchy from this
+linkage alone.
+
 ### Elite Recruit Offer coverage
 
 Premium Recruits may occasionally lack an elite Offer deep into a cycle.
@@ -164,17 +192,25 @@ Interior/forward-heavy eligibility and rare large incumbent displacement remain
 worth observing. Legal manual 40-minute assignments are intentional; automatic
 default workload realism and stable validation-row geometry are resolved.
 
-### Recruiting exact-position friction
+### Flexible-capacity defensive completion
 
-Exact-position vacancies can make desirable Recruits unavailable. Preserve this
-player-facing friction as evidence for a future deliberately selected roster or
-Recruiting design; Rotation flexibility does not silently change natural-
-position scholarship capacity.
+Production verification found the final matcher in 89% of inspected cycles but
+only 2.83% of incoming assignments. Continue observing whether it remains a
+small defensive late tail rather than taking on a materially larger share of
+roster construction. Current behavior is healthy, not a Known Issue.
 
-Roster Outlook clarified the broader lifecycle consequence: S0 position counts
-are inherited through departure-based openings and exact-position replacement.
-Whether Programs should be able to reshape those counts is now a selected
-focused-design question, not a decided replacement mechanic or current defect.
+### AI flexible-depth positional shares
+
+Flexible depth remained broadly distributed without structural convergence,
+but multi-Season samples varied by seed in which positions carried extra depth.
+Continue observing for persistent monotonic bias or pathological convergence;
+equal 20% shares are not a tuning target.
+
+### Flexible-capacity compatibility cleanup
+
+The non-authoritative `projectedOpeningsByPosition` compatibility projection
+remains for legacy/diagnostic typed consumers. Eventual retirement is narrow
+technical debt, not a player-facing blocker and not a reason to reopen B2.
 
 ### Shot selection and single-game Steals upper tail
 

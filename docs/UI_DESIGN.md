@@ -283,14 +283,18 @@ Details  = inspection / attachment
 ```
 
 Roster Outlook is the accepted factual roster-planning sibling mode within
-Recruiting. Its compact dashboard summarizes Returning, Incoming, and Openings,
-then uses natural-position modules with capacity context, strong Player identity,
-next-class/status metadata, compact current OVR/POT, subtly distinguished
-incoming commitments, and clear non-interactive Recruiting Need rows. Departing
-Seniors remain a compact secondary section. Existing Player and Recruit Details
-navigation is reused. At narrow widths, modules stack, Recruiting mode tabs
-scroll within their container, and the page introduces no body-level horizontal
-overflow. The surface is not a future depth chart or Development forecast.
+Recruiting. Its compact dashboard summarizes Returning, Incoming, Scholarships,
+Required Needs, and Flexible Openings, then uses natural-position modules with
+strong Player identity, next-class/status metadata, compact current OVR/POT,
+subtly distinguished incoming commitments, and factual capacity labels. Below
+minimum may show `Required N` and `Flex +1` together; two projected Players show
+`Flex +1`; three show `Full`. These are per-position eligibility/headroom cues,
+not fake exact Flexible openings—the shared count lives in the summary.
+Departing Seniors remain a compact secondary section. Existing Player and
+Recruit Details navigation is reused. At narrow widths, modules stack, all six
+Recruiting modes use a two-row grid, and the page introduces no body-level
+horizontal overflow. The surface is not a future depth chart or Development
+forecast.
 
 Recruit identity links on Board, Battles, and National Class open the functional
 Recruit Details child destination. It presents canonical profile, exact OVR/POT
@@ -313,6 +317,16 @@ controls are contextual versions of existing Board, Focus, and Offer behavior,
 not a new action model. Committed Recruits read as resolved instead of
 actionable, and the ordering remains legible at narrow widths. This hierarchy
 and interaction model are accepted and frozen for Phase 7D.1.
+
+Recruiting overview and empty-Board states expose total scholarships alongside
+exact Required needs and the shared Flexible count, so totals always reconcile.
+Recruit Details states whether a specific Offer fills Required capacity or uses
+Flexible capacity and gives concise Full/reserved/protected reasons when an
+Offer is unavailable. The in-game Recruiting Guide explains the 12-Player,
+2–3-per-position envelope, Required/Flexible capacity, Offer reservations and
+release, commitment-driven roster shape, and absence of a preseason roster-plan
+decision. These surfaces use the shared player-facing vocabulary `Required`,
+`Flexible`/`Flex +1`, and `Full` without exposing matching or feasibility jargon.
 
 Recruiting Following is the accepted prospect-context sibling of League
 Following. It reuses the accepted compact Follow/Following button,

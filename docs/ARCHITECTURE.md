@@ -477,7 +477,7 @@ Explosions, and a large historical DEV delta must not be used as a substitute
 for the missing event fact. Any future historical recognition requires a
 deliberate durable lifecycle-event design.
 
-`deriveProjectedRosterOutlook(team)` is an in-season pure projection over current roster facts:
+`deriveProjectedRosterOutlook(team)` remains an in-season pure projection over current roster facts:
 
 ```text
 SR           → projected departure
@@ -485,22 +485,32 @@ FR / SO / JR → projected returner
 12 − projected returners → projected openings
 ```
 
-It returns current roster size plus departing and returning Player IDs and projected openings by natural position. It does not require Season completion, Postseason, OffseasonState, graduation, or RNG. Recruiting V0 consumes this projection rather than reimplementing graduation rules; board capacity remains distinct from offer/signing capacity.
+It returns current roster size plus departing and returning Player IDs and a
+legacy exact-opening projection by natural position. It does not require Season
+completion, Postseason, OffseasonState, graduation, or RNG. New flexible cycles
+freeze explicit projected-returner counts as their versioned capacity basis;
+legacy exact-opening cycles remain distinguishable and supported.
 
 Next Season Roster Planner composes a dedicated pure
 `deriveNextSeasonRosterOutlook(dynasty)` read model from that generic Team
-projection plus `deriveProgramCommitments()`,
-`deriveRemainingOpeningsByPosition()`, and `getRecruit()`. It exposes factual
-returners with promoted class labels, controlled incoming commitments,
-remaining exact-position openings, and departing seniors. It is recomputed on
-demand with no canonical Dynasty/Recruiting field, persistence, cache, RNG, or
-roster-assembly mutation.
+projection plus canonical Recruiting capacity facts and commitments. It exposes
+factual returners with promoted class labels, controlled incoming commitments,
+Required needs, shared Flexible openings, projected positional counts, Full
+states, and departing seniors. It is recomputed on demand with no separate
+roster-plan state, persistence, cache, RNG, or roster-assembly mutation.
 
-The current lifecycle preserves each Program's S0 natural-position counts:
-senior natural positions establish stored Recruiting openings, exact-position
-commitments consume them, and offseason assembly validates that positional
-composition. Roster Outlook reveals this chain but does not create or alter it.
-Any future flexibility requires a separate accepted mechanics contract.
+Flexible-capacity cycles derive rather than store Required needs, remaining
+scholarships, Flexible capacity, projected counts, position-full state, and
+legal Offer capacity. Their final exact `3/3/2/2/2` target is not canonical
+before Recruiting:
+
+```text
+projected returners + commitments → final positional composition
+```
+
+`projectedOpeningsByPosition` remains a compatibility projection for
+legacy/diagnostic typed consumers. It is explicitly non-authoritative for new
+flexible-capacity legality and may be retired through narrow technical cleanup.
 
 Recruit Details composes a separate pure `deriveRecruitPositionOutlook()` read
 model rather than expanding generic `ProjectedRosterOutlook` with hypothetical
@@ -534,7 +544,15 @@ Details adds no parallel eligibility or simulation rules. Committed Recruits
 resolve to a non-actionable committed state. Stale IDs recover locally to the
 preserved Recruiting parent mode.
 
-The canonical `RecruitingState` stores the national Recruit class/profiles and class rankings, each Program's projected positional openings and Board targets, Focus flags, and Active Offer intent, accumulated Recruit/Program relationship progress, commitments with period/late timing, current phase, and last resolved period. Current standings, standing order, target status, remaining positional need, Active Offer counts, available offer capacity, and Focus counts are pure projections. This follows the same rule as Season state: store facts, derive summaries.
+The canonical `RecruitingState` stores the national Recruit class/profiles and
+class rankings, versioned Program capacity basis (projected returner counts for
+new flexible cycles or legacy exact openings), Board targets, Focus flags,
+Active Offer intent, accumulated Recruit/Program relationship progress,
+commitments with period/late timing, current phase, and last resolved period.
+Required needs, remaining scholarships, Flexible capacity, projected position
+counts, position-full state, jointly feasible Offer capacity, current standings,
+target status, and Focus counts are pure projections. No stored mandatory-slot
+or flexible-position assignment object exists.
 
 Recruiting advancement attaches to fully completed basketball rounds rather than individual controlled-game completion:
 
@@ -581,7 +599,13 @@ accepted developed/class-advanced returners
 → NextSeasonRosterAssembly
 ```
 
-It does not rerun graduation, Development, Recruiting, or destination selection and does not generate emergency Players, repair positions, make cuts, or handle transfers. Every Program must exist in all canonical sources, target seasons must agree, and `returners + incoming commitments` must equal exactly 12. Failure is explicit rather than repaired.
+It does not rerun graduation, Development, Recruiting, or destination selection
+and does not generate emergency Players, repair positions, make cuts, or handle
+transfers. Every Program must exist in all canonical sources, target seasons
+must agree, and `returners + incoming commitments` must equal exactly 12. New
+flexible-capacity cycles additionally require 2–3 Players at each natural
+position; legacy exact cycles retain their versioned validation. Failure is
+explicit rather than repaired.
 
 Enrollment clones the Recruit's Player value, sets `classYear: "FR"`, and preserves Player ID, name, height, position, attributes, and Potential. Unsigned Recruits remain historical facts and do not enroll. Output rosters sort by natural-position order then Player ID and remain plain serializable values.
 

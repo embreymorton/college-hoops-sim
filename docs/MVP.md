@@ -94,15 +94,23 @@ Complete MVP foundation items:
 The pure Dynasty layer now runs one national Recruiting market for Season N+1 alongside the current basketball year:
 
 ```text
-projected positional openings
-→ national Recruit class with rankings/stars
+projected returner capacity → Required needs + shared Flexible scholarships
+→ national Recruit class with rankings/stars and preserved total size
 → boards, priorities, Active Offers, and relationship progress
 → regular-season and Postseason commitments
 → Late Recruiting and finalization
 → CompletedRecruitingClass
 ```
 
-Recruiting supports a 10-target Board, up to three Focus targets, independent capacity-limited Active Offers, AI Programs, final commitments, postseason continuation, Late Recruiting, and canonical period-by-period synchronization through ordinary progression or Super Sim. Every active Board target receives fixed baseline effort; Focus adds a fixed bonus without redistributing effort. A commitment remains a future-roster fact and does not alter the current Team, Rotation, or Season. Recruit identity is already future Player identity and Phase 5C preserves it through freshman enrollment.
+Recruiting supports a 10-target Board, up to three Focus targets, jointly
+feasible capacity-limited Active Offers, AI Programs under the same legal
+12-Player/2–3-position envelope, final commitments, postseason continuation,
+Late Recruiting, and canonical period-by-period synchronization through
+ordinary progression or Super Sim. Every active Board target receives fixed
+baseline effort; Focus adds a fixed bonus without redistributing effort. A
+commitment remains a future-roster fact and does not alter the current Team,
+Rotation, or Season. Recruit identity is already future Player identity and
+Phase 5C preserves it through freshman enrollment.
 
 ## Season Rollover V0 — implemented and accepted
 

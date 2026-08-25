@@ -348,31 +348,12 @@ probabilities.
 These systems would materially change simulation or lifecycle behavior and need
 their own selected phases and validation.
 
-### Position changes and positional roster flexibility
-
-Future roster/coaching depth could explore position changes or broader rules
-for how incoming Players occupy roster openings. Exact-position scarcity can
-produce engaging choices, so one contested natural-C opening is not evidence
-that current construction is defective. Any flexibility design must consider
-Recruiting capacity, Rotation positional eligibility, roster lifecycle, and
-Team Strength/lineup semantics together rather than loosening only one boundary.
-
 ### Redshirts
 
 Redshirting could trade immediate availability for preserved eligibility and
 time to develop a raw high-POT Player. It would require coordinated class-year,
 roster-limit, Development, statistics/history, and UI semantics; no eligibility
 rules are defined.
-
-### Next Season roster planner
-
-A Program-level planning view could connect returning Players, departing
-seniors, current commitments, likely positional openings, and factual depth for
-the next Season while Recruiting remains active. It should build on Next Season
-Position Outlook, canonical roster/commitment facts, OVR/POT, Rotation concepts,
-and roster-size constraints. A first version should favor factual construction
-context—and at most a clearly factual projected lineup—over hidden recommendation
-scores, automatic roster decisions, or Recruiting-mechanics changes.
 
 ### Player roles and expectations
 

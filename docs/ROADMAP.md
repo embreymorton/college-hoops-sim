@@ -15,17 +15,11 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### Roster Positional Flexibility — Focused Design — NEXT
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-**Roster Positional Flexibility — Focused Design** is the authoritative NEXT,
-so fresh sessions resolve to Path A. This is a design milestone only; no
-implementation contract or replacement Recruiting model has been selected.
-
-Focused design will determine whether and how Programs may reshape their
-12-Player natural-position composition over time while preserving useful
-position-based Recruiting constraints. Timing, healthy flexibility, positional
-bounds, Recruiting/AI/assembly behavior, Roster Outlook adaptation, migration,
-and balance implications remain unresolved.
+Roster Positional Flexibility / B2 Live Flexible Capacity is complete,
+accepted, and frozen. No successor has been selected. Fresh sessions resolve to
+Path B and must conduct a neutral Open Planning pass before recommending work.
 
 ## Planned and unscheduled
 
@@ -51,11 +45,25 @@ unscheduled Phase 7 work.
 
 ## Completed Phase Summary
 
+### Roster Positional Flexibility / B2 Live Flexible Capacity — COMPLETE / ACCEPTED / FROZEN
+
+- Replaced inherited exact-position replacement for new Recruiting cycles with
+  derived Required needs plus shared Flexible capacity while preserving the
+  12-Player, 2–3-per-natural-position completed-roster envelope.
+- Made Active Offers jointly feasible, let commitments determine the final
+  `3/3/2/2/2` positional shape, preserved total Recruit class size, and added
+  deterministic Required-first/Flexible-second completion without emergency
+  Player generation.
+- Accepted Required/Flexible/Full clarity across Recruiting overview, Board,
+  Roster Outlook, Recruit Details, and the in-game Guide, then returned the
+  Roadmap to an Open Planning Checkpoint with no successor selected.
+
 ### Next Season Roster Planner / Roster Outlook V1 — COMPLETE / ACCEPTED / FROZEN
 
 - Added a factual read-only Recruiting sibling mode for Season N+1 returners,
-  controlled commitments, exact-position openings, and departing seniors using
-  current pre-Development ratings.
+  controlled commitments, current capacity facts, and departing seniors using
+  current pre-Development ratings; B2 later expanded those facts to
+  Required/Flexible/Full semantics.
 - Derived the outlook from existing canonical Team and Recruiting facts without
   new state, persistence, RNG, mechanics, or speculative future-role projections.
 - Accepted the compact position-group dashboard, identity navigation, and

@@ -300,6 +300,15 @@ attributes, OVR, final POT, national/position rank, and stars. Candidate B is
 the production default; this issue is resolved and the calibrated behavior is
 frozen unless new evidence appears.
 
+### P3 — Flexible-capacity compatibility projection retirement — DEBT / WATCH
+
+New B2 Recruiting legality derives from versioned projected-returner capacity,
+commitments, Required needs, remaining scholarships, and the 2–3 positional
+envelope. The retained `projectedOpeningsByPosition` view is non-authoritative
+compatibility infrastructure for legacy/diagnostic typed consumers. Eventual
+retirement is narrow cleanup, not a player-facing blocker and not evidence that
+Roster Positional Flexibility should reopen.
+
 ## Accepted non-issues
 
 - A high correlation between initial Team Strength and average wins across many seasons is expected because averaging removes game-level variance. Do not tune the simulator solely for that observation; revisit only if individual seasons become too deterministic.

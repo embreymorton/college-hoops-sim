@@ -45,7 +45,10 @@ The playable product includes:
   Recruiting, a factual whole-roster Season N+1 Roster Outlook, class
   finalization, Recruit-to-Player identity continuity, and an
   accepted controlled-Program Board organized by canonical manual/assistant
-  entry provenance with atomic unavailable-target cleanup;
+  entry provenance with atomic unavailable-target cleanup; new Recruiting
+  cycles derive exact Required needs and shared Flexible scholarships, keep
+  Active Offers jointly feasible, and allow commitments to determine the final
+  legal `3/3/2/2/2` roster shape;
 - departures with graduating-senior career context, ordinary Player Development
   plus rare Explosive Offseasons, Work Ethic reveal, top attribute gains and an
   event-aware Biggest Leap spotlight, incoming classes, exact
@@ -116,8 +119,13 @@ refactor these systems during unrelated feature work:
 - Recruiting Board Organization & Cleanup V1, including required Board-entry
   provenance, manual/assistant grouping, authoritative unavailable cleanup,
   preserved relationship history, and no automatic refill;
+- Roster Positional Flexibility / B2 Live Flexible Capacity, including the
+  12-Player and 2–3-per-position envelope, derived Required/shared Flexible
+  semantics, jointly feasible Offers, commitment-driven shape, balanced
+  current-scale supply, deterministic completion, flexible-cycle assembly, and
+  accepted Required/Flexible/Full player-facing clarity;
 - Next Season Roster Planner / Roster Outlook V1's pure factual projection,
-  position-group/opening presentation, current-rating semantics, and existing
+  position-group capacity presentation, current-rating semantics, and existing
   Player/Recruit Details navigation;
 - the production Recruit POT Candidate B finalizer;
 - Player Development V1, including the accepted high-POT/high-headroom
@@ -179,7 +187,10 @@ does not itself authorize implementation:
 - concentrated single-attribute offseason gains;
 - interior/forward-heavy Rotation secondary paths and rare incumbent
   displacement;
-- exact-position Recruiting friction;
+- defensive final-matcher assignment share;
+- long-run AI flexible-depth positional-share variation;
+- retirement of the non-authoritative `projectedOpeningsByPosition`
+  compatibility projection;
 - shot-selection/statistical translation, including the single-game Steals
   upper tail, only if focused evidence establishes a concrete problem;
 - active Dynasty persistence and serialized-history growth; and
@@ -188,20 +199,18 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT: Roster Positional Flexibility — Focused Design.**
+**No NEXT selected — OPEN PLANNING CHECKPOINT.**
 
-Fresh sessions resolve to **Path A**. This is a design milestone only; no
-implementation contract or replacement Recruiting model has been selected.
-The design pass will investigate whether Programs should be able to reshape
-their inherited natural-position counts and the resulting Recruiting, AI,
-assembly, migration, Rotation, and balance implications.
+Fresh sessions resolve to **Path B**. Roster Positional Flexibility / B2 Live
+Flexible Capacity is **COMPLETE / ACCEPTED / FROZEN**. No successor may be
+inferred from Roadmap order, WATCH items, Future Features, or recent work.
 
 Next Season Roster Planner / Roster Outlook V1 is **COMPLETE / ACCEPTED /
 FROZEN**. Recruiting now includes a factual read-only Season N+1 outlook over
-returners, controlled commitments, exact-position openings, and departing
-seniors. It uses current pre-Development OVR/POT, adds no canonical state or
-mechanics, and yields to the actual assembled Roster Review after Recruiting
-finalization and Offseason Development.
+returners, controlled commitments, Required needs, shared Flexible openings,
+Full positions, and departing seniors. It uses current pre-Development OVR/POT,
+adds no canonical state or mechanics, and yields to the actual assembled Roster
+Review after Recruiting finalization and Offseason Development.
 
 Awards & Honors V1 is **COMPLETE / ACCEPTED / FROZEN**. It includes the accepted
 national, Conference, and Tournament honors, deterministic `awards-v1`

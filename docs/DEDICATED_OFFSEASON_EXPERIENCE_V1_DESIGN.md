@@ -61,8 +61,9 @@ The current lifecycle is:
    operation prepares existing offers/market facts and changes
    `RecruitingState.phase` to `late`. It does not begin Offseason.
 4. `finalizeRecruitingClass()` calls `autoFinalizeRecruiting()`. It
-   deterministically fills all remaining positional openings, changes the phase
-   to `finalized`, and appends one immutable `CompletedRecruitingClass` snapshot.
+   deterministically fills all remaining legal Recruiting capacity under the
+   cycle's versioned model, changes the phase to `finalized`, and appends one
+   immutable `CompletedRecruitingClass` snapshot.
    The active Season and Tournament still exist; `offseason` is still null.
 5. `beginDynastyOffseason()` calls `beginOffseason()`. This validates the
    completed Season/Tournament, appends the `CompletedSeasonArchive`, derives

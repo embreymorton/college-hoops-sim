@@ -318,24 +318,30 @@ The saved plan supports both pacing styles already established by Quick Sim and 
 
 ### Positional needs, Board, Focus, and Offers
 
-Projected graduating positions create strict natural-position Recruiting
-capacity. Two graduating SGs and one graduating C create two SG openings and
-one C opening—not three interchangeable slots. Rotation V1 eligibility changes
-floor minutes only: a natural PG who may play SG floor minutes does not satisfy
-an SG Recruiting opening. Stored multi-position identity, position changes,
-generic scholarships, cuts, and transfers remain separate future systems.
+New flexible-capacity Recruiting cycles construct every completed roster within
+one accepted envelope:
 
-Under the current accepted lifecycle, S0 establishes each Program's exact
-natural-position counts. Senior departures create openings at those same
-positions, exact-position Recruiting replaces them, and roster assembly
-validates the result. Without another future mechanic, the initial composition
-therefore persists across Seasons. This is a current constraint, not a judgment
-that the model is broken.
+```text
+12 Players total
+2–3 Players at each natural position (PG / SG / SF / PF / C)
+```
+
+Every legal final shape is therefore a permutation of `3/3/2/2/2`, but the two
+extra depth positions are not inherited permanently from S0. Projected
+shortages below two create exact-position **Required** needs; every remaining
+scholarship is shared **Flexible** capacity that may land at any position still
+below three. Commitments determine the final shape. Recruiting itself is the
+roster-construction experience—there is no preseason plan or slot-assignment
+screen. Rotation V1 floor-position eligibility does not change a Player's
+natural-position Recruiting identity.
 
 Recruiting's accepted **Roster Outlook** sibling mode presents the controlled
 Program's factual Season N+1 roster: non-senior returners with next-class labels,
-controlled commitments as incoming freshmen, current OVR/POT, each remaining
-exact-position opening, and separate departing seniors. It is available through
+controlled commitments as incoming freshmen, current OVR/POT, Required needs,
+shared Flexible openings, Full positions, and separate departing seniors. A
+position below two may show both its Required need and `Flex +1` headroom after
+the minimum is satisfied; this never creates a separate flexible scholarship
+for every eligible position. It is available through
 regular-season, postseason, and Late Recruiting, including embedded Late
 Recruiting, then yields to the finalized Recruiting Class flow. It does not
 include unsigned targets or forecast Development, future OVR, Rotation, depth,
@@ -348,15 +354,15 @@ and departing seniors. Current OVR alone determines ordering and tied rank; POT
 is display context only. This is not a future Rotation, depth chart, role or
 playing-time promise, Development forecast, or Recruiting-interest input.
 
-A Program may place up to 10 Recruits on its board, including backups and reaches beyond its available openings. Board membership means the Program is recruiting/following that Player. An Active Offer means the Program is currently willing to consume one projected opening at that Player's position if he commits. Only an active board target with a valid Active Offer may commit; an unoffered backup may still build relationship progress.
-
-For each position:
-
-```text
-active offers + existing commitments ≤ projected positional openings
-```
-
-This is explicit Program intent, not hidden star-tier protection. A backup cannot consume capacity reserved by another offered target.
+A Program may place up to 10 Recruits on its board, including backups and
+reaches beyond available scholarships. Board membership means the Program is
+recruiting/following that Player. An Active Offer reserves real capacity. The
+complete Offer set must be jointly feasible: all offered Recruits could commit
+without exceeding 12 Players, creating a fourth projected Player at a position,
+or consuming scholarships needed for remaining Required positions. Withdrawing
+an Offer or losing that Recruit releases the reservation. Only an active board
+target with a valid Active Offer may commit; an unoffered backup may still build
+relationship progress.
 
 Board targets receive normal recruiting effort. A Program may Focus up to three active Board targets for extra attention; the Focus bonus is fixed and does not grow when the Board is smaller or Focus slots are unused. Inactive, committed, or position-filled targets receive no effort and cannot remain effective Focus targets. There is no points budget or normalized allocation mechanic.
 
@@ -437,7 +443,16 @@ plus CompletedRecruitingClass incoming Recruits
 → exact 12-Player next-season roster
 ```
 
-Late Recruiting is a distinct, user-reviewed final signing phase. After the Tournament completes, Continue → Late Recruiting remains available across normal navigation until the canonical phase advances; the action may synchronize any still-missing postseason Recruiting periods first. It deterministically concludes the existing market, fills every projected positional opening from the originally generated class, and preserves unmatched lower-tier Players as unsigned once League capacity is exhausted. Major lifecycle checkpoints never advance automatically. Exact formulas and accepted calibration are documented in `SIMULATION.md`.
+Late Recruiting is a distinct, user-reviewed final signing phase. After the
+Tournament completes, Continue → Late Recruiting remains available across
+normal navigation until the canonical phase advances; the action may
+synchronize any still-missing postseason Recruiting periods first. It
+deterministically concludes the existing market, satisfying remaining Required
+needs before shared Flexible scholarships from the originally generated class,
+and preserves unmatched lower-tier Players as unsigned once League capacity is
+exhausted. No emergency Players are generated. Major lifecycle checkpoints
+never advance automatically. Exact formulas and accepted calibration are
+documented in `SIMULATION.md`.
 
 ## Accepted Dynasty Season Rollover V0
 
@@ -451,7 +466,11 @@ Every new roster receives a fresh generated default Rotation, including the cont
 
 Each Season receives a fresh deterministic Schedule under the accepted 24-game format: 14 Conference and 10 non-Conference games across 24 rounds, split 12 home and 12 away. The new Season begins with zero results and default Rotations, while the prior Season remains historical.
 
-Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from the senior positions on the new rosters. Prior projected needs are not reused. Interactive play begins that new controlled Program board empty while AI plans remain autonomous; the user again chooses when to create a strategy. This closes the repeatable player-facing loop.
+Once Season N+1 exists, Recruiting targeting N+2 initializes immediately from
+that roster's frozen projected-returner capacity basis. Prior needs are not
+reused. Interactive play begins that new controlled Program board empty while
+AI plans remain autonomous; the user again chooses when to create a strategy.
+This closes the repeatable player-facing loop.
 
 ## Accepted long-run Dynasty economy
 

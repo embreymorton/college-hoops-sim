@@ -25,10 +25,13 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
 - **Recruit inspection and Board management:** open stable-ID Recruit Details
   from Board, Battles, or National Class, organize canonical manual and
   assistant Board entries in counted groups, clear unavailable targets without
-  automatic refill, and return to the same Recruiting mode.
+  automatic refill, manage jointly feasible Active Offers against Required and
+  shared Flexible scholarship capacity, and return to the same Recruiting mode.
 - **Next-season roster planning:** inspect a factual read-only Recruiting Roster
-  Outlook with promoted returners, committed incoming freshmen, exact-position
-  openings, departing seniors, and current ratings before Offseason Development.
+  Outlook with promoted returners, committed incoming freshmen, Required needs,
+  Flexible openings, Full positions, departing seniors, and current ratings
+  before Offseason Development. Completed rosters remain 12 Players with 2–3 at
+  every natural position while their exact `3/3/2/2/2` shape may evolve.
 - **Recruit following and continuity:** follow prospects independently from Board management, track their live status in Recruiting Following, and carry that attachment into existing Player Following after stable-ID enrollment is verified.
 - **Deterministic replayability:** each interactive Dynasty receives one unique creation seed; all rosters, schedules, Recruiting, and simulations remain deterministic from that stored seed. Explicit-seed tests and inspection workflows remain repeatable.
 

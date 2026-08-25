@@ -170,7 +170,7 @@ Repository inspection identified the structural lifecycle:
 ```text
 fixed 12-player roster
 + senior-only departures
-+ usually 2–4 exact-position openings
++ usually 2–4 exact-position openings in the historical pre-B2 baseline
 + every non-senior returns
 + every commitment enrolls
 + synchronized four-year cohorts

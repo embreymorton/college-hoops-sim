@@ -221,17 +221,31 @@ though the finite sample produced no +20 event. These results and manual
 acceptance freeze the exceptional layer without reopening ordinary Development
 or hierarchy/compression tuning.
 
-## Implemented Recruiting V0
+## Implemented Recruiting V0 + B2 Live Flexible Capacity
 
-Recruiting is a deterministic Dynasty-layer simulation targeting the following season. It consumes the active Season's current Teams and projected senior departures, but it neither changes game simulation nor mutates current Teams, Rotations, or Season results.
+Recruiting is a deterministic Dynasty-layer simulation targeting the following
+season. New cycles use versioned flexible-capacity semantics derived from frozen
+projected returner counts; distinguishable legacy state retains exact-opening
+behavior where required. Recruiting neither changes game simulation nor mutates
+current Teams, Rotations, or Season results.
 
 ### National class generation and ranking
 
-Position demand is the sum of all 32 Programs' projected senior departures at that natural position. Generated supply is calculated independently per position:
+The legacy total class-size rule remains:
 
 ```text
-supply(position) = max(18, ceil(national demand(position) × 1.65))
+legacy supply(position) = max(18, ceil(national senior demand(position) × 1.65))
 ```
+
+B2 preserves the exact sum of that rule. It first covers league-wide Required
+demand (`max(0, 2 - projected returners)` per Program/position, with the existing
+minimum supply floor), then distributes the remaining preserved class total to
+the least-supplied positions in stable natural-position order. This creates a
+balanced Flexible market without changing total class size. Paired production
+verification found identical baseline/B2 class sizes with zero per-cycle
+differences. No supplemental emergency or extra premium supply is generated;
+Recruit Talent Profile V2 and all Recruit OVR/POT/readiness/star/quality formulas
+remain unchanged.
 
 Every generated Recruit already contains his future freshman `Player` value. The generator supplies `classYear: FR`; the accepted Player generator produces exact attributes, height, name, Potential, and stable identity. The Recruiting talent input has a long upper tail:
 
@@ -282,7 +296,14 @@ target progress = 3 + (isFocused ? 3 : 0)
 
 Neither term is normalized by Board size, other Focus targets, or unused Focus capacity. Inactive targets receive no effort; invalid Focus is cleared during canonical plan cleanup. Board, Focus, and Offer remain separate facts. Standing order is descending standing with stable Program ID as the tie-breaker.
 
-A Recruit may commit only after his decision-ready period and only to a Program that has a valid Active Offer, unfilled capacity at his position, and at least 8 relationship progress. The leading eligible Program must meet both the Recruit's standing threshold and the required lead over the eligible runner-up. Recruits resolve in National Rank order then Player ID; exact standing ties resolve by Program ID. A recorded commitment is final.
+A Recruit may commit only after his decision-ready period and only to a Program
+that has a valid Active Offer, compatible scholarship/position capacity, and at
+least 8 relationship progress. At a deficient position, the commitment satisfies
+Required need first; otherwise it consumes shared Flexible capacity. A projected
+position at three is Full. The leading eligible Program must meet both the
+Recruit's standing threshold and required lead over the eligible runner-up.
+Recruits resolve in National Rank order then Player ID; exact standing ties
+resolve by Program ID. A recorded commitment is final.
 
 Regular-season thresholds never ease. During periods 25–28, only already-ready Recruit confidence changes:
 
@@ -296,7 +317,14 @@ This modestly makes ready Recruits more decisive as the calendar closes; it does
 
 ### Board construction and AI offers
 
-Boards hold at most 10 targets. Default plans seek at most three candidates per remaining positional opening and cycle across positions. Default priorities by board slot are `5, 4, 3, 3, 2, 2, 1, 1, 1, 1`. For a position, the prestige-shaped target rank is:
+Boards hold at most 10 targets. Flexible-cycle default plans cover uncovered
+Required needs first, then compare compatible candidates across positions for
+shared Flexible capacity. They do not preselect a final positional shape.
+Active Offer sets are jointly feasible: every offered Recruit could commit
+without exceeding 12 Players, creating a fourth projected Player at a position,
+or consuming capacity still needed by Required positions. AI and the controlled
+Program use the same legality. Default priorities by board slot remain `5, 4,
+3, 3, 2, 2, 1, 1, 1, 1`. For a position, the prestige-shaped target rank is:
 
 ```text
 ideal position rank = max(1, round(candidate count × (1.08 - prestige × 0.0095)))
@@ -381,9 +409,22 @@ late utility = qualityScore × 1.5
              - abs(standing - stored standing threshold) × 0.2
 ```
 
-Unsigned Recruits resolve in National Rank order then Player ID. Only Programs with a valid Active Offer and compatible remaining positional capacity are candidates; highest standing wins, with Program ID breaking ties. Capacity and invalid offers are recalculated after every commitment. Finalization iteratively fills offer vacancies, prepares premium options, and resolves commitments until every projected opening is filled. Lower-tier Recruits remain unsigned when League roster supply is exhausted.
+Unsigned Recruits resolve in National Rank order then Player ID. Only Programs
+with a valid Active Offer and compatible remaining capacity are candidates;
+highest standing wins, with Program ID breaking ties. Capacity and invalid
+offers are recalculated after every commitment. Finalization resolves actual
+Recruiting outcomes first, then deterministic compatibility-aware completion
+fills remaining Required exact-position needs before remaining Flexible
+scholarships. Flexible completion may use any unsigned Recruit whose position
+keeps the Program within the 2–3 envelope. Lower-tier Recruits remain unsigned
+when League roster supply is exhausted.
 
-The defensive fallback matcher is not normal Recruiting flow. It runs only if an iterative pass produces zero commitments while openings remain; it uses existing unsigned Recruits, compatible positional capacity, standing, and stable Program ID ordering. Supply is validated before finalization. V0 contains no emergency-Recruit generation path: `emergencyGeneratedRecruits` is always `0`, and normal and fallback resolution use only the originally generated class.
+The defensive fallback matcher is a routine late cleanup boundary, not the
+primary roster-construction path. It uses only existing unsigned Recruits,
+Required/Flexible compatibility, standing, and stable Program ordering. Supply
+is validated before finalization. There is no emergency-Recruit generation:
+normal and fallback resolution use only the originally generated class, and
+structural failure remains explicit rather than repaired.
 
 Finalization marks the state `finalized` and appends a structured clone to `completedRecruitingHistory` as a `CompletedRecruitingClass`. Repeating finalization on the already-finalized state is idempotent; a conflicting duplicate target-season archive is rejected.
 
@@ -405,7 +446,21 @@ In that canonical sample, average actual commitment periods were approximately 2
 
 Across 100 deterministic strategic scenarios, a lower-ranked early underdog defeated a late favorite about 72% to 28%, while an early underdog pursuing an elite Recruit won about 33% to the late favorite's 67%. These results validate attainable early investment and stronger elite prestige pressure; they are not fixed probabilities.
 
-Across 100 full finalization cycles, every projected opening was filled in all 100. No cycle left a 5-star unsigned; one left a 4-star unsigned because no compatible positional capacity remained. That is an accepted consequence of strict positional capacity plus final commitments, not a defect or a guarantee that every premium Recruit signs. Fallback and emergency Recruit usage were both zero across the 100 cycles. Premium Recruits are strongly prioritized and should not remain unsigned while compatible capacity remains.
+In the historical exact-opening V0 baseline, 100 full finalization cycles filled
+every projected opening. No cycle left a 5-star unsigned; one left a 4-star
+unsigned because no compatible positional capacity remained. Fallback and
+emergency Recruit usage were both zero. This remains useful baseline evidence,
+but B2's capacity and matcher evidence below supersedes it for new cycles.
+
+B2's paired diagnostic covered 300 single-cycle runs per model plus 10 paired
+seeds over 10 Seasons (1,200 model-cycles total) with zero finalization,
+envelope, matching, feasibility, emergency-generation, determinism, or Program-
+order failures and no material Recruit talent inflation. A later production-
+faithful 100-cycle verification invoked the matcher in 89 cycles, assisted 240
+Programs, and assigned 169 Required plus 102 Flexible fallback scholarships.
+Those 271 assignments were 2.83% of 9,585 incoming scholarships: normal
+Recruiting constructed 97.17%, so matcher usage is frequent as a defensive late
+tail while its assignment share remains small.
 
 ## Implemented Next-Season Roster Assembly V0
 
@@ -416,11 +471,23 @@ next roster = accepted Offseason returners
             + Recruits committed to that Program
 ```
 
-Only recorded commitments enroll; unsigned Recruits remain in Recruiting history. The assembler does not regenerate or develop Players, rerun graduation or Recruiting, reconsider destinations, or create replacements. Every Program must exist in all sources, all target-season fields must agree, and each result must contain exactly 12 Players. An 11- or 13-Player result fails rather than being repaired.
+Only recorded commitments enroll; unsigned Recruits remain in Recruiting
+history. The assembler does not regenerate or develop Players, rerun graduation
+or Recruiting, reconsider destinations, or create replacements. Every Program
+must exist in all sources, all target-season fields must agree, and each result
+must contain exactly 12 Players. Flexible cycles additionally require 2–3
+Players at every natural position; the exact positions carrying three may
+change between Seasons. An invalid total or positional envelope fails rather
+than being repaired.
 
 An incoming Player is a structured clone of `Recruit.player` with `classYear: "FR"`. Player ID, name, height, natural position, all nine attributes, and Potential remain exact; derived OVR therefore remains exact. Returners are likewise cloned from their already-developed/class-advanced Offseason values. Output is deterministically ordered by `PG, SG, SF, PF, C`, then stable Player ID.
 
-Validation checks Player IDs/names, accepted position-specific height ranges, valid class, integer 40–99 attributes and Potential, `OVR ≤ POT`, exact positional composition, one appearance per returner/commitment, commitment destination, graduate exclusion, and unique active IDs. Historical continuation is semantic: the same person may share an ID across Recruit/active or prior/current snapshots, while an unrelated Recruit may not reuse it.
+Validation checks Player IDs/names, accepted position-specific height ranges,
+valid class, integer 40–99 attributes and Potential, `OVR ≤ POT`, the applicable
+versioned positional contract, one appearance per returner/commitment,
+commitment destination, graduate exclusion, and unique active IDs. Historical
+continuation is semantic: the same person may share an ID across Recruit/active
+or prior/current snapshots, while an unrelated Recruit may not reuse it.
 
 One accepted 5C.1 canonical inspection observed 290 returners and 94 commitments, producing 384 Players across 32 of 32 exact 12-Player rosters. It found 384 unique active IDs, zero changed returner or Recruit-enrollment IDs, and zero duplicates. Completed Season history, completed Recruiting history, and Offseason input all remained unchanged. These returner/commitment counts describe that sample, not fixed future distributions.
 
@@ -477,7 +544,14 @@ controlledProgramId       = preserved
 recruiting                = fresh cycle targeting N+2
 ```
 
-The existing `initializeRecruiting()` immediately derives N+2 positional openings from seniors on the new rosters, generates a season-specific national class, creates default plans for every Program including the controlled Program, and leaves `lastResolvedPeriod = 0`. Existing Recruiting V0 target-season namespaces make the class distinct from prior cycles. Rollover additionally rejects any new Recruit ID that duplicates another new Recruit or collides with completed Season Players, current Players, or prior Recruiting identities.
+The existing `initializeRecruiting()` immediately freezes N+2 projected-returner
+capacity from the new rosters, derives Required/shared Flexible capacity,
+generates a season-specific national class, creates default AI plans, leaves the
+interactive controlled Board empty, and sets `lastResolvedPeriod = 0`. Existing
+Recruiting target-season namespaces make the class distinct from prior cycles.
+Rollover additionally rejects any new Recruit ID that duplicates another new
+Recruit or collides with completed Season Players, current Players, or prior
+Recruiting identities.
 
 ### Accepted rollover and lifecycle validation
 
@@ -566,7 +640,14 @@ Prestige correlated `0.773` with Team OVR; Team OVR correlated `0.839` with regu
 
 Across 250 championships, 26 of 32 Programs won at least once. Northbridge won 25, Appalachian Commonwealth 20, and Great Lakes 20. Prestige bands `80–100`, `60–79`, `40–59`, and `1–39` won `112`, `126`, `12`, and `0` titles respectively. No Program received more than `6.2%` of late-window 5-star Recruits. Stronger Programs retained a clear advantage without a single-Team premium-Recruit monopoly or championship lock.
 
-Strict positional Recruiting remained stable at approximately 76–77 active Players per position per Season. Across the full run there were zero invalid rosters, Rotations, or Schedules; unfilled Recruiting/roster openings; Player-ID, Game-ID, or history collisions; history overwrites; emergency Recruits; fallback matcher uses; premium unsigned Recruits with compatible capacity; lifecycle failures; or serialization failures.
+In the historical exact-opening baseline, strict positional Recruiting remained
+stable at approximately 76–77 active Players per position per Season. Across
+that run there were zero invalid rosters, Rotations, or Schedules; unfilled
+Recruiting/roster openings; Player-ID, Game-ID, or history collisions; history
+overwrites; emergency Recruits; fallback matcher uses; premium unsigned Recruits
+with compatible capacity; lifecycle failures; or serialization failures. B2's
+accepted production evidence above supersedes the capacity/fallback expectation
+for new flexible cycles.
 
 ### V0 calibration freeze
 
