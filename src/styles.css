@@ -1765,9 +1765,34 @@ p {
 }
 
 .season-header__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--space-3);
+  row-gap: 0.2rem;
   font-size: 0.82rem;
   color: var(--ink-1);
-  margin-top: 0.15rem;
+  margin-top: 0.25rem;
+}
+
+.season-header__meta-place {
+  white-space: normal;
+}
+
+.season-header__standing {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.season-header__standing-label {
+  color: var(--ink-1);
+}
+
+.season-header__standing-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-0);
 }
 
 .season-header__stats {

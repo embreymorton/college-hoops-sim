@@ -252,11 +252,10 @@
 }
 
 .program-reputation-summary {
-  display: grid;
-  grid-template-columns: minmax(10rem, 0.45fr) minmax(0, 1fr);
-  gap: var(--space-4);
-  align-items: start;
-  padding: var(--space-4) var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
   border: 1px solid var(--line);
   border-left: 3px solid var(--team-accent, var(--line));
   border-radius: var(--radius-md);
@@ -264,7 +263,6 @@
 }
 
 .program-reputation-summary--empty {
-  grid-template-columns: minmax(10rem, 0.45fr) minmax(0, 1fr);
   color: var(--ink-1);
 }
 
@@ -273,24 +271,35 @@
 }
 
 .program-reputation-summary__status {
+  font-size: 0.82rem;
   color: var(--ink-1);
 }
 
 .program-reputation-summary__status strong {
-  display: block;
-  margin-top: var(--space-1);
+  margin-left: var(--space-2);
   font-family: var(--font-display);
-  font-size: 1.2rem;
+  font-weight: 600;
+  font-size: 0.95rem;
   color: var(--ink-0);
+}
+
+.program-reputation-summary__hint {
+  font-size: 0.8rem;
+  color: var(--ink-2);
 }
 
 .program-reputation-summary__facts {
   display: grid;
-  gap: var(--space-2);
-  margin: 0;
+  gap: 0.3rem;
+  margin: var(--space-1) 0 0;
   padding: 0;
   list-style: none;
   color: var(--ink-1);
+  font-size: 0.86rem;
+}
+
+.program-reputation-summary__facts li {
+  max-width: 42rem;
 }
 
 .program-reputation-summary__facts li::before {
@@ -402,13 +411,14 @@
 .program-legacy__season-identity {
   display: grid;
   align-content: start;
-  gap: 0.12rem;
+  gap: 0.18rem;
 }
 
 .program-legacy__season-reputation {
   font-family: var(--font-display);
-  font-size: 0.66rem;
+  font-size: 0.68rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   color: var(--ink-1);
   white-space: nowrap;
 }
@@ -974,11 +984,6 @@
    ========================================================================== */
 
 @media (max-width: 800px) {
-  .program-reputation-summary,
-  .program-reputation-summary--empty {
-    grid-template-columns: 1fr;
-  }
-
   .program-legacy {
     grid-template-columns: 1fr;
   }

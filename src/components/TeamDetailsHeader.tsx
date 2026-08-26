@@ -47,10 +47,28 @@ export function TeamDetailsHeader({
             {isControlled && <span className="standings-you-tag"> · You</span>}
           </h1>
           <p className="season-header__meta">
-            {conferenceName}
-            {locationLabel && <> · {locationLabel}</>}
-            {prestige !== undefined && <> · Prestige {prestige}</>}
-            {reputation && <>{' · Reputation '}<ProgramReputationLabel reputation={reputation} /></>}
+            <span className="season-header__meta-place">
+              {conferenceName}
+              {locationLabel && <> · {locationLabel}</>}
+            </span>
+            {(prestige !== undefined || reputation) && (
+              <span className="season-header__standing">
+                {prestige !== undefined && (
+                  <span className="season-header__standing-item">
+                    <span className="season-header__standing-label">Prestige</span>{' '}
+                    <span className="season-header__standing-value">{prestige}</span>
+                  </span>
+                )}
+                {reputation && (
+                  <span className="season-header__standing-item">
+                    <span className="season-header__standing-label">Reputation</span>{' '}
+                    <span className="season-header__standing-value">
+                      <ProgramReputationLabel reputation={reputation} />
+                    </span>
+                  </span>
+                )}
+              </span>
+            )}
           </p>
         </div>
       </div>

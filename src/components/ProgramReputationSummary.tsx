@@ -33,7 +33,9 @@ export function ProgramReputationSummary({
         <p className="program-reputation-summary__status">
           Reputation <strong><ProgramReputationLabel reputation={reputation} /></strong>
         </p>
-        <p>Reputation establishes after completed Dynasty results exist.</p>
+        <p className="program-reputation-summary__hint">
+          Reputation establishes after completed Dynasty results exist.
+        </p>
       </div>
     )
   }
