@@ -46,6 +46,7 @@ import {
 import { generateRegularSeasonSchedule, validateRegularSeasonSchedule } from '../src/schedule'
 import {
   initializeSeason,
+  deriveConferenceStandings,
   deriveProgramRecord,
   simulatePendingGamesInRound,
 } from '../src/season'
@@ -168,6 +169,8 @@ export interface ProgramSeasonOutcomeTrace {
   readonly losses: number
   readonly resumeRank: number
   readonly tournamentSeed: number | null
+  readonly conferenceFinish: number
+  readonly tournamentFinish: 'none' | 'round-of-16' | 'elite-eight' | 'final-four' | 'runner-up' | 'champion'
 }
 
 export interface RecruitingBattleParticipantTrace {
@@ -749,17 +752,6 @@ export function runDynastyCalibration(
       const tournamentSeedByProgramId = new Map(
         initializedPostseason.field.map(({ programId, seed }) => [programId, seed]),
       )
-      programSeasonOutcomes.push(...Object.keys(season.programStates).map((programId) => {
-        const record = deriveProgramRecord(season, programId)
-        return {
-          seasonNumber: season.seasonNumber,
-          programId,
-          wins: record.wins,
-          losses: record.losses,
-          resumeRank: resumeRankByProgramId.get(programId)!,
-          tournamentSeed: tournamentSeedByProgramId.get(programId) ?? null,
-        }
-      }))
       let baselinePostseason: PostseasonState = {
         ...initializedPostseason,
         field: seedSelectedFieldWithProtectedAutomatics(
@@ -831,6 +823,39 @@ export function runDynastyCalibration(
         semifinalAppearances[result.awayTeamId] =
           (semifinalAppearances[result.awayTeamId] ?? 0) + 1
       }
+
+      const conferenceFinishByProgramId = new Map(
+        dynasty.universe.conferences.flatMap((conference) =>
+          deriveConferenceStandings(dynasty.universe, season, conference.id)
+            .map((row, index) => [row.programId, index + 1] as const),
+        ),
+      )
+      const tournamentFinishByProgramId = new Map<string, ProgramSeasonOutcomeTrace['tournamentFinish']>()
+      for (const entry of postseason.field) tournamentFinishByProgramId.set(entry.programId, 'round-of-16')
+      const reached: Array<readonly [typeof TOURNAMENT_ROUNDS[number], ProgramSeasonOutcomeTrace['tournamentFinish']]> = [
+        ['round-of-16', 'elite-eight'],
+        ['quarterfinals', 'final-four'],
+        ['semifinals', 'runner-up'],
+        ['championship', 'champion'],
+      ]
+      for (const [round, finish] of reached) {
+        for (const game of getGamesForTournamentRound(postseason, round)) {
+          tournamentFinishByProgramId.set(postseason.resultsByGameId[game.id]!.winnerId, finish)
+        }
+      }
+      programSeasonOutcomes.push(...Object.keys(season.programStates).map((programId) => {
+        const record = deriveProgramRecord(season, programId)
+        return {
+          seasonNumber: season.seasonNumber,
+          programId,
+          wins: record.wins,
+          losses: record.losses,
+          resumeRank: resumeRankByProgramId.get(programId)!,
+          tournamentSeed: tournamentSeedByProgramId.get(programId) ?? null,
+          conferenceFinish: conferenceFinishByProgramId.get(programId)!,
+          tournamentFinish: tournamentFinishByProgramId.get(programId) ?? 'none',
+        }
+      }))
 
       dynasty = { ...dynasty, activePostseason: postseason }
       auditRecruitingFocus(dynasty, health)

@@ -64,6 +64,18 @@ export {
   deriveProgramPlayerRecords,
 } from './seasonRecords'
 export { deriveProgramLegacy } from './programLegacy'
+export {
+  deriveProgramReputation,
+  deriveProgramReputationFromSeasonEvidence,
+  deriveProgramReputationSeasonScore,
+  deriveProgramReputationTier,
+  deriveProgramReputationTrend,
+  deriveProgramReputationTrajectory,
+  PROGRAM_REPUTATION_ERA_WEIGHTS,
+  PROGRAM_REPUTATION_MATURITY,
+  PROGRAM_REPUTATION_NEUTRAL_PRIOR,
+  PROGRAM_REPUTATION_TREND_THRESHOLD,
+} from './programReputation'
 export { derivePostgameMeaning } from './postgameMeaning'
 export type {
   DerivePostgameMeaningOptions,
@@ -279,6 +291,14 @@ export type {
   HistoricalTournamentOutcome,
 } from './seasonYearbook'
 export type { ProgramLegacy, ProgramTrajectorySeason } from './programLegacy'
+export type {
+  ProgramReputationFact,
+  ProgramReputationSeasonEvidence,
+  ProgramReputationSnapshot,
+  ProgramReputationTier,
+  ProgramReputationTournamentFinish,
+  ProgramReputationTrend,
+} from './programReputation'
 export type {
   NewsCheckpoint,
   NewsFeed,

@@ -251,6 +251,54 @@
   min-width: 0;
 }
 
+.program-reputation-summary {
+  display: grid;
+  grid-template-columns: minmax(10rem, 0.45fr) minmax(0, 1fr);
+  gap: var(--space-4);
+  align-items: start;
+  padding: var(--space-4) var(--space-5);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--team-accent, var(--line));
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+}
+
+.program-reputation-summary--empty {
+  grid-template-columns: minmax(10rem, 0.45fr) minmax(0, 1fr);
+  color: var(--ink-1);
+}
+
+.program-reputation-summary p {
+  margin: 0;
+}
+
+.program-reputation-summary__status {
+  color: var(--ink-1);
+}
+
+.program-reputation-summary__status strong {
+  display: block;
+  margin-top: var(--space-1);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--ink-0);
+}
+
+.program-reputation-summary__facts {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--ink-1);
+}
+
+.program-reputation-summary__facts li::before {
+  content: '—';
+  margin-right: var(--space-2);
+  color: var(--team-accent, var(--ink-2));
+}
+
 .program-legacy {
   display: grid;
   grid-template-columns: minmax(0, 1.4fr) minmax(15rem, 0.8fr);
@@ -349,6 +397,20 @@
 
 .program-legacy__season:last-child {
   border-bottom: 0;
+}
+
+.program-legacy__season-identity {
+  display: grid;
+  align-content: start;
+  gap: 0.12rem;
+}
+
+.program-legacy__season-reputation {
+  font-family: var(--font-display);
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--ink-1);
+  white-space: nowrap;
 }
 
 .program-legacy__season > span:nth-child(5),
@@ -912,6 +974,11 @@
    ========================================================================== */
 
 @media (max-width: 800px) {
+  .program-reputation-summary,
+  .program-reputation-summary--empty {
+    grid-template-columns: 1fr;
+  }
+
   .program-legacy {
     grid-template-columns: 1fr;
   }

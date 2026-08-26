@@ -15,7 +15,17 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-**OPEN PLANNING CHECKPOINT — no NEXT selected.**
+### Program Reputation V1 — NEXT / SELECTED / NOT IMPLEMENTED
+
+- Add a pure deterministic projection of recent earned competitive standing
+  from canonical completed Dynasty history while preserving immutable static
+  Prestige and current-roster Team Strength as separate concepts.
+- Implement the evidence-backed five-Season era baseline, early-Dynasty
+  maturity, player-facing tier/trend, and bounded factual explanation without
+  mutable Reputation state, save migration, or simulation feedback.
+- Present current Reputation beside Prestige on Team Details and attach compact
+  historical `as-of` Reputation to the existing Program Trajectory; Recruiting
+  and every other possible Reputation consumer remain outside V1.
 
 ## Planned and unscheduled
 

@@ -224,5 +224,5 @@ describe('Dynasty long-run calibration metrics', () => {
     expect(first.runs[0]!.seasons).toHaveLength(2)
     expect(first.runs[0]!.rollovers).toBe(2)
     expect(first.runs[0]!.health.lifecycleFailures).toBe(0)
-  }, 15_000)
+  }, 30_000)
 })

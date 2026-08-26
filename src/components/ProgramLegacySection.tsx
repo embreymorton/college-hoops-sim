@@ -1,12 +1,14 @@
-import type { ProgramLegacy } from '../dynasty'
+import type { ProgramLegacy, ProgramReputationSnapshot } from '../dynasty'
 import { formatHistoricalTournamentOutcome } from '../app/programLegacyFormatters'
 import { formatOrdinal, formatRecord } from '../app/seasonFormatters'
+import { ProgramReputationLabel } from './ProgramReputationSummary'
 
 interface ProgramLegacySectionProps {
   readonly legacy: ProgramLegacy
+  readonly reputationTrajectory: readonly ProgramReputationSnapshot[]
 }
 
-export function ProgramLegacySection({ legacy }: ProgramLegacySectionProps) {
+export function ProgramLegacySection({ legacy, reputationTrajectory }: ProgramLegacySectionProps) {
   if (legacy.completedSeasons === 0) {
     return (
       <p className="league-empty-state">
@@ -50,9 +52,20 @@ export function ProgramLegacySection({ legacy }: ProgramLegacySectionProps) {
           <span>Season</span><span>Team OVR</span><span>Record</span><span>Conference</span><span>Tournament</span><span>Incoming</span>
         </div>
         <div className="program-legacy__season-list" role="list">
-          {legacy.trajectorySeasons.map((season) => (
+          {legacy.trajectorySeasons.map((season) => {
+            const reputation = reputationTrajectory.find(
+              ({ asOfCompletedSeasonNumber }) => asOfCompletedSeasonNumber === season.seasonNumber,
+            )
+            return (
             <div className="program-legacy__season" role="listitem" key={season.seasonNumber}>
-              <strong><span className="program-legacy__mobile-label">Season </span>{season.seasonNumber}</strong>
+              <strong className="program-legacy__season-identity">
+                <span><span className="program-legacy__mobile-label">Season </span>{season.seasonNumber}</span>
+                {reputation && (
+                  <span className="program-legacy__season-reputation">
+                    <ProgramReputationLabel reputation={reputation} />
+                  </span>
+                )}
+              </strong>
               <span><span className="program-legacy__mobile-label">Team OVR </span>{Math.round(season.teamOverall)}<span className="program-legacy__mobile-label"> OVR</span></span>
               <span><span className="program-legacy__mobile-label">Record </span>{formatRecord(season.record.wins, season.record.losses)}</span>
               <span><span className="program-legacy__mobile-label">Conference </span>{formatOrdinal(season.conferencePlace)}</span>
@@ -71,7 +84,8 @@ export function ProgramLegacySection({ legacy }: ProgramLegacySectionProps) {
                     : `${season.incomingClass.signeeCount} · ${season.incomingClass.averageOverall!.toFixed(1)} OVR`}
               </span>
             </div>
-          ))}
+            )
+          })}
         </div>
       </div>
     </div>

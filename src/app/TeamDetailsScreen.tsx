@@ -3,6 +3,7 @@ import { calculateTeamStrength } from '../engine'
 import {
   ExplorationBackButton,
   ProgramLegacySection,
+  ProgramReputationSummary,
   ProgramPlayerRecordsSection,
   RecentResultsSection,
   TeamAverages,
@@ -10,7 +11,12 @@ import {
   TeamLeadersStrip,
   TeamStatsTable,
 } from '../components'
-import { deriveProgramLegacy, deriveProgramPlayerRecords } from '../dynasty'
+import {
+  deriveProgramLegacy,
+  deriveProgramPlayerRecords,
+  deriveProgramReputation,
+  deriveProgramReputationTrajectory,
+} from '../dynasty'
 import {
   deriveConferenceRecord,
   deriveProgramPlayerSeasonStats,
@@ -57,8 +63,20 @@ export function TeamDetailsScreen() {
       : null,
     [dynasty, selectedTeamProgramId],
   )
+  const programReputation = useMemo(
+    () => dynasty && selectedTeamProgramId
+      ? deriveProgramReputation(dynasty, selectedTeamProgramId)
+      : null,
+    [dynasty, selectedTeamProgramId],
+  )
+  const programReputationTrajectory = useMemo(
+    () => dynasty && selectedTeamProgramId
+      ? deriveProgramReputationTrajectory(dynasty, selectedTeamProgramId)
+      : [],
+    [dynasty, selectedTeamProgramId],
+  )
 
-  if (!dynasty || !season || !selectedTeamProgramId || !programPlayerRecords) {
+  if (!dynasty || !season || !selectedTeamProgramId || !programPlayerRecords || !programReputation) {
     return null
   }
 
@@ -114,6 +132,7 @@ export function TeamDetailsScreen() {
         conferenceName={conference?.name ?? ''}
         locationLabel={`${program.location.city}, ${program.location.stateCode}`}
         prestige={programState.team.prestige}
+        reputation={programReputation}
         isControlled={selectedTeamProgramId === controlledProgramId}
         overallRecord={overallRecord}
         conferenceRecord={conferenceRecord}
@@ -127,6 +146,11 @@ export function TeamDetailsScreen() {
 
       {detailsTab === 'overview' ? (
         <div className="details-tab-panel">
+          <section className="section" aria-labelledby="program-reputation-heading">
+            <h2 id="program-reputation-heading" className="section-title">Recent Era</h2>
+            <ProgramReputationSummary reputation={programReputation} />
+          </section>
+
           <section className="section" aria-labelledby="team-averages-heading">
             <h2 id="team-averages-heading" className="section-title">Team Averages</h2>
             <TeamAverages stats={teamStats} />
@@ -155,7 +179,10 @@ export function TeamDetailsScreen() {
         <div className="details-tab-panel">
           <section className="section" aria-labelledby="program-legacy-heading">
             <h2 id="program-legacy-heading" className="section-title">Dynasty History</h2>
-            <ProgramLegacySection legacy={programLegacy} />
+            <ProgramLegacySection
+              legacy={programLegacy}
+              reputationTrajectory={programReputationTrajectory}
+            />
           </section>
 
           <section className="section" aria-labelledby="program-player-records-heading">

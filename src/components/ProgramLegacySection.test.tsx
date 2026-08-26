@@ -30,9 +30,19 @@ const oneSeasonLegacy: ProgramLegacy = {
   }],
 }
 
+const oneSeasonReputation = [{
+  programId: 'northbridge',
+  asOfCompletedSeasonNumber: 1,
+  completedSeasons: 1,
+  score: 68,
+  tier: 'national-power' as const,
+  trend: null,
+  facts: [],
+}]
+
 describe('ProgramLegacySection', () => {
   it('renders a deliberate empty state before any completed Season', () => {
-    render(<ProgramLegacySection legacy={{
+    render(<ProgramLegacySection reputationTrajectory={[]} legacy={{
       ...oneSeasonLegacy,
       completedSeasons: 0,
       wins: 0,
@@ -48,12 +58,13 @@ describe('ProgramLegacySection', () => {
   })
 
   it('renders the résumé and compact full-history trajectory', () => {
-    render(<ProgramLegacySection legacy={oneSeasonLegacy} />)
+    render(<ProgramLegacySection legacy={oneSeasonLegacy} reputationTrajectory={oneSeasonReputation} />)
 
     expect(within(screen.getByText('Dynasty Record').parentElement!).getByText('21-3')).toBeInTheDocument()
     expect(screen.getByText(/#2 · Runner-Up/, { selector: '.program-legacy__season > span' })).toBeInTheDocument()
     expect(screen.getByText('Season 1 · 21-3')).toBeInTheDocument()
     expect(screen.getByRole('listitem')).toHaveTextContent('Season 1')
+    expect(screen.getByRole('listitem')).toHaveTextContent('National Power')
     expect(screen.getByText('Program Trajectory')).toBeInTheDocument()
     expect(screen.queryByText('Recent Seasons')).not.toBeInTheDocument()
     expect(screen.getByRole('listitem')).toHaveTextContent('78')
@@ -62,7 +73,7 @@ describe('ProgramLegacySection', () => {
   })
 
   it('shows "No Tournament Appearances" rather than "Did Not Qualify" when the Program has never made the Tournament', () => {
-    render(<ProgramLegacySection legacy={{
+    render(<ProgramLegacySection reputationTrajectory={oneSeasonReputation} legacy={{
       ...oneSeasonLegacy,
       tournamentAppearances: 0,
       championships: 0,
@@ -87,13 +98,13 @@ describe('ProgramLegacySection', () => {
   })
 
   it('still shows canonical Tournament finish labels once a Program has made the Tournament', () => {
-    render(<ProgramLegacySection legacy={oneSeasonLegacy} />)
+    render(<ProgramLegacySection legacy={oneSeasonLegacy} reputationTrajectory={oneSeasonReputation} />)
 
     expect(screen.getByText('Runner-Up', { selector: '.program-legacy__highlights strong' })).toBeInTheDocument()
   })
 
   it('renders National Champion with emphasis in both the highlight and trajectory', () => {
-    render(<ProgramLegacySection legacy={{
+    render(<ProgramLegacySection reputationTrajectory={oneSeasonReputation} legacy={{
       ...oneSeasonLegacy,
       championships: 1,
       runnerUpFinishes: 0,

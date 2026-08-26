@@ -211,7 +211,17 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — Open Planning Checkpoint.**
+**NEXT selected — Program Reputation V1 (not yet implemented).**
+
+The selected milestone will derive recent earned competitive standing from
+canonical completed Dynasty history while keeping institutional Prestige static
+and current Team Strength separate. Its selected V1 boundary includes the
+evidence-backed recent-era derivation, early-Dynasty maturity, historical
+`as-of` reconstruction, player-facing tier/trend and bounded factual reasons,
+plus Team Details and Program Trajectory presentation. It adds no mutable
+Reputation state or simulation feedback; Recruiting and all other possible
+consumers remain outside V1. The focused-design contract and diagnostic evidence
+remain in [FUTURE_FEATURES.md](FUTURE_FEATURES.md#program-reputation--distinct-future-reframing).
 
 Recruiting Market Visibility V1 is **COMPLETE / ACCEPTED / FROZEN**. Recruiting
 now presents P0 as Preseason Evaluation with external national information

@@ -24,4 +24,7 @@ process.stdout.write(JSON.stringify(process.env.RECRUIT_MARKET_COMPACT === '1' ?
   recruitingMarket: result.recruitingMarket,
   recruitingMarketOpportunities: result.recruitingMarketOpportunities,
   signedRecruits: result.signedRecruits,
+} : process.env.PROGRAM_REPUTATION_COMPACT === '1' ? {
+  seed: result.seed,
+  programSeasonOutcomes: result.programSeasonOutcomes,
 } : result))

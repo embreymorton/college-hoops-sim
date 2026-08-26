@@ -10,7 +10,10 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 ## Selected elsewhere
 
-No future feature is currently selected. The Roadmap owns order and scope.
+[Program Reputation V1](#program-reputation--distinct-future-reframing) is now
+selected as **NEXT / NOT IMPLEMENTED**. `ROADMAP.md` owns its authoritative
+sequence and selected V1 scope; the focused-design and diagnostic detail below
+is retained as implementation context. No other future feature is selected.
 
 ## Recruiting depth
 
@@ -907,29 +910,158 @@ and reopening criteria live in `DYNASTY_HIERARCHY_RESEARCH.md`.
 
 ### Program Reputation — distinct future reframing
 
-A separate future Reputation system could represent what a Program has earned
-through a sustained competitive era while leaving institutional Prestige
-static. Conceptually, **Prestige is enduring institutional stature; Reputation
-is recent earned competitive standing**. Sustained winning, Conference success,
-Tournament appearances and runs, championships, strong rosters, or prolonged
-decline are possible future inputs, but no formula, window, decay, thresholds,
-tiers, UI, or canonical-state design is approved. Reputation should change
-gradually enough to represent eras rather than isolated Seasons.
+Program Reputation V1 is **selected NEXT / not implemented**. This section
+retains its focused-design contract and diagnostic evidence as implementation
+context; none of it is implemented or accepted production truth. Program
+Reputation is not a replacement for rejected Dynamic Prestige. Its intended
+distinction is:
 
-This split could let the world recognize that a Pine Valley has built something
-real while preserving the inertia and advantages of established powers. If ever
-selected, the product questions are whether sustained success earns meaningful
-recognition and Recruiting access, established Programs retain institutional
-identity, competitive eras emerge, and league differentiation remains healthy.
-That last concern is a guardrail, not a hierarchy-compression justification.
-This is neither restored Dynamic Prestige nor permission to reopen frozen
-Prestige or Recruiting behavior.
+```text
+Prestige           = enduring institutional stature (static production truth)
+Program Reputation = recent earned competitive standing
+Team Strength      = quality of the current roster
+```
 
-A future Recruit `Winning` preference could consume Program Reputation if both
-systems are eventually accepted, but Recruit fit would not be Reputation's sole
-purpose. Reputation remains a broader reusable concept that could inform
-Recruiting, expectations, coach/job-market context, News/world recognition, or
-other future Program-identity systems without expanding any of them here.
+The product purpose is to let the Dynasty world recognize what a Program has
+recently earned without rewriting the permanent institutional hierarchy. A
+low-Prestige Program could therefore hold Elite Reputation after an exceptional
+era, while an established high-Prestige Program could fall to Regional
+Reputation after sustained decline. Reputation recognizes accomplishment; it
+does not compensate for Prestige.
+
+#### Focused-design architecture candidate
+
+The strongest current direction is a pure deterministic projection from
+canonical completed Dynasty history, conceptually:
+
+```ts
+deriveProgramReputation(dynasty, programId, asOfCompletedSeasonNumber?)
+```
+
+The API name is not selected. The candidate semantics are completed-Season-only
+evidence, explicit historical `as-of` reconstruction, and identical derivation
+for current and historical Reputation. Active-Season results, Prestige,
+user/AI control, and mutable `team.reputation` state would not participate. No
+separate Reputation history or save migration is currently desired.
+
+This projection boundary is strongly favored but remains a design candidate,
+not accepted architecture.
+
+#### Evidence-backed derivation candidate
+
+Focused diagnostics currently support a completed-Season result weighted
+approximately 60% overall regular-season win percentage, 10% canonical
+Conference finish, and 30% Tournament finish. The explored Conference values
+were `1st 100`, `2nd 80`, `3rd–4th 60`, `5th–7th 35`, and `8th 10`; Tournament
+values were `No Tournament 0`, `Round of 16 loss 5`, `Elite Eight 30`, `Final
+Four 65`, `Runner-up 82`, and `Champion 100`. The nonlinear Tournament shape is
+intended to make championships matter greatly without letting March erase the
+regular season.
+
+The strongest recent-era memory candidate uses approximately five completed
+Seasons, weighted newest-to-oldest `25 / 22 / 20 / 18 / 15%`. Early Dynasties
+would blend earned evidence against a neutral prior near 50 at approximately
+`40 / 65 / 90 / 96 / 100%` maturity after one through five completed Seasons.
+This maturity is internal; no player-facing confidence rating is proposed.
+
+The current tier candidate is:
+
+```text
+Unestablished   before any completed Season
+Low             <35
+Regional        35–47
+Emerging        48–54
+National        55–65
+National Power  66–70
+Elite           71+
+```
+
+No raw player-facing score is currently desired. A year-over-year change of at
+least `+4` or at most `-4` is the current Rising/Falling candidate, with smaller
+movement treated as Steady; Season 1 has no trend. These weights, values,
+thresholds, and trend rules are diagnostic candidates, not frozen production
+constants or accepted UI behavior.
+
+#### Diagnostic checkpoint
+
+Production-faithful diagnostics covered 12 deterministic seeds, 25 completed
+Seasons per seed, all 32 Programs, and 9,600 Program-season observations using
+production Season simulation, canonical Conference standings/tiebreaks,
+production Tournament progression, and Dynasty rollover. Reputation did not
+feed back into the simulation.
+
+The first pass showed that the original tier thresholds were too high for the
+compressed five-Season era score. A second pass preserved the derivation and
+changed only tier interpretation. At mature checkpoints the revised bands
+remained differentiated: approximately 37–42% Low, 29–40% Regional, 12–14%
+Emerging, 9–12% National, 1–4% National Power, and 0.3–2% Elite. These are
+observations, not future quotas.
+
+Pressure cases supported the intended semantics:
+
+- a rocket-ship rebuild moved `54.8 → 65.6 → 79.4` (`Emerging → National →
+  Elite`) across an Elite Eight, Final Four, and championship;
+- an extreme runner-up/champion two-year rise reached `National Power → Elite`;
+- a Cinderella championship followed by validation reached National Power but
+  not automatically Elite;
+- sustained `22–2`, first-place, Round-of-16 Seasons produced National Power,
+  reserving Elite for eras with top-end national validation; and
+- an established Elite era declined `84.5 → 73.0 → 60.4 → 46.5` (`Elite →
+  Elite → National → Regional`) only after sustained poor results.
+
+The cohort contained only one Program below Prestige 40. Across 12 independent
+paths it never reached Emerging or higher. This does not establish a Reputation
+formula defect: derivation recognizes success but does not create competitive
+success. Preserve this result under the existing low-Prestige rebuild / structural
+mobility WATCH and do not add expectation-relative, Prestige-relative, or
+underdog bonuses to manufacture mobility.
+
+The diagnostic supports the selected implementation baseline and suggests tier
+recalibration resolved the apparent structural failures. It did not implement
+or accept the feature, freeze the constants, establish production balance
+targets, validate a player-facing experience, or justify changing Prestige or
+any Reputation consumer.
+
+#### Explanation and presentation direction
+
+Player-facing explanation should use recent basketball facts rather than raw
+component math: deterministic, ranked, deduplicated, suppression-aware, and
+limited to approximately three facts such as recent championships/Final Fours,
+repeated Tournament appearances or 20-win Seasons, Conference championships,
+recent aggregate record, consecutive Tournament misses, or consecutive losing
+Seasons. Exact fact priority and suppression remain unresolved.
+
+Team Details is the strongest V1 surface candidate. Prestige and current
+Reputation would appear together in the header because their contrast explains
+the feature, while a lightweight Overview section could supply the factual
+reasons. Reputation should not sit beside Off/Def/Ovr as another roster rating.
+Historical Reputation is also favored because the same `as-of` projection can
+attach a compact tier/trend to an existing Program History Season cell without
+adding another dense trajectory-table column. Exact styling remains unresolved.
+
+Program Legacy and Program Reputation should remain separate domains:
+Legacy describes what happened across the Dynasty; Reputation interprets the
+recent portion of that history now. They may share low-level historical facts,
+but Program Legacy should not own Reputation calculation merely because one UI
+surface consumes both.
+
+#### Focused V1 boundary and deferred consumers
+
+The strongest V1 concept comprises derived completed-Season Reputation,
+approximately five-Season memory, early-Dynasty maturity, historical `as-of`
+reconstruction, player-facing tier and meaningful trend, up to three factual
+reasons, Team Details Prestige/Reputation juxtaposition, a lightweight
+recent-era explanation, historical trajectory, and support for every Program.
+
+Recruiting effects, Recruit Winning preference, Recruit–Program Fit, AI target
+selection or Offers, commitment behavior, Team Strength, Development, Game
+Simulation, Tournament selection/seeding, Prestige mutation, Coach Career,
+jobs, expectations, facilities, News, Season Preview, Program Selection,
+league-wide rankings/leaderboards, and a raw player-facing score are explicitly
+outside this focused V1 direction. They are possible future consumers or
+extensions only. In particular, a future Recruit `Winning` preference could
+consume Reputation if both systems are independently selected and accepted;
+that relationship remains unresolved and is not part of this checkpoint.
 
 ## Presentation and broader modes
 

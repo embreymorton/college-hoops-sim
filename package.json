@@ -51,6 +51,7 @@
     "sim:dynasty-equilibrium": "node --import tsx scripts/runDynastyLongRun.ts --preset equilibrium",
     "sim:elite-dominance-audit": "node --import tsx scripts/eliteProgramDominanceAudit.ts",
     "sim:competitive-compression": "node --import tsx scripts/inspectCompetitiveCompression.ts",
+    "sim:program-reputation": "node --import tsx scripts/inspectProgramReputation.ts",
     "sim:recruiting-cohort-survival": "node --import tsx scripts/inspectRecruitingCohortSurvival.ts",
     "sim:intra-elite-recruiting": "node --import tsx scripts/inspectIntraEliteRecruiting.ts",
     "sim:elite-pursuit-funnel": "node --import tsx scripts/inspectElitePursuitFunnel.ts",

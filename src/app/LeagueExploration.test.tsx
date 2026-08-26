@@ -227,6 +227,9 @@ describe('Team Details', () => {
     fireEvent.click(within(detailsTabs).getByRole('button', { name: 'Overview' }))
     expect(screen.getByRole('heading', { name: 'Roster' })).toBeInTheDocument()
     expect(screen.getByText(/Providence, RI · Prestige 88/)).toBeInTheDocument()
+    expect(screen.getAllByText('Unestablished').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByRole('heading', { name: 'Recent Era' })).toBeInTheDocument()
+    expect(screen.getByText(/Reputation establishes after completed Dynasty results/i)).toBeInTheDocument()
     const averages = screen
       .getByRole('heading', { name: 'Team Averages' })
       .closest('section') as HTMLElement

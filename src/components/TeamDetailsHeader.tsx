@@ -2,6 +2,8 @@ import type { CSSProperties } from 'react'
 import type { TeamStrength } from '../engine'
 import { formatRating } from '../app/formatters'
 import { formatRecord } from '../app/seasonFormatters'
+import type { ProgramReputationSnapshot } from '../dynasty'
+import { ProgramReputationLabel } from './ProgramReputationSummary'
 
 interface TeamDetailsHeaderProps {
   readonly programName: string
@@ -9,6 +11,7 @@ interface TeamDetailsHeaderProps {
   readonly conferenceName: string
   readonly locationLabel?: string
   readonly prestige?: number
+  readonly reputation?: ProgramReputationSnapshot
   readonly isControlled: boolean
   readonly overallRecord: { readonly wins: number; readonly losses: number }
   readonly conferenceRecord: { readonly wins: number; readonly losses: number }
@@ -22,6 +25,7 @@ export function TeamDetailsHeader({
   conferenceName,
   locationLabel,
   prestige,
+  reputation,
   isControlled,
   overallRecord,
   conferenceRecord,
@@ -43,9 +47,10 @@ export function TeamDetailsHeader({
             {isControlled && <span className="standings-you-tag"> · You</span>}
           </h1>
           <p className="season-header__meta">
-            {[conferenceName, locationLabel, prestige === undefined ? null : `Prestige ${prestige}`]
-              .filter(Boolean)
-              .join(' · ')}
+            {conferenceName}
+            {locationLabel && <> · {locationLabel}</>}
+            {prestige !== undefined && <> · Prestige {prestige}</>}
+            {reputation && <>{' · Reputation '}<ProgramReputationLabel reputation={reputation} /></>}
           </p>
         </div>
       </div>

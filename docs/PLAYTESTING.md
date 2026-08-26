@@ -23,8 +23,8 @@ but worth monitoring.
 
 ## Current Playtesting Priorities
 
-Roadmap is at an **Open Planning Checkpoint with no NEXT selected**. This
-evidence file informs later planning but does not select a successor.
+Roadmap has selected **Program Reputation V1 as NEXT / not implemented**. This
+evidence file supports that milestone but does not own or change its sequence.
 
 1. Continue normal multi-Season play and observe whether the accepted attachment
    loop—Recruit decisions, News, Following, Player careers, Alumni, Records,
@@ -61,6 +61,26 @@ discovery, Following enables retrieval, Player Details shows progression and
 career production, Program History/Records add context, and Yearbooks preserve
 completed Seasons. Continue observing this compound loop rather than treating
 each surface as an isolated feature.
+
+### Program Reputation focused diagnostic — future design evidence
+
+A production-faithful, non-feedback diagnostic evaluated a future derived
+Program Reputation candidate across 12 deterministic 25-Season Dynasties, 32
+Programs, and 9,600 Program-season observations. The raw recent-era derivation
+behaved intuitively; the initial player-facing bands were too high, and a
+tier-only recalibration produced differentiated mature distributions plus the
+intended rocket-rise, Cinderella/validation, sustained-power, and gradual-decline
+pressure cases. This now supports the selected implementation baseline, but the
+feature remains unimplemented and unaccepted. Candidate math, tier observations,
+architectural direction, and V1 boundaries are preserved in
+[FUTURE_FEATURES.md](FUTURE_FEATURES.md#program-reputation--distinct-future-reframing).
+
+Only one production Program had Prestige below 40, and none of its 12 paths
+reached Emerging Reputation. Reputation derivation recognizes earned success;
+it does not create competitive success. Treat that result as context for the
+existing low-Prestige rebuild / structural-progress WATCH, not evidence for
+Prestige-relative or underdog bonuses and not permission to reopen static
+Prestige.
 
 ## Latest Accepted Milestone Evidence
 
