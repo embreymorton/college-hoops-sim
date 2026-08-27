@@ -10,10 +10,9 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 ## Selected elsewhere
 
-[Program Reputation V1](#program-reputation--distinct-future-reframing) is now
-selected as **NEXT / NOT IMPLEMENTED**. `ROADMAP.md` owns its authoritative
-sequence and selected V1 scope; the focused-design and diagnostic detail below
-is retained as implementation context. No other future feature is selected.
+No future feature is selected. Program Reputation V1 is complete, accepted,
+and frozen; only separately scoped future consumers remain in this idea bank.
+`ROADMAP.md` is at an Open Planning Checkpoint.
 
 ## Recruiting depth
 
@@ -848,6 +847,12 @@ Program would need to become mutable across a Dynasty career. Hiring AI,
 offer probabilities, firing rules, Coach attributes, and progression mechanics
 all require separate design before implementation.
 
+A separately scoped [Observer Mode / Viewed Program](#observer-mode--viewed-program)
+could eventually supply a no-controlled-Program or unemployed-coach foundation
+for this lifecycle. Observing the world, accepting a later job, and switching
+control mid-Dynasty remain Coach Career questions rather than part of a bounded
+Observer Mode V1.
+
 ### Program expectations, Hot Seat, and contextual goals
 
 Results could eventually be evaluated against Program circumstances: 15–9 at
@@ -908,13 +913,12 @@ long-run differentiation. Static Prestige remains current production truth, and
 the completed hierarchy/compression investigation remains closed; its evidence
 and reopening criteria live in `DYNASTY_HIERARCHY_RESEARCH.md`.
 
-### Program Reputation — distinct future reframing
+### Program Reputation — fulfilled V1 and future extensions
 
-Program Reputation V1 is **selected NEXT / not implemented**. This section
-retains its focused-design contract and diagnostic evidence as implementation
-context; none of it is implemented or accepted production truth. Program
-Reputation is not a replacement for rejected Dynamic Prestige. Its intended
-distinction is:
+Program Reputation V1 is **COMPLETE / ACCEPTED / FROZEN**. This section retains
+useful design and diagnostic history while separating fulfilled V1 from future
+consumers. Program Reputation is not a replacement for rejected Dynamic
+Prestige. Production distinguishes:
 
 ```text
 Prestige           = enduring institutional stature (static production truth)
@@ -929,28 +933,24 @@ era, while an established high-Prestige Program could fall to Regional
 Reputation after sustained decline. Reputation recognizes accomplishment; it
 does not compensate for Prestige.
 
-#### Focused-design architecture candidate
+#### Fulfilled architecture
 
-The strongest current direction is a pure deterministic projection from
+Production uses a pure deterministic projection from
 canonical completed Dynasty history, conceptually:
 
 ```ts
 deriveProgramReputation(dynasty, programId, asOfCompletedSeasonNumber?)
 ```
 
-The API name is not selected. The candidate semantics are completed-Season-only
-evidence, explicit historical `as-of` reconstruction, and identical derivation
-for current and historical Reputation. Active-Season results, Prestige,
-user/AI control, and mutable `team.reputation` state would not participate. No
-separate Reputation history or save migration is currently desired.
+Its accepted semantics are completed-Season-only evidence, explicit historical
+`as-of` reconstruction, and identical current/historical derivation. Active
+competition, Prestige, ownership, and mutable Reputation state do not
+participate; there is no separate Reputation history or save migration.
 
-This projection boundary is strongly favored but remains a design candidate,
-not accepted architecture.
+#### Fulfilled derivation and diagnostic history
 
-#### Evidence-backed derivation candidate
-
-Focused diagnostics currently support a completed-Season result weighted
-approximately 60% overall regular-season win percentage, 10% canonical
+Production uses a completed-Season result weighted 60% overall regular-season
+win percentage, 10% canonical
 Conference finish, and 30% Tournament finish. The explored Conference values
 were `1st 100`, `2nd 80`, `3rd–4th 60`, `5th–7th 35`, and `8th 10`; Tournament
 values were `No Tournament 0`, `Round of 16 loss 5`, `Elite Eight 30`, `Final
@@ -958,13 +958,13 @@ Four 65`, `Runner-up 82`, and `Champion 100`. The nonlinear Tournament shape is
 intended to make championships matter greatly without letting March erase the
 regular season.
 
-The strongest recent-era memory candidate uses approximately five completed
+The accepted recent-era memory uses five completed
 Seasons, weighted newest-to-oldest `25 / 22 / 20 / 18 / 15%`. Early Dynasties
-would blend earned evidence against a neutral prior near 50 at approximately
-`40 / 65 / 90 / 96 / 100%` maturity after one through five completed Seasons.
-This maturity is internal; no player-facing confidence rating is proposed.
+blend earned evidence against a neutral prior of 50 at `40 / 65 / 90 / 96 /
+100%` maturity after one through five completed Seasons. This maturity is
+internal; no player-facing confidence rating exists.
 
-The current tier candidate is:
+The accepted tiers are:
 
 ```text
 Unestablished   before any completed Season
@@ -976,11 +976,10 @@ National Power  66–70
 Elite           71+
 ```
 
-No raw player-facing score is currently desired. A year-over-year change of at
-least `+4` or at most `-4` is the current Rising/Falling candidate, with smaller
-movement treated as Steady; Season 1 has no trend. These weights, values,
-thresholds, and trend rules are diagnostic candidates, not frozen production
-constants or accepted UI behavior.
+No raw score is player-facing. A year-over-year change of at least `+4` or at
+most `-4` is Rising/Falling, with smaller movement Steady; Season 1 has no trend.
+These boundaries are frozen production behavior and are owned exactly by
+`SIMULATION.md`.
 
 #### Diagnostic checkpoint
 
@@ -1016,28 +1015,24 @@ success. Preserve this result under the existing low-Prestige rebuild / structur
 mobility WATCH and do not add expectation-relative, Prestige-relative, or
 underdog bonuses to manufacture mobility.
 
-The diagnostic supports the selected implementation baseline and suggests tier
-recalibration resolved the apparent structural failures. It did not implement
-or accept the feature, freeze the constants, establish production balance
-targets, validate a player-facing experience, or justify changing Prestige or
-any Reputation consumer.
+The production-backed implementation reproduced this selected diagnostic
+behavior without further tuning. The results validate V1 but do not establish
+population quotas or justify changing Prestige or any future consumer.
 
-#### Explanation and presentation direction
+#### Fulfilled explanation and presentation
 
-Player-facing explanation should use recent basketball facts rather than raw
+Player-facing explanation uses recent basketball facts rather than raw
 component math: deterministic, ranked, deduplicated, suppression-aware, and
-limited to approximately three facts such as recent championships/Final Fours,
+limited to three facts such as recent championships/Final Fours,
 repeated Tournament appearances or 20-win Seasons, Conference championships,
 recent aggregate record, consecutive Tournament misses, or consecutive losing
-Seasons. Exact fact priority and suppression remain unresolved.
+Seasons. Exact factual behavior is production-owned; incidental prose is not
+frozen more tightly than required.
 
-Team Details is the strongest V1 surface candidate. Prestige and current
-Reputation would appear together in the header because their contrast explains
-the feature, while a lightweight Overview section could supply the factual
-reasons. Reputation should not sit beside Off/Def/Ovr as another roster rating.
-Historical Reputation is also favored because the same `as-of` projection can
-attach a compact tier/trend to an existing Program History Season cell without
-adding another dense trajectory-table column. Exact styling remains unresolved.
+Team Details presents Prestige and Reputation together in the header, keeps
+Reputation separate from Off/Def/Ovr, supplies a compact Recent Era explanation,
+and attaches historical tier/trend inside the existing Program History Season
+cell without adding a seventh column.
 
 Program Legacy and Program Reputation should remain separate domains:
 Legacy describes what happened across the Dynasty; Reputation interprets the
@@ -1045,13 +1040,11 @@ recent portion of that history now. They may share low-level historical facts,
 but Program Legacy should not own Reputation calculation merely because one UI
 surface consumes both.
 
-#### Focused V1 boundary and deferred consumers
+#### Still future / unselected consumers
 
-The strongest V1 concept comprises derived completed-Season Reputation,
-approximately five-Season memory, early-Dynasty maturity, historical `as-of`
-reconstruction, player-facing tier and meaningful trend, up to three factual
-reasons, Team Details Prestige/Reputation juxtaposition, a lightweight
-recent-era explanation, historical trajectory, and support for every Program.
+Fulfilled V1 comprises derived completed-era Reputation, five-Season memory,
+maturity, historical reconstruction, tier/trend, maximum-three factual reasons,
+Team Details presentation, and historical trajectory for every Program.
 
 Recruiting effects, Recruit Winning preference, Recruit–Program Fit, AI target
 selection or Offers, commitment behavior, Team Strength, Development, Game
@@ -1061,16 +1054,75 @@ league-wide rankings/leaderboards, and a raw player-facing score are explicitly
 outside this focused V1 direction. They are possible future consumers or
 extensions only. In particular, a future Recruit `Winning` preference could
 consume Reputation if both systems are independently selected and accepted;
-that relationship remains unresolved and is not part of this checkpoint.
+that relationship remains unresolved and unselected. No extension here is NEXT.
 
 ## Presentation and broader modes
 
 - save/load and Dynasty management;
 - accessibility and localization expansion;
-- spectator / League Observer mode;
 - richer responsive/mobile navigation;
 - optional presentation themes; and
 - export/share tools for Seasons, brackets, and careers.
+
+### Observer Mode / Viewed Program — FUTURE / UNSCHEDULED
+
+Observer Mode is a conceptually promising, likely medium feature for a bounded
+V1, subject to focused code-grounded design. It is not implemented, selected,
+scheduled, or an approved schema. Its core product distinction is:
+
+```text
+Controlled Program = the Program the user can make decisions for
+Viewed Program     = the Program currently being inspected
+```
+
+In ordinary Coach Mode, one Program remains controlled while the user may view
+that Program or browse another. In Observer Mode, no Program is controlled and
+the user may freely change the Viewed Program. Illustrative concepts such as a
+`coach | observer` mode, nullable controlled Program ID, or separate viewed
+Program ID describe the distinction only; no exact type, API, persistence, or
+state owner is approved.
+
+A bounded V1 could start a Dynasty without selecting a controlled Program,
+advance the same deterministic 32-Program world with normal AI behavior for
+every Program, and provide read-only League and Program browsing. A lightweight
+selector such as `Viewing: Pine Valley` could contextualize Program schedule and
+results, roster, Team Details, Reputation, Recruiting activity/class,
+postseason context, and Program History. Exact placement, navigation, default,
+and contextual scope remain unresolved. Observer Mode should reuse the existing
+Dynasty simulation, Recruiting, Tournament, Awards, Records, Yearbooks, Alumni,
+Following, Program Reputation/history, and Player-career systems rather than
+create a second simulation engine or separate game.
+
+Viewed Program is browsing/filter context, not coaching control or a job change.
+Changing it must not grant Offers/Withdrawals, Board management, Rotation or
+Starting Five edits, Game Prep, or other user-only decisions. This permission
+boundary may also improve Coach Mode by separating inspection of another
+Program from authority over the controlled Program.
+
+Focused design must inspect where the current application assumes controlled
+Program equals viewing context and resolve, without presupposing answers:
+
+- which screens/selectors should consume Viewed Program and which actions truly
+  require Controlled Program permission;
+- application navigation/state ownership, persistence expectations, and
+  postgame routing when no Program is controlled;
+- deterministic lifecycle gates that currently require explicit user action;
+- whether existing AI Recruiting is sufficient with no user-managed Program;
+- observer-safe Late Recruiting, offseason, rollover, and Season-start flow;
+- Hub meaning without a home Program, including possible round, notable-game,
+  standings, Recruiting, Tournament, Following, and Viewed Program context;
+- responsive placement and behavior of a Program selector; and
+- whether mid-Dynasty control changes are excluded entirely or reserved for a
+  later Coach Career/job lifecycle.
+
+Possible Observer Mode V1 remains limited to no initial controlled Program, one
+freely changeable Viewed Program, normal all-AI simulation, read-only browsing,
+and deterministic progression without controlled-Program decisions. Switching
+or taking control mid-Dynasty, Coach Career/job applications, commissioner
+controls, forced results, roster/Program editing, manual Recruiting
+intervention, live possession-by-possession spectating, a second simulation
+engine, and multiplayer/spectator networking are larger independent future
+extensions—not automatic V1 requirements.
 
 ### Home-court and arena identity
 
@@ -1116,7 +1168,8 @@ questions rather than an implementation bundle.
 - **Lower-risk / incremental:** Create a Coach identity-only V1.
 - **Medium-scope:** Create/Customize School within the fixed structure; CSV
   Program metadata import; user-only offseason position changes as a
-  cross-system lifecycle feature.
+  cross-system lifecycle feature; a bounded Observer Mode / Viewed Program V1,
+  subject to code-grounded lifecycle and permission design.
 - **Major future systems:** Coach Career/job market, changing controlled
   Programs, hot-seat/firing behavior, variable-size custom universes, and a
   Program Reputation + Recruit-preferences evolution; Game Simulation V2 is a

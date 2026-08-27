@@ -503,6 +503,45 @@ Dynamic Program Prestige V1 was rolled back after validation showed material
 hierarchy compression. Rejected experiment evidence remains in Playtesting and
 does not define a successor production model.
 
+## Accepted Program Reputation V1
+
+Program Reputation is a pure deterministic projection of recent earned standing
+from canonical completed Dynasty history. It reads no Prestige, active Season,
+active Postseason, ownership, or RNG and is not stored on Team, Dynasty, or
+Zustand state. Current and historical values share an explicit completed-Season
+cutoff. Before the first completed Season, Reputation is `Unestablished`.
+
+```text
+Season Reputation =
+  60% regular-season quality
++ 10% Conference achievement
++ 30% Tournament achievement
+
+regular-season quality = 100 × wins / (wins + losses)
+```
+
+Conference values are `1st 100`, `2nd 80`, `3rd–4th 60`, `5th–7th 35`, and
+`8th 10`, using canonical standings. Tournament values are `Did not qualify 0`,
+`Round of 16 loss 5`, `Elite Eight 30`, `Final Four 65`, `Runner-up 82`, and
+`National Champion 100`; production maps `quarterfinals` to Elite Eight and
+`semifinals` to Final Four.
+
+The newest five completed Seasons use `25 / 22 / 20 / 18 / 15%` weights. Fewer
+available Seasons renormalize those weights before blending against a neutral
+prior of 50 at `40 / 65 / 90 / 96 / 100%` maturity after one through five
+completed Seasons. Prior, maturity, and raw score remain internal.
+
+Player-facing tiers are `Low <35`, `Regional 35–47`, `Emerging 48–54`,
+`National 55–65`, `National Power 66–70`, and `Elite 71+`. Year-over-year
+movement is Rising at `+4` or more, Falling at `-4` or less, otherwise Steady;
+the first established Season has no trend.
+
+The production-backed acceptance cohort covered 12 deterministic seeds × 25
+Seasons × 32 Programs = 9,600 Program-season observations. Season 25 observed
+`38.8% / 33.6% / 14.3% / 12.0% / 1.0% / 0.3%` from Low through Elite, and
+`16.8% Rising / 66.6% Steady / 16.6% Falling`. These are observed validation
+results, not quotas. Reputation did not feed back into simulation.
+
 ## Implemented Dynasty Season Rollover V0
 
 `rolloverDynastyToNextSeason()` is the atomic pure orchestration boundary. It requires no active Season/Postseason, a prepared Offseason, exactly one matching completed Season archive and finalized Recruiting class, unique Season/Recruiting history keys, finalized active Recruiting equal to its historical snapshot, compatible seasons/Programs, and a valid roster assembly. Failure returns no partial Dynasty and mutates no input.

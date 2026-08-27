@@ -15,17 +15,10 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### Program Reputation V1 — NEXT / SELECTED / NOT IMPLEMENTED
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-- Add a pure deterministic projection of recent earned competitive standing
-  from canonical completed Dynasty history while preserving immutable static
-  Prestige and current-roster Team Strength as separate concepts.
-- Implement the evidence-backed five-Season era baseline, early-Dynasty
-  maturity, player-facing tier/trend, and bounded factual explanation without
-  mutable Reputation state, save migration, or simulation feedback.
-- Present current Reputation beside Prestige on Team Details and attach compact
-  historical `as-of` Reputation to the existing Program Trajectory; Recruiting
-  and every other possible Reputation consumer remain outside V1.
+Program Reputation V1 is complete, accepted, and frozen. No successor has been
+selected; the next planning session begins through Path B.
 
 ## Planned and unscheduled
 
@@ -50,6 +43,16 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Program Reputation V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added a pure completed-history projection with five-Season memory,
+  early-Dynasty maturity, historical `as-of` reconstruction, tier/trend, and
+  maximum-three factual explanations.
+- Presented Reputation beside—but distinct from—static Prestige and current
+  Team Strength on Team Details, including historical Program Trajectory values.
+- Added no mutable state, migration, RNG, simulation feedback, or Recruiting
+  consumer, then returned to an Open Planning Checkpoint.
 
 ### Recruiting Market Visibility V1 — COMPLETE / ACCEPTED / FROZEN
 

@@ -38,7 +38,9 @@ The playable product includes:
   finalized national Recruiting class retrospectives, plus deterministic
   Awards & Honors with archived outcomes and Player Career Honors; Player
   Career now separates regular-season and Tournament history, while the Record
-  Book has an explicitly separate Tournament scope;
+  Book has an explicitly separate Tournament scope; Team Details also derives
+  current and historical Program Reputation from completed Dynasty history,
+  distinct from static Prestige and current Team Strength;
 - a deterministic 16-Team Tournament with automatic and at-large selection,
   accepted results-only résumé seeding, and fixed-bracket progression;
 - Board + Focus + Offer Recruiting, Recruiting battles/readiness, stable-ID
@@ -173,6 +175,10 @@ refactor these systems during unrelated feature work:
   and suppression rules, regular-season/Tournament fact scopes, canonical
   as-of-game historical reconstruction, stable Player navigation, and quiet /
   notable / championship-headline presentation tiers.
+- Program Reputation V1's pure completed-history projection, `60/10/30`
+  Season weighting, five-Season memory, maturity model, tiers/trend, maximum-
+  three explanation contract, historical cutoff semantics, and Team Details
+  presentation, with no simulation or Recruiting consumers.
 
 Recruit Talent Profile V2 is implemented, accepted, and frozen production
 behavior. It supersedes V1's independent raw-ceiling roll with the loose
@@ -211,17 +217,14 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**NEXT selected — Program Reputation V1 (not yet implemented).**
+**No NEXT selected — OPEN PLANNING CHECKPOINT.**
 
-The selected milestone will derive recent earned competitive standing from
-canonical completed Dynasty history while keeping institutional Prestige static
-and current Team Strength separate. Its selected V1 boundary includes the
-evidence-backed recent-era derivation, early-Dynasty maturity, historical
-`as-of` reconstruction, player-facing tier/trend and bounded factual reasons,
-plus Team Details and Program Trajectory presentation. It adds no mutable
-Reputation state or simulation feedback; Recruiting and all other possible
-consumers remain outside V1. The focused-design contract and diagnostic evidence
-remain in [FUTURE_FEATURES.md](FUTURE_FEATURES.md#program-reputation--distinct-future-reframing).
+Program Reputation V1 is **COMPLETE / ACCEPTED / FROZEN**. It derives recent
+earned standing from completed Dynasty history with historical `as-of`
+reconstruction while Prestige remains static and Team Strength remains roster-
+derived. Team Details presents tier/trend, bounded Recent Era facts, and
+historical Reputation. No mutable Reputation state, migration, simulation
+feedback, or downstream consumer was added.
 
 Recruiting Market Visibility V1 is **COMPLETE / ACCEPTED / FROZEN**. Recruiting
 now presents P0 as Preseason Evaluation with external national information

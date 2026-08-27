@@ -100,6 +100,22 @@ regular-season career projections. Unknown IDs remain explicit without being
 mislabeled Former. Intent survives rollover, clears for a new Dynasty, stores
 no Player/Team snapshots, and has no simulation effect.
 
+Program Reputation is a pure cross-season read model owned by
+`src/dynasty/programReputation.ts`:
+
+```text
+completed Dynasty history + Program ID + optional completed-Season cutoff
+→ current or historical Reputation snapshot
+```
+
+It reuses canonical records, Conference standings, and Tournament outcomes and
+filters archives through the cutoff before deriving evidence, preventing future
+leakage. It reads no active competition, Prestige, ownership, or RNG; stores no
+mutable Reputation or duplicate history; requires no migration; and has no
+dependency back into Recruiting, simulation, Team Strength, Development,
+Tournament selection/seeding, or lifecycle orchestration. Program Legacy owns
+what happened; Program Reputation interprets the recent completed era.
+
 Followed Recruits begins as separate application intent. Zustand
 stores a duplicate-free, first-followed ordered list of stable Recruit/future-
 Player IDs for the current Dynasty. The foundation resolves those IDs only

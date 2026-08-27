@@ -509,8 +509,9 @@ League
 │   └── Former Players / unavailable IDs
 ├── Team Details
 │   ├── record
-│   ├── OFF / DEF / OVR
+│   ├── Prestige / Reputation and OFF / DEF / OVR
 │   ├── Overview
+│   │   ├── Recent Era Reputation summary
 │   │   ├── Team averages
 │   │   ├── recent results
 │   │   ├── Team leaders
@@ -551,6 +552,16 @@ analytics, Program Records, or trophy-room destination. When a Program has never
 qualified, Best Tournament Finish reads `No Tournament Appearances`; individual
 missed Seasons retain canonical `Did Not Qualify`. `National Champion` alone
 receives restrained accent-color and weight emphasis.
+
+Program Reputation is restrained Team Details context. The header groups
+labeled Prestige and Reputation metadata while keeping both separate from
+OFF/DEF/OVR. Overview places a compact single-column Recent Era summary before
+Team Averages with tier/trend and up to three factual lines; Unestablished uses
+quieter guidance and no raw score appears. Program History nests each historical
+tier/trend inside the existing Season cell rather than adding a seventh column.
+Metadata wraps cleanly, trend meaning does not rely on an arrow alone, and
+desktop plus approximately 390px layouts preserve the trajectory without body
+overflow. Incidental spacing and CSS values are not frozen contracts.
 
 Around the Country is a compact vertical feed grouped by newest fully completed
 round. Each story has a restrained type label, linked entity headline, and one

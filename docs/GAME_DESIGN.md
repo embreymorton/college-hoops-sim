@@ -496,7 +496,23 @@ Offseason V0 is a focused review/turnover phase, not a decision-heavy system: th
 
 Every new roster receives a fresh generated default Rotation, including the controlled Program. Prior user/AI minute distributions are not carried between seasons. Rotation preference carryover is future depth.
 
-`Team.prestige` remains fixed through rollover. Championships, losing seasons, and Recruiting classes do not modify it in V0; dynamic prestige is deferred.
+`Team.prestige` remains fixed through rollover. Championships, losing seasons,
+and Recruiting classes do not modify it. Dynamic Prestige was rejected and
+rolled back; static Prestige remains production truth.
+
+Program Reputation is a separate accepted read-only meaning:
+
+```text
+Prestige           = enduring institutional stature (static)
+Program Reputation = recent earned competitive standing
+Team Strength      = quality of the current roster
+```
+
+Reputation is not Dynamic Prestige and never mutates Prestige. Before any
+completed Season it is Unestablished; afterward the player sees a tier and
+meaningful trend rather than the internal score. Up to three deterministic
+recent-era facts explain it. Reputation recognizes success but does not create
+success, alter Recruiting, or compensate for low Prestige.
 
 Each Season receives a fresh deterministic Schedule under the accepted 24-game format: 14 Conference and 10 non-Conference games across 24 rounds, split 12 home and 12 away. The new Season begins with zero results and default Rotations, while the prior Season remains historical.
 

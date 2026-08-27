@@ -23,8 +23,8 @@ but worth monitoring.
 
 ## Current Playtesting Priorities
 
-Roadmap has selected **Program Reputation V1 as NEXT / not implemented**. This
-evidence file supports that milestone but does not own or change its sequence.
+Roadmap is at an **Open Planning Checkpoint with no NEXT selected**. Program
+Reputation V1 is accepted/frozen; this evidence file selects no successor.
 
 1. Continue normal multi-Season play and observe whether the accepted attachment
    loop—Recruit decisions, News, Following, Player careers, Alumni, Records,
@@ -62,18 +62,20 @@ career production, Program History/Records add context, and Yearbooks preserve
 completed Seasons. Continue observing this compound loop rather than treating
 each surface as an isolated feature.
 
-### Program Reputation focused diagnostic — future design evidence
+### Program Reputation V1 — accepted diagnostic and manual evidence
 
-A production-faithful, non-feedback diagnostic evaluated a future derived
-Program Reputation candidate across 12 deterministic 25-Season Dynasties, 32
-Programs, and 9,600 Program-season observations. The raw recent-era derivation
-behaved intuitively; the initial player-facing bands were too high, and a
-tier-only recalibration produced differentiated mature distributions plus the
-intended rocket-rise, Cinderella/validation, sustained-power, and gradual-decline
-pressure cases. This now supports the selected implementation baseline, but the
-feature remains unimplemented and unaccepted. Candidate math, tier observations,
-architectural direction, and V1 boundaries are preserved in
-[FUTURE_FEATURES.md](FUTURE_FEATURES.md#program-reputation--distinct-future-reframing).
+A production-faithful, non-feedback diagnostic covered 12 deterministic
+25-Season Dynasties, 32 Programs, 9,600 Program-season observations, and 384
+observations per mature checkpoint. Season 25 observed `38.8% Low`, `33.6%
+Regional`, `14.3% Emerging`, `12.0% National`, `1.0% National Power`, and
+`0.3% Elite`; trends were `16.8% Rising`, `66.6% Steady`, and `16.6% Falling`.
+These are validation observations, not quotas or future balancing targets.
+
+The user manually simulated approximately ten Seasons and noticed many Programs
+from Low through Emerging. A second simulation surfaced National Power Programs;
+the user then explicitly kept the ranges unchanged and accepted V1. The bottom-
+heavy impression is accepted context, not a current defect or recalibration
+request; reopening the frozen ranges requires genuinely new evidence.
 
 Only one production Program had Prestige below 40, and none of its 12 paths
 reached Emerging Reputation. Reputation derivation recognizes earned success;
@@ -83,6 +85,22 @@ Prestige-relative or underdog bonuses and not permission to reopen static
 Prestige.
 
 ## Latest Accepted Milestone Evidence
+
+### Program Reputation V1 — ACCEPTED / FROZEN
+
+Acceptance covered 70 focused implementation tests and a full serial regression
+of 139 files / 1,440 tests, plus ESLint, TypeScript, production build, diff
+hygiene, and the production-backed diagnostic. Frontend polish passed 69 focused
+Team Details/Reputation UI tests, desktop and 390×844 browser checks, and no body
+overflow at 390px; Established and Unestablished states were verified. Unrelated
+parallel-suite timeout sensitivity remains the existing infrastructure WATCH.
+
+Pressure cases behaved as intended: rocket growth reached `Emerging → National
+→ Elite`; extreme dominance reached `National Power → Elite`; Cinderella
+validation and a traditional contender reached National Power; and established
+Elite decline moved `Elite → Elite → National → Regional`. Sustained `22–2`,
+first-place, Round-of-16 eras can establish National Power while Elite remains
+scarce and tied to sustained top-end results.
 
 ### Recruiting Market Visibility V1 — ACCEPTED / FROZEN
 
