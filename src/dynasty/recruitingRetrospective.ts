@@ -38,14 +38,14 @@ export interface RecruitingRetrospectiveRow {
 export interface RecruitingClassRetrospective {
   readonly targetSeasonNumber: number
   readonly signeeCount: number
-  readonly controlledProgramSigneeCount: number
+  readonly perspectiveProgramSigneeCount: number
   readonly rows: readonly RecruitingRetrospectiveRow[]
 }
 
 export interface RecruitingClassIndexEntry {
   readonly targetSeasonNumber: number
   readonly signeeCount: number
-  readonly controlledProgramSigneeCount: number
+  readonly perspectiveProgramSigneeCount: number
 }
 
 interface RosterSnapshot {
@@ -157,6 +157,7 @@ function findCompletedClass(dynasty: DynastyState, targetSeasonNumber: number) {
 export function deriveRecruitingClassRetrospective(
   dynasty: DynastyState,
   targetSeasonNumber: number,
+  perspectiveProgramId: string | null,
 ): RecruitingClassRetrospective {
   const completedClass = findCompletedClass(dynasty, targetSeasonNumber)
   const recruiting = completedClass.recruitingState
@@ -202,8 +203,8 @@ export function deriveRecruitingClassRetrospective(
   return {
     targetSeasonNumber,
     signeeCount: rows.length,
-    controlledProgramSigneeCount: rows.filter(
-      ({ signedProgramId }) => signedProgramId === dynasty.controlledProgramId,
+    perspectiveProgramSigneeCount: rows.filter(
+      ({ signedProgramId }) => signedProgramId === perspectiveProgramId,
     ).length,
     rows,
   }
@@ -212,6 +213,7 @@ export function deriveRecruitingClassRetrospective(
 /** Lists finalized national signing classes newest first, independent of archive order. */
 export function deriveRecruitingClassIndex(
   dynasty: DynastyState,
+  perspectiveProgramId: string | null,
 ): readonly RecruitingClassIndexEntry[] {
   const seen = new Set<number>()
   return [...dynasty.completedRecruitingHistory]
@@ -229,8 +231,8 @@ export function deriveRecruitingClassIndex(
       return {
         targetSeasonNumber,
         signeeCount: commitments.length,
-        controlledProgramSigneeCount: commitments.filter(
-          ({ programId }) => programId === dynasty.controlledProgramId,
+        perspectiveProgramSigneeCount: commitments.filter(
+          ({ programId }) => programId === perspectiveProgramId,
         ).length,
       }
     })

@@ -24,13 +24,20 @@ function installHistoryFixture(): {
   activePlayer: Player
   formerPlayer: Player
   incomingPlayer: Player
+  perspectiveProgramId: string
+  perspectiveProgramName: string
 } {
   const dynasty = useDynastyStore.getState().dynasty!
   const controlledTeam = dynasty.activeSeason!.programStates[CONTROLLED_PROGRAM_ID]!.team
   const otherProgramId = dynasty.universe.programs.find(({ id }) => id !== CONTROLLED_PROGRAM_ID)!.id
   const otherTeam = dynasty.activeSeason!.programStates[otherProgramId]!.team
+  const perspectiveProgram = dynasty.universe.programs.find(
+    ({ id }) => id !== CONTROLLED_PROGRAM_ID && id !== otherProgramId,
+  )!
+  const perspectiveTeam = dynasty.activeSeason!.programStates[perspectiveProgram.id]!.team
   const activePlayer = controlledTeam.roster[0]!
   const formerPlayer = otherTeam.roster[0]!
+  const perspectivePlayers = perspectiveTeam.roster.slice(0, 2)
   const incomingPlayer = dynasty.recruiting!.recruits[0]!.player
   const archivedSeason = structuredClone(dynasty.activeSeason!)
   const activeSeason = {
@@ -50,6 +57,8 @@ function installHistoryFixture(): {
   const enrolledRecruits = [
     recruitFromPlayer(activePlayer, 1),
     recruitFromPlayer(formerPlayer, 2),
+    recruitFromPlayer(perspectivePlayers[0]!, 3),
+    recruitFromPlayer(perspectivePlayers[1]!, 4),
   ]
   const enrolledClass: CompletedRecruitingClass = {
     targetSeasonNumber: 1,
@@ -74,6 +83,12 @@ function installHistoryFixture(): {
           timing: { kind: 'late' },
           targetSeasonNumber: 1,
         },
+        ...Object.fromEntries(perspectivePlayers.map((player) => [player.id, {
+          playerId: player.id,
+          programId: perspectiveProgram.id,
+          timing: { kind: 'late' as const },
+          targetSeasonNumber: 1,
+        }])),
       },
     },
   }
@@ -112,7 +127,13 @@ function installHistoryFixture(): {
   useDynastyStore.getState().goToLeague()
   useDynastyStore.getState().setLeagueTab('history')
   useDynastyStore.getState().setHistoryTab('recruiting')
-  return { activePlayer, formerPlayer, incomingPlayer }
+  return {
+    activePlayer,
+    formerPlayer,
+    incomingPlayer,
+    perspectiveProgramId: perspectiveProgram.id,
+    perspectiveProgramName: perspectiveProgram.name,
+  }
 }
 
 beforeEach(() => {
@@ -124,6 +145,38 @@ beforeEach(() => {
 })
 
 describe('Recruiting History presentation and navigation', () => {
+  it('uses the transient Viewed Program as Observer retrospective perspective', () => {
+    const { perspectiveProgramId, perspectiveProgramName } = installHistoryFixture()
+    const coachDynasty = useDynastyStore.getState().dynasty!
+    useDynastyStore.setState({
+      dynasty: { ...coachDynasty, controlledProgramId: null },
+      viewedProgramId: CONTROLLED_PROGRAM_ID,
+    })
+    const canonicalBefore = JSON.stringify(useDynastyStore.getState().dynasty)
+    render(<App />)
+
+    const seasonOneCard = screen.getByRole('button', {
+      name: /Season 1 Recruiting Class/,
+    })
+    expect(seasonOneCard).toHaveTextContent('Charlotte Tech: 1')
+    expect(screen.queryByText(/Your Program/)).not.toBeInTheDocument()
+
+    fireEvent.change(screen.getByLabelText('Viewed Program'), {
+      target: { value: perspectiveProgramId },
+    })
+
+    expect(screen.getByRole('button', { name: /Season 1 Recruiting Class/ }))
+      .toHaveTextContent(`${perspectiveProgramName}: 2`)
+    fireEvent.click(screen.getByRole('button', { name: /Season 1 Recruiting Class/ }))
+    expect(screen.getByText(`4 signees · ${perspectiveProgramName}: 2`)).toBeInTheDocument()
+    fireEvent.click(screen.getByRole('button', { name: perspectiveProgramName }))
+    expect(within(screen.getByRole('table', { name: /Season 1 national recruiting class/i }))
+      .getAllByRole('row')).toHaveLength(3)
+    expect(useDynastyStore.getState().dynasty?.controlledProgramId).toBeNull()
+    expect(JSON.stringify(useDynastyStore.getState().dynasty)).toBe(canonicalBefore)
+    expect(screen.queryByText(/Your Program/)).not.toBeInTheDocument()
+  })
+
   it('lists finalized classes newest first and shows only lean class metadata', () => {
     installHistoryFixture()
     render(<App />)

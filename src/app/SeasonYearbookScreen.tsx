@@ -297,6 +297,7 @@ export function SeasonYearbookScreen() {
   const runnerUp = yearbook.championship.runnerUp
   const titleGame = yearbook.championship.game
   const controlled = yearbook.controlledProgramSeason
+  const isObserver = dynasty.controlledProgramId === null
   const tournamentEntry = tournamentEntryLabel(controlled.tournamentOutcome)
   const accentByProgramId = new Map(
     dynasty.universe.programs.map((program) => [program.id, program.branding.primaryColor]),
@@ -341,7 +342,9 @@ export function SeasonYearbookScreen() {
       </header>
 
       <section className="section" aria-labelledby="your-season-heading">
-        <h2 id="your-season-heading" className="section-title">Your Season</h2>
+        <h2 id="your-season-heading" className="section-title">
+          {isObserver ? 'Viewed Program Season' : 'Your Season'}
+        </h2>
         <div className="yearbook-recap-card">
           <div className="yearbook-recap-card__summary">
             <p className="eyebrow-tag">{controlled.program.name}</p>
@@ -366,7 +369,7 @@ export function SeasonYearbookScreen() {
             {tournamentEntry && <p className="section-hint">{tournamentEntry}</p>}
           </div>
 
-          <div className="yearbook-recap-card__section" role="region" aria-label="Your Team Leaders">
+          <div className="yearbook-recap-card__section" role="region" aria-label={isObserver ? 'Program Team Leaders' : 'Your Team Leaders'}>
             <h3 className="section-subtitle">Team Leaders</h3>
             <div className="team-leaders">
               {LEADER_CATEGORIES.map(({ key, unit }) => {
@@ -397,7 +400,7 @@ export function SeasonYearbookScreen() {
           </div>
 
           {tournamentGames.length > 0 && (
-            <div className="yearbook-recap-card__section" role="region" aria-label="Your Tournament Run">
+            <div className="yearbook-recap-card__section" role="region" aria-label={isObserver ? 'Program Tournament Run' : 'Your Tournament Run'}>
               <h3 className="section-subtitle">Tournament Run</h3>
               <ul className="recent-results__list">
                 {tournamentGames.map((game) => {

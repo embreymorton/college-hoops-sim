@@ -40,7 +40,7 @@ export function ProgramSelectScreen() {
     <section className="section program-select" aria-labelledby="program-select-heading">
       <div className="section-heading">
         <h2 id="program-select-heading" className="section-title">
-          Choose Your Program
+          Start a Dynasty
         </h2>
         <p className="section-hint">
           Starts Season 1 of a 24-round regular season across four conferences.

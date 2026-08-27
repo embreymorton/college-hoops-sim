@@ -88,12 +88,34 @@ function fixture(): {
 }
 
 describe('Recruiting Class Retrospective projection', () => {
+  it('derives Program metrics from the explicit presentation perspective', () => {
+    const { dynasty, commitments } = fixture()
+    const controlledProgramId = dynasty.controlledProgramId!
+    const otherProgramId = commitments.find(
+      ({ programId }) => programId !== controlledProgramId,
+    )!.programId
+
+    const controlled = deriveRecruitingClassRetrospective(dynasty, 2, controlledProgramId)
+    const other = deriveRecruitingClassRetrospective(dynasty, 2, otherProgramId)
+
+    expect(controlled.perspectiveProgramSigneeCount).toBe(2)
+    expect(other.perspectiveProgramSigneeCount).toBe(1)
+    expect({ ...controlled, perspectiveProgramSigneeCount: 0 }).toEqual({
+      ...other,
+      perspectiveProgramSigneeCount: 0,
+    })
+    expect(deriveRecruitingClassIndex(dynasty, controlledProgramId)[0]!
+      .perspectiveProgramSigneeCount).toBe(2)
+    expect(deriveRecruitingClassIndex(dynasty, otherProgramId)[0]!
+      .perspectiveProgramSigneeCount).toBe(1)
+  })
+
   it('includes only signees and preserves archived Recruit-time facts', () => {
     const { dynasty, recruits } = fixture()
-    const projection = deriveRecruitingClassRetrospective(dynasty, 2)
+    const projection = deriveRecruitingClassRetrospective(dynasty, 2, dynasty.controlledProgramId)
 
     expect(projection.signeeCount).toBe(3)
-    expect(projection.controlledProgramSigneeCount).toBe(2)
+    expect(projection.perspectiveProgramSigneeCount).toBe(2)
     expect(projection.rows.some(({ playerId }) => playerId === recruits[3]!.player.id)).toBe(false)
     expect(projection.rows.map(({ nationalRank, playerId }) => [nationalRank, playerId])).toEqual([
       [1, recruits[1]!.player.id],
@@ -146,11 +168,13 @@ describe('Recruiting Class Retrospective projection', () => {
     expect(deriveRecruitingClassRetrospective({
       ...dynasty,
       completedRecruitingHistory: [reversedClass],
-    }, 2)).toEqual(deriveRecruitingClassRetrospective(dynasty, 2))
+    }, 2, dynasty.controlledProgramId)).toEqual(
+      deriveRecruitingClassRetrospective(dynasty, 2, dynasty.controlledProgramId),
+    )
     expect(deriveRecruitingClassIndex({
       ...dynasty,
       completedRecruitingHistory: [completedClass, seasonThree],
-    }).map(({ targetSeasonNumber }) => targetSeasonNumber)).toEqual([3, 2])
+    }, dynasty.controlledProgramId).map(({ targetSeasonNumber }) => targetSeasonNumber)).toEqual([3, 2])
   })
 
   it('derives active and former outcomes with current and peak OVR', () => {
@@ -179,7 +203,7 @@ describe('Recruiting Class Retrospective projection', () => {
         { seasonNumber: 4, season: seasonFour, postseason: {} as PostseasonState, awards: { rulesVersion: 'awards-v1' as const, honors: [] } },
       ],
     }
-    const projection = deriveRecruitingClassRetrospective(resolved, 2)
+    const projection = deriveRecruitingClassRetrospective(resolved, 2, dynasty.controlledProgramId)
 
     expect(projection.rows.find(({ playerId }) => playerId === activeRecruit.player.id)!.outcome)
       .toEqual({
@@ -202,7 +226,7 @@ describe('Recruiting Class Retrospective projection', () => {
     const missing = deriveRecruitingClassRetrospective({
       ...dynasty,
       activeSeason: { ...dynasty.activeSeason!, seasonNumber: 2 },
-    }, 2)
+    }, 2, dynasty.controlledProgramId)
     expect(missing.rows.every(({ outcome }) =>
       outcome.kind === 'unavailable' && outcome.reason === 'missing-player',
     )).toBe(true)
@@ -216,7 +240,9 @@ describe('Recruiting Class Retrospective projection', () => {
     const mismatch = deriveRecruitingClassRetrospective({
       ...dynasty,
       activeSeason: mismatchedSeason,
-    }, 2).rows.find(({ playerId }) => playerId === commitments[0]!.playerId)!
+    }, 2, dynasty.controlledProgramId).rows.find(
+      ({ playerId }) => playerId === commitments[0]!.playerId,
+    )!
     expect(mismatch.outcome).toEqual({ kind: 'unavailable', reason: 'destination-mismatch' })
   })
 })

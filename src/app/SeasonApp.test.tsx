@@ -93,14 +93,14 @@ describe('Season Presentation', () => {
     const dynasty = useDynastyStore.getState().dynasty!
     useDynastyStore.setState({ dynasty: { ...dynasty, controlledProgramId: null } })
     render(<App />)
-    expect(screen.queryByRole('heading', { name: 'Choose Your Program' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Start a Dynasty' })).not.toBeInTheDocument()
   })
 
   it('presents permanent Universe V0 program selection initially', () => {
     render(<App />)
 
     expect(
-      screen.getByRole('heading', { name: 'Choose Your Program' }),
+      screen.getByRole('heading', { name: 'Start a Dynasty' }),
     ).toBeInTheDocument()
     expect(screen.getByText('Great Lakes')).toBeInTheDocument()
     expect(screen.getAllByText(/Conference$/).length).toBeGreaterThan(0)

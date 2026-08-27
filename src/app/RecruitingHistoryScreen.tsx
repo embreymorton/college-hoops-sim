@@ -5,7 +5,7 @@ import {
   deriveRecruitingClassRetrospective,
   type RecruitingRetrospectiveRow,
 } from '../dynasty'
-import { useDynastyStore } from '../store'
+import { selectPresentationProgramId, useDynastyStore } from '../store'
 import type { ProgramDefinition } from '../universe'
 
 function formatOutcome(row: RecruitingRetrospectiveRow): string {
@@ -31,6 +31,7 @@ export function RecruitingHistoryScreen() {
   const filter = useDynastyStore((state) => state.recruitingHistoryFilter)
   const setFilter = useDynastyStore((state) => state.setRecruitingHistoryFilter)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
+  const perspectiveProgramId = useDynastyStore(selectPresentationProgramId)
 
   const programsById = useMemo(
     () => new Map(
@@ -40,17 +41,24 @@ export function RecruitingHistoryScreen() {
   ) as ReadonlyMap<string, ProgramDefinition>
 
   const classIndex = useMemo(
-    () => dynasty ? deriveRecruitingClassIndex(dynasty) : [],
-    [dynasty],
+    () => dynasty ? deriveRecruitingClassIndex(dynasty, perspectiveProgramId) : [],
+    [dynasty, perspectiveProgramId],
   )
   const selectedClass = useMemo(
     () => dynasty && selectedSeasonNumber !== null
-      ? deriveRecruitingClassRetrospective(dynasty, selectedSeasonNumber)
+      ? deriveRecruitingClassRetrospective(dynasty, selectedSeasonNumber, perspectiveProgramId)
       : null,
-    [dynasty, selectedSeasonNumber],
+    [dynasty, perspectiveProgramId, selectedSeasonNumber],
   )
 
   if (!dynasty) return null
+  const isObserver = dynasty.controlledProgramId === null
+  const perspectiveProgramName = dynasty.universe.programs.find(
+    ({ id }) => id === perspectiveProgramId,
+  )?.name
+  const perspectiveLabel = isObserver
+    ? perspectiveProgramName ?? 'Viewed Program'
+    : 'Your Program'
 
   if (!selectedClass) {
     return (
@@ -84,7 +92,7 @@ export function RecruitingHistoryScreen() {
                   {entry.signeeCount} signees
                 </span>
                 <span className="history-season-card__detail">
-                  Your Program: {entry.controlledProgramSigneeCount}
+                  {perspectiveLabel}: {entry.perspectiveProgramSigneeCount}
                 </span>
               </button>
             ))}
@@ -97,7 +105,7 @@ export function RecruitingHistoryScreen() {
   const rows = filter === 'all'
     ? selectedClass.rows
     : selectedClass.rows.filter(
-      ({ signedProgramId }) => signedProgramId === dynasty.controlledProgramId,
+      ({ signedProgramId }) => signedProgramId === perspectiveProgramId,
     )
 
   return (
@@ -116,7 +124,7 @@ export function RecruitingHistoryScreen() {
             Season {selectedClass.targetSeasonNumber} Recruiting Class
           </h2>
           <p className="section-hint">
-            {selectedClass.signeeCount} signees · Your Program: {selectedClass.controlledProgramSigneeCount}
+            {selectedClass.signeeCount} signees · {perspectiveLabel}: {selectedClass.perspectiveProgramSigneeCount}
           </p>
         </div>
         <div role="group" aria-label="Recruiting class scope" className="tab-list">
@@ -134,7 +142,7 @@ export function RecruitingHistoryScreen() {
             aria-pressed={filter === 'controlled'}
             onClick={() => setFilter('controlled')}
           >
-            Your Program
+            {isObserver ? perspectiveProgramName ?? 'Viewed Program' : 'Your Program'}
           </button>
         </div>
       </header>

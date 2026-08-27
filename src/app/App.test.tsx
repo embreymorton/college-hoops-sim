@@ -16,7 +16,7 @@ describe('App', () => {
     render(<App />)
 
     expect(
-      screen.getByRole('heading', { name: 'Choose Your Program' }),
+      screen.getByRole('heading', { name: 'Start a Dynasty' }),
     ).toBeInTheDocument()
     expect(
       screen.getByRole('heading', { name: 'College Hoops' }),
@@ -35,7 +35,7 @@ describe('App', () => {
     fireEvent.click(screen.getByRole('button', { name: /back to season/i }))
 
     expect(
-      screen.getByRole('heading', { name: 'Choose Your Program' }),
+      screen.getByRole('heading', { name: 'Start a Dynasty' }),
     ).toBeInTheDocument()
   })
 })
