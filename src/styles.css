@@ -1115,7 +1115,7 @@ p {
   overflow-x: auto;
 }
 
-.league-history { display: grid; gap: var(--space-4); }
+.league-history { display: grid; gap: var(--space-4); min-width: 0; }
 .history-tab-list { justify-self: start; max-width: 100%; overflow-x: auto; }
 .records-screen { display: grid; gap: var(--space-4); min-width: 0; }
 
@@ -1184,6 +1184,7 @@ p {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 .history-subsection-header {
@@ -1195,7 +1196,7 @@ p {
 
 .recruiting-history__back { align-self: flex-start; }
 .recruiting-history-card { grid-template-columns: minmax(13rem, 1.4fr) minmax(8rem, 0.8fr) minmax(9rem, 0.8fr); }
-.recruiting-history__table-scroll { max-width: 100%; }
+.recruiting-history__table-scroll { width: 100%; min-width: 0; max-width: 100%; }
 .recruiting-history-table { min-width: 38rem; }
 .recruiting-history-table th:first-child,
 .recruiting-history-table td:first-child { text-align: left; }

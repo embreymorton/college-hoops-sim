@@ -372,6 +372,25 @@ describe('Recruiting finalization', () => {
     expect(useDynastyStore.getState().dynasty).toBe(beforeFinalize)
   })
 
+  it('finalizes directly without an irrelevant confirmation in Observer Mode', () => {
+    const boundary = championshipBoundary()
+    const viewedProgramId = boundary.controlledProgramId!
+    useDynastyStore.setState({
+      dynasty: { ...boundary, controlledProgramId: null },
+      viewedProgramId,
+      view: 'postseasonHub',
+    })
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Begin Offseason' }))
+
+    fireEvent.click(screen.getByRole('button', { name: 'Finalize Recruiting Class' }))
+
+    expect(screen.queryByRole('heading', { name: 'Finalize Recruiting Class?' }))
+      .not.toBeInTheDocument()
+    expect(useDynastyStore.getState().dynasty!.recruiting!.phase).toBe('finalized')
+    expect(screen.getByRole('heading', { name: 'Recruiting Class' })).toBeInTheDocument()
+  })
+
   it('confirming invokes finalization and shows the class summary without starting Offseason', () => {
     enterLateRecruiting()
 

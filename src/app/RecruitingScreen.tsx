@@ -171,6 +171,13 @@ export function RecruitingScreen({
   }
 
   const hasRemainingOpenings = totals.remainingTotal > 0
+  const requestClassFinalization = () => {
+    if (isObserver) {
+      finalizeRecruitingClass()
+    } else {
+      setIsFinalizeDialogOpen(true)
+    }
+  }
 
   return (
     <div className="recruiting-screen">
@@ -226,7 +233,7 @@ export function RecruitingScreen({
           <button
             type="button"
             className="button button--primary late-recruiting-banner__action"
-            onClick={() => setIsFinalizeDialogOpen(true)}
+            onClick={requestClassFinalization}
           >
             Finalize Recruiting Class
           </button>

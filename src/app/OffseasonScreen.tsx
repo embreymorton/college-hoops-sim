@@ -72,7 +72,11 @@ export function OffseasonScreen() {
     const action = experience.progressionAction
     switch (action.kind) {
       case 'finalize-recruiting-class':
-        setIsFinalizeDialogOpen(true)
+        if (isObserver) {
+          finalizeRecruitingClass()
+        } else {
+          setIsFinalizeDialogOpen(true)
+        }
         break
       case 'begin-dynasty-offseason':
         beginDynastyOffseason()
