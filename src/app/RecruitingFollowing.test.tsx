@@ -111,7 +111,7 @@ describe('Recruiting — Following', () => {
     const dynasty = seedRecruiting('recruit-following:rows')
     const recruiting = dynasty.recruiting!
     const boardIds = new Set(
-      recruiting.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId),
+      recruiting.programs[dynasty.controlledProgramId!]!.board.map(({ playerId }) => playerId),
     )
     const offBoard = recruiting.recruits.find(({ player }) => !boardIds.has(player.id))!
     const onBoard = recruiting.recruits.find(({ player }) => boardIds.has(player.id))!
@@ -146,8 +146,8 @@ describe('Recruiting — Following', () => {
       const dynasty = seedRecruiting(`recruit-following:commit:${destination}`)
       const playerId = dynasty.recruiting!.recruits[0]!.player.id
       const programId = destination === 'controlled'
-        ? dynasty.controlledProgramId
-        : UNIVERSE_V0.programs.find(({ id }) => id !== dynasty.controlledProgramId)!.id
+        ? dynasty.controlledProgramId!
+        : UNIVERSE_V0.programs.find(({ id }) => id !== dynasty.controlledProgramId!)!.id
       useDynastyStore.getState().followRecruit(playerId)
       useDynastyStore.setState({ dynasty: withCommitment(dynasty, playerId, programId) })
       render(<App />)

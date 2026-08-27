@@ -41,7 +41,7 @@ describe('Coaching Rotation — Simple / Advanced', () => {
 
     const controlledTeam =
       useDynastyStore.getState().dynasty!.activeSeason!.programStates[
-        useDynastyStore.getState().dynasty!.controlledProgramId
+        useDynastyStore.getState().dynasty!.controlledProgramId!
       ]!.team
     const simpleMinutes = useDynastyStore.getState().coachingSimpleMinutesByPlayerId!
 
@@ -68,7 +68,7 @@ describe('Coaching Rotation — Simple / Advanced', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: 'Rotation' }))
 
-    const controlledProgramId = useDynastyStore.getState().dynasty!.controlledProgramId
+    const controlledProgramId = useDynastyStore.getState().dynasty!.controlledProgramId!
     const before = useDynastyStore.getState().dynasty!.activeSeason!.programStates[
       controlledProgramId
     ]!.rotation
@@ -146,7 +146,7 @@ describe('Coaching Rotation — Simple / Advanced', () => {
     const player = useDynastyStore
       .getState()
       .dynasty!.activeSeason!.programStates[
-        useDynastyStore.getState().dynasty!.controlledProgramId
+        useDynastyStore.getState().dynasty!.controlledProgramId!
       ]!.team.roster.find((candidate) => candidate.id === activeId)!
     const label = `${player.firstName} ${player.lastName}`
 

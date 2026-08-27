@@ -27,13 +27,13 @@ describe('Recruiting market visibility', () => {
   it('conceals the external P0 market without changing the controlled Offer fact', () => {
     const dynasty = initialized()
     const recruiting = dynasty.recruiting!
-    const controlled = recruiting.programs[dynasty.controlledProgramId]!
+    const controlled = recruiting.programs[dynasty.controlledProgramId!]!
     const offered = controlled.board.find(({ hasActiveOffer }) => hasActiveOffer)
       ?? Object.values(recruiting.programs).flatMap(({ board }) => board).find(({ hasActiveOffer }) => hasActiveOffer)!
     const programId = controlled.board.some(({ playerId }) => playerId === offered.playerId)
-      ? dynasty.controlledProgramId
+      ? dynasty.controlledProgramId!
       : Object.values(recruiting.programs).find(({ board }) => board.some(({ playerId }) => playerId === offered.playerId && offered.hasActiveOffer))!.programId
-    const withControlledOffer = programId === dynasty.controlledProgramId ? dynasty : {
+    const withControlledOffer = programId === dynasty.controlledProgramId! ? dynasty : {
       ...dynasty,
       controlledProgramId: programId,
     }
@@ -65,7 +65,7 @@ describe('Recruiting Pulse', () => {
 
   it('ranks a controlled commitment first and suppresses obsolete movement', () => {
     const dynasty = withPopulatedControlled(initialized('pulse-commitment'))
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const target = program.board[0]!
     const baseline = deriveRecruitingPulseSnapshot(dynasty)!
     const committed = {
@@ -76,7 +76,7 @@ describe('Recruiting Pulse', () => {
         commitmentsByPlayerId: {
           [target.playerId]: {
             playerId: target.playerId,
-            programId: dynasty.controlledProgramId,
+            programId: dynasty.controlledProgramId!,
             timing: { kind: 'period' as const, period: 1 },
             targetSeasonNumber: dynasty.recruiting!.targetSeasonNumber,
           },
@@ -107,16 +107,16 @@ describe('Recruiting Pulse', () => {
     const dynasty = withPopulatedControlled(initialized('pulse-material'))
     const revealed = { ...dynasty, recruiting: { ...dynasty.recruiting!, lastResolvedPeriod: 1 } }
     const followedId = revealed.recruiting!.recruits.find(({ player }) =>
-      !revealed.recruiting!.programs[revealed.controlledProgramId]!.board.some(({ playerId }) => playerId === player.id))!.player.id
+      !revealed.recruiting!.programs[revealed.controlledProgramId!]!.board.some(({ playerId }) => playerId === player.id))!.player.id
     const snapshot = deriveRecruitingPulseSnapshot(revealed, [followedId])!
     expect(snapshot.recruits.some(({ playerId }) => playerId === followedId)).toBe(true)
-    const offered = snapshot.recruits.find(({ activeOfferProgramIds }) => activeOfferProgramIds.some((id) => id !== revealed.controlledProgramId))
+    const offered = snapshot.recruits.find(({ activeOfferProgramIds }) => activeOfferProgramIds.some((id) => id !== revealed.controlledProgramId!))
     expect(offered).toBeDefined()
     const baseline: RecruitingPulseSnapshot = {
       ...snapshot,
       recruits: snapshot.recruits.map((row) => row.playerId === offered!.playerId ? {
         ...row,
-        activeOfferProgramIds: row.activeOfferProgramIds.filter((id) => id === revealed.controlledProgramId),
+        activeOfferProgramIds: row.activeOfferProgramIds.filter((id) => id === revealed.controlledProgramId!),
         marketTier: row.marketTier === 'open' ? 'active' : 'open',
       } : row),
     }

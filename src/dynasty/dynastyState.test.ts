@@ -87,6 +87,30 @@ beforeAll(() => {
 })
 
 describe('Dynasty offseason transition', () => {
+  it('accepts null control without confusing it with a missing Dynasty', () => {
+    const observer = initializeDynastyState({
+      dynastyId: 'observer-dynasty',
+      dynastySeed: 'observer-seed',
+      controlledProgramId: null,
+      universe: UNIVERSE_V0,
+      activeSeason: initialSeason,
+    })
+    expect(observer).toBeDefined()
+    expect(observer.controlledProgramId).toBeNull()
+    expect(observer.activeSeason).toBe(initialSeason)
+  })
+
+  it('still validates non-null controlled Program IDs', () => {
+    expect(dynasty().controlledProgramId).toBe(UNIVERSE_V0.programs[0]!.id)
+    expect(() => initializeDynastyState({
+      dynastyId: 'invalid-control',
+      dynastySeed: 'invalid-control-seed',
+      controlledProgramId: 'not-a-program',
+      universe: UNIVERSE_V0,
+      activeSeason: initialSeason,
+    })).toThrow(/Unknown controlled Program/)
+  })
+
   it('requires the regular season, Tournament, and National Champion', () => {
     expect(() => beginOffseason(dynasty(initialSeason, null))).toThrow(/regular season/)
     expect(() => beginOffseason(dynasty(completeSeason, initialPostseason))).toThrow(/Tournament/)

@@ -88,6 +88,14 @@ function getCellByColumn(row: HTMLTableRowElement, columnName: string) {
 }
 
 describe('Season Presentation', () => {
+  it('does not treat an existing no-control Dynasty as missing', () => {
+    useDynastyStore.getState().selectProgram('charlotte-tech', 'observer-shell')
+    const dynasty = useDynastyStore.getState().dynasty!
+    useDynastyStore.setState({ dynasty: { ...dynasty, controlledProgramId: null } })
+    render(<App />)
+    expect(screen.queryByRole('heading', { name: 'Choose Your Program' })).not.toBeInTheDocument()
+  })
+
   it('presents permanent Universe V0 program selection initially', () => {
     render(<App />)
 
@@ -96,6 +104,18 @@ describe('Season Presentation', () => {
     ).toBeInTheDocument()
     expect(screen.getByText('Great Lakes')).toBeInTheDocument()
     expect(screen.getAllByText(/Conference$/).length).toBeGreaterThan(0)
+  })
+
+  it('creates an Observer Dynasty from the dedicated creation action', () => {
+    render(<App />)
+    fireEvent.click(screen.getByRole('button', { name: 'Start Observer Dynasty' }))
+
+    const state = useDynastyStore.getState()
+    expect(state.dynasty?.controlledProgramId).toBeNull()
+    expect(screen.getByLabelText('Viewed Program')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Sim Round' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Game Prep' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Coaching' })).not.toBeInTheDocument()
   })
 
   it('shows the Season Hub with 0-0 records and Round 1 after selecting a Program', () => {
@@ -1060,7 +1080,7 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
 
     const dynasty = useDynastyStore.getState().dynasty!
     const recruiting = dynasty.recruiting!
-    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId!]!.board
     const target = controlledBoard.find((candidate) => candidate.isFocused)!
     const committedPlayer = getRecruit(recruiting, target.playerId)!.player
     const recruitName = `${committedPlayer.firstName} ${committedPlayer.lastName}`
@@ -1075,7 +1095,7 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
             commitmentsByPlayerId: {
               [target.playerId]: {
                 playerId: target.playerId,
-                programId: dynasty.controlledProgramId,
+                programId: dynasty.controlledProgramId!,
                 timing: { kind: 'period', period: 1 },
                 targetSeasonNumber: recruiting.targetSeasonNumber,
               },
@@ -1105,10 +1125,10 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
 
     const dynasty = useDynastyStore.getState().dynasty!
     const recruiting = dynasty.recruiting!
-    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId!]!.board
     const target = controlledBoard.find((candidate) => !candidate.isFocused)!
     const rivalProgramId = Object.keys(recruiting.programs).find(
-      (programId) => programId !== dynasty.controlledProgramId,
+      (programId) => programId !== dynasty.controlledProgramId!,
     )!
 
     act(() => {
@@ -1184,12 +1204,12 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
 
     const dynasty = useDynastyStore.getState().dynasty!
     const recruiting = dynasty.recruiting!
-    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId!]!.board
     // Deliberately not Focused, so this test isolates the commitment-activity
     // banner from the separate Focus-target standing badge.
     const target = controlledBoard.find((candidate) => !candidate.isFocused)!
     const rivalProgramId = Object.keys(recruiting.programs).find(
-      (programId) => programId !== dynasty.controlledProgramId,
+      (programId) => programId !== dynasty.controlledProgramId!,
     )!
 
     act(() => {
@@ -1229,10 +1249,10 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
 
     const dynasty = useDynastyStore.getState().dynasty!
     const recruiting = dynasty.recruiting!
-    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId!]!.board
     const target = controlledBoard.find((candidate) => !candidate.isFocused)!
     const rivalProgramId = Object.keys(recruiting.programs).find(
-      (programId) => programId !== dynasty.controlledProgramId,
+      (programId) => programId !== dynasty.controlledProgramId!,
     )!
     const recruit = getRecruit(recruiting, target.playerId)!.player
     const recruitName = `${recruit.firstName} ${recruit.lastName}`
@@ -1280,12 +1300,12 @@ describe('Recruiting Hub summary, Focus targets, and commitment activity present
 
     const dynasty = useDynastyStore.getState().dynasty!
     const recruiting = dynasty.recruiting!
-    const controlledBoard = recruiting.programs[dynasty.controlledProgramId]!.board
+    const controlledBoard = recruiting.programs[dynasty.controlledProgramId!]!.board
     // Deliberately not Focused, so this test isolates the commitment-activity
     // banner from the separate Focus-target standing badge.
     const target = controlledBoard.find((candidate) => !candidate.isFocused)!
     const rivalProgramId = Object.keys(recruiting.programs).find(
-      (programId) => programId !== dynasty.controlledProgramId,
+      (programId) => programId !== dynasty.controlledProgramId!,
     )!
 
     act(() => {

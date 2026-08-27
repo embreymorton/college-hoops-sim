@@ -171,7 +171,7 @@ describe('Program Reputation era and history semantics', () => {
     const malformedFuture = { ...structuredClone(source), seasonNumber: 3 }
     expect(deriveProgramReputation(
       { ...canonical, history: [first, malformedFuture] },
-      canonical.controlledProgramId,
+      canonical.controlledProgramId!,
       1,
     ).asOfCompletedSeasonNumber).toBe(1)
   })
@@ -199,7 +199,7 @@ describe('Program Reputation era and history semantics', () => {
     }))
     const trajectory = deriveProgramReputationTrajectory(
       { ...canonical, history },
-      canonical.controlledProgramId,
+      canonical.controlledProgramId!,
     )
     expect(trajectory.map((snapshot) => snapshot.asOfCompletedSeasonNumber)).toEqual([3, 2, 1])
     expect(trajectory.at(-1)!.trend).toBeNull()
@@ -207,15 +207,15 @@ describe('Program Reputation era and history semantics', () => {
 
   it('fails clearly for invalid cutoffs, unknown Programs, duplicate Seasons, and malformed archives', () => {
     expect(() => deriveProgramReputation(canonical, 'unknown')).toThrow(/Unknown Program/)
-    expect(() => deriveProgramReputation(canonical, canonical.controlledProgramId, -1)).toThrow(/cutoff/)
-    expect(() => deriveProgramReputation(canonical, canonical.controlledProgramId, 1.5)).toThrow(/cutoff/)
+    expect(() => deriveProgramReputation(canonical, canonical.controlledProgramId!, -1)).toThrow(/cutoff/)
+    expect(() => deriveProgramReputation(canonical, canonical.controlledProgramId!, 1.5)).toThrow(/cutoff/)
     expect(() => deriveProgramReputationFromSeasonEvidence('program', [evidence(1, 10), evidence(1, 11)]))
       .toThrow(/duplicate Season/)
     const sourceArchive = structuredClone(canonical.history[0]!)
     const archive = { ...sourceArchive, seasonNumber: sourceArchive.seasonNumber + 1 }
     expect(() => deriveProgramReputation(
       { ...canonical, history: [archive] },
-      canonical.controlledProgramId,
+      canonical.controlledProgramId!,
     )).toThrow(/number does not match/)
   })
 })

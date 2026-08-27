@@ -1,7 +1,7 @@
 import { BoxScorePanel, FinalScoreboard, PostgameMeaningSection } from '../components'
 import { derivePostgameMeaning } from '../dynasty'
 import { getPendingGamesForTournamentRound } from '../postseason'
-import { selectActivePostseason, useDynastyStore } from '../store'
+import { selectActivePostseason, selectPresentationProgramId, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import { formatOvertimeTag } from './formatters'
 import { formatSeedLabel, formatTournamentRoundName } from './postseasonFormatters'
@@ -35,13 +35,14 @@ export function TournamentPostgameScreen() {
   )
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
+  const perspectiveProgramId = useDynastyStore(selectPresentationProgramId)
 
   const isHistorical = view === 'postseasonGameHistory'
   const tournamentGameId = isHistorical
     ? viewedTournamentGameId
     : lastPlayedTournamentGameId
 
-  if (!dynasty || !postseason || !tournamentGameId) {
+  if (!dynasty || !postseason || !tournamentGameId || !perspectiveProgramId) {
     return null
   }
 
@@ -75,7 +76,7 @@ export function TournamentPostgameScreen() {
     dynasty,
     competition: 'tournament',
     gameId: tournamentGameId,
-    perspectiveProgramId: dynasty.controlledProgramId,
+    perspectiveProgramId,
     presentation: isHistorical ? 'historical' : 'live',
   })
 

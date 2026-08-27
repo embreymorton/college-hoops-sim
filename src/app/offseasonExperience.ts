@@ -134,6 +134,7 @@ function normalizeCursor(
 export function deriveOffseasonExperience(
   dynasty: DynastyState,
   cursor: OffseasonPresentationCursor | null,
+  perspectiveProgramId?: string,
 ): OffseasonExperienceView | null {
   const recruiting = dynasty.recruiting
   const activeSeasonNumber = dynasty.activeSeason?.seasonNumber
@@ -170,6 +171,8 @@ export function deriveOffseasonExperience(
       label: 'Continue to Departures',
     }
   } else if (dynasty.offseason) {
+    const controlledProgramId = perspectiveProgramId ?? dynasty.controlledProgramId
+    if (controlledProgramId === null) return null
     normalizedCursor = normalizeCursor(cursor, offseasonKey)
     canonicalStage = 'departures'
     furthestUnlockedStage = normalizedCursor.furthestStage
@@ -198,7 +201,7 @@ export function deriveOffseasonExperience(
     const completedClass = dynasty.completedRecruitingHistory.find(
       ({ targetSeasonNumber: seasonNumber }) => seasonNumber === targetSeasonNumber,
     )
-    const program = dynasty.offseason.programs[dynasty.controlledProgramId]
+    const program = dynasty.offseason.programs[controlledProgramId]
     if (archive && completedClass && program) {
       const assembly = assembleNextSeasonRosters({
         universe: dynasty.universe,
@@ -206,19 +209,19 @@ export function deriveOffseasonExperience(
         completedRecruitingClass: completedClass,
         completedSeasonArchive: archive,
       })
-      const roster = assembly.programs[dynasty.controlledProgramId]?.players ?? []
-      const archivedRoster = archive.postseason.programStates[dynasty.controlledProgramId]
-        ?.team.roster ?? archive.season.programStates[dynasty.controlledProgramId]?.team.roster ?? []
+      const roster = assembly.programs[controlledProgramId]?.players ?? []
+      const archivedRoster = archive.postseason.programStates[controlledProgramId]
+        ?.team.roster ?? archive.season.programStates[controlledProgramId]?.team.roster ?? []
       facts = {
         incomingCount: deriveIncomingClass(
           completedClass.recruitingState,
-          dynasty.controlledProgramId,
+          controlledProgramId,
         ).length,
         returningCount: program.returningPlayers.length,
         departureCount: archivedRoster.filter(({ classYear }) => classYear === 'SR').length,
         developedCount: deriveDevelopmentRows(
           archive,
-          dynasty.controlledProgramId,
+          controlledProgramId,
           program,
           dynasty.dynastySeed,
           dynasty.offseason.developmentExplosions,

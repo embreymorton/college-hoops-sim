@@ -61,7 +61,7 @@ describe('Followed Recruits foundation', () => {
 
   it('survives Recruiting updates and commitment without changing Player follows', () => {
     const dynasty = useDynastyStore.getState().dynasty!
-    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board[0]!.playerId
     useDynastyStore.getState().followRecruit(playerId)
     useDynastyStore.getState().setRecruitingFocus(playerId, true)
 
@@ -71,7 +71,7 @@ describe('Followed Recruits foundation', () => {
       dynasty: withCommitment(
         useDynastyStore.getState().dynasty!,
         playerId,
-        dynasty.controlledProgramId,
+        dynasty.controlledProgramId!,
       ),
     })
 

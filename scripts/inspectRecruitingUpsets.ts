@@ -133,7 +133,7 @@ function baseDynasty(trial: number, controlledProgramId: string): DynastyState {
 }
 
 function clearControlledBoard(dynasty: DynastyState): DynastyState {
-  const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+  const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
   return {
     ...dynasty,
     recruiting: {
@@ -176,7 +176,7 @@ function auditFocus(dynasty: DynastyState, audit: StructuralAudit): void {
 
 function targetCandidates(dynasty: DynastyState, tier: Tier): Recruit[] {
   const recruiting = dynasty.recruiting!
-  const program = recruiting.programs[dynasty.controlledProgramId]!
+  const program = recruiting.programs[dynasty.controlledProgramId!]!
   return recruiting.recruits.filter((recruit) =>
     tier.matches(recruit) && program.projectedOpeningsByPosition[recruit.player.position] > 0,
   ).sort((first, second) => first.nationalRank - second.nationalRank || first.player.id.localeCompare(second.player.id))
@@ -191,12 +191,12 @@ function attempt(base: DynastyState, tier: Tier, focused: boolean, audit: Struct
       auditFocus(configured, audit)
       const recruiting = configured.recruiting!
       const programs = Object.values(recruiting.programs).filter(({ programId, board }) =>
-        programId !== configured.controlledProgramId && board.some(({ playerId }) => playerId === recruit.player.id),
+        programId !== configured.controlledProgramId! && board.some(({ playerId }) => playerId === recruit.player.id),
       )
       const standings = deriveRecruitProgramStandings(configured, recruit.player.id)
-      const controlled = standings.find(({ programId }) => programId === configured.controlledProgramId)!
+      const controlled = standings.find(({ programId }) => programId === configured.controlledProgramId!)!
       const competitors = standings.filter(({ programId }) => programs.some((program) => program.programId === programId))
-      const team = configured.activeSeason!.programStates[configured.controlledProgramId]!.team
+      const team = configured.activeSeason!.programStates[configured.controlledProgramId!]!.team
       const controlledAffinity = deriveBaseRecruitAttraction(configured, recruit, controlled.programId) -
         (20 + team.prestige * PRESTIGE_SENSITIVITY[recruit.stars])
       let final: DynastyState
@@ -208,7 +208,7 @@ function attempt(base: DynastyState, tier: Tier, focused: boolean, audit: Struct
       }
       auditFocus(final, audit)
       const commitment = final.recruiting!.commitmentsByPlayerId[recruit.player.id]
-      const signed = commitment?.programId === configured.controlledProgramId
+      const signed = commitment?.programId === configured.controlledProgramId!
       const timing = !commitment
         ? 'unsigned'
         : !signed

@@ -13,7 +13,7 @@ import {
   type RecruitDetailsView,
 } from '../dynasty'
 import type { Player } from '../engine'
-import { useDynastyStore } from '../store'
+import { selectPresentationProgramId, useDynastyStore } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
 import {
   deriveBattleGroups,
@@ -52,14 +52,19 @@ export function RecruitDetailsScreen() {
   const setRecruitingFocus = useDynastyStore((state) => state.setRecruitingFocus)
   const offerRecruitingTarget = useDynastyStore((state) => state.offerRecruitingTarget)
   const withdrawRecruitingOffer = useDynastyStore((state) => state.withdrawRecruitingOffer)
+  const presentationProgramId = useDynastyStore(selectPresentationProgramId)
+  const isObserver = dynasty?.controlledProgramId === null
+  const presentationDynasty = dynasty && presentationProgramId && isObserver
+    ? { ...dynasty, controlledProgramId: presentationProgramId }
+    : dynasty
 
   let details: RecruitDetailsView | null = null
   let invalidSelection = false
-  if (!dynasty || !playerId) {
+  if (!presentationDynasty || !playerId) {
     invalidSelection = true
   } else {
     try {
-      details = deriveRecruitDetailsView(dynasty, playerId)
+      details = deriveRecruitDetailsView(presentationDynasty, playerId)
     } catch (error) {
       if (!(error instanceof RangeError)) throw error
       invalidSelection = true
@@ -73,14 +78,16 @@ export function RecruitDetailsScreen() {
   if (!details || !dynasty) {
     return <p className="league-empty-state">Returning to Recruiting…</p>
   }
+  const controlledProgramId = presentationProgramId
+  if (controlledProgramId === null) return null
 
-  const controlledProgram = PROGRAMS_BY_ID.get(dynasty.controlledProgramId)
+  const controlledProgram = PROGRAMS_BY_ID.get(controlledProgramId)
   if (!controlledProgram) return null
 
   const { battle } = details
   const { positionOutlook } = details
   const isCommitted = battle.commitment !== null
-  const isCommittedToUs = isCommitted && battle.commitment!.programId === dynasty.controlledProgramId
+  const isCommittedToUs = isCommitted && battle.commitment!.programId === controlledProgramId
   const commitmentProgram = battle.commitment
     ? PROGRAMS_BY_ID.get(battle.commitment.programId)
     : undefined
@@ -109,8 +116,8 @@ export function RecruitDetailsScreen() {
     : undefined
 
   let managementActions: ReactNode = null
-  if (!isCommitted) {
-    const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+  if (!isCommitted && !isObserver) {
+    const board = deriveProgramRecruitingBoard(dynasty, controlledProgramId)
     const { isOnBoard, isFocused, hasActiveOffer, targetStatus } = battle.controlled
     const isActive = targetStatus === 'active'
     const canRemove = isOnBoard && targetStatus !== 'committed'
@@ -119,7 +126,7 @@ export function RecruitDetailsScreen() {
     const boardIsFull = board.targets.length >= RECRUITING_BOARD_LIMIT
     const nationalStatus = isOnBoard
       ? targetStatus
-      : deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, details.playerId)
+      : deriveTargetStatus(dynasty.recruiting!, controlledProgramId, details.playerId)
     const canAddToBoard = !isOnBoard && nationalStatus === 'active'
     const fullName = `${details.firstName} ${details.lastName}`
     const capacityContext = isActive
@@ -367,15 +374,15 @@ export function RecruitDetailsScreen() {
               className="recruit-details-your-program"
               data-position={battle.controlled.position}
             >
-              <p className="eyebrow-tag">Your Program</p>
+              <p className="eyebrow-tag">{isObserver ? 'Viewed Program' : 'Your Program'}</p>
               <p className="recruit-details-your-program__standing">
                 {battle.controlled.isOnBoard
                   ? formatControlledPositionLabel(battle.controlled.position)
-                  : 'Not on your Board'}
+                  : isObserver ? 'Not on its Board' : 'Not on your Board'}
               </p>
               <p className="section-hint">
                 {[
-                  battle.controlled.isOnBoard && 'On your Board',
+                  battle.controlled.isOnBoard && (isObserver ? 'On its Board' : 'On your Board'),
                   battle.controlled.isFocused && 'Focused',
                   battle.controlled.hasActiveOffer ? 'Offered' : 'No Offer',
                   battle.controlled.targetStatus === 'position-filled' && 'Position Filled',

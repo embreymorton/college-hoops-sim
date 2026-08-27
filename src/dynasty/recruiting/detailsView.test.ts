@@ -9,7 +9,7 @@ import { createRecruitingDynasty } from './testSupport'
 
 function fixture(seed = 'recruit-details') {
   const dynasty = createRecruitingDynasty(seed)
-  const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!
+  const target = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board[0]!
   return { dynasty, playerId: target.playerId }
 }
 
@@ -76,14 +76,14 @@ describe('Recruit Details projection', () => {
 
   it('represents a commitment to the controlled Program', () => {
     const { dynasty, playerId } = fixture('recruit-details-ours')
-    const committed = withCommitment(dynasty, playerId, dynasty.controlledProgramId)
+    const committed = withCommitment(dynasty, playerId, dynasty.controlledProgramId!)
     const battle = deriveRecruitDetailsView(committed, playerId).battle
 
     expect(battle.readiness).toBe('committed')
     expect(battle.controlled.position).toBe('committed-to-us')
     expect(battle.controlled.targetStatus).toBe('committed')
     expect(battle.commitment).toMatchObject({
-      programId: dynasty.controlledProgramId,
+      programId: dynasty.controlledProgramId!,
       timing: { kind: 'period', period: 7 },
     })
   })
@@ -92,7 +92,7 @@ describe('Recruit Details projection', () => {
     const { dynasty, playerId } = fixture('recruit-details-theirs')
     const otherProgramId = Object.keys(dynasty.recruiting!.programs)
       .sort()
-      .find((programId) => programId !== dynasty.controlledProgramId)!
+      .find((programId) => programId !== dynasty.controlledProgramId!)!
     const battle = deriveRecruitDetailsView(
       withCommitment(dynasty, playerId, otherProgramId),
       playerId,
@@ -107,7 +107,7 @@ describe('Recruit Details projection', () => {
   it('represents a Recruit outside the controlled Program Board', () => {
     const { dynasty } = fixture('recruit-details-off-board')
     const controlledBoardIds = new Set(
-      dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(
+      dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.map(
         ({ playerId }) => playerId,
       ),
     )

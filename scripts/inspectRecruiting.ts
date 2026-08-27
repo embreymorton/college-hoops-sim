@@ -363,7 +363,7 @@ function printStrategicInspection(complete: SeasonState): void {
   }
 
   const initial = recruitingDynasty(complete, 'priority-inspection')
-  const programId = initial.controlledProgramId
+  const programId = initial.controlledProgramId!
   const targets = initial.recruiting!.programs[programId]!.board
   const target = targets[0]!
   const runPlan = (board: typeof targets) => {
@@ -393,7 +393,7 @@ function printStrategicInspection(complete: SeasonState): void {
 
 function printProtectedOfferScenario(complete: SeasonState): void {
   let dynasty = recruitingDynasty(complete, 'protected-offer-inspection')
-  const programId = dynasty.controlledProgramId
+  const programId = dynasty.controlledProgramId!
   const pair = POSITIONS.map((position) => ({
     position,
     premium: dynasty.recruiting!.recruits.find(
@@ -475,7 +475,7 @@ function printSuperSimOfferAutomation(complete: SeasonState): void {
   console.log(`Final offers identical: ${JSON.stringify(Object.values(manual.recruiting!.programs).map(({ programId, board }) => [programId, board.map(({ playerId, hasActiveOffer }) => [playerId, hasActiveOffer])])) === JSON.stringify(Object.values(batched.recruiting!.programs).map(({ programId, board }) => [programId, board.map(({ playerId, hasActiveOffer }) => [playerId, hasActiveOffer])])) ? 'PASS' : 'FAIL'}`)
 
   const fallbackInitial = recruitingDynasty(complete, 'controlled-offer-fallback')
-  const programId = fallbackInitial.controlledProgramId
+  const programId = fallbackInitial.controlledProgramId!
   const program = fallbackInitial.recruiting!.programs[programId]!
   const offered = program.board.find(({ hasActiveOffer }) => hasActiveOffer)!
   const offeredRecruit = getRecruit(fallbackInitial.recruiting!, offered.playerId)!
@@ -638,7 +638,7 @@ function printOfferInspection(initial: DynastyState, final: DynastyState): void 
     }
     if (missing) {
       programsMissingOffers += 1
-      if (program.programId === final.controlledProgramId) controlledProgramMissingOffers += 1
+      if (program.programId === final.controlledProgramId!) controlledProgramMissingOffers += 1
       else aiProgramsMissingOffers += 1
     }
   }

@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { simulateScheduledGame, simulatePendingGamesInRound } from '../../season'
 import { UNIVERSE_V0 } from '../../universe'
-import { removeRecruitingBoardTarget } from './boards'
+import {
+  addRecruitingBoardTarget,
+  promoteControlledRecruitingBackups,
+  refreshAiRecruitingBoards,
+  removeRecruitingBoardTarget,
+} from './boards'
 import {
   deriveBaseRecruitAttraction,
   deriveProgramCommitments,
@@ -17,6 +22,55 @@ import {
 import { completeRounds, createRecruitingDynasty } from './testSupport'
 
 describe('regular-season Recruiting advancement', () => {
+  it('keeps every Program in existing AI strategy when control is absent', () => {
+    const observer = createRecruitingDynasty('observer-ai-initialization', null)
+    const programs = Object.values(observer.recruiting!.programs)
+    expect(programs).toHaveLength(32)
+    expect(programs.every(({ board }) => board.length > 0)).toBe(true)
+    expect(programs.every(({ board }) => board.some(({ hasActiveOffer }) => hasActiveOffer))).toBe(true)
+    expect(programs.every(({ board }) => board.some(({ isFocused }) => isFocused))).toBe(true)
+  })
+
+  it('refreshes all Observer Programs and grants no controlled-only backup behavior', () => {
+    const observer = createRecruitingDynasty('observer-ai-refresh', null)
+    const programId = UNIVERSE_V0.programs[0]!.id
+    const before = observer.recruiting!
+    const removed = before.programs[programId]!.board[0]!.playerId
+    const withGap = {
+      ...before,
+      programs: {
+        ...before.programs,
+        [programId]: {
+          ...before.programs[programId]!,
+          board: before.programs[programId]!.board.filter(({ playerId }) => playerId !== removed),
+        },
+      },
+    }
+    const refreshed = refreshAiRecruitingBoards(observer, withGap)
+    expect(refreshed.programs[programId]!.board.length).toBeGreaterThanOrEqual(
+      withGap.programs[programId]!.board.length,
+    )
+    expect(promoteControlledRecruitingBackups(observer, before, refreshed)).toBe(refreshed)
+  })
+
+  it('rejects user Recruiting mutations for an Observer while Coach Mode still works', () => {
+    const observer = createRecruitingDynasty('observer-authority', null)
+    const coach = createRecruitingDynasty('coach-authority')
+    const observerPlayerId = observer.recruiting!.recruits.find(({ player }) =>
+      !Object.values(observer.recruiting!.programs).some(({ board }) =>
+        board.some(({ playerId }) => playerId === player.id),
+      ),
+    )?.player.id ?? observer.recruiting!.recruits[0]!.player.id
+    expect(() => addRecruitingBoardTarget({ dynasty: observer, playerId: observerPlayerId }))
+      .toThrow(/no controlled Program/)
+
+    const controlledBoard = coach.recruiting!.programs[coach.controlledProgramId!]!.board
+    const removed = controlledBoard[0]!.playerId
+    expect(removeRecruitingBoardTarget({ dynasty: coach, playerId: removed })
+      .recruiting!.programs[coach.controlledProgramId!]!.board)
+      .toHaveLength(controlledBoard.length - 1)
+  })
+
   it('waits for the full basketball round and synchronizes each period once', () => {
     let dynasty = createRecruitingDynasty('round-gate')
     const roundOneGame = dynasty.activeSeason!.schedule.games.find(({ round }) => round === 1)!
@@ -82,14 +136,14 @@ describe('regular-season Recruiting advancement', () => {
 
   it('does not let AI rewrite the controlled board while replacing unavailable AI targets', () => {
     let dynasty = createRecruitingDynasty('ai-refresh')
-    const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const removedControlledId = controlled.board[0]!.playerId
     dynasty = removeRecruitingBoardTarget({ dynasty, playerId: removedControlledId })
-    const expectedControlledBoard = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
-    const aiId = UNIVERSE_V0.programs.map(({ id }) => id).find((id) => id !== dynasty.controlledProgramId)!
+    const expectedControlledBoard = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
+    const aiId = UNIVERSE_V0.programs.map(({ id }) => id).find((id) => id !== dynasty.controlledProgramId!)!
     const aiTarget = dynasty.recruiting!.programs[aiId]!.board[0]!.playerId
     const otherProgramId = UNIVERSE_V0.programs.map(({ id }) => id)
-      .find((id) => id !== aiId && id !== dynasty.controlledProgramId)!
+      .find((id) => id !== aiId && id !== dynasty.controlledProgramId!)!
     dynasty = {
       ...dynasty,
       activeSeason: completeRounds(dynasty.activeSeason!, 1),
@@ -101,7 +155,7 @@ describe('regular-season Recruiting advancement', () => {
       },
     }
     dynasty = resolveRecruitingPeriod(dynasty, 1)
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board).toEqual(expectedControlledBoard)
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board).toEqual(expectedControlledBoard)
     expect(dynasty.recruiting!.programs[aiId]!.board.some(({ playerId }) => playerId === aiTarget)).toBe(false)
   })
 })
@@ -109,7 +163,7 @@ describe('regular-season Recruiting advancement', () => {
 describe('Recruiting strategy model', () => {
   it('gives focus a fixed bonus without normalizing board effort', () => {
     const initial = createRecruitingDynasty('focus-progress')
-    const programId = initial.controlledProgramId
+    const programId = initial.controlledProgramId!
     const targets = initial.recruiting!.programs[programId]!.board.slice(0, 2)
     const withFocus = (firstFocused: boolean, secondFocused: boolean) => ({
       ...initial,
@@ -138,7 +192,7 @@ describe('Recruiting strategy model', () => {
 
   it('keeps baseline and focused effort independent of board size', () => {
     const initial = createRecruitingDynasty('focus-board-size')
-    const programId = initial.controlledProgramId
+    const programId = initial.controlledProgramId!
     const targets = initial.recruiting!.programs[programId]!.board
     const withBoard = (board: typeof targets) => ({
       ...initial,
@@ -169,7 +223,7 @@ describe('Recruiting strategy model', () => {
     let dynasty = createRecruitingDynasty('persistent-progress')
     dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
     dynasty = resolveRecruitingPeriod(dynasty, 1)
-    const programId = dynasty.controlledProgramId
+    const programId = dynasty.controlledProgramId!
     const board = dynasty.recruiting!.programs[programId]!.board
     const removedId = board[0]!.playerId
     const retained = dynasty.recruiting!.relationshipProgressByPlayerId[removedId]![programId]

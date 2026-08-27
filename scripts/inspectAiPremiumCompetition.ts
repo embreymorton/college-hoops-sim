@@ -181,7 +181,7 @@ function auditState(dynasty: DynastyState, audit: Audit): void {
 
 function competitors(dynasty: DynastyState, recruit: Recruit) {
   return Object.values(dynasty.recruiting!.programs).filter(({ programId, board }) =>
-    programId !== dynasty.controlledProgramId && board.some(({ playerId }) => playerId === recruit.player.id),
+    programId !== dynasty.controlledProgramId! && board.some(({ playerId }) => playerId === recruit.player.id),
   )
 }
 

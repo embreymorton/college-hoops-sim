@@ -13,6 +13,7 @@ import {
   SuperSimConfirmDialog,
   SuperSimMenu,
   SuperSimSummaryDialog,
+  ViewedProgramSelector,
 } from '../components'
 import {
   deriveDynastyProgressionAction,
@@ -24,6 +25,7 @@ import {
   selectActivePostseason,
   selectActiveSeason,
   selectControlledProgramId,
+  selectPresentationProgramId,
   useDynastyStore,
 } from '../store'
 import { selectNationalTournamentField } from '../postseason'
@@ -77,7 +79,9 @@ export function SeasonHubScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
   const openSeasonPreview = useDynastyStore((state) => state.openSeasonPreview)
   const season = useDynastyStore(selectActiveSeason)
-  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const canonicalControlledProgramId = useDynastyStore(selectControlledProgramId)
+  const controlledProgramId = useDynastyStore(selectPresentationProgramId)
+  const setViewedProgram = useDynastyStore((state) => state.setViewedProgram)
   const goToGamePrep = useDynastyStore((state) => state.goToGamePrep)
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToCoaching = useDynastyStore((state) => state.goToCoaching)
@@ -112,7 +116,7 @@ export function SeasonHubScreen() {
   )
   const recruitingPulseBaseline = useDynastyStore((state) => state.recruitingPulseBaseline)
 
-  if (!season || !controlledProgramId) {
+  if (!dynasty || !season || !controlledProgramId) {
     return null
   }
 
@@ -126,20 +130,24 @@ export function SeasonHubScreen() {
   }
 
   const recruiting = dynasty?.recruiting
+  const isObserver = canonicalControlledProgramId === null
+  const presentationDynasty = isObserver
+    ? { ...dynasty, controlledProgramId }
+    : dynasty
   const isLateRecruitingHandoffAvailable = dynasty
     ? deriveDynastyProgressionAction(dynasty).kind === 'enter-late-recruiting'
     : false
   const recruitingBoard =
-    dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
+    recruiting ? deriveProgramRecruitingBoard(presentationDynasty, controlledProgramId) : undefined
   const focusTargets =
-    dynasty && recruitingBoard ? deriveFocusTargetSummaries(dynasty, recruitingBoard) : []
+    recruitingBoard ? deriveFocusTargetSummaries(presentationDynasty, recruitingBoard) : []
   const recruitingCommits =
-    dynasty && recruitingBoard ? deriveHubCommitSummaries(dynasty, recruitingBoard) : []
+    recruitingBoard ? deriveHubCommitSummaries(presentationDynasty, recruitingBoard) : []
   const recruitingActivity =
     dynasty && recruiting && recruitingActivityBaselinePeriod !== null
       ? recruitingPulseBaseline
-        ? deriveRecruitingPulseDescriptions(dynasty, recruitingPulseBaseline, PROGRAMS_BY_ID)
-        : deriveRecruitingActivityDescriptions(dynasty, recruitingActivityBaselinePeriod, PROGRAMS_BY_ID)
+        ? deriveRecruitingPulseDescriptions(presentationDynasty, recruitingPulseBaseline, PROGRAMS_BY_ID)
+        : deriveRecruitingActivityDescriptions(presentationDynasty, recruitingActivityBaselinePeriod, PROGRAMS_BY_ID)
       : []
 
   const overallRecord = deriveProgramRecord(season, controlledProgramId)
@@ -236,7 +244,15 @@ export function SeasonHubScreen() {
         onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
+        showCoaching={!isObserver}
       />
+      {isObserver && (
+        <ViewedProgramSelector
+          programId={controlledProgramId}
+          programs={UNIVERSE_V0.programs}
+          onChange={setViewedProgram}
+        />
+      )}
       <SeasonHeader
         programName={controlledProgram.name}
         accentColor={controlledProgram.branding.primaryColor}
@@ -360,8 +376,9 @@ export function SeasonHubScreen() {
                 season,
                 opponentProgram.id,
               )}
-              onSimulate={simulateNextGame}
+              onSimulate={isObserver ? simulateRestOfRound : simulateNextGame}
               onGamePrep={goToGamePrep}
+              observerMode={isObserver}
             />
           )
         )}
@@ -437,8 +454,9 @@ export function SeasonHubScreen() {
             focusTargets={focusTargets}
             commits={recruitingCommits}
             activity={recruitingActivity}
-            onGenerateDraftBoard={generateControlledDraftBoard}
-            onBuildManually={goToRecruiting}
+              onGenerateDraftBoard={generateControlledDraftBoard}
+              onBuildManually={goToRecruiting}
+              readOnly={isObserver}
           />
         </section>
       )}
@@ -455,6 +473,7 @@ export function SeasonHubScreen() {
             controlledProgramId={controlledProgramId}
             conferenceId={controlledProgram.conferenceId}
             onSelectProgram={openTeamDetails}
+            highlightedLabel={isObserver ? 'Viewed' : 'You'}
           />
         </section>
 

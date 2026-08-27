@@ -214,7 +214,7 @@ function main(): void {
   console.log('ROLLOVER\n')
   console.log(`Previous Season: ${source.history.at(-1)!.seasonNumber}`)
   console.log(`Active Season: ${season2.seasonNumber}`)
-  console.log(`Controlled Program preserved: ${pass(next.controlledProgramId === source.controlledProgramId)}`)
+  console.log(`Controlled Program preserved: ${pass(next.controlledProgramId! === source.controlledProgramId!)}`)
   console.log(`Active Postseason: ${next.activePostseason === null ? 'NONE' : 'INVALID'}`)
   console.log(`OffseasonState cleared: ${pass(next.offseason === null)}`)
   console.log(`Completed Season history preserved: ${pass(JSON.stringify(next.history) === archiveBefore)}`)
@@ -267,7 +267,7 @@ function main(): void {
   console.log(`Projected openings: ${projectedOpenings}`)
   console.log(`Generated Recruits: ${next.recruiting!.recruits.length}`)
   console.log(`Programs with Recruiting plans: ${Object.keys(next.recruiting!.programs).length} / ${UNIVERSE_V0.programs.length}`)
-  console.log(`Controlled Program plan initialized: ${pass(next.recruiting!.programs[next.controlledProgramId]!.board.length > 0)}`)
+  console.log(`Controlled Program plan initialized: ${pass(next.recruiting!.programs[next.controlledProgramId!]!.board.length > 0)}`)
   console.log(`Resolved periods: ${next.recruiting!.lastResolvedPeriod}\n`)
 
   console.log('RECRUIT ID AUDIT\n')

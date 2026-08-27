@@ -21,6 +21,7 @@ interface NextGameCardProps {
   readonly onSimulate: () => void
   /** Opens the Rotation Editor / Game Prep workflow instead of simulating immediately. */
   readonly onGamePrep: () => void
+  readonly observerMode?: boolean
 }
 
 /** Compact preview of the controlled Program's next ScheduledGame. */
@@ -34,6 +35,7 @@ export function NextGameCard({
   opponentConferenceRecord,
   onSimulate,
   onGamePrep,
+  observerMode = false,
 }: NextGameCardProps) {
   return (
     <div className="next-game-card">
@@ -56,7 +58,7 @@ export function NextGameCard({
         Conf
       </p>
       <div className="next-game-card__comparison">
-        <NextGameTeamStats label="You" team={controlled} />
+        <NextGameTeamStats label={observerMode ? 'Viewed Program' : 'You'} team={controlled} />
         <span className="next-game-card__vs" aria-hidden="true">
           vs
         </span>
@@ -68,15 +70,15 @@ export function NextGameCard({
           className="button button--primary"
           onClick={onSimulate}
         >
-          Simulate Game
+          {observerMode ? 'Sim Round' : 'Simulate Game'}
         </button>
-        <button
+        {!observerMode && <button
           type="button"
           className="button button--ghost"
           onClick={onGamePrep}
         >
           Game Prep
-        </button>
+        </button>}
       </div>
     </div>
   )

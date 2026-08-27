@@ -6,6 +6,7 @@ import {
   LeagueTeamsDirectory,
   NationalLeadersSection,
   NewsFeedSection,
+  ViewedProgramSelector,
 } from '../components'
 import { deriveNewsFeed } from '../dynasty'
 import { calculateTeamStrength } from '../engine'
@@ -18,6 +19,7 @@ import {
   selectActivePostseason,
   selectActiveSeason,
   selectControlledProgramId,
+  selectPresentationProgramId,
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -43,6 +45,8 @@ export function LeagueScreen({ progressionBar }: { readonly progressionBar?: Rea
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const presentationProgramId = useDynastyStore(selectPresentationProgramId)
+  const setViewedProgram = useDynastyStore((state) => state.setViewedProgram)
   const followedPlayerIds = useDynastyStore((state) => state.followedPlayerIds)
   const goToHub = useDynastyStore((state) => state.goToHub)
   const goToPostseasonHub = useDynastyStore((state) => state.goToPostseasonHub)
@@ -63,14 +67,15 @@ export function LeagueScreen({ progressionBar }: { readonly progressionBar?: Rea
   const followingView = deriveFollowingView(followedPlayerIds, dynasty)
   const newsFeed = deriveNewsFeed(dynasty, followedPlayerIds)
 
-  const controlledProgram = controlledProgramId
-    ? PROGRAMS_BY_ID.get(controlledProgramId)
+  const contextProgramId = presentationProgramId
+  const controlledProgram = contextProgramId
+    ? PROGRAMS_BY_ID.get(contextProgramId)
     : undefined
-  const controlledSeasonState = controlledProgramId
-    ? season.programStates[controlledProgramId]
+  const controlledSeasonState = contextProgramId
+    ? season.programStates[contextProgramId]
     : undefined
-  const postseasonControlledState = controlledProgramId
-    ? postseason?.programStates[controlledProgramId]
+  const postseasonControlledState = contextProgramId
+    ? postseason?.programStates[contextProgramId]
     : undefined
   const controlledTeam = postseasonControlledState?.team ?? controlledSeasonState?.team
   const canonicalRotation =
@@ -101,16 +106,22 @@ export function LeagueScreen({ progressionBar }: { readonly progressionBar?: Rea
         onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
+        showCoaching={controlledProgramId !== null}
       />
+      {controlledProgramId === null && contextProgramId && <ViewedProgramSelector
+        programId={contextProgramId}
+        programs={dynasty.universe.programs}
+        onChange={setViewedProgram}
+      />}
       {progressionBar}
 
-      {controlledProgram && controlledProgramId && controlledTeam && canonicalRotation ? (
+      {controlledProgram && contextProgramId && controlledTeam && canonicalRotation ? (
         <LeagueHeader
           seasonNumber={season.seasonNumber}
           phaseLabel={phaseLabel}
           programName={controlledProgram.name}
           accentColor={controlledProgram.branding.primaryColor}
-          overallRecord={deriveProgramRecord(season, controlledProgramId)}
+          overallRecord={deriveProgramRecord(season, contextProgramId)}
           overallRating={calculateTeamStrength(controlledTeam, canonicalRotation).overall}
           dynastySeed={dynasty.dynastySeed}
         />

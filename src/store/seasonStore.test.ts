@@ -5,6 +5,7 @@ import {
   simulateGame,
   validateRotationV1,
 } from '../engine'
+import { isTournamentComplete } from '../postseason'
 import {
   deriveProgramRecord,
   getCompletedGamesForProgram,
@@ -18,6 +19,7 @@ import { UNIVERSE_V0 } from '../universe'
 import {
   DEFAULT_INTERACTIVE_TEST_SEED,
   MIDSEASON_ROUND,
+  selectPresentationProgramId,
   useDynastyStore,
 } from './seasonStore'
 
@@ -54,6 +56,72 @@ beforeEach(() => {
 })
 
 describe('seasonStore initialization', () => {
+  it('starts an all-AI Observer Dynasty with a deterministic viewed Program fallback', () => {
+    useDynastyStore.getState().startObserverDynasty(undefined, DEFAULT_INTERACTIVE_TEST_SEED)
+
+    const state = useDynastyStore.getState()
+    expect(state.dynasty?.controlledProgramId).toBeNull()
+    expect(state.viewedProgramId).toBe(UNIVERSE_V0.programs[0]!.id)
+    expect(selectPresentationProgramId(state)).toBe(UNIVERSE_V0.programs[0]!.id)
+    expect(state.view).toBe('hub')
+  })
+
+  it('uses the requested Observer context without making it simulation authority', () => {
+    useDynastyStore.getState().startObserverDynasty('northbridge', DEFAULT_INTERACTIVE_TEST_SEED)
+    const canonicalBefore = JSON.stringify(useDynastyStore.getState().dynasty)
+
+    useDynastyStore.getState().setViewedProgram('charlotte-tech')
+
+    expect(useDynastyStore.getState().viewedProgramId).toBe('charlotte-tech')
+    expect(useDynastyStore.getState().dynasty?.controlledProgramId).toBeNull()
+    expect(JSON.stringify(useDynastyStore.getState().dynasty)).toBe(canonicalBefore)
+  })
+
+  it('rejects an invalid viewed Program without changing context', () => {
+    useDynastyStore.getState().startObserverDynasty('northbridge', DEFAULT_INTERACTIVE_TEST_SEED)
+    expect(() => useDynastyStore.getState().setViewedProgram('not-a-program')).toThrow(
+      /Unknown viewed Program ID/,
+    )
+    expect(useDynastyStore.getState().viewedProgramId).toBe('northbridge')
+  })
+
+  it('creates identical canonical Observer worlds regardless of initial viewed Program', () => {
+    useDynastyStore.getState().startObserverDynasty('northbridge', DEFAULT_INTERACTIVE_TEST_SEED)
+    const first = JSON.stringify(useDynastyStore.getState().dynasty)
+    resetStore()
+    useDynastyStore.getState().startObserverDynasty('charlotte-tech', DEFAULT_INTERACTIVE_TEST_SEED)
+    expect(JSON.stringify(useDynastyStore.getState().dynasty)).toBe(first)
+  })
+
+  it('produces identical round results regardless of the viewed Program', () => {
+    useDynastyStore.getState().startObserverDynasty('northbridge', DEFAULT_INTERACTIVE_TEST_SEED)
+    useDynastyStore.getState().simulateRestOfRound()
+    const first = JSON.stringify(useDynastyStore.getState().dynasty?.activeSeason?.resultsByGameId)
+
+    resetStore()
+    useDynastyStore.getState().startObserverDynasty('charlotte-tech', DEFAULT_INTERACTIVE_TEST_SEED)
+    useDynastyStore.getState().simulateRestOfRound()
+    expect(JSON.stringify(useDynastyStore.getState().dynasty?.activeSeason?.resultsByGameId)).toBe(first)
+  })
+
+  it('carries an Observer from creation through Season 2 rollover', () => {
+    useDynastyStore.getState().startObserverDynasty('northbridge', DEFAULT_INTERACTIVE_TEST_SEED)
+    useDynastyStore.getState().requestSuperSim('seasonComplete')
+    useDynastyStore.getState().confirmSuperSim()
+    expect(isTournamentComplete(useDynastyStore.getState().dynasty!.activePostseason!)).toBe(true)
+
+    useDynastyStore.getState().enterLateRecruiting()
+    useDynastyStore.getState().finalizeRecruitingClass()
+    useDynastyStore.getState().beginDynastyOffseason()
+    useDynastyStore.getState().beginNextSeason()
+
+    const state = useDynastyStore.getState()
+    expect(state.dynasty?.controlledProgramId).toBeNull()
+    expect(state.dynasty?.activeSeason?.seasonNumber).toBe(2)
+    expect(state.viewedProgramId).toBe('northbridge')
+    expect(state.view).toBe('hub')
+  })
+
   it('starts with no controlled Program and no Season', () => {
     const state = useDynastyStore.getState()
     expect(state.dynasty).toBeNull()
@@ -75,7 +143,7 @@ describe('seasonStore initialization', () => {
     selectProgram()
 
     const state = useDynastyStore.getState()
-    expect(state.dynasty!.controlledProgramId).toBe('charlotte-tech')
+    expect(state.dynasty!.controlledProgramId!).toBe('charlotte-tech')
     expect(state.dynasty!.activeSeason).not.toHaveProperty('controlledProgramId')
     expect(
       Object.prototype.hasOwnProperty.call(
@@ -906,6 +974,7 @@ describe('seasonStore Super Sim', () => {
     const finalRecord = deriveProgramRecord(state.dynasty!.activeSeason!, 'charlotte-tech')
     // A fresh Season starts 0-0, so the segment record equals the final record.
     expect(state.superSimSummary).toEqual({
+      programId: 'charlotte-tech',
       kind: 'midseason',
       throughRound: MIDSEASON_ROUND,
       segmentWins: finalRecord.wins,

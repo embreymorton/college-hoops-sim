@@ -6,7 +6,7 @@ import type { RecruitingCommitment } from './domain'
 import { deriveNextSeasonRosterOutlook } from './rosterOutlook'
 import { createLegacyRecruitingDynasty as createRecruitingDynasty } from './testSupport'
 
-function commit(dynasty: DynastyState, playerId: string, programId = dynasty.controlledProgramId) {
+function commit(dynasty: DynastyState, playerId: string, programId = dynasty.controlledProgramId!) {
   const commitment: RecruitingCommitment = {
     playerId, programId, timing: { kind: 'period', period: 1 },
     targetSeasonNumber: dynasty.recruiting!.targetSeasonNumber,
@@ -17,7 +17,7 @@ function commit(dynasty: DynastyState, playerId: string, programId = dynasty.con
 }
 
 function recruitForNeed(dynasty: DynastyState) {
-  const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+  const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
   return dynasty.recruiting!.recruits.find(({ player }) =>
     program.projectedOpeningsByPosition[player.position] > 0)!
 }
@@ -25,7 +25,7 @@ function recruitForNeed(dynasty: DynastyState) {
 describe('next season roster outlook', () => {
   it('promotes returners, separates seniors, preserves ratings, and follows position order', () => {
     const dynasty = createRecruitingDynasty('next-roster-membership')
-    const team = dynasty.activeSeason!.programStates[dynasty.controlledProgramId]!.team
+    const team = dynasty.activeSeason!.programStates[dynasty.controlledProgramId!]!.team
     const outlook = deriveNextSeasonRosterOutlook(dynasty)
     const rows = outlook.positionGroups.flatMap(({ players }) => players)
     expect(outlook.positionGroups.map(({ position }) => position)).toEqual(POSITIONS)
@@ -56,7 +56,7 @@ describe('next season roster outlook', () => {
     }))
     expect(outlook.remainingOpeningCount).toBe(before.remainingOpeningCount - 1)
 
-    const otherProgram = Object.keys(dynasty.recruiting!.programs).find((id) => id !== dynasty.controlledProgramId)!
+    const otherProgram = Object.keys(dynasty.recruiting!.programs).find((id) => id !== dynasty.controlledProgramId!)!
     const elsewhere = deriveNextSeasonRosterOutlook(commit(dynasty, recruit.player.id, otherProgram))
     expect(elsewhere.positionGroups.flatMap(({ players }) => players.map(({ playerId }) => playerId)))
       .not.toContain(recruit.player.id)
@@ -68,7 +68,7 @@ describe('next season roster outlook', () => {
     const first = deriveNextSeasonRosterOutlook(dynasty)
     expect(deriveNextSeasonRosterOutlook(dynasty)).toEqual(first)
     expect(dynasty).toEqual(before)
-    const boardIds = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId)
+    const boardIds = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.map(({ playerId }) => playerId)
     const projectedIds = first.positionGroups.flatMap(({ players }) => players.map(({ playerId }) => playerId))
     expect(projectedIds.filter((id) => boardIds.includes(id))).toEqual([])
     for (const group of first.positionGroups) {
@@ -79,7 +79,7 @@ describe('next season roster outlook', () => {
 
   it('supports no seniors as a complete all-filled roster', () => {
     const dynasty = createRecruitingDynasty('next-roster-full')
-    const id = dynasty.controlledProgramId
+    const id = dynasty.controlledProgramId!
     const state = dynasty.activeSeason!.programStates[id]!
     const noSeniors: DynastyState = {
       ...dynasty,
@@ -97,7 +97,7 @@ describe('next season roster outlook', () => {
 
   it('keeps multiple same-position openings tangible with zero returners, then fills every opening', () => {
     const dynasty = createRecruitingDynasty('next-roster-openings')
-    const id = dynasty.controlledProgramId
+    const id = dynasty.controlledProgramId!
     const state = dynasty.activeSeason!.programStates[id]!
     const roster = state.team.roster.map((player) => ({
       ...player,
@@ -140,7 +140,7 @@ describe('next season roster outlook', () => {
     } })).toThrow(/different lifecycle years/)
     expect(() => deriveNextSeasonRosterOutlook(commit(dynasty, 'missing'))).toThrow(/unknown Recruit/)
 
-    const id = dynasty.controlledProgramId
+    const id = dynasty.controlledProgramId!
     const state = dynasty.activeSeason!.programStates[id]!
     const duplicate = [...state.team.roster]
     duplicate[1] = { ...duplicate[1]!, id: duplicate[0]!.id }

@@ -16,6 +16,7 @@ interface TournamentMatchupCardProps {
   /** Tournament Quick Sim: plays the game through the existing Postseason simulation API. */
   readonly onSimulate: () => void
   readonly onGamePrep: () => void
+  readonly observerMode?: boolean
 }
 
 /** Escalated Next-Game equivalent for a live Tournament matchup — always neutral site. */
@@ -25,6 +26,7 @@ export function TournamentMatchupCard({
   opponent,
   onSimulate,
   onGamePrep,
+  observerMode = false,
 }: TournamentMatchupCardProps) {
   return (
     <div className="next-game-card">
@@ -36,7 +38,7 @@ export function TournamentMatchupCard({
         vs {formatSeedLabel(opponent.seed)} {opponent.name}
       </h3>
       <div className="next-game-card__comparison">
-        <TournamentTeamStats label="You" seed={controlled.seed} team={controlled} />
+        <TournamentTeamStats label={observerMode ? 'Viewed Program' : 'You'} seed={controlled.seed} team={controlled} />
         <span className="next-game-card__vs" aria-hidden="true">
           vs
         </span>
@@ -52,15 +54,15 @@ export function TournamentMatchupCard({
           className="button button--primary"
           onClick={onSimulate}
         >
-          Simulate Game
+          {observerMode ? 'Sim Round' : 'Simulate Game'}
         </button>
-        <button
+        {!observerMode && <button
           type="button"
           className="button button--ghost"
           onClick={onGamePrep}
         >
           Game Prep
-        </button>
+        </button>}
       </div>
     </div>
   )

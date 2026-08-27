@@ -52,8 +52,8 @@ describe('Completed Season History index projection', () => {
     expect(summary).toMatchObject({
       seasonNumber: 1,
       nationalChampion: { programId: deriveNationalChampion(archive.postseason) },
-      controlledProgram: { programId: canonical.controlledProgramId },
-      controlledProgramRecord: deriveProgramRecord(archive.season, canonical.controlledProgramId),
+      controlledProgram: { programId: canonical.controlledProgramId! },
+      controlledProgramRecord: deriveProgramRecord(archive.season, canonical.controlledProgramId!),
     })
     expect(summary!.controlledTournamentOutcome.status).not.toBe('qualified')
   })
@@ -125,13 +125,13 @@ describe('Completed Season Yearbook projection', () => {
     )
 
     expect(yearbook.controlledProgramSeason.overallRecord).toEqual(
-      deriveProgramRecord(archive.season, canonical.controlledProgramId),
+      deriveProgramRecord(archive.season, canonical.controlledProgramId!),
     )
     expect(yearbook.controlledProgramSeason.conferenceRecord).toEqual(
-      deriveConferenceRecord(archive.season, canonical.controlledProgramId),
+      deriveConferenceRecord(archive.season, canonical.controlledProgramId!),
     )
     expect(yearbook.controlledProgramSeason.conferencePlace).toBe(
-      expectedStandings.findIndex(({ programId }) => programId === canonical.controlledProgramId) + 1,
+      expectedStandings.findIndex(({ programId }) => programId === canonical.controlledProgramId!) + 1,
     )
     expect(
       yearbook.conferenceStandings.find(({ conference: row }) => row.id === conference.id)!
@@ -145,8 +145,8 @@ describe('Completed Season Yearbook projection', () => {
     expect(yearbook.tournament.games).toHaveLength(15)
     expect(yearbook.tournament.games.every(({ result }) => result.winnerId.length > 0)).toBe(true)
     expect(yearbook.controlledProgramSeason.tournamentGames.every((game) =>
-      game.homeProgram.programId === canonical.controlledProgramId ||
-      game.awayProgram.programId === canonical.controlledProgramId,
+      game.homeProgram.programId === canonical.controlledProgramId! ||
+      game.awayProgram.programId === canonical.controlledProgramId!,
     )).toBe(true)
   })
 

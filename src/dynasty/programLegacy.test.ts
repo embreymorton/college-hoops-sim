@@ -68,15 +68,15 @@ describe('deriveProgramLegacy', () => {
   })
 
   it('derives one completed Season for controlled and non-controlled Programs independently', () => {
-    const controlled = deriveProgramLegacy(canonical, canonical.controlledProgramId)
+    const controlled = deriveProgramLegacy(canonical, canonical.controlledProgramId!)
     const otherId = canonical.universe.programs.find(
-      ({ id }) => id !== canonical.controlledProgramId,
+      ({ id }) => id !== canonical.controlledProgramId!,
     )!.id
     const other = deriveProgramLegacy(canonical, otherId)
 
     expect(controlled.completedSeasons).toBe(1)
     expect(controlled.trajectorySeasons[0]!.record).toEqual(
-      deriveProgramRecord(canonical.history[0]!.season, canonical.controlledProgramId),
+      deriveProgramRecord(canonical.history[0]!.season, canonical.controlledProgramId!),
     )
     expect(other.completedSeasons).toBe(1)
     expect(other.programId).toBe(otherId)
@@ -124,8 +124,8 @@ describe('deriveProgramLegacy', () => {
       seasonNumber: index + 1,
       season: { ...structuredClone(source.season), seasonNumber: index + 1 },
     })).reverse()
-    const record = deriveProgramRecord(source.season, canonical.controlledProgramId)
-    const legacy = deriveProgramLegacy({ ...canonical, history }, canonical.controlledProgramId)
+    const record = deriveProgramRecord(source.season, canonical.controlledProgramId!)
+    const legacy = deriveProgramLegacy({ ...canonical, history }, canonical.controlledProgramId!)
 
     expect(legacy.completedSeasons).toBe(7)
     expect(legacy.wins).toBe(record.wins * 7)
@@ -140,7 +140,7 @@ describe('deriveProgramLegacy', () => {
       dynasty = rolloverDynastyToNextSeason(completeSeasonAndBeginOffseason(dynasty))
     }
 
-    const legacy = deriveProgramLegacy(dynasty, dynasty.controlledProgramId)
+    const legacy = deriveProgramLegacy(dynasty, dynasty.controlledProgramId!)
     expect(legacy.completedSeasons).toBe(2)
     expect(legacy.trajectorySeasons.map(({ seasonNumber }) => seasonNumber)).toEqual([2, 1])
     expect(legacy.wins + legacy.losses).toBe(48)
@@ -151,7 +151,7 @@ describe('deriveProgramLegacy', () => {
       ({ targetSeasonNumber }) => targetSeasonNumber === 2,
     )!
     const signedRecruits = Object.values(completedClass.recruitingState.commitmentsByPlayerId)
-      .filter(({ programId }) => programId === dynasty.controlledProgramId)
+      .filter(({ programId }) => programId === dynasty.controlledProgramId!)
       .map(({ playerId }) => completedClass.recruitingState.recruits.find(
         ({ player }) => player.id === playerId,
       )!)
@@ -165,7 +165,7 @@ describe('deriveProgramLegacy', () => {
   }, 30000)
 
   it('uses canonical archived Team Strength, Conference standings, and Tournament seed', () => {
-    const programId = canonical.controlledProgramId
+    const programId = canonical.controlledProgramId!
     const archive = canonical.history[0]!
     const trajectory = deriveProgramLegacy(canonical, programId).trajectorySeasons[0]!
     const programState = archive.season.programStates[programId]!
@@ -186,7 +186,7 @@ describe('deriveProgramLegacy', () => {
   })
 
   it('distinguishes unavailable incoming history from a finalized zero-signee class', () => {
-    const programId = canonical.controlledProgramId
+    const programId = canonical.controlledProgramId!
     const targetSeasonNumber = canonical.history[0]!.seasonNumber
     const sourceClass = canonical.completedRecruitingHistory[0]!
     const completedClass = {
@@ -217,6 +217,6 @@ describe('deriveProgramLegacy', () => {
     expect(() => deriveProgramLegacy({
       ...canonical,
       completedRecruitingHistory: [completedClass, structuredClone(completedClass)],
-    }, canonical.controlledProgramId)).toThrow(/Multiple finalized Recruiting classes/)
+    }, canonical.controlledProgramId!)).toThrow(/Multiple finalized Recruiting classes/)
   })
 })

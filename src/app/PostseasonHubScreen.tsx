@@ -12,6 +12,7 @@ import {
   TournamentMatchupCard,
   TournamentStatusBanner,
   TournamentStatusHeader,
+  ViewedProgramSelector,
   type BracketSlot,
   type BracketSlotParticipant,
   type TournamentFieldRow,
@@ -40,6 +41,7 @@ import {
   selectActivePostseason,
   selectActiveSeason,
   selectControlledProgramId,
+  selectPresentationProgramId,
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -159,7 +161,9 @@ export function PostseasonHubScreen({
   const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
   const postseason = useDynastyStore(selectActivePostseason)
-  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const canonicalControlledProgramId = useDynastyStore(selectControlledProgramId)
+  const controlledProgramId = useDynastyStore(selectPresentationProgramId)
+  const setViewedProgram = useDynastyStore((state) => state.setViewedProgram)
   const simulateNextPostseasonGame = useDynastyStore(
     (state) => state.simulateNextPostseasonGame,
   )
@@ -197,7 +201,7 @@ export function PostseasonHubScreen({
     (state) => state.recruitingActivityBaselinePeriod,
   )
 
-  if (!season || !postseason || !controlledProgramId) {
+  if (!dynasty || !season || !postseason || !controlledProgramId) {
     return null
   }
 
@@ -208,16 +212,20 @@ export function PostseasonHubScreen({
   }
 
   const recruiting = dynasty?.recruiting
+  const isObserver = canonicalControlledProgramId === null
+  const presentationDynasty = isObserver
+    ? { ...dynasty, controlledProgramId }
+    : dynasty
   const recruitingBoard =
-    dynasty && recruiting ? deriveProgramRecruitingBoard(dynasty, controlledProgramId) : undefined
+    recruiting ? deriveProgramRecruitingBoard(presentationDynasty, controlledProgramId) : undefined
   const focusTargets =
-    dynasty && recruitingBoard ? deriveFocusTargetSummaries(dynasty, recruitingBoard) : []
+    recruitingBoard ? deriveFocusTargetSummaries(presentationDynasty, recruitingBoard) : []
   const recruitingCommits =
-    dynasty && recruitingBoard ? deriveHubCommitSummaries(dynasty, recruitingBoard) : []
+    recruitingBoard ? deriveHubCommitSummaries(presentationDynasty, recruitingBoard) : []
   const recruitingActivity =
     dynasty && recruiting && recruitingActivityBaselinePeriod !== null
       ? deriveRecruitingActivityDescriptions(
-          dynasty,
+          presentationDynasty,
           recruitingActivityBaselinePeriod,
           PROGRAMS_BY_ID,
         )
@@ -250,7 +258,7 @@ export function PostseasonHubScreen({
 
   const controlledGame =
     currentRound !== undefined && controlledEntry
-      ? getTournamentGameForProgram(postseason, controlledProgramId, currentRound)
+          ? getTournamentGameForProgram(postseason, controlledProgramId, currentRound)
       : undefined
   const controlledGameResult = controlledGame
     ? postseason.resultsByGameId[controlledGame.id]
@@ -450,8 +458,9 @@ export function PostseasonHubScreen({
           seed: opponentEntry.seed,
           strength: calculateTeamStrength(opponentState.team, opponentState.rotation),
         }}
-        onSimulate={simulateNextPostseasonGame}
+        onSimulate={isObserver ? simulateRestOfCurrentTournamentRound : simulateNextPostseasonGame}
         onGamePrep={goToPostseasonGamePrep}
+        observerMode={isObserver}
       />
     )
   } else if (isEliminated) {
@@ -530,7 +539,15 @@ export function PostseasonHubScreen({
         onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
+        showCoaching={!isObserver}
       />
+      {isObserver && (
+        <ViewedProgramSelector
+          programId={controlledProgramId}
+          programs={UNIVERSE_V0.programs}
+          onChange={setViewedProgram}
+        />
+      )}
       {progressionBar}
       <TournamentStatusHeader
         programName={controlledProgram.name}
@@ -632,6 +649,7 @@ export function PostseasonHubScreen({
               isSeasonComplete={
                 progression.kind === 'enter-late-recruiting'
               }
+              readOnly={isObserver}
             />
           </section>
         )}
@@ -646,7 +664,7 @@ export function PostseasonHubScreen({
               <p className="section-hint">National and conference honors are now available.</p>
             </div>
             {controlledRegularHonorCount > 0 && (
-              <p className="tournament-awards-announcement__program"><span>{controlledRegularHonorCount}</span><span className="tournament-awards-announcement__program-label">{controlledRegularHonorCount === 1 ? 'honor for your program' : 'honors for your program'}</span></p>
+              <p className="tournament-awards-announcement__program"><span>{controlledRegularHonorCount}</span><span className="tournament-awards-announcement__program-label">{isObserver ? (controlledRegularHonorCount === 1 ? 'honor for viewed program' : 'honors for viewed program') : (controlledRegularHonorCount === 1 ? 'honor for your program' : 'honors for your program')}</span></p>
             )}
           </div>
           <button type="button" className="button button--ghost" onClick={openAwards}>View Awards &amp; Honors</button>

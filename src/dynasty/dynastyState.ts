@@ -47,7 +47,10 @@ export function initializeDynastyState({
   if (!validateUniverseDefinition(universe).valid) {
     throw new RangeError('Cannot initialize a Dynasty with an invalid Universe.')
   }
-  if (!universe.programs.some(({ id }) => id === controlledProgramId)) {
+  if (
+    controlledProgramId !== null &&
+    !universe.programs.some(({ id }) => id === controlledProgramId)
+  ) {
     throw new RangeError(`Unknown controlled Program ID "${controlledProgramId}".`)
   }
   if (

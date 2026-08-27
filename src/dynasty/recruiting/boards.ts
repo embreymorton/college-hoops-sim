@@ -1,5 +1,6 @@
 import { POSITIONS, type Position } from '../../engine'
 import type { DynastyState } from '../domain'
+import { requireControlledProgram } from '../control'
 import {
   FINAL_RECRUITING_PERIOD,
   RECRUITING_BOARD_LIMIT,
@@ -46,7 +47,8 @@ function withProgramBoard(
 }
 
 function controlledProgram(dynasty: DynastyState): RecruitingProgramState {
-  const program = dynasty.recruiting?.programs[dynasty.controlledProgramId]
+  const programId = requireControlledProgram(dynasty)
+  const program = dynasty.recruiting?.programs[programId]
   if (!program) throw new RangeError('Dynasty Recruiting is not initialized.')
   return program
 }
@@ -567,6 +569,7 @@ export function promoteControlledRecruitingBackups(
   after: RecruitingState,
 ): RecruitingState {
   const programId = dynasty.controlledProgramId
+  if (programId === null) return after
   const beforeProgram = before.programs[programId]
   const afterProgram = after.programs[programId]
   if (!beforeProgram || !afterProgram) return after

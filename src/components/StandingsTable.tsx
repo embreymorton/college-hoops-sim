@@ -8,6 +8,7 @@ interface StandingsTableProps {
   readonly controlledProgramId: string
   /** Opens Team Details for the selected row's Program. */
   readonly onSelectProgram: (programId: string) => void
+  readonly highlightedLabel?: string
 }
 
 /** One Conference table in the existing accepted V0 tiebreak order. */
@@ -16,6 +17,7 @@ export function StandingsTable({
   programsById,
   controlledProgramId,
   onSelectProgram,
+  highlightedLabel = 'You',
 }: StandingsTableProps) {
   return (
     <div className="table-scroll">
@@ -50,7 +52,7 @@ export function StandingsTable({
                     {program?.name ?? row.programId}
                   </button>
                   {isControlled && (
-                    <span className="standings-you-tag"> · You</span>
+                    <span className="standings-you-tag"> · {highlightedLabel}</span>
                   )}
                 </td>
                 <td>{formatRecord(row.wins, row.losses)}</td>

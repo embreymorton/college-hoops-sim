@@ -13,6 +13,7 @@ function programsForConference(conferenceId: string): ProgramDefinition[] {
 /** Shown once, before a Season session exists: choose one of the 32 permanent programs. */
 export function ProgramSelectScreen() {
   const selectProgram = useDynastyStore((state) => state.selectProgram)
+  const startObserverDynasty = useDynastyStore((state) => state.startObserverDynasty)
   const [seedText, setSeedText] = useState('')
   const seedInputId = useId()
   const seedErrorId = useId()
@@ -25,6 +26,14 @@ export function ProgramSelectScreen() {
       return
     }
     selectProgram(programId, parsedSeed.kind === 'valid' ? parsedSeed.seed : undefined)
+  }
+
+  function handleObserve(): void {
+    if (parsedSeed.kind === 'invalid') return
+    startObserverDynasty(
+      undefined,
+      parsedSeed.kind === 'valid' ? parsedSeed.seed : undefined,
+    )
   }
 
   return (
@@ -64,6 +73,24 @@ export function ProgramSelectScreen() {
           )}
         </p>
       </div>
+      <div className="program-select__observer">
+        <div>
+          <p className="eyebrow-tag">Observer Mode</p>
+          <h3>Observe the Simulation</h3>
+          <p className="section-hint">
+            Follow all 32 AI-controlled Programs and change the Program you are viewing at any time.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="button button--primary"
+          disabled={parsedSeed.kind === 'invalid'}
+          onClick={handleObserve}
+        >
+          Start Observer Dynasty
+        </button>
+      </div>
+      <p className="eyebrow-tag">Control a Program</p>
       <div className="program-select__conferences">
         {UNIVERSE_V0.conferences.map((conference) => (
           <div key={conference.id} className="program-select__conference">

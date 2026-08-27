@@ -49,11 +49,25 @@ beforeEach(() => {
 })
 
 describe('Dynasty application state integration', () => {
+  it('keeps control-only store mutations inert for an Observer-shaped Dynasty', () => {
+    const coach = useDynastyStore.getState().dynasty!
+    const observer = { ...coach, controlledProgramId: null }
+    useDynastyStore.setState({ dynasty: observer, draftRotation: null })
+    const before = structuredClone(observer)
+    const recruitId = observer.recruiting!.recruits[0]!.player.id
+
+    useDynastyStore.getState().addRecruitingTarget(recruitId)
+    useDynastyStore.getState().setDraftPlayerPositionMinutes(recruitId, 'PG', 20)
+
+    expect(useDynastyStore.getState().dynasty).toEqual(before)
+    expect(useDynastyStore.getState().recruitingActionError).toMatch(/no controlled Program/)
+  })
+
   it('initializes Season 1 and Recruiting for Season 2 under one canonical Dynasty', () => {
     const state = useDynastyStore.getState()
     const dynasty = state.dynasty!
 
-    expect(dynasty.controlledProgramId).toBe(PROGRAM_ID)
+    expect(dynasty.controlledProgramId!).toBe(PROGRAM_ID)
     expect(dynasty.activeSeason?.seasonNumber).toBe(1)
     expect(dynasty.activePostseason).toBeNull()
     expect(dynasty.recruiting?.targetSeasonNumber).toBe(2)

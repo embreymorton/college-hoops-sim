@@ -13,6 +13,7 @@ import {
   RecruitingModeTabs,
   NextSeasonRosterOutlook,
   RecruitingOverview,
+  ViewedProgramSelector,
 } from '../components'
 import {
   deriveFollowingRecruitsView,
@@ -23,6 +24,7 @@ import {
 } from '../dynasty'
 import {
   selectActivePostseason,
+  selectPresentationProgramId,
   useDynastyStore,
 } from '../store'
 import { UNIVERSE_V0, type ProgramDefinition } from '../universe'
@@ -84,6 +86,7 @@ export function RecruitingScreen({
   const beginDynastyOffseason = useDynastyStore(
     (state) => state.beginDynastyOffseason,
   )
+  const setViewedProgram = useDynastyStore((state) => state.setViewedProgram)
 
   if (!dynasty || !dynasty.recruiting) {
     return (
@@ -92,15 +95,21 @@ export function RecruitingScreen({
       </p>
     )
   }
+  const isObserver = dynasty.controlledProgramId === null
+  const controlledProgramId = selectPresentationProgramId(useDynastyStore.getState())
+  if (controlledProgramId === null) return null
+  const presentationDynasty = isObserver
+    ? { ...dynasty, controlledProgramId }
+    : dynasty
 
-  const controlledProgram = PROGRAMS_BY_ID.get(dynasty.controlledProgramId)
+  const controlledProgram = PROGRAMS_BY_ID.get(controlledProgramId)
 
   if (!controlledProgram) {
     return null
   }
 
   if (dynasty.recruiting.phase === 'finalized') {
-    const signees = deriveIncomingClass(dynasty.recruiting, dynasty.controlledProgramId)
+    const signees = deriveIncomingClass(dynasty.recruiting, controlledProgramId)
     const averages = deriveClassAverages(signees.map(({ recruit }) => recruit))
     const positionCounts = derivePositionCounts(
       signees.map(({ recruit }) => recruit.player),
@@ -115,6 +124,12 @@ export function RecruitingScreen({
           onSelectCoaching={goToCoaching}
           onSelectRecruiting={goToRecruiting}
           onSelectLeague={goToLeague}
+          showCoaching={!isObserver}
+        />}
+        {!embeddedOffseason && isObserver && <ViewedProgramSelector
+          programId={controlledProgramId}
+          programs={dynasty.universe.programs}
+          onChange={setViewedProgram}
         />}
         {progressionBar}
         <RecruitingClassSummary
@@ -129,7 +144,7 @@ export function RecruitingScreen({
     )
   }
 
-  const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+  const board = deriveProgramRecruitingBoard(dynasty, controlledProgramId)
   const focusCount = board.targets.filter(({ isFocused, status }) => isFocused && status === 'active').length
   const totals = deriveRecruitingHubTotals(board)
   const showZeroOfferWarning =
@@ -166,6 +181,12 @@ export function RecruitingScreen({
         onSelectCoaching={goToCoaching}
         onSelectRecruiting={goToRecruiting}
         onSelectLeague={goToLeague}
+        showCoaching={!isObserver}
+      />}
+      {!embeddedOffseason && isObserver && <ViewedProgramSelector
+        programId={controlledProgramId}
+        programs={dynasty.universe.programs}
+        onChange={setViewedProgram}
       />}
       {progressionBar}
 
@@ -236,7 +257,7 @@ export function RecruitingScreen({
         <div className="section-heading">
           <h2 id="recruiting-mode-heading" className="section-title">
             {isLate && mode === 'board'
-              ? 'My Board'
+              ? isObserver ? 'Viewed Program Board' : 'My Board'
               : isLate && mode === 'national'
                 ? 'Available Market'
                 : 'Recruiting'}
@@ -258,7 +279,9 @@ export function RecruitingScreen({
         )}
 
         {mode === 'board' ? (
-          board.targets.length === 0 ? (
+          board.targets.length === 0 ? isObserver ? (
+            <p className="league-empty-state">This Program has no Recruits on its Board.</p>
+          ) : (
             <RecruitingBoardEmptyState
               lastResolvedPeriod={dynasty.recruiting.lastResolvedPeriod}
               needsByPosition={totals.needsByPosition}
@@ -271,7 +294,7 @@ export function RecruitingScreen({
             />
           ) : (
             <>
-              {(unavailableCount > 0 || board.targets.length < RECRUITING_BOARD_LIMIT) && (
+              {!isObserver && (unavailableCount > 0 || board.targets.length < RECRUITING_BOARD_LIMIT) && (
                 <div className="recruiting-board-management">
                   {unavailableCount > 0 && (
                     <button
@@ -295,7 +318,7 @@ export function RecruitingScreen({
               )}
               {boardActionMessage && <p className="section-hint" role="status">{boardActionMessage}</p>}
               <RecruitingBoardTable
-                dynasty={dynasty}
+                dynasty={presentationDynasty}
                 board={board}
                 programsById={PROGRAMS_BY_ID}
                 onSetFocus={setRecruitingFocus}
@@ -303,36 +326,38 @@ export function RecruitingScreen({
                 onWithdraw={withdrawRecruitingOffer}
                 onRemove={removeRecruitingTarget}
                 onOpenRecruitDetails={openRecruitDetails}
+                readOnly={isObserver}
               />
             </>
           )
         ) : mode === 'roster-outlook' ? (
           <NextSeasonRosterOutlook
-            outlook={deriveNextSeasonRosterOutlook(dynasty)}
-            onSelectPlayer={(playerId) => openPlayerDetails(dynasty.controlledProgramId, playerId)}
+            outlook={deriveNextSeasonRosterOutlook(presentationDynasty)}
+            onSelectPlayer={(playerId) => openPlayerDetails(controlledProgramId, playerId)}
             onSelectRecruit={openRecruitDetails}
           />
         ) : mode === 'battles' ? (
           <RecruitingBattlesGrid
-            cards={deriveBattleCardSummaries(dynasty, board)}
+            cards={deriveBattleCardSummaries(presentationDynasty, board)}
             controlledProgram={controlledProgram}
             programsById={PROGRAMS_BY_ID}
             onOpenRecruitDetails={openRecruitDetails}
           />
         ) : mode === 'national' ? (
           <NationalRecruitTable
-            dynasty={dynasty}
+            dynasty={presentationDynasty}
             board={board}
             programsById={PROGRAMS_BY_ID}
             onAddToBoard={addRecruitingTarget}
             onOpenRecruitDetails={openRecruitDetails}
             availableMarketOnly={isLate}
+            readOnly={isObserver}
           />
         ) : mode === 'following' ? (
           <FollowingRecruitsSection
-            projection={deriveFollowingRecruitsView(dynasty, followedRecruitIds)}
+            projection={deriveFollowingRecruitsView(presentationDynasty, followedRecruitIds)}
             programsById={PROGRAMS_BY_ID}
-            controlledProgramId={dynasty.controlledProgramId}
+            controlledProgramId={controlledProgramId}
             onSelectRecruit={openRecruitDetails}
           />
         ) : (

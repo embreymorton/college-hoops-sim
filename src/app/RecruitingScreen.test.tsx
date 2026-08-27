@@ -203,6 +203,25 @@ beforeEach(() => {
   resetStore()
 })
 
+describe('Observer recruiting', () => {
+  it('shows the viewed Program board without management controls', () => {
+    const dynasty = buildFixtureDynasty()
+    useDynastyStore.setState({
+      dynasty: { ...dynasty, controlledProgramId: null },
+      viewedProgramId: CONTROLLED_PROGRAM_ID,
+      view: 'recruiting',
+      recruitingMode: 'board',
+    })
+    render(<App />)
+
+    expect(screen.getByLabelText('Viewed Program')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Focus Active Fixture/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Offer' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Remove/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Fill Remaining Board/ })).not.toBeInTheDocument()
+  })
+})
+
 describe('Dynasty section navigation', () => {
   it('shows Season / Recruiting / League during the regular season', () => {
     renderRecruitingScreen()
@@ -273,11 +292,11 @@ describe('Roster Outlook mode', () => {
 
   it('opens Player and Recruit Details and preserves the parent mode on return', () => {
     let dynasty = createRecruitingDynasty('roster-outlook-navigation')
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const remaining = deriveRemainingOpeningsByPosition(dynasty.recruiting!, program)
     const recruit = dynasty.recruiting!.recruits.find(({ player }) =>
       remaining[player.position] > 0)!
-    dynasty = withCommitment(dynasty, recruit.player.id, dynasty.controlledProgramId)
+    dynasty = withCommitment(dynasty, recruit.player.id, dynasty.controlledProgramId!)
     useDynastyStore.setState({ dynasty, view: 'recruiting', recruitingMode: 'roster-outlook' })
     render(<App />)
 

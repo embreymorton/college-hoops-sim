@@ -1,5 +1,6 @@
 import { calculateOverall, type ClassYear, type Player, type Position } from '../../engine'
 import type { DynastyState } from '../domain'
+import { requireControlledProgram } from '../control'
 import { deriveProgramCommitments, deriveTargetStatus, getRecruit } from './queries'
 
 export type RecruitPositionOutlookRowKind =
@@ -90,10 +91,11 @@ export function deriveRecruitPositionOutlook(
 
   const viewedRecruit = getRecruit(recruiting, playerId)
   if (!viewedRecruit) throw new RangeError(`Unknown Recruit Player ID "${playerId}".`)
-  const controlledProgram = recruiting.programs[dynasty.controlledProgramId]
-  const team = season.programStates[dynasty.controlledProgramId]?.team
+  const controlledProgramId = requireControlledProgram(dynasty)
+  const controlledProgram = recruiting.programs[controlledProgramId]
+  const team = season.programStates[controlledProgramId]?.team
   if (!controlledProgram || !team) {
-    throw new RangeError(`Unknown controlled Recruiting Program "${dynasty.controlledProgramId}".`)
+    throw new RangeError(`Unknown controlled Recruiting Program "${controlledProgramId}".`)
   }
   if (recruiting.targetSeasonNumber !== season.seasonNumber + 1) {
     throw new RangeError('Recruiting and active Season target different lifecycle years.')
@@ -121,7 +123,7 @@ export function deriveRecruitPositionOutlook(
     rowFromPlayer(player, 'returner', NEXT_CLASS[player.classYear], playerId),
   )
   const seenPlayerIds = new Set(team.roster.map(({ id }) => id))
-  const controlledCommitments = deriveProgramCommitments(recruiting, dynasty.controlledProgramId)
+  const controlledCommitments = deriveProgramCommitments(recruiting, controlledProgramId)
   for (const commitment of controlledCommitments) {
     if (
       commitment.targetSeasonNumber !== recruiting.targetSeasonNumber ||
@@ -142,7 +144,7 @@ export function deriveRecruitPositionOutlook(
     }
   }
 
-  const targetStatus = deriveTargetStatus(recruiting, dynasty.controlledProgramId, playerId)
+  const targetStatus = deriveTargetStatus(recruiting, controlledProgramId, playerId)
   let viewedRecruitInclusion: RecruitPositionOutlookInclusion
   if (targetStatus === 'committed') {
     viewedRecruitInclusion = 'committed'

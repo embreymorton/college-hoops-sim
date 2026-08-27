@@ -56,7 +56,7 @@ function generatedControlledPlans(dynasty: DynastyState): {
   candidate: DynastyState
 } {
   const recruiting = dynasty.recruiting!
-  const id = dynasty.controlledProgramId
+  const id = dynasty.controlledProgramId!
   const empty = { ...recruiting.programs[id]!, board: [] }
   const current = { ...dynasty, recruiting: { ...recruiting, programs: { ...recruiting.programs, [id]: empty } } }
   const board = buildDefaultRecruitingBoard(current, current.recruiting!, id)
@@ -100,10 +100,10 @@ function run(seed: string, seasons: number): Diagnostic {
   let dynasty = createDynasty(seed)
   for (let seasonIndex = 0; seasonIndex < seasons; seasonIndex += 1) {
     const generated = generatedControlledPlans(dynasty)
-    result.plans.push(observePlanCoherence(generated.baseline, dynasty.controlledProgramId, 'controlled-baseline'))
+    result.plans.push(observePlanCoherence(generated.baseline, dynasty.controlledProgramId!, 'controlled-baseline'))
     dynasty = generated.candidate
-    result.plans.push(observePlanCoherence(dynasty, dynasty.controlledProgramId, 'controlled-candidate'))
-    for (const id of Object.keys(dynasty.recruiting!.programs).sort().filter((id) => id !== dynasty.controlledProgramId)) {
+    result.plans.push(observePlanCoherence(dynasty, dynasty.controlledProgramId!, 'controlled-candidate'))
+    for (const id of Object.keys(dynasty.recruiting!.programs).sort().filter((id) => id !== dynasty.controlledProgramId!)) {
       result.plans.push(observePlanCoherence(dynasty, id, 'ai'))
     }
     observeCheckpoint(dynasty, 0, result)

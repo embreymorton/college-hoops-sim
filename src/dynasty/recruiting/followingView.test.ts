@@ -33,7 +33,7 @@ describe('Following Recruits projection', () => {
     const dynasty = createRecruitingDynasty('following-recruits:resolved')
     const recruiting = dynasty.recruiting!
     const boardIds = new Set(
-      recruiting.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId),
+      recruiting.programs[dynasty.controlledProgramId!]!.board.map(({ playerId }) => playerId),
     )
     const offBoard = recruiting.recruits.find(({ player }) => !boardIds.has(player.id))!
     const onBoard = recruiting.recruits.find(({ player }) => boardIds.has(player.id))!
@@ -72,9 +72,9 @@ describe('Following Recruits projection', () => {
     const dynasty = createRecruitingDynasty(`following-recruits:commit:${commitsToControlled}`)
     const playerId = dynasty.recruiting!.recruits[0]!.player.id
     const programId = commitsToControlled
-      ? dynasty.controlledProgramId
+      ? dynasty.controlledProgramId!
       : Object.keys(dynasty.recruiting!.programs).find(
-          (candidate) => candidate !== dynasty.controlledProgramId,
+          (candidate) => candidate !== dynasty.controlledProgramId!,
         )!
     const row = deriveFollowingRecruitsView(
       withCommitment(dynasty, playerId, programId),

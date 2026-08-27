@@ -1,4 +1,5 @@
 import type { DynastyState } from '../domain'
+import { requireControlledProgram } from '../control'
 import { MIN_MEANINGFUL_RELATIONSHIP } from './constants'
 import type {
   Recruit,
@@ -190,7 +191,7 @@ export function deriveRecruitingBattleView(
     }),
   )
 
-  const controlledProgramId = dynasty.controlledProgramId
+  const controlledProgramId = requireControlledProgram(dynasty)
   const controlledProgram = recruiting.programs[controlledProgramId]
   const controlledTarget = controlledProgram?.board.find(
     (target) => target.playerId === playerId,
@@ -232,7 +233,8 @@ export function deriveRecruitingCommitmentActivity(
 ): RecruitingCommitmentActivity[] {
   const recruiting = dynasty.recruiting
   if (!recruiting) throw new RangeError('Dynasty Recruiting is not initialized.')
-  const controlled = recruiting.programs[dynasty.controlledProgramId]
+  const controlledProgramId = requireControlledProgram(dynasty)
+  const controlled = recruiting.programs[controlledProgramId]
   const controlledTargets = new Map(
     controlled?.board.map((target) => [target.playerId, target]) ?? [],
   )
@@ -245,7 +247,7 @@ export function deriveRecruitingCommitmentActivity(
           : Number.MAX_SAFE_INTEGER
       return (
         period > sincePeriodExclusive &&
-        (commitment.programId === dynasty.controlledProgramId ||
+        (commitment.programId === controlledProgramId ||
           controlledTargets.has(commitment.playerId))
       )
     })
@@ -265,7 +267,7 @@ export function deriveRecruitingCommitmentActivity(
     })
     .map((commitment) => ({
       kind:
-        commitment.programId === dynasty.controlledProgramId
+        commitment.programId === controlledProgramId
           ? 'committed-to-controlled'
           : 'tracked-committed-elsewhere',
       playerId: commitment.playerId,

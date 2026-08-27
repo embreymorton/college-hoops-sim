@@ -145,6 +145,8 @@ export interface SuperSimSummary {
   readonly throughRound: number
   readonly segmentWins: number
   readonly segmentLosses: number
+  /** Presentation Program captured when the segment was simulated. */
+  readonly programId: string
 }
 
 export type PendingRecruitingSetupIntent =
@@ -237,6 +239,8 @@ export interface OffseasonPresentationCursor {
 export interface DynastySessionState {
   /** The application's one canonical cross-season domain value. */
   readonly dynasty: DynastyState | null
+  /** Persistent session-only Program context; never grants management authority. */
+  readonly viewedProgramId: string | null
   /** Stable user intent for the current Dynasty; current facts are derived from active Season state. */
   readonly followedPlayerIds: readonly string[]
   /** Stable Recruit/future-Player IDs kept separate from Player follows until Phase 7D.3. */
@@ -326,6 +330,8 @@ export interface DynastySessionState {
   readonly recruitingPulseBaseline: RecruitingPulseSnapshot | null
   /** Initializes Universe V0 and canonical Dynasty Season 1 + Recruiting 2. */
   selectProgram(programId: string, dynastySeed?: RngSeed): void
+  startObserverDynasty(viewedProgramId?: string, dynastySeed?: RngSeed): void
+  setViewedProgram(programId: string): void
   followPlayer(playerId: string): void
   unfollowPlayer(playerId: string): void
   isPlayerFollowed(playerId: string): boolean
@@ -509,11 +515,26 @@ export const selectControlledProgramId = (
   state: DynastySessionState,
 ): string | null => state.dynasty?.controlledProgramId ?? null
 
+/** Presentation context only. Never use this selector to authorize mutations. */
+export const selectPresentationProgramId = (
+  state: DynastySessionState,
+): string | null => {
+  const dynasty = state.dynasty
+  if (!dynasty) return null
+  if (dynasty.controlledProgramId !== null) return dynasty.controlledProgramId
+  const viewed = state.viewedProgramId
+  return viewed && dynasty.universe.programs.some(({ id }) => id === viewed)
+    ? viewed
+    : dynasty.universe.programs[0]?.id ?? null
+}
+
 function controlledRecruitingBoardIsEmpty(dynasty: DynastyState): boolean {
   const recruiting = dynasty.recruiting
+  const programId = dynasty.controlledProgramId
+  if (programId === null) return false
   return Boolean(
     recruiting &&
-      recruiting.programs[dynasty.controlledProgramId]?.board.length === 0,
+      recruiting.programs[programId]?.board.length === 0,
   )
 }
 
@@ -532,7 +553,9 @@ export function needsRecruitingSetupBeforeAdvance(
 /** Interactive-only policy: preserve the plan and class, but start user strategy empty. */
 function withoutControlledRecruitingStrategy(dynasty: DynastyState): DynastyState {
   const recruiting = dynasty.recruiting
-  const program = recruiting?.programs[dynasty.controlledProgramId]
+  const programId = dynasty.controlledProgramId
+  if (programId === null) return dynasty
+  const program = recruiting?.programs[programId]
   if (!recruiting || !program) return dynasty
   return {
     ...dynasty,
@@ -548,13 +571,15 @@ function withoutControlledRecruitingStrategy(dynasty: DynastyState): DynastyStat
 
 function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState {
   const recruiting = dynasty.recruiting
-  const program = recruiting?.programs[dynasty.controlledProgramId]
+  const programId = dynasty.controlledProgramId
+  if (programId === null) return dynasty
+  const program = recruiting?.programs[programId]
   if (!recruiting || !program || program.board.length > 0) return dynasty
 
   const board = buildDefaultRecruitingBoard(
     dynasty,
     recruiting,
-    dynasty.controlledProgramId,
+    programId,
   )
   const recruitingWithBoard: RecruitingState = {
     ...recruiting,
@@ -567,12 +592,12 @@ function withGeneratedControlledDraftBoard(dynasty: DynastyState): DynastyState 
   const managedProgram = manageProgramRecruitingOffers(
     context,
     recruitingWithBoard,
-    dynasty.controlledProgramId,
+    programId,
   )
   const alignedProgram = alignGeneratedRecruitingFocus(
     context,
     recruitingWithBoard,
-    dynasty.controlledProgramId,
+    programId,
     managedProgram,
   )
 
@@ -602,6 +627,7 @@ function nextRecruitingPulseBaseline(
   dynasty: DynastyState,
   followedRecruitIds: readonly string[],
 ): RecruitingPulseSnapshot | null {
+  if (dynasty.controlledProgramId === null) return null
   return deriveRecruitingPulseSnapshot(dynasty, followedRecruitIds)
 }
 
@@ -764,6 +790,7 @@ function transferEnrolledRecruitFollows(
 
 export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   dynasty: null,
+  viewedProgramId: null,
   followedPlayerIds: [],
   followedRecruitIds: [],
   controlledProgramDefaultRotation: null,
@@ -833,6 +860,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
     set({
       dynasty,
+      viewedProgramId: programId,
       followedPlayerIds: [],
       followedRecruitIds: [],
       controlledProgramDefaultRotation: initializedProgram.rotation,
@@ -867,6 +895,79 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       recruitingActivityBaselinePeriod: null,
       recruitingPulseBaseline: null,
     })
+  },
+
+  startObserverDynasty(requestedViewedProgramId, explicitDynastySeed) {
+    const viewedProgramId = requestedViewedProgramId ?? UNIVERSE_V0.programs[0]!.id
+    if (!UNIVERSE_V0.programs.some(({ id }) => id === viewedProgramId)) {
+      throw new RangeError(`Unknown Universe V0 program ID "${viewedProgramId}"`)
+    }
+    const dynastySeed = explicitDynastySeed ?? createInteractiveDynastySeed()
+    const initializedUniverse = initializeUniverse(
+      UNIVERSE_V0,
+      deriveInteractiveSeed(dynastySeed, 'universe'),
+    )
+    const season = initializeSeason({
+      universe: UNIVERSE_V0,
+      initializedUniverse,
+      schedule: generateRegularSeasonSchedule({
+        universe: UNIVERSE_V0,
+        seed: deriveInteractiveSeed(dynastySeed, 'schedule:season-1'),
+      }),
+      seasonNumber: 1,
+    })
+    const dynasty = initializeRecruiting(initializeDynastyState({
+      dynastyId: `dynasty:observer:${seedValue(dynastySeed)}`,
+      dynastySeed,
+      controlledProgramId: null,
+      universe: UNIVERSE_V0,
+      activeSeason: season,
+    }))
+    set({
+      dynasty,
+      viewedProgramId,
+      followedPlayerIds: [],
+      followedRecruitIds: [],
+      controlledProgramDefaultRotation: null,
+      draftRotation: null,
+      view: 'hub',
+      offseasonPresentationCursor: null,
+      lastPlayedGameId: null,
+      viewedGameId: null,
+      pendingSuperSim: null,
+      superSimSummary: null,
+      postseasonControlledDefaultRotation: null,
+      postseasonDraftRotation: null,
+      coachingSimpleMinutesByPlayerId: null,
+      coachingSimplePreservedPlayerIds: [],
+      coachingSimpleRotationIssues: [],
+      lastPlayedTournamentGameId: null,
+      viewedTournamentGameId: null,
+      explorationViewHistory: [],
+      leagueTab: 'news',
+      historyTab: 'yearbooks',
+      recordCategory: 'points',
+      recruitingMode: 'board',
+      selectedArchivedSeasonNumber: null,
+      selectedRecruitingClassSeasonNumber: null,
+      recruitingHistoryFilter: 'all',
+      selectedTeamProgramId: null,
+      selectedPlayerProgramId: null,
+      selectedPlayerId: null,
+      selectedRecruitPlayerId: null,
+      recruitingActionError: null,
+      pendingRecruitingSetupIntent: null,
+      recruitingActivityBaselinePeriod: null,
+      recruitingPulseBaseline: null,
+    })
+  },
+
+  setViewedProgram(programId) {
+    const dynasty = get().dynasty
+    if (!dynasty || !dynasty.universe.programs.some(({ id }) => id === programId)) {
+      throw new RangeError(`Unknown viewed Program ID "${programId}".`)
+    }
+    set({ viewedProgramId: programId, superSimSummary: null })
   },
 
   followPlayer(playerId) {
@@ -1044,6 +1145,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextState = get()
       if (nextState.dynasty !== dynastyBefore) {
         const controlledProgramId = nextState.dynasty!.controlledProgramId
+        if (controlledProgramId === null) return
         const controlledState =
           nextState.dynasty!.activePostseason!.programStates[controlledProgramId]!
         set({
@@ -1062,6 +1164,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const nextState = get()
     if (nextState.dynasty !== dynastyBefore) {
       const controlledProgramId = nextState.dynasty!.controlledProgramId
+      if (controlledProgramId === null) return
       const controlledState =
         nextState.dynasty!.activeSeason!.programStates[controlledProgramId]!
       set({
@@ -1382,7 +1485,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const season = dynasty?.activeSeason
     const controlledProgramId = dynasty?.controlledProgramId
 
-    if (!dynasty || !season || !controlledProgramId) {
+    if (!dynasty || !season) {
       return
     }
 
@@ -1392,7 +1495,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         dynasty.dynastySeed,
         season.seasonNumber,
       ),
-      excludedProgramIds: [controlledProgramId],
+      excludedProgramIds: controlledProgramId ? [controlledProgramId] : [],
     })
 
     if (needsRecruitingSetupBeforeAdvance(dynasty, nextSeason)) {
@@ -1465,14 +1568,15 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     const { dynasty, pendingSuperSim } = get()
     const season = dynasty?.activeSeason
     const controlledProgramId = dynasty?.controlledProgramId
+    const presentationProgramId = selectPresentationProgramId(get())
 
-    if (!dynasty || !season || !controlledProgramId || !pendingSuperSim) {
+    if (!dynasty || !season || !presentationProgramId || !pendingSuperSim) {
       return
     }
 
     const before: ProgramRecord = deriveProgramRecord(
       season,
-      controlledProgramId,
+      presentationProgramId,
     )
     const nextSeason = simulatePendingGamesThroughRound({
       season,
@@ -1493,7 +1597,9 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     if (pendingSuperSim.kind === 'seasonComplete') {
       const nextDynasty = simulateDynastyToSeasonComplete(dynasty)
       const controlledState =
-        nextDynasty.activePostseason?.programStates[controlledProgramId]
+        controlledProgramId
+          ? nextDynasty.activePostseason?.programStates[controlledProgramId]
+          : undefined
 
       set({
         dynasty: nextDynasty,
@@ -1512,7 +1618,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     }
     const after: ProgramRecord = deriveProgramRecord(
       nextSeason,
-      controlledProgramId,
+      presentationProgramId,
     )
 
     set({
@@ -1523,6 +1629,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
         throughRound: pendingSuperSim.throughRound,
         segmentWins: after.wins - before.wins,
         segmentLosses: after.losses - before.losses,
+        programId: presentationProgramId,
       },
       recruitingActivityBaselinePeriod,
       recruitingPulseBaseline,
@@ -2022,11 +2129,12 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
   clearUnavailableRecruitingTargets() {
     const { dynasty } = get()
-    if (!dynasty?.recruiting) return 0
-    const before = dynasty.recruiting.programs[dynasty.controlledProgramId]!.board.length
+    const programId = dynasty?.controlledProgramId
+    if (!dynasty?.recruiting || !programId) return 0
+    const before = dynasty.recruiting.programs[programId]!.board.length
     const nextDynasty = clearUnavailableRecruitingBoardTargets(dynasty)
     if (nextDynasty === dynasty) return 0
-    const after = nextDynasty.recruiting!.programs[nextDynasty.controlledProgramId]!.board.length
+    const after = nextDynasty.recruiting!.programs[programId]!.board.length
     set({ dynasty: nextDynasty, recruitingActionError: null })
     return before - after
   },
@@ -2099,10 +2207,11 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
 
   fillRemainingRecruitingBoard() {
     const { dynasty } = get()
-    if (!dynasty?.recruiting) return 0
-    const before = dynasty.recruiting.programs[dynasty.controlledProgramId]!.board.length
+    const programId = dynasty?.controlledProgramId
+    if (!dynasty?.recruiting || !programId) return 0
+    const before = dynasty.recruiting.programs[programId]!.board.length
     const nextDynasty = fillRemainingRecruitingBoard(dynasty)
-    const after = nextDynasty.recruiting!.programs[nextDynasty.controlledProgramId]!.board.length
+    const after = nextDynasty.recruiting!.programs[programId]!.board.length
     if (nextDynasty !== dynasty) set({ dynasty: nextDynasty, recruitingActionError: null })
     return after - before
   },
@@ -2241,8 +2350,10 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       const nextDynasty = withoutControlledRecruitingStrategy(
         rolloverDynastyToNextSeason(dynasty),
       )
-      const controlledRotation = nextDynasty.activeSeason!
-        .programStates[nextDynasty.controlledProgramId]!.rotation
+      const controlledProgramId = nextDynasty.controlledProgramId
+      const controlledRotation = controlledProgramId
+        ? nextDynasty.activeSeason!.programStates[controlledProgramId]!.rotation
+        : null
       const transferredFollows = transferEnrolledRecruitFollows(
         nextDynasty,
         followedPlayerIds,

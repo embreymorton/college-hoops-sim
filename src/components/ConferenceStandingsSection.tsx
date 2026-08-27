@@ -8,6 +8,7 @@ interface ConferenceStandingsSectionProps {
   readonly controlledProgramId: string
   readonly conferenceId: string
   readonly onSelectProgram: (programId: string) => void
+  readonly highlightedLabel?: string
 }
 
 /**
@@ -21,6 +22,7 @@ export function ConferenceStandingsSection({
   controlledProgramId,
   conferenceId,
   onSelectProgram,
+  highlightedLabel,
 }: ConferenceStandingsSectionProps) {
   const programsById = new Map(
     universe.programs.map((program) => [program.id, program] as const),
@@ -33,6 +35,7 @@ export function ConferenceStandingsSection({
       programsById={programsById}
       controlledProgramId={controlledProgramId}
       onSelectProgram={onSelectProgram}
+      highlightedLabel={highlightedLabel}
     />
   )
 }

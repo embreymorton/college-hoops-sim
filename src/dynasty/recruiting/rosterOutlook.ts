@@ -7,6 +7,7 @@ import {
   type Position,
 } from '../../engine'
 import type { DynastyState } from '../domain'
+import { requireControlledProgram } from '../control'
 import { deriveProjectedRosterOutlook } from '../rosterOutlook'
 import {
   deriveFlexibleOpenings,
@@ -103,7 +104,7 @@ export function deriveNextSeasonRosterOutlook(
     throw new RangeError('Recruiting and active Season target different lifecycle years.')
   }
 
-  const programId = dynasty.controlledProgramId
+  const programId = requireControlledProgram(dynasty)
   const team = season.programStates[programId]?.team
   const program = recruiting.programs[programId]
   if (!team || !program) {

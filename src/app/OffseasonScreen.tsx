@@ -7,10 +7,11 @@ import {
   OffseasonTimeline,
   RecruitingClassSummary,
   RecruitingFinalizationDialog,
+  ViewedProgramSelector,
   type NextSeasonRosterRow,
 } from '../components'
 import { assembleNextSeasonRosters, deriveProgramRecruitingBoard } from '../dynasty'
-import { useDynastyStore } from '../store'
+import { selectPresentationProgramId, useDynastyStore } from '../store'
 import {
   deriveDepartures,
   deriveBiggestLeap,
@@ -42,13 +43,17 @@ export function OffseasonScreen() {
   const goToLeague = useDynastyStore((state) => state.goToLeague)
   const openHistory = useDynastyStore((state) => state.openHistory)
   const openArchivedSeason = useDynastyStore((state) => state.openArchivedSeason)
+  const setViewedProgram = useDynastyStore((state) => state.setViewedProgram)
 
   if (!dynasty) return null
-  const experience = deriveOffseasonExperience(dynasty, cursor)
+  const isObserver = dynasty.controlledProgramId === null
+  const controlledProgramId = selectPresentationProgramId(useDynastyStore.getState())
+  if (controlledProgramId === null) return null
+  const experience = deriveOffseasonExperience(dynasty, cursor, controlledProgramId)
   if (!experience) return null
 
   const controlledProgram = dynasty.universe.programs.find(
-    ({ id }) => id === dynasty.controlledProgramId,
+    ({ id }) => id === controlledProgramId,
   )
   if (!controlledProgram) return null
 
@@ -91,7 +96,7 @@ export function OffseasonScreen() {
     )
     const recruiting = completedClass?.recruitingState ?? dynasty.recruiting
     const incoming = recruiting
-      ? deriveIncomingClass(recruiting, dynasty.controlledProgramId)
+      ? deriveIncomingClass(recruiting, controlledProgramId)
       : []
 
     if (experience.viewedStage === 'recruiting-class') {
@@ -118,11 +123,11 @@ export function OffseasonScreen() {
     const archive = dynasty.history.find(
       ({ seasonNumber }) => seasonNumber === experience.completedSeasonNumber,
     )
-    const offseasonProgram = offseason?.programs[dynasty.controlledProgramId]
+    const offseasonProgram = offseason?.programs[controlledProgramId]
     if (!offseason || !archive || !completedClass || !offseasonProgram) return null
 
     if (experience.viewedStage === 'departures') {
-      const departures = deriveDepartures(dynasty, archive, dynasty.controlledProgramId)
+      const departures = deriveDepartures(dynasty, archive, controlledProgramId)
       return (
         <section className="section" aria-labelledby="departures-heading">
           <p className="eyebrow-tag">Who Is Moving On</p>
@@ -135,7 +140,7 @@ export function OffseasonScreen() {
 
     const developmentRows = deriveDevelopmentRows(
       archive,
-      dynasty.controlledProgramId,
+      controlledProgramId,
       offseasonProgram,
       dynasty.dynastySeed,
       offseason.developmentExplosions,
@@ -157,7 +162,7 @@ export function OffseasonScreen() {
       completedRecruitingClass: completedClass,
       completedSeasonArchive: archive,
     })
-    const roster = assembly.programs[dynasty.controlledProgramId]!.players
+    const roster = assembly.programs[controlledProgramId]!.players
     const returningIds = new Set(offseasonProgram.returningPlayers.map(({ id }) => id))
     const rosterRows: NextSeasonRosterRow[] = roster.map((player) => ({
       player,
@@ -217,7 +222,7 @@ export function OffseasonScreen() {
   )?.label
   const remainingOpenings = dynasty.recruiting?.phase === 'late'
     ? deriveRecruitingHubTotals(
-        deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId),
+        deriveProgramRecruitingBoard(dynasty, controlledProgramId),
       ).remainingTotal
     : 0
 
@@ -256,6 +261,12 @@ export function OffseasonScreen() {
           </div>
         </div>
       </header>
+
+      {isObserver && <ViewedProgramSelector
+        programId={controlledProgramId}
+        programs={dynasty.universe.programs}
+        onChange={setViewedProgram}
+      />}
 
       <OffseasonTimeline stages={experience.stages} onSelectStage={handleTimelineSelect} />
 

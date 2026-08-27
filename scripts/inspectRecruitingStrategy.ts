@@ -49,8 +49,8 @@ function boardEffort(dynasty: DynastyState, programId: string, playerId: string)
 }
 
 function configure(dynasty: DynastyState, targets: number, focusCount: number): { dynasty: DynastyState; targetIds: string[] } {
-  if (targets === 0) return { dynasty, targetIds: dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId) }
-  const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+  if (targets === 0) return { dynasty, targetIds: dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.map(({ playerId }) => playerId) }
+  const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
   let current: DynastyState = { ...dynasty, recruiting: { ...dynasty.recruiting!, programs: { ...dynasty.recruiting!.programs, [controlled.programId]: { ...controlled, board: [] } } } }
   const targetIds: string[] = []
   for (const recruit of current.recruiting!.recruits) {

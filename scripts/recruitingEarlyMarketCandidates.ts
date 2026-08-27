@@ -9,7 +9,7 @@ import {
 export type EarlyMarketCandidate = 'baseline' | 'earlier-p4' | 'earlier-p6' | 'opportunity' | 'reach' | 'prestige-control'
 
 const activePrograms = (dynasty: DynastyState, playerId: string) => Object.values(dynasty.recruiting!.programs)
-  .filter((program) => program.programId !== dynasty.controlledProgramId && program.board.some((target) => target.playerId === playerId && deriveTargetStatus(dynasty.recruiting!, program.programId, playerId) === 'active')).length
+  .filter((program) => program.programId !== dynasty.controlledProgramId! && program.board.some((target) => target.playerId === playerId && deriveTargetStatus(dynasty.recruiting!, program.programId, playerId) === 'active')).length
 
 /** Diagnostic-only pre-period board perturbation. Production Recruiting never imports this file. */
 export function applyEarlyMarketCandidate(dynasty: DynastyState): DynastyState {
@@ -20,7 +20,7 @@ export function applyEarlyMarketCandidate(dynasty: DynastyState): DynastyState {
   const programs = { ...recruiting.programs }
   const marketCounts = new Map(recruiting.recruits.map((recruit) => [recruit.player.id, activePrograms(dynasty, recruit.player.id)]))
   for (const programId of Object.keys(programs).sort()) {
-    if (programId === dynasty.controlledProgramId) continue
+    if (programId === dynasty.controlledProgramId!) continue
     const program = programs[programId]!
     const prestige = dynasty.activeSeason.programStates[programId]!.team.prestige
     const remaining = deriveRemainingOpeningsByPosition(recruiting, program)

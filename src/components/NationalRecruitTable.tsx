@@ -5,6 +5,7 @@ import {
   deriveRecruitMarketView,
   deriveRecruitProgramStandings,
   deriveTargetStatus,
+  requireControlledProgram,
   RECRUITING_BOARD_LIMIT,
   type DynastyState,
   type ProgramRecruitingBoard,
@@ -31,6 +32,7 @@ interface NationalRecruitTableProps {
   readonly onAddToBoard: (playerId: string) => void
   readonly onOpenRecruitDetails: (playerId: string) => void
   readonly availableMarketOnly?: boolean
+  readonly readOnly?: boolean
 }
 
 /** The full national Recruit pool, filterable by position/need, in National Rank order. */
@@ -41,10 +43,11 @@ export function NationalRecruitTable({
   onAddToBoard,
   onOpenRecruitDetails,
   availableMarketOnly = false,
+  readOnly = false,
 }: NationalRecruitTableProps) {
   const [filter, setFilter] = useState<ClassFilter>('all')
   const recruiting = dynasty.recruiting!
-  const controlledProgramId = dynasty.controlledProgramId
+  const controlledProgramId = requireControlledProgram(dynasty)
   const boardIsFull = board.targets.length >= RECRUITING_BOARD_LIMIT
   const marketIsForming = recruiting.lastResolvedPeriod === 0
 
@@ -123,7 +126,7 @@ export function NationalRecruitTable({
                 <th scope="col">Market</th>
                 <th scope="col">Offers</th>
                 <th scope="col">Status</th>
-                <th scope="col">Action</th>
+                {!readOnly && <th scope="col">Action</th>}
               </tr>
             </thead>
             <tbody>
@@ -158,9 +161,9 @@ export function NationalRecruitTable({
                       </button>
                       <span className="leader-board__pos">{recruit.player.position}</span>
                     </td>
-                    <td>
+                    {!readOnly && <td>
                       <RecruitStars stars={recruit.stars} />
-                    </td>
+                    </td>}
                     <td>{calculateOverall(recruit.player)}</td>
                     <td>{recruit.player.potential}</td>
                     <td>

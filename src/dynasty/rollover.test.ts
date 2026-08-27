@@ -63,11 +63,26 @@ beforeAll(() => {
 })
 
 describe('Dynasty Season Rollover V0', () => {
+  it('carries an Observer through finalization, offseason, and rollover with all AI plans intact', () => {
+    const observerOffseason = finishCompetitionAndBeginOffseason(
+      createRecruitingDynasty('observer-rollover', null),
+    )
+    const next = rolloverDynastyToNextSeason(observerOffseason)
+    expect(next.controlledProgramId).toBeNull()
+    expect(next.activeSeason?.seasonNumber).toBe(2)
+    expect(next.recruiting?.lastResolvedPeriod).toBe(0)
+    expect(Object.values(next.recruiting!.programs)).toHaveLength(32)
+    expect(Object.values(next.recruiting!.programs).every(({ board }) =>
+      board.length > 0 && board.some(({ hasActiveOffer }) => hasActiveOffer) &&
+      board.some(({ isFocused }) => isFocused),
+    )).toBe(true)
+  }, 15_000)
+
   it('atomically starts a fresh next Season while preserving lifecycle history', () => {
     const before = structuredClone(canonical)
     const next = rolloverDynastyToNextSeason(canonical)
 
-    expect(next.controlledProgramId).toBe(canonical.controlledProgramId)
+    expect(next.controlledProgramId!).toBe(canonical.controlledProgramId!)
     expect(next.activeSeason?.seasonNumber).toBe(2)
     expect(next.activePostseason).toBeNull()
     expect(next.offseason).toBeNull()
@@ -133,7 +148,7 @@ describe('Dynasty Season Rollover V0', () => {
       }
       const recruit = active.recruiting!.recruits[0]!
       expect(Number.isFinite(
-        deriveBaseRecruitAttraction(active, recruit, active.controlledProgramId),
+        deriveBaseRecruitAttraction(active, recruit, active.controlledProgramId!),
       )).toBe(true)
 
       if (transition < 2) offseason = finishCompetitionAndBeginOffseason(active)
@@ -182,11 +197,11 @@ describe('Dynasty Season Rollover V0', () => {
     expect(recruiting.targetSeasonNumber).toBe(3)
     expect(recruiting.lastResolvedPeriod).toBe(0)
     expect(Object.keys(recruiting.programs)).toHaveLength(32)
-    expect(recruiting.programs[first.controlledProgramId]!.board.length).toBeGreaterThan(0)
+    expect(recruiting.programs[first.controlledProgramId!]!.board.length).toBeGreaterThan(0)
     expect(recruiting.recruits).not.toEqual(
       canonical.completedRecruitingHistory[0]!.recruitingState.recruits,
     )
-    const programId = first.controlledProgramId
+    const programId = first.controlledProgramId!
     const recruit = recruiting.recruits[0]!
     const baselineAttraction = deriveBaseRecruitAttraction(first, recruit, programId)
     const higherPrestige = {

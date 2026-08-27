@@ -32,7 +32,7 @@ function setControlledBoard(
   board: readonly RecruitingBoardTarget[],
   openings: PositionCounts,
 ) {
-  const programId = dynasty.controlledProgramId
+  const programId = dynasty.controlledProgramId!
   return {
     ...dynasty,
     recruiting: {
@@ -68,7 +68,7 @@ describe('active recruiting offers', () => {
 
   it('offers and withdraws only eligible controlled-board targets without changing focus', () => {
     let dynasty = createRecruitingDynasty('manual-offers')
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const offered = program.board.find(({ hasActiveOffer }) => hasActiveOffer)!
     const offeredPosition = dynasty.recruiting!.recruits.find(
       ({ player }) => player.id === offered.playerId,
@@ -80,20 +80,20 @@ describe('active recruiting offers', () => {
     })!
     const wasFocused = offered.isFocused
     dynasty = withdrawRecruitOffer({ dynasty, playerId: offered.playerId })
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .find(({ playerId }) => playerId === offered.playerId)).toMatchObject({
         isFocused: wasFocused,
         hasActiveOffer: false,
       })
     dynasty = offerRecruit({ dynasty, playerId: backup.playerId })
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .find(({ playerId }) => playerId === backup.playerId)?.hasActiveOffer).toBe(true)
     expect(() => offerRecruit({ dynasty, playerId: backup.playerId })).toThrow(/already/)
   })
 
   it('rejects non-board, committed, and over-capacity offers', () => {
     let dynasty = createRecruitingDynasty('offer-validation')
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const outside = dynasty.recruiting!.recruits.find(({ player }) =>
       !program.board.some(({ playerId }) => playerId === player.id),
     )!
@@ -122,23 +122,23 @@ describe('active recruiting offers', () => {
     let dynasty = createRecruitingDynasty('offer-progress')
     dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
     dynasty = resolveRecruitingPeriod(dynasty, 1)
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const offered = program.board.find(({ hasActiveOffer }) => hasActiveOffer)!
     const offeredRecruit = dynasty.recruiting!.recruits.find(({ player }) => player.id === offered.playerId)!
     const backup = program.board.find((target) => {
       const recruit = dynasty.recruiting!.recruits.find(({ player }) => player.id === target.playerId)!
       return !target.hasActiveOffer && recruit.player.position === offeredRecruit.player.position
     })!
-    const progress = dynasty.recruiting!.relationshipProgressByPlayerId[backup.playerId]?.[dynasty.controlledProgramId] ?? 0
+    const progress = dynasty.recruiting!.relationshipProgressByPlayerId[backup.playerId]?.[dynasty.controlledProgramId!] ?? 0
     expect(progress).toBeGreaterThan(0)
     dynasty = withdrawRecruitOffer({ dynasty, playerId: offered.playerId })
     dynasty = offerRecruit({ dynasty, playerId: backup.playerId })
-    expect(dynasty.recruiting!.relationshipProgressByPlayerId[backup.playerId]![dynasty.controlledProgramId]).toBe(progress)
+    expect(dynasty.recruiting!.relationshipProgressByPlayerId[backup.playerId]![dynasty.controlledProgramId!]).toBe(progress)
   })
 
   it('blocks an early backup, then permits it after the protected offer switches', () => {
     let dynasty = createRecruitingDynasty('protected-slot')
-    const programId = dynasty.controlledProgramId
+    const programId = dynasty.controlledProgramId!
     const byPosition = POSITIONS.map((position) => ({
       position,
       premium: dynasty.recruiting!.recruits.find(
@@ -206,7 +206,7 @@ describe('active recruiting offers', () => {
 
   it('cleans invalid controlled offers while AI deterministically replaces lost offers', () => {
     let dynasty = createRecruitingDynasty('offer-cleanup')
-    const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const controlled = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const controlledOffer = controlled.board.find(({ hasActiveOffer }) => hasActiveOffer)!
     const cleaned = cleanupInvalidRecruitingOffers({
       ...dynasty.recruiting!,
@@ -219,7 +219,7 @@ describe('active recruiting offers', () => {
         },
       },
     })
-    expect(cleaned.programs[dynasty.controlledProgramId]!.board
+    expect(cleaned.programs[dynasty.controlledProgramId!]!.board
       .find(({ playerId }) => playerId === controlledOffer.playerId)?.hasActiveOffer).toBe(false)
 
     dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
@@ -232,7 +232,7 @@ describe('active recruiting offers', () => {
         commitmentsByPlayerId: {
           [lost.playerId]: {
             playerId: lost.playerId,
-            programId: dynasty.controlledProgramId,
+            programId: dynasty.controlledProgramId!,
             timing: { kind: 'period', period: 0 },
             targetSeasonNumber: 2,
           },
@@ -296,7 +296,7 @@ describe('active recruiting offers', () => {
 
   it('promotes the user-focused backup identically in manual and batched advancement', () => {
     const initial = createRecruitingDynasty('controlled-fallback-equivalence')
-    const programId = initial.controlledProgramId
+    const programId = initial.controlledProgramId!
     const position = POSITIONS.find((candidate) =>
       initial.recruiting!.recruits.filter(({ player }) => player.position === candidate).length >= 3,
     )!
@@ -347,7 +347,7 @@ describe('active recruiting offers', () => {
 
   it('does not undo a deliberate controlled offer withdrawal during advancement', () => {
     let dynasty = createRecruitingDynasty('deliberate-offer-vacancy')
-    const programId = dynasty.controlledProgramId
+    const programId = dynasty.controlledProgramId!
     const offered = dynasty.recruiting!.programs[programId]!.board
       .find(({ hasActiveOffer }) => hasActiveOffer)!
     dynasty = withdrawRecruitOffer({ dynasty, playerId: offered.playerId })
@@ -359,7 +359,7 @@ describe('active recruiting offers', () => {
 
   it('does not promote a backup when the offered commitment fills the position', () => {
     let dynasty = createRecruitingDynasty('filled-position-no-fallback')
-    const programId = dynasty.controlledProgramId
+    const programId = dynasty.controlledProgramId!
     const recruit = { ...dynasty.recruiting!.recruits[0]!,
       decisionReadyPeriod: 1,
       commitmentStandingThreshold: 0,
@@ -400,7 +400,7 @@ describe('active recruiting offers', () => {
     const programId = Object.values(dynasty.activeSeason!.programStates)
       .sort((first, second) => second.team.prestige - first.team.prestige)
       .map(({ team }) => team.id)
-      .find((id) => id !== dynasty.controlledProgramId)!
+      .find((id) => id !== dynasty.controlledProgramId!)!
     const premium = dynasty.recruiting!.recruits.find(({ stars }) => stars === 5)!
     const fallback = [...dynasty.recruiting!.recruits].reverse().find(
       (recruit) => recruit.player.position === premium.player.position,
@@ -430,7 +430,7 @@ describe('active recruiting offers', () => {
 
   it('allows a clear elite lead to commit early while a tied battle waits', () => {
     const source = createRecruitingDynasty('elite-commitment-conditions')
-    const programId = source.controlledProgramId
+    const programId = source.controlledProgramId!
     const otherProgramId = Object.keys(source.recruiting!.programs).sort()
       .find((id) => id !== programId)!
     const elite = {

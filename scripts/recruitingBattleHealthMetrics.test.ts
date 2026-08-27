@@ -20,7 +20,7 @@ describe('Recruiting battle health metrics', () => {
 
   it('classifies generated Focus-with-Offer coherence separately from AI', () => {
     const initial = createRecruitingDynasty('health-plan')
-    const id = initial.controlledProgramId
+    const id = initial.controlledProgramId!
     const recruiting = initial.recruiting!
     const empty = { ...recruiting.programs[id]!, board: [] }
     const context = { ...initial, recruiting: { ...recruiting, programs: { ...recruiting.programs, [id]: empty } } }

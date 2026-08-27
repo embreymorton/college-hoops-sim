@@ -1,4 +1,5 @@
 import type { DynastyState } from '../domain'
+import { requireControlledProgram } from '../control'
 import {
   deriveRecruitingBattleView,
   type ControlledRecruitingPosition,
@@ -79,7 +80,8 @@ export function deriveRecruitingPulseSnapshot(
 ): RecruitingPulseSnapshot | null {
   const recruiting = dynasty.recruiting
   if (!recruiting) return null
-  const controlled = recruiting.programs[dynasty.controlledProgramId]
+  const controlledProgramId = requireControlledProgram(dynasty)
+  const controlled = recruiting.programs[controlledProgramId]
   const boardIds = controlled?.board.map(({ playerId }) => playerId) ?? []
   const trackedIds = [...new Set([...boardIds, ...followedRecruitIds])]
     .filter((playerId) => getRecruit(recruiting, playerId) !== undefined)
@@ -136,6 +138,7 @@ export function deriveRecruitingPulse(
   dynasty: DynastyState,
 ): RecruitingPulseFact[] {
   if (!baseline || !dynasty.recruiting) return []
+  const controlledProgramId = requireControlledProgram(dynasty)
   const current = deriveRecruitingPulseSnapshot(dynasty, baseline.recruits.map(({ playerId }) => playerId))
   if (!current) return []
   const currentById = new Map(current.recruits.map((row) => [row.playerId, row]))
@@ -145,12 +148,12 @@ export function deriveRecruitingPulse(
     if (!after) continue
     if (!before.commitment && after.commitment) {
       facts.push({
-        kind: after.commitment.programId === dynasty.controlledProgramId
+        kind: after.commitment.programId === controlledProgramId
           ? 'committed-to-controlled'
           : before.isFocused ? 'focused-committed-elsewhere' : 'tracked-committed-elsewhere',
         playerId: before.playerId,
         programId: after.commitment.programId,
-        priority: after.commitment.programId === dynasty.controlledProgramId ? 1 : before.isFocused ? 2 : 7,
+        priority: after.commitment.programId === controlledProgramId ? 1 : before.isFocused ? 2 : 7,
       })
       continue
     }
@@ -165,11 +168,11 @@ export function deriveRecruitingPulse(
       if (order[to] > order[from]) facts.push({ kind: 'position-fell', playerId: before.playerId, from, to, priority: 4 })
       if (order[to] < order[from]) facts.push({ kind: 'position-improved', playerId: before.playerId, from, to, priority: 6 })
     }
-    const newOffers = after.activeOfferProgramIds.filter((id) => id !== dynasty.controlledProgramId && !before.activeOfferProgramIds.includes(id))
+    const newOffers = after.activeOfferProgramIds.filter((id) => id !== controlledProgramId && !before.activeOfferProgramIds.includes(id))
     if (before.isOnControlledBoard && newOffers.length) {
       facts.push({ kind: 'new-offer', playerId: before.playerId, programId: newOffers.sort()[0], priority: before.isFocused ? 5 : 6 })
     }
-    const newPrograms = after.activeProgramIds.filter((id) => id !== dynasty.controlledProgramId && !before.activeProgramIds.includes(id))
+    const newPrograms = after.activeProgramIds.filter((id) => id !== controlledProgramId && !before.activeProgramIds.includes(id))
     const major = newPrograms.find((programId) => {
       const battle = deriveRecruitingBattleView(dynasty, before.playerId)
       const row = battle.pursuingPrograms.find((entry) => entry.programId === programId)

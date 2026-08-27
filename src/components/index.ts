@@ -1,4 +1,5 @@
 export { TeamSelect } from './TeamSelect'
+export { ViewedProgramSelector } from './ViewedProgramSelector'
 export { PregameScoreboard, FinalScoreboard } from './Scoreboard'
 export { RosterTable } from './RosterTable'
 export { TeamPanelHeader } from './TeamPanelHeader'

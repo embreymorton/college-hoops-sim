@@ -74,7 +74,7 @@ function tournamentHeader(): HTMLElement {
 
 function forceControlledProgramLoss(): void {
   const dynasty = useDynastyStore.getState().dynasty!
-  const controlledProgramId = dynasty.controlledProgramId
+  const controlledProgramId = dynasty.controlledProgramId!
   let postseason = dynasty.activePostseason!
   const round = getCurrentTournamentRound(postseason)!
   postseason = simulatePendingGamesInTournamentRound({
@@ -136,14 +136,14 @@ describe('Postseason transition', () => {
     expect(within(awards).getAllByText(`${formatRating(stats.pointsPerGame)} PPG · ${formatRating(stats.reboundsPerGame)} RPG · ${formatRating(stats.assistsPerGame)} APG`).length).toBeGreaterThan(0)
 
     const announced = deriveAnnouncedSeasonHonors(dynasty)
-    const controlledHonor = announced.find(({ program }) => program.id === dynasty.controlledProgramId)
+    const controlledHonor = announced.find(({ program }) => program.id === dynasty.controlledProgramId!)
     if (controlledHonor) {
       const controlledName = `${controlledHonor.player.firstName} ${controlledHonor.player.lastName}`
       expect(within(awards).getAllByRole('button', { name: controlledName })[0]!.parentElement).toHaveTextContent(/You/i)
     }
 
     const conferenceTabs = within(awards).getByRole('group', { name: 'Conference' })
-    const controlledConference = dynasty.universe.conferences.find(({ id }) => id === dynasty.universe.programs.find(({ id }) => id === dynasty.controlledProgramId)!.conferenceId)!
+    const controlledConference = dynasty.universe.conferences.find(({ id }) => id === dynasty.universe.programs.find(({ id }) => id === dynasty.controlledProgramId!)!.conferenceId)!
     expect(within(conferenceTabs).getByRole('button', { name: controlledConference.name.replace(/ Conference$/, '') })).toHaveAttribute('aria-pressed', 'true')
     const otherConference = dynasty.universe.conferences.find(({ id }) => id !== controlledConference.id)!
     fireEvent.click(within(conferenceTabs).getByRole('button', { name: otherConference.name.replace(/ Conference$/, '') }))
@@ -466,8 +466,8 @@ describe('Postseason — did not qualify', () => {
     selectProgram('pine-valley')
     completeRegularSeasonAndEnterPostseason()
     const before = useDynastyStore.getState().dynasty!
-    expect(before.activePostseason!.programStates[before.controlledProgramId]).toBeUndefined()
-    const seasonTeam = before.activeSeason!.programStates[before.controlledProgramId]!.team
+    expect(before.activePostseason!.programStates[before.controlledProgramId!]).toBeUndefined()
+    const seasonTeam = before.activeSeason!.programStates[before.controlledProgramId!]!.team
     render(<App />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Coaching' }))
@@ -533,7 +533,7 @@ describe('Postseason — bracket and historical results', () => {
     )!
     const controlledGame = getTournamentGameForProgram(
       initial.dynasty!.activePostseason!,
-      initial.dynasty!.controlledProgramId,
+      initial.dynasty!.controlledProgramId!,
       currentRound,
     )!
     const futureGame = initial.dynasty!.activePostseason!.bracket.games.find(

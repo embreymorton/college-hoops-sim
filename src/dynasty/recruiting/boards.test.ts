@@ -61,22 +61,22 @@ describe('Program recruiting boards', () => {
     let dynasty = createRecruitingDynasty('board-editing')
     dynasty = { ...dynasty, activeSeason: completeRounds(dynasty.activeSeason!, 1) }
     dynasty = resolveRecruitingPeriod(dynasty, 1)
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const removed = program.board[0]!
-    const progress = dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId]!
+    const progress = dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId!]!
     dynasty = removeRecruitingBoardTarget({ dynasty, playerId: removed.playerId })
-    expect(dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId]).toBe(progress)
+    expect(dynasty.recruiting!.relationshipProgressByPlayerId[removed.playerId]![dynasty.controlledProgramId!]).toBe(progress)
     dynasty = addRecruitingBoardTarget({ dynasty, playerId: removed.playerId })
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .find(({ playerId }) => playerId === removed.playerId)?.origin).toBe('manual')
     dynasty = setRecruitingFocus({ dynasty, playerId: removed.playerId, isFocused: true })
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .find(({ playerId }) => playerId === removed.playerId)?.isFocused).toBe(true)
   })
 
   it('preserves provenance through focus, offer, withdraw, and assistant restoration', () => {
     let dynasty = createRecruitingDynasty('board-origin-lifecycle')
-    const programId = dynasty.controlledProgramId
+    const programId = dynasty.controlledProgramId!
     const original = dynasty.recruiting!.programs[programId]!.board.find(
       ({ hasActiveOffer }) => hasActiveOffer,
     )!
@@ -115,7 +115,7 @@ describe('Program recruiting boards', () => {
 
   it('fills only remaining capacity while preserving the exact manual plan and order', () => {
     const full = createRecruitingDynasty('assistant-partial-board')
-    const programId = full.controlledProgramId
+    const programId = full.controlledProgramId!
     const original = full.recruiting!.programs[programId]!.board.slice(0, 3).map(
       (target, index) => ({
         ...target,
@@ -146,7 +146,7 @@ describe('Program recruiting boards', () => {
 
   it('atomically clears unavailable targets while retaining commitments, order, and history', () => {
     const source = createRecruitingDynasty('clear-unavailable')
-    const programId = source.controlledProgramId
+    const programId = source.controlledProgramId!
     const atPosition = (position: 'PG' | 'SG' | 'PF' | 'C') =>
       source.recruiting!.recruits.filter(({ player }) => player.position === position)
     const elsewhere = atPosition('PG')[0]!
@@ -195,7 +195,7 @@ describe('Program recruiting boards', () => {
 
   it('fills empty and nearly-full Boards deterministically without changing AI plans', () => {
     const source = createRecruitingDynasty('assistant-determinism')
-    const programId = source.controlledProgramId
+    const programId = source.controlledProgramId!
     const aiBefore = Object.fromEntries(Object.entries(source.recruiting!.programs).filter(
       ([id]) => id !== programId,
     ))
@@ -237,7 +237,7 @@ describe('Program recruiting boards', () => {
 
   it('preserves unavailable existing entries and stops when no legal candidates remain', () => {
     const source = createRecruitingDynasty('assistant-insufficient')
-    const programId = source.controlledProgramId
+    const programId = source.controlledProgramId!
     const existing = { ...source.recruiting!.programs[programId]!.board[0]!, isFocused: true, hasActiveOffer: true }
     const dynasty = {
       ...source,
@@ -259,7 +259,7 @@ describe('Program recruiting boards', () => {
 
   it('validates board bounds, duplicates, focus, commitments, and position eligibility', () => {
     let dynasty = createRecruitingDynasty('board-validation')
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const existing = program.board[0]!
     expect(() => addRecruitingBoardTarget({ dynasty, playerId: existing.playerId })).toThrow(/already/)
 
@@ -288,16 +288,16 @@ describe('Program recruiting boards', () => {
 
   it('enforces at most three active focus targets without coupling focus to offers', () => {
     let dynasty = createRecruitingDynasty('focus-limit')
-    const targetIds = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    const targetIds = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .slice(0, 4).map(({ playerId }) => playerId)
     for (const playerId of targetIds.slice(0, 3)) {
       dynasty = setRecruitingFocus({ dynasty, playerId, isFocused: true })
     }
     expect(() => setRecruitingFocus({ dynasty, playerId: targetIds[3]!, isFocused: true }))
       .toThrow(/focus cannot exceed 3/i)
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .filter(({ isFocused }) => isFocused)).toHaveLength(3)
-    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+    expect(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
       .filter(({ isFocused }) => isFocused).every(({ hasActiveOffer }) => !hasActiveOffer || hasActiveOffer))
       .toBe(true)
   })
@@ -306,7 +306,7 @@ describe('Program recruiting boards', () => {
     const dynasty = createRecruitingDynasty('coherent-ai-plan')
     const recruiting = dynasty.recruiting!
     const aiPrograms = Object.values(recruiting.programs).filter(
-      ({ programId }) => programId !== dynasty.controlledProgramId,
+      ({ programId }) => programId !== dynasty.controlledProgramId!,
     )
     for (const program of aiPrograms) {
       const offered = program.board.filter(({ hasActiveOffer }) => hasActiveOffer)

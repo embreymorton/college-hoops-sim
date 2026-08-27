@@ -34,13 +34,13 @@ function initializeInteractiveDynasty(): void {
 
 function controlledBoard() {
   const dynasty = useDynastyStore.getState().dynasty!
-  return dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board
+  return dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board
 }
 
 function firstEligibleRecruitId(): string {
   const dynasty = useDynastyStore.getState().dynasty!
   const recruiting = dynasty.recruiting!
-  const program = recruiting.programs[dynasty.controlledProgramId]!
+  const program = recruiting.programs[dynasty.controlledProgramId!]!
   const remaining = deriveRemainingOpeningsByPosition(recruiting, program)
   return recruiting.recruits.find(
     ({ player }) => remaining[player.position] > 0,
@@ -58,7 +58,7 @@ describe('interactive Recruiting initialization', () => {
       initializeDynastyState({
         dynastyId: interactive.dynastyId,
         dynastySeed: interactive.dynastySeed,
-        controlledProgramId: interactive.controlledProgramId,
+        controlledProgramId: interactive.controlledProgramId!,
         universe: interactive.universe,
         activeSeason: interactive.activeSeason!,
       }),
@@ -85,7 +85,7 @@ describe('interactive Recruiting initialization', () => {
   it('leaves autonomous/default Dynasty initialization behavior unchanged', () => {
     const autonomous = createRecruitingDynasty('autonomous-setup-regression')
     expect(
-      autonomous.recruiting!.programs[autonomous.controlledProgramId]!.board
+      autonomous.recruiting!.programs[autonomous.controlledProgramId!]!.board
         .length,
     ).toBeGreaterThan(0)
   })

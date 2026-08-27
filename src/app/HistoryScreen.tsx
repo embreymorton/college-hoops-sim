@@ -2,7 +2,7 @@ import {
   deriveCompletedSeasonIndex,
   type HistoricalTournamentOutcome,
 } from '../dynasty'
-import { useDynastyStore } from '../store'
+import { selectPresentationProgramId, useDynastyStore } from '../store'
 import { formatTournamentRoundName } from './postseasonFormatters'
 
 function formatTournamentOutcome(outcome: HistoricalTournamentOutcome): string {
@@ -27,12 +27,17 @@ export function HistoryScreen() {
   const openArchivedSeason = useDynastyStore(
     (state) => state.openArchivedSeason,
   )
+  const perspectiveProgramId = useDynastyStore(selectPresentationProgramId)
 
   if (!dynasty) return null
 
   let seasons
   try {
-    seasons = deriveCompletedSeasonIndex(dynasty)
+    seasons = deriveCompletedSeasonIndex(
+      dynasty.controlledProgramId === null && perspectiveProgramId
+        ? { ...dynasty, controlledProgramId: perspectiveProgramId }
+        : dynasty,
+    )
   } catch (error) {
     return (
       <div className="history-screen">
@@ -79,7 +84,7 @@ export function HistoryScreen() {
                   Champion: {season.nationalChampion.name}
                 </span>
                 <span className="history-season-card__detail">
-                  Your Program: {season.controlledProgramRecord.wins}-{season.controlledProgramRecord.losses}
+                  {dynasty.controlledProgramId === null ? 'Viewed Program' : 'Your Program'}: {season.controlledProgramRecord.wins}-{season.controlledProgramRecord.losses}
                   {' · '}{formatTournamentOutcome(season.controlledTournamentOutcome)}
                 </span>
               </button>

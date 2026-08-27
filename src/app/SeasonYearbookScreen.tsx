@@ -16,7 +16,7 @@ import {
   type HistoricalTournamentOutcome,
 } from '../dynasty'
 import { TOURNAMENT_ROUNDS } from '../postseason'
-import { useDynastyStore } from '../store'
+import { selectPresentationProgramId, useDynastyStore } from '../store'
 import { formatOrdinal, formatRecord } from './seasonFormatters'
 import {
   formatBidType,
@@ -241,6 +241,7 @@ function StatisticalLeadersCard({
 
 /** Complete, read-only player-facing summary of one canonical archived Season. */
 export function SeasonYearbookScreen() {
+  const perspectiveProgramId = useDynastyStore(selectPresentationProgramId)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const selectedSeasonNumber = useDynastyStore(
     (state) => state.selectedArchivedSeasonNumber,
@@ -263,7 +264,12 @@ export function SeasonYearbookScreen() {
     if (selectedSeasonNumber === null) {
       throw new RangeError('No completed Season is selected.')
     }
-    yearbook = deriveCompletedSeasonYearbook(dynasty, selectedSeasonNumber)
+    yearbook = deriveCompletedSeasonYearbook(
+      dynasty.controlledProgramId === null && perspectiveProgramId
+        ? { ...dynasty, controlledProgramId: perspectiveProgramId }
+        : dynasty,
+      selectedSeasonNumber,
+    )
   } catch (error) {
     return (
       <main className="season-yearbook-screen">

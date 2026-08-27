@@ -128,7 +128,7 @@ function baseDynasty(trial: number, controlledProgramId: string): DynastyState {
 }
 
 function clearControlledBoard(dynasty: DynastyState): DynastyState {
-  const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+  const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
   return {
     ...dynasty,
     recruiting: {
@@ -139,7 +139,7 @@ function clearControlledBoard(dynasty: DynastyState): DynastyState {
 }
 
 function targetFor(base: DynastyState, tier: Tier): Recruit | undefined {
-  const program = base.recruiting!.programs[base.controlledProgramId]!
+  const program = base.recruiting!.programs[base.controlledProgramId!]!
   return base.recruiting!.recruits.filter((recruit) =>
     tier.matches(recruit) && program.projectedOpeningsByPosition[recruit.player.position] > 0,
   ).sort((first, second) => first.nationalRank - second.nationalRank || first.player.id.localeCompare(second.player.id))[0]
@@ -170,7 +170,7 @@ function resolveLifecycle(dynasty: DynastyState): DynastyState {
 
 function competition(base: DynastyState, recruit: Recruit): Competition {
   const programs = Object.values(base.recruiting!.programs).filter(({ programId, board }) =>
-    programId !== base.controlledProgramId && board.some(({ playerId, hasActiveOffer }) =>
+    programId !== base.controlledProgramId! && board.some(({ playerId, hasActiveOffer }) =>
       playerId === recruit.player.id && hasActiveOffer,
     ),
   )
@@ -190,7 +190,7 @@ function runOutcome(base: DynastyState, recruit: Recruit, focused: boolean, audi
     auditState(final, audit)
     const commitment = final.recruiting!.commitmentsByPlayerId[recruit.player.id]
     if (!commitment) return { signed: false, timing: 'unsigned' }
-    if (commitment.programId !== configured.controlledProgramId) return { signed: false, timing: 'loss' }
+    if (commitment.programId !== configured.controlledProgramId!) return { signed: false, timing: 'loss' }
     if (commitment.timing.kind === 'late') return { signed: true, timing: 'late' }
     return {
       signed: true,

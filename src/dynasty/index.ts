@@ -1,5 +1,10 @@
 export { beginOffseason, initializeDynastyState } from './dynastyState'
 export {
+  canManageProgram,
+  isObserverDynasty,
+  requireControlledProgram,
+} from './control'
+export {
   AWARDS_MINIMUM_MINUTES_PER_GAME,
   AWARDS_RULES_VERSION,
   FIRST_TEAM_SIZE,

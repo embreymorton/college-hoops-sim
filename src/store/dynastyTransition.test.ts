@@ -114,7 +114,7 @@ describe('Dynasty transition orchestration', () => {
       lastPlayedGameId: 'season-1-g1',
       viewedGameId: 'season-1-g1',
       pendingSuperSim: { kind: 'midseason', throughRound: 12 },
-      superSimSummary: { kind: 'midseason', throughRound: 12, segmentWins: 8, segmentLosses: 4 },
+      superSimSummary: { programId: 'charlotte-tech', kind: 'midseason', throughRound: 12, segmentWins: 8, segmentLosses: 4 },
       lastPlayedTournamentGameId: 'national-final',
       viewedTournamentGameId: 'national-final',
       postseasonDraftRotation: {
@@ -138,16 +138,16 @@ describe('Dynasty transition orchestration', () => {
     useDynastyStore.getState().beginNextSeason()
     const state = useDynastyStore.getState()
     const next = state.dynasty!
-    const controlledRotation = next.activeSeason!.programStates[next.controlledProgramId]!.rotation
+    const controlledRotation = next.activeSeason!.programStates[next.controlledProgramId!]!.rotation
 
     expect(next.activeSeason!.seasonNumber).toBe(2)
     expect(next.activeSeason!.resultsByGameId).toEqual({})
     expect(next.activePostseason).toBeNull()
     expect(next.offseason).toBeNull()
     expect(next.history).toEqual(prepared.history)
-    expect(next.controlledProgramId).toBe(prepared.controlledProgramId)
+    expect(next.controlledProgramId!).toBe(prepared.controlledProgramId!)
     expect(next.recruiting).toMatchObject({ targetSeasonNumber: 3, lastResolvedPeriod: 0 })
-    expect(next.recruiting!.programs[next.controlledProgramId]!.board).toEqual([])
+    expect(next.recruiting!.programs[next.controlledProgramId!]!.board).toEqual([])
     expect(state.followedRecruitIds).toEqual([followedRecruitId])
     expect(state.followedPlayerIds).not.toContain(followedRecruitId)
     expect(state.controlledProgramDefaultRotation).toEqual(controlledRotation)
@@ -209,10 +209,10 @@ describe('Dynasty transition orchestration', () => {
     const finalized = useDynastyStore.getState().dynasty!
     const commitments = Object.values(finalized.recruiting!.commitmentsByPlayerId)
     const ours = commitments.find(
-      ({ programId }) => programId === finalized.controlledProgramId,
+      ({ programId }) => programId === finalized.controlledProgramId!,
     )!
     const theirs = commitments.find(
-      ({ programId }) => programId !== finalized.controlledProgramId,
+      ({ programId }) => programId !== finalized.controlledProgramId!,
     )!
 
     useDynastyStore.getState().followRecruit(ours.playerId)

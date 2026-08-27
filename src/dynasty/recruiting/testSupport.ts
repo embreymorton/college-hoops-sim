@@ -7,7 +7,10 @@ import { deriveProjectedRosterOutlook } from '../rosterOutlook'
 import { initializeRecruiting } from './state'
 import { alignAiRecruitingFocus, buildDefaultRecruitingBoard, manageProgramRecruitingOffers } from './boards'
 
-export function createRecruitingDynasty(seed = 'recruiting-test-v0'): DynastyState {
+export function createRecruitingDynasty(
+  seed = 'recruiting-test-v0',
+  controlledProgramId: string | null = 'charlotte-tech',
+): DynastyState {
   const initializedUniverse = initializeUniverse(UNIVERSE_V0, `${seed}:universe`)
   const season = initializeSeason({
     universe: UNIVERSE_V0,
@@ -18,7 +21,7 @@ export function createRecruitingDynasty(seed = 'recruiting-test-v0'): DynastySta
   return initializeRecruiting(initializeDynastyState({
     dynastyId: `dynasty:${seed}`,
     dynastySeed: seed,
-    controlledProgramId: 'charlotte-tech',
+    controlledProgramId,
     universe: UNIVERSE_V0,
     activeSeason: season,
   }))

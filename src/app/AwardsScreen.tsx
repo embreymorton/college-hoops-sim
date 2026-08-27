@@ -1,16 +1,17 @@
 import { AwardsHonors, ExplorationBackButton } from '../components'
 import { areRegularSeasonAwardsRevealed, deriveAnnouncedSeasonHonors, deriveTournamentMopSummary } from '../dynasty'
-import { useDynastyStore } from '../store'
+import { selectPresentationProgramId, useDynastyStore } from '../store'
 
 export function AwardsScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
   const goBack = useDynastyStore((state) => state.goBackFromExploration)
   const openPlayerDetails = useDynastyStore((state) => state.openPlayerDetails)
   const explorationHistory = useDynastyStore((state) => state.explorationViewHistory)
+  const perspectiveProgramId = useDynastyStore(selectPresentationProgramId)
   if (!dynasty?.activeSeason || !dynasty.activePostseason) return null
   if (!areRegularSeasonAwardsRevealed(dynasty.activePostseason)) return null
   const controlledProgram = dynasty.universe.programs.find(
-    ({ id }) => id === dynasty.controlledProgramId,
+    ({ id }) => id === perspectiveProgramId,
   )!
   const honors = deriveAnnouncedSeasonHonors(dynasty)
   const mopSummary = deriveTournamentMopSummary(dynasty)

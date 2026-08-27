@@ -62,7 +62,7 @@ function zeroCounts(): Record<Position, number> {
 describe('Late Recruiting and finalization', () => {
   it('creates a reviewable Late phase and preserves controlled valid offers', () => {
     const dynasty = readyForLate('late-prepare')
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const protectedOffers = program.board.filter(({ hasActiveOffer }) => hasActiveOffer)
       .map(({ playerId }) => playerId)
     const prepared = prepareLateRecruiting(dynasty)
@@ -71,7 +71,7 @@ describe('Late Recruiting and finalization', () => {
       dynasty.recruiting!.commitmentsByPlayerId,
     )
     for (const playerId of protectedOffers) {
-      expect(prepared.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+      expect(prepared.recruiting!.programs[dynasty.controlledProgramId!]!.board.find(
         (target) => target.playerId === playerId,
       )?.hasActiveOffer).toBe(true)
     }
@@ -117,7 +117,7 @@ describe('Late Recruiting and finalization', () => {
 
   it('expands the controlled board nationally only when Auto Finalize needs it', () => {
     const initial = readyForLate('late-controlled-expansion')
-    const programId = initial.controlledProgramId
+    const programId = initial.controlledProgramId!
     const position = POSITIONS.find((candidate) =>
       initial.recruiting!.recruits.some(({ player }) => player.position === candidate),
     )!
@@ -209,7 +209,7 @@ describe('Late Recruiting and finalization', () => {
         player.position === premium.player.position && stars <= 3,
     )!
     const [programA, programB] = Object.keys(initial.recruiting!.programs).sort()
-      .filter((programId) => programId !== initial.controlledProgramId)
+      .filter((programId) => programId !== initial.controlledProgramId!)
       .slice(0, 2)
     const openings = { ...zeroCounts(), [premium.player.position]: 1 }
     const recruiting: RecruitingState = {
@@ -246,7 +246,7 @@ describe('Late Recruiting and finalization', () => {
       ({ player, stars }) => player.position === premium.player.position && stars === 2,
     )!
     const programId = Object.keys(initial.recruiting!.programs).sort().find(
-      (id) => id !== initial.controlledProgramId,
+      (id) => id !== initial.controlledProgramId!,
     )!
     const openings = { ...zeroCounts(), [premium.player.position]: 1 }
     const recruiting: RecruitingState = {
@@ -288,7 +288,7 @@ describe('Late Recruiting and finalization', () => {
     const lower = initial.recruiting!.recruits.find(
       ({ player }) => player.position === premium.player.position && player.id !== premium.player.id,
     )!
-    const programId = initial.controlledProgramId
+    const programId = initial.controlledProgramId!
     const openings = { ...zeroCounts(), [premium.player.position]: 1 }
     const recruiting: RecruitingState = {
       ...initial.recruiting!,

@@ -217,7 +217,10 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**No NEXT selected — OPEN PLANNING CHECKPOINT.**
+**Observer Mode V1 — NEXT.**
+
+Observer Mode V1 is selected for implementation following completed focused
+design. It is not yet complete, accepted, or frozen production behavior.
 
 Program Reputation V1 is **COMPLETE / ACCEPTED / FROZEN**. It derives recent
 earned standing from completed Dynasty history with historical `as-of`

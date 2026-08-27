@@ -28,6 +28,7 @@ interface RecruitingHubSummaryProps {
   readonly onBuildManually: () => void
   /** True once the Tournament has concluded — reframes this module as the Late Recruiting lead-in rather than mid-Season status. */
   readonly isSeasonComplete?: boolean
+  readonly readOnly?: boolean
 }
 
 /**
@@ -47,12 +48,13 @@ export function RecruitingHubSummary({
   onGenerateDraftBoard,
   onBuildManually,
   isSeasonComplete = false,
+  readOnly = false,
 }: RecruitingHubSummaryProps) {
   const totals = deriveRecruitingHubTotals(board)
   const periodLabel = formatRecruitingPeriodLabel(phase, lastResolvedPeriod)
   // Onboarding is a one-time, preseason-only condition — an empty board later
   // in the season is a normal in-progress state, not a setup prompt.
-  const needsOnboarding = board.targets.length === 0 && lastResolvedPeriod === 0
+  const needsOnboarding = !readOnly && board.targets.length === 0 && lastResolvedPeriod === 0
 
   return (
     <div className="recruiting-hub-summary">
@@ -129,7 +131,7 @@ export function RecruitingHubSummary({
               <p className="recruiting-hub-focus__label">Focus Targets</p>
               <ul className="recruiting-hub-focus__list">
                 {focusTargets.map((target) => (
-                  <RecruitingHubFocusItem key={target.playerId} target={target} />
+                  <RecruitingHubFocusItem key={target.playerId} target={target} readOnly={readOnly} />
                 ))}
               </ul>
             </div>
@@ -160,6 +162,7 @@ export function RecruitingHubSummary({
 
 interface RecruitingHubFocusItemProps {
   readonly target: FocusTargetSummary
+  readonly readOnly: boolean
 }
 
 /**
@@ -167,12 +170,22 @@ interface RecruitingHubFocusItemProps {
  * identity, readiness, our standing, and an actionable state when relevant.
  * No competitor detail — that lives on the Battles tab.
  */
-function RecruitingHubFocusItem({ target }: RecruitingHubFocusItemProps) {
+function RecruitingHubFocusItem({ target, readOnly }: RecruitingHubFocusItemProps) {
   const isCommitted = target.battle.commitment !== null
   const needsOffer =
     !isCommitted &&
     target.battle.controlled.targetStatus === 'active' &&
-    !target.battle.controlled.hasActiveOffer
+    !target.battle.controlled.hasActiveOffer &&
+    !readOnly
+  const positionLabel = readOnly
+    ? target.battle.controlled.position === 'leading'
+      ? 'Leading'
+      : target.battle.controlled.position === 'trailing'
+        ? 'Trailing'
+        : target.battle.controlled.position === 'committed-to-us'
+          ? 'Committed Here'
+          : formatControlledPositionLabel(target.battle.controlled.position)
+    : formatControlledPositionLabel(target.battle.controlled.position)
 
   return (
     <li className="recruiting-hub-focus__item" data-readiness={target.battle.readiness}>
@@ -187,7 +200,7 @@ function RecruitingHubFocusItem({ target }: RecruitingHubFocusItemProps) {
           className="recruiting-hub-focus__outcome"
           data-position={target.battle.controlled.position}
         >
-          {formatControlledPositionLabel(target.battle.controlled.position)}
+          {positionLabel}
         </p>
       ) : (
         <div className="recruiting-hub-focus__status">
@@ -198,7 +211,7 @@ function RecruitingHubFocusItem({ target }: RecruitingHubFocusItemProps) {
             className="recruiting-hub-focus__standing"
             data-position={target.battle.controlled.position}
           >
-            {formatControlledPositionLabel(target.battle.controlled.position)}
+            {positionLabel}
           </span>
         </div>
       )}

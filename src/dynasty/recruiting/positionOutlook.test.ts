@@ -19,10 +19,10 @@ const ratings = (value: number): PlayerAttributes => ({
 
 function fixture(seed = 'position-outlook') {
   const original = createRecruitingDynasty(seed)
-  const playerId = original.recruiting!.programs[original.controlledProgramId]!.board[0]!.playerId
+  const playerId = original.recruiting!.programs[original.controlledProgramId!]!.board[0]!.playerId
   const viewed = original.recruiting!.recruits.find(({ player }) => player.id === playerId)!
   const position = viewed.player.position
-  const programId = original.controlledProgramId
+  const programId = original.controlledProgramId!
   const team = original.activeSeason!.programStates[programId]!.team
   const roster = team.roster.map((player, index): Player => ({
     ...player,
@@ -148,14 +148,14 @@ describe('Recruit position outlook', () => {
 
   it('inserts an active off-Board Recruit because Board membership is not eligibility', () => {
     const { dynasty, playerId } = fixture('position-outlook-off-board')
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const offBoard = {
       ...dynasty,
       recruiting: {
         ...dynasty.recruiting!,
         programs: {
           ...dynasty.recruiting!.programs,
-          [dynasty.controlledProgramId]: {
+          [dynasty.controlledProgramId!]: {
             ...program,
             board: program.board.filter((target) => target.playerId !== playerId),
           },
@@ -170,18 +170,18 @@ describe('Recruit position outlook', () => {
     const second = dynasty.recruiting!.recruits.find(
       ({ player }) => player.position === position && player.id !== playerId,
     )!
-    let committed = commit(dynasty, playerId, dynasty.controlledProgramId)
-    committed = commit(committed, second.player.id, dynasty.controlledProgramId)
+    let committed = commit(dynasty, playerId, dynasty.controlledProgramId!)
+    committed = commit(committed, second.player.id, dynasty.controlledProgramId!)
     committed = {
       ...committed,
       recruiting: {
         ...committed.recruiting!,
         programs: {
           ...committed.recruiting!.programs,
-          [committed.controlledProgramId]: {
-            ...committed.recruiting!.programs[committed.controlledProgramId]!,
+          [committed.controlledProgramId!]: {
+            ...committed.recruiting!.programs[committed.controlledProgramId!]!,
             projectedOpeningsByPosition: {
-              ...committed.recruiting!.programs[committed.controlledProgramId]!.projectedOpeningsByPosition,
+              ...committed.recruiting!.programs[committed.controlledProgramId!]!.projectedOpeningsByPosition,
               [position]: 2,
             },
           },
@@ -198,7 +198,7 @@ describe('Recruit position outlook', () => {
   it('excludes commitments elsewhere and Recruits at a filled position', () => {
     const { dynasty, playerId, position } = fixture('position-outlook-excluded')
     const otherProgramId = Object.keys(dynasty.recruiting!.programs).find(
-      (id) => id !== dynasty.controlledProgramId,
+      (id) => id !== dynasty.controlledProgramId!,
     )!
     expect(deriveRecruitPositionOutlook(commit(dynasty, playerId, otherProgramId), playerId))
       .toMatchObject({ viewedRecruitInclusion: 'excluded-committed-elsewhere', viewedRecruitRank: null })
@@ -209,10 +209,10 @@ describe('Recruit position outlook', () => {
         ...dynasty.recruiting!,
         programs: {
           ...dynasty.recruiting!.programs,
-          [dynasty.controlledProgramId]: {
-            ...dynasty.recruiting!.programs[dynasty.controlledProgramId]!,
+          [dynasty.controlledProgramId!]: {
+            ...dynasty.recruiting!.programs[dynasty.controlledProgramId!]!,
             projectedOpeningsByPosition: {
-              ...dynasty.recruiting!.programs[dynasty.controlledProgramId]!.projectedOpeningsByPosition,
+              ...dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.projectedOpeningsByPosition,
               [position]: 0,
             },
           },
@@ -241,15 +241,15 @@ describe('Recruit position outlook', () => {
 
   it('supports no returners and no departures', () => {
     const { dynasty, playerId, position } = fixture('position-outlook-empty')
-    const team = dynasty.activeSeason!.programStates[dynasty.controlledProgramId]!.team
+    const team = dynasty.activeSeason!.programStates[dynasty.controlledProgramId!]!.team
     const empty = {
       ...dynasty,
       activeSeason: {
         ...dynasty.activeSeason!,
         programStates: {
           ...dynasty.activeSeason!.programStates,
-          [dynasty.controlledProgramId]: {
-            ...dynasty.activeSeason!.programStates[dynasty.controlledProgramId]!,
+          [dynasty.controlledProgramId!]: {
+            ...dynasty.activeSeason!.programStates[dynasty.controlledProgramId!]!,
             team: {
               ...team,
               roster: team.roster.map((player) =>
@@ -274,7 +274,7 @@ describe('Recruit position outlook', () => {
     )
     expect(dynasty).toEqual(before)
 
-    const dangling = commit(dynasty, 'missing-recruit', dynasty.controlledProgramId)
+    const dangling = commit(dynasty, 'missing-recruit', dynasty.controlledProgramId!)
     expect(() => deriveRecruitPositionOutlook(dangling, playerId)).toThrow(
       'Commitment references unknown Recruit Player ID "missing-recruit".',
     )

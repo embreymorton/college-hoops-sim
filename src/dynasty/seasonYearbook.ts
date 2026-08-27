@@ -21,6 +21,7 @@ import type {
   UniverseDefinition,
 } from '../universe'
 import type { CompletedSeasonArchive, DynastyState } from './domain'
+import { requireControlledProgram } from './control'
 
 export const YEARBOOK_STATISTICAL_SCOPE = 'regular-season' as const
 
@@ -300,7 +301,8 @@ export function deriveCompletedSeasonIndex(
 ): CompletedSeasonIndexSummary[] {
   const seen = new Set<number>()
   const programs = programMap(dynasty.universe)
-  programIdentity(programs, dynasty.controlledProgramId)
+  const controlledProgramId = requireControlledProgram(dynasty)
+  programIdentity(programs, controlledProgramId)
   return [...dynasty.history]
     .map((archive) => {
       if (seen.has(archive.seasonNumber)) {
@@ -313,9 +315,9 @@ export function deriveCompletedSeasonIndex(
       return {
         seasonNumber: archive.seasonNumber,
         nationalChampion: programIdentity(programs, championId),
-        controlledProgram: programIdentity(programs, dynasty.controlledProgramId),
-        controlledProgramRecord: deriveProgramRecord(archive.season, dynasty.controlledProgramId),
-        controlledTournamentOutcome: deriveHistoricalTournamentOutcome(archive, dynasty.controlledProgramId),
+        controlledProgram: programIdentity(programs, controlledProgramId),
+        controlledProgramRecord: deriveProgramRecord(archive.season, controlledProgramId),
+        controlledTournamentOutcome: deriveHistoricalTournamentOutcome(archive, controlledProgramId),
       }
     })
     .sort((first, second) => second.seasonNumber - first.seasonNumber)
@@ -336,9 +338,10 @@ export function deriveCompletedSeasonYearbook(
   const archive = matches[0]!
   assertArchive(archive, dynasty.universe)
   const programs = programMap(dynasty.universe)
-  const controlledProgram = programIdentity(programs, dynasty.controlledProgramId)
-  if (!archive.season.programStates[dynasty.controlledProgramId]) {
-    throw new RangeError(`Archived Season is missing controlled Program "${dynasty.controlledProgramId}".`)
+  const controlledProgramId = requireControlledProgram(dynasty)
+  const controlledProgram = programIdentity(programs, controlledProgramId)
+  if (!archive.season.programStates[controlledProgramId]) {
+    throw new RangeError(`Archived Season is missing controlled Program "${controlledProgramId}".`)
   }
   const games = tournamentGames(archive, programs)
   const championshipGameDefinition = archive.postseason.bracket.games.find(
@@ -361,7 +364,7 @@ export function deriveCompletedSeasonYearbook(
     conference.id,
   )
   const conferencePlace = controlledStandings.findIndex(
-    ({ programId }) => programId === dynasty.controlledProgramId,
+    ({ programId }) => programId === controlledProgramId,
   ) + 1
   if (conferencePlace === 0) throw new RangeError('Controlled Program is missing from conference standings.')
   const national = historicalLeaderboards(archive, programs)
@@ -375,20 +378,20 @@ export function deriveCompletedSeasonYearbook(
     },
     controlledProgramSeason: {
       program: controlledProgram,
-      overallRecord: deriveProgramRecord(archive.season, dynasty.controlledProgramId),
-      conferenceRecord: deriveConferenceRecord(archive.season, dynasty.controlledProgramId),
+      overallRecord: deriveProgramRecord(archive.season, controlledProgramId),
+      conferenceRecord: deriveConferenceRecord(archive.season, controlledProgramId),
       conferencePlace,
-      tournamentOutcome: deriveHistoricalTournamentOutcome(archive, dynasty.controlledProgramId),
+      tournamentOutcome: deriveHistoricalTournamentOutcome(archive, controlledProgramId),
       tournamentGames: games.filter((game) => {
-        const isHome = game.homeProgram.programId === dynasty.controlledProgramId
-        const isAway = game.awayProgram.programId === dynasty.controlledProgramId
+        const isHome = game.homeProgram.programId === controlledProgramId
+        const isAway = game.awayProgram.programId === controlledProgramId
         return isHome || isAway
       }).map((game) => {
-        const isHome = game.homeProgram.programId === dynasty.controlledProgramId
+        const isHome = game.homeProgram.programId === controlledProgramId
         return {
           ...game,
           opponent: isHome ? game.awayProgram : game.homeProgram,
-          resultForControlledProgram: game.result.winnerId === dynasty.controlledProgramId
+          resultForControlledProgram: game.result.winnerId === controlledProgramId
             ? 'win' as const
             : 'loss' as const,
         }
@@ -413,7 +416,7 @@ export function deriveCompletedSeasonYearbook(
       controlledProgram: controlledLeaderboards(
         archive,
         programs,
-        dynasty.controlledProgramId,
+        controlledProgramId,
       ),
     },
   }

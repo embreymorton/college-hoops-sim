@@ -57,7 +57,7 @@ beforeEach(resetStore)
 describe('Recruit Details screen', () => {
   it('treats P0 as Market Forming without exposing external Program details', () => {
     const dynasty = createRecruitingDynasty('recruit-details-forming')
-    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board[0]!.playerId
     renderDetails(dynasty, playerId)
 
     expect(screen.getByText('Market Forming')).toBeInTheDocument()
@@ -68,9 +68,9 @@ describe('Recruit Details screen', () => {
 
   it('reveals exact Recruiting Programs without Board or Focus gating after Period 1', () => {
     const dynasty = createRecruitingDynasty('recruit-details-reveal')
-    const controlledIds = new Set(dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId))
+    const controlledIds = new Set(dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.map(({ playerId }) => playerId))
     const program = Object.values(dynasty.recruiting!.programs).find(({ programId, board }) =>
-      programId !== dynasty.controlledProgramId && board.some(({ playerId }) => !controlledIds.has(playerId)))!
+      programId !== dynasty.controlledProgramId! && board.some(({ playerId }) => !controlledIds.has(playerId)))!
     const playerId = program.board.find(({ playerId }) => !controlledIds.has(playerId))!.playerId
     const revealed = { ...dynasty, recruiting: { ...dynasty.recruiting!, lastResolvedPeriod: 1 } }
     renderDetails(revealed, playerId)
@@ -104,7 +104,7 @@ describe('Recruit Details screen', () => {
     let match: { dynasty: DynastyState; playerId: string } | null = null
     for (let index = 0; index < 40 && !match; index += 1) {
       const dynasty = createRecruitingDynasty(`recruit-details-${kind}-capacity-${index}`)
-      const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+      const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId!)
       const recruit = dynasty.recruiting!.recruits.find(({ player }) => {
         const target = board.targets.find(({ playerId }) => playerId === player.id)
         if (!target || target.status !== 'active' || !matches(board, player.position)) return false
@@ -128,7 +128,7 @@ describe('Recruit Details screen', () => {
 
   it('renders canonical identity, class, ability, ratings, readiness, and controlled status', () => {
     const dynasty = createRecruitingDynasty('recruit-details-screen')
-    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board[0]!.playerId
     const recruit = getRecruit(dynasty.recruiting!, playerId)!
     renderDetails(dynasty, playerId)
 
@@ -155,7 +155,7 @@ describe('Recruit Details screen', () => {
       dynasty.recruiting!.commitmentsByPlayerId[playerId] ? 'committed' : 'not-deciding',
     ))).toBeInTheDocument()
     expect(screen.queryByText('Work Ethic')).not.toBeInTheDocument()
-    const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+    const target = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.find(
       (entry) => entry.playerId === playerId,
     )!
     expect(screen.getByText(
@@ -185,7 +185,7 @@ describe('Recruit Details screen', () => {
   it('shows a Recruit outside the controlled Board without fabricating pursuit state', () => {
     const dynasty = createRecruitingDynasty('recruit-details-off-board-screen')
     const boardIds = new Set(
-      dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.map(({ playerId }) => playerId),
+      dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.map(({ playerId }) => playerId),
     )
     const playerId = dynasty.recruiting!.recruits.find(({ player }) => !boardIds.has(player.id))!.player.id
     renderDetails(dynasty, playerId)
@@ -198,10 +198,10 @@ describe('Recruit Details screen', () => {
     'shows a committed Recruit destination for the %s Program without unresolved battle groups',
     (destination) => {
       const dynasty = createRecruitingDynasty(`recruit-details-commit-${destination}`)
-      const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+      const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board[0]!.playerId
       const programId = destination === 'controlled'
-        ? dynasty.controlledProgramId
-        : UNIVERSE_V0.programs.find(({ id }) => id !== dynasty.controlledProgramId)!.id
+        ? dynasty.controlledProgramId!
+        : UNIVERSE_V0.programs.find(({ id }) => id !== dynasty.controlledProgramId!)!.id
       renderDetails(withCommitment(dynasty, playerId, programId), playerId)
 
       expect(screen.getByText(`Committed to ${UNIVERSE_V0.programs.find(({ id }) => id === programId)!.name}`)).toBeInTheDocument()
@@ -220,16 +220,16 @@ describe('Recruit Details screen', () => {
 
   it('shows a filled-position exclusion instead of an impossible hypothetical row', () => {
     const dynasty = createRecruitingDynasty('recruit-details-filled-position')
-    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board[0]!.playerId
+    const playerId = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board[0]!.playerId
     const recruit = getRecruit(dynasty.recruiting!, playerId)!
-    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId]!
+    const program = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!
     const filled = {
       ...dynasty,
       recruiting: {
         ...dynasty.recruiting!,
         programs: {
           ...dynasty.recruiting!.programs,
-          [dynasty.controlledProgramId]: {
+          [dynasty.controlledProgramId!]: {
             ...program,
             ...('projectedReturnerCountsByPosition' in program ? {
               projectedReturnerCountsByPosition: {
@@ -271,7 +271,7 @@ describe('Recruit Details screen', () => {
       const dynasty = createRecruitingDynasty('recruit-details-focus-action')
       // The default board's initial plan focuses its first RECRUITING_FOCUS_LIMIT
       // active recommendations, so an already-focused target always exists here.
-      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.find(
         (entry) => entry.isFocused,
       )!
       renderDetails(dynasty, target.playerId)
@@ -281,27 +281,27 @@ describe('Recruit Details screen', () => {
       fireEvent.click(screen.getByRole('button', { name: `Unfocus ${fullName}` }))
 
       expect(useDynastyStore.getState().dynasty!.recruiting!
-        .programs[dynasty.controlledProgramId]!.board
+        .programs[dynasty.controlledProgramId!]!.board
         .find((entry) => entry.playerId === target.playerId)!.isFocused).toBe(false)
     })
 
     it('reuses the canonical Remove action for a Board target', () => {
       const dynasty = createRecruitingDynasty('recruit-details-remove-action')
-      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
-        (entry) => deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, entry.playerId) === 'active',
+      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.find(
+        (entry) => deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId!, entry.playerId) === 'active',
       )!
       renderDetails(dynasty, target.playerId)
 
       fireEvent.click(screen.getByRole('button', { name: 'Remove from Board' }))
 
       expect(useDynastyStore.getState().dynasty!.recruiting!
-        .programs[dynasty.controlledProgramId]!.board
+        .programs[dynasty.controlledProgramId!]!.board
         .some((entry) => entry.playerId === target.playerId)).toBe(false)
     })
 
     it('reuses the canonical Offer action for an un-offered Board target, matching Board offer-capacity eligibility', () => {
       const dynasty = createRecruitingDynasty('recruit-details-offer-action')
-      const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId)
+      const board = deriveProgramRecruitingBoard(dynasty, dynasty.controlledProgramId!)
       const target = board.targets.find((entry) => entry.status === 'active' && !entry.hasActiveOffer)
 
       if (!target) {
@@ -319,15 +319,15 @@ describe('Recruit Details screen', () => {
       fireEvent.click(offerButton)
 
       expect(useDynastyStore.getState().dynasty!.recruiting!
-        .programs[dynasty.controlledProgramId]!.board
+        .programs[dynasty.controlledProgramId!]!.board
         .find((entry) => entry.playerId === target.playerId)!.hasActiveOffer).toBe(hasCapacity)
     })
 
     it('reuses the canonical Withdraw action for an offered Board target', () => {
       const dynasty = createRecruitingDynasty('recruit-details-withdraw-action')
-      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId]!.board.find(
+      const target = dynasty.recruiting!.programs[dynasty.controlledProgramId!]!.board.find(
         (entry) => entry.hasActiveOffer
-          && deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId, entry.playerId) === 'active',
+          && deriveTargetStatus(dynasty.recruiting!, dynasty.controlledProgramId!, entry.playerId) === 'active',
       )
 
       if (!target) {
@@ -339,14 +339,14 @@ describe('Recruit Details screen', () => {
       fireEvent.click(screen.getByRole('button', { name: 'Withdraw Offer' }))
 
       expect(useDynastyStore.getState().dynasty!.recruiting!
-        .programs[dynasty.controlledProgramId]!.board
+        .programs[dynasty.controlledProgramId!]!.board
         .find((entry) => entry.playerId === target.playerId)!.hasActiveOffer).toBe(false)
     })
 
     it('reuses the canonical Add to Board action for a Recruit not yet pursued', () => {
       const dynasty = createRecruitingDynasty('recruit-details-add-action')
       useDynastyStore.setState({ dynasty })
-      const controlledProgramId = dynasty.controlledProgramId
+      const controlledProgramId = dynasty.controlledProgramId!
       const initialBoard = dynasty.recruiting!.programs[controlledProgramId]!.board
       // The default board fills all `RECRUITING_BOARD_LIMIT` slots; remove one
       // to make room, matching how National already handles a full board.
@@ -380,14 +380,14 @@ describe('Recruit Details screen', () => {
       useDynastyStore.setState({ dynasty })
       useDynastyStore.getState().fillRemainingRecruitingBoard()
       const filled = useDynastyStore.getState().dynasty!
-      const board = deriveProgramRecruitingBoard(filled, filled.controlledProgramId)
+      const board = deriveProgramRecruitingBoard(filled, filled.controlledProgramId!)
       expect(board.targets.length).toBe(RECRUITING_BOARD_LIMIT)
       const boardIds = new Set(board.targets.map(({ playerId }) => playerId))
       const recruiting = filled.recruiting!
       const playerId = recruiting.recruits.find(
         (recruit) =>
           !boardIds.has(recruit.player.id)
-          && deriveTargetStatus(recruiting, filled.controlledProgramId, recruit.player.id) === 'active',
+          && deriveTargetStatus(recruiting, filled.controlledProgramId!, recruit.player.id) === 'active',
       )!.player.id
 
       useDynastyStore.setState({

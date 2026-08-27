@@ -2,7 +2,7 @@ import { BoxScorePanel, FinalScoreboard, PostgameMeaningSection } from '../compo
 import { derivePostgameMeaning } from '../dynasty'
 import {
   selectActiveSeason,
-  selectControlledProgramId,
+  selectPresentationProgramId,
   useDynastyStore,
 } from '../store'
 import { getPendingGamesForRound } from '../season'
@@ -26,7 +26,7 @@ const PROGRAMS_BY_ID: ReadonlyMap<string, ProgramDefinition> = new Map(
 export function SeasonPostgameScreen() {
   const dynasty = useDynastyStore((state) => state.dynasty)
   const season = useDynastyStore(selectActiveSeason)
-  const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const controlledProgramId = useDynastyStore(selectPresentationProgramId)
   const view = useDynastyStore((state) => state.view)
   const lastPlayedGameId = useDynastyStore((state) => state.lastPlayedGameId)
   const viewedGameId = useDynastyStore((state) => state.viewedGameId)

@@ -1,4 +1,4 @@
-import { selectControlledProgramId, useDynastyStore } from '../store'
+import { selectControlledProgramId, selectPresentationProgramId, useDynastyStore } from '../store'
 import { DynastyProgressionBar, RecruitingSetupDialog } from '../components'
 import { deriveDynastyProgressionAction } from '../dynasty'
 import { deriveOffseasonExperience } from './offseasonExperience'
@@ -24,6 +24,7 @@ import { TournamentPostgameScreen } from './TournamentPostgameScreen'
 /** Routes the Dynasty session across program selection, Season, and Postseason views. */
 export function DynastyApp() {
   const controlledProgramId = useDynastyStore(selectControlledProgramId)
+  const presentationProgramId = useDynastyStore(selectPresentationProgramId)
   const view = useDynastyStore((state) => state.view)
   const dynasty = useDynastyStore((state) => state.dynasty)
   const enterLateRecruiting = useDynastyStore((state) => state.enterLateRecruiting)
@@ -45,9 +46,11 @@ export function DynastyApp() {
     (state) => state.cancelRecruitingSetup,
   )
 
-  if (!controlledProgramId) {
+  if (!dynasty) {
     return <ProgramSelectScreen />
   }
+
+  const isObserver = controlledProgramId === null
 
   const progression = dynasty
     ? deriveDynastyProgressionAction(dynasty)
@@ -56,7 +59,7 @@ export function DynastyApp() {
     ? <DynastyProgressionBar onContinue={enterLateRecruiting} />
     : null
   const offseasonExperience = dynasty
-    ? deriveOffseasonExperience(dynasty, offseasonCursor)
+    ? deriveOffseasonExperience(dynasty, offseasonCursor, presentationProgramId ?? undefined)
     : null
   const runOffseasonProgression = () => {
     const action = offseasonExperience?.progressionAction
@@ -74,10 +77,10 @@ export function DynastyApp() {
   let screen
   switch (view) {
     case 'coaching':
-      screen = <CoachingScreen progressionBar={progressionBar} />
+      screen = isObserver ? <SeasonHubScreen /> : <CoachingScreen progressionBar={progressionBar} />
       break
     case 'gamePrep':
-      screen = <GamePrepScreen />
+      screen = isObserver ? <SeasonHubScreen /> : <GamePrepScreen />
       break
     case 'postgame':
     case 'gameHistory':
@@ -90,7 +93,7 @@ export function DynastyApp() {
       screen = <AwardsScreen />
       break
     case 'postseasonGamePrep':
-      screen = <TournamentGamePrepScreen />
+      screen = isObserver ? <PostseasonHubScreen progressionBar={progressionBar} /> : <TournamentGamePrepScreen />
       break
     case 'postseasonPostgame':
     case 'postseasonGameHistory':

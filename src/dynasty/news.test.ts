@@ -196,7 +196,7 @@ describe('Around the Country V1 projection', () => {
     const recruiting = dynasty.recruiting!
     const first = { ...recruiting.recruits[0]!, stars: 5 as const, nationalRank: 1 }
     const second = { ...recruiting.recruits[1]!, stars: 4 as const }
-    const commitmentsByPlayerId = Object.fromEntries([first, second].map((recruit) => [recruit.player.id, { playerId: recruit.player.id, programId: dynasty.controlledProgramId, timing: { kind: 'period' as const, period: 1 }, targetSeasonNumber: recruiting.targetSeasonNumber }]))
+    const commitmentsByPlayerId = Object.fromEntries([first, second].map((recruit) => [recruit.player.id, { playerId: recruit.player.id, programId: dynasty.controlledProgramId!, timing: { kind: 'period' as const, period: 1 }, targetSeasonNumber: recruiting.targetSeasonNumber }]))
     const feed = deriveNewsFeed({ ...dynasty, recruiting: { ...recruiting, recruits: [first, second, ...recruiting.recruits.slice(2)], commitmentsByPlayerId } }, [])
     const commitments = feed.groups.flatMap(({ stories }) => stories).filter(({ kind }) => kind === 'recruit-commitment')
     expect(commitments).toHaveLength(1)

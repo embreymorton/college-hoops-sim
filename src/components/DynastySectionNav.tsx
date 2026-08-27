@@ -8,6 +8,7 @@ interface DynastySectionNavProps {
   readonly onSelectCoaching: () => void
   readonly onSelectRecruiting: () => void
   readonly onSelectLeague: () => void
+  readonly showCoaching?: boolean
 }
 
 /**
@@ -22,6 +23,7 @@ export function DynastySectionNav({
   onSelectCoaching,
   onSelectRecruiting,
   onSelectLeague,
+  showCoaching = true,
 }: DynastySectionNavProps) {
   return (
     <div
@@ -37,14 +39,14 @@ export function DynastySectionNav({
       >
         {competitionLabel}
       </button>
-      <button
+      {showCoaching && <button
         type="button"
         className="tab dynasty-section-nav__tab"
         aria-pressed={activeSection === 'coaching'}
         onClick={onSelectCoaching}
       >
         Coaching
-      </button>
+      </button>}
       <button
         type="button"
         className="tab dynasty-section-nav__tab"

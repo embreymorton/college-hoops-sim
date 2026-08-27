@@ -22,6 +22,7 @@ interface RecruitingBoardTableProps {
   readonly onWithdraw: (playerId: string) => void
   readonly onRemove: (playerId: string) => void
   readonly onOpenRecruitDetails: (playerId: string) => void
+  readonly readOnly?: boolean
 }
 
 interface FocusToggleProps {
@@ -64,6 +65,7 @@ export function RecruitingBoardTable({
   onWithdraw,
   onRemove,
   onOpenRecruitDetails,
+  readOnly = false,
 }: RecruitingBoardTableProps) {
   const recruiting = dynasty.recruiting!
   // Strictly by National Rank — a fixed identity order, so changing a
@@ -99,20 +101,20 @@ export function RecruitingBoardTable({
             <th scope="col">Ovr</th>
             <th scope="col">Pot</th>
             <th scope="col">Readiness</th>
-            <th scope="col">Focus</th>
+            {!readOnly && <th scope="col">Focus</th>}
             <th scope="col">Status</th>
-            <th scope="col">Action</th>
+            {!readOnly && <th scope="col">Action</th>}
           </tr>
         </thead>
         {groups.map((group) => {
           const groupRows = rows.filter(({ target }) => target.origin === group.origin)
           return <tbody key={group.origin} aria-label={`${group.label} (${groupRows.length})`}>
             <tr className="recruiting-board-table__group-heading">
-              <th scope="rowgroup" colSpan={9}>{group.label} ({groupRows.length})</th>
+              <th scope="rowgroup" colSpan={readOnly ? 7 : 9}>{group.label} ({groupRows.length})</th>
             </tr>
             {groupRows.length === 0 && (
               <tr className="recruiting-board-table__group-empty">
-                <td colSpan={9}>{group.emptyLabel}</td>
+                <td colSpan={readOnly ? 7 : 9}>{group.emptyLabel}</td>
               </tr>
             )}
           {groupRows.map(({ target, recruit }) => {
@@ -149,14 +151,14 @@ export function RecruitingBoardTable({
                 <td>
                   <RecruitingReadinessBadge readiness={battle.readiness} />
                 </td>
-                <td>
+                {!readOnly && <td>
                   <FocusToggle
                     isFocused={target.isFocused}
                     disabled={!isActive}
                     label={`${recruit.player.firstName} ${recruit.player.lastName}`}
                     onChange={(next) => onSetFocus(target.playerId, next)}
                   />
-                </td>
+                </td>}
                 <td className="recruiting-status-cell">
                   {formatRecruitStatusLabel({
                     status: target.status,
@@ -167,7 +169,7 @@ export function RecruitingBoardTable({
                     committedProgramName,
                   })}
                 </td>
-                <td>
+                {!readOnly && <td>
                   <div className="recruiting-board-table__actions">
                     {isActive && target.hasActiveOffer && (
                       <button
@@ -208,7 +210,7 @@ export function RecruitingBoardTable({
                       </button>
                     )}
                   </div>
-                </td>
+                </td>}
               </tr>
             )
           })}

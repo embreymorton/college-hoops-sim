@@ -15,7 +15,7 @@ function battleFixture(seed = 'battle-view'): {
 } {
   const initial = createRecruitingDynasty(seed)
   const recruiting = initial.recruiting!
-  const controlledId = initial.controlledProgramId
+  const controlledId = initial.controlledProgramId!
   const controlledTarget = recruiting.programs[controlledId]!.board[0]!
   const playerId = controlledTarget.playerId
   const otherIds = Object.keys(recruiting.programs)
@@ -124,7 +124,7 @@ describe('player-facing Recruiting battle projection', () => {
     const configured = withDecisionState(
       dynasty,
       playerId,
-      { [dynasty.controlledProgramId]: 120 },
+      { [dynasty.controlledProgramId!]: 120 },
       { period: 1, readyPeriod: 3, standingThreshold: 100 },
     )
     expect(deriveRecruitingBattleView(configured, playerId).readiness).toBe(

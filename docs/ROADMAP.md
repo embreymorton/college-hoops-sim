@@ -15,10 +15,10 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### OPEN PLANNING CHECKPOINT — no NEXT selected
+### Observer Mode V1 — NEXT
 
-Program Reputation V1 is complete, accepted, and frozen. No successor has been
-selected; the next planning session begins through Path B.
+Observer Mode V1 is selected for implementation following completed focused
+design. It is not yet complete, accepted, or frozen production behavior.
 
 ## Planned and unscheduled
 

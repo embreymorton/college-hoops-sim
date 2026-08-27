@@ -31,7 +31,7 @@ function battleFixture(seed: string): {
 } {
   const initial = createRecruitingDynasty(seed)
   const recruiting = initial.recruiting!
-  const controlledId = initial.controlledProgramId
+  const controlledId = initial.controlledProgramId!
   const controlledTarget = recruiting.programs[controlledId]!.board[0]!
   const playerId = controlledTarget.playerId
   const otherIds = Object.keys(recruiting.programs)
@@ -138,7 +138,7 @@ describe('Recruiting battle presentation formatters', () => {
       [programIds[1]]: 80,
       [programIds[2]]: 75,
     })
-    const board = deriveProgramRecruitingBoard(configured, configured.controlledProgramId)
+    const board = deriveProgramRecruitingBoard(configured, configured.controlledProgramId!)
     const [summary] = deriveFocusTargetSummaries(configured, board)
 
     expect(summary).toBeDefined()
@@ -156,7 +156,7 @@ describe('Recruiting battle presentation formatters', () => {
       [programIds[2]]: 70,
     })
     const battle = deriveRecruitingBattleView(configured, playerId)
-    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId!)!
     const { groups, overflowCount } = deriveBattleGroups(
       battle,
       controlledProgram,
@@ -179,7 +179,7 @@ describe('Recruiting battle presentation formatters', () => {
       [programIds[2]]: 90,
     })
     const battle = deriveRecruitingBattleView(configured, playerId)
-    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId!)!
     const { groups } = deriveBattleGroups(battle, controlledProgram, PROGRAMS_BY_ID)
 
     const controlledGroup = groups.find((group) =>
@@ -198,7 +198,7 @@ describe('Recruiting battle presentation formatters', () => {
       [programIds[2]]: 60,
     })
     const battle = deriveRecruitingBattleView(configured, playerId)
-    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId!)!
     // A limit of 0 forces every competitor into overflow — the controlled
     // Program (which is the leader here) must still appear in a group.
     const { groups, overflowCount } = deriveBattleGroups(
@@ -224,7 +224,7 @@ describe('Recruiting battle presentation formatters', () => {
       [programIds[1]]: 90,
     })
     const battle = deriveRecruitingBattleView(configured, playerId)
-    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId)!
+    const controlledProgram = PROGRAMS_BY_ID.get(configured.controlledProgramId!)!
     const { groups } = deriveBattleGroups(battle, controlledProgram, PROGRAMS_BY_ID)
 
     for (const row of groups.flatMap((group) => group.rows)) {

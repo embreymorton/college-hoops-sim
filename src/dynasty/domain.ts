@@ -96,7 +96,7 @@ export interface NextSeasonRosterValidationResult {
 export interface DynastyState {
   readonly dynastyId: string
   readonly dynastySeed: RngSeed
-  readonly controlledProgramId: string
+  readonly controlledProgramId: string | null
   readonly universe: UniverseDefinition
   readonly activeSeason: SeasonState | null
   readonly activePostseason: PostseasonState | null
@@ -109,7 +109,7 @@ export interface DynastyState {
 export interface InitializeDynastyOptions {
   readonly dynastyId: string
   readonly dynastySeed: RngSeed
-  readonly controlledProgramId: string
+  readonly controlledProgramId: string | null
   readonly universe: UniverseDefinition
   readonly activeSeason: SeasonState
   readonly activePostseason?: PostseasonState | null

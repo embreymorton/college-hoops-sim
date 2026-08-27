@@ -53,7 +53,7 @@ function fixture(): {
 } {
   const dynasty = createRecruitingDynasty('recruiting-retrospective')
   const otherProgramId = dynasty.universe.programs.find(
-    ({ id }) => id !== dynasty.controlledProgramId,
+    ({ id }) => id !== dynasty.controlledProgramId!,
   )!.id
   const generated = dynasty.recruiting!.recruits.slice(0, 4)
   const recruits = [
@@ -64,7 +64,7 @@ function fixture(): {
   ]
   const commitments: RecruitingCommitment[] = recruits.slice(0, 3).map((recruit, index) => ({
     playerId: recruit.player.id,
-    programId: index < 2 ? dynasty.controlledProgramId : otherProgramId,
+    programId: index < 2 ? dynasty.controlledProgramId! : otherProgramId,
     timing: { kind: 'late' },
     targetSeasonNumber: 2,
   }))
@@ -106,7 +106,7 @@ describe('Recruiting Class Retrospective projection', () => {
       nationalRank: 2,
       entryOverall: calculateOverall(recruits[0]!.player),
       entryPotential: recruits[0]!.player.potential,
-      signedProgramId: dynasty.controlledProgramId,
+      signedProgramId: dynasty.controlledProgramId!,
       outcome: { kind: 'incoming' },
     })
     expect(row).not.toHaveProperty('qualityScore')
