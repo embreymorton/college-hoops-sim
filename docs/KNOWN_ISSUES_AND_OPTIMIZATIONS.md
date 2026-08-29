@@ -74,6 +74,12 @@ Revisit only if future generic scholarships, multi-position Players, position ch
 
 Accepted long-run calibration measured the full-snapshot serialized `DynastyState` at `30.57 MB` after Season 10, `76.20 MB` after Season 25, and `152.27 MB` after Season 50. Growth is approximately linear at roughly 3 MB per completed Season and is material even though 50-Season JSON serialization remained correct.
 
+Super Duper Sim V1 makes this accepted growth easier to reach in normal
+Observer use; its implementation smoke measured approximately `3.51 MB` after
+1 rollover, `16.26 MB` after 5, and `32.23 MB` after 10. This reinforces the
+existing scaling WATCH without establishing a new defect or selecting storage
+work.
+
 Before production-scale save support or very long playable Dynasties, evaluate save-file size, browser persistence limits, load/parse time, memory use, and history-rendering cost. Preserve canonical historical `GameResult`, Player, Team, and Recruiting facts. Do not prematurely prescribe a database, compression format, pruning policy, binary serialization, IndexedDB, backend persistence, or stat-reconstruction model. This is a measured scaling watchpoint, not a current correctness defect.
 
 ### P3 — Active Dynasty persistence / browser navigation — FUTURE
@@ -266,6 +272,12 @@ full runs with `--maxWorkers=4` also passed. No result mismatch or product bug
 reproduced. Do not paper over this with retries or longer per-test timeouts;
 profile or right-size suite concurrency in a separately scoped reliability
 milestone if default-run contention continues.
+
+Super Duper Sim closure observed two additional lifecycle-heavy timeouts only
+under highly parallel full-suite contention; both passed in isolation, while
+the bounded `--maxWorkers=4` suite passed `144` files / `1,478` tests. This is
+additional evidence for the same infrastructure WATCH, not a UI or simulation
+correctness defect.
 
 The Tournament completion escape-path diagnostic produced another instance on
 the default full-suite command: `keeps manual and Super Sim basketball and

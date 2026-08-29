@@ -220,6 +220,35 @@ describe('Observer recruiting', () => {
     expect(screen.queryByRole('button', { name: /Remove/ })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Fill Remaining Board/ })).not.toBeInTheDocument()
   })
+
+  it('keeps National Class headers aligned with read-only row cells', () => {
+    const dynasty = buildFixtureDynasty()
+    useDynastyStore.setState({
+      dynasty: { ...dynasty, controlledProgramId: null },
+      viewedProgramId: CONTROLLED_PROGRAM_ID,
+      view: 'recruiting',
+      recruitingMode: 'national',
+    })
+    render(<App />)
+
+    const table = screen.getByRole('table', { name: 'National recruiting class' })
+    const headers = within(table).getAllByRole('columnheader')
+    const firstRow = within(table).getAllByRole('row')[1]!
+
+    expect(headers.map((header) => header.textContent)).toEqual([
+      'Rk',
+      'Player',
+      'Stars',
+      'Ovr',
+      'Pot',
+      'Standing',
+      'Market',
+      'Offers',
+      'Status',
+    ])
+    expect(within(firstRow).getAllByRole('cell')).toHaveLength(headers.length)
+    expect(within(firstRow).getByLabelText(/-star recruit$/)).toBeInTheDocument()
+  })
 })
 
 describe('Dynasty section navigation', () => {

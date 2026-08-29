@@ -22,7 +22,14 @@ The playable Dynasty loop is repeatable from Program selection through consecuti
   deterministic national/Conference/Tournament Awards, and Season-grouped
   Player Career Honors, all derived from canonical facts.
 - **National Tournament:** a deterministic 16-Team field with automatic and at-large bids, unified results-only résumé seeding, neutral-site simulation, fixed-bracket progression, Postseason presentation, and National Champion derivation.
-- **Playable Dynasty:** choose a Program, manage Recruiting alongside Season play, compete in the National Tournament, then use the dedicated Hybrid Offseason Timeline to progress through Late Recruiting, Recruiting Class, Departures, Development, Roster Review, Ready for Season, and the next Season.
+- **Playable Dynasty:** begin in Coach Mode by choosing a controlled Program, or
+  begin in Observer Mode with no controlled Program and freely change the
+  read-only Viewed Program. Both modes advance the same deterministic Season,
+  Tournament, Recruiting, and six-stage Offseason lifecycle; only Coach Mode
+  grants Program-management actions. Observer Mode keeps Recruiting, results,
+  history, records, Awards, and other league systems available for inspection,
+  and can simulate 1, 5, or 10 complete canonical Seasons at once with progress
+  feedback and a Viewed Program summary.
 - **Player development stories:** ordinary Development V1 is supplemented by
   rare Explosive Offseasons, while a Player's stable Work Ethic is hidden as a
   Recruit, shown as Unknown as a freshman, and revealed after his first

@@ -15,10 +15,10 @@ next; **OPEN PLANNING CHECKPOINT** = no successor is currently selected.
 
 ## Current Selected Horizon
 
-### Observer Mode V1 — NEXT
+### OPEN PLANNING CHECKPOINT — no NEXT selected
 
-Observer Mode V1 is selected for implementation following completed focused
-design. It is not yet complete, accepted, or frozen production behavior.
+Super Duper Sim V1 is complete, accepted, and frozen. No successor has been
+explicitly selected.
 
 ## Planned and unscheduled
 
@@ -43,6 +43,25 @@ unscheduled Phase 7 work.
   do not belong in completed Roadmap entries.
 
 ## Completed Phase Summary
+
+### Super Duper Sim V1 — Observer Multi-Season Simulation — COMPLETE / ACCEPTED / FROZEN
+
+- Added an Observer-only 1/5/10-Season foreground simulation that completes
+  exact canonical Season rollovers from any regular-season checkpoint.
+- Reused normal deterministic Season, Recruiting, Tournament, Awards,
+  Offseason, history, roster, and Follow-continuity behavior, committing after
+  each completed rollover and retaining the last good Season on failure.
+- Added restrained progress and a transient Viewed Program summary, then
+  returned to an Open Planning Checkpoint with no successor selected.
+
+### Observer Mode V1 — COMPLETE / ACCEPTED / FROZEN
+
+- Added a start-of-Dynasty Coach/Observer choice, nullable Program-management
+  authority, and a freely changeable Viewed Program for read-only context.
+- Reused the canonical all-AI Season, Recruiting, Tournament, Offseason, and
+  rollover lifecycle without a second simulation path or new simulation rules.
+- Preserved Coach Mode behavior and excluded mid-Dynasty control changes,
+  commissioner tools, manual Observer intervention, and Coach Career/jobs.
 
 ### Program Reputation V1 — COMPLETE / ACCEPTED / FROZEN
 

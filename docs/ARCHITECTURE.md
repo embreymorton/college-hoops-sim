@@ -60,7 +60,7 @@ Phases 5A–5C add the pure `src/dynasty` layer above those accepted domains; Ph
 `DynastyState` is the serializable owner of cross-season lifecycle and identity:
 
 ```text
-dynastyId + dynastySeed + controlledProgramId + universe
+dynastyId + dynastySeed + controlledProgramId: string | null + universe
 activeSeason: SeasonState | null
 activePostseason: PostseasonState | null
 recruiting: RecruitingState | null
@@ -70,6 +70,38 @@ offseason: OffseasonState | null
 ```
 
 Season and Postseason own one competitive year's basketball facts. Recruiting owns a future class and its relationships. Dynasty alone coordinates transitions among those states and immutable histories; lower layers do not know about rollover.
+
+Observer Mode preserves one canonical lifecycle and separates authority from
+presentation context. `DynastyState.controlledProgramId` is the nullable domain
+authority boundary: a Program ID grants Coach Mode management rights, while
+`null` means every Program remains AI-controlled; separately, `dynasty === null`
+means no active Dynasty exists. The session store owns the Viewed Program as
+replaceable presentation/navigation context and resolves it without mutating
+canonical Dynasty facts. Mutation authority derives only from the actual
+controlled Program. Read models that need contextual filtering receive an
+explicit perspective Program ID rather than inferring authority. Presentation
+context must never be used as a fallback for Program-management authority.
+Progression commands branch only where an explicit user decision would
+otherwise be required; they reuse the existing deterministic Season,
+Recruiting, Postseason, Offseason, and rollover operations rather than an
+Observer-specific engine.
+
+Super Duper Sim V1 preserves that boundary. A pure Dynasty orchestration helper
+advances exactly one Observer Season through the normal regular-season,
+Recruiting synchronization, Tournament, Late Recruiting finalization,
+Offseason archive/Development/departure work, and rollover operations. Zustand
+owns the foreground 1/5/10 loop, yields before work and between rollovers, and
+commits each returned `DynastyState` only after a complete rollover. A failure
+therefore retains the last committed Season and phase context without
+manufacturing a completion summary. The operation snapshots the Viewed Program
+and updates Followed Recruit → Player continuity after every rollover.
+
+Only a small transient summary descriptor is stored in session state. The
+completion dialog derives Season rows, champions, Awards, records, Conference
+finishes, Tournament outcomes, best Season, championships, and Reputation
+movement from canonical archives and the unchanged Universe. The feature adds
+no canonical multi-Season job, persisted summary, alternate simulation path,
+RNG namespace, cancellation protocol, worker, or background queue.
 
 ## Domain and state rules
 

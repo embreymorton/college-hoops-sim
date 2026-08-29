@@ -35,4 +35,6 @@ export type {
   SeasonSessionView,
   SuperSimKind,
   SuperSimSummary,
+  ObserverMultiSeasonHorizon,
+  ObserverMultiSeasonSimState,
 } from './seasonStore'

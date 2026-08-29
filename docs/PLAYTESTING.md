@@ -23,8 +23,9 @@ but worth monitoring.
 
 ## Current Playtesting Priorities
 
-Roadmap is at an **Open Planning Checkpoint with no NEXT selected**. Program
-Reputation V1 is accepted/frozen; this evidence file selects no successor.
+Roadmap is at an **OPEN PLANNING CHECKPOINT — no NEXT selected**. Super Duper
+Sim V1 and Observer Mode V1 are accepted/frozen; this evidence file selects no
+successor.
 
 1. Continue normal multi-Season play and observe whether the accepted attachment
    loop—Recruit decisions, News, Following, Player careers, Alumni, Records,
@@ -85,6 +86,60 @@ Prestige-relative or underdog bonuses and not permission to reopen static
 Prestige.
 
 ## Latest Accepted Milestone Evidence
+
+### Super Duper Sim V1 — ACCEPTED / FROZEN
+
+The user explicitly accepted the final polished Observer multi-Season flow.
+Manual browser coverage passed on desktop and approximately 390px layouts with
+clean console output. It covered the Observer-only entry point, 1/5/10 presets,
+locked foreground progress, restrained completion summary, local table
+scrolling, and corrected narrow preset/modal overflow. Coach Mode and its
+existing Super Sim remained unchanged.
+
+Functional evidence verified exact rollover horizons from preseason and
+mid-Season checkpoints, canonical regular season → Recruiting → Tournament →
+Late Recruiting → Offseason → rollover behavior, stable seeds and Universe,
+archive/Awards/Development/departure/roster continuity, Followed Recruit →
+Player transfer at intermediate rollovers, Viewed Program independence,
+per-rollover commits, and failure without a false summary. Sixteen focused new
+tests and a 204-test Observer/Coach regression selection passed. The bounded
+full suite passed `144` files / `1,478` tests with `--maxWorkers=4`; ESLint,
+TypeScript, production build, and diff hygiene passed. The build retained only
+the existing large-chunk warning.
+
+The production-path smoke measurements were:
+
+| Requested rollovers | Resulting Season | Elapsed | Serialized Dynasty |
+| ---: | ---: | ---: | ---: |
+| 1 | 2 | 1.77s | 3.51 MB |
+| 5 | 6 | 8.59s | 16.26 MB |
+| 10 | 11 | 17.14s | 32.23 MB |
+
+These timings are evidence for the accepted foreground V1, not performance
+budgets. Two lifecycle-heavy tests also timed out only under highly parallel
+full-suite contention and passed in isolation; that remains the existing
+test-infrastructure WATCH, not a Super Duper Sim product defect.
+
+### Observer Mode V1 — ACCEPTED / FROZEN
+
+The user completed manual playtesting and explicitly accepted Observer Mode V1.
+They specifically valued using it to monitor and investigate AI behavior across
+Programs without influencing the simulation through a user-controlled Program;
+this is acceptance evidence, not a new feature requirement.
+Browser coverage exercised the read-only Viewed Program selector and contextual
+Recruiting, Tournament, Offseason, Recruiting History, and next-Season flow on
+desktop and approximately 390px layouts. It verified all-AI progression,
+observer-safe direct Late Recruiting finalization, Program-name perspective,
+local table scrolling, and no body-level horizontal overflow. A narrow Recruiting
+History overflow defect found during review was fixed and revalidated.
+
+Coach Mode regression review preserved management authority, “Your Program”
+context, and its Recruiting finalization confirmation. Automated closure passed
+140 test files / 1,461 tests, including focused Observer, Recruiting History,
+transition, Recruiting, and Season UI coverage. TypeScript, ESLint, production
+build, and diff hygiene passed; a quick multi-Season Dynasty simulation remained
+stable with deterministic/lifecycle checks green. The accepted V1 adds no new
+simulation mechanics and leaves its larger excluded extensions unscheduled.
 
 ### Program Reputation V1 — ACCEPTED / FROZEN
 

@@ -64,6 +64,20 @@ export {
 export { deriveNewsFeed } from './news'
 export { deriveDynastyProgressionAction } from './progression'
 export {
+  advanceObserverDynastyOneSeason,
+  ObserverSeasonAdvanceError,
+  postseasonSimulationSeed,
+  regularSeasonSimulationSeed,
+  simulateDynastyToSeasonComplete,
+} from './observerMultiSeasonSimulation'
+export type { ObserverSeasonAdvancePhase } from './observerMultiSeasonSimulation'
+export { deriveObserverMultiSeasonSummary } from './observerMultiSeasonSummary'
+export type {
+  ObserverMultiSeasonSummary,
+  ObserverMultiSeasonSummaryDescriptor,
+  ObserverMultiSeasonSummaryRow,
+} from './observerMultiSeasonSummary'
+export {
   deriveDynastyRecordBook,
   derivePlayerCareerHighs,
   deriveProgramPlayerRecords,

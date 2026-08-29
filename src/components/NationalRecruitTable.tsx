@@ -161,9 +161,9 @@ export function NationalRecruitTable({
                       </button>
                       <span className="leader-board__pos">{recruit.player.position}</span>
                     </td>
-                    {!readOnly && <td>
+                    <td>
                       <RecruitStars stars={recruit.stars} />
-                    </td>}
+                    </td>
                     <td>{calculateOverall(recruit.player)}</td>
                     <td>{recruit.player.potential}</td>
                     <td>
@@ -193,7 +193,7 @@ export function NationalRecruitTable({
                         committedProgramName,
                       })}
                     </td>
-                    <td>
+                    {!readOnly && <td>
                       {status !== 'active' || isOnBoard ? null : boardIsFull ? (
                         <button
                           type="button"
@@ -211,7 +211,7 @@ export function NationalRecruitTable({
                           Add to Board
                         </button>
                       )}
-                    </td>
+                    </td>}
                   </tr>
                 )
               })}

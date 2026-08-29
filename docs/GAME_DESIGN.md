@@ -8,6 +8,36 @@ Build an approachable fictional college basketball dynasty simulator in which ro
 
 Choose a school → manage the current roster/Rotation while recruiting for the next season → complete the regular season and national tournament → preserve history → graduate/develop returning Players → enroll recruits and finalize rosters → advance to the next season.
 
+Observer Mode is the accepted read-only counterpart to that Coach loop. At
+Dynasty creation, the user may instead choose Observer Mode, which controls no
+Program, advances every Program through normal AI behavior, and allows the
+Viewed Program to change freely for contextual browsing. Viewing a Program
+never grants Board, Offer, Rotation, Game Prep, or other Program-management
+authority. Observer progression uses the same Season, Tournament, Recruiting,
+Offseason, history, and rollover rules as Coach Mode: league-round simulation
+advances the regular season, Tournament rounds progress without Game Prep,
+Recruiting remains read-only, and the full offseason advances into future
+Seasons.
+
+Observer Mode V1 does not include taking or switching control mid-Dynasty,
+changing controlled Programs, multi-Team control, Coach Career/jobs,
+commissioner controls, forced results, manual Recruiting or roster
+intervention, live possession spectating, multiplayer, new AI behavior, or a
+separate simulation engine.
+
+Super Duper Sim V1 is the accepted accelerated pacing control for Observer
+Mode. During any active regular Season, the user may confirm exactly 1, 5, or 10
+complete Season rollovers. The current partial Season counts as the first: the
+simulation finishes its regular season, Tournament, Recruiting, Awards,
+Offseason, history, Development, departures, roster assembly, and rollover
+before proceeding. Intermediate review screens are skipped, but no underlying
+rule or AI behavior is skipped. The Viewed Program is captured when the run
+starts and receives a completion summary covering its record, Conference
+finish, Tournament result, best Season, championships, Reputation movement,
+national champions, Player of the Year, and Tournament MOP. Runs cannot be
+cancelled once confirmed; if a rollover fails, only fully completed Seasons
+remain committed and no false completion summary is shown.
+
 ## Design principles
 
 - Decisions should create visible tradeoffs rather than hidden complexity.

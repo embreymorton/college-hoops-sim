@@ -4,6 +4,7 @@ import {
   ConferenceStandingsSection,
   DynastySectionNav,
   NextGameCard,
+  ObserverMultiSeasonSimDialog,
   RecentResultsSection,
   RecruitingHubSummary,
   ScheduleTable,
@@ -96,6 +97,12 @@ export function SeasonHubScreen() {
     (state) => state.pendingRecruitingSetupIntent,
   )
   const superSimSummary = useDynastyStore((state) => state.superSimSummary)
+  const observerMultiSeasonSim = useDynastyStore((state) => state.observerMultiSeasonSim)
+  const requestObserverMultiSeasonSim = useDynastyStore((state) => state.requestObserverMultiSeasonSim)
+  const setObserverMultiSeasonHorizon = useDynastyStore((state) => state.setObserverMultiSeasonHorizon)
+  const cancelObserverMultiSeasonSim = useDynastyStore((state) => state.cancelObserverMultiSeasonSim)
+  const confirmObserverMultiSeasonSim = useDynastyStore((state) => state.confirmObserverMultiSeasonSim)
+  const dismissObserverMultiSeasonSim = useDynastyStore((state) => state.dismissObserverMultiSeasonSim)
   const requestSuperSim = useDynastyStore((state) => state.requestSuperSim)
   const cancelSuperSim = useDynastyStore((state) => state.cancelSuperSim)
   const confirmSuperSim = useDynastyStore((state) => state.confirmSuperSim)
@@ -193,7 +200,7 @@ export function SeasonHubScreen() {
   // would be a confusing no-op rather than hiding a stale option.
   const showMidseason =
     currentRound !== undefined && currentRound <= MIDSEASON_ROUND
-  const isSuperSimDialogOpen = Boolean(pendingSuperSim) || Boolean(superSimSummary)
+  const isSuperSimDialogOpen = Boolean(pendingSuperSim) || Boolean(superSimSummary) || Boolean(observerMultiSeasonSim)
   const controlledStandingIndex = deriveConferenceStandings(
     UNIVERSE_V0,
     season,
@@ -418,6 +425,11 @@ export function SeasonHubScreen() {
                 onSelect={requestSuperSim}
                 isDialogOpen={isSuperSimDialogOpen}
               />
+              {isObserver && (
+                <button type="button" className="button button--ghost" onClick={requestObserverMultiSeasonSim}>
+                  Sim Multiple Seasons
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -433,6 +445,11 @@ export function SeasonHubScreen() {
                 onSelect={requestSuperSim}
                 isDialogOpen={isSuperSimDialogOpen}
               />
+              {isObserver && (
+                <button type="button" className="button button--ghost" onClick={requestObserverMultiSeasonSim}>
+                  Sim Multiple Seasons
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -529,6 +546,17 @@ export function SeasonHubScreen() {
           conferenceStanding={controlledConferenceStanding}
           tournamentEntry={controlledTournamentEntry}
           onContinue={dismissSuperSimSummary}
+        />
+      )}
+
+      {observerMultiSeasonSim && (
+        <ObserverMultiSeasonSimDialog
+          dynasty={dynasty}
+          operation={observerMultiSeasonSim}
+          onSelectHorizon={setObserverMultiSeasonHorizon}
+          onCancel={cancelObserverMultiSeasonSim}
+          onConfirm={() => { void confirmObserverMultiSeasonSim() }}
+          onDismiss={dismissObserverMultiSeasonSim}
         />
       )}
     </div>

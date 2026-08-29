@@ -47,6 +47,46 @@ Completed Quick Sim cards preserve HOME/AWAY and overtime context, show WIN/LOSS
 
 Super Sim remains a confirmed secondary pacing control for Midseason (through Round 12) or End of Regular Season (through Round 24). It uses the same simulation pipeline and never enters Postseason automatically.
 
+## Observer Mode presentation — accepted
+
+Dynasty creation presents Coach Mode and Observer Mode as distinct choices.
+Coach Mode retains Program selection and all existing management actions.
+Observer Mode starts with no controlled Program and uses a persistent, freely
+changeable lightweight `Viewing: [Program]` selector to contextualize Season,
+Recruiting, Tournament, Offseason, Team, and history surfaces.
+
+Observer screens retain the shared navigation and information hierarchy but
+remove coaching-only controls rather than presenting misleading disabled
+management workflows; Coaching and Game Prep management destinations are absent.
+Lifecycle actions remain available in observer-safe form:
+all Programs use canonical AI behavior, and gates such as Late Recruiting
+finalization progress directly without Coach-only confirmation copy. Neutral
+observational language and Program names replace ownership phrasing where the
+content follows the Viewed Program, including Tournament and Offseason context.
+Read-only Recruiting feels intentional rather than disabled. The selector and
+dense read-only tables remain usable at approximately 390px, with wide tables
+scrolling locally and no body-level overflow. Normal Coach Mode language,
+authority, and visual semantics remain unchanged.
+
+### Super Duper Sim V1 presentation — accepted / frozen
+
+The Season Hub exposes `Sim Multiple Seasons` only for Observer Mode during an
+active regular Season. Its confirmation dialog presents three compact presets—
+1 Season / Quick look ahead, 5 Seasons / Program arc, and 10 Seasons / Long-run
+simulation—and clearly states that canonical systems continue while
+intermediate review screens are skipped. Confirming locks the modal and shows
+Season-by-Season progress; cancellation is intentionally unavailable while the
+foreground operation runs.
+
+Completion expands into a restrained summary for the Viewed Program captured at
+confirmation: Season range, best Season, championships, Reputation movement, a
+scrollable Season-by-Season table, champions, and major Awards. Failure copy
+identifies the stopped Season/phase and confirms how many completed Seasons
+remain committed. The modal preserves the existing collegiate visual language,
+uses local horizontal scrolling for dense tables, avoids body-level overflow,
+and remains usable on desktop and approximately 390px layouts. Coach Mode and
+the existing single-Season Super Sim presentation are unchanged.
+
 ## Game Prep presentation — accepted
 
 Regular-season and Tournament Game Prep share one cohesive pregame hierarchy:

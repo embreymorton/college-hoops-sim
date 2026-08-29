@@ -22,6 +22,16 @@ Program selection → Season opening / Regular Season + Recruiting → Tournamen
 
 The playable product includes:
 
+- Coach Mode with one controlled Program, plus Observer Mode with no controlled
+  Program, a freely changeable Viewed Program, read-only Program context, and
+  deterministic all-AI progression through the complete Dynasty lifecycle;
+  viewing grants no authority, Recruiting is read-only, Coaching/Game Prep
+  management is unavailable, and existing Team, Player, Recruit, League,
+  Tournament, Awards, Records, News, Yearbook, Reputation, and history views
+  remain available where applicable without changing Coach Mode; during an
+  active regular Season, Observer Mode can also simulate exactly 1, 5, or 10
+  complete canonical Season rollovers with progress feedback and a transient
+  Viewed Program summary;
 - deterministic Player/roster generation, game simulation, overtime, and full
   Player box scores;
 - Rotation V1 with legal secondary floor-position assignments, Simple and
@@ -111,6 +121,17 @@ competition state.
 Frozen means “reopen only with new evidence,” not “never change.” Do not tune or
 refactor these systems during unrelated feature work:
 
+- Observer Mode V1's separation of nullable Program-management authority from
+  Viewed Program presentation context, read-only Observer surfaces, all-AI
+  lifecycle progression through future Seasons, unchanged deterministic
+  simulation/AI systems and Coach Mode authority, absent Coaching/Game Prep
+  management, and accepted desktop/approximately 390px presentation;
+- Super Duper Sim V1's Observer-only regular-season availability, exact 1/5/10
+  rollover horizons including mid-Season-first semantics, canonical
+  deterministic lifecycle reuse, Viewed Program independence, foreground
+  Season-level progress without cancellation, commit-at-complete-rollover
+  failure boundary, canonical-history-derived transient summary and accepted
+  fact scope, Coach Mode isolation, and responsive presentation;
 - Recruiting mechanics and accepted Recruiting information architecture;
 - Recruiting Market Visibility V1's Preseason Evaluation / Market Forming
   concealment, derived Open/Active/Crowded tiers, separate exact Offer
@@ -217,10 +238,17 @@ does not itself authorize implementation:
 
 ## Current planning checkpoint
 
-**Observer Mode V1 — NEXT.**
+**OPEN PLANNING CHECKPOINT — no NEXT selected.**
 
-Observer Mode V1 is selected for implementation following completed focused
-design. It is not yet complete, accepted, or frozen production behavior.
+Super Duper Sim V1 — Observer Multi-Season Simulation is **COMPLETE / ACCEPTED /
+FROZEN**. It is an Observer-only, regular-season foreground operation with exact
+1/5/10 rollover horizons. It reuses canonical deterministic progression,
+preserves history and identity continuity, commits only complete rollovers, and
+returns a transient summary for the Viewed Program. No cancellation, background
+execution, Coach Mode access, new simulation rules, or persisted summary state
+was added. No successor has been selected.
+
+Observer Mode V1 is **COMPLETE / ACCEPTED / FROZEN**.
 
 Program Reputation V1 is **COMPLETE / ACCEPTED / FROZEN**. It derives recent
 earned standing from completed Dynasty history with historical `as-of`

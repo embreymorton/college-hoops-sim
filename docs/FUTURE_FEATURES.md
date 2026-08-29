@@ -10,9 +10,9 @@ defects/debt belong in `KNOWN_ISSUES_AND_OPTIMIZATIONS.md`.
 
 ## Selected elsewhere
 
-No future feature is selected. Program Reputation V1 is complete, accepted,
-and frozen; only separately scoped future consumers remain in this idea bank.
-`ROADMAP.md` is at an Open Planning Checkpoint.
+No future feature is selected. Super Duper Sim V1 and Program Reputation V1 are
+complete, accepted, and frozen; only separately scoped future extensions remain
+in this idea bank. `ROADMAP.md` is at an Open Planning Checkpoint.
 
 ## Recruiting depth
 
@@ -1064,65 +1064,23 @@ that relationship remains unresolved and unselected. No extension here is NEXT.
 - optional presentation themes; and
 - export/share tools for Seasons, brackets, and careers.
 
-### Observer Mode / Viewed Program — FUTURE / UNSCHEDULED
+### Observer Mode extensions — FUTURE / UNSCHEDULED
 
-Observer Mode is a conceptually promising, likely medium feature for a bounded
-V1, subject to focused code-grounded design. It is not implemented, selected,
-scheduled, or an approved schema. Its core product distinction is:
+Observer Mode V1 and its Controlled Program / Viewed Program separation are
+implemented, accepted, and frozen; current behavior belongs in the production
+owner docs rather than this idea bank. Independent possible extensions remain
+unscheduled: taking or switching control mid-Dynasty, Coach Career/job flows,
+commissioner controls, multi-Team control, forced results, roster or Recruiting
+intervention, live possession spectating, deeper observer-specific league
+presentation, Program Following if separately desired, and multiplayer/
+spectator networking. None is implied by V1 and none is NEXT.
 
-```text
-Controlled Program = the Program the user can make decisions for
-Viewed Program     = the Program currently being inspected
-```
-
-In ordinary Coach Mode, one Program remains controlled while the user may view
-that Program or browse another. In Observer Mode, no Program is controlled and
-the user may freely change the Viewed Program. Illustrative concepts such as a
-`coach | observer` mode, nullable controlled Program ID, or separate viewed
-Program ID describe the distinction only; no exact type, API, persistence, or
-state owner is approved.
-
-A bounded V1 could start a Dynasty without selecting a controlled Program,
-advance the same deterministic 32-Program world with normal AI behavior for
-every Program, and provide read-only League and Program browsing. A lightweight
-selector such as `Viewing: Pine Valley` could contextualize Program schedule and
-results, roster, Team Details, Reputation, Recruiting activity/class,
-postseason context, and Program History. Exact placement, navigation, default,
-and contextual scope remain unresolved. Observer Mode should reuse the existing
-Dynasty simulation, Recruiting, Tournament, Awards, Records, Yearbooks, Alumni,
-Following, Program Reputation/history, and Player-career systems rather than
-create a second simulation engine or separate game.
-
-Viewed Program is browsing/filter context, not coaching control or a job change.
-Changing it must not grant Offers/Withdrawals, Board management, Rotation or
-Starting Five edits, Game Prep, or other user-only decisions. This permission
-boundary may also improve Coach Mode by separating inspection of another
-Program from authority over the controlled Program.
-
-Focused design must inspect where the current application assumes controlled
-Program equals viewing context and resolve, without presupposing answers:
-
-- which screens/selectors should consume Viewed Program and which actions truly
-  require Controlled Program permission;
-- application navigation/state ownership, persistence expectations, and
-  postgame routing when no Program is controlled;
-- deterministic lifecycle gates that currently require explicit user action;
-- whether existing AI Recruiting is sufficient with no user-managed Program;
-- observer-safe Late Recruiting, offseason, rollover, and Season-start flow;
-- Hub meaning without a home Program, including possible round, notable-game,
-  standings, Recruiting, Tournament, Following, and Viewed Program context;
-- responsive placement and behavior of a Program selector; and
-- whether mid-Dynasty control changes are excluded entirely or reserved for a
-  later Coach Career/job lifecycle.
-
-Possible Observer Mode V1 remains limited to no initial controlled Program, one
-freely changeable Viewed Program, normal all-AI simulation, read-only browsing,
-and deterministic progression without controlled-Program decisions. Switching
-or taking control mid-Dynasty, Coach Career/job applications, commissioner
-controls, forced results, roster/Program editing, manual Recruiting
-intervention, live possession-by-possession spectating, a second simulation
-engine, and multiplayer/spectator networking are larger independent future
-extensions—not automatic V1 requirements.
+Super Duper Sim V1 also fulfills Observer-only 1/5/10-Season foreground
+progression, per-rollover commits, progress feedback, and the transient Viewed
+Program summary. Background or worker execution, cancellation/resume, arbitrary
+horizons, richer league-wide batch reports, persistent simulation reports, and
+Coach Mode bulk progression remain independent future ideas. None is selected
+or implied by the accepted V1.
 
 ### Home-court and arena identity
 

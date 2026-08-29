@@ -8,6 +8,8 @@ interface ModalOverlayProps {
   readonly children: ReactNode
   /** Focused on mount; defaults to the dialog surface itself. */
   readonly initialFocusRef?: RefObject<HTMLElement | null>
+  /** Extra class appended to the `.modal` surface, e.g. a width modifier for a denser dialog. */
+  readonly className?: string
 }
 
 /** Minimal accessible modal shell shared by the Super Sim confirm/summary dialogs. */
@@ -18,6 +20,7 @@ export function ModalOverlay({
   onDismiss,
   children,
   initialFocusRef,
+  className,
 }: ModalOverlayProps) {
   const dialogRef = useRef<HTMLDivElement>(null)
 
@@ -46,7 +49,7 @@ export function ModalOverlay({
       }}
     >
       <div
-        className="modal"
+        className={className ? `modal ${className}` : 'modal'}
         role={role}
         aria-modal="true"
         aria-labelledby={titleId}

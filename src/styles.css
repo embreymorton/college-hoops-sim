@@ -2855,6 +2855,8 @@ p {
   box-shadow: var(--shadow-panel);
   padding: var(--space-6);
   max-width: 28rem;
+  max-height: calc(100dvh - (2 * var(--space-5)));
+  overflow-y: auto;
   width: 100%;
 }
 
@@ -2898,6 +2900,123 @@ p {
   justify-content: flex-end;
   gap: var(--space-3);
   margin-top: var(--space-6);
+}
+
+.modal--wide {
+  max-width: 40rem;
+}
+
+.multi-season-presets {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  margin: var(--space-5) 0;
+}
+
+.multi-season-presets .button {
+  min-width: 0;
+  height: auto;
+  padding: var(--space-2) var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  white-space: normal;
+}
+
+.multi-season-presets__detail {
+  font-size: 0.68rem;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity: 0.75;
+}
+
+.multi-season-progress {
+  margin: var(--space-5) 0 var(--space-2);
+}
+
+.multi-season-progress__track {
+  height: 0.4rem;
+  border-radius: var(--radius-sm);
+  background: var(--surface-3);
+  overflow: hidden;
+}
+
+.multi-season-progress__fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width var(--duration-fast) var(--ease-standard);
+}
+
+.multi-season-snapshot {
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  background: var(--surface-1);
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--accent);
+  border-radius: var(--radius-md);
+}
+
+.multi-season-snapshot__name {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-0);
+  margin-bottom: var(--space-3);
+}
+
+.multi-season-summary-table-wrap {
+  margin-top: var(--space-4);
+  max-height: 18rem;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+}
+
+.multi-season-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+}
+
+.multi-season-summary-table th {
+  position: sticky;
+  top: 0;
+  background: var(--surface-2);
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-1);
+}
+
+.multi-season-summary-table th,
+.multi-season-summary-table td {
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.multi-season-summary-table td {
+  font-variant-numeric: tabular-nums;
+}
+
+.multi-season-summary-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.multi-season-summary-section {
+  margin-top: var(--space-5);
+}
+
+.multi-season-summary-section h3 {
+  color: var(--ink-1);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: var(--space-2);
 }
 
 .modal-stat-list {

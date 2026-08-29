@@ -15,6 +15,7 @@ import {
 } from '../engine'
 import {
   addRecruitingBoardTarget,
+  advanceObserverDynastyOneSeason,
   alignGeneratedRecruitingFocus,
   autoFinalizeRecruiting,
   areRegularSeasonAwardsRevealed,
@@ -29,6 +30,10 @@ import {
   manageProgramRecruitingOffers,
   offerRecruit,
   prepareLateRecruiting,
+  ObserverSeasonAdvanceError,
+  postseasonSimulationSeed,
+  regularSeasonSimulationSeed,
+  simulateDynastyToSeasonComplete,
   removeRecruitingBoardTarget,
   syncRecruitingThroughCompletedPostseasonRounds,
   syncRecruitingThroughCompletedRounds,
@@ -40,6 +45,7 @@ import {
   type RecordCategory,
   type RecruitingState,
   type RecruitingPulseSnapshot,
+  type ObserverMultiSeasonSummaryDescriptor,
 } from '../dynasty'
 import {
   getCurrentTournamentRound,
@@ -47,9 +53,7 @@ import {
   initializePostseason,
   isTournamentComplete,
   simulatePendingGamesInCurrentTournamentRound,
-  simulatePendingGamesInTournamentRound,
   simulateTournamentGame,
-  TOURNAMENT_ROUNDS,
   updatePostseasonProgramRotation,
   type PostseasonState,
   type TournamentGame,
@@ -99,23 +103,6 @@ function deriveInteractiveSeed(dynastySeed: RngSeed, stream: string): string {
   return `${seedValue(dynastySeed)}:${stream}`
 }
 
-function regularSeasonSimulationSeed(
-  dynastySeed: RngSeed,
-  seasonNumber: number,
-): string {
-  return deriveInteractiveSeed(dynastySeed, `season-${seasonNumber}:simulation`)
-}
-
-function postseasonSimulationSeed(
-  dynastySeed: RngSeed,
-  seasonNumber: number,
-): string {
-  return deriveInteractiveSeed(
-    dynastySeed,
-    `season-${seasonNumber}:postseason:simulation`,
-  )
-}
-
 /**
  * Super Sim V0's one fixed checkpoint short of the full 24-round regular
  * season. A UI/application policy constant, not a Season-domain rule — the
@@ -148,6 +135,31 @@ export interface SuperSimSummary {
   /** Presentation Program captured when the segment was simulated. */
   readonly programId: string
 }
+
+export type ObserverMultiSeasonHorizon = 1 | 5 | 10
+
+export type ObserverMultiSeasonSimState =
+  | {
+      readonly status: 'confirming' | 'running' | 'complete'
+      readonly requestedSeasons: ObserverMultiSeasonHorizon
+      readonly completedSeasons: number
+      readonly startingSeasonNumber: number
+      readonly currentSeasonNumber: number
+      readonly viewedProgramId: string
+      readonly summary: ObserverMultiSeasonSummaryDescriptor | null
+    }
+  | {
+      readonly status: 'error'
+      readonly requestedSeasons: ObserverMultiSeasonHorizon
+      readonly completedSeasons: number
+      readonly startingSeasonNumber: number
+      readonly currentSeasonNumber: number
+      readonly viewedProgramId: string
+      readonly summary: null
+      readonly errorSeasonNumber: number
+      readonly errorPhase: string
+      readonly errorMessage: string
+    }
 
 export type PendingRecruitingSetupIntent =
   | 'game-prep-catch-up'
@@ -266,6 +278,8 @@ export interface DynastySessionState {
   readonly pendingSuperSim: PendingSuperSim | null
   /** One-time completion feedback for the Super Sim that just ran, if any. */
   readonly superSimSummary: SuperSimSummary | null
+  /** Foreground Observer-only multi-Season operation and its transient result descriptor. */
+  readonly observerMultiSeasonSim: ObserverMultiSeasonSimState | null
   /** The controlled Program's Rotation as carried into the tournament; the Postseason "reset" target. */
   readonly postseasonControlledDefaultRotation: RotationV1 | null
   /** In-progress Postseason Rotation edit, scoped to Tournament Game Prep — same draft-boundary contract as `draftRotation`. */
@@ -397,6 +411,11 @@ export interface DynastySessionState {
   confirmSuperSim(): void
   /** Dismisses the completion feedback; Season state is unaffected. */
   dismissSuperSimSummary(): void
+  requestObserverMultiSeasonSim(): void
+  setObserverMultiSeasonHorizon(horizon: ObserverMultiSeasonHorizon): void
+  cancelObserverMultiSeasonSim(): void
+  confirmObserverMultiSeasonSim(): Promise<void>
+  dismissObserverMultiSeasonSim(): void
   /**
    * Initializes Postseason from the completed Season the first time it is
    * called, then simply navigates on every later call — so re-entering the
@@ -648,45 +667,8 @@ function withActivePostseason(
   })
 }
 
-/**
- * Advances through the existing Season and Postseason production operations,
- * synchronizing Recruiting at the same boundaries as stepwise progression.
- * Deliberately stops at the completed-Tournament checkpoint; Late Recruiting
- * remains an explicit user action.
- */
-export function simulateDynastyToSeasonComplete(
-  dynasty: DynastyState,
-): DynastyState {
-  const season = dynasty.activeSeason
-  if (!season) return dynasty
-
-  const completedSeason = simulatePendingGamesThroughRound({
-    season,
-    throughRound: season.schedule.roundCount,
-    simulationSeed: regularSeasonSimulationSeed(
-      dynasty.dynastySeed,
-      season.seasonNumber,
-    ),
-  })
-  let current = withActiveSeason(dynasty, completedSeason)
-  let postseason =
-    current.activePostseason ??
-    initializePostseason({ universe: UNIVERSE_V0, season: completedSeason })
-
-  current = { ...current, activePostseason: postseason }
-  for (const round of TOURNAMENT_ROUNDS) {
-    postseason = simulatePendingGamesInTournamentRound({
-      postseason,
-      round,
-      simulationSeed: postseasonSimulationSeed(
-        current.dynastySeed,
-        completedSeason.seasonNumber,
-      ),
-    })
-    current = withActivePostseason(current, postseason)
-  }
-
-  return current
+function yieldToBrowser(): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, 0))
 }
 
 /**
@@ -801,6 +783,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   viewedGameId: null,
   pendingSuperSim: null,
   superSimSummary: null,
+  observerMultiSeasonSim: null,
   postseasonControlledDefaultRotation: null,
   postseasonDraftRotation: null,
   coachingSimpleMinutesByPlayerId: null,
@@ -871,6 +854,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       viewedGameId: null,
       pendingSuperSim: null,
       superSimSummary: null,
+      observerMultiSeasonSim: null,
       postseasonControlledDefaultRotation: null,
       postseasonDraftRotation: null,
       coachingSimpleMinutesByPlayerId: null,
@@ -936,6 +920,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
       viewedGameId: null,
       pendingSuperSim: null,
       superSimSummary: null,
+      observerMultiSeasonSim: null,
       postseasonControlledDefaultRotation: null,
       postseasonDraftRotation: null,
       coachingSimpleMinutesByPlayerId: null,
@@ -1448,6 +1433,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   simulateNextGame() {
+    if (get().observerMultiSeasonSim) return
     const { dynasty } = get()
     const season = dynasty?.activeSeason
     const controlledProgramId = dynasty?.controlledProgramId
@@ -1481,6 +1467,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   simulateRestOfRound() {
+    if (get().observerMultiSeasonSim) return
     const { dynasty } = get()
     const season = dynasty?.activeSeason
     const controlledProgramId = dynasty?.controlledProgramId
@@ -1521,6 +1508,7 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
   },
 
   requestSuperSim(kind) {
+    if (get().observerMultiSeasonSim) return
     const dynasty = get().dynasty
     const season = dynasty?.activeSeason
 
@@ -1640,7 +1628,146 @@ export const useDynastyStore = create<DynastySessionState>((set, get) => ({
     set({ superSimSummary: null })
   },
 
+  requestObserverMultiSeasonSim() {
+    const state = get()
+    const dynasty = state.dynasty
+    const season = dynasty?.activeSeason
+    const viewedProgramId = selectPresentationProgramId(state)
+    if (
+      !dynasty || !season || !viewedProgramId ||
+      dynasty.controlledProgramId !== null ||
+      dynasty.activePostseason || dynasty.offseason ||
+      state.pendingSuperSim || state.observerMultiSeasonSim
+    ) return
+    set({
+      observerMultiSeasonSim: {
+        status: 'confirming',
+        requestedSeasons: 1,
+        completedSeasons: 0,
+        startingSeasonNumber: season.seasonNumber,
+        currentSeasonNumber: season.seasonNumber,
+        viewedProgramId,
+        summary: null,
+      },
+    })
+  },
+
+  setObserverMultiSeasonHorizon(requestedSeasons) {
+    if (![1, 5, 10].includes(requestedSeasons)) return
+    const operation = get().observerMultiSeasonSim
+    if (!operation || operation.status !== 'confirming') return
+    set({ observerMultiSeasonSim: { ...operation, requestedSeasons } })
+  },
+
+  cancelObserverMultiSeasonSim() {
+    if (get().observerMultiSeasonSim?.status !== 'confirming') return
+    set({ observerMultiSeasonSim: null })
+  },
+
+  async confirmObserverMultiSeasonSim() {
+    const requested = get().observerMultiSeasonSim
+    const state = get()
+    const dynasty = state.dynasty
+    const season = dynasty?.activeSeason
+    const viewedProgramId = selectPresentationProgramId(state)
+    if (
+      !requested || requested.status !== 'confirming' ||
+      !dynasty || !season || !viewedProgramId ||
+      dynasty.controlledProgramId !== null || dynasty.activePostseason || dynasty.offseason
+    ) return
+
+    const operation = {
+      ...requested,
+      status: 'running' as const,
+      viewedProgramId,
+    }
+    set({ observerMultiSeasonSim: operation, pendingSuperSim: null, superSimSummary: null })
+    await yieldToBrowser()
+
+    let currentDynasty = dynasty
+    let followedPlayerIds = state.followedPlayerIds
+    let followedRecruitIds = state.followedRecruitIds
+    for (let completedSeasons = 0; completedSeasons < operation.requestedSeasons; completedSeasons += 1) {
+      const failingSeasonNumber = currentDynasty.activeSeason!.seasonNumber
+      try {
+        const nextDynasty = advanceObserverDynastyOneSeason(currentDynasty)
+        const transferred = transferEnrolledRecruitFollows(
+          nextDynasty,
+          followedPlayerIds,
+          followedRecruitIds,
+        )
+        currentDynasty = nextDynasty
+        followedPlayerIds = transferred.followedPlayerIds
+        followedRecruitIds = transferred.followedRecruitIds
+        set({
+          dynasty: currentDynasty,
+          followedPlayerIds,
+          followedRecruitIds,
+          viewedProgramId: operation.viewedProgramId,
+          view: 'hub',
+          offseasonPresentationCursor: null,
+          lastPlayedGameId: null,
+          viewedGameId: null,
+          postseasonControlledDefaultRotation: null,
+          postseasonDraftRotation: null,
+          lastPlayedTournamentGameId: null,
+          viewedTournamentGameId: null,
+          explorationViewHistory: [],
+          pendingRecruitingSetupIntent: null,
+          recruitingActivityBaselinePeriod: null,
+          recruitingPulseBaseline: null,
+          observerMultiSeasonSim: {
+            ...operation,
+            completedSeasons: completedSeasons + 1,
+            currentSeasonNumber: nextDynasty.activeSeason!.seasonNumber,
+            summary: null,
+          },
+        })
+      } catch (error) {
+        const phase = error instanceof ObserverSeasonAdvanceError ? error.phase : 'unknown'
+        set({
+          observerMultiSeasonSim: {
+            status: 'error',
+            requestedSeasons: operation.requestedSeasons,
+            completedSeasons,
+            startingSeasonNumber: operation.startingSeasonNumber,
+            currentSeasonNumber: currentDynasty.activeSeason!.seasonNumber,
+            viewedProgramId: operation.viewedProgramId,
+            summary: null,
+            errorSeasonNumber: error instanceof ObserverSeasonAdvanceError ? error.seasonNumber : failingSeasonNumber,
+            errorPhase: phase,
+            errorMessage: error instanceof Error ? error.message : 'Multi-Season simulation failed.',
+          },
+        })
+        return
+      }
+      if (completedSeasons + 1 < operation.requestedSeasons) await yieldToBrowser()
+    }
+
+    set({
+      observerMultiSeasonSim: {
+        ...operation,
+        status: 'complete',
+        completedSeasons: operation.requestedSeasons,
+        currentSeasonNumber: currentDynasty.activeSeason!.seasonNumber,
+        summary: {
+          startSeasonNumber: operation.startingSeasonNumber,
+          endSeasonNumber: operation.startingSeasonNumber + operation.requestedSeasons - 1,
+          rolloverCount: operation.requestedSeasons,
+          viewedProgramId: operation.viewedProgramId,
+        },
+      },
+    })
+  },
+
+  dismissObserverMultiSeasonSim() {
+    const operation = get().observerMultiSeasonSim
+    if (!operation || operation.status === 'running' || operation.status === 'confirming') return
+    set({ observerMultiSeasonSim: null })
+  },
+
   enterPostseason() {
+    if (get().observerMultiSeasonSim) return
     const { dynasty } = get()
     const season = dynasty?.activeSeason
     const postseason = dynasty?.activePostseason
